@@ -1,0 +1,148 @@
+    - ObsSpace:
+        name: amsua_n19
+        ObsDataIn:
+          obsfile: Data/amsua_n19_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_amsua_n19.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: 5-7,9
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: PreQC
+        maxvalue: 0
+        apply_at_iterations: 0
+      - Filter: Background Check
+        threshold: 3
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_amsua_n19.nc4
+      ObsOperator: &crtmdry
+        name: CRTM
+        Absorbers: [H2O,O3]
+        LinearObsOperator:
+          Absorbers: [H2O]
+        ObsOptions: &crtmopts
+          Sensor_ID: amsua_n19
+          EndianType: little_endian
+          CoefficientPath: CRTMTABLES
+    - ObsSpace:
+        name: amsua_n15
+        ObsDataIn:
+          obsfile: Data/amsua_n15_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_amsua_n15.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: 5-9
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: PreQC
+        maxvalue: 0
+        apply_at_iterations: 0
+      - Filter: Background Check
+        threshold: 3
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_amsua_n15.nc4
+      ObsOperator:
+        <<: *crtmdry
+        ObsOptions:
+          <<: *crtmopts
+          Sensor_ID: amsua_n15
+    - ObsSpace:
+        name: amsua_n18
+        ObsDataIn:
+          obsfile: Data/amsua_n18_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_amsua_n18.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: 5-9
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: PreQC
+        maxvalue: 0
+        apply_at_iterations: 0
+      - Filter: Background Check
+        threshold: 3
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_amsua_n18.nc4
+      ObsOperator:
+        <<: *crtmdry
+        ObsOptions:
+          <<: *crtmopts
+          Sensor_ID: amsua_n18
+    - ObsSpace:
+        name: amsua_metop-a
+        ObsDataIn:
+          obsfile: Data/amsua_metop-a_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_amsua_metop-a.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: 5,6,9
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: PreQC
+        maxvalue: 0
+        apply_at_iterations: 0
+      - Filter: Background Check
+        threshold: 3
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_amsua_metop-a.nc4
+      ObsOperator:
+        <<: *crtmdry
+        ObsOptions:
+          <<: *crtmopts
+          Sensor_ID: amsua_metop-a
+#    - ObsSpace:
+#        name: amsua_metop-b
+#        ObsDataIn:
+#          obsfile: Data/amsua_metop-b_obs_2018041500.nc4
+#        ObsDataOut:
+#          obsfile: Data/obsout_DATYPE_amsua_metop-b.nc4
+#        simulate:
+#          variables: [brightness_temperature]
+#          channels: 8,9
+#      Covariance:
+#        covariance: diagonal
+#      ObsFilters:
+#      - Filter: PreQC
+#        maxvalue: 0
+#        apply_at_iterations: 0
+#      - Filter: Background Check
+#        threshold: 3
+#      - Filter: GOMsaver
+#        filename: Data/geoval_DATYPE_amsua_metop-b.nc4
+#      ObsOperator:
+#        <<: *crtmdry
+#        ObsOptions:
+#          <<: *crtmopts
+#          Sensor_ID: amsua_metop-b
+    - ObsSpace:
+        name: amsua_aqua
+        ObsDataIn:
+          obsfile: Data/amsua_aqua_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_amsua_aqua.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: 8,9
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: PreQC
+        maxvalue: 0
+        apply_at_iterations: 0
+      - Filter: Background Check
+        threshold: 3
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_amsua_aqua.nc4
+      ObsOperator:
+        <<: *crtmdry
+        ObsOptions:
+          <<: *crtmopts
+          Sensor_ID: amsua_aqua

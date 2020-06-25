@@ -1,0 +1,242 @@
+    - ObsSpace:
+        name: amsua-cld_n19
+        ObsDataIn:
+          obsfile: Data/amsua_n19_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_amsua-cld_n19.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: &cldamsua_channels 1-4,15
+#          channels: &cldamsua_channels 1-15
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: Domain Check
+        filter variables:
+        - name: brightness_temperature
+          channels: *cldamsua_channels
+        where:
+        - variable:
+            name: water_area_fraction@GeoVaLs
+          minvalue: 1.0
+#      - Filter: Bounds Check
+#        filter variables:
+#        - name: brightness_temperature
+#          channels: *cldamsua_channels
+#        minvalue: 170.0
+#        maxvalue: 300.0
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_amsua-cld_n19.nc4
+      - Filter: YDIAGsaver
+        filename: Data/ydiags_DATYPE_amsua-cld_n19.nc4
+        filter variables: &cldamsuaydiag
+        - name: brightness_temperature_assuming_clear_sky
+          channels: *cldamsua_channels
+      ObsOperator: &crtmcloud
+        name: CRTM
+        Absorbers: [H2O,O3,CO2]
+        Clouds: [Water, Ice, Rain, Snow, Graupel]
+        LinearObsOperator:
+          Absorbers: [H2O]
+          Clouds: [Water, Ice, Rain, Snow, Graupel]
+        ObsOptions:
+          Sensor_ID: amsua_n19
+          EndianType: little_endian
+          CoefficientPath: CRTMTABLES
+    - ObsSpace:
+        name: amsua-cld_n15
+        ObsDataIn:
+          obsfile: Data/amsua_n15_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_amsua-cld_n15.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: &cldamsuan15_channels 1-4,15
+#CHECK FPE ERRORS IN CRTM
+#          channels: &cldamsuan15_channels 1-3,15
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: Domain Check
+        filter variables:
+        - name: brightness_temperature
+          channels: *cldamsuan15_channels
+        where:
+        - variable:
+            name: water_area_fraction@GeoVaLs
+          minvalue: 1.0
+#      - Filter: Bounds Check
+#        filter variables:
+#        - name: brightness_temperature
+#          channels: *cldamsuan15_channels
+#        minvalue: 170.0
+#        maxvalue: 300.0
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_amsua-cld_n15.nc4
+      - Filter: YDIAGsaver
+        filename: Data/ydiags_DATYPE_amsua-cld_n15.nc4
+        filter variables: 
+        - name: brightness_temperature_assuming_clear_sky
+          channels: *cldamsuan15_channels
+      ObsOperator:
+        <<: *crtmcloud
+        ObsOptions:
+          Sensor_ID: amsua_n15
+          EndianType: little_endian
+          CoefficientPath: CRTMTABLES
+    - ObsSpace:
+        name: amsua-cld_n18
+        ObsDataIn:
+          obsfile: Data/amsua_n18_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_amsua-cld_n18.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: &cldamsuan18_channels 1-4,15
+#CHECK FPE ERRORS IN CRTM
+#          channels: &cldamsuan18_channels 1-4
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: Domain Check
+        filter variables:
+        - name: brightness_temperature
+          channels: *cldamsuan18_channels
+        where:
+        - variable:
+            name: water_area_fraction@GeoVaLs
+          minvalue: 1.0
+#      - Filter: Bounds Check
+#        filter variables:
+#        - name: brightness_temperature
+#          channels: *cldamsuan18_channels
+#        minvalue: 170.0
+#        maxvalue: 300.0
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_amsua-cld_n18.nc4
+      - Filter: YDIAGsaver
+        filename: Data/ydiags_DATYPE_amsua-cld_n18.nc4
+        filter variables: 
+        - name: brightness_temperature_assuming_clear_sky
+          channels: *cldamsuan18_channels
+      ObsOperator:
+        <<: *crtmcloud
+        ObsOptions:
+          Sensor_ID: amsua_n18
+          EndianType: little_endian
+          CoefficientPath: CRTMTABLES
+    - ObsSpace:
+        name: amsua-cld_metop-a
+        ObsDataIn:
+          obsfile: Data/amsua_metop-a_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_amsua-cld_metop-a.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: &cldamsuama_channels 1-4,15
+#CHECK FPE ERRORS IN CRTM
+#          channels: &cldamsuama_channels 1-4
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: Domain Check
+        filter variables:
+        - name: brightness_temperature
+          channels: *cldamsuama_channels
+        where:
+        - variable:
+            name: water_area_fraction@GeoVaLs
+          minvalue: 1.0
+#      - Filter: Bounds Check
+#        filter variables:
+#        - name: brightness_temperature
+#          channels: *cldamsuama_channels
+#        minvalue: 170.0
+#        maxvalue: 300.0
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_amsua-cld_metop-a.nc4
+      - Filter: YDIAGsaver
+        filename: Data/ydiags_DATYPE_amsua-cld_metop-a.nc4
+        filter variables:
+        - name: brightness_temperature_assuming_clear_sky
+          channels: *cldamsuama_channels
+      ObsOperator:
+        <<: *crtmcloud
+        ObsOptions:
+          Sensor_ID: amsua_metop-a
+          EndianType: little_endian
+          CoefficientPath: CRTMTABLES
+    - ObsSpace:
+        name: amsua-cld_metop-b
+        ObsDataIn:
+          obsfile: Data/amsua_metop-b_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_amsua-cld_metop-b.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: *cldamsua_channels
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: Domain Check
+        filter variables:
+        - name: brightness_temperature
+          channels: *cldamsua_channels
+        where:
+        - variable:
+            name: water_area_fraction@GeoVaLs
+          minvalue: 1.0
+#      - Filter: Bounds Check
+#        filter variables:
+#        - name: brightness_temperature
+#          channels: *cldamsua_channels
+#        minvalue: 170.0
+#        maxvalue: 300.0
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_amsua-cld_metop-b.nc4
+      - Filter: YDIAGsaver
+        filename: Data/ydiags_DATYPE_amsua-cld_metop-b.nc4
+        filter variables: *cldamsuaydiag
+      ObsOperator:
+        <<: *crtmcloud
+        ObsOptions:
+          Sensor_ID: amsua_metop-b
+          EndianType: little_endian
+          CoefficientPath: CRTMTABLES
+    - ObsSpace:
+        name: amsua-cld_aqua
+        ObsDataIn:
+          obsfile: Data/amsua_aqua_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_amsua-cld_aqua.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: *cldamsua_channels
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: Domain Check
+        filter variables:
+        - name: brightness_temperature
+          channels: *cldamsua_channels
+        where:
+        - variable:
+            name: water_area_fraction@GeoVaLs
+          minvalue: 1.0
+#      - Filter: Bounds Check
+#        filter variables:
+#        - name: brightness_temperature
+#          channels: *cldamsua_channels
+#        minvalue: 170.0
+#        maxvalue: 300.0
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_amsua-cld_aqua.nc4
+      - Filter: YDIAGsaver
+        filename: Data/ydiags_DATYPE_amsua-cld_aqua.nc4
+        filter variables: *cldamsuaydiag
+      ObsOperator:
+        <<: *crtmcloud
+        ObsOptions:
+          Sensor_ID: amsua_aqua
+          EndianType: little_endian
+          CoefficientPath: CRTMTABLES

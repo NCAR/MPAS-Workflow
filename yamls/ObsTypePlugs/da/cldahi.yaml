@@ -1,0 +1,79 @@
+    - ObsSpace:
+        name: ahi_himawari8
+        ObsDataIn:
+          obsfile: Data/ahi_himawari8_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_ahi_himawari8.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: &ahi_channels 8-10
+      ObsOperator:
+        name: CRTM
+        Absorbers: [H2O,O3,CO2]
+        Clouds: [Water, Ice, Rain, Snow, Graupel]
+        LinearObsOperator:
+          Absorbers: [H2O]
+          Clouds: [Water, Ice, Rain, Snow, Graupel]
+        ObsOptions:
+          Sensor_ID: ahi_himawari8
+          EndianType: little_endian
+          CoefficientPath: CRTMTABLES
+          IRVISlandCoeff: USGS
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: Domain Check
+        where:
+        - variable:
+            name: sensor_zenith_angle@MetaData
+          maxvalue: 65.0
+      - Filter: Thinning
+        amount: RADTHINAMOUNT
+        random_seed: 0
+        apply_at_iterations: 0
+#      - Filter: Gaussian_Thinning
+#        horizontal_mesh: RADTHINDISTANCE #km
+      - Filter: BlackList
+        filter variables:
+        - name: brightness_temperature
+          channels: *ahi_channels
+#      - Filter: Domain Check
+#        where:
+#        - variable:
+#            name: cloud_area_fraction@MetaData
+#          minvalue: 0.05
+        action:
+          name: assign error
+          error function:
+            name: ObsErrorModelRamp@ObsFunction
+            channels: *ahi_channels
+            options:
+              channels: *ahi_channels
+              xvar:
+                name: SymmCldImpactIR@ObsFunction
+                channels: *ahi_channels
+                options:
+                  channels: *ahi_channels
+              x0: [1.0, 1.0, 1.0]
+              x1: [15.87, 20.75, 25.21]
+              err0: [1.94, 1.88, 2.26]
+              err1: [20.05, 24.75, 25.90]
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_ahi_himawari8.nc4
+      - Filter: YDIAGsaver
+        filename: Data/ydiags_DATYPE_ahi_himawari8.nc4
+        filter variables:
+        - name: brightness_temperature_assuming_clear_sky
+          channels: *ahi_channels
+        - name: weightingfunction_of_atmosphere_layer
+          channels: *ahi_channels
+        - name: pressure_level_at_peak_of_weightingfunction
+          channels: *ahi_channels
+        - name: brightness_temperature_jacobian_air_temperature
+          channels: *ahi_channels
+        - name: brightness_temperature_jacobian_humidity_mixing_ratio
+          channels: *ahi_channels
+        - name: brightness_temperature_jacobian_surface_emissivity
+          channels: *ahi_channels
+        - name: brightness_temperature_jacobian_surface_temperature
+          channels: *ahi_channels

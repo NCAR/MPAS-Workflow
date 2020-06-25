@@ -1,0 +1,174 @@
+#---
+#logging:
+#  categories: Info, Test, Warning, Error, Log, Trace, Stats
+resolution:
+  gridfname: "./restart.2018-04-15_00.00.00.nc"
+model:
+  name: MPAS
+  tstep: PT0H
+  variables:
+  - temperature
+  - pressure
+  - spechum
+  - uReconstructZonal
+  - uReconstructMeridional
+cost_function:
+  cost_type: 3D-Var
+  window_begin: '2018-04-14T21:00:00Z'
+  window_length: PT6H
+  variables: &incvars
+  - temperature
+  - pressure
+  - spechum
+  - uReconstructZonal
+  - uReconstructMeridional
+  varchange: Identity
+  Jb:
+    Background:
+      state:
+      - variables: *incvars
+        filename: "./restart.2018-04-15_00.00.00.nc"
+        date: '2018-04-15T00:00:00Z'
+    Covariance:
+      covariance: MPASstatic
+      date: '2018-04-15T00:00:00Z'
+#    Covariance:
+#      covariance: BUMP
+#      date: '2018-04-15T00:00:00Z'
+#      bump:
+#        prefix: ${path_for_filesbump}/mpas_parametersbump_cov
+#        default_seed: 1
+#        method: cor
+#        nonunit_diag: 1 #effectively "cov"
+#        strategy: specific_univariate  #common
+#        new_nicas: 0
+#        load_nicas: 1
+#        load_cmat: 1
+#        ntry: 3
+#        nrep: 2
+#        lsqrt: 1
+#        resol: 10
+#        nicas_interp: bilin
+#        network: 0
+#        mpicom: 2
+#        advmode: 0
+#        forced_radii: 0
+#        rh: 600000
+#        rv: 1
+  Jo:
+    ObsTypes:
+    - ObsSpace:
+        name: Radiosonde
+        ObsDataIn:
+          obsfile: Data/sondes_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_3dvar_sondes.nc4
+        simulate:
+          variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind, specific_humidity]
+      ObsOperator:
+        name: VertInterp
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: PreQC
+        maxvalue: 3
+        apply_at_iterations: 0
+      - Filter: Background Check
+        threshold: 3
+    - ObsSpace:
+        name: Aircraft
+        ObsDataIn:
+          obsfile: Data/aircraft_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_3dvar_aircraft.nc4
+        simulate:
+          variables: [air_temperature, eastward_wind, northward_wind, specific_humidity]
+      ObsOperator:
+        name: VertInterp
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: PreQC
+        maxvalue: 3
+        apply_at_iterations: 0
+      - Filter: Background Check
+        threshold: 3
+    - ObsSpace:
+        name: Satwind
+        ObsDataIn:
+          obsfile: Data/satwind_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_3dvar_satwind.nc4
+        simulate:
+          variables: [eastward_wind, northward_wind]
+      ObsOperator:
+        name: VertInterp
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: PreQC
+        maxvalue: 3
+        apply_at_iterations: 0
+      - Filter: Background Check
+        threshold: 3
+      - Filter: Gaussian_Thinning
+        horizontal_mesh: 30.0 #km
+    - ObsSpace:
+        name: GnssroRef
+        ObsDataIn:
+          obsfile: Data/gnssro_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_3dvar_gnssroref.nc4
+        simulate:
+          variables: [refractivity]
+      ObsOperator:
+        name: GnssroRef
+        ObsOptions:
+          use_compress: 0
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: Domain Check
+        where:
+        - variable:
+            name: altitude@MetaData
+          minvalue: 0
+          maxvalue: 30000
+        - variable:
+            name: earth_radius_of_curvature@MetaData
+          minvalue: 6250000
+          maxvalue: 6450000
+        - variable:
+            name: geoid_height_above_reference_ellipsoid@MetaData
+          minvalue: -200
+          maxvalue: 200
+      - Filter: Background Check
+        threshold: 3
+      - Filter: ROobserror
+        variable: refractivity
+        errmodel: NBAM
+#      - Filter: Bounds Check
+#        minvalue: -10.0
+minimizer:
+  algorithm: DRIPCG
+output:
+  filename: "./analysis.$Y-$M-$D_$h.$m.$s.nc"
+variational:
+  iteration:
+  - resolution:
+      gridfname: "./restart.2018-04-15_00.00.00.nc"
+    linearmodel:
+      varchange: Identity
+      version: MPASIdTLM
+      tstep: PT0H
+      trajectory:
+        tstep: PT0H
+      variables: *incvars
+    ninner: '60'
+    gradient_norm_reduction: 1e-10
+    test: 'on'
+    diagnostics:
+      departures: depbg
+final:
+  diagnostics:
+    departures: depan

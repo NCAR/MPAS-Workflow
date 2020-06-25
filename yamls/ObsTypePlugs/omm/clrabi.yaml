@@ -1,0 +1,46 @@
+    - ObsSpace:
+        name: abi_g16
+        ObsDataIn:
+          obsfile: Data/abi_g16_obs_2018041500.nc4
+        ObsDataOut:
+          obsfile: Data/obsout_DATYPE_abi-clr_g16.nc4
+        simulate:
+          variables: [brightness_temperature]
+          channels: &abi_channels 7-16
+      ObsOperator:
+        name: CRTM
+        Absorbers: [H2O,O3,CO2]
+        LinearObsOperator:
+          Absorbers: [H2O]
+        ObsOptions:
+          Sensor_ID: abi_g16
+          EndianType: little_endian
+          CoefficientPath: CRTMTABLES
+          IRVISlandCoeff: USGS
+      Covariance:
+        covariance: diagonal
+      ObsFilters:
+      - Filter: Domain Check
+        where:
+        - variable:
+            name: sensor_zenith_angle@MetaData
+          maxvalue: 65.0
+      - Filter: GOMsaver
+        filename: Data/geoval_DATYPE_abi-clr_g16.nc4
+      - Filter: YDIAGsaver
+        filename: Data/ydiags_DATYPE_abi-clr_g16.nc4
+        filter variables:
+        - name: brightness_temperature_assuming_clear_sky
+          channels: *abi_channels
+        - name: weightingfunction_of_atmosphere_layer
+          channels: *abi_channels
+        - name: pressure_level_at_peak_of_weightingfunction
+          channels: *abi_channels
+        - name: brightness_temperature_jacobian_air_temperature
+          channels: *abi_channels
+        - name: brightness_temperature_jacobian_humidity_mixing_ratio
+          channels: *abi_channels
+        - name: brightness_temperature_jacobian_surface_emissivity
+          channels: *abi_channels
+        - name: brightness_temperature_jacobian_surface_temperature
+          channels: *abi_channels
