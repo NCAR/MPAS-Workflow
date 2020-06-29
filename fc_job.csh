@@ -41,7 +41,7 @@ set NAMELIST_DATE  = ${yy}-${mm}-${dd}_${hh}:00:00
 # =============================================
 cp $FC_NML_DIR/* .
 ln -sf $GRAPHINFO_DIR/x1.${MPAS_NCELLS}.graph.info* .
-ln -sf ${TOP_WORK_DIR}/libs/build/${MPASBUILD}/src/core_atmosphere/physics/physics_wrf/files/* .
+ln -sf ${TOP_BUILD_DIR}/libs/build/${MPASBUILD}/src/core_atmosphere/physics/physics_wrf/files/* .
 cp namelist.atmosphere orig_namelist.atmosphere
 
 ## link background:

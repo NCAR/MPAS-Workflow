@@ -10,11 +10,11 @@
 setenv omm  omm
 
 ## OMM_OBS_LIST
-# OPTIONS: conv, clramsua, cldamsua, clrabi, cldabi, clrahi, cldahi
-set OMM_OBS_LIST = (conv clramsua cldamsua clrabi cldabi clrahi cldahi)
+# OPTIONS: conv, clramsua, allamsua, clrabi, allabi, clrahi, allahi
+set OMM_OBS_LIST = (conv clramsua allamsua clrabi allabi clrahi allahi)
 #set OMM_OBS_LIST = (clramsua clrabi)
-#set OMM_OBS_LIST = (cldabi_SCI)
-#set OMM_OBS_LIST = (cldabi_constObsError)
+#set OMM_OBS_LIST = (allabi_SCI)
+#set OMM_OBS_LIST = (allabi_constObsError)
 
 
 #
@@ -25,11 +25,11 @@ set OMM_OBS_LIST = (conv clramsua cldamsua clrabi cldabi clrahi cldahi)
 setenv DATYPE  3denvar
 
 ## DA_OBS_LIST
-#OPTIONS: conv, clramsua, cldamsua, clrabi, cldabi, clrahi, cldahi
+#OPTIONS: conv, clramsua, allamsua, clrabi, allabi, clrahi, allahi
 #set DA_OBS_LIST = ()
-#set DA_OBS_LIST = (conv clramsua)
+set DA_OBS_LIST = (conv clramsua)
 #set DA_OBS_LIST = (conv clramsua clrabi)
-set DA_OBS_LIST = (conv clramsua cldabi)
+#set DA_OBS_LIST = (conv clramsua allabi)
 
 ## ABI super-obbing footprint (used for both OMM and DA)
 #OPTIONS: 15X15, 59X59 
@@ -49,6 +49,9 @@ foreach obs ($EXPOBSLIST)
   endif
 end
 
+## add unique suffix
+set SUFFIX = ""
+setenv EXPNAME ${EXPNAME}${SUFFIX}
 
 #
 # verification settings
@@ -97,9 +100,10 @@ setenv RST_FILE_PREFIX      restart
 setenv ORIG_SCRIPT_DIR  `pwd`
 setenv currdir          `basename "$ORIG_SCRIPT_DIR"`
 
-setenv TOP_EXPERIMENT_DIR  /glade/scratch/${USER}/pandac
+setenv EXPUSER          ${USER}
+setenv TOP_EXP_DIR      /glade/scratch/${EXPUSER}/pandac
 
-setenv EXPDIR           ${TOP_EXPERIMENT_DIR}/${MPAS_RES}_${EXPNAME}
+setenv EXPDIR           ${TOP_EXP_DIR}/${EXPUSER}_${EXPNAME}_${MPAS_RES}
 setenv JOBCONTROL       ${EXPDIR}/JOBCONTROL
 mkdir -p ${JOBCONTROL}
 
@@ -119,7 +123,8 @@ setenv OMF_WORK_DIR     ${VF_WORK_DIR}/fc
 #
 # static data directories
 # =============================================
-setenv TOP_STATIC_DIR       /glade/work/${USER}/pandac
+setenv STATICUSER           ${USER}
+setenv TOP_STATIC_DIR       /glade/work/${STATICUSER}/pandac
 setenv FIXED_INPUT          ${TOP_STATIC_DIR}/fixed_input
 setenv GFSANA6HFC_DIR       ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
 setenv GFSANA6HFC_OMF_DIR   ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
@@ -135,8 +140,8 @@ setenv CONV_OBS_DIR         ${TOP_STATIC_DIR}/obs/conv
 setenv AMSUA_OBS_DIR        /glade/p/mmm/parc/vahl/gsi_ioda/bias_corr
 
 # TODO: enable logic (somewhere else) to use different super-obbing/thinning for DA/OMM jobs
-# setenv ABI_OBS_DIR        ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB${ABISUPEROB}_no-bias-correct
-setenv ABI_OBS_DIR        ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB${ABISUPEROB}_const-bias-correct
+# setenv ABI_OBS_DIR         ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB${ABISUPEROB}_no-bias-correct
+setenv ABI_OBS_DIR          ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB${ABISUPEROB}_const-bias-correct
 
 setenv AHI_OBS_DIR          /glade/work/wuyl/pandac/work/fix_input/AHI_OBS/ioda_cnst_bias
 
@@ -177,7 +182,8 @@ setenv F_UFMTENDIAN 'big:101-200'
 #
 # build directory structures
 # =============================================
-setenv TOP_BUILD_DIR     /glade/work/${USER}/pandac
+setenv BUILDUSER         ${USER}
+setenv TOP_BUILD_DIR     /glade/work/${BUILDUSER}/pandac
 #MPAS-JEDI
 setenv DAEXE             mpas_variational.x
 setenv HOFXEXE           mpas_hofx_nomodel.x
