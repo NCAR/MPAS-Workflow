@@ -9,8 +9,9 @@
 # 0, setup environment:
 # ====================
     source ./setup.csh
+    rm -rf ${MAIN_SCRIPT_DIR}
     mkdir -p ${MAIN_SCRIPT_DIR}
-    cp -rP ${ORIG_SCRIPT_DIR} ${EXPDIR}/
+    cp -rpP ${ORIG_SCRIPT_DIR}/* ${MAIN_SCRIPT_DIR}/
     cd ${MAIN_SCRIPT_DIR}
     echo "0" > ${JOBCONTROL}/last_omm_job
     echo "0" > ${JOBCONTROL}/last_fcvf_job

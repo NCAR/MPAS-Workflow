@@ -9,8 +9,9 @@
 # 0, setup environment:
 # ====================
     source ./setup.csh
+    rm -rf ${MAIN_SCRIPT_DIR}
     mkdir -p ${MAIN_SCRIPT_DIR}
-    cp -rP ${ORIG_SCRIPT_DIR} ${EXPDIR}/
+    cp -rpP ${ORIG_SCRIPT_DIR}/* ${MAIN_SCRIPT_DIR}/
     cd ${MAIN_SCRIPT_DIR}
     echo "0" > ${JOBCONTROL}/last_fc_job
     echo "0" > ${JOBCONTROL}/last_da_job
@@ -29,9 +30,7 @@
 # =========================================
     setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
     setenv S_DATE     2018041500 # experiment start date
-#    setenv S_DATE     2018051300 # experiment end   date
-    setenv E_DATE     2018041500 # experiment end   date
-#    setenv E_DATE     2018051418 # experiment end   date
+    setenv E_DATE     2018051418 # experiment end   date
     setenv C_DATE     ${S_DATE}  # current-cycle date (will change)
 
     set VERIFYBG = 1
