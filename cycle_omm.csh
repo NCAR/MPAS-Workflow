@@ -98,7 +98,6 @@
           -e 's@VFCYCLEDIR_in@'${WORKDIR}'@' \
           -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
           -e 's@DIAGTYPE_in@omb-'${OMM_STATE}'@' \
-          -e 's@BGTYPE_in@'${BGFROMCYCLEDIR}'@' \
           -e 's@DEPENDTYPE_in@null@' \
           omm_wrapper.csh > ${OMMSCRIPT}
       chmod 744 ${OMMSCRIPT}

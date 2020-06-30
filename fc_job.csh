@@ -18,10 +18,10 @@ date
 source ./setup.csh
 
 setenv DATE             CDATE
-setenv PREVIOUS_DA_DIR  DADIR
+setenv IC_STATE_DIR     ICDIR
 setenv FC_LENGTH_HR     FCLENGTHHR
 setenv OUT_DT_HR        OUTDTHR
-setenv IC_FILE_PREFIX   ICFILEPREFIX
+setenv IC_STATE_PREFIX  ICSTATEPREFIX
 
 setenv FC_LENGTH_STR 0_${FC_LENGTH_HR}:00:00
 setenv OUT_DT_STR 0_${OUT_DT_HR}:00:00
@@ -45,7 +45,7 @@ ln -sf ${TOP_BUILD_DIR}/libs/build/${MPASBUILD}/src/core_atmosphere/physics/phys
 cp namelist.atmosphere orig_namelist.atmosphere
 
 ## link background:
-ln -sf ${PREVIOUS_DA_DIR}/${IC_FILE_PREFIX}.${FILE_DATE}.nc ./${RST_FILE_PREFIX}.${FILE_DATE}.nc
+ln -sf ${IC_STATE_DIR}/${IC_STATE_PREFIX}.${FILE_DATE}.nc ./${RST_FILE_PREFIX}.${FILE_DATE}.nc
 
 #
 # Revise time info in namelist
@@ -92,19 +92,19 @@ while ( ${OUT_DATE} <= ${E_DATE} )
   set hh = `echo ${OUT_DATE} | cut -c 9-10`
   set OUT_FILE_DATE  = ${yy}-${mm}-${dd}_${hh}.00.00
 
-  ## Update sst,xice:
-  if ( ${UPDATESST} ) then
-     #delete sst from previous GFS ANA
-     ncks -a -x -v sst,xice ${RST_FILE_PREFIX}.${OUT_FILE_DATE}.nc ${RST_FILE_PREFIX}.${OUT_FILE_DATE}_nosstice.nc
+  ## Update MPAS sea surface variables:
+  if ( ${UPDATESEA} ) then
+     #delete MPASSeaVars from previous GFS ANA
+     ncks -a -x -v ${MPASSeaVars} ${RST_FILE_PREFIX}.${OUT_FILE_DATE}.nc ${RST_FILE_PREFIX}.${OUT_FILE_DATE}_nosea.nc
 
-     #append sst,xice from current GFS ANA
+     #append MPASSeaVars from current GFS ANA
      setenv SST_FILE ${GFSSST_DIR}/${OUT_DATE}/x1.${MPAS_NCELLS}.sfc_update.${OUT_FILE_DATE}.nc
-     ncks -A -v sst,xice ${SST_FILE} ${RST_FILE_PREFIX}.${OUT_FILE_DATE}_nosstice.nc
-     mv  ${RST_FILE_PREFIX}.${OUT_FILE_DATE}_nosstice.nc  ${RST_FILE_PREFIX}.${OUT_FILE_DATE}.nc
+     ncks -A -v ${MPASSeaVars} ${SST_FILE} ${RST_FILE_PREFIX}.${OUT_FILE_DATE}_nosea.nc
+     mv  ${RST_FILE_PREFIX}.${OUT_FILE_DATE}_nosea.nc  ${RST_FILE_PREFIX}.${OUT_FILE_DATE}.nc
   endif
 
-  ## Add cldfrac to the next cycle bg file
-  ncks -A -v cldfrac diag.${OUT_FILE_DATE}.nc ${RST_FILE_PREFIX}.${OUT_FILE_DATE}.nc
+  ## Add MPASDiagVars to the next cycle bg file
+  ncks -A -v ${MPASDiagVars} diag.${OUT_FILE_DATE}.nc ${RST_FILE_PREFIX}.${OUT_FILE_DATE}.nc
 
   ## move to background name
   mv ${RST_FILE_PREFIX}.${OUT_FILE_DATE}.nc ${BG_FILE_PREFIX}.${OUT_FILE_DATE}.nc

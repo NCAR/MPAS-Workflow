@@ -10,8 +10,8 @@
 setenv omm  omm
 
 ## OMM_OBS_LIST
-# OPTIONS: conv, clramsua, allamsua, clrabi, allabi, clrahi, allahi
-set OMM_OBS_LIST = (conv clramsua allamsua clrabi allabi clrahi allahi)
+# OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
+set OMM_OBS_LIST = (conv clramsua cldamsua clrabi allabi clrahi allahi)
 #set OMM_OBS_LIST = (clramsua clrabi)
 #set OMM_OBS_LIST = (allabi_SCI)
 #set OMM_OBS_LIST = (allabi_constObsError)
@@ -20,6 +20,11 @@ set OMM_OBS_LIST = (conv clramsua allamsua clrabi allabi clrahi allahi)
 #
 # DA settings
 # =============================================
+## InDBDir and OutDBDir control the names of the database directories
+# on input and output from jedi applications
+setenv InDBDir  dbIn
+setenv OutDBDir dbOut
+
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar
 setenv DATYPE  3denvar
@@ -30,7 +35,7 @@ else
 endif
 
 ## DA_OBS_LIST
-#OPTIONS: conv, clramsua, allamsua, clrabi, allabi, clrahi, allahi
+#OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
 #set DA_OBS_LIST = ()
 set DA_OBS_LIST = (conv clramsua)
 #set DA_OBS_LIST = (conv clramsua clrabi)
@@ -69,13 +74,12 @@ setenv VERIFYAFTERDA  1
 setenv obsPrefix      obsout
 setenv geoPrefix      geoval
 setenv diagPrefix     ydiags
-setenv DBDir          Data/dbOut
 
 
 #
 # cycling settings
 # =============================================
-setenv UPDATESST         1
+setenv UPDATESEA         1
 
 setenv CY_WINDOW_HR      6               # interval between cycle DA
 setenv FCVF_LENGTH_HR    72              # length of verification forecasts
@@ -98,11 +102,12 @@ setenv FCVFJOBMINUTES    40
 #setenv FCCYJOBMINUTES    10
 #setenv FCVFJOBMINUTES    60
 
-setenv AN_FILE_PREFIX       an
-setenv BG_FILE_PREFIX       bg
-setenv RST_FILE_PREFIX      restart
+setenv AN_FILE_PREFIX    an
+setenv BG_FILE_PREFIX    bg
+setenv RST_FILE_PREFIX   restart
 
-
+setenv MPASDiagVars      cldfrac
+setenv MPASSeaVars       sst,xice
 #
 # Run directories
 # =============================================

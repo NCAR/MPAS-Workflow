@@ -22,7 +22,9 @@ date
 # =============================================
 source ./setup.csh
 
-setenv DATE     CDATE
+setenv DATE            CDATE
+setenv BG_STATE_DIR    BGDIR
+setenv BG_STATE_PREFIX BGSTATEPREFIX
 
 #
 # Time info for namelist, yaml etc:
@@ -41,15 +43,19 @@ rm jedi.log*
 # EVERYTHING BEYOND HERE MUST HAPPEN AFTER OMM STATE IS AVAILABLE
 #################################################################
 
-# Copy specific diagnostic variables used in DA to bg
-# ===================================================
-if ( BGFROMCYCLEDIR ) then
-  # Use when copying BG from analysis directory
-  ln -sf ./${RST_FILE_PREFIX}.$FILE_DATE.nc_orig ./${RST_FILE_PREFIX}.$FILE_DATE.nc
+set bgFileFC = ${BG_STATE_DIR}/${BG_STATE_PREFIX}.$FILE_DATE.nc
+set bgFileDA = ./${RST_FILE_PREFIX}.$FILE_DATE.nc
+
+# Copy diagnostic variables used in DA to bg
+# ==========================================
+ncdump -h ${bgFileFC} | grep ${MPASDiagVars}
+if ( $status != 0 ) then
+  ln -fsv ${bgFileFC} ${bgFileDA}_orig
+  set diagFile = ${BG_STATE_DIR}/diag.$FILE_DATE.nc
+  cp ${bgFileDA}_orig ${bgFileDA}
+  ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFileDA}
 else
-  # Use when copying BG from forecast directory
-  cp ./${RST_FILE_PREFIX}.$FILE_DATE.nc_orig ./${RST_FILE_PREFIX}.$FILE_DATE.nc
-  ncks -A -v cldfrac diag.$FILE_DATE.nc ${RST_FILE_PREFIX}.$FILE_DATE.nc
+  ln -fsv ${bgFileFC} ${bgFileDA}
 endif
 
 # Ensure analysis file is not present

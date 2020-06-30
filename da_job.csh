@@ -18,7 +18,9 @@ date
 # =============================================
 source ./setup.csh
 
-setenv DATE     CDATE
+setenv DATE            CDATE
+setenv BG_STATE_DIR    BGDIR
+setenv BG_STATE_PREFIX BGSTATEPREFIX
 
 #
 # Time info for namelist, yaml etc:
@@ -37,9 +39,37 @@ rm jedi.log*
 # EVERYTHING BEYOND HERE MUST HAPPEN AFTER THE PREVIOUS FORECAST IS COMPLETED
 ##############################################################################
 
-# Copy restart file for adding variables used in DA to bg
-# =======================================================
-ln -sf ./${RST_FILE_PREFIX}.$FILE_DATE.nc_orig ./${RST_FILE_PREFIX}.$FILE_DATE.nc
+set member = 1
+while ( $member <= ${NMEMBERS} )
+  if ( "$DATYPE" =~ *"eda_"* ) then
+    set memberDir = `printf "/mem%03d" $member`
+    set bg = ./${BG_FILE_PREFIX}${memberDir}
+    set an = ./${AN_FILE_PREFIX}${memberDir}
+    mkdir -p ${bg}
+    mkdir -p ${an}
+  else
+    set memberDir = ''
+    set bg = '.'
+  endif
+
+  set bgFileFC = ${BG_STATE_DIR}${memberDir}/${BG_STATE_PREFIX}.$FILE_DATE.nc
+  set bgFileDA = ${bg}/${RST_FILE_PREFIX}.$FILE_DATE.nc
+
+  # Copy diagnostic variables used in DA to bg
+  # ==========================================
+
+  ncdump -h ${bgFileFC} | grep ${MPASDiagVars}
+  if ( $status != 0 ) then
+    ln -fsv ${bgFileFC} ${bgFileDA}_orig
+    set diagFile = ${BG_STATE_DIR}${memberDir}/diag.$FILE_DATE.nc
+    cp ${bgFileDA}_orig ${bgFileDA}
+    ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFileDA}
+  else
+    ln -fsv ${bgFileFC} ${bgFileDA}
+  endif
+
+  @ member++
+end
 
 # Ensure analysis file is not present
 # ===================================

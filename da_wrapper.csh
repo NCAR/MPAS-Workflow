@@ -7,8 +7,6 @@ source ./setup.csh
 
 setenv DATE              CDATE
 setenv WINDOW_HR         WINDOWHR
-setenv PREVIOUS_FC_DIR   FCDIR
-setenv BG_STATE_PREFIX   BGSTATEPREFIX
 set OBS_LIST = ("${OBSLIST}")
 setenv VARBC_TABLE       VARBCTABLE
 setenv DA_TYPE           DATYPESUB
@@ -88,60 +86,32 @@ rm newnamelist
 # =============
 # OBSERVATIONS
 # =============
-mkdir Data
-mkdir -p ${DBDir}
+mkdir -p ${InDBDir}
+mkdir -p ${OutDBDir}
 
 # Link conventional data
 # ======================
-ln -fsv $CONV_OBS_DIR/${DATE}/aircraft_obs*.nc4 Data/
-ln -fsv $CONV_OBS_DIR/${DATE}/gnssro_obs*.nc4 Data/
-ln -fsv $CONV_OBS_DIR/${DATE}/satwind_obs*.nc4 Data/
-ln -fsv $CONV_OBS_DIR/${DATE}/sfc_obs*.nc4 Data/
-ln -fsv $CONV_OBS_DIR/${DATE}/sondes_obs*.nc4 Data/
+ln -fsv $CONV_OBS_DIR/${DATE}/aircraft_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${DATE}/gnssro_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${DATE}/satwind_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${DATE}/sfc_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${DATE}/sondes_obs*.nc4 ${InDBDir}/
 
 # Link AMSUA data
 # ==============
-ln -fsv $AMSUA_OBS_DIR/${DATE}/amsua*_obs_*.nc4 Data/
+ln -fsv $AMSUA_OBS_DIR/${DATE}/amsua*_obs_*.nc4 ${InDBDir}/
 
 # Link ABI data
 # ============
-ln -fsv $ABI_OBS_DIR/${DATE}/abi*_obs_*.nc4 Data/
+ln -fsv $ABI_OBS_DIR/${DATE}/abi*_obs_*.nc4 ${InDBDir}/
 
 # Link AHI data
 # ============
-ln -fsv $AHI_OBS_DIR/${DATE}/ahi*_obs_*.nc4 Data/
-
-# Link CRTM coeff files
-# ====================
-#ln -fsv ${CRTMTABLES}/*.bin Data/
-
-
-# ===========
-# BACKGROUND
-# ===========
-
-# Link bg('s) from previous forecast(s)
-# =====================================
-if ( "$DA_TYPE" =~ *"eda_"* ) then
-  set member = 1
-  while ( $member <= ${NMEMBERS} )
-    set memberDir = `printf "mem%03d" $member`
-    set bg = ${BG_FILE_PREFIX}/${memberDir}
-    set an = ${AN_FILE_PREFIX}/${memberDir}
-    mkdir -p ${bg}
-    mkdir -p ${an}
-    ln -fsv ${PREVIOUS_FC_DIR}/${memberDir}/${BG_STATE_PREFIX}.$FILE_DATE.nc ./${bg}/${RST_FILE_PREFIX}.$FILE_DATE.nc
-    ln -fsv ${PREVIOUS_FC_DIR}/${memberDir}/diag.$FILE_DATE.nc ./${bg}/diag.$FILE_DATE.nc
-    @ member++
-  end
-else
-  ln -fsv ${PREVIOUS_FC_DIR}/${BG_STATE_PREFIX}.$FILE_DATE.nc ./${RST_FILE_PREFIX}.$FILE_DATE.nc_orig
-  ln -fsv ${PREVIOUS_FC_DIR}/diag.$FILE_DATE.nc ./diag.$FILE_DATE.nc
-endif
+ln -fsv $AHI_OBS_DIR/${DATE}/ahi*_obs_*.nc4 ${InDBDir}/
 
 # Link VarBC prior
 # ====================
-ln -fsv ${VARBC_TABLE} Data/satbias_crtm_bak
+ln -fsv ${VARBC_TABLE} ${InDBDir}/satbias_crtm_bak
 
 
 # Generate yaml
@@ -156,11 +126,11 @@ foreach obs ($OBS_LIST)
   set missing=0
   set SUBYAML=ObsTypePlugs/${DA_MODE}/${obs}
   if ( "$obs" =~ *"abi"* ) then
-    find ./Data/abi*_obs_*.nc4 -mindepth 0 -maxdepth 0
+    find ${InDBDir}/abi*_obs_*.nc4 -mindepth 0 -maxdepth 0
     if ($? > 0) then
       set missing=1
     else
-      set brokenLinks=( `find ./Data/abi*_obs_*.nc4 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
+      set brokenLinks=( `find ${InDBDir}/abi*_obs_*.nc4 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
       foreach link ($brokenLinks)
         set missing=1
       end
@@ -186,7 +156,8 @@ sed -i 's@DATYPE@'${DIAG_TYPE}'@g' orig_jedi.yaml
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' orig_jedi.yaml
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' orig_jedi.yaml
 sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' orig_jedi.yaml
-sed -i 's@DBDir@'${DBDir}'@g' orig_jedi.yaml
+sed -i 's@InDBDir@'${InDBDir}'@g' orig_jedi.yaml
+sed -i 's@OutDBDir@'${OutDBDir}'@g' orig_jedi.yaml
 sed -i 's@obsPrefix@'${obsPrefix}'@g' orig_jedi.yaml
 sed -i 's@geoPrefix@'${geoPrefix}'@g' orig_jedi.yaml
 sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi.yaml
@@ -198,7 +169,7 @@ if ( "$DA_TYPE" =~ *"eda_"* ) then
   set member = 1
   while ( $member <= ${NMEMBERS} )
     set memberDir = `printf "mem%03d" $member`
-    mkdir -p ${DBDir}/${memberDir}
+    mkdir -p ${OutDBDir}/${memberDir}
     @ member++
   end
 else

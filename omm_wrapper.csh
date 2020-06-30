@@ -21,7 +21,6 @@
     setenv VF_CYCLE_DIR     VFCYCLEDIR_in
     setenv VARBC_TABLE      VARBCTABLE_in
     setenv DIAG_TYPE        DIAGTYPE_in
-    setenv BGFROMCYCLEDIR   BGTYPE_in
     setenv DEPEND_TYPE      DEPENDTYPE_in
 
     set WORKDIR=${VF_CYCLE_DIR}
@@ -44,15 +43,14 @@
         -e 's@ACCOUNTNUM@'${VFACCOUNTNUM}'@' \
         -e 's@QUEUENAME@'${VFQUEUENAME}'@' \
         -e 's@EXPNAME@'${EXPNAME}'@' \
-        -e 's@BGFROMCYCLEDIR@'${BGFROMCYCLEDIR}'@' \
+        -e 's@BGDIR@'${VF_STATE_DIR}'@' \
+        -e 's@BGSTATEPREFIX@'${VF_FILE_PREFIX}'@' \
         ${omm}_job.csh > ${OMMSCRIPT}
     chmod 744 ${OMMSCRIPT}
 
     set da_wrapper=${WORKDIR}/da_wrapper_${C_DATE}_${EXPNAME}.csh
     sed -e 's@CDATE@'${C_DATE}'@' \
         -e 's@WINDOWHR@'${WINDOW_HR}'@' \
-        -e 's@FCDIR@'${VF_STATE_DIR}'@' \
-        -e 's@BGSTATEPREFIX@'${VF_FILE_PREFIX}'@' \
         -e 's@OBSLIST@OMM_OBS_LIST@' \
         -e 's@VARBCTABLE@'${VARBC_TABLE}'@' \
         -e 's@DATYPESUB@'${omm}'@' \

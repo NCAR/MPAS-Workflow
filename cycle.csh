@@ -114,14 +114,14 @@
             -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
             -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
             -e 's@EXPNAME@'${EXPNAME}'@' \
+            -e 's@BGDIR@'${FCCY_PCYCLE_DIR}'@' \
+            -e 's@BGSTATEPREFIX@'${BGPREFIX}'@' \
             da_job.csh > ${DASCRIPT}
         chmod 744 ${DASCRIPT}
 
         set da_wrapper=${DAWorkDir}/da_wrapper_${C_DATE}_${EXPNAME}.csh
         sed -e 's@CDATE@'${C_DATE}'@' \
             -e 's@WINDOWHR@'${CY_WINDOW_HR}'@' \
-            -e 's@FCDIR@'${FCCY_PCYCLE_DIR}'@' \
-            -e 's@BGSTATEPREFIX@'${BGPREFIX}'@' \
             -e 's@OBSLIST@DA_OBS_LIST@' \
             -e 's@VARBCTABLE@'${VARBC_TABLE}'@' \
             -e 's@DATYPESUB@'${DATYPE}'@' \
@@ -157,18 +157,18 @@
             set ANMemberDir = ''
           endif
 
-          set anDir=${DAWorkDir}${ANMemberDir}
+          set StateDir=${DAWorkDir}${ANMemberDir}
 
           set FCBASE = ''
           if ( "$DATYPE" =~ *"eda_"* ) then
-            set FCBASE = '/'`basename "${anDir}"`
+            set FCBASE = '/'`basename "${StateDir}"`
           endif
           set MY_VF_DIR = ${VF_CYCLE_DIR}${FCBASE}
 
           set OMMSCRIPT=${omm}_wrapper_OMA.csh
           sed -e 's@VFSTATEDATE_in@'${C_DATE}'@' \
               -e 's@WINDOWHR_in@'${CY_WINDOW_HR}'@' \
-              -e 's@VFSTATEDIR_in@'${anDir}'@' \
+              -e 's@VFSTATEDIR_in@'${StateDir}'@' \
               -e 's@VFFILEPREFIX_in@'${STATEID}'@' \
               -e 's@VFCYCLEDIR_in@'${MY_VF_DIR}'@' \
               -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
@@ -192,18 +192,18 @@
         if ( "$DATYPE" =~ *"eda_"* ) then
           echo "INITIAL OMM NOT ENABLED FOR EDA"
         else
-          set bgDir=${DAWorkDir}${BGMemberDir}
+          set StateDir=${DAWorkDir}${BGMemberDir}
 
           set OMMSCRIPT=${omm}_wrapper_OMB0.csh
           sed -e 's@VFSTATEDATE_in@'${C_DATE}'@' \
               -e 's@WINDOWHR_in@'${CY_WINDOW_HR}'@' \
-              -e 's@VFSTATEDIR_in@'${bgDir}'@' \
+              -e 's@VFSTATEDIR_in@'${StateDir}'@' \
               -e 's@VFFILEPREFIX_in@'${BGPREFIX}'@' \
               -e 's@VFCYCLEDIR_in@'${VF_CYCLE_DIR}'@' \
               -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
               -e 's@DIAGTYPE_in@omb@' \
               -e 's@BGTYPE_in@1@' \
-              -e 's@DEPENDTYPE_in@null@' \
+              -e 's@DEPENDTYPE_in@da@' \
               ${omm}_wrapper.csh > ${OMMSCRIPT}
           chmod 744 ${OMMSCRIPT}
           ./${OMMSCRIPT}
@@ -249,9 +249,8 @@
                 -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
                 -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
                 -e 's@EXPNAME@'${EXPNAME}'@' \
-                -e 's@FCDIR@'${WorkDir}'@' \
-                -e 's@DADIR@'${ANWorkDir}'@' \
-                -e 's@ICFILEPREFIX@'${AN_FILE_PREFIX}'@' \
+                -e 's@ICDIR@'${ANWorkDir}'@' \
+                -e 's@ICSTATEPREFIX@'${AN_FILE_PREFIX}'@' \
                 -e 's@FCLENGTHHR@'${CY_WINDOW_HR}'@' \
                 -e 's@OUTDTHR@'${CY_WINDOW_HR}'@' \
                 fc_job.csh > ${fc_job}
@@ -335,9 +334,8 @@
                 -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
                 -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
                 -e 's@EXPNAME@'${EXPNAME}'@' \
-                -e 's@FCDIR@'${WorkDir}'@' \
-                -e 's@DADIR@'${DAWorkDir}'@' \
-                -e 's@ICFILEPREFIX@'${AN_FILE_PREFIX}'@' \
+                -e 's@ICDIR@'${DAWorkDir}'@' \
+                -e 's@ICSTATEPREFIX@'${AN_FILE_PREFIX}'@' \
                 -e 's@FCLENGTHHR@'${FCVF_LENGTH_HR}'@' \
                 -e 's@OUTDTHR@'${FCVF_DT_HR}'@' \
                 fc_job.csh > ${fcvf_job}

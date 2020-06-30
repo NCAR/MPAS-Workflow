@@ -39,20 +39,20 @@
 #TODO    ## GFS cold start
 #TODO    set IC_STATE=GFSCOLD
 #TODO    set IC_DIR=/glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962
-#TODO    set IC_FILE_PREFIX=x1.40962.init
+#TODO    set IC_STATE_PREFIX=x1.40962.init
 #TODO    ENSURE THIS IS A COLD START IN NAMELIST.ATMOSPHERE
 
 #    ## Junmei Ban's baseline analysis (conv_clramsua) - no cloud fraction/radius
 #    set IC_STATE=ANA_conv_clramsua_JB
 #    set IC_DIR=/glade/scratch/jban/pandac/test35_amsua/FC1
-#    set IC_FILE_PREFIX=${RST_FILE_PREFIX}
+#    set IC_STATE_PREFIX=${RST_FILE_PREFIX}
 
     ## Yali Wu's baseline analysis (conv_clramsua)
     set IC_STATE=ANA_conv_clramsua_YW
 #    set IC_DIR=/glade/scratch/wuyl/test2/pandac/test_120km/DA/noAHI
     set IC_DIR=/glade/scratch/wuyl/test2/pandac/test_120km/FC_cyc/noAHI
 
-    set IC_FILE_PREFIX=${RST_FILE_PREFIX}
+    set IC_STATE_PREFIX=${RST_FILE_PREFIX}
 
     set VARBC_TABLE=${INITIAL_VARBC_TABLE}
 
@@ -86,9 +86,8 @@
             -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
             -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
             -e 's@EXPNAME@'${EXPNAME}'@' \
-            -e 's@FCDIR@'${WORKDIR}'@' \
-            -e 's@DADIR@'${IC_CYCLE_DIR}'@' \
-            -e 's@ICFILEPREFIX@'${IC_FILE_PREFIX}'@' \
+            -e 's@ICDIR@'${IC_CYCLE_DIR}'@' \
+            -e 's@ICSTATEPREFIX@'${IC_STATE_PREFIX}'@' \
             -e 's@FCLENGTHHR@'${FCVF_LENGTH_HR}'@' \
             -e 's@OUTDTHR@'${FCVF_DT_HR}'@' \
             fc_job.csh > ${fcvf_job}
@@ -117,7 +116,7 @@
       sed -e 's@VFSTATEDATE_in@'${C_VFDATE}'@' \
           -e 's@WINDOWHR_in@'${VF_WINDOW_HR}'@' \
           -e 's@VFSTATEDIR_in@'${WORKDIR}'@' \
-          -e 's@VFFILEPREFIX_in@'${IC_FILE_PREFIX}'@' \
+          -e 's@VFFILEPREFIX_in@'${IC_STATE_PREFIX}'@' \
           -e 's@VFCYCLEDIR_in@'${VF_DIR}'@' \
           -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
           -e 's@DIAGTYPE_in@omf@' \
