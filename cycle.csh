@@ -30,7 +30,8 @@
 # =========================================
     setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
     setenv S_DATE     2018041500 # experiment start date
-    setenv E_DATE     2018051418 # experiment end date
+#    setenv E_DATE     2018051418 # experiment end date
+    setenv E_DATE     2018041506 # experiment end date
 
     setenv C_DATE     ${S_DATE}  # current-cycle date (will change)
 
@@ -56,20 +57,19 @@
         mkdir -p ${FCCY_WORK_DIR}
         cd ${FCCY_WORK_DIR}
 
-        if ( "$DATYPE" =~ *"eda"* ) then
+        rm -r ${P_DATE}
+        if ( "$DATYPE" =~ *"eda_"* ) then
           mkdir ${P_DATE}
           set member = 1
           while ( $member <= ${NMEMBERS} )
-            set FCWorkDir = ./${P_DATE}`printf "/mem%03d" $member`
-            rm ${FCWorkDir}
-
+            set FCWorkDir = "./${P_DATE}"`printf "/mem%03d" $member`
             set FCINIT = $GEFSANA6HFC_DIR/${P_DATE}/`print "%02d" $member`
             ln -sf ${FCINIT} ${FCWorkDir}
 
             @ member++
           end
         else
-          ln -sf $GFSANA6HFC_DIR/${P_DATE} .
+          ln -sf $GFSANA6HFC_2018041418 ./${P_DATE}
         endif
 
         cd ${MAIN_SCRIPT_DIR}
@@ -151,7 +151,7 @@
         while ( $member <= ${NMEMBERS} )
           cd ${MAIN_SCRIPT_DIR}
 
-          if ( "$DATYPE" =~ *"eda"* ) then
+          if ( "$DATYPE" =~ *"eda_"* ) then
             set ANMemberDir = `printf "/${AN_FILE_PREFIX}/mem%03d" $member`
           else
             set ANMemberDir = ''
@@ -160,7 +160,7 @@
           set anDir=${DAWorkDir}${ANMemberDir}
 
           set FCBASE = ''
-          if ( "$DATYPE" =~ *"eda"* ) then
+          if ( "$DATYPE" =~ *"eda_"* ) then
             set FCBASE = '/'`basename "${anDir}"`
           endif
           set MY_VF_DIR = ${VF_CYCLE_DIR}${FCBASE}
@@ -189,7 +189,7 @@
         setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${STATEID}/${C_DATE}"
 
         set BGMemberDir = ''
-        if ( "$DATYPE" =~ *"eda"* ) then
+        if ( "$DATYPE" =~ *"eda_"* ) then
           echo "INITIAL OMM NOT ENABLED FOR EDA"
         else
           set bgDir=${DAWorkDir}${BGMemberDir}
@@ -223,7 +223,7 @@
           rm ${JOBCONTROL}/last_fc_job
           set member = 1
           while ( $member <= ${NMEMBERS} )
-            if ( "$DATYPE" =~ *"eda"* ) then
+            if ( "$DATYPE" =~ *"eda_"* ) then
               set FCMemberDir = `printf "/mem%03d" $member`
               set ANMemberDir = /${AN_FILE_PREFIX}${FCMemberDir}
 
@@ -280,7 +280,7 @@
           foreach WorkDir ($FCWorkDirs)
             cd ${MAIN_SCRIPT_DIR}
             set FCBASE = ''
-            if ( "$DATYPE" =~ *"eda"* ) then
+            if ( "$DATYPE" =~ *"eda_"* ) then
               set FCBASE = '/'`basename "${WorkDir}"`
             endif
             set MY_VF_DIR = ${VF_CYCLE_DIR}${FCBASE}
@@ -308,7 +308,7 @@
 
 #------- extended forecast step ---------
       if ( ${VERIFYFC} > 0 && ${C_DATE} == ${N_FCVFDATE}) then
-        if ( "$DATYPE" =~ *"eda"* ) then
+        if ( "$DATYPE" =~ *"eda_"* ) then
           echo "VERIFYING FORECAST NOT ENABLED FOR EDA"
         else
           set N_FCVFDATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_INTERVAL_HR}`

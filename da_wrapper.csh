@@ -122,7 +122,7 @@ ln -fsv $AHI_OBS_DIR/${DATE}/ahi*_obs_*.nc4 Data/
 
 # Link bg('s) from previous forecast(s)
 # =====================================
-if ( "$DA_TYPE" =~ *"eda"* ) then
+if ( "$DA_TYPE" =~ *"eda_"* ) then
   set member = 1
   while ( $member <= ${NMEMBERS} )
     set memberDir = `printf "mem%03d" $member`
@@ -131,10 +131,12 @@ if ( "$DA_TYPE" =~ *"eda"* ) then
     mkdir -p ${bg}
     mkdir -p ${an}
     ln -fsv ${PREVIOUS_FC_DIR}/${memberDir}/${BG_STATE_PREFIX}.$FILE_DATE.nc ./${bg}/${RST_FILE_PREFIX}.$FILE_DATE.nc
+    ln -fsv ${PREVIOUS_FC_DIR}/${memberDir}/diag.$FILE_DATE.nc ./${bg}/diag.$FILE_DATE.nc
     @ member++
   end
 else
   ln -fsv ${PREVIOUS_FC_DIR}/${BG_STATE_PREFIX}.$FILE_DATE.nc ./${RST_FILE_PREFIX}.$FILE_DATE.nc_orig
+  ln -fsv ${PREVIOUS_FC_DIR}/diag.$FILE_DATE.nc ./diag.$FILE_DATE.nc
 endif
 
 # Link VarBC prior
@@ -190,7 +192,7 @@ sed -i 's@geoPrefix@'${geoPrefix}'@g' orig_jedi.yaml
 sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi.yaml
 
 set OOPSMemberDir = '/%{member}%'
-if ( "$DA_TYPE" =~ *"eda"* ) then
+if ( "$DA_TYPE" =~ *"eda_"* ) then
   sed -i 's@OOPSMemberDir@'${OOPSMemberDir}'@g' orig_jedi.yaml
   sed -i 's@NMEMBERS@'${NMEMBERS}'@g' orig_jedi.yaml
   set member = 1

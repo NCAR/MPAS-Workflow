@@ -23,7 +23,7 @@ set OMM_OBS_LIST = (conv clramsua allamsua clrabi allabi clrahi allahi)
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar
 setenv DATYPE  3denvar
-if ( "$DATYPE" =~ *"eda"* ) then
+if ( "$DATYPE" =~ *"eda_"* ) then
   setenv NMEMBERS 1
 else
   setenv NMEMBERS 1
@@ -132,33 +132,34 @@ setenv OMF_WORK_DIR     ${VF_WORK_DIR}/fc
 #
 # static data directories
 # =============================================
-setenv STATICUSER           ${USER}
-setenv TOP_STATIC_DIR       /glade/work/${STATICUSER}/pandac
-setenv FIXED_INPUT          ${TOP_STATIC_DIR}/fixed_input
-setenv GFSANA6HFC_DIR       ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
-setenv GEFSANA6HFC_DIR      /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC
-setenv GFSANA6HFC_OMF_DIR   ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
-setenv GFSSST_DIR           ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSSST
-setenv GRAPHINFO_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_graph
-setenv DA_NML_DIR           ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_DA_NML
-setenv FC_NML_DIR           ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_FC_NML
+setenv STATICUSER            ${USER}
+setenv TOP_STATIC_DIR        /glade/work/${STATICUSER}/pandac
+setenv FIXED_INPUT           ${TOP_STATIC_DIR}/fixed_input
+setenv GFSANA6HFC_2018041418 /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
+setenv GFSANA6HFC_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
+setenv GEFSANA6HFC_DIR       /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC
+setenv GFSANA6HFC_OMF_DIR    ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
+setenv GFSSST_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSSST
+setenv GRAPHINFO_DIR         ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_graph
+setenv DA_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_DA_NML
+setenv FC_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_FC_NML
 
-setenv BUMP_FILES_DIR       ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_filesbump
+setenv BUMP_FILES_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_filesbump
 
-setenv CONV_OBS_DIR         ${TOP_STATIC_DIR}/obs/conv
-#setenv CONV_OBS_DIR         ${TOP_STATIC_DIR}/obs/conv_liuz
-setenv AMSUA_OBS_DIR        /glade/p/mmm/parc/vahl/gsi_ioda/bias_corr
+setenv CONV_OBS_DIR          ${TOP_STATIC_DIR}/obs/conv
+#setenv CONV_OBS_DIR          ${TOP_STATIC_DIR}/obs/conv_liuz
+setenv AMSUA_OBS_DIR         /glade/p/mmm/parc/vahl/gsi_ioda/bias_corr
 
 # TODO: enable logic (somewhere else) to use different super-obbing/thinning for DA/OMM jobs
-# setenv ABI_OBS_DIR         ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB${ABISUPEROB}_no-bias-correct
-setenv ABI_OBS_DIR          ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB${ABISUPEROB}_const-bias-correct
+# setenv ABI_OBS_DIR          ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB${ABISUPEROB}_no-bias-correct
+setenv ABI_OBS_DIR           ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB${ABISUPEROB}_const-bias-correct
 
-setenv AHI_OBS_DIR          /glade/work/wuyl/pandac/work/fix_input/AHI_OBS/ioda_cnst_bias
+setenv AHI_OBS_DIR           /glade/work/wuyl/pandac/work/fix_input/AHI_OBS/ioda_cnst_bias
 
-setenv CRTMTABLES           ${FIXED_INPUT}/crtm_bin/
+setenv CRTMTABLES            ${FIXED_INPUT}/crtm_bin/
 
-setenv INITIAL_VARBC_TABLE  ${FIXED_INPUT}/satbias/satbias_crtm_in
-setenv VARBC_ANA            Data/satbias_crtm_ana
+setenv INITIAL_VARBC_TABLE   ${FIXED_INPUT}/satbias/satbias_crtm_in
+setenv VARBC_ANA             Data/satbias_crtm_ana
 
 
 #
@@ -195,7 +196,7 @@ setenv F_UFMTENDIAN 'big:101-200'
 setenv BUILDUSER         ${USER}
 setenv TOP_BUILD_DIR     /glade/work/${BUILDUSER}/pandac
 #MPAS-JEDI
-if ( "$DATYPE" =~ *"eda"* ) then
+if ( "$DATYPE" =~ *"eda_"* ) then
   setenv DAEXE           mpas_eda.x
 else
   setenv DAEXE           mpas_variational.x
