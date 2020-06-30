@@ -1,9 +1,9 @@
     - ObsSpace:
         name: amsua_n19
         ObsDataIn:
-          obsfile: Data/amsua_n19_obs_2018041500.nc4
+          obsfile: InDBDir/amsua_n19_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_n19_cld.nc4
+          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_n19_cld.nc4
         simulate:
           variables: [brightness_temperature]
           channels: 1-5,15
@@ -16,7 +16,7 @@
       - Filter: Background Check
         threshold: 3
       - Filter: GOMsaver
-        filename: DBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n19_cld.nc4
+        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n19_cld.nc4
       ObsOperator: &crtmcloud
         name: CRTM
         Absorbers: [H2O,O3,CO2]
@@ -30,9 +30,9 @@
     - ObsSpace:
         name: amsua_n15
         ObsDataIn:
-          obsfile: Data/amsua_n15_obs_2018041500.nc4
+          obsfile: InDBDir/amsua_n15_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_n15_cld.nc4
+          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_n15_cld.nc4
         simulate:
           variables: [brightness_temperature]
           channels: 1-5,15
@@ -45,7 +45,7 @@
       - Filter: Background Check
         threshold: 3
       - Filter: GOMsaver
-        filename: DBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n15_cld.nc4
+        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n15_cld.nc4
       ObsOperator:
         <<: *crtmcloud
         ObsOptions:
@@ -54,9 +54,9 @@
     - ObsSpace:
         name: amsua_n18
         ObsDataIn:
-          obsfile: Data/amsua_n18_obs_2018041500.nc4
+          obsfile: InDBDir/amsua_n18_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_n18_cld.nc4
+          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_n18_cld.nc4
         simulate:
           variables: [brightness_temperature]
           channels: 1-5,15
@@ -69,7 +69,7 @@
       - Filter: Background Check
         threshold: 3
       - Filter: GOMsaver
-        filename: DBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n18_cld.nc4
+        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n18_cld.nc4
       ObsOperator:
         <<: *crtmcloud
         ObsOptions:
@@ -78,9 +78,9 @@
     - ObsSpace:
         name: amsua_metop-a
         ObsDataIn:
-          obsfile: Data/amsua_metop-a_obs_2018041500.nc4
+          obsfile: InDBDir/amsua_metop-a_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_metop-a_cld.nc4
+          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_metop-a_cld.nc4
         simulate:
           variables: [brightness_temperature]
           channels: 1-5,15
@@ -93,7 +93,7 @@
       - Filter: Background Check
         threshold: 3
       - Filter: GOMsaver
-        filename: DBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_metop-a_cld.nc4
+        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_metop-a_cld.nc4
       ObsOperator:
         <<: *crtmcloud
         ObsOptions:
@@ -102,9 +102,9 @@
     - ObsSpace:
         name: amsua_metop-b
         ObsDataIn:
-          obsfile: Data/amsua_metop-b_obs_2018041500.nc4
+          obsfile: InDBDir/amsua_metop-b_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_metop-b_cld.nc4
+          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_metop-b_cld.nc4
         simulate:
           variables: [brightness_temperature]
           channels: 1-5,15
@@ -117,7 +117,7 @@
       - Filter: Background Check
         threshold: 3
       - Filter: GOMsaver
-        filename: DBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_metop-b_cld.nc4
+        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_metop-b_cld.nc4
       ObsOperator:
         <<: *crtmcloud
         ObsOptions:
@@ -126,9 +126,9 @@
     - ObsSpace:
         name: amsua_aqua
         ObsDataIn:
-          obsfile: Data/amsua_aqua_obs_2018041500.nc4
+          obsfile: InDBDir/amsua_aqua_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_aqua_cld.nc4
+          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_aqua_cld.nc4
         simulate:
           variables: [brightness_temperature]
           channels: 1-5,15
@@ -141,7 +141,7 @@
       - Filter: Background Check
         threshold: 3
       - Filter: GOMsaver
-        filename: DBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_aqua_cld.nc4
+        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_aqua_cld.nc4
       ObsOperator:
         <<: *crtmcloud
         ObsOptions:

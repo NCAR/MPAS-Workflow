@@ -1,9 +1,9 @@
     - ObsSpace:
         name: ahi_himawari8
         ObsDataIn:
-          obsfile: Data/ahi_himawari8_obs_2018041500.nc4
+          obsfile: InDBDir/ahi_himawari8_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDir/obsPrefix_DATYPE_ahi-clr_himawari8.nc4
+          obsfile: OutDBDir/obsPrefix_DATYPE_ahi-clr_himawari8.nc4
         simulate:
           variables: [brightness_temperature]
           channels: &ahi_channels 7-16
@@ -26,9 +26,9 @@
             name: sensor_zenith_angle@MetaData
           maxvalue: 65.0
       - Filter: GOMsaver
-        filename: DBDir/geoPrefix_DATYPE_ahi-clr_himawari8.nc4
+        filename: OutDBDir/geoPrefix_DATYPE_ahi-clr_himawari8.nc4
       - Filter: YDIAGsaver
-        filename: DBDir/diagPrefix_DATYPE_ahi-clr_himawari8.nc4
+        filename: OutDBDir/diagPrefix_DATYPE_ahi-clr_himawari8.nc4
         filter variables:
         - name: brightness_temperature_assuming_clear_sky
           channels: *ahi_channels

@@ -1,9 +1,9 @@
     - ObsSpace:
         name: Radiosonde
         ObsDataIn:
-          obsfile: Data/sondes_obs_2018041500.nc4
+          obsfile: InDBDir/sondes_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDir/obsPrefix_DATYPE_sondes.nc4
+          obsfile: OutDBDir/obsPrefix_DATYPE_sondes.nc4
         simulate:
           variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind, specific_humidity]
       ObsOperator:
@@ -17,9 +17,9 @@
     - ObsSpace:
         name: Aircraft
         ObsDataIn:
-          obsfile: Data/aircraft_obs_2018041500.nc4
+          obsfile: InDBDir/aircraft_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDir/obsPrefix_DATYPE_aircraft.nc4
+          obsfile: OutDBDir/obsPrefix_DATYPE_aircraft.nc4
         simulate:
           variables: [air_temperature, eastward_wind, northward_wind, specific_humidity]
       ObsOperator:
@@ -33,9 +33,9 @@
     - ObsSpace:
         name: Satwind
         ObsDataIn:
-          obsfile: Data/satwind_obs_2018041500.nc4
+          obsfile: InDBDir/satwind_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDir/obsPrefix_DATYPE_satwind.nc4
+          obsfile: OutDBDir/obsPrefix_DATYPE_satwind.nc4
         simulate:
           variables: [eastward_wind, northward_wind]
       ObsOperator:
@@ -49,9 +49,9 @@
     - ObsSpace:
         name: GnssroRef
         ObsDataIn:
-          obsfile: Data/gnssro_obs_2018041500.nc4
+          obsfile: InDBDir/gnssro_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDir/obsPrefix_DATYPE_gnssroref.nc4
+          obsfile: OutDBDir/obsPrefix_DATYPE_gnssroref.nc4
         simulate:
           variables: [refractivity]
       ObsOperator:
@@ -83,9 +83,9 @@
     - ObsSpace:
         name: SfcPCorrected
         ObsDataIn:
-          obsfile: Data/sfc_obs_2018041500.nc4
+          obsfile: InDBDir/sfc_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDir/obsPrefix_DATYPE_sfcp.nc4
+          obsfile: OutDBDir/obsPrefix_DATYPE_sfcp.nc4
         simulate:
           variables: [surface_pressure]
       ObsOperator:

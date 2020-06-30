@@ -1,9 +1,9 @@
     - ObsSpace:
         name: ABI-GOES16
         ObsDataIn:
-          obsfile: Data/abi_g16_obs_2018041500.nc4
+          obsfile: InDBDir/abi_g16_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDir/obsPrefix_omb_abi_g16.nc4
+          obsfile: OutDBDir/obsPrefix_omb_abi_g16.nc4
         simulate:
           variables: [brightness_temperature]
           channels: &abi_channels 7-11,13-16
@@ -33,8 +33,8 @@
         name: GSI
         newpc4pred: true
         emiss_bc: true
-#        abias_in: Data/satbias_crtm_bak
-#        abias_out: Data/satbias_crtm_ana
+#        abias_in: InDBDir/satbias_crtm_bak
+#        abias_out: InDBDir/satbias_crtm_ana
         predictors:
         - constant
 #        - scan_angle

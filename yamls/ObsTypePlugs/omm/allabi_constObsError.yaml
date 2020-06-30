@@ -1,9 +1,9 @@
     - ObsSpace:
         name: ABI-GOES16
         ObsDataIn:
-          obsfile: Data/abi_g16_obs_2018041500.nc4
+          obsfile: InDBDir/abi_g16_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: DBDir/obsPrefix_DATYPE_abi_g16.nc4
+          obsfile: OutDBDir/obsPrefix_DATYPE_abi_g16.nc4
         simulate:
           variables: [brightness_temperature]
           channels: &abi_channels 7-11,13-16
@@ -36,9 +36,9 @@
 ##            name: solar_zenith_angle@MetaData
 ##          maxvalue: 65.0
       - Filter: GOMsaver
-        filename: DBDir/geoPrefix_DATYPE_abi_g16.nc4
+        filename: OutDBDir/geoPrefix_DATYPE_abi_g16.nc4
       - Filter: YDIAGsaver
-        filename: DBDir/diagPrefix_DATYPE_abi_g16.nc4
+        filename: OutDBDir/diagPrefix_DATYPE_abi_g16.nc4
         filter variables:
         - name: brightness_temperature_assuming_clear_sky
           channels: *abi_channels
