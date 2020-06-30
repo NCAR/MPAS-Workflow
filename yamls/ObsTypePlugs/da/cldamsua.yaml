@@ -15,8 +15,8 @@
         apply_at_iterations: 0
       - Filter: Background Check
         threshold: 3
-      - Filter: GOMsaver
-        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n19_cld.nc4
+#      - Filter: GOMsaver
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n19_cld.nc4
       ObsOperator: &crtmcloud
         name: CRTM
         Absorbers: [H2O,O3,CO2]
@@ -44,8 +44,8 @@
         apply_at_iterations: 0
       - Filter: Background Check
         threshold: 3
-      - Filter: GOMsaver
-        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n15_cld.nc4
+#      - Filter: GOMsaver
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n15_cld.nc4
       ObsOperator:
         <<: *crtmcloud
         ObsOptions:
@@ -68,8 +68,8 @@
         apply_at_iterations: 0
       - Filter: Background Check
         threshold: 3
-      - Filter: GOMsaver
-        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n18_cld.nc4
+#      - Filter: GOMsaver
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n18_cld.nc4
       ObsOperator:
         <<: *crtmcloud
         ObsOptions:
@@ -92,8 +92,8 @@
         apply_at_iterations: 0
       - Filter: Background Check
         threshold: 3
-      - Filter: GOMsaver
-        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_metop-a_cld.nc4
+#      - Filter: GOMsaver
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_metop-a_cld.nc4
       ObsOperator:
         <<: *crtmcloud
         ObsOptions:
@@ -116,8 +116,8 @@
         apply_at_iterations: 0
       - Filter: Background Check
         threshold: 3
-      - Filter: GOMsaver
-        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_metop-b_cld.nc4
+#      - Filter: GOMsaver
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_metop-b_cld.nc4
       ObsOperator:
         <<: *crtmcloud
         ObsOptions:
@@ -140,8 +140,8 @@
         apply_at_iterations: 0
       - Filter: Background Check
         threshold: 3
-      - Filter: GOMsaver
-        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_aqua_cld.nc4
+#      - Filter: GOMsaver
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_aqua_cld.nc4
       ObsOperator:
         <<: *crtmcloud
         ObsOptions:

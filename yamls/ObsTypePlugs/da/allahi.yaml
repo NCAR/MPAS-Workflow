@@ -58,22 +58,22 @@
               x1: [15.87, 20.75, 25.21]
               err0: [1.94, 1.88, 2.26]
               err1: [20.05, 24.75, 25.90]
-      - Filter: GOMsaver
-        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_ahi_himawari8.nc4
-      - Filter: YDIAGsaver
-        filename: OutDBDirOOPSMemberDir/diagPrefix_DATYPE_ahi_himawari8.nc4
-        filter variables:
-        - name: brightness_temperature_assuming_clear_sky
-          channels: *ahi_channels
-        - name: weightingfunction_of_atmosphere_layer
-          channels: *ahi_channels
-        - name: pressure_level_at_peak_of_weightingfunction
-          channels: *ahi_channels
-        - name: brightness_temperature_jacobian_air_temperature
-          channels: *ahi_channels
-        - name: brightness_temperature_jacobian_humidity_mixing_ratio
-          channels: *ahi_channels
-        - name: brightness_temperature_jacobian_surface_emissivity
-          channels: *ahi_channels
-        - name: brightness_temperature_jacobian_surface_temperature
-          channels: *ahi_channels
+#      - Filter: GOMsaver
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_ahi_himawari8.nc4
+#      - Filter: YDIAGsaver
+#        filename: OutDBDirOOPSMemberDir/diagPrefix_DATYPE_ahi_himawari8.nc4
+#        filter variables:
+#        - name: brightness_temperature_assuming_clear_sky
+#          channels: *ahi_channels
+#        - name: weightingfunction_of_atmosphere_layer
+#          channels: *ahi_channels
+#        - name: pressure_level_at_peak_of_weightingfunction
+#          channels: *ahi_channels
+#        - name: brightness_temperature_jacobian_air_temperature
+#          channels: *ahi_channels
+#        - name: brightness_temperature_jacobian_humidity_mixing_ratio
+#          channels: *ahi_channels
+#        - name: brightness_temperature_jacobian_surface_emissivity
+#          channels: *ahi_channels
+#        - name: brightness_temperature_jacobian_surface_temperature
+#          channels: *ahi_channels
