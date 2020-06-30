@@ -89,8 +89,9 @@ rm newnamelist
 # OBSERVATIONS
 # =============
 mkdir Data
+mkdir -p ${DBDir}
 
-#Link conventional data
+# Link conventional data
 # ======================
 ln -fsv $CONV_OBS_DIR/${DATE}/aircraft_obs*.nc4 Data/
 ln -fsv $CONV_OBS_DIR/${DATE}/gnssro_obs*.nc4 Data/
@@ -98,29 +99,43 @@ ln -fsv $CONV_OBS_DIR/${DATE}/satwind_obs*.nc4 Data/
 ln -fsv $CONV_OBS_DIR/${DATE}/sfc_obs*.nc4 Data/
 ln -fsv $CONV_OBS_DIR/${DATE}/sondes_obs*.nc4 Data/
 
-#Link AMSUA data
+# Link AMSUA data
 # ==============
 ln -fsv $AMSUA_OBS_DIR/${DATE}/amsua*_obs_*.nc4 Data/
 
-#Link ABI data
+# Link ABI data
 # ============
 ln -fsv $ABI_OBS_DIR/${DATE}/abi*_obs_*.nc4 Data/
 
-#Link AHI data
+# Link AHI data
 # ============
 ln -fsv $AHI_OBS_DIR/${DATE}/ahi*_obs_*.nc4 Data/
 
-#Link CRTM coeff files
+# Link CRTM coeff files
 # ====================
 #ln -fsv ${CRTMTABLES}/*.bin Data/
+
 
 # ===========
 # BACKGROUND
 # ===========
 
-# Link bg from previous forecast
-# =================================
-ln -fsv ${PREVIOUS_FC_DIR}/${BG_STATE_PREFIX}.$FILE_DATE.nc ./${RST_FILE_PREFIX}.$FILE_DATE.nc_orig
+# Link bg('s) from previous forecast(s)
+# =====================================
+if ( "$DA_TYPE" =~ *"eda"* ) then
+  set member = 1
+  while ( $member <= ${NMEMBERS} )
+    set memberDir = `printf "mem%03d" $member`
+    set bg = ${BG_FILE_PREFIX}/${memberDir}
+    set an = ${AN_FILE_PREFIX}/${memberDir}
+    mkdir -p ${bg}
+    mkdir -p ${an}
+    ln -fsv ${PREVIOUS_FC_DIR}/${memberDir}/${BG_STATE_PREFIX}.$FILE_DATE.nc ./${bg}/${RST_FILE_PREFIX}.$FILE_DATE.nc
+    @ member++
+  end
+else
+  ln -fsv ${PREVIOUS_FC_DIR}/${BG_STATE_PREFIX}.$FILE_DATE.nc ./${RST_FILE_PREFIX}.$FILE_DATE.nc_orig
+endif
 
 # Link VarBC prior
 # ====================
@@ -169,6 +184,24 @@ sed -i 's@DATYPE@'${DIAG_TYPE}'@g' orig_jedi.yaml
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' orig_jedi.yaml
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' orig_jedi.yaml
 sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' orig_jedi.yaml
+sed -i 's@DBDir@'${DBDir}'@g' orig_jedi.yaml
+sed -i 's@obsPrefix@'${obsPrefix}'@g' orig_jedi.yaml
+sed -i 's@geoPrefix@'${geoPrefix}'@g' orig_jedi.yaml
+sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi.yaml
+
+set OOPSMemberDir = '/%{member}%'
+if ( "$DA_TYPE" =~ *"eda"* ) then
+  sed -i 's@OOPSMemberDir@'${OOPSMemberDir}'@g' orig_jedi.yaml
+  sed -i 's@NMEMBERS@'${NMEMBERS}'@g' orig_jedi.yaml
+  set member = 1
+  while ( $member <= ${NMEMBERS} )
+    set memberDir = `printf "mem%03d" $member`
+    mkdir -p ${DBDir}/${memberDir}
+    @ member++
+  end
+else
+  sed -i 's@OOPSMemberDir@@g' orig_jedi.yaml
+endif
 
 ## Revise time info
 sed 's/'${RST_FILE_PREFIX}'.2018-04-15_00.00.00.nc/'${RST_FILE_PREFIX}'.'${FILE_DATE}'.nc/g; s/2018041500/'${DATE}'/g; s/2018-04-15T00:00:00Z/'${YAML_DATE}'/g'  orig_jedi.yaml  > new0.yaml

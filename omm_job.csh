@@ -12,7 +12,7 @@
 #PBS -A ACCOUNTNUM
 #PBS -m ae
 #PBS -k eod
-#PBS -o jedi.log.job.out 
+#PBS -o jedi.log.job.out
 #PBS -e jedi.log.job.err
 
 date
@@ -61,13 +61,13 @@ rm analysis.${FILE_DATE}.nc
 # Run the executable:
 # ===================
 # ===================
-ln -sf ${JEDIBUILDDIR}/bin/${DAEXE} ./
-mpiexec ./${DAEXE} ./jedi.yaml ./jedi.log >& jedi.log.all
+ln -sf ${JEDIBUILDDIR}/bin/${OMMEXE} ./
+mpiexec ./${OMMEXE} ./jedi.yaml ./jedi.log >& jedi.log.all
 
 #WITH DEBUGGER
 #module load arm-forge/19.1
 #setenv MPI_SHEPHERD true
-#ddt --connect ${JEDIBUILDDIR}/bin/${DAEXE}  ./jedi.yaml ./jedi.log 
+#ddt --connect ${JEDIBUILDDIR}/bin/${OMMEXE}  ./jedi.yaml ./jedi.log
 
 #
 # Check status:

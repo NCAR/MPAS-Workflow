@@ -34,7 +34,7 @@ while ( $success != 0 )
   mv diags.log diags.log_LAST
 
   ## MULTIPLE PROCESSORS
-  python ${mainScript} -n ${NUMPROC} >& diags.log
+  python ${mainScript} -n ${NUMPROC} -p ../${DBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} >& diags.log
 
   setenv success $?
 

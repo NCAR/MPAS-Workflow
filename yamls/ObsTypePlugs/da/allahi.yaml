@@ -3,7 +3,7 @@
         ObsDataIn:
           obsfile: Data/ahi_himawari8_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: Data/obsout_DATYPE_ahi_himawari8.nc4
+          obsfile: DBDirOOPSMemberDir/obsPrefix_DATYPE_ahi_himawari8.nc4
         simulate:
           variables: [brightness_temperature]
           channels: &ahi_channels 8-10
@@ -59,9 +59,9 @@
               err0: [1.94, 1.88, 2.26]
               err1: [20.05, 24.75, 25.90]
       - Filter: GOMsaver
-        filename: Data/geoval_DATYPE_ahi_himawari8.nc4
+        filename: DBDirOOPSMemberDir/geoPrefix_DATYPE_ahi_himawari8.nc4
       - Filter: YDIAGsaver
-        filename: Data/ydiags_DATYPE_ahi_himawari8.nc4
+        filename: DBDirOOPSMemberDir/diagPrefix_DATYPE_ahi_himawari8.nc4
         filter variables:
         - name: brightness_temperature_assuming_clear_sky
           channels: *ahi_channels

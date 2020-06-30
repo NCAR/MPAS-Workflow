@@ -3,7 +3,7 @@
         ObsDataIn:
           obsfile: Data/abi_g16_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: Data/obsout_omb_abi_g16.nc4
+          obsfile: DBDir/obsPrefix_omb_abi_g16.nc4
         simulate:
           variables: [brightness_temperature]
           channels: &abi_channels 7-11,13-16

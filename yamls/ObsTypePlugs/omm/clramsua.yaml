@@ -3,7 +3,7 @@
         ObsDataIn:
           obsfile: Data/amsua_n19_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: Data/obsout_DATYPE_amsua_n19.nc4
+          obsfile: DBDir/obsPrefix_DATYPE_amsua_n19.nc4
         simulate:
           variables: [brightness_temperature]
           channels: &clramsua_channels 5-14
@@ -22,7 +22,7 @@
 #        maxvalue: 0
 #        apply_at_iterations: 0
       - Filter: GOMsaver
-        filename: Data/geoval_DATYPE_amsua_n19.nc4
+        filename: DBDir/geoPrefix_DATYPE_amsua_n19.nc4
       ObsOperator: &crtmdry
         name: CRTM
         Absorbers: [H2O,O3]
@@ -37,7 +37,7 @@
         ObsDataIn:
           obsfile: Data/amsua_n15_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: Data/obsout_DATYPE_amsua_n15.nc4
+          obsfile: DBDir/obsPrefix_DATYPE_amsua_n15.nc4
         simulate:
           variables: [brightness_temperature]
           channels: *clramsua_channels
@@ -56,7 +56,7 @@
 #        maxvalue: 0
 #        apply_at_iterations: 0
       - Filter: GOMsaver
-        filename: Data/geoval_DATYPE_amsua_n15.nc4
+        filename: DBDir/geoPrefix_DATYPE_amsua_n15.nc4
       ObsOperator:
         <<: *crtmdry
         ObsOptions:
@@ -67,7 +67,7 @@
         ObsDataIn:
           obsfile: Data/amsua_n18_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: Data/obsout_DATYPE_amsua_n18.nc4
+          obsfile: DBDir/obsPrefix_DATYPE_amsua_n18.nc4
         simulate:
           variables: [brightness_temperature]
           channels: *clramsua_channels
@@ -86,7 +86,7 @@
 #        maxvalue: 0
 #        apply_at_iterations: 0
       - Filter: GOMsaver
-        filename: Data/geoval_DATYPE_amsua_n18.nc4
+        filename: DBDir/geoPrefix_DATYPE_amsua_n18.nc4
       ObsOperator:
         <<: *crtmdry
         ObsOptions:
@@ -97,7 +97,7 @@
         ObsDataIn:
           obsfile: Data/amsua_metop-a_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: Data/obsout_DATYPE_amsua_metop-a.nc4
+          obsfile: DBDir/obsPrefix_DATYPE_amsua_metop-a.nc4
         simulate:
           variables: [brightness_temperature]
           channels: *clramsua_channels
@@ -116,7 +116,7 @@
 #        maxvalue: 0
 #        apply_at_iterations: 0
       - Filter: GOMsaver
-        filename: Data/geoval_DATYPE_amsua_metop-a.nc4
+        filename: DBDir/geoPrefix_DATYPE_amsua_metop-a.nc4
       ObsOperator:
         <<: *crtmdry
         ObsOptions:
@@ -127,7 +127,7 @@
         ObsDataIn:
           obsfile: Data/amsua_metop-b_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: Data/obsout_DATYPE_amsua_metop-b.nc4
+          obsfile: DBDir/obsPrefix_DATYPE_amsua_metop-b.nc4
         simulate:
           variables: [brightness_temperature]
           channels: *clramsua_channels
@@ -146,7 +146,7 @@
 #        maxvalue: 0
 #        apply_at_iterations: 0
       - Filter: GOMsaver
-        filename: Data/geoval_DATYPE_amsua_metop-b.nc4
+        filename: DBDir/geoPrefix_DATYPE_amsua_metop-b.nc4
       ObsOperator:
         <<: *crtmdry
         ObsOptions:
@@ -157,7 +157,7 @@
         ObsDataIn:
           obsfile: Data/amsua_aqua_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: Data/obsout_DATYPE_amsua_aqua.nc4
+          obsfile: DBDir/obsPrefix_DATYPE_amsua_aqua.nc4
         simulate:
           variables: [brightness_temperature]
           channels: *clramsua_channels
@@ -176,7 +176,7 @@
 #        maxvalue: 0
 #        apply_at_iterations: 0
       - Filter: GOMsaver
-        filename: Data/geoval_DATYPE_amsua_aqua.nc4
+        filename: DBDir/geoPrefix_DATYPE_amsua_aqua.nc4
       ObsOperator:
         <<: *crtmdry
         ObsOptions:

@@ -23,6 +23,11 @@ set OMM_OBS_LIST = (conv clramsua allamsua clrabi allabi clrahi allahi)
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar
 setenv DATYPE  3denvar
+if ( "$DATYPE" =~ *"eda"* ) then
+  setenv NMEMBERS 1
+else
+  setenv NMEMBERS 1
+endif
 
 ## DA_OBS_LIST
 #OPTIONS: conv, clramsua, allamsua, clrabi, allabi, clrahi, allahi
@@ -50,7 +55,7 @@ foreach obs ($EXPOBSLIST)
 end
 
 ## add unique suffix
-set SUFFIX = ""
+set SUFFIX = "EDATEST"
 setenv EXPNAME ${EXPNAME}${SUFFIX}
 
 #
@@ -61,6 +66,10 @@ setenv EXPNAME ${EXPNAME}${SUFFIX}
 # If > 0, a vf_job will be submitted after both omm_job and da_job in da_wrapper
 # TODO: add model-space verification
 setenv VERIFYAFTERDA  1
+setenv obsPrefix      obsout
+setenv geoPrefix      geoval
+setenv diagPrefix     ydiags
+setenv DBDir          Data/dbOut
 
 
 #
@@ -127,6 +136,7 @@ setenv STATICUSER           ${USER}
 setenv TOP_STATIC_DIR       /glade/work/${STATICUSER}/pandac
 setenv FIXED_INPUT          ${TOP_STATIC_DIR}/fixed_input
 setenv GFSANA6HFC_DIR       ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
+setenv GEFSANA6HFC_DIR      /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC
 setenv GFSANA6HFC_OMF_DIR   ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
 setenv GFSSST_DIR           ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSSST
 setenv GRAPHINFO_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_graph
@@ -185,7 +195,12 @@ setenv F_UFMTENDIAN 'big:101-200'
 setenv BUILDUSER         ${USER}
 setenv TOP_BUILD_DIR     /glade/work/${BUILDUSER}/pandac
 #MPAS-JEDI
-setenv DAEXE             mpas_variational.x
+if ( "$DATYPE" =~ *"eda"* ) then
+  setenv DAEXE           mpas_eda.x
+else
+  setenv DAEXE           mpas_variational.x
+endif
+setenv OMMEXE            mpas_variational.x
 setenv HOFXEXE           mpas_hofx_nomodel.x
 #setenv JEDIBUILD         mpas-bundle_${COMPILER}_build=Debug
 #setenv JEDIBUILD         mpas-bundle_${COMPILER}_build=Release
