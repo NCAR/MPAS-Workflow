@@ -64,7 +64,7 @@
 
 #------- extended forecast step --------- 
       setenv FC_CYCLE_DIR "${FCVF_WORK_DIR}/${IC_STATE}/${C_DATE}"
-      set WORKDIR=${FC_CYCLE_DIR}
+      set FCWorkDir=${FC_CYCLE_DIR}
       set E_VFDATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_LENGTH_HR}`
 
       echo ""
@@ -72,15 +72,15 @@
 
       if ( ${ONLYOMM} == 0 ) then
 
-        rm -rf ${WORKDIR}
-        mkdir -p ${WORKDIR}
+        rm -rf ${FCWorkDir}
+        mkdir -p ${FCWorkDir}
 
         cd ${MAIN_SCRIPT_DIR}
-        cp setup.csh ${WORKDIR}/
+        cp setup.csh ${FCWorkDir}/
 
         echo ""
         echo "${FCVF_LENGTH_HR}-hr verification FC from ${C_DATE} to ${E_VFDATE}"
-        set fcvf_job=${WORKDIR}/fcvf_job_${C_DATE}_${EXPNAME}.csh
+        set fcvf_job=${FCWorkDir}/fcvf_job_${C_DATE}_${EXPNAME}.csh
         sed -e 's@CDATE@'${C_DATE}'@' \
             -e 's@JOBMINUTES@'${FCVFJOBMINUTES}'@' \
             -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
@@ -93,7 +93,7 @@
             fc_job.csh > ${fcvf_job}
         chmod 744 ${fcvf_job}
 
-        cd ${WORKDIR}
+        cd ${FCWorkDir}
 
         set JFCVF = `qsub -h ${fcvf_job}`
         echo "${JFCVF}" > ${JOBCONTROL}/last_fcvf_job
@@ -115,7 +115,7 @@
       set OMMSCRIPT=${omm}_wrapper_OMF_${dt}hr.csh
       sed -e 's@VFSTATEDATE_in@'${C_VFDATE}'@' \
           -e 's@WINDOWHR_in@'${VF_WINDOW_HR}'@' \
-          -e 's@VFSTATEDIR_in@'${WORKDIR}'@' \
+          -e 's@VFSTATEDIR_in@'${FCWorkDir}'@' \
           -e 's@VFFILEPREFIX_in@'${IC_STATE_PREFIX}'@' \
           -e 's@VFCYCLEDIR_in@'${VF_DIR}'@' \
           -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
@@ -137,8 +137,8 @@
         set OMMSCRIPT=${omm}_wrapper_OMF_${dt}hr.csh
         sed -e 's@VFSTATEDATE_in@'${C_VFDATE}'@' \
             -e 's@WINDOWHR_in@'${VF_WINDOW_HR}'@' \
-            -e 's@VFSTATEDIR_in@'${WORKDIR}'@' \
-            -e 's@VFFILEPREFIX_in@'${BG_FILE_PREFIX}'@' \
+            -e 's@VFSTATEDIR_in@'${FCWorkDir}'@' \
+            -e 's@VFFILEPREFIX_in@'${FC_FILE_PREFIX}'@' \
             -e 's@VFCYCLEDIR_in@'${VF_DIR}'@' \
             -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
             -e 's@DIAGTYPE_in@omf@' \

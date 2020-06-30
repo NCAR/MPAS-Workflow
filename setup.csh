@@ -27,9 +27,9 @@ setenv OutDBDir dbOut
 
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar
-setenv DATYPE  3denvar
+setenv DATYPE  eda_3denvar
 if ( "$DATYPE" =~ *"eda_"* ) then
-  setenv NMEMBERS 1
+  setenv NMEMBERS 2
 else
   setenv NMEMBERS 1
 endif
@@ -102,12 +102,18 @@ setenv FCVFJOBMINUTES    40
 #setenv FCCYJOBMINUTES    10
 #setenv FCVFJOBMINUTES    60
 
-setenv AN_FILE_PREFIX    an
-setenv BG_FILE_PREFIX    bg
 setenv RST_FILE_PREFIX   restart
+setenv FC_FILE_PREFIX    ${RST_FILE_PREFIX}
+setenv AN_FILE_PREFIX    an
+setenv anDir             ${AN_FILE_PREFIX}
+setenv BG_FILE_PREFIX    ${RST_FILE_PREFIX}
+setenv bgDir             bg
 
 setenv MPASDiagVars      cldfrac
 setenv MPASSeaVars       sst,xice
+setenv MPASANVars        theta,rho,u,qv,uReconstructZonal,uReconstructMeridional,qc,qr,qi,qs,qg
+
+
 #
 # Run directories
 # =============================================

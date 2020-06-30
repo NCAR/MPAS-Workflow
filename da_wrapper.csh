@@ -162,9 +162,8 @@ sed -i 's@obsPrefix@'${obsPrefix}'@g' orig_jedi.yaml
 sed -i 's@geoPrefix@'${geoPrefix}'@g' orig_jedi.yaml
 sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi.yaml
 
-set OOPSMemberDir = '/%{member}%'
 if ( "$DA_TYPE" =~ *"eda_"* ) then
-  sed -i 's@OOPSMemberDir@'${OOPSMemberDir}'@g' orig_jedi.yaml
+  sed -i 's@OOPSMemberDir@/%{member}%@g' orig_jedi.yaml
   sed -i 's@NMEMBERS@'${NMEMBERS}'@g' orig_jedi.yaml
   set member = 1
   while ( $member <= ${NMEMBERS} )
@@ -206,7 +205,7 @@ echo "${JDA}" > ${JOBCONTROL}/last_${DA_MODE}_job
 
 # Submit VF job script
 # =================================
-if ( ${VERIFYAFTERDA} > 0 ) then
+if ( ${VERIFYAFTERDA} > 0 && ${VF_JOB_SCRIPT} != "VFJOBSCRIPT" ) then
   set JVF = `qsub -W depend=afterok:$JDA ${VF_JOB_SCRIPT}`
 endif
 

@@ -2,9 +2,13 @@
 #PBS -N daCDATE_EXPNAME
 #PBS -A ACCOUNTNUM
 #PBS -q QUEUENAME
+#36
 #   #PBS -l select=2:ncpus=18:mpiprocs=18:mem=109GB
-#PBS -l select=4:ncpus=32:mpiprocs=32:mem=109GB
 #   #PBS -l select=4:ncpus=9:mpiprocs=9:mem=109GB
+#128 per member (NMEMBERS==1)
+#   #PBS -l select=4:ncpus=32:mpiprocs=32:mem=109GB
+#128 per member (NMEMBERS==2)
+#PBS -l select=8:ncpus=32:mpiprocs=32:mem=109GB
 #PBS -l walltime=0:25:00
 #PBS -m ae
 #PBS -k eod
@@ -43,37 +47,48 @@ set member = 1
 while ( $member <= ${NMEMBERS} )
   if ( "$DATYPE" =~ *"eda_"* ) then
     set memberDir = `printf "/mem%03d" $member`
-    set bg = ./${BG_FILE_PREFIX}${memberDir}
-    set an = ./${AN_FILE_PREFIX}${memberDir}
+    set other = ${BG_STATE_DIR}${memberDir}
+    set bg = ./${bgDir}${memberDir}
+    set an = ./${anDir}${memberDir}
     mkdir -p ${bg}
     mkdir -p ${an}
   else
-    set memberDir = ''
+    set other = ${BG_STATE_DIR}
     set bg = '.'
+    set an = '.'
   endif
 
-  set bgFileFC = ${BG_STATE_DIR}${memberDir}/${BG_STATE_PREFIX}.$FILE_DATE.nc
-  set bgFileDA = ${bg}/${RST_FILE_PREFIX}.$FILE_DATE.nc
+  # Ensure analysis file is not present
+  # ===================================
+  rm ${an}/analysis.${FILE_DATE}.nc
 
-  # Copy diagnostic variables used in DA to bg
-  # ==========================================
+  # Link/copy bg from other directory
+  # =================================
+  set bgFileOther = ${other}/${BG_STATE_PREFIX}.$FILE_DATE.nc
+  set bgFileDA = ${bg}/${BG_FILE_PREFIX}.$FILE_DATE.nc
 
-  ncdump -h ${bgFileFC} | grep ${MPASDiagVars}
+  ncdump -h ${bgFileOther} | grep ${MPASDiagVars}
   if ( $status != 0 ) then
-    ln -fsv ${bgFileFC} ${bgFileDA}_orig
-    set diagFile = ${BG_STATE_DIR}${memberDir}/diag.$FILE_DATE.nc
+    ln -fsv ${bgFileOther} ${bgFileDA}_orig
+    set diagFile = ${other}/diag.$FILE_DATE.nc
     cp ${bgFileDA}_orig ${bgFileDA}
+
+    # Copy diagnostic variables used in DA to bg
+    # ==========================================
     ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFileDA}
   else
-    ln -fsv ${bgFileFC} ${bgFileDA}
+    ln -fsv ${bgFileOther} ${bgFileDA}
   endif
 
   @ member++
 end
 
-# Ensure analysis file is not present
-# ===================================
-rm analysis.${FILE_DATE}.nc
+# link one of the backgrounds to a local RST file
+# used to initialize the MPAS mesh
+if ( "$DATYPE" =~ *"eda_"* ) then
+  ln -sf ${bgFileDA} ./${BG_FILE_PREFIX}.$FILE_DATE.nc
+endif
+
 
 # ===================
 # ===================
@@ -102,8 +117,29 @@ endif
 #
 # Update analyzed variables:
 # =============================================
-cp ${RST_FILE_PREFIX}.${FILE_DATE}.nc ${AN_FILE_PREFIX}.${FILE_DATE}.nc
-ncks -A -v theta,rho,u,qv,uReconstructZonal,uReconstructMeridional analysis.${FILE_DATE}.nc ${AN_FILE_PREFIX}.${FILE_DATE}.nc
+set member = 1
+while ( $member <= ${NMEMBERS} )
+  if ( "$DATYPE" =~ *"eda_"* ) then
+    set memberDir = `printf "/mem%03d" $member`
+    set bg = ./${bgDir}${memberDir}
+    set an = ./${anDir}${memberDir}
+  else
+    set memberDir = ''
+    set bg = '.'
+    set an = '.'
+  endif
+
+  set bgFile = ${bg}/${BG_FILE_PREFIX}.$FILE_DATE.nc
+  set anFile = ${an}/${AN_FILE_PREFIX}.$FILE_DATE.nc
+  cp ${bgFile} ${anFile}
+  ncks -A -v ${MPASANVars} ${an}/analysis.${FILE_DATE}.nc ${anFile}
+
+  rm ${an}/analysis.${FILE_DATE}.nc
+  @ member++
+end
+
+#cp ${BG_FILE_PREFIX}.${FILE_DATE}.nc ${AN_FILE_PREFIX}.${FILE_DATE}.nc
+#ncks -A -v theta,rho,u,qv,uReconstructZonal,uReconstructMeridional analysis.${FILE_DATE}.nc ${AN_FILE_PREFIX}.${FILE_DATE}.nc
 
 date
 

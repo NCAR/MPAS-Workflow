@@ -35,8 +35,8 @@
 
     setenv C_DATE     ${S_DATE}  # current-cycle date (will change)
 
-    set VERIFYBG = 1
-    set VERIFYAN = 1
+    set VERIFYBG = 0
+    set VERIFYAN = 0
 
     set ONLYFCVF = 0
     set VERIFYFC = 0
@@ -63,7 +63,8 @@
           set member = 1
           while ( $member <= ${NMEMBERS} )
             set FCWorkDir = "./${P_DATE}"`printf "/mem%03d" $member`
-            set FCINIT = $GEFSANA6HFC_DIR/${P_DATE}/`print "%02d" $member`
+            set FCINIT = "$GEFSANA6HFC_DIR/${P_DATE}/"`printf "%02d" $member`
+
             ln -sf ${FCINIT} ${FCWorkDir}
 
             @ member++
@@ -85,7 +86,7 @@
         setenv BGPREFIX ${RST_FILE_PREFIX}
       else
         setenv VARBC_TABLE ${DA_PCYCLE_DIR}/${VARBC_ANA}
-        setenv BGPREFIX ${BG_FILE_PREFIX}
+        setenv BGPREFIX ${FC_FILE_PREFIX}
       endif
 
       echo ""
@@ -101,13 +102,13 @@
         mkdir -p ${DAWorkDir}
         cp setup.csh ${DAWorkDir}/
 
-        set VFSCRIPT=${DAWorkDir}/vf_job_${C_DATE}_${EXPNAME}.csh
-        sed -e 's@CDATE@'${C_DATE}'@' \
-            -e 's@ACCOUNTNUM@'${VFACCOUNTNUM}'@' \
-            -e 's@QUEUENAME@'${VFQUEUENAME}'@' \
-            -e 's@EXPNAME@'${EXPNAME}'@' \
-            vf_job.csh > ${VFSCRIPT}
-        chmod 744 ${VFSCRIPT}
+#        set VFSCRIPT=${DAWorkDir}/vf_job_${C_DATE}_${EXPNAME}.csh
+#        sed -e 's@CDATE@'${C_DATE}'@' \
+#            -e 's@ACCOUNTNUM@'${VFACCOUNTNUM}'@' \
+#            -e 's@QUEUENAME@'${VFQUEUENAME}'@' \
+#            -e 's@EXPNAME@'${EXPNAME}'@' \
+#            vf_job.csh > ${VFSCRIPT}
+#        chmod 744 ${VFSCRIPT}
 
         set DASCRIPT=${DAWorkDir}/da_job_${C_DATE}_${EXPNAME}.csh
         sed -e 's@CDATE@'${C_DATE}'@' \
@@ -129,10 +130,11 @@
             -e 's@DIAGTYPE@cycle-da@' \
             -e 's@DAJOBSCRIPT@'${DASCRIPT}'@' \
             -e 's@DEPENDTYPE@fc@' \
-            -e 's@VFJOBSCRIPT@'${VFSCRIPT}'@' \
             -e 's@YAMLTOPDIR@'${YAMLTOPDIR}'@' \
             -e 's@RESSPECIFICDIR@'${RESSPECIFICDIR}'@' \
             da_wrapper.csh > ${da_wrapper}
+#            -e 's@VFJOBSCRIPT@'${VFSCRIPT}'@' \
+
         chmod 744 ${da_wrapper}
 #            -e 's@DIAGTYPE@'${DATYPE}'@' \
 
@@ -152,7 +154,7 @@
           cd ${MAIN_SCRIPT_DIR}
 
           if ( "$DATYPE" =~ *"eda_"* ) then
-            set ANMemberDir = `printf "/${AN_FILE_PREFIX}/mem%03d" $member`
+            set ANMemberDir = `printf "/${anDir}/mem%03d" $member`
           else
             set ANMemberDir = ''
           endif
@@ -185,7 +187,7 @@
       if ( ${C_DATE} == ${FIRSTCYCLE} && ${VERIFYBG} > 0 && ${ONLYFCVF} == 0 ) then
         cd ${MAIN_SCRIPT_DIR}
 
-        set STATEID=${BG_FILE_PREFIX}
+        set STATEID=${FC_FILE_PREFIX}
         setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${STATEID}/${C_DATE}"
 
         set BGMemberDir = ''
@@ -219,13 +221,13 @@
       set FCWorkDirs=()
       if ( ${ONLYFCVF} == 0 ) then
         if ( ${ONLYOMM} == 0 ) then
-          cd ${MAIN_SCRIPT_DIR}
           rm ${JOBCONTROL}/last_fc_job
           set member = 1
           while ( $member <= ${NMEMBERS} )
+            cd ${MAIN_SCRIPT_DIR}
             if ( "$DATYPE" =~ *"eda_"* ) then
               set FCMemberDir = `printf "/mem%03d" $member`
-              set ANMemberDir = /${AN_FILE_PREFIX}${FCMemberDir}
+              set ANMemberDir = /${anDir}${FCMemberDir}
 
             else
               set FCMemberDir = ''
@@ -242,7 +244,7 @@
             cp setup.csh ${WorkDir}/
 
             echo ""
-            echo "${CY_WINDOW_HR}-hr cycle FC from ${C_DATE} to ${N_DATE}"
+            echo "${CY_WINDOW_HR}-hr cycle FC from ${C_DATE} to ${N_DATE} for member $member"
             set fc_job=${WorkDir}/fc_job_${C_DATE}_${EXPNAME}.csh
             sed -e 's@CDATE@'${C_DATE}'@' \
                 -e 's@JOBMINUTES@'${FCCYJOBMINUTES}'@' \
@@ -272,7 +274,7 @@
         endif
 
 #------- verify bg step ---------
-        set STATEID=${BG_FILE_PREFIX}
+        set STATEID=${FC_FILE_PREFIX}
         setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${STATEID}/${N_DATE}"
 
         if ( ${VERIFYBG} > 0 ) then
@@ -372,7 +374,7 @@
             sed -e 's@VFSTATEDATE_in@'${C_VFDATE}'@' \
                 -e 's@WINDOWHR_in@'${VF_WINDOW_HR}'@' \
                 -e 's@VFSTATEDIR_in@'${WorkDir}'@' \
-                -e 's@VFFILEPREFIX_in@'${BG_FILE_PREFIX}'@' \
+                -e 's@VFFILEPREFIX_in@'${FC_FILE_PREFIX}'@' \
                 -e 's@VFCYCLEDIR_in@'${VF_DIR}'@' \
                 -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
                 -e 's@DIAGTYPE_in@omf@' \

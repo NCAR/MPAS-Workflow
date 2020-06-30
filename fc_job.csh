@@ -107,7 +107,7 @@ while ( ${OUT_DATE} <= ${E_DATE} )
   ncks -A -v ${MPASDiagVars} diag.${OUT_FILE_DATE}.nc ${RST_FILE_PREFIX}.${OUT_FILE_DATE}.nc
 
   ## move to background name
-  mv ${RST_FILE_PREFIX}.${OUT_FILE_DATE}.nc ${BG_FILE_PREFIX}.${OUT_FILE_DATE}.nc
+  mv ${RST_FILE_PREFIX}.${OUT_FILE_DATE}.nc ${FC_FILE_PREFIX}.${OUT_FILE_DATE}.nc
 
   set OUT_DATE = `$HOME/bin/advance_cymdh ${OUT_DATE} ${OUT_DT_HR}`
   setenv OUT_DATE ${OUT_DATE}
