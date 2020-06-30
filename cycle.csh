@@ -116,6 +116,8 @@
             -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
             -e 's@EXPNAME@'${EXPNAME}'@' \
             -e 's@BGDIR@'${FCCY_PCYCLE_DIR}'@' \
+            -e 's@NNODE@'${NodesDA}'@' \
+            -e 's@NPE@'${PEPerNodeDA}'@g' \
             -e 's@BGSTATEPREFIX@'${BGPREFIX}'@' \
             da_job.csh > ${DASCRIPT}
         chmod 744 ${DASCRIPT}
@@ -237,7 +239,6 @@
             set WorkDir=${FCWorkDir}${FCMemberDir}
             set ANWorkDir=${DAWorkDir}${ANMemberDir}
             set FCWorkDirs=(${FCWorkDirs} ${WorkDir})
-            echo "DEBUG: FC WorkDir = ${WorkDir}"
 
             rm -rf ${WorkDir}
             mkdir -p ${WorkDir}

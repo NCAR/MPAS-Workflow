@@ -194,6 +194,7 @@ rm new0.yaml new1.yaml new2.yaml new3.yaml new4.yaml
 
 # Submit DA job script
 # =================================
+#TODO: last_fc_job has multiple lines for eda and must be parsed here!
 set JDEP=`cat ${JOBCONTROL}/last_${DEPEND_TYPE}_job`
 if ( ${JDEP} == 0 ) then
   set JDA = `qsub -h ${DA_JOB_SCRIPT}`

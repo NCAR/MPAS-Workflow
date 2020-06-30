@@ -26,8 +26,8 @@ setenv InDBDir  dbIn
 setenv OutDBDir dbOut
 
 ## DATYPE
-#OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar
-setenv DATYPE  eda_3denvar
+#OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
+setenv DATYPE  3denvar
 if ( "$DATYPE" =~ *"eda_"* ) then
   setenv NMEMBERS 2
 else
@@ -94,6 +94,8 @@ setenv RADTHINDISTANCE   "200.0"
 setenv RADTHINAMOUNT     "0.98"
 setenv FCCYJOBMINUTES    5
 setenv FCVFJOBMINUTES    40
+setenv NodesPerDA        4
+setenv PEPerNodeDA       32
 
 #setenv MPAS_RES          30km
 #setenv MPAS_NCELLS       655362
@@ -101,6 +103,8 @@ setenv FCVFJOBMINUTES    40
 #setenv RADTHINAMOUNT     "0.75"
 #setenv FCCYJOBMINUTES    10
 #setenv FCVFJOBMINUTES    60
+#setenv NodesPerDA        16
+#setenv PEPerNodeDA       32
 
 setenv RST_FILE_PREFIX   restart
 setenv FC_FILE_PREFIX    ${RST_FILE_PREFIX}
@@ -113,6 +117,8 @@ setenv MPASDiagVars      cldfrac
 setenv MPASSeaVars       sst,xice
 setenv MPASANVars        theta,rho,u,qv,uReconstructZonal,uReconstructMeridional,qc,qr,qi,qs,qg
 
+@ NodesDA = ${NodesPerDA} * ${NMEMBERS}
+setenv NodesDA ${NodesDA}
 
 #
 # Run directories

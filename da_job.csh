@@ -2,13 +2,7 @@
 #PBS -N daCDATE_EXPNAME
 #PBS -A ACCOUNTNUM
 #PBS -q QUEUENAME
-#36
-#   #PBS -l select=2:ncpus=18:mpiprocs=18:mem=109GB
-#   #PBS -l select=4:ncpus=9:mpiprocs=9:mem=109GB
-#128 per member (NMEMBERS==1)
-#   #PBS -l select=4:ncpus=32:mpiprocs=32:mem=109GB
-#128 per member (NMEMBERS==2)
-#PBS -l select=8:ncpus=32:mpiprocs=32:mem=109GB
+#PBS -l select=NNODE:ncpus=NPE:mpiprocs=NPE:mem=109GB
 #PBS -l walltime=0:25:00
 #PBS -m ae
 #PBS -k eod
