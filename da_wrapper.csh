@@ -194,28 +194,22 @@ rm new0.yaml new1.yaml new2.yaml new3.yaml new4.yaml
 
 # Submit DA job script
 # =================================
-#TODO: last_fc_job has multiple lines for eda and must be parsed here!
-set JDEP=`cat ${JOBCONTROL}/last_${DEPEND_TYPE}_job`
-if ( ${JDEP} == 0 ) then
-  set JDA = `qsub -h ${DA_JOB_SCRIPT}`
-else
-  set JDA = `qsub -W depend=afterok:${JDEP} ${DA_JOB_SCRIPT}`
-endif
-echo "${JDA}" > ${JOBCONTROL}/last_${DA_MODE}_job
+#TODO: move all job control to top-level cycling/workflow scripts
+set JALL=(`cat ${JOBCONTROL}/last_${DEPEND_TYPE}_job`)
+set JDEP = ''
+foreach J ($JALL)
+  if (${J} != "0" ) then
+    set JDEP = ${JDEP}:${J}
+  endif
+end
+set JDA = `qsub -W depend=afterok${JDEP} ${DA_JOB_SCRIPT}`
 
+echo "${JDA}" > ${JOBCONTROL}/last_${DA_MODE}_job
 
 # Submit VF job script
 # =================================
 if ( ${VERIFYAFTERDA} > 0 && ${VF_JOB_SCRIPT} != "VFJOBSCRIPT" ) then
   set JVF = `qsub -W depend=afterok:$JDA ${VF_JOB_SCRIPT}`
 endif
-
-
-# Release DA job
-# =================================
-if ( ${JDEP} == 0 ) then
-  qrls $JDA
-endif
-
 
 exit
