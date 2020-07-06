@@ -76,10 +76,10 @@
         ln -sf ${OMF_DIR}/${P_DATE} .
       endif
 
-      setenv VF_CYCLE_DIR "${OMF_WORK_DIR}-${OMM_STATE}/${C_DATE}"
+      setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${fcDir}-${OMM_STATE}/${C_DATE}"
       set WORKDIR=${VF_CYCLE_DIR}
 
-      setenv VF_PCYCLE_DIR "${OMF_WORK_DIR}-${OMM_STATE}/${P_DATE}"
+      setenv VF_PCYCLE_DIR "${VF_WORK_DIR}/${fcDir}-${OMM_STATE}/${P_DATE}"
       if ( ${C_DATE} == ${FIRSTCYCLE} ) then
          setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
       else

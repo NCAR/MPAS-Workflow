@@ -28,15 +28,14 @@
 #
 # 1, Initial and final times of the period:
 # =========================================
-    setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
     setenv S_DATE     2018041500 # experiment start date
 #    setenv E_DATE     2018051418 # experiment end date
-    setenv E_DATE     2018041506 # experiment end date
+    setenv E_DATE     2018041500 # experiment end date
 
     setenv C_DATE     ${S_DATE}  # current-cycle date (will change)
 
-    set VERIFYBG = 0
-    set VERIFYAN = 0
+    set VERIFYBG = 1
+    set VERIFYAN = 1
 
     set ONLYFCVF = 0
     set VERIFYFC = 0
@@ -70,7 +69,7 @@
             @ member++
           end
         else
-          ln -sf $GFSANA6HFC_2018041418 ./${P_DATE}
+          ln -sf $GFSANA6HFC_FIRSTCYCLE ./${P_DATE}
         endif
 
         cd ${MAIN_SCRIPT_DIR}
@@ -102,13 +101,18 @@
         mkdir -p ${DAWorkDir}
         cp setup.csh ${DAWorkDir}/
 
-#        set VFSCRIPT=${DAWorkDir}/vf_job_${C_DATE}_${EXPNAME}.csh
-#        sed -e 's@CDATE@'${C_DATE}'@' \
-#            -e 's@ACCOUNTNUM@'${VFACCOUNTNUM}'@' \
-#            -e 's@QUEUENAME@'${VFQUEUENAME}'@' \
-#            -e 's@EXPNAME@'${EXPNAME}'@' \
-#            vf_job.csh > ${VFSCRIPT}
-#        chmod 744 ${VFSCRIPT}
+        if ( "$DATYPE" =~ *"eda_"* ) then
+          set VFSCRIPT=None
+          echo "WARNING: cycling-da verification not enabled for EDA"
+        else
+          set VFSCRIPT=${DAWorkDir}/vf_job_${C_DATE}_${EXPNAME}.csh
+          sed -e 's@CDATE@'${C_DATE}'@' \
+              -e 's@ACCOUNTNUM@'${VFACCOUNTNUM}'@' \
+              -e 's@QUEUENAME@'${VFQUEUENAME}'@' \
+              -e 's@EXPNAME@'${EXPNAME}'@' \
+              vf_job.csh > ${VFSCRIPT}
+          chmod 744 ${VFSCRIPT}
+        endif
 
         set DASCRIPT=${DAWorkDir}/da_job_${C_DATE}_${EXPNAME}.csh
         sed -e 's@CDATE@'${C_DATE}'@' \
@@ -132,13 +136,12 @@
             -e 's@DIAGTYPE@cycle-da@' \
             -e 's@DAJOBSCRIPT@'${DASCRIPT}'@' \
             -e 's@DEPENDTYPE@fc@' \
+            -e 's@VFJOBSCRIPT@'${VFSCRIPT}'@' \
             -e 's@YAMLTOPDIR@'${YAMLTOPDIR}'@' \
             -e 's@RESSPECIFICDIR@'${RESSPECIFICDIR}'@' \
             da_wrapper.csh > ${da_wrapper}
-#            -e 's@VFJOBSCRIPT@'${VFSCRIPT}'@' \
 
         chmod 744 ${da_wrapper}
-#            -e 's@DIAGTYPE@'${DATYPE}'@' \
 
         cd ${DAWorkDir}
 
@@ -146,8 +149,7 @@
       endif
 
 #------- verify an step ---------
-      set STATEID=${AN_FILE_PREFIX}
-      setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${STATEID}/${C_DATE}"
+      setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${anDir}/${C_DATE}"
       set VF0h_CYCLE_DIR=${VF_CYCLE_DIR}
 
       if ( ${VERIFYAN} > 0 && ${ONLYFCVF} == 0 ) then
@@ -173,7 +175,7 @@
           sed -e 's@VFSTATEDATE_in@'${C_DATE}'@' \
               -e 's@WINDOWHR_in@'${CY_WINDOW_HR}'@' \
               -e 's@VFSTATEDIR_in@'${StateDir}'@' \
-              -e 's@VFFILEPREFIX_in@'${STATEID}'@' \
+              -e 's@VFFILEPREFIX_in@'${AN_FILE_PREFIX}'@' \
               -e 's@VFCYCLEDIR_in@'${MY_VF_DIR}'@' \
               -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
               -e 's@DIAGTYPE_in@oma@' \
@@ -189,12 +191,11 @@
       if ( ${C_DATE} == ${FIRSTCYCLE} && ${VERIFYBG} > 0 && ${ONLYFCVF} == 0 ) then
         cd ${MAIN_SCRIPT_DIR}
 
-        set STATEID=${FC_FILE_PREFIX}
-        setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${STATEID}/${C_DATE}"
+        setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${bgDir}/${C_DATE}"
 
         set BGMemberDir = ''
         if ( "$DATYPE" =~ *"eda_"* ) then
-          echo "INITIAL OMM NOT ENABLED FOR EDA"
+          echo "WARNING: initial omm not enabled for EDA"
         else
           set StateDir=${DAWorkDir}${BGMemberDir}
 
@@ -216,9 +217,7 @@
 
 #------- cycling forecast step ---------
       set FCWorkDir=${FCCY_CCYCLE_DIR}
-
-      set DEPEND_TYPE=da
-      set JDA=`cat ${JOBCONTROL}/last_${DEPEND_TYPE}_job`
+      set thisDependsOn=da
 
       set FCWorkDirs=()
       if ( ${ONLYFCVF} == 0 ) then
@@ -261,10 +260,12 @@
 
             cd ${WorkDir}
 
-            if ( ${JDA} == 0 ) then
+            set JDEP=`cat ${JOBCONTROL}/last_${thisDependsOn}_job`
+
+            if ( ${JDEP} == 0 ) then
               set JFC = `qsub -h ${fc_job}`
             else
-              set JFC = `qsub -W depend=afterok:${JDA} ${fc_job}`
+              set JFC = `qsub -W depend=afterok:${JDEP} ${fc_job}`
             endif
             echo "${JFC}" >> ${JOBCONTROL}/last_fc_job
 
@@ -275,8 +276,8 @@
         endif
 
 #------- verify bg step ---------
-        set STATEID=${FC_FILE_PREFIX}
-        setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${STATEID}/${N_DATE}"
+        setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${bgDir}/${N_DATE}"
+        set thisDependsOn=da
 
         if ( ${VERIFYBG} > 0 ) then
           foreach WorkDir ($FCWorkDirs)
@@ -291,7 +292,7 @@
             sed -e 's@VFSTATEDATE_in@'${N_DATE}'@' \
                 -e 's@WINDOWHR_in@'${CY_WINDOW_HR}'@' \
                 -e 's@VFSTATEDIR_in@'${WorkDir}'@' \
-                -e 's@VFFILEPREFIX_in@'${STATEID}'@' \
+                -e 's@VFFILEPREFIX_in@'${FC_FILE_PREFIX}'@' \
                 -e 's@VFCYCLEDIR_in@'${MY_VF_DIR}'@' \
                 -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
                 -e 's@DIAGTYPE_in@omb@' \
@@ -303,7 +304,9 @@
           end
         endif
 
-        if ( ${JDA} == 0 && ${JFC} != 0 ) then
+        set JDEP=`cat ${JOBCONTROL}/last_${thisDependsOn}_job`
+
+        if ( ${JDEP} == 0 && ${JFC} != 0 ) then
           qrls $JFC
         endif
       endif
@@ -311,27 +314,26 @@
 #------- extended forecast step ---------
       if ( ${VERIFYFC} > 0 && ${C_DATE} == ${N_FCVFDATE}) then
         if ( "$DATYPE" =~ *"eda_"* ) then
-          echo "VERIFYING FORECAST NOT ENABLED FOR EDA"
+          echo "WARNING: verifying forecast not enabled for EDA"
         else
           set N_FCVFDATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_INTERVAL_HR}`
 
           setenv FCVF_CYCLE_DIR "${FCVF_WORK_DIR}/${C_DATE}"
-          set WorkDir=${FCVF_CYCLE_DIR}
+          set FCVFWorkDir=${FCVF_CYCLE_DIR}
           set E_VFDATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_LENGTH_HR}`
+
+          set thisDependsOn=da
 
           if ( ${ONLYOMM} == 0 ) then
 
-            set DEPEND_TYPE=da
-            set JDA=`cat ${JOBCONTROL}/last_${DEPEND_TYPE}_job`
-
               cd ${MAIN_SCRIPT_DIR}
-            rm -rf ${WorkDir}
-            mkdir -p ${WorkDir}
-            cp setup.csh ${WorkDir}/
+            rm -rf ${FCVFWorkDir}
+            mkdir -p ${FCVFWorkDir}
+            cp setup.csh ${FCVFWorkDir}/
 
             echo ""
             echo "${FCVF_LENGTH_HR}-hr verification FC from ${C_DATE} to ${E_VFDATE}"
-            set fcvf_job=${WorkDir}/fcvf_job_${C_DATE}_${EXPNAME}.csh
+            set fcvf_job=${FCVFWorkDir}/fcvf_job_${C_DATE}_${EXPNAME}.csh
             sed -e 's@CDATE@'${C_DATE}'@' \
                 -e 's@JOBMINUTES@'${FCVFJOBMINUTES}'@' \
                 -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
@@ -344,12 +346,14 @@
                 fc_job.csh > ${fcvf_job}
             chmod 744 ${fcvf_job}
 
-            cd ${WorkDir}
+            cd ${FCVFWorkDir}
 
-            if ( ${JDA} == 0 ) then
+            set JDEP=`cat ${JOBCONTROL}/last_${thisDependsOn}_job`
+
+            if ( ${JDEP} == 0 ) then
               set JFCVF = `qsub -h ${fcvf_job}`
             else
-              set JFCVF = `qsub -W depend=afterok:${JDA} ${fcvf_job}`
+              set JFCVF = `qsub -W depend=afterok:${JDEP} ${fcvf_job}`
             endif
             echo "${JFCVF}" > ${JOBCONTROL}/last_fcvf_job
           else
@@ -358,8 +362,10 @@
 
 #------- verify fc step ---------
           set C_VFDATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_DT_HR}`
+          set thisDependsOn=da
+
           @ dt = ${FCVF_DT_HR}
-          setenv VF_CYCLE_DIR "${OMF_WORK_DIR}/${C_DATE}"
+          setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${fcDir}/${C_DATE}"
           mkdir -p ${VF_CYCLE_DIR}
           cd ${VF_CYCLE_DIR}
 
@@ -374,7 +380,7 @@
             set OMMSCRIPT=${omm}_wrapper_OMF_${dt}hr.csh
             sed -e 's@VFSTATEDATE_in@'${C_VFDATE}'@' \
                 -e 's@WINDOWHR_in@'${VF_WINDOW_HR}'@' \
-                -e 's@VFSTATEDIR_in@'${WorkDir}'@' \
+                -e 's@VFSTATEDIR_in@'${FCVFWorkDir}'@' \
                 -e 's@VFFILEPREFIX_in@'${FC_FILE_PREFIX}'@' \
                 -e 's@VFCYCLEDIR_in@'${VF_DIR}'@' \
                 -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
@@ -390,7 +396,9 @@
             @ dt = $dt + $FCVF_DT_HR
           end
 
-          if ( ${JDA} == 0 && ${JFCVF} != 0 ) then
+          set JDEP=`cat ${JOBCONTROL}/last_${thisDependsOn}_job`
+
+          if ( ${JDEP} == 0 && ${JFCVF} != 0 ) then
             qrls $JFCVF
           endif
         endif

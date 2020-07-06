@@ -102,7 +102,7 @@
       endif
 
 #------- verify fc step ---------
-      setenv VF_CYCLE_DIR "${OMF_WORK_DIR}-${IC_STATE}/${C_DATE}"
+      setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${fcDir}-${IC_STATE}/${C_DATE}"
       mkdir -p ${VF_CYCLE_DIR}
       cd ${VF_CYCLE_DIR}
 

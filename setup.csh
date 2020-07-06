@@ -6,7 +6,7 @@
 ## omm
 # controls name of omm jobs
 # TODO: enable varbc-only jobs including offline coefficient initialization
-# OPTIONS: omm, varbc
+# OPTIONS: omm, [TODO: varbc]
 setenv omm  omm
 
 ## OMM_OBS_LIST
@@ -71,6 +71,10 @@ setenv EXPNAME ${EXPNAME}${SUFFIX}
 # If > 0, a vf_job will be submitted after both omm_job and da_job in da_wrapper
 # TODO: add model-space verification
 setenv VERIFYAFTERDA  1
+
+## File Prefixes for obs, geovals, and hofx-diagnostics
+# NOTE: these are self-consistent across multiple applications
+#       and can be changed to any non-empty string
 setenv obsPrefix      obsout
 setenv geoPrefix      geoval
 setenv diagPrefix     ydiags
@@ -108,6 +112,7 @@ setenv PEPerNodeDA       32
 
 setenv RST_FILE_PREFIX   restart
 setenv FC_FILE_PREFIX    ${RST_FILE_PREFIX}
+setenv fcDir             fc
 setenv AN_FILE_PREFIX    an
 setenv anDir             ${AN_FILE_PREFIX}
 setenv BG_FILE_PREFIX    ${RST_FILE_PREFIX}
@@ -140,10 +145,8 @@ setenv RESSPECIFICDIR   ${MAIN_SCRIPT_DIR}/${MPAS_RES}
 
 setenv DA_WORK_DIR      ${EXPDIR}/DACY
 setenv FCCY_WORK_DIR    ${EXPDIR}/FCCY
-setenv VF_WORK_DIR      ${EXPDIR}/VF
-
 setenv FCVF_WORK_DIR    ${EXPDIR}/FCVF
-setenv OMF_WORK_DIR     ${VF_WORK_DIR}/fc
+setenv VF_WORK_DIR      ${EXPDIR}/VF
 
 
 #
@@ -152,10 +155,12 @@ setenv OMF_WORK_DIR     ${VF_WORK_DIR}/fc
 setenv STATICUSER            ${USER}
 setenv TOP_STATIC_DIR        /glade/work/${STATICUSER}/pandac
 setenv FIXED_INPUT           ${TOP_STATIC_DIR}/fixed_input
-setenv GFSANA6HFC_2018041418 /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
+setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
+setenv GFSANA6HFC_FIRSTCYCLE /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
 setenv GFSANA6HFC_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
 setenv GEFSANA6HFC_DIR       /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC
 setenv GFSANA6HFC_OMF_DIR    ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
+setenv GFSANA_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA
 setenv GFSSST_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSSST
 setenv GRAPHINFO_DIR         ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_graph
 setenv DA_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_DA_NML
@@ -234,7 +239,8 @@ setenv MPASBUILD         MPAS_${COMPILER}_debug=0
 setenv MPASBUILDDIR      ${TOP_BUILD_DIR}/libs/build/${MPASBUILD}
 
 #Verification tools
-setenv pyScriptDir       ${FIXED_INPUT}/graphics_git
+setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
+setenv pyModelDir        ${FIXED_INPUT}/graphics_model
 
 #Cycling tools
 setenv BIN_DIR           $HOME/bin

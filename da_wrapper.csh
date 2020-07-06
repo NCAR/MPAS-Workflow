@@ -13,7 +13,7 @@ setenv DA_TYPE           DATYPESUB
 setenv DA_MODE           DAMODESUB
 setenv DIAG_TYPE         DIAGTYPE
 setenv DA_JOB_SCRIPT     DAJOBSCRIPT
-setenv DEPEND_TYPE       DEPENDTYPE
+setenv thisDependsOn     DEPENDTYPE
 setenv VF_JOB_SCRIPT     VFJOBSCRIPT
 setenv YAML_TOP_DIR      YAMLTOPDIR
 setenv RES_SPECIFIC_DIR  RESSPECIFICDIR
@@ -195,7 +195,7 @@ rm new0.yaml new1.yaml new2.yaml new3.yaml new4.yaml
 # Submit DA job script
 # =================================
 #TODO: move all job control to top-level cycling/workflow scripts
-set JALL=(`cat ${JOBCONTROL}/last_${DEPEND_TYPE}_job`)
+set JALL=(`cat ${JOBCONTROL}/last_${thisDependsOn}_job`)
 set JDEP = ''
 foreach J ($JALL)
   if (${J} != "0" ) then
@@ -208,7 +208,7 @@ echo "${JDA}" > ${JOBCONTROL}/last_${DA_MODE}_job
 
 # Submit VF job script
 # =================================
-if ( ${VERIFYAFTERDA} > 0 && ${VF_JOB_SCRIPT} != "VFJOBSCRIPT" ) then
+if ( ${VERIFYAFTERDA} > 0 && ${VF_JOB_SCRIPT} != "None" ) then
   set JVF = `qsub -W depend=afterok:$JDA ${VF_JOB_SCRIPT}`
 endif
 
