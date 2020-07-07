@@ -82,7 +82,7 @@
         echo "${FCVF_LENGTH_HR}-hr verification FC from ${C_DATE} to ${E_VFDATE}"
         set fcvf_job=${FCWorkDir}/fcvf_job_${C_DATE}_${EXPNAME}.csh
         sed -e 's@CDATE@'${C_DATE}'@' \
-            -e 's@JOBMINUTES@'${FCVFJOBMINUTES}'@' \
+            -e 's@JobMinutes@'${FCVFJobMinutes}'@' \
             -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
             -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
             -e 's@EXPNAME@'${EXPNAME}'@' \

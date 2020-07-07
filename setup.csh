@@ -27,15 +27,18 @@ setenv OutDBDir dbOut
 
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DATYPE  3denvar
+setenv DATYPE  eda_3denvar
 set nGEFSMembers = 20
-if ( "$DATYPE" =~ *"eda_"* ) then
+if ( "$DATYPE" =~ *"eda"* ) then
   setenv nEnsDAMembers ${nGEFSMembers}
   setenv nEnsBMembers ${nEnsDAMembers}
 else
   setenv nEnsDAMembers 1
   setenv nEnsBMembers ${nGEFSMembers}
 endif
+
+## directory string formatter for EDA members
+# must match oops/src/oops/util/string_utils::swap_name_member
 setenv oopsEnsMemberFormat "mem%03d"
 
 ## DA_OBS_LIST
@@ -96,23 +99,33 @@ setenv FCVF_INTERVAL_HR  12              # interval between OMF forecast initial
 setenv VF_WINDOW_HR      ${FCVF_DT_HR}   # window of observations included in verification
 
 # TODO: enable logic (somewhere else) to use different super-obbing/thinning for DA/OMM jobs
-setenv MPAS_RES          120km
-setenv MPAS_NCELLS       40962
-setenv RADTHINDISTANCE   "200.0"
-setenv RADTHINAMOUNT     "0.98"
-setenv FCCYJOBMINUTES    5
-setenv FCVFJOBMINUTES    40
-setenv NodesPerDA        4
-setenv PEPerNodeDA       32
+setenv MPAS_RES            120km
+setenv MPAS_NCELLS         40962
+setenv RADTHINDISTANCE     "200.0"
+setenv RADTHINAMOUNT       "0.98"
+setenv FCCYJobMinutes      5
+setenv FCVFJobMinutes      40
+if ( "$DATYPE" =~ *"eda"* ) then
+  setenv DACYNodesPerMember 2
+  setenv DACYPEPerNode      18
+else
+  setenv DACYNodesPerMember 4
+  setenv DACYPEPerNode      32
+endif
 
-#setenv MPAS_RES          30km
-#setenv MPAS_NCELLS       655362
-#setenv RADTHINDISTANCE   "60.0"
-#setenv RADTHINAMOUNT     "0.75"
-#setenv FCCYJOBMINUTES    10
-#setenv FCVFJOBMINUTES    60
-#setenv NodesPerDA        16
-#setenv PEPerNodeDA       32
+#setenv MPAS_RES           30km
+#setenv MPAS_NCELLS        655362
+#setenv RADTHINDISTANCE    "60.0"
+#setenv RADTHINAMOUNT      "0.75"
+#setenv FCCYJobMinutes     10
+#setenv FCVFJobMinutes     60
+#if ( "$DATYPE" =~ *"eda"* ) then
+#  setenv DACYNodesPerMember 8
+#  setenv DACYPEPerNode      16
+#else
+#  setenv DACYNodesPerMember 16
+#  setenv DACYPEPerNode      32
+#endif
 
 setenv RST_FILE_PREFIX   restart
 setenv FC_FILE_PREFIX    ${RST_FILE_PREFIX}
@@ -126,8 +139,11 @@ setenv MPASDiagVars      cldfrac
 setenv MPASSeaVars       sst,xice
 setenv MPASANVars        theta,rho,u,qv,uReconstructZonal,uReconstructMeridional,qc,qr,qi,qs,qg
 
-@ NodesDA = ${NodesPerDA} * ${nEnsDAMembers}
-setenv NodesDA ${NodesDA}
+@ DACYPEPerMember = ${DACYNodesPerMember} * ${DACYPEPerNode}
+setenv DACYPEPerMember ${DACYPEPerMember}
+
+@ DACYNodes = ${DACYNodesPerMember} * ${nEnsDAMembers}
+setenv DACYNodes ${DACYNodes}
 
 #
 # Run directories
@@ -156,7 +172,7 @@ setenv VF_WORK_DIR      ${EXPDIR}/VF
 #
 # static data directories
 # =============================================
-setenv STATICUSER            ${USER}
+setenv STATICUSER            guerrett
 setenv TOP_STATIC_DIR        /glade/work/${STATICUSER}/pandac
 setenv FIXED_INPUT           ${TOP_STATIC_DIR}/fixed_input
 setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
@@ -171,7 +187,15 @@ setenv GRAPHINFO_DIR         ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_graph
 setenv DA_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_DA_NML
 setenv FC_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_FC_NML
 
-setenv BUMP_FILES_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_filesbump
+setenv bumpLocDir        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_filesbump_${DACYPEPerMember}pe
+if (${DACYPEPerMember} == 128) then
+  setenv bumpLocPrefix         bumploc_2000_5
+else if (${DACYPEPerMember} == 36) then
+  setenv bumpLocPrefix         mpas_parametersbump_loc_2000_5
+else
+  echo "ERROR: bump localization not defined for DACYPEPerMember == ${DACYPEPerMember}"
+  exit 1
+endif
 
 setenv CONV_OBS_DIR          ${TOP_STATIC_DIR}/obs/conv
 #setenv CONV_OBS_DIR          ${TOP_STATIC_DIR}/obs/conv_liuz
@@ -205,8 +229,11 @@ module load jedi/${COMPILER}
 #USE FOR OLD CODE (BEFORE APRIL 15)
 #module load jedi/gnu-openmpi/7.4.0-v0.1
 
-#UNLOAD PIO WHEN USING CUSTOM BUILD
-module unload pio
+#setenv CUSTOMPIO         ""
+setenv CUSTOMPIO         _pio2_5_0_debug=1
+if ( CUSTOMPIO != "" ) then
+  module unload pio
+endif
 
 module load nco
 limit stacksize unlimited
@@ -223,24 +250,24 @@ setenv F_UFMTENDIAN 'big:101-200'
 setenv BUILDUSER         ${USER}
 setenv TOP_BUILD_DIR     /glade/work/${BUILDUSER}/pandac
 #MPAS-JEDI
-if ( "$DATYPE" =~ *"eda_"* ) then
+if ( "$DATYPE" =~ *"eda"* ) then
   setenv DAEXE           mpas_eda.x
 else
   setenv DAEXE           mpas_variational.x
 endif
 setenv OMMEXE            mpas_variational.x
 setenv HOFXEXE           mpas_hofx_nomodel.x
-#setenv JEDIBUILD         mpas-bundle_${COMPILER}_build=Debug
-#setenv JEDIBUILD         mpas-bundle_${COMPILER}_build=Release
-#setenv JEDIBUILD         mpas-bundle_${COMPILER}_build=RelWithDebInfo_feature--symmetric_cloud_impact
-#setenv JEDIBUILD         mpas-bundle_${COMPILER}_build=Release_feature--symmetric_cloud_impact
-#setenv JEDIBUILD         mpas-bundle_${COMPILER}_build=RelWithDebInfo_features--eda_sci
-setenv JEDIBUILD         mpas-bundle_pio2_5_0_debug=1_${COMPILER}_build=RelWithDebInfo_feature--eda_sci
+
+set BUNDLEBUILD = _build=RelWithDebInfo
+set BUILDFEATURE = _feature--eda_sci
+
+setenv JEDIBUILD         mpas-bundle${CUSTOMPIO}_${COMPILER}${BUNDLEBUILD}${BUILDFEATURE}
 setenv JEDIBUILDDIR      ${TOP_BUILD_DIR}/build/${JEDIBUILD}
 
 #MPAS-Model
 setenv FCEXE             atmosphere_model
 setenv MPASBUILD         MPAS_${COMPILER}_debug=0
+#setenv MPASBUILD         MPAS_${COMPILER}_debug=0${CUSTOMPIO}
 setenv MPASBUILDDIR      ${TOP_BUILD_DIR}/libs/build/${MPASBUILD}
 
 #Verification tools

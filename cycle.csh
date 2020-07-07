@@ -56,7 +56,7 @@
         cd ${FCCY_WORK_DIR}
 
         rm -r ${P_DATE}
-        if ( "$DATYPE" =~ *"eda_"* ) then
+        if ( "$DATYPE" =~ *"eda"* ) then
           mkdir ${P_DATE}
           set member = 1
           while ( $member <= ${nGEFSMembers} )
@@ -98,7 +98,7 @@
         mkdir -p ${DAWorkDir}
         cp setup.csh ${DAWorkDir}/
 
-        if ( "$DATYPE" =~ *"eda_"* ) then
+        if ( "$DATYPE" =~ *"eda"* ) then
           set VFSCRIPT=None
           echo "WARNING: cycling-da verification not enabled for EDA"
         else
@@ -117,8 +117,8 @@
             -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
             -e 's@EXPNAME@'${EXPNAME}'@' \
             -e 's@BGDIR@'${FCCY_PCYCLE_DIR}'@' \
-            -e 's@NNODE@'${NodesDA}'@' \
-            -e 's@NPE@'${PEPerNodeDA}'@g' \
+            -e 's@NNODE@'${DACYNodes}'@' \
+            -e 's@NPE@'${DACYPEPerNode}'@g' \
             -e 's@BGSTATEPREFIX@'${BGPREFIX}'@' \
             da_job.csh > ${DASCRIPT}
         chmod 744 ${DASCRIPT}
@@ -154,7 +154,7 @@
         while ( $member <= ${nEnsDAMembers} )
           cd ${MAIN_SCRIPT_DIR}
 
-          if ( "$DATYPE" =~ *"eda_"* ) then
+          if ( "$DATYPE" =~ *"eda"* ) then
             set ANMemberDir = `printf "/${anDir}/${oopsEnsMemberFormat}" $member`
           else
             set ANMemberDir = ''
@@ -163,7 +163,7 @@
           set StateDir=${DAWorkDir}${ANMemberDir}
 
           set FCBASE = ''
-          if ( "$DATYPE" =~ *"eda_"* ) then
+          if ( "$DATYPE" =~ *"eda"* ) then
             set FCBASE = '/'`basename "${StateDir}"`
           endif
           set MY_VF_DIR = ${VF_CYCLE_DIR}${FCBASE}
@@ -191,7 +191,7 @@
         setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${bgDir}/${C_DATE}"
 
         set BGMemberDir = ''
-        if ( "$DATYPE" =~ *"eda_"* ) then
+        if ( "$DATYPE" =~ *"eda"* ) then
           echo "WARNING: initial omm not enabled for EDA"
         else
           set StateDir=${DAWorkDir}${BGMemberDir}
@@ -223,7 +223,7 @@
           set member = 1
           while ( $member <= ${nEnsDAMembers} )
             cd ${MAIN_SCRIPT_DIR}
-            if ( "$DATYPE" =~ *"eda_"* ) then
+            if ( "$DATYPE" =~ *"eda"* ) then
               set FCMemberDir = `printf "/${oopsEnsMemberFormat}" $member`
               set ANMemberDir = /${anDir}${FCMemberDir}
 
@@ -243,7 +243,7 @@
             echo "\n${CY_WINDOW_HR}-hr cycle FC from ${C_DATE} to ${N_DATE} for member $member"
             set fc_job=${WorkDir}/fc_job_${C_DATE}_${EXPNAME}.csh
             sed -e 's@CDATE@'${C_DATE}'@' \
-                -e 's@JOBMINUTES@'${FCCYJOBMINUTES}'@' \
+                -e 's@JobMinutes@'${FCCYJobMinutes}'@' \
                 -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
                 -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
                 -e 's@EXPNAME@'${EXPNAME}'@' \
@@ -279,7 +279,7 @@
           foreach WorkDir ($FCWorkDirs)
             cd ${MAIN_SCRIPT_DIR}
             set FCBASE = ''
-            if ( "$DATYPE" =~ *"eda_"* ) then
+            if ( "$DATYPE" =~ *"eda"* ) then
               set FCBASE = '/'`basename "${WorkDir}"`
             endif
             set MY_VF_DIR = ${VF_CYCLE_DIR}${FCBASE}
@@ -309,7 +309,7 @@
 
 #------- extended forecast step ---------
       if ( ${VERIFYFC} > 0 && ${C_DATE} == ${N_FCVFDATE}) then
-        if ( "$DATYPE" =~ *"eda_"* ) then
+        if ( "$DATYPE" =~ *"eda"* ) then
           echo "WARNING: verifying forecast not enabled for EDA"
         else
           set N_FCVFDATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_INTERVAL_HR}`
@@ -330,7 +330,7 @@
             echo "\n${FCVF_LENGTH_HR}-hr verification FC from ${C_DATE} to ${E_VFDATE}"
             set fcvf_job=${FCVFWorkDir}/fcvf_job_${C_DATE}_${EXPNAME}.csh
             sed -e 's@CDATE@'${C_DATE}'@' \
-                -e 's@JOBMINUTES@'${FCVFJOBMINUTES}'@' \
+                -e 's@JobMinutes@'${FCVFJobMinutes}'@' \
                 -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
                 -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
                 -e 's@EXPNAME@'${EXPNAME}'@' \

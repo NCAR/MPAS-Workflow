@@ -3,7 +3,7 @@
 #PBS -A ACCOUNTNUM
 #PBS -q QUEUENAME
 #PBS -l select=4:ncpus=32:mpiprocs=32:mem=109GB
-#PBS -l walltime=00:JOBMINUTES:00
+#PBS -l walltime=00:JobMinutes:00
 #PBS -m ae
 #PBS -k eod
 #   #PBS -V 

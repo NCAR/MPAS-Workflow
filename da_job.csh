@@ -39,7 +39,7 @@ rm jedi.log*
 
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  if ( "$DATYPE" =~ *"eda_"* ) then
+  if ( "$DATYPE" =~ *"eda"* ) then
     set memberDir = `printf "/${oopsEnsMemberFormat}" $member`
     set other = ${BG_STATE_DIR}${memberDir}
     set bg = ./${bgDir}${memberDir}
@@ -79,7 +79,7 @@ end
 
 # link one of the backgrounds to a local RST file
 # used to initialize the MPAS mesh
-if ( "$DATYPE" =~ *"eda_"* ) then
+if ( "$DATYPE" =~ *"eda"* ) then
   ln -sf ${bgFileDA} ./${BG_FILE_PREFIX}.$FILE_DATE.nc
 endif
 
@@ -113,7 +113,7 @@ endif
 # =============================================
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  if ( "$DATYPE" =~ *"eda_"* ) then
+  if ( "$DATYPE" =~ *"eda"* ) then
     set memberDir = `printf "/${oopsEnsMemberFormat}" $member`
     set bg = ./${bgDir}${memberDir}
     set an = ./${anDir}${memberDir}

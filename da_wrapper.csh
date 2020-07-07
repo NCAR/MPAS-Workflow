@@ -153,6 +153,7 @@ foreach obs ($OBS_LIST)
   endif
 end
 
+## fill in observation characteristics
 sed -i 's@DATYPE@'${DIAG_TYPE}'@g' orig_jedi0.yaml
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' orig_jedi0.yaml
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' orig_jedi0.yaml
@@ -163,7 +164,7 @@ sed -i 's@obsPrefix@'${obsPrefix}'@g' orig_jedi0.yaml
 sed -i 's@geoPrefix@'${geoPrefix}'@g' orig_jedi0.yaml
 sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi0.yaml
 
-if ( "$DA_TYPE" =~ *"eda_"* ) then
+if ( "$DA_TYPE" =~ *"eda"* ) then
   sed -i 's@OOPSMemberDir@/%{member}%@g' orig_jedi0.yaml
   sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' orig_jedi0.yaml
   set member = 1
@@ -189,19 +190,16 @@ sed -i 's@2018-04-15T00:00:00Z@'${YAML_DATE}'@g' orig_jedi0.yaml
 ## revise window length
 sed -i 's@PT6H@PT'${WINDOW_HR}'H@g' orig_jedi0.yaml
 
-
-## revise full line parameters
+## revise full line configs
 cat >! fullline_sedf.yaml << EOF
   /window_begin: /c\
   window_begin: '${PHALFYAML_DATE}'
-  /datadir: /c\
-          datadir: ${BUMP_FILES_DIR}
 EOF
 
 sed -f fullline_sedf.yaml orig_jedi0.yaml >! orig_jedi1.yaml
 rm fullline_sedf.yaml
 
-if ( "$DATYPE" =~ *"eda_"* ) then
+if ( "$DATYPE" =~ *"eda"* ) then
   set topEnsBDir = ${FCCY_WORK_DIR}
   set ensBMemberFormat = "${oopsEnsMemberFormat}"
 else
@@ -209,7 +207,10 @@ else
   set ensBMemberFormat = "${gefsEnsMemberFormat}"
 endif
 
-## fill in ensemble B members as needed
+## fill in ensemble B configs
+sed -i 's@bumpLocDir@'${bumpLocDir}'@g' orig_jedi1.yaml
+sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' orig_jedi1.yaml
+
 cat >! EnsembleBMembers_sedf.yaml << EOF
 /EnsembleBMembers/c\
 EOF
