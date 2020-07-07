@@ -64,11 +64,6 @@
         da_wrapper.csh > ${da_wrapper}
     chmod 744 ${da_wrapper}
 
-    set vf_wrapper=${WORKDIR}/vf_wrapper_${C_DATE}_${EXPNAME}.csh
-    sed -e 's@VFSCRIPT@'${VFSCRIPT}'@' \
-        vf_wrapper.csh > ${vf_wrapper}
-    chmod 744 ${vf_wrapper}
-
     cd ${WORKDIR}
 
     if ( ${ONLYVERIFY} == 0 ) then
@@ -76,5 +71,5 @@
         ${da_wrapper} >& da_wrapper.log
     else
         echo "verification at ${C_DATE}"
-        ${vf_wrapper} >& vf_wrapper.log
+        qsub ${VFSCRIPT}
    endif
