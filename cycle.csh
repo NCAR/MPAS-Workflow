@@ -30,12 +30,12 @@
 # =========================================
     setenv S_DATE     2018041500 # experiment start date
 #    setenv E_DATE     2018051418 # experiment end date
-    setenv E_DATE     2018041500 # experiment end date
+    setenv E_DATE     2018041506 # experiment end date
 
     setenv C_DATE     ${S_DATE}  # current-cycle date (will change)
 
-    set VERIFYBG = 1
-    set VERIFYAN = 1
+    set VERIFYBG = 0
+    set VERIFYAN = 0
 
     set ONLYFCVF = 0
     set VERIFYFC = 0
@@ -73,6 +73,12 @@
         endif
 
         cd ${MAIN_SCRIPT_DIR}
+
+        set topEnsBDir = ${GEFSANA6HFC_DIR}
+        set ensBMemberFormat = "%02d"
+      else
+        set topEnsBDir = ${FCCY_WORK_DIR}
+        set ensBMemberFormat = "mem%03d"
       endif
 
       setenv DA_CCYCLE_DIR "${DA_WORK_DIR}/${C_DATE}"
@@ -139,6 +145,8 @@
             -e 's@VFJOBSCRIPT@'${VFSCRIPT}'@' \
             -e 's@YAMLTOPDIR@'${YAMLTOPDIR}'@' \
             -e 's@RESSPECIFICDIR@'${RESSPECIFICDIR}'@' \
+            -e 's@ENSBDIR@'${topEnsBDir}'@' \
+            -e 's@ENSMEMBERFORMAT@'${ensBMemberFormat}'@' \
             da_wrapper.csh > ${da_wrapper}
 
         chmod 744 ${da_wrapper}

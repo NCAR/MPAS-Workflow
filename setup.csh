@@ -27,9 +27,9 @@ setenv OutDBDir dbOut
 
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DATYPE  3denvar
+setenv DATYPE  eda_3denvar
 if ( "$DATYPE" =~ *"eda_"* ) then
-  setenv NMEMBERS 2
+  setenv NMEMBERS 20
 else
   setenv NMEMBERS 1
 endif
@@ -60,7 +60,7 @@ foreach obs ($EXPOBSLIST)
 end
 
 ## add unique suffix
-set SUFFIX = "EDATEST"
+set SUFFIX = "_NMEM"${NMEMBERS}
 setenv EXPNAME ${EXPNAME}${SUFFIX}
 
 #
