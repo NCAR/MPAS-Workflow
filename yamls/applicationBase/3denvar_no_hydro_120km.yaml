@@ -58,11 +58,8 @@ cost_function:
         - *adate
         variables: *incvars
         bump:
-          datadir: /glade/work/vahl/mpas-reldir/fix_input/120km_filesbump
-## 36 pe
-#          prefix: mpas_parametersbump_loc_2000_5
-## 128 pe
-          prefix: bumploc_2000_5
+          datadir: bumpLocDir
+          prefix: bumpLocPrefix
           default_seed: 1
           method: loc
           strategy: common  #specific_univariate
