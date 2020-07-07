@@ -13,7 +13,7 @@
 date
 
 #
-# Set up environment:
+# Setup environment:
 # =============================================
 source ./setup.csh
 

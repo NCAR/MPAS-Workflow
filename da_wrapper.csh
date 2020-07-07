@@ -1,7 +1,7 @@
 #!/bin/csh
 
 #
-#set environment:
+# Setup environment:
 # =============================================
 source ./setup.csh
 
@@ -17,6 +17,7 @@ setenv thisDependsOn     DEPENDTYPE
 setenv VF_JOB_SCRIPT     VFJOBSCRIPT
 setenv YAML_TOP_DIR      YAMLTOPDIR
 setenv RES_SPECIFIC_DIR  RESSPECIFICDIR
+
 
 #
 # Time info for namelist, yaml etc:
@@ -118,7 +119,7 @@ ln -fsv ${VARBC_TABLE} ${InDBDir}/satbias_crtm_bak
 # =======================================
 
 ## Copy BASE MPAS-JEDI yaml
-cp -v ${YAML_TOP_DIR}/applicationBase/${DA_TYPE}.yaml orig_jedi.yaml
+cp -v ${YAML_TOP_DIR}/applicationBase/${DA_TYPE}.yaml orig_jedi0.yaml
 
 ## Add selected observations (see setup.csh)
 foreach obs ($OBS_LIST)
@@ -148,48 +149,87 @@ foreach obs ($OBS_LIST)
   endif
 
   if ($missing == 0) then
-    cat ${YAML_TOP_DIR}/${SUBYAML}.yaml >> orig_jedi.yaml
+    cat ${YAML_TOP_DIR}/${SUBYAML}.yaml >> orig_jedi0.yaml
   endif
 end
 
-sed -i 's@DATYPE@'${DIAG_TYPE}'@g' orig_jedi.yaml
-sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' orig_jedi.yaml
-sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' orig_jedi.yaml
-sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' orig_jedi.yaml
-sed -i 's@InDBDir@'${InDBDir}'@g' orig_jedi.yaml
-sed -i 's@OutDBDir@'${OutDBDir}'@g' orig_jedi.yaml
-sed -i 's@obsPrefix@'${obsPrefix}'@g' orig_jedi.yaml
-sed -i 's@geoPrefix@'${geoPrefix}'@g' orig_jedi.yaml
-sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi.yaml
+sed -i 's@DATYPE@'${DIAG_TYPE}'@g' orig_jedi0.yaml
+sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' orig_jedi0.yaml
+sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' orig_jedi0.yaml
+sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' orig_jedi0.yaml
+sed -i 's@InDBDir@'${InDBDir}'@g' orig_jedi0.yaml
+sed -i 's@OutDBDir@'${OutDBDir}'@g' orig_jedi0.yaml
+sed -i 's@obsPrefix@'${obsPrefix}'@g' orig_jedi0.yaml
+sed -i 's@geoPrefix@'${geoPrefix}'@g' orig_jedi0.yaml
+sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi0.yaml
 
 if ( "$DA_TYPE" =~ *"eda_"* ) then
-  sed -i 's@OOPSMemberDir@/%{member}%@g' orig_jedi.yaml
-  sed -i 's@NMEMBERS@'${NMEMBERS}'@g' orig_jedi.yaml
+  sed -i 's@OOPSMemberDir@/%{member}%@g' orig_jedi0.yaml
+  sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' orig_jedi0.yaml
   set member = 1
-  while ( $member <= ${NMEMBERS} )
-    set memberDir = `printf "mem%03d" $member`
+  while ( $member <= ${nEnsDAMembers} )
+    set memberDir = `printf "${oopsEnsMemberFormat}" $member`
     mkdir -p ${OutDBDir}/${memberDir}
     @ member++
   end
 else
-  sed -i 's@OOPSMemberDir@@g' orig_jedi.yaml
+  sed -i 's@OOPSMemberDir@@g' orig_jedi0.yaml
 endif
 
-## Revise time info
-sed 's/'${RST_FILE_PREFIX}'.2018-04-15_00.00.00.nc/'${RST_FILE_PREFIX}'.'${FILE_DATE}'.nc/g; s/2018041500/'${DATE}'/g; s/2018-04-15T00:00:00Z/'${YAML_DATE}'/g'  orig_jedi.yaml  > new0.yaml
-sed 's/'${RST_FILE_PREFIX}'.2018-04-14_18.00.00.nc/'${RST_FILE_PREFIX}'.'${PFILE_DATE}'.nc/g; s/2018041418/'${PDATE}'/g; s/2018-04-14T18:00:00Z/'${PYAML_DATE}'/g'  new0.yaml  > new1.yaml
-sed 's/x1.'${MPAS_NCELLS}'.init.2018-04-15_00.00.00.nc/x1.'${MPAS_NCELLS}'.init.'${FILE_DATE}'.nc/g' new1.yaml > new2.yaml
-sed 's/PT6H/PT'${WINDOW_HR}'H/g' new2.yaml > new3.yaml
+## revise previous date
+sed -i 's@2018-04-14_18.00.00@'${PFILE_DATE}'@g' orig_jedi0.yaml
+sed -i 's@2018041418@'${PDATE}'@g' orig_jedi0.yaml
+sed -i 's@2018-04-14T18:00:00Z@'${PYAML_DATE}'@g'  orig_jedi0.yaml
 
-cat >! new4.yaml << EOF
+## revise current date
+sed -i 's@2018-04-15_00.00.00@'${FILE_DATE}'@g' orig_jedi0.yaml
+sed -i 's@2018041500@'${DATE}'@g' orig_jedi0.yaml
+sed -i 's@2018-04-15T00:00:00Z@'${YAML_DATE}'@g' orig_jedi0.yaml
+
+## revise window length
+sed -i 's@PT6H@PT'${WINDOW_HR}'H@g' orig_jedi0.yaml
+
+
+## revise full line parameters
+cat >! fullline_sedf.yaml << EOF
   /window_begin: /c\
   window_begin: '${PHALFYAML_DATE}'
   /datadir: /c\
           datadir: ${BUMP_FILES_DIR}
 EOF
 
-sed -f new4.yaml new3.yaml >! jedi.yaml
-rm new0.yaml new1.yaml new2.yaml new3.yaml new4.yaml
+sed -f fullline_sedf.yaml orig_jedi0.yaml >! orig_jedi1.yaml
+rm fullline_sedf.yaml
+
+if ( "$DATYPE" =~ *"eda_"* ) then
+  set topEnsBDir = ${FCCY_WORK_DIR}
+  set ensBMemberFormat = "${oopsEnsMemberFormat}"
+else
+  set topEnsBDir = ${GEFSANA6HFC_DIR}
+  set ensBMemberFormat = "${gefsEnsMemberFormat}"
+endif
+
+## fill in ensemble B members as needed
+cat >! EnsembleBMembers_sedf.yaml << EOF
+/EnsembleBMembers/c\
+EOF
+
+set member = 1
+while ( $member <= ${nEnsBMembers} )
+set memberDir = `printf "${ensBMemberFormat}" $member`
+set adate = adate
+if ( $member < ${nEnsBMembers} ) then
+   set adate = ${adate}\\
+endif
+cat >>! EnsembleBMembers_sedf.yaml << EOF
+      - filename: ${topEnsBDir}/${PDATE}/${memberDir}/${FC_FILE_PREFIX}.${FILE_DATE}.nc\
+        date: *${adate}
+EOF
+
+  @ member++
+end
+sed -f EnsembleBMembers_sedf.yaml orig_jedi1.yaml >! jedi.yaml
+rm EnsembleBMembers_sedf.yaml
 
 
 # Submit DA job script

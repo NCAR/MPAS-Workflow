@@ -12,7 +12,7 @@
 date
 
 #
-#set environment:
+# Setup environment:
 # =============================================
 source ./setup.csh
 
@@ -38,9 +38,9 @@ rm jedi.log*
 ##############################################################################
 
 set member = 1
-while ( $member <= ${NMEMBERS} )
+while ( $member <= ${nEnsDAMembers} )
   if ( "$DATYPE" =~ *"eda_"* ) then
-    set memberDir = `printf "/mem%03d" $member`
+    set memberDir = `printf "/${oopsEnsMemberFormat}" $member`
     set other = ${BG_STATE_DIR}${memberDir}
     set bg = ./${bgDir}${memberDir}
     set an = ./${anDir}${memberDir}
@@ -112,9 +112,9 @@ endif
 # Update analyzed variables:
 # =============================================
 set member = 1
-while ( $member <= ${NMEMBERS} )
+while ( $member <= ${nEnsDAMembers} )
   if ( "$DATYPE" =~ *"eda_"* ) then
-    set memberDir = `printf "/mem%03d" $member`
+    set memberDir = `printf "/${oopsEnsMemberFormat}" $member`
     set bg = ./${bgDir}${memberDir}
     set an = ./${anDir}${memberDir}
   else

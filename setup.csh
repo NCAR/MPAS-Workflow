@@ -27,12 +27,16 @@ setenv OutDBDir dbOut
 
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DATYPE  eda_3denvar
+setenv DATYPE  3denvar
+set nGEFSMembers = 20
 if ( "$DATYPE" =~ *"eda_"* ) then
-  setenv NMEMBERS 20
+  setenv nEnsDAMembers ${nGEFSMembers}
+  setenv nEnsBMembers ${nEnsDAMembers}
 else
-  setenv NMEMBERS 1
+  setenv nEnsDAMembers 1
+  setenv nEnsBMembers ${nGEFSMembers}
 endif
+setenv oopsEnsMemberFormat "mem%03d"
 
 ## DA_OBS_LIST
 #OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
@@ -60,7 +64,7 @@ foreach obs ($EXPOBSLIST)
 end
 
 ## add unique suffix
-set SUFFIX = "_NMEM"${NMEMBERS}
+set SUFFIX = "_NMEM"${nEnsDAMembers}
 setenv EXPNAME ${EXPNAME}${SUFFIX}
 
 #
@@ -122,7 +126,7 @@ setenv MPASDiagVars      cldfrac
 setenv MPASSeaVars       sst,xice
 setenv MPASANVars        theta,rho,u,qv,uReconstructZonal,uReconstructMeridional,qc,qr,qi,qs,qg
 
-@ NodesDA = ${NodesPerDA} * ${NMEMBERS}
+@ NodesDA = ${NodesPerDA} * ${nEnsDAMembers}
 setenv NodesDA ${NodesDA}
 
 #
@@ -159,6 +163,7 @@ setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
 setenv GFSANA6HFC_FIRSTCYCLE /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
 setenv GFSANA6HFC_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
 setenv GEFSANA6HFC_DIR       /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC
+setenv gefsEnsMemberFormat   "%02d"
 setenv GFSANA6HFC_OMF_DIR    ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
 setenv GFSANA_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA
 setenv GFSSST_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSSST

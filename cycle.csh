@@ -19,11 +19,10 @@
     echo "0" > ${JOBCONTROL}/last_fcvf_job
     echo "0" > ${JOBCONTROL}/last_null_job
 
-    echo "=============================================================="
-    echo ""
-    echo "Initiating cycling experiment for experiment: ${EXPNAME}"
-    echo ""
-    echo "=============================================================="
+    clear
+    echo "==============================================================\n"
+    echo "Cycling workflow for experiment: ${EXPNAME}\n"
+    echo "==============================================================\n"
 
 #
 # 1, Initial and final times of the period:
@@ -60,9 +59,9 @@
         if ( "$DATYPE" =~ *"eda_"* ) then
           mkdir ${P_DATE}
           set member = 1
-          while ( $member <= ${NMEMBERS} )
-            set FCWorkDir = "./${P_DATE}"`printf "/mem%03d" $member`
-            set FCINIT = "$GEFSANA6HFC_DIR/${P_DATE}/"`printf "%02d" $member`
+          while ( $member <= ${nGEFSMembers} )
+            set FCWorkDir = "./${P_DATE}"`printf "/${oopsEnsMemberFormat}" $member`
+            set FCINIT = "$GEFSANA6HFC_DIR/${P_DATE}/"`printf "${gefsEnsMemberFormat}" $member`
 
             ln -sf ${FCINIT} ${FCWorkDir}
 
@@ -73,12 +72,6 @@
         endif
 
         cd ${MAIN_SCRIPT_DIR}
-
-        set topEnsBDir = ${GEFSANA6HFC_DIR}
-        set ensBMemberFormat = "%02d"
-      else
-        set topEnsBDir = ${FCCY_WORK_DIR}
-        set ensBMemberFormat = "mem%03d"
       endif
 
       setenv DA_CCYCLE_DIR "${DA_WORK_DIR}/${C_DATE}"
@@ -94,15 +87,13 @@
         setenv BGPREFIX ${FC_FILE_PREFIX}
       endif
 
-      echo ""
-      echo "Working on cycle: ${C_DATE}"
+      echo "\nWorking on cycle: ${C_DATE}"
 
 #------- analysis step ---------
       set DAWorkDir=${DA_CCYCLE_DIR}
 
       if ( ${ONLYOMM} == 0 && ${ONLYFCVF} == 0 ) then
-        echo ""
-        echo "analysis at ${C_DATE}"
+        echo "\nanalysis at ${C_DATE}"
 
         mkdir -p ${DAWorkDir}
         cp setup.csh ${DAWorkDir}/
@@ -145,8 +136,6 @@
             -e 's@VFJOBSCRIPT@'${VFSCRIPT}'@' \
             -e 's@YAMLTOPDIR@'${YAMLTOPDIR}'@' \
             -e 's@RESSPECIFICDIR@'${RESSPECIFICDIR}'@' \
-            -e 's@ENSBDIR@'${topEnsBDir}'@' \
-            -e 's@ENSMEMBERFORMAT@'${ensBMemberFormat}'@' \
             da_wrapper.csh > ${da_wrapper}
 
         chmod 744 ${da_wrapper}
@@ -162,11 +151,11 @@
 
       if ( ${VERIFYAN} > 0 && ${ONLYFCVF} == 0 ) then
         set member = 1
-        while ( $member <= ${NMEMBERS} )
+        while ( $member <= ${nEnsDAMembers} )
           cd ${MAIN_SCRIPT_DIR}
 
           if ( "$DATYPE" =~ *"eda_"* ) then
-            set ANMemberDir = `printf "/${anDir}/mem%03d" $member`
+            set ANMemberDir = `printf "/${anDir}/${oopsEnsMemberFormat}" $member`
           else
             set ANMemberDir = ''
           endif
@@ -232,10 +221,10 @@
         if ( ${ONLYOMM} == 0 ) then
           rm ${JOBCONTROL}/last_fc_job
           set member = 1
-          while ( $member <= ${NMEMBERS} )
+          while ( $member <= ${nEnsDAMembers} )
             cd ${MAIN_SCRIPT_DIR}
             if ( "$DATYPE" =~ *"eda_"* ) then
-              set FCMemberDir = `printf "/mem%03d" $member`
+              set FCMemberDir = `printf "/${oopsEnsMemberFormat}" $member`
               set ANMemberDir = /${anDir}${FCMemberDir}
 
             else
@@ -251,8 +240,7 @@
             mkdir -p ${WorkDir}
             cp setup.csh ${WorkDir}/
 
-            echo ""
-            echo "${CY_WINDOW_HR}-hr cycle FC from ${C_DATE} to ${N_DATE} for member $member"
+            echo "\n${CY_WINDOW_HR}-hr cycle FC from ${C_DATE} to ${N_DATE} for member $member"
             set fc_job=${WorkDir}/fc_job_${C_DATE}_${EXPNAME}.csh
             sed -e 's@CDATE@'${C_DATE}'@' \
                 -e 's@JOBMINUTES@'${FCCYJOBMINUTES}'@' \
@@ -339,8 +327,7 @@
             mkdir -p ${FCVFWorkDir}
             cp setup.csh ${FCVFWorkDir}/
 
-            echo ""
-            echo "${FCVF_LENGTH_HR}-hr verification FC from ${C_DATE} to ${E_VFDATE}"
+            echo "\n${FCVF_LENGTH_HR}-hr verification FC from ${C_DATE} to ${E_VFDATE}"
             set fcvf_job=${FCVFWorkDir}/fcvf_job_${C_DATE}_${EXPNAME}.csh
             sed -e 's@CDATE@'${C_DATE}'@' \
                 -e 's@JOBMINUTES@'${FCVFJOBMINUTES}'@' \

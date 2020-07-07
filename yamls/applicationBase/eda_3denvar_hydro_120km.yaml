@@ -1,5 +1,5 @@
 EnsembleApplication:
-  members: NMEMBERS
+  members: nEnsDAMembers
 resolution:
   gridfname: "./restart.2018-04-15_00.00.00.nc"
 model:
@@ -96,46 +96,7 @@ cost_function:
           lsqrt: 1
           mpicom: 2
       members:
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/01/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/02/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/03/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/04/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/05/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/06/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/07/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/08/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/09/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/10/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/11/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/12/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/13/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/14/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/15/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/16/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/17/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/18/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/19/restart.2018-04-15_00.00.00.nc
-        date: *adate
-      - filename: /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC/2018041418/20/restart.2018-04-15_00.00.00.nc
-        date: *adate
+EnsembleBMembers
       variables: *incvars
   Jo:
     ObsTypes:

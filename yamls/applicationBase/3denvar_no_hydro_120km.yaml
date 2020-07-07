@@ -48,18 +48,21 @@ cost_function:
       state:
       - variables: *incvars
         filename: "./restart.2018-04-15_00.00.00.nc"
-        date: '2018-04-15T00:00:00Z'
+        date: &adate '2018-04-15T00:00:00Z'
     Covariance:
       covariance: ensemble
-      date: '2018-04-15T00:00:00Z'
+      date: *adate
       localization:
         localization: BUMP
         timeslots:
-        - '2018-04-15T00:00:00Z'
+        - *adate
         variables: *incvars
         bump:
-          datadir: /glade/work/jban/pandac/fix_input/120km_filesbump
-          prefix: mpas_parametersbump_loc_2000_5
+          datadir: /glade/work/vahl/mpas-reldir/fix_input/120km_filesbump
+## 36 pe
+#          prefix: mpas_parametersbump_loc_2000_5
+## 128 pe
+          prefix: bumploc_2000_5
           default_seed: 1
           method: loc
           strategy: common  #specific_univariate
@@ -69,46 +72,7 @@ cost_function:
           lsqrt: 1
           mpicom: 2
       members:
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem01/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem02/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem03/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem04/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem05/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem06/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem07/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem08/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem09/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem10/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem11/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem12/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem13/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem14/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem15/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem16/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem17/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem18/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962/2018041500/ensemble/mem19/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
-      - filename: /glade/p/mmm/parc/bjung/panda-c/testdata/v7_x1.40962//2018041500/ensemble/mem20/x1.40962.init.2018-04-15_00.00.00.nc
-        date: '2018-04-15T00:00:00Z'
+EnsembleBMembers
       variables: *incvars
   Jo:
     ObsTypes:
