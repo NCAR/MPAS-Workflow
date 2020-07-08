@@ -27,6 +27,31 @@
         - variable:
             name: sensor_zenith_angle@MetaData
           maxvalue: 65.0
+      - Filter: BlackList
+        filter variables:
+        - name: brightness_temperature
+          channels: *ahi_channels
+#      - Filter: Domain Check
+#        where:
+#        - variable:
+#            name: cloud_area_fraction@MetaData
+#          minvalue: 0.05
+        action:
+          name: assign error
+          error function:
+            name: ObsErrorModelRamp@ObsFunction
+            channels: *ahi_channels
+            options:
+              channels: *ahi_channels
+              xvar:
+                name: SymmCldImpactIR@ObsFunction
+                channels: *ahi_channels
+                options:
+                  channels: *ahi_channels
+              x0: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+              x1: [29, 10.45, 13.52, 22.34, 32.29, 26.04, 25.87, 23.6, 23.05, 24]
+              err0: [3.5, 1.8, 1.79, 2.64, 3.58, 2.52, 2.59, 2.27, 2.18, 2.2]
+              err1: [19, 13.46, 15.46, 16.95, 23.19, 25.22, 25.41, 24.82, 20.6, 25]
       - Filter: GOMsaver
         filename: OutDBDir/geoPrefix_DATYPE_ahi_himawari8.nc4
       - Filter: YDIAGsaver
