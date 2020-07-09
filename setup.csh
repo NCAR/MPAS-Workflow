@@ -27,10 +27,10 @@ setenv OutDBDir dbOut
 
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DATYPE  eda_3denvar
+setenv DATYPE 3denvar
 set nGEFSMembers = 20
 if ( "$DATYPE" =~ *"eda"* ) then
-  setenv nEnsDAMembers ${nGEFSMembers}
+  setenv nEnsDAMembers 2
   setenv nEnsBMembers ${nEnsDAMembers}
 else
   setenv nEnsDAMembers 1
@@ -128,8 +128,11 @@ endif
 #endif
 
 setenv RST_FILE_PREFIX   restart
+setenv IC_FILE_PREFIX    ${RST_FILE_PREFIX}
 setenv FC_FILE_PREFIX    ${RST_FILE_PREFIX}
 setenv fcDir             fc
+setenv DIAG_FILE_PREFIX  diag
+
 setenv AN_FILE_PREFIX    an
 setenv anDir             ${AN_FILE_PREFIX}
 setenv BG_FILE_PREFIX    ${RST_FILE_PREFIX}
@@ -137,7 +140,7 @@ setenv bgDir             bg
 
 setenv MPASDiagVars      cldfrac
 setenv MPASSeaVars       sst,xice
-setenv MPASANVars        theta,rho,u,qv,uReconstructZonal,uReconstructMeridional,qc,qr,qi,qs,qg
+setenv MPASANVars        theta,rho,u,qv,uReconstructZonal,uReconstructMeridional,qc,qi,qr,qs,qg
 
 @ DACYPEPerMember = ${DACYNodesPerMember} * ${DACYPEPerNode}
 setenv DACYPEPerMember ${DACYPEPerMember}
@@ -175,7 +178,11 @@ setenv VF_WORK_DIR      ${EXPDIR}/VF
 setenv STATICUSER            guerrett
 setenv TOP_STATIC_DIR        /glade/work/${STATICUSER}/pandac
 setenv FIXED_INPUT           ${TOP_STATIC_DIR}/fixed_input
+
+## First cycle date (used to initiate new experiments)
 setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
+
+## GFS/GEFS
 setenv GFSANA6HFC_FIRSTCYCLE /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
 setenv GFSANA6HFC_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
 setenv GEFSANA6HFC_DIR       /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC
@@ -183,20 +190,17 @@ setenv gefsEnsMemberFormat   "%02d"
 setenv GFSANA6HFC_OMF_DIR    ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
 setenv GFSANA_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA
 setenv GFSSST_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSSST
+
+## MPAS-Model and MPAS-JEDI
 setenv GRAPHINFO_DIR         ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_graph
 setenv DA_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_DA_NML
 setenv FC_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_FC_NML
 
-setenv bumpLocDir        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_filesbump_${DACYPEPerMember}pe
-if (${DACYPEPerMember} == 128) then
-  setenv bumpLocPrefix         bumploc_2000_5
-else if (${DACYPEPerMember} == 36) then
-  setenv bumpLocPrefix         mpas_parametersbump_loc_2000_5
-else
-  echo "ERROR: bump localization not defined for DACYPEPerMember == ${DACYPEPerMember}"
-  exit 1
-endif
+## Background Error
+setenv bumpLocDir            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_bumploc_${DACYPEPerMember}pe
+setenv bumpLocPrefix         bumploc_2000_5
 
+## Observations
 setenv CONV_OBS_DIR          ${TOP_STATIC_DIR}/obs/conv
 #setenv CONV_OBS_DIR          ${TOP_STATIC_DIR}/obs/conv_liuz
 setenv AMSUA_OBS_DIR         /glade/p/mmm/parc/vahl/gsi_ioda/bias_corr
@@ -207,8 +211,10 @@ setenv ABI_OBS_DIR           ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPERO
 
 setenv AHI_OBS_DIR           /glade/work/wuyl/pandac/work/fix_input/AHI_OBS/ioda_cnst_bias
 
+## CRTM
 setenv CRTMTABLES            ${FIXED_INPUT}/crtm_bin/
 
+## VARBC
 setenv INITIAL_VARBC_TABLE   ${FIXED_INPUT}/satbias/satbias_crtm_in
 setenv VARBC_ANA             Data/satbias_crtm_ana
 
@@ -260,6 +266,7 @@ setenv HOFXEXE           mpas_hofx_nomodel.x
 
 set BUNDLEBUILD = _build=RelWithDebInfo
 set BUILDFEATURE = _feature--eda_sci
+#set BUILDFEATURE = _feature--eda_sci_OLD #(before ATLAS, OBS-MODEL Trait separation)
 
 setenv JEDIBUILD         mpas-bundle${CUSTOMPIO}_${COMPILER}${BUNDLEBUILD}${BUILDFEATURE}
 setenv JEDIBUILDDIR      ${TOP_BUILD_DIR}/build/${JEDIBUILD}

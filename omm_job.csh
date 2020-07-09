@@ -12,8 +12,8 @@
 #PBS -A ACCOUNTNUM
 #PBS -m ae
 #PBS -k eod
-#PBS -o jedi.log.job.out
-#PBS -e jedi.log.job.err
+#PBS -o log.job.out
+#PBS -e log.job.err
 
 date
 
@@ -43,23 +43,32 @@ rm jedi.log*
 # EVERYTHING BEYOND HERE MUST HAPPEN AFTER OMM STATE IS AVAILABLE
 #################################################################
 
-set bgFileFC = ${BG_STATE_DIR}/${BG_STATE_PREFIX}.$FILE_DATE.nc
-set bgFileDA = ./${RST_FILE_PREFIX}.$FILE_DATE.nc
+# Link/copy bg from other directory and ensure that MPASDiagVars are present
+# =========================================================================
+set bgFileOther = ${BG_STATE_DIR}/${BG_STATE_PREFIX}.$FILE_DATE.nc
+set bgFileDA = ./${BG_FILE_PREFIX}.$FILE_DATE.nc
 
-# Copy diagnostic variables used in DA to bg
-# ==========================================
-ncdump -h ${bgFileFC} | grep ${MPASDiagVars}
-if ( $status != 0 ) then
-  ln -fsv ${bgFileFC} ${bgFileDA}_orig
-  set diagFile = ${BG_STATE_DIR}/diag.$FILE_DATE.nc
+set copyDiags = 0
+foreach var ({$MPASDiagVars})
+  ncdump -h ${bgFileOther} | grep $var
+  if ( $status != 0 ) then
+    @ copyDiags++
+  endif 
+end
+if ( $copyDiags > 0 ) then
+  ln -fsv ${bgFileOther} ${bgFileDA}_orig
+  set diagFile = ${BG_STATE_DIR}/${DIAG_FILE_PREFIX}.$FILE_DATE.nc
   cp ${bgFileDA}_orig ${bgFileDA}
+
+  # Copy diagnostic variables used in DA to bg
+  # ==========================================
   ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFileDA}
 else
-  ln -fsv ${bgFileFC} ${bgFileDA}
+  ln -fsv ${bgFileOther} ${bgFileDA}
 endif
 
-# Ensure analysis file is not present
-# ===================================
+# Remove existing analysis file, if any
+# =====================================
 rm analysis.${FILE_DATE}.nc
 
 # ===================
@@ -79,10 +88,10 @@ mpiexec ./${OMMEXE} ./jedi.yaml ./jedi.log >& jedi.log.all
 # Check status:
 # =============================================
 #grep "Finished running the atmosphere core" log.atmosphere.0000.out
-grep 'Run: Finishing oops::.*<MPAS> with status = 0' jedi.log
+grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
     touch ./FAIL
-    echo "ERROR in $0 : mpas-jedi failed" >> ./FAIL
+    echo "ERROR in $0 : jedi application failed" >> ./FAIL
     exit 1
 endif
 

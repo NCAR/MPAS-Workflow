@@ -61,12 +61,12 @@ set PHALFYAML_DATE     = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 
 # ============================================================
 # ============================================================
-# Copy/link files: BUMP B matrix, namelist, yaml, bg, obs data 
+# Copy/link files: BUMP B matrix, namelist, yaml, bg, obs data
 # ============================================================
 # ============================================================
 
 # MPAS mesh graph info
-ln -sf $GRAPHINFO_DIR/x1.${MPAS_NCELLS}.graph.info* .  
+ln -sf $GRAPHINFO_DIR/x1.${MPAS_NCELLS}.graph.info* .
 
 # lookup tables
 ln -sf ${MPASBUILDDIR}/src/core_atmosphere/physics/physics_wrf/files/* .
@@ -169,8 +169,7 @@ if ( "$DA_TYPE" =~ *"eda"* ) then
   sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' orig_jedi0.yaml
   set member = 1
   while ( $member <= ${nEnsDAMembers} )
-    set memberDir = `printf "${oopsEnsMemberFormat}" $member`
-    mkdir -p ${OutDBDir}/${memberDir}
+    mkdir -p "${OutDBDir}/"`printf "${oopsEnsMemberFormat}" $member`
     @ member++
   end
 else

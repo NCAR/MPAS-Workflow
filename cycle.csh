@@ -33,11 +33,11 @@
 
     setenv C_DATE     ${S_DATE}  # current-cycle date (will change)
 
-    set VERIFYBG = 0
-    set VERIFYAN = 0
+    set VERIFYBG = 1
+    set VERIFYAN = 1
 
-    set ONLYFCVF = 0
-    set VERIFYFC = 0
+    set ONLYFCVF = 1
+    set VERIFYFC = 1
 
     set ONLYOMM = 0
 
@@ -60,7 +60,7 @@
           mkdir ${P_DATE}
           set member = 1
           while ( $member <= ${nGEFSMembers} )
-            set FCWorkDir = "./${P_DATE}"`printf "/${oopsEnsMemberFormat}" $member`
+            set FCWorkDir = "./${P_DATE}/"`printf "${oopsEnsMemberFormat}" $member`
             set FCINIT = "$GEFSANA6HFC_DIR/${P_DATE}/"`printf "${gefsEnsMemberFormat}" $member`
 
             ln -sf ${FCINIT} ${FCWorkDir}
@@ -116,9 +116,10 @@
             -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
             -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
             -e 's@EXPNAME@'${EXPNAME}'@' \
-            -e 's@BGDIR@'${FCCY_PCYCLE_DIR}'@' \
             -e 's@NNODE@'${DACYNodes}'@' \
             -e 's@NPE@'${DACYPEPerNode}'@g' \
+            -e 's@DATYPESUB@'${DATYPE}'@' \
+            -e 's@BGDIR@'${FCCY_PCYCLE_DIR}'@' \
             -e 's@BGSTATEPREFIX@'${BGPREFIX}'@' \
             da_job.csh > ${DASCRIPT}
         chmod 744 ${DASCRIPT}
@@ -146,34 +147,26 @@
       endif
 
 #------- verify an step ---------
-      setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${anDir}/${C_DATE}"
-      set VF0h_CYCLE_DIR=${VF_CYCLE_DIR}
-
       if ( ${VERIFYAN} > 0 && ${ONLYFCVF} == 0 ) then
+        set VFARGS = (${DAWorkDir}/${anDir} ${AN_FILE_PREFIX} ${anDir}/${C_DATE} ${C_DATE})
+
         set member = 1
         while ( $member <= ${nEnsDAMembers} )
           cd ${MAIN_SCRIPT_DIR}
-
           if ( "$DATYPE" =~ *"eda"* ) then
-            set ANMemberDir = `printf "/${anDir}/${oopsEnsMemberFormat}" $member`
+            set memberDir = `printf "/${oopsEnsMemberFormat}" $member`
           else
-            set ANMemberDir = ''
+            set memberDir = ''
           endif
-
-          set StateDir=${DAWorkDir}${ANMemberDir}
-
-          set FCBASE = ''
-          if ( "$DATYPE" =~ *"eda"* ) then
-            set FCBASE = '/'`basename "${StateDir}"`
-          endif
-          set MY_VF_DIR = ${VF_CYCLE_DIR}${FCBASE}
+          set StateDir = $VFARGS[1]${memberDir}
+          set WorkDir = ${VF_WORK_DIR}/$VFARGS[3]${memberDir}
 
           set OMMSCRIPT=${omm}_wrapper_OMA.csh
-          sed -e 's@VFSTATEDATE_in@'${C_DATE}'@' \
+          sed -e 's@VFSTATEDATE_in@'$VFARGS[4]'@' \
               -e 's@WINDOWHR_in@'${CY_WINDOW_HR}'@' \
               -e 's@VFSTATEDIR_in@'${StateDir}'@' \
-              -e 's@VFFILEPREFIX_in@'${AN_FILE_PREFIX}'@' \
-              -e 's@VFCYCLEDIR_in@'${MY_VF_DIR}'@' \
+              -e 's@VFFILEPREFIX_in@'$VFARGS[2]'@' \
+              -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
               -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
               -e 's@DIAGTYPE_in@oma@' \
               -e 's@BGTYPE_in@1@' \
@@ -186,22 +179,25 @@
       endif
 
       if ( ${C_DATE} == ${FIRSTCYCLE} && ${VERIFYBG} > 0 && ${ONLYFCVF} == 0 ) then
-        cd ${MAIN_SCRIPT_DIR}
+        set VFARGS = (${DAWorkDir}/${bgDir} ${BGPREFIX} ${bgDir}/${C_DATE} ${C_DATE})
 
-        setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${bgDir}/${C_DATE}"
+        set member = 1
+        while ( $member <= ${nEnsDAMembers} )
+          cd ${MAIN_SCRIPT_DIR}
+          if ( "$DATYPE" =~ *"eda"* ) then
+            set memberDir = `printf "/${oopsEnsMemberFormat}" $member`
+          else
+            set memberDir = ''
+          endif
+          set StateDir = $VFARGS[1]${memberDir}
+          set WorkDir = ${VF_WORK_DIR}/$VFARGS[3]${memberDir}
 
-        set BGMemberDir = ''
-        if ( "$DATYPE" =~ *"eda"* ) then
-          echo "WARNING: initial omm not enabled for EDA"
-        else
-          set StateDir=${DAWorkDir}${BGMemberDir}
-
-          set OMMSCRIPT=${omm}_wrapper_OMB0.csh
-          sed -e 's@VFSTATEDATE_in@'${C_DATE}'@' \
+          set OMMSCRIPT=${omm}_wrapper_OMB.csh
+          sed -e 's@VFSTATEDATE_in@'$VFARGS[4]'@' \
               -e 's@WINDOWHR_in@'${CY_WINDOW_HR}'@' \
               -e 's@VFSTATEDIR_in@'${StateDir}'@' \
-              -e 's@VFFILEPREFIX_in@'${BGPREFIX}'@' \
-              -e 's@VFCYCLEDIR_in@'${VF_CYCLE_DIR}'@' \
+              -e 's@VFFILEPREFIX_in@'$VFARGS[2]'@' \
+              -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
               -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
               -e 's@DIAGTYPE_in@omb@' \
               -e 's@BGTYPE_in@1@' \
@@ -209,14 +205,14 @@
               ${omm}_wrapper.csh > ${OMMSCRIPT}
           chmod 744 ${OMMSCRIPT}
           ./${OMMSCRIPT}
-        endif
+
+          @ member++
+        end
       endif
 
 #------- cycling forecast step ---------
-      set FCWorkDir=${FCCY_CCYCLE_DIR}
       set thisDependsOn=da
 
-      set FCWorkDirs=()
       if ( ${ONLYFCVF} == 0 ) then
         if ( ${ONLYOMM} == 0 ) then
           rm ${JOBCONTROL}/last_fc_job
@@ -224,17 +220,12 @@
           while ( $member <= ${nEnsDAMembers} )
             cd ${MAIN_SCRIPT_DIR}
             if ( "$DATYPE" =~ *"eda"* ) then
-              set FCMemberDir = `printf "/${oopsEnsMemberFormat}" $member`
-              set ANMemberDir = /${anDir}${FCMemberDir}
-
+              set memberDir = `printf "/${oopsEnsMemberFormat}" $member`
             else
-              set FCMemberDir = ''
-              set ANMemberDir = ''
+              set memberDir = ''
             endif
-
-            set WorkDir=${FCWorkDir}${FCMemberDir}
-            set ANWorkDir=${DAWorkDir}${ANMemberDir}
-            set FCWorkDirs=(${FCWorkDirs} ${WorkDir})
+            set StateDir = ${DAWorkDir}/${anDir}${memberDir}
+            set WorkDir = ${FCCY_CCYCLE_DIR}${memberDir}
 
             rm -rf ${WorkDir}
             mkdir -p ${WorkDir}
@@ -247,7 +238,7 @@
                 -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
                 -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
                 -e 's@EXPNAME@'${EXPNAME}'@' \
-                -e 's@ICDIR@'${ANWorkDir}'@' \
+                -e 's@ICDIR@'${StateDir}'@' \
                 -e 's@ICSTATEPREFIX@'${AN_FILE_PREFIX}'@' \
                 -e 's@FCLENGTHHR@'${CY_WINDOW_HR}'@' \
                 -e 's@OUTDTHR@'${CY_WINDOW_HR}'@' \
@@ -272,24 +263,27 @@
         endif
 
 #------- verify bg step ---------
-        setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${bgDir}/${N_DATE}"
-        set thisDependsOn=da
-
         if ( ${VERIFYBG} > 0 ) then
-          foreach WorkDir ($FCWorkDirs)
+          set VFARGS = (${FCCY_CCYCLE_DIR} ${FC_FILE_PREFIX} ${bgDir}/${N_DATE} ${N_DATE})
+          set thisDependsOn=da
+
+          set member = 1
+          while ( $member <= ${nEnsDAMembers} )
             cd ${MAIN_SCRIPT_DIR}
-            set FCBASE = ''
             if ( "$DATYPE" =~ *"eda"* ) then
-              set FCBASE = '/'`basename "${WorkDir}"`
+              set memberDir = `printf "/${oopsEnsMemberFormat}" $member`
+            else
+              set memberDir = ''
             endif
-            set MY_VF_DIR = ${VF_CYCLE_DIR}${FCBASE}
+            set StateDir = $VFARGS[1]${memberDir}
+            set WorkDir = ${VF_WORK_DIR}/$VFARGS[3]${memberDir}
 
             set OMMSCRIPT=${omm}_wrapper_OMB.csh
-            sed -e 's@VFSTATEDATE_in@'${N_DATE}'@' \
+            sed -e 's@VFSTATEDATE_in@'$VFARGS[4]'@' \
                 -e 's@WINDOWHR_in@'${CY_WINDOW_HR}'@' \
-                -e 's@VFSTATEDIR_in@'${WorkDir}'@' \
-                -e 's@VFFILEPREFIX_in@'${FC_FILE_PREFIX}'@' \
-                -e 's@VFCYCLEDIR_in@'${MY_VF_DIR}'@' \
+                -e 's@VFSTATEDIR_in@'${StateDir}'@' \
+                -e 's@VFFILEPREFIX_in@'$VFARGS[2]'@' \
+                -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
                 -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
                 -e 's@DIAGTYPE_in@omb@' \
                 -e 's@BGTYPE_in@1@' \
@@ -297,6 +291,8 @@
                 ${omm}_wrapper.csh > ${OMMSCRIPT}
             chmod 744 ${OMMSCRIPT}
             ./${OMMSCRIPT}
+
+            @ member++
           end
         endif
 
@@ -312,20 +308,23 @@
         if ( "$DATYPE" =~ *"eda"* ) then
           echo "WARNING: verifying forecast not enabled for EDA"
         else
+          set memberDir = ''
+
           set N_FCVFDATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_INTERVAL_HR}`
 
-          setenv FCVF_CYCLE_DIR "${FCVF_WORK_DIR}/${C_DATE}"
-          set FCVFWorkDir=${FCVF_CYCLE_DIR}
+          set FCVFWorkDir=${FCVF_WORK_DIR}/${C_DATE}${memberDir}
           set E_VFDATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_LENGTH_HR}`
 
           set thisDependsOn=da
 
           if ( ${ONLYOMM} == 0 ) then
 
-              cd ${MAIN_SCRIPT_DIR}
+            cd ${MAIN_SCRIPT_DIR}
             rm -rf ${FCVFWorkDir}
             mkdir -p ${FCVFWorkDir}
             cp setup.csh ${FCVFWorkDir}/
+
+            set StateDir = ${DAWorkDir}/${anDir}${memberDir}
 
             echo "\n${FCVF_LENGTH_HR}-hr verification FC from ${C_DATE} to ${E_VFDATE}"
             set fcvf_job=${FCVFWorkDir}/fcvf_job_${C_DATE}_${EXPNAME}.csh
@@ -334,7 +333,7 @@
                 -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
                 -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
                 -e 's@EXPNAME@'${EXPNAME}'@' \
-                -e 's@ICDIR@'${DAWorkDir}'@' \
+                -e 's@ICDIR@'${StateDir}'@' \
                 -e 's@ICSTATEPREFIX@'${AN_FILE_PREFIX}'@' \
                 -e 's@FCLENGTHHR@'${FCVF_LENGTH_HR}'@' \
                 -e 's@OUTDTHR@'${FCVF_DT_HR}'@' \
@@ -356,35 +355,44 @@
           endif
 
 #------- verify fc step ---------
-          set C_VFDATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_DT_HR}`
           set thisDependsOn=da
 
-          @ dt = ${FCVF_DT_HR}
-          setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${fcDir}/${C_DATE}"
+          setenv VF_CYCLE_DIR ${VF_WORK_DIR}/${fcDir}/${C_DATE}
           mkdir -p ${VF_CYCLE_DIR}
           cd ${VF_CYCLE_DIR}
 
-          ## 0 hr fc length
-          ln -sf ${VF0h_CYCLE_DIR} ./0hr
+          ## 0 hour fc length
+          ln -sf ${VF_WORK_DIR}/${anDir}/${C_DATE} ./0hr
 
           ## all other fc lengths
+          set C_VFDATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_DT_HR}`
+          @ dt = ${FCVF_DT_HR}
           while ( ${C_VFDATE} <= ${E_VFDATE} )
-            cd ${MAIN_SCRIPT_DIR}
-            setenv VF_DIR "${VF_CYCLE_DIR}/${dt}hr"
+            if ( ${C_DATE} > ${FIRSTCYCLE} && ${dt} == ${CY_WINDOW_HR}) then
+              ## CY_WINDOW_HR fc length
+              cd ${VF_CYCLE_DIR}
+              ln -sf ${VF_WORK_DIR}/${bgDir}/${P_DATE} ./${CY_WINDOW_HR}hr
+            else
+              cd ${MAIN_SCRIPT_DIR}
+              set VFARGS = (${FCVFWorkDir} ${FC_FILE_PREFIX} ${fcDir}/${C_DATE}/${dt}hr ${C_VFDATE})
 
-            set OMMSCRIPT=${omm}_wrapper_OMF_${dt}hr.csh
-            sed -e 's@VFSTATEDATE_in@'${C_VFDATE}'@' \
-                -e 's@WINDOWHR_in@'${VF_WINDOW_HR}'@' \
-                -e 's@VFSTATEDIR_in@'${FCVFWorkDir}'@' \
-                -e 's@VFFILEPREFIX_in@'${FC_FILE_PREFIX}'@' \
-                -e 's@VFCYCLEDIR_in@'${VF_DIR}'@' \
-                -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
-                -e 's@DIAGTYPE_in@omf@' \
-                -e 's@BGTYPE_in@1@' \
-                -e 's@DEPENDTYPE_in@fcvf@' \
-                ${omm}_wrapper.csh > ${OMMSCRIPT}
-            chmod 744 ${OMMSCRIPT}
-            ./${OMMSCRIPT}
+              set StateDir = $VFARGS[1]${memberDir}
+              set WorkDir = ${VF_WORK_DIR}/$VFARGS[3]${memberDir}
+
+              set OMMSCRIPT=${omm}_wrapper_OMF.csh
+              sed -e 's@VFSTATEDATE_in@'$VFARGS[4]'@' \
+                  -e 's@WINDOWHR_in@'${VF_WINDOW_HR}'@' \
+                  -e 's@VFSTATEDIR_in@'${StateDir}'@' \
+                  -e 's@VFFILEPREFIX_in@'$VFARGS[2]'@' \
+                  -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
+                  -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
+                  -e 's@DIAGTYPE_in@omf@' \
+                  -e 's@BGTYPE_in@1@' \
+                  -e 's@DEPENDTYPE_in@fcvf@' \
+                  ${omm}_wrapper.csh > ${OMMSCRIPT}
+              chmod 744 ${OMMSCRIPT}
+              ./${OMMSCRIPT}
+            endif
 
             set C_VFDATE = `$HOME/bin/advance_cymdh ${C_VFDATE} ${FCVF_DT_HR}`
             setenv C_VFDATE ${C_VFDATE}
