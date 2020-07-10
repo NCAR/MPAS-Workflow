@@ -39,10 +39,10 @@
 
     set OMMSCRIPT=${WORKDIR}/${omm}_job_${C_DATE}_${EXPNAME}.csh
     sed -e 's@OMMTYPE@'${DIAG_TYPE}'@' \
-        -e 's@CDATE@'${C_DATE}'@' \
         -e 's@ACCOUNTNUM@'${VFACCOUNTNUM}'@' \
         -e 's@QUEUENAME@'${VFQUEUENAME}'@' \
         -e 's@EXPNAME@'${EXPNAME}'@' \
+        -e 's@CDATE@'${C_DATE}'@' \
         -e 's@BGDIR@'${VF_STATE_DIR}'@' \
         -e 's@BGSTATEPREFIX@'${VF_FILE_PREFIX}'@' \
         ${omm}_job.csh > ${OMMSCRIPT}

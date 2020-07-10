@@ -30,7 +30,7 @@ set FILE_DATE     = ${yy}-${mm}-${dd}_${hh}.00.00
 set NAMELIST_DATE = ${yy}-${mm}-${dd}_${hh}:00:00
 set YAML_DATE     = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
-set PDATE = `${BIN_DIR}/advance_cymdh ${DATE} -${WINDOW_HR}`
+set PDATE = `$advanceCYMDH ${DATE} -${WINDOW_HR}`
 set yy = `echo ${PDATE} | cut -c 1-4`
 set mm = `echo ${PDATE} | cut -c 5-6`
 set dd = `echo ${PDATE} | cut -c 7-8`
@@ -50,7 +50,7 @@ endif
 
 #@ HALF_DT_HR_PLUS = ${HALF_DT_HR}
 @ HALF_DT_HR_MINUS = ${HALF_DT_HR} + ${ODD_DT}
-set PHALF_DATE = `${BIN_DIR}/advance_cymdh ${DATE} -${HALF_DT_HR_MINUS}`
+set PHALF_DATE = `$advanceCYMDH ${DATE} -${HALF_DT_HR_MINUS}`
 set yy = `echo ${PHALF_DATE} | cut -c 1-4`
 set mm = `echo ${PHALF_DATE} | cut -c 5-6`
 set dd = `echo ${PHALF_DATE} | cut -c 7-8`
@@ -88,7 +88,12 @@ rm newnamelist
 # OBSERVATIONS
 # =============
 mkdir -p ${InDBDir}
-mkdir -p ${OutDBDir}
+set member = 1
+while ( $member <= ${nEnsDAMembers} )
+  set memDir = `${memberDir} $DA_TYPE $member`
+  mkdir -p ${OutDBDir}${memDir}
+  @ member++
+end
 
 # Link conventional data
 # ======================
@@ -167,15 +172,12 @@ sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi0.yaml
 if ( "$DA_TYPE" =~ *"eda"* ) then
   sed -i 's@OOPSMemberDir@/%{member}%@g' orig_jedi0.yaml
   sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' orig_jedi0.yaml
-  set member = 1
-  while ( $member <= ${nEnsDAMembers} )
-    mkdir -p "${OutDBDir}/"`printf "${oopsEnsMemberFormat}" $member`
-    @ member++
-  end
 else
   sed -i 's@OOPSMemberDir@@g' orig_jedi0.yaml
 endif
 
+# TODO(JJG): revise these date replacements to loop over
+#            all relevant dates to this application (e.g., 4DEnVar?)
 ## revise previous date
 sed -i 's@2018-04-14_18.00.00@'${PFILE_DATE}'@g' orig_jedi0.yaml
 sed -i 's@2018041418@'${PDATE}'@g' orig_jedi0.yaml
@@ -200,13 +202,17 @@ rm fullline_sedf.yaml
 
 if ( "$DATYPE" =~ *"eda"* ) then
   set topEnsBDir = ${FCCY_WORK_DIR}
-  set ensBMemberFormat = "${oopsEnsMemberFormat}"
+  set ensBMemFmt = "${oopsMemFmt}"
+  set nEnsBMembers = ${nEnsDAMembers}
 else
-  set topEnsBDir = ${GEFSANA6HFC_DIR}
-  set ensBMemberFormat = "${gefsEnsMemberFormat}"
+  set topEnsBDir = ${fixedEnsembleB}
+  set ensBMemFmt = "${fixedEnsMemFmt}"
+  set nEnsBMembers = ${nFixedMembers}
 endif
 
 ## fill in ensemble B configs
+# TODO(JJG): how does this ensemble config generation need to be
+#            modified for 4DEnVar?
 sed -i 's@bumpLocDir@'${bumpLocDir}'@g' orig_jedi1.yaml
 sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' orig_jedi1.yaml
 
@@ -216,13 +222,13 @@ EOF
 
 set member = 1
 while ( $member <= ${nEnsBMembers} )
-set memberDir = `printf "${ensBMemberFormat}" $member`
+set memDir = `${memberDir} ens $member "${ensBMemFmt}"`
 set adate = adate
 if ( $member < ${nEnsBMembers} ) then
    set adate = ${adate}\\
 endif
 cat >>! EnsembleBMembers_sedf.yaml << EOF
-      - filename: ${topEnsBDir}/${PDATE}/${memberDir}/${FC_FILE_PREFIX}.${FILE_DATE}.nc\
+      - filename: ${topEnsBDir}/${PDATE}${memDir}/${FC_FILE_PREFIX}.${FILE_DATE}.nc\
         date: *${adate}
 EOF
 

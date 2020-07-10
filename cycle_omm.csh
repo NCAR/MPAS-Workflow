@@ -11,7 +11,7 @@
     source ./setup.csh
     rm -rf ${MAIN_SCRIPT_DIR}
     mkdir -p ${MAIN_SCRIPT_DIR}
-    cp -rpP ${ORIG_SCRIPT_DIR}/* ${MAIN_SCRIPT_DIR}/
+    cp -rpP ./* ${MAIN_SCRIPT_DIR}/
     cd ${MAIN_SCRIPT_DIR}
     echo "0" > ${JOBCONTROL}/last_omm_job
     echo "0" > ${JOBCONTROL}/last_null_job
@@ -21,15 +21,6 @@
     echo "OMM cycling for experiment: ${EXPNAME}"
     echo ""
     echo "=============================================================="
-#
-# 1, Initial and final times of the period:
-# =========================================
-    setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
-
-    setenv S_DATE     2018041500 # experiment start date
-    setenv E_DATE     2018041500 # experiment end   date
-#    setenv E_DATE     2018042200 # experiment end   date
-#    setenv E_DATE     2018051412 # experiment end   date
 
     setenv C_DATE     ${S_DATE}  # current-cycle date (will change)
 
@@ -59,7 +50,7 @@
 # 2, CYCLE:
 # =========
     while ( ${C_DATE} <= ${E_DATE} )
-      set P_DATE = `$HOME/bin/advance_cymdh ${C_DATE} -${CY_WINDOW_HR}`
+      set P_DATE = `$advanceCYMDH ${C_DATE} -${CY_WINDOW_HR}`
       setenv P_DATE ${P_DATE}
 
       echo ""
@@ -105,7 +96,7 @@
 
 #------- advance date ---------
 
-      set C_DATE = `$HOME/bin/advance_cymdh ${C_DATE} ${CY_WINDOW_HR}`
+      set C_DATE = `$advanceCYMDH ${C_DATE} ${CY_WINDOW_HR}`
       setenv C_DATE ${C_DATE}
 
     end

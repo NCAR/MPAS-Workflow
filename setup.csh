@@ -1,6 +1,17 @@
 #!/bin/csh -f
 
 #
+# Initial and final times of the period:
+# =========================================
+# First cycle date (used to initiate new experiments)
+setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
+
+setenv S_DATE     2018041500 # experiment start date
+#setenv E_DATE     2018051418 # experiment end date
+setenv E_DATE     2018041506 # experiment end date
+
+
+#
 # OMM/VARBC settings
 # =============================================
 ## omm
@@ -28,18 +39,11 @@ setenv OutDBDir dbOut
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
 setenv DATYPE 3denvar
-set nGEFSMembers = 20
+
+setenv nEnsDAMembers 1
 if ( "$DATYPE" =~ *"eda"* ) then
   setenv nEnsDAMembers 2
-  setenv nEnsBMembers ${nEnsDAMembers}
-else
-  setenv nEnsDAMembers 1
-  setenv nEnsBMembers ${nGEFSMembers}
 endif
-
-## directory string formatter for EDA members
-# must match oops/src/oops/util/string_utils::swap_name_member
-setenv oopsEnsMemberFormat "mem%03d"
 
 ## DA_OBS_LIST
 #OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
@@ -59,10 +63,15 @@ if ( "$DATYPE" == "${omm}" ) then
 else
   set EXPOBSLIST=($DA_OBS_LIST)
 endif
+
+set MPASHydroANVars = ""
 foreach obs ($EXPOBSLIST)
   setenv EXPNAME ${EXPNAME}_${obs}
   if ( "$obs" =~ *"abi"* ) then
     setenv EXPNAME ${EXPNAME}${ABISUPEROB}
+  endif
+  if ( "$obs" =~ "all"* ) then
+    set MPASHydroANVars = ",qc,qi,qr,qs,qg"
   endif
 end
 
@@ -140,7 +149,7 @@ setenv bgDir             bg
 
 setenv MPASDiagVars      cldfrac
 setenv MPASSeaVars       sst,xice
-setenv MPASANVars        theta,rho,u,qv,uReconstructZonal,uReconstructMeridional,qc,qi,qr,qs,qg
+setenv MPASANVars        theta,rho,u,qv,uReconstructZonal,uReconstructMeridional${MPASHydroANVars}
 
 @ DACYPEPerMember = ${DACYNodesPerMember} * ${DACYPEPerNode}
 setenv DACYPEPerMember ${DACYPEPerMember}
@@ -151,9 +160,7 @@ setenv DACYNodes ${DACYNodes}
 #
 # Run directories
 # =============================================
-setenv ORIG_SCRIPT_DIR  `pwd`
-setenv currdir          `basename "$ORIG_SCRIPT_DIR"`
-
+setenv PKGBASE          MPAS-Workflow
 setenv EXPUSER          ${USER}
 setenv TOP_EXP_DIR      /glade/scratch/${EXPUSER}/pandac
 
@@ -162,7 +169,7 @@ setenv JOBCONTROL       ${EXPDIR}/JOBCONTROL
 mkdir -p ${JOBCONTROL}
 
 ## Only valid from top-level script directory
-setenv MAIN_SCRIPT_DIR  ${EXPDIR}/${currdir}
+setenv MAIN_SCRIPT_DIR  ${EXPDIR}/${PKGBASE}
 setenv YAMLTOPDIR       ${MAIN_SCRIPT_DIR}/yamls
 setenv RESSPECIFICDIR   ${MAIN_SCRIPT_DIR}/${MPAS_RES}
 
@@ -170,6 +177,11 @@ setenv DA_WORK_DIR      ${EXPDIR}/DACY
 setenv FCCY_WORK_DIR    ${EXPDIR}/FCCY
 setenv FCVF_WORK_DIR    ${EXPDIR}/FCVF
 setenv VF_WORK_DIR      ${EXPDIR}/VF
+
+## directory string formatter for EDA members
+# argument to memberDir.py
+# must match oops/src/oops/util/string_utils::swap_name_member
+setenv oopsMemFmt "/mem{:03d}"
 
 
 #
@@ -179,14 +191,32 @@ setenv STATICUSER            guerrett
 setenv TOP_STATIC_DIR        /glade/work/${STATICUSER}/pandac
 setenv FIXED_INPUT           ${TOP_STATIC_DIR}/fixed_input
 
-## First cycle date (used to initiate new experiments)
-setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
-
-## GFS/GEFS
+## deterministic input
+#GFS
 setenv GFSANA6HFC_FIRSTCYCLE /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
 setenv GFSANA6HFC_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
-setenv GEFSANA6HFC_DIR       /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC
-setenv gefsEnsMemberFormat   "%02d"
+#generic names
+setenv deterministicICFirstCycle ${GFSANA6HFC_FIRSTCYCLE}
+
+## ensemble input
+#GEFS
+set GEFSANA6HFC_DIR = /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC
+set GEFSANA6HFC_FIRSTCYCLE = ${GEFSANA6HFC_DIR}/2018041418
+set gefsMemFmt = "/{:02d}"
+set nGEFSMembers = 20
+
+#generic names
+setenv fixedEnsembleB ${GEFSANA6HFC_DIR}
+setenv ensembleICFirstCycle ${GEFSANA6HFC_FIRSTCYCLE}
+setenv fixedEnsMemFmt "${gefsMemFmt}"
+setenv nFixedMembers ${nGEFSMembers}
+
+if ( $nEnsDAMembers > $nFixedMembers ) then
+  echo "WARNING: nEnsDAMembers must be <= nFixedMembers, changing ensemble size"
+  setenv nEnsDAMembers = ${nFixedMembers}
+endif
+
+
 setenv GFSANA6HFC_OMF_DIR    ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
 setenv GFSANA_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA
 setenv GFSSST_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSSST
@@ -249,6 +279,7 @@ setenv OOPS_DEBUG 0
 setenv GFORTRAN_CONVERT_UNIT 'native;big_endian:101-200'
 setenv F_UFMTENDIAN 'big:101-200'
 
+module load python/3.7.5
 
 #
 # build directory structures
@@ -273,8 +304,7 @@ setenv JEDIBUILDDIR      ${TOP_BUILD_DIR}/build/${JEDIBUILD}
 
 #MPAS-Model
 setenv FCEXE             atmosphere_model
-setenv MPASBUILD         MPAS_${COMPILER}_debug=0
-#setenv MPASBUILD         MPAS_${COMPILER}_debug=0${CUSTOMPIO}
+setenv MPASBUILD         MPAS_${COMPILER}_debug=0${CUSTOMPIO}
 setenv MPASBUILDDIR      ${TOP_BUILD_DIR}/libs/build/${MPASBUILD}
 
 #Verification tools
@@ -282,7 +312,14 @@ setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
 
 #Cycling tools
-setenv BIN_DIR           $HOME/bin
+#TODO(JJG): move time advancing to python using datetime objects
+setenv advanceCYMDH     /glade/u/home/guerrett/bin/advance_cymdh
+
+set pyDir = ${MAIN_SCRIPT_DIR}/tools
+set pyTools = (memberDir)
+foreach tool ($pyTools)
+  setenv ${tool} "python ${pyDir}/${tool}.py"
+end
 
 
 #

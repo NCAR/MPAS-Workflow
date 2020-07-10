@@ -36,16 +36,28 @@ set hh = `echo ${DATE} | cut -c 9-10`
 set FILE_DATE  = ${yy}-${mm}-${dd}_${hh}.00.00
 set NAMELIST_DATE  = ${yy}-${mm}-${dd}_${hh}:00:00
 
+## link initial forecast state:
+ln -sf ${IC_STATE_DIR}/${IC_STATE_PREFIX}.${FILE_DATE}.nc ./${IC_FILE_PREFIX}.${FILE_DATE}.nc
+
+## zero-length forecast case
+if ( ${FC_LENGTH_HR} == 0 ) then
+  ## copy IC file to forecast name
+  mv ./${IC_FILE_PREFIX}.${FILE_DATE}.nc ./${IC_FILE_PREFIX}.${FILE_DATE}.nc_tmp
+  cp ${IC_FILE_PREFIX}.${FILE_DATE}.nc_tmp ${FC_FILE_PREFIX}.${FILE_DATE}.nc
+
+  ## Add MPASDiagVars to the next cycle bg file
+  ncks -A -v ${MPASDiagVars} ${IC_STATE_DIR}/${DIAG_FILE_PREFIX}.${FILE_DATE}.nc ${FC_FILE_PREFIX}.${FILE_DATE}.nc
+  exit 0
+endif
+
+
 #
-# Copy/link files: 
+# Copy/link static files:
 # =============================================
 cp $FC_NML_DIR/* .
 ln -sf $GRAPHINFO_DIR/x1.${MPAS_NCELLS}.graph.info* .
 ln -sf ${TOP_BUILD_DIR}/libs/build/${MPASBUILD}/src/core_atmosphere/physics/physics_wrf/files/* .
 cp namelist.atmosphere orig_namelist.atmosphere
-
-## link initial forecast state:
-ln -sf ${IC_STATE_DIR}/${IC_STATE_PREFIX}.${FILE_DATE}.nc ./${IC_FILE_PREFIX}.${FILE_DATE}.nc
 
 #
 # Revise time info in namelist
@@ -58,7 +70,6 @@ cat >! newnamelist << EOF
 EOF
 sed -f newnamelist orig_namelist.atmosphere >! namelist.atmosphere
 rm newnamelist
-
 
 set STREAMS=streams.atmosphere
 sed -e 's@OUT_DT_STR@'${OUT_DT_STR}'@' \
@@ -75,13 +86,13 @@ mpiexec ./${FCEXE}
 # =============================================
 grep "Finished running the atmosphere core" log.atmosphere.0000.out
 if ( $status != 0 ) then
-    touch ./FAIL
-    echo "ERROR in $0 : MPAS-Model forecast failed" >> ./FAIL
-    exit 1
+  touch ./FAIL
+  echo "ERROR in $0 : MPAS-Model forecast failed" >> ./FAIL
+  exit 1
 endif
 
-set OUT_DATE = `${BIN_DIR}/advance_cymdh ${DATE} ${OUT_DT_HR}`
-set E_DATE = `${BIN_DIR}/advance_cymdh ${DATE} ${FC_LENGTH_HR}`
+set OUT_DATE = `$advanceCYMDH ${DATE} ${OUT_DT_HR}`
+set E_DATE = `$advanceCYMDH ${DATE} ${FC_LENGTH_HR}`
 while ( ${OUT_DATE} <= ${E_DATE} )
   #
   # Update/add fields to output for DA
@@ -97,19 +108,19 @@ while ( ${OUT_DATE} <= ${E_DATE} )
 
   ## Update MPAS sea surface variables:
   if ( ${UPDATESEA} ) then
-     #delete MPASSeaVars from previous GFS ANA
-     ncks -a -x -v ${MPASSeaVars} ${FC_FILE_PREFIX}.${OUT_FILE_DATE}.nc ${FC_FILE_PREFIX}.${OUT_FILE_DATE}_nosea.nc
+    #delete MPASSeaVars from previous GFS ANA
+    ncks -a -x -v ${MPASSeaVars} ${FC_FILE_PREFIX}.${OUT_FILE_DATE}.nc ${FC_FILE_PREFIX}.${OUT_FILE_DATE}_nosea.nc
 
-     #append MPASSeaVars from current GFS ANA
-     setenv SST_FILE ${GFSSST_DIR}/${OUT_DATE}/x1.${MPAS_NCELLS}.sfc_update.${OUT_FILE_DATE}.nc
-     ncks -A -v ${MPASSeaVars} ${SST_FILE} ${FC_FILE_PREFIX}.${OUT_FILE_DATE}_nosea.nc
-     mv  ${FC_FILE_PREFIX}.${OUT_FILE_DATE}_nosea.nc  ${FC_FILE_PREFIX}.${OUT_FILE_DATE}.nc
+    #append MPASSeaVars from current GFS ANA
+    setenv SST_FILE ${GFSSST_DIR}/${OUT_DATE}/x1.${MPAS_NCELLS}.sfc_update.${OUT_FILE_DATE}.nc
+    ncks -A -v ${MPASSeaVars} ${SST_FILE} ${FC_FILE_PREFIX}.${OUT_FILE_DATE}_nosea.nc
+    mv  ${FC_FILE_PREFIX}.${OUT_FILE_DATE}_nosea.nc  ${FC_FILE_PREFIX}.${OUT_FILE_DATE}.nc
   endif
 
   ## Add MPASDiagVars to the next cycle bg file
   ncks -A -v ${MPASDiagVars} ${DIAG_FILE_PREFIX}.${OUT_FILE_DATE}.nc ${FC_FILE_PREFIX}.${OUT_FILE_DATE}.nc
 
-  set OUT_DATE = `$HOME/bin/advance_cymdh ${OUT_DATE} ${OUT_DT_HR}`
+  set OUT_DATE = `$advanceCYMDH ${OUT_DATE} ${OUT_DT_HR}`
   setenv OUT_DATE ${OUT_DATE}
 end
 

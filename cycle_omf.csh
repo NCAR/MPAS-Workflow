@@ -11,7 +11,7 @@
     source ./setup.csh
     rm -rf ${MAIN_SCRIPT_DIR}
     mkdir -p ${MAIN_SCRIPT_DIR}
-    cp -rpP ${ORIG_SCRIPT_DIR}/* ${MAIN_SCRIPT_DIR}/
+    cp -rpP ./* ${MAIN_SCRIPT_DIR}/
     cd ${MAIN_SCRIPT_DIR}
     echo "0" > ${JOBCONTROL}/last_omm_job
     echo "0" > ${JOBCONTROL}/last_fcvf_job
@@ -22,15 +22,6 @@
     echo "OMF cycling for experiment: ${EXPNAME}"
     echo ""
     echo "=============================================================="
-#
-# 1, Initial and final times of the period:
-# =========================================
-    setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
-
-    setenv S_DATE     2018041600 # experiment start date
-#    setenv E_DATE     2018041512 # experiment end   date
-#    setenv E_DATE     2018042200 # experiment end   date
-    setenv E_DATE     2018051412 # experiment end   date
 
     setenv C_DATE     ${S_DATE}  # current-cycle date (will change)
 
@@ -65,7 +56,7 @@
 #------- extended forecast step --------- 
       setenv FC_CYCLE_DIR "${FCVF_WORK_DIR}/${IC_STATE}/${C_DATE}"
       set FCWorkDir=${FC_CYCLE_DIR}
-      set E_VFDATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_LENGTH_HR}`
+      set E_VFDATE = `$advanceCYMDH ${C_DATE} ${FCVF_LENGTH_HR}`
 
       echo ""
       echo "Working on cycle: ${C_DATE}"
@@ -127,7 +118,7 @@
       ./${OMMSCRIPT}
 
       ## all other fc lengths
-      set C_VFDATE = `$HOME/bin/advance_cymdh ${C_VFDATE} ${FCVF_DT_HR}`
+      set C_VFDATE = `$advanceCYMDH ${C_VFDATE} ${FCVF_DT_HR}`
       @ dt = $dt + $FCVF_DT_HR
 
       while ( ${C_VFDATE} <= ${E_VFDATE} )
@@ -148,7 +139,7 @@
         chmod 744 ${OMMSCRIPT}
         ./${OMMSCRIPT}
 
-        set C_VFDATE = `$HOME/bin/advance_cymdh ${C_VFDATE} ${FCVF_DT_HR}`
+        set C_VFDATE = `$advanceCYMDH ${C_VFDATE} ${FCVF_DT_HR}`
         @ dt = $dt + $FCVF_DT_HR
       end
 
@@ -157,7 +148,7 @@
       endif
 
 #------- advance date ---------
-      set C_DATE = `$HOME/bin/advance_cymdh ${C_DATE} ${FCVF_INTERVAL_HR}`
+      set C_DATE = `$advanceCYMDH ${C_DATE} ${FCVF_INTERVAL_HR}`
       setenv C_DATE ${C_DATE}
 
     end

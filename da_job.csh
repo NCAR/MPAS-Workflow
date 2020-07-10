@@ -38,18 +38,12 @@ rm jedi.log*
 # EVERYTHING BEYOND HERE MUST HAPPEN AFTER THE PREVIOUS FORECAST IS COMPLETED
 ##############################################################################
 
-set stateEnsMemberFormat = "/${oopsEnsMemberFormat}"
-
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  if ( "$DA_TYPE" =~ *"eda"* ) then
-    set memberDir = `printf "${stateEnsMemberFormat}" $member`
-  else
-    set memberDir = ""
-  endif
-  set other = ${BG_STATE_DIR}${memberDir}
-  set bg = ./${bgDir}${memberDir}
-  set an = ./${anDir}${memberDir}
+  set memDir = `${memberDir} $DA_TYPE $member`
+  set other = ${BG_STATE_DIR}${memDir}
+  set bg = ./${bgDir}${memDir}
+  set an = ./${anDir}${memDir}
   mkdir -p ${bg}
   mkdir -p ${an}
 
@@ -118,14 +112,10 @@ endif
 # =============================================
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  if ( "$DA_TYPE" =~ *"eda"* ) then
-    set memberDir = `printf "${stateEnsMemberFormat}" $member`
-  else
-    set memberDir = ''
-  endif
+  set memDir = `${memberDir} $DA_TYPE $member`
 
-  set bg = ./${bgDir}${memberDir}
-  set an = ./${anDir}${memberDir}
+  set bg = ./${bgDir}${memDir}
+  set an = ./${anDir}${memDir}
 
   ## copy background to analysis
   set bgFile = ${bg}/${BG_FILE_PREFIX}.$FILE_DATE.nc
