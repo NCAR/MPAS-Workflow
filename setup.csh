@@ -6,9 +6,9 @@
 # First cycle date (used to initiate new experiments)
 setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
 
-setenv S_DATE     2018041500 # experiment start date
+setenv S_DATE     2018041600 # experiment start date
 #setenv E_DATE     2018051418 # experiment end date
-setenv E_DATE     2018041506 # experiment end date
+setenv E_DATE     2018041600 # experiment end date
 
 
 #
@@ -38,7 +38,7 @@ setenv OutDBDir dbOut
 
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DATYPE 3denvar
+setenv DATYPE eda_3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DATYPE" =~ *"eda"* ) then
@@ -160,23 +160,24 @@ setenv DACYNodes ${DACYNodes}
 #
 # Run directories
 # =============================================
+## absolute experiment directory
 setenv PKGBASE          MPAS-Workflow
 setenv EXPUSER          ${USER}
 setenv TOP_EXP_DIR      /glade/scratch/${EXPUSER}/pandac
-
 setenv EXPDIR           ${TOP_EXP_DIR}/${EXPUSER}_${EXPNAME}_${MPAS_RES}
-setenv JOBCONTROL       ${EXPDIR}/JOBCONTROL
-mkdir -p ${JOBCONTROL}
 
-## Only valid from top-level script directory
-setenv MAIN_SCRIPT_DIR  ${EXPDIR}/${PKGBASE}
-setenv YAMLTOPDIR       ${MAIN_SCRIPT_DIR}/yamls
-setenv RESSPECIFICDIR   ${MAIN_SCRIPT_DIR}/${MPAS_RES}
-
+## immediate subdirectories
 setenv DA_WORK_DIR      ${EXPDIR}/DACY
 setenv FCCY_WORK_DIR    ${EXPDIR}/FCCY
 setenv FCVF_WORK_DIR    ${EXPDIR}/FCVF
 setenv VF_WORK_DIR      ${EXPDIR}/VF
+setenv JOBCONTROL       ${EXPDIR}/JOBCONTROL
+mkdir -p ${JOBCONTROL}
+
+## directories copied from PKGBASE
+setenv MAIN_SCRIPT_DIR  ${EXPDIR}/${PKGBASE}
+setenv CONFIGDIR        ${MAIN_SCRIPT_DIR}/config
+setenv RESSPECIFICDIR   ${MAIN_SCRIPT_DIR}/${MPAS_RES}
 
 ## directory string formatter for EDA members
 # argument to memberDir.py

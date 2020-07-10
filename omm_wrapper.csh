@@ -59,7 +59,7 @@
         -e 's@DAJOBSCRIPT@'${OMMSCRIPT}'@' \
         -e 's@DEPENDTYPE@'${DEPEND_TYPE}'@' \
         -e 's@VFJOBSCRIPT@'${VFSCRIPT}'@' \
-        -e 's@YAMLTOPDIR@'${YAMLTOPDIR}'@' \
+        -e 's@CONFIGDIR@'${CONFIGDIR}'@' \
         -e 's@RESSPECIFICDIR@'${RESSPECIFICDIR}'@' \
         da_wrapper.csh > ${da_wrapper}
     chmod 744 ${da_wrapper}

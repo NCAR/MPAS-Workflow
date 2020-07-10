@@ -26,15 +26,15 @@
     echo "0" > ${JOBCONTROL}/last_null_job
 
     ## workflow component selection
-    set VERIFYBG = 0
-    set VERIFYAN = 0
+    set VERIFYBG = 1
+    set VERIFYAN = 1
     set VERIFYFC = 0
 
     # TODO(JJG): replace ONLY* flags with forceIFExists
     #            or skipIFExists flags for individual
     #            DA/FC/OMM/VF stages
     set ONLYFCVF = 0
-    set ONLYOMM = 0
+    set ONLYOMM = 1
 
 #
 # 2, CYCLE:
@@ -140,7 +140,7 @@
             -e 's@DAJOBSCRIPT@'${JobScript}'@' \
             -e 's@DEPENDTYPE@'${thisDependsOn}'@' \
             -e 's@VFJOBSCRIPT@'${ChildScript}'@' \
-            -e 's@YAMLTOPDIR@'${YAMLTOPDIR}'@' \
+            -e 's@CONFIGDIR@'${CONFIGDIR}'@' \
             -e 's@RESSPECIFICDIR@'${RESSPECIFICDIR}'@' \
             ${myWrapper}.csh > ${WrapperScript}
 

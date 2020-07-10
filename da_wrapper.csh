@@ -15,7 +15,7 @@ setenv DIAG_TYPE         DIAGTYPE
 setenv DA_JOB_SCRIPT     DAJOBSCRIPT
 setenv thisDependsOn     DEPENDTYPE
 setenv VF_JOB_SCRIPT     VFJOBSCRIPT
-setenv YAML_TOP_DIR      YAMLTOPDIR
+setenv CONFIG_DIR        CONFIGDIR
 setenv RES_SPECIFIC_DIR  RESSPECIFICDIR
 
 
@@ -28,7 +28,7 @@ set dd = `echo ${DATE} | cut -c 7-8`
 set hh = `echo ${DATE} | cut -c 9-10`
 set FILE_DATE     = ${yy}-${mm}-${dd}_${hh}.00.00
 set NAMELIST_DATE = ${yy}-${mm}-${dd}_${hh}:00:00
-set YAML_DATE     = ${yy}-${mm}-${dd}T${hh}:00:00Z
+set CONF_DATE     = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
 set PDATE = `$advanceCYMDH ${DATE} -${WINDOW_HR}`
 set yy = `echo ${PDATE} | cut -c 1-4`
@@ -37,7 +37,7 @@ set dd = `echo ${PDATE} | cut -c 7-8`
 set hh = `echo ${PDATE} | cut -c 9-10`
 set PFILE_DATE     = ${yy}-${mm}-${dd}_${hh}.00.00
 set PNAMELIST_DATE = ${yy}-${mm}-${dd}_${hh}:00:00
-set PYAML_DATE     = ${yy}-${mm}-${dd}T${hh}:00:00Z
+set PCONF_DATE     = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
 #TODO: HALF STEP ONLY WORKS FOR INTEGER VALUES OF WINDOW_HR
 @ HALF_DT_HR = ${WINDOW_HR} / 2
@@ -57,7 +57,7 @@ set dd = `echo ${PHALF_DATE} | cut -c 7-8`
 set hh = `echo ${PHALF_DATE} | cut -c 9-10`
 #set PHALFFILE_DATE     = ${yy}-${mm}-${dd}_${hh}.${HALF_mi}.00
 #set PHALFNAMELIST_DATE = ${yy}-${mm}-${dd}_${hh}:${HALF_mi}:00
-set PHALFYAML_DATE     = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
+set PHALFCONF_DATE     = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 
 # ============================================================
 # ============================================================
@@ -124,7 +124,7 @@ ln -fsv ${VARBC_TABLE} ${InDBDir}/satbias_crtm_bak
 # =======================================
 
 ## Copy BASE MPAS-JEDI yaml
-cp -v ${YAML_TOP_DIR}/applicationBase/${DA_TYPE}.yaml orig_jedi0.yaml
+cp -v ${CONFIG_DIR}/applicationBase/${DA_TYPE}.yaml orig_jedi0.yaml
 
 set AnalyzeHydrometeors = 0
 
@@ -161,7 +161,7 @@ foreach obs ($OBS_LIST)
   endif
 
   if ($missing == 0) then
-    cat ${YAML_TOP_DIR}/${SUBYAML}.yaml >> orig_jedi0.yaml
+    cat ${CONFIG_DIR}/${SUBYAML}.yaml >> orig_jedi0.yaml
   endif
 end
 
@@ -188,12 +188,12 @@ endif
 ## revise previous date
 sed -i 's@2018-04-14_18.00.00@'${PFILE_DATE}'@g' orig_jedi0.yaml
 sed -i 's@2018041418@'${PDATE}'@g' orig_jedi0.yaml
-sed -i 's@2018-04-14T18:00:00Z@'${PYAML_DATE}'@g'  orig_jedi0.yaml
+sed -i 's@2018-04-14T18:00:00Z@'${PCONF_DATE}'@g'  orig_jedi0.yaml
 
 ## revise current date
 sed -i 's@2018-04-15_00.00.00@'${FILE_DATE}'@g' orig_jedi0.yaml
 sed -i 's@2018041500@'${DATE}'@g' orig_jedi0.yaml
-sed -i 's@2018-04-15T00:00:00Z@'${YAML_DATE}'@g' orig_jedi0.yaml
+sed -i 's@2018-04-15T00:00:00Z@'${CONF_DATE}'@g' orig_jedi0.yaml
 
 ## revise window length
 sed -i 's@PT6H@PT'${WINDOW_HR}'H@g' orig_jedi0.yaml
@@ -201,7 +201,7 @@ sed -i 's@PT6H@PT'${WINDOW_HR}'H@g' orig_jedi0.yaml
 ## revise full line configs
 cat >! fulllineSEDF.yaml << EOF
   /window_begin: /c\
-  window_begin: '${PHALFYAML_DATE}'
+  window_begin: '${PHALFCONF_DATE}'
 EOF
 
 sed -f fulllineSEDF.yaml orig_jedi0.yaml >! orig_jedi1.yaml
