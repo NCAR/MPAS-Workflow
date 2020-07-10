@@ -6,9 +6,9 @@
 # First cycle date (used to initiate new experiments)
 setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
 
-setenv S_DATE     2018041518 # experiment start date
+setenv S_DATE     2018041500 # experiment start date
 #setenv E_DATE     2018051418 # experiment end date
-setenv E_DATE     2018041800 # experiment end date
+setenv E_DATE     2018041506 # experiment end date
 
 
 #
@@ -38,7 +38,7 @@ setenv OutDBDir dbOut
 
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DATYPE eda_3denvar
+setenv DATYPE 3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DATYPE" =~ *"eda"* ) then
@@ -47,6 +47,10 @@ endif
 
 ## DA_OBS_LIST
 #OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
+#NOTE: the "clr" and "all" prefixes are used for clear-sky
+#      and all-sky scenes for radiances.  The "all" prefix
+#      signals to DA and OMM jobs to include hydrometeors among
+#      the analysis variables.
 #set DA_OBS_LIST = ()
 set DA_OBS_LIST = (conv clramsua)
 #set DA_OBS_LIST = (conv clramsua clrabi)
@@ -63,15 +67,10 @@ if ( "$DATYPE" == "${omm}" ) then
 else
   set EXPOBSLIST=($DA_OBS_LIST)
 endif
-
-set MPASHydroANVars = ""
 foreach obs ($EXPOBSLIST)
   setenv EXPNAME ${EXPNAME}_${obs}
   if ( "$obs" =~ *"abi"* ) then
     setenv EXPNAME ${EXPNAME}${ABISUPEROB}
-  endif
-  if ( "$obs" =~ "all"* ) then
-    set MPASHydroANVars = ",qc,qi,qr,qs,qg"
   endif
 end
 
@@ -149,7 +148,8 @@ setenv bgDir             bg
 
 setenv MPASDiagVars      cldfrac
 setenv MPASSeaVars       sst,xice
-setenv MPASANVars        theta,rho,u,qv,uReconstructZonal,uReconstructMeridional${MPASHydroANVars}
+set MPASHydroVars = (qc qi qr qs qg)
+setenv MPASStandardANVars theta,rho,u,qv,uReconstructZonal,uReconstructMeridional
 
 @ DACYPEPerMember = ${DACYNodesPerMember} * ${DACYPEPerNode}
 setenv DACYPEPerMember ${DACYPEPerMember}

@@ -107,6 +107,21 @@ if ( $status != 0 ) then
     exit 1
 endif
 
+## add hydrometeors to update variables (if needed)
+set UpdateHydrometeors = 0
+foreach obs ($DA_OBS_LIST)
+  ## determine if hydrometeor analysis variables are needed
+  if ( "$obs" =~ "all"* ) then
+    set UpdateHydrometeors = 1
+  endif
+end
+set MPASANVars = $MPASStandardANVars
+if ( $UpdateHydrometeors == 1 ) then
+  foreach hydro ($MPASHydroANVars)
+    set MPASANVars = $MPASANVars,$hydro
+  end
+endif
+
 #
 # Update analyzed variables:
 # =============================================

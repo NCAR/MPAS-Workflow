@@ -4,11 +4,7 @@ model:
   name: MPAS
   tstep: PT6H
   variables:
-  - temperature
-  - spechum
-  - uReconstructZonal
-  - uReconstructMeridional
-  - surface_pressure
+ModelVariables
 minimizer:
   algorithm: DRIPCG
 output:
@@ -24,16 +20,24 @@ variational:
       trajectory:
         tstep: PT0H
       variables: &incvars
-      - temperature
-      - spechum
-      - uReconstructZonal
-      - uReconstructMeridional
-      - surface_pressure
+AnalysisVariables
     ninner: '60'
     gradient_norm_reduction: 1e-10
     test: 'on'
     diagnostics:
       departures: depbg
+#  - resolution:
+#      gridfname: "./restart.2018-04-15_00.00.00.nc"
+#    linearmodel:
+#      varchange: Identity
+#      version: MPASIdTLM
+#      tstep: PT0H
+#      trajectory:
+#        tstep: PT0H
+#      variables: *incvars
+#    ninner: '60'
+#    gradient_norm_reduction: 1e-10
+#    test: 'on'
 final:
   diagnostics:
     departures: depan

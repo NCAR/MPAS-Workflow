@@ -126,6 +126,8 @@ ln -fsv ${VARBC_TABLE} ${InDBDir}/satbias_crtm_bak
 ## Copy BASE MPAS-JEDI yaml
 cp -v ${YAML_TOP_DIR}/applicationBase/${DA_TYPE}.yaml orig_jedi0.yaml
 
+set AnalyzeHydrometeors = 0
+
 ## Add selected observations (see setup.csh)
 foreach obs ($OBS_LIST)
   echo "Preparing YAML for ${obs} observations"
@@ -151,6 +153,11 @@ foreach obs ($OBS_LIST)
     if ( ${DATE} == 2018043006 ) then
       set SUBYAML=${SUBYAML}-2018043006
     endif
+  endif
+
+  ## determine if hydrometeor variables will be analyzed
+  if ( "$obs" =~ "all"* ) then
+    set AnalyzeHydrometeors = 1
   endif
 
   if ($missing == 0) then
@@ -192,13 +199,13 @@ sed -i 's@2018-04-15T00:00:00Z@'${YAML_DATE}'@g' orig_jedi0.yaml
 sed -i 's@PT6H@PT'${WINDOW_HR}'H@g' orig_jedi0.yaml
 
 ## revise full line configs
-cat >! fullline_sedf.yaml << EOF
+cat >! fulllineSEDF.yaml << EOF
   /window_begin: /c\
   window_begin: '${PHALFYAML_DATE}'
 EOF
 
-sed -f fullline_sedf.yaml orig_jedi0.yaml >! orig_jedi1.yaml
-rm fullline_sedf.yaml
+sed -f fulllineSEDF.yaml orig_jedi0.yaml >! orig_jedi1.yaml
+rm fulllineSEDF.yaml
 
 if ( "$DATYPE" =~ *"eda"* ) then
   set topEnsBDir = ${FCCY_WORK_DIR}
@@ -210,32 +217,80 @@ else
   set nEnsBMembers = ${nFixedMembers}
 endif
 
-## fill in ensemble B configs
+## fill in ensemble B config
 # TODO(JJG): how does this ensemble config generation need to be
 #            modified for 4DEnVar?
 sed -i 's@bumpLocDir@'${bumpLocDir}'@g' orig_jedi1.yaml
 sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' orig_jedi1.yaml
 
-cat >! EnsembleBMembers_sedf.yaml << EOF
-/EnsembleBMembers/c\
+set ensbsed = EnsembleBMembers
+cat >! ${ensbsed}SEDF.yaml << EOF
+/${ensbsed}/c\
 EOF
 
 set member = 1
 while ( $member <= ${nEnsBMembers} )
-set memDir = `${memberDir} ens $member "${ensBMemFmt}"`
-set adate = adate
-if ( $member < ${nEnsBMembers} ) then
-   set adate = ${adate}\\
-endif
-cat >>! EnsembleBMembers_sedf.yaml << EOF
+  set memDir = `${memberDir} ens $member "${ensBMemFmt}"`
+  set adate = adate
+  if ( $member < ${nEnsBMembers} ) then
+     set adate = ${adate}\\
+  endif
+cat >>! ${ensbsed}SEDF.yaml << EOF
       - filename: ${topEnsBDir}/${PDATE}${memDir}/${FC_FILE_PREFIX}.${FILE_DATE}.nc\
         date: *${adate}
 EOF
 
   @ member++
 end
-sed -f EnsembleBMembers_sedf.yaml orig_jedi1.yaml >! jedi.yaml
-rm EnsembleBMembers_sedf.yaml
+sed -f ${ensbsed}SEDF.yaml orig_jedi1.yaml >! orig_jedi2.yaml
+rm ${ensbsed}SEDF.yaml
+
+
+## fill in model and analysis variable configs
+set JEDIANVars = ( \
+  temperature \
+  spechum \
+  uReconstructZonal \
+  uReconstructMeridional \
+  surface_pressure \
+)
+
+if ( $AnalyzeHydrometeors == 1 ) then
+  foreach hydro ($MPASHydroVars)
+    set JEDIANVars = ($JEDIANVars index_$hydro)
+  end
+endif
+
+set analysissed = AnalysisVariables
+set modelsed = ModelVariables
+cat >! ${analysissed}SEDF.yaml << EOF
+/${analysissed}/c\
+EOF
+
+cat >! ${modelsed}SEDF.yaml << EOF
+/${modelsed}/c\
+EOF
+
+set ivar = 1
+while ( $ivar <= ${#JEDIANVars} )
+  set var = $JEDIANVars[$ivar]
+  if ( $ivar < ${#JEDIANVars} ) then
+     set var = ${var}\\
+  endif
+cat >>! ${analysissed}SEDF.yaml << EOF
+      - $var
+EOF
+
+cat >>! ${modelsed}SEDF.yaml << EOF
+  - $var
+EOF
+
+  @ ivar++
+end
+sed -f ${analysissed}SEDF.yaml orig_jedi2.yaml >! orig_jedi3.yaml
+rm ${analysissed}SEDF.yaml
+sed -f ${modelsed}SEDF.yaml orig_jedi3.yaml >! jedi.yaml
+rm ${modelsed}SEDF.yaml
 
 
 # Submit DA job script
