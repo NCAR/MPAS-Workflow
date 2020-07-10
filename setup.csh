@@ -6,9 +6,9 @@
 # First cycle date (used to initiate new experiments)
 setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
 
-setenv S_DATE     2018041500 # experiment start date
+setenv S_DATE     2018041518 # experiment start date
 #setenv E_DATE     2018051418 # experiment end date
-setenv E_DATE     2018041506 # experiment end date
+setenv E_DATE     2018041800 # experiment end date
 
 
 #
@@ -38,11 +38,11 @@ setenv OutDBDir dbOut
 
 ## DATYPE
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DATYPE 3denvar
+setenv DATYPE eda_3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DATYPE" =~ *"eda"* ) then
-  setenv nEnsDAMembers 2
+  setenv nEnsDAMembers 20
 endif
 
 ## DA_OBS_LIST

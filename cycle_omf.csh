@@ -111,7 +111,6 @@
           -e 's@VFCYCLEDIR_in@'${VF_DIR}'@' \
           -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
           -e 's@DIAGTYPE_in@omf@' \
-          -e 's@BGTYPE_in@1@' \
           -e 's@DEPENDTYPE_in@fcvf@' \
           ${omm}_wrapper.csh > ${OMMSCRIPT}
       chmod 744 ${OMMSCRIPT}
@@ -133,7 +132,6 @@
             -e 's@VFCYCLEDIR_in@'${VF_DIR}'@' \
             -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
             -e 's@DIAGTYPE_in@omf@' \
-            -e 's@BGTYPE_in@1@' \
             -e 's@DEPENDTYPE_in@fcvf@' \
             ${omm}_wrapper.csh > ${OMMSCRIPT}
         chmod 744 ${OMMSCRIPT}

@@ -172,7 +172,6 @@
               -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
               -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
               -e 's@DIAGTYPE_in@oma@' \
-              -e 's@BGTYPE_in@1@' \
               -e 's@DEPENDTYPE_in@'${thisDependsOn}'@' \
               ${myWrapper}.csh > ${WrapperScript}
           chmod 744 ${WrapperScript}
@@ -204,7 +203,6 @@
               -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
               -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
               -e 's@DIAGTYPE_in@omb@' \
-              -e 's@BGTYPE_in@1@' \
               -e 's@DEPENDTYPE_in@'${thisDependsOn}'@' \
               ${myWrapper}.csh > ${WrapperScript}
           chmod 744 ${WrapperScript}
@@ -282,7 +280,6 @@
                 -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
                 -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
                 -e 's@DIAGTYPE_in@omb@' \
-                -e 's@BGTYPE_in@1@' \
                 -e 's@DEPENDTYPE_in@'${thisDependsOn}'@' \
                 ${myWrapper}.csh > ${WrapperScript}
             chmod 744 ${WrapperScript}
@@ -379,7 +376,6 @@
                   -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
                   -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
                   -e 's@DIAGTYPE_in@omf@' \
-                  -e 's@BGTYPE_in@1@' \
                   -e 's@DEPENDTYPE_in@'${thisDependsOn}'@' \
                   ${myWrapper}.csh > ${WrapperScript}
               chmod 744 ${WrapperScript}
