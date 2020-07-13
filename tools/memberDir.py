@@ -15,11 +15,11 @@ def memberStr():
   ap.add_argument('fmt', default='/mem{:03d}', type=str, nargs = '?',
                   help='Member string format')
 
-  MyArgs = ap.parse_args()
+  args = ap.parse_args()
   out = ''
-  if ('eda' in MyArgs.datype or 
-      MyArgs.datype in ['ens','ensemble']):
-    out += str(MyArgs.fmt).format(MyArgs.member)
+  if ('eda' in args.datype or
+      args.datype in ['ens','ensemble']):
+    out += str(args.fmt).format(args.member)
 
   print(out)
 
