@@ -3,7 +3,7 @@
         ObsDataIn:
           obsfile: InDBDir/amsua_n19_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_n19.nc4
+          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_n19.nc4
         simulate:
           variables: [brightness_temperature]
           channels: 5-7,9
@@ -23,7 +23,7 @@
 #        horizontal_mesh: RADTHINDISTANCE #km
 #        apply_at_iterations: 0
 #      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n19.nc4
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n19.nc4
       ObsOperator: &crtmdry
         name: CRTM
         Absorbers: [H2O,O3]
@@ -38,7 +38,7 @@
         ObsDataIn:
           obsfile: InDBDir/amsua_n15_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_n15.nc4
+          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_n15.nc4
         simulate:
           variables: [brightness_temperature]
           channels: 5-9
@@ -58,7 +58,7 @@
 #        horizontal_mesh: RADTHINDISTANCE #km
 #        apply_at_iterations: 0
 #      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n15.nc4
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n15.nc4
       ObsOperator:
         <<: *crtmdry
         ObsOptions:
@@ -69,7 +69,7 @@
         ObsDataIn:
           obsfile: InDBDir/amsua_n18_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_n18.nc4
+          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_n18.nc4
         simulate:
           variables: [brightness_temperature]
           channels: 5-9
@@ -89,7 +89,7 @@
 #        horizontal_mesh: RADTHINDISTANCE #km
 #        apply_at_iterations: 0
 #      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_n18.nc4
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n18.nc4
       ObsOperator:
         <<: *crtmdry
         ObsOptions:
@@ -100,7 +100,7 @@
         ObsDataIn:
           obsfile: InDBDir/amsua_metop-a_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_metop-a.nc4
+          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_metop-a.nc4
         simulate:
           variables: [brightness_temperature]
           channels: 5,6,9
@@ -120,7 +120,7 @@
 #        horizontal_mesh: RADTHINDISTANCE #km
 #        apply_at_iterations: 0
 #      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_metop-a.nc4
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-a.nc4
       ObsOperator:
         <<: *crtmdry
         ObsOptions:
@@ -131,7 +131,7 @@
 #        ObsDataIn:
 #          obsfile: InDBDir/amsua_metop-b_obs_2018041500.nc4
 #        ObsDataOut:
-#          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_metop-b.nc4
+#          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_metop-b.nc4
 #        simulate:
 #          variables: [brightness_temperature]
 #          channels: 8,9
@@ -151,7 +151,7 @@
 #        horizontal_mesh: RADTHINDISTANCE #km
 #        apply_at_iterations: 0
 #      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_metop-b.nc4
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-b.nc4
 #      ObsOperator:
 #        <<: *crtmdry
 #        ObsOptions:
@@ -162,7 +162,7 @@
         ObsDataIn:
           obsfile: InDBDir/amsua_aqua_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DATYPE_amsua_aqua.nc4
+          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_aqua.nc4
         simulate:
           variables: [brightness_temperature]
           channels: 8,9
@@ -182,7 +182,7 @@
 #        horizontal_mesh: RADTHINDISTANCE #km
 #        apply_at_iterations: 0
 #      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DATYPE_amsua_aqua.nc4
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_aqua.nc4
       ObsOperator:
         <<: *crtmdry
         ObsOptions:

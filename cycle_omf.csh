@@ -19,11 +19,11 @@
 
     echo "=============================================================="
     echo ""
-    echo "OMF cycling for experiment: ${EXPNAME}"
+    echo "OMF cycling for experiment: ${ExpName}"
     echo ""
     echo "=============================================================="
 
-    setenv C_DATE     ${S_DATE}  # current-cycle date (will change)
+    setenv cycle_Date ${ExpStartDate}  # initialize current cycle date
 
     set ONLYOMM = 1
 
@@ -36,30 +36,30 @@
 #    ## Junmei Ban's baseline analysis (conv_clramsua) - no cloud fraction/radius
 #    set IC_STATE=ANA_conv_clramsua_JB
 #    set IC_DIR=/glade/scratch/jban/pandac/test35_amsua/FC1
-#    set IC_STATE_PREFIX=${RST_FILE_PREFIX}
+#    set IC_STATE_PREFIX=${RSTFilePrefix}
 
     ## Yali Wu's baseline analysis (conv_clramsua)
     set IC_STATE=ANA_conv_clramsua_YW
 #    set IC_DIR=/glade/scratch/wuyl/test2/pandac/test_120km/DA/noAHI
     set IC_DIR=/glade/scratch/wuyl/test2/pandac/test_120km/FC_cyc/noAHI
 
-    set IC_STATE_PREFIX=${RST_FILE_PREFIX}
+    set IC_STATE_PREFIX=${RSTFilePrefix}
 
     set VARBC_TABLE=${INITIAL_VARBC_TABLE}
 
 #
 # 2, CYCLE:
 # =========
-    while ( ${C_DATE} <= ${E_DATE} )
-      setenv IC_CYCLE_DIR "${IC_DIR}/${C_DATE}"
+    while ( ${cycle_Date} <= ${ExpEndDate} )
+      setenv IC_CYCLE_DIR "${IC_DIR}/${cycle_Date}"
 
 #------- extended forecast step --------- 
-      setenv FC_CYCLE_DIR "${FCVF_WORK_DIR}/${IC_STATE}/${C_DATE}"
+      setenv FC_CYCLE_DIR "${FCVF_WORK_DIR}/${IC_STATE}/${cycle_Date}"
       set FCWorkDir=${FC_CYCLE_DIR}
-      set E_VFDATE = `$advanceCYMDH ${C_DATE} ${FCVF_LENGTH_HR}`
+      set finalFCVFDate = `$advanceCYMDH ${cycle_Date} ${FCVFWindowHR}`
 
       echo ""
-      echo "Working on cycle: ${C_DATE}"
+      echo "Working on cycle: ${cycle_Date}"
 
       if ( ${ONLYOMM} == 0 ) then
 
@@ -67,20 +67,20 @@
         mkdir -p ${FCWorkDir}
 
         cd ${MAIN_SCRIPT_DIR}
-        cp setup.csh ${FCWorkDir}/
+        ln -sf setup.csh ${FCWorkDir}/
 
         echo ""
-        echo "${FCVF_LENGTH_HR}-hr verification FC from ${C_DATE} to ${E_VFDATE}"
-        set fcvf_job=${FCWorkDir}/fcvf_job_${C_DATE}_${EXPNAME}.csh
-        sed -e 's@CDATE@'${C_DATE}'@' \
+        echo "${FCVFWindowHR}-hr verification FC from ${cycle_Date} to ${finalFCVFDate}"
+        set fcvf_job=${FCWorkDir}/fcvf_job_${cycle_Date}_${ExpName}.csh
+        sed -e 's@icDateArg@'${cycle_Date}'@' \
             -e 's@JobMinutes@'${FCVFJobMinutes}'@' \
-            -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
-            -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
-            -e 's@EXPNAME@'${EXPNAME}'@' \
-            -e 's@ICDIR@'${IC_CYCLE_DIR}'@' \
-            -e 's@ICSTATEPREFIX@'${IC_STATE_PREFIX}'@' \
-            -e 's@FCLENGTHHR@'${FCVF_LENGTH_HR}'@' \
-            -e 's@OUTDTHR@'${FCVF_DT_HR}'@' \
+            -e 's@AccountNumArg@'${CYACCOUNTNUM}'@' \
+            -e 's@QueueNameArg@'${CYQUEUENAME}'@' \
+            -e 's@ExpNameArg@'${ExpName}'@' \
+            -e 's@icStateDirArg@'${IC_CYCLE_DIR}'@' \
+            -e 's@icStatePrefixArg@'${IC_STATE_PREFIX}'@' \
+            -e 's@fcLengthHRArg@'${FCVFWindowHR}'@' \
+            -e 's@fcIntervalHRArg@'${FCVF_DT_HR}'@' \
             fc_job.csh > ${fcvf_job}
         chmod 744 ${fcvf_job}
 
@@ -93,51 +93,51 @@
       endif
 
 #------- verify fc step ---------
-      setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${fcDir}-${IC_STATE}/${C_DATE}"
+      setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${fcDir}-${IC_STATE}/${cycle_Date}"
       mkdir -p ${VF_CYCLE_DIR}
       cd ${VF_CYCLE_DIR}
 
       ## 0 hr fc length
-      set C_VFDATE = ${C_DATE}
+      set thisVFDate = ${cycle_Date}
       @ dt = 0
       cd ${MAIN_SCRIPT_DIR}
       set VF_DIR = "${VF_CYCLE_DIR}/${dt}hr"
 
       set OMMSCRIPT=${omm}_wrapper_OMF_${dt}hr.csh
-      sed -e 's@VFSTATEDATE_in@'${C_VFDATE}'@' \
-          -e 's@WINDOWHR_in@'${VF_WINDOW_HR}'@' \
-          -e 's@VFSTATEDIR_in@'${FCWorkDir}'@' \
-          -e 's@VFFILEPREFIX_in@'${IC_STATE_PREFIX}'@' \
-          -e 's@VFCYCLEDIR_in@'${VF_DIR}'@' \
-          -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
-          -e 's@DIAGTYPE_in@omf@' \
-          -e 's@DEPENDTYPE_in@fcvf@' \
+      sed -e 's@DateArg@'${thisVFDate}'@' \
+          -e 's@DAWindowHRArg@'${DAVFWindowHR}'@' \
+          -e 's@StateDirArg@'${FCWorkDir}'@' \
+          -e 's@StatePrefixArg@'${IC_STATE_PREFIX}'@' \
+          -e 's@WorkDirArg@'${VF_DIR}'@' \
+          -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
+          -e 's@CYOMMTypeArg@omf@' \
+          -e 's@DependTypeArg@fcvf@' \
           ${omm}_wrapper.csh > ${OMMSCRIPT}
       chmod 744 ${OMMSCRIPT}
       ./${OMMSCRIPT}
 
       ## all other fc lengths
-      set C_VFDATE = `$advanceCYMDH ${C_VFDATE} ${FCVF_DT_HR}`
+      set thisVFDate = `$advanceCYMDH ${thisVFDate} ${FCVF_DT_HR}`
       @ dt = $dt + $FCVF_DT_HR
 
-      while ( ${C_VFDATE} <= ${E_VFDATE} )
+      while ( ${thisVFDate} <= ${finalFCVFDate} )
         cd ${MAIN_SCRIPT_DIR}
         set VF_DIR = "${VF_CYCLE_DIR}/${dt}hr"
 
         set OMMSCRIPT=${omm}_wrapper_OMF_${dt}hr.csh
-        sed -e 's@VFSTATEDATE_in@'${C_VFDATE}'@' \
-            -e 's@WINDOWHR_in@'${VF_WINDOW_HR}'@' \
-            -e 's@VFSTATEDIR_in@'${FCWorkDir}'@' \
-            -e 's@VFFILEPREFIX_in@'${FC_FILE_PREFIX}'@' \
-            -e 's@VFCYCLEDIR_in@'${VF_DIR}'@' \
-            -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
-            -e 's@DIAGTYPE_in@omf@' \
-            -e 's@DEPENDTYPE_in@fcvf@' \
+        sed -e 's@DateArg@'${thisVFDate}'@' \
+            -e 's@DAWindowHRArg@'${DAVFWindowHR}'@' \
+            -e 's@StateDirArg@'${FCWorkDir}'@' \
+            -e 's@StatePrefixArg@'${FCFilePrefix}'@' \
+            -e 's@WorkDirArg@'${VF_DIR}'@' \
+            -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
+            -e 's@CYOMMTypeArg@omf@' \
+            -e 's@DependTypeArg@fcvf@' \
             ${omm}_wrapper.csh > ${OMMSCRIPT}
         chmod 744 ${OMMSCRIPT}
         ./${OMMSCRIPT}
 
-        set C_VFDATE = `$advanceCYMDH ${C_VFDATE} ${FCVF_DT_HR}`
+        set thisVFDate = `$advanceCYMDH ${thisVFDate} ${FCVF_DT_HR}`
         @ dt = $dt + $FCVF_DT_HR
       end
 
@@ -146,8 +146,8 @@
       endif
 
 #------- advance date ---------
-      set C_DATE = `$advanceCYMDH ${C_DATE} ${FCVF_INTERVAL_HR}`
-      setenv C_DATE ${C_DATE}
+      set cycle_Date = `$advanceCYMDH ${cycle_Date} ${FCVF_INTERVAL_HR}`
+      setenv cycle_Date ${cycle_Date}
 
     end
     exit 0

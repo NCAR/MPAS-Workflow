@@ -4,11 +4,14 @@
 # Initial and final times of the period:
 # =========================================
 # First cycle date (used to initiate new experiments)
-setenv FIRSTCYCLE 2018041500 # experiment first cycle date (GFS ANALYSIS)
+setenv FIRSTCYCLE 2018041500 # experiment first cycle date
 
-setenv S_DATE     2018041600 # experiment start date
-#setenv E_DATE     2018051418 # experiment end date
-setenv E_DATE     2018041600 # experiment end date
+# Experiment start and end date
+# NOTE: can be set beyond FIRSTCYCLE in order to continue
+# from previously generated workflow output
+setenv ExpStartDate 2018041500 
+#setenv ExpEndDate 2018051418
+setenv ExpEndDate 2018041500
 
 
 #
@@ -20,12 +23,12 @@ setenv E_DATE     2018041600 # experiment end date
 # OPTIONS: omm, [TODO: varbc]
 setenv omm  omm
 
-## OMM_OBS_LIST
+## OMMObsList
 # OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
-set OMM_OBS_LIST = (conv clramsua cldamsua clrabi allabi clrahi allahi)
-#set OMM_OBS_LIST = (clramsua clrabi)
-#set OMM_OBS_LIST = (allabi_SCI)
-#set OMM_OBS_LIST = (allabi_constObsError)
+set OMMObsList = (conv clramsua cldamsua clrabi allabi clrahi allahi)
+#set OMMObsList = (clramsua clrabi)
+#set OMMObsList = (allabi_SCI)
+#set OMMObsList = (allabi_constObsError)
 
 
 #
@@ -36,47 +39,47 @@ set OMM_OBS_LIST = (conv clramsua cldamsua clrabi allabi clrahi allahi)
 setenv InDBDir  dbIn
 setenv OutDBDir dbOut
 
-## DATYPE
+## DAType
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DATYPE eda_3denvar
+setenv DAType 3denvar
 
 setenv nEnsDAMembers 1
-if ( "$DATYPE" =~ *"eda"* ) then
+if ( "$DAType" =~ *"eda"* ) then
   setenv nEnsDAMembers 20
 endif
 
-## DA_OBS_LIST
+## DAObsList
 #OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
 #NOTE: the "clr" and "all" prefixes are used for clear-sky
 #      and all-sky scenes for radiances.  The "all" prefix
 #      signals to DA and OMM jobs to include hydrometeors among
 #      the analysis variables.
-#set DA_OBS_LIST = ()
-set DA_OBS_LIST = (conv clramsua)
-#set DA_OBS_LIST = (conv clramsua clrabi)
-#set DA_OBS_LIST = (conv clramsua allabi)
+#set DAObsList = ()
+set DAObsList = (conv clramsua)
+#set DAObsList = (conv clramsua clrabi)
+#set DAObsList = (conv clramsua allabi)
 
 ## ABI super-obbing footprint (used for both OMM and DA)
 #OPTIONS: 15X15, 59X59 
 set ABISUPEROB = 15X15
 
 ## make experiment title from DA/OMM settings
-setenv EXPNAME               ${DATYPE}
-if ( "$DATYPE" == "${omm}" ) then
-  set EXPOBSLIST=($OMM_OBS_LIST)
+setenv ExpName ${DAType}
+if ( "$DAType" == "${omm}" ) then
+  set expObsList=($OMMObsList)
 else
-  set EXPOBSLIST=($DA_OBS_LIST)
+  set expObsList=($DAObsList)
 endif
-foreach obs ($EXPOBSLIST)
-  setenv EXPNAME ${EXPNAME}_${obs}
+foreach obs ($expObsList)
+  setenv ExpName ${ExpName}_${obs}
   if ( "$obs" =~ *"abi"* ) then
-    setenv EXPNAME ${EXPNAME}${ABISUPEROB}
+    setenv ExpName ${ExpName}${ABISUPEROB}
   endif
 end
 
 ## add unique suffix
-set SUFFIX = "_NMEM"${nEnsDAMembers}
-setenv EXPNAME ${EXPNAME}${SUFFIX}
+set ExpSuffix = "_NMEM"${nEnsDAMembers}debug
+setenv ExpName ${ExpName}${ExpSuffix}
 
 #
 # verification settings
@@ -98,13 +101,13 @@ setenv diagPrefix     ydiags
 #
 # cycling settings
 # =============================================
-setenv UPDATESEA         1
+setenv updateSea         1
 
-setenv CY_WINDOW_HR      6               # interval between cycle DA
-setenv FCVF_LENGTH_HR    72              # length of verification forecasts
+setenv CYWindowHR        6               # interval between cycle DA
+setenv FCVFWindowHR      72              # length of verification forecasts
 setenv FCVF_DT_HR        6               # interval between OMF verification times of an individual forecast
 setenv FCVF_INTERVAL_HR  12              # interval between OMF forecast initial times
-setenv VF_WINDOW_HR      ${FCVF_DT_HR}   # window of observations included in verification
+setenv DAVFWindowHR      ${FCVF_DT_HR}   # window of observations included in verification
 
 # TODO: enable logic (somewhere else) to use different super-obbing/thinning for DA/OMM jobs
 setenv MPAS_RES            120km
@@ -113,7 +116,7 @@ setenv RADTHINDISTANCE     "200.0"
 setenv RADTHINAMOUNT       "0.98"
 setenv FCCYJobMinutes      5
 setenv FCVFJobMinutes      40
-if ( "$DATYPE" =~ *"eda"* ) then
+if ( "$DAType" =~ *"eda"* || "$DAType" == "${omm}") then
   setenv DACYNodesPerMember 2
   setenv DACYPEPerNode      18
 else
@@ -127,7 +130,7 @@ endif
 #setenv RADTHINAMOUNT      "0.75"
 #setenv FCCYJobMinutes     10
 #setenv FCVFJobMinutes     60
-#if ( "$DATYPE" =~ *"eda"* ) then
+#if ( "$DAType" =~ *"eda"* ) then
 #  setenv DACYNodesPerMember 8
 #  setenv DACYPEPerNode      16
 #else
@@ -135,19 +138,21 @@ endif
 #  setenv DACYPEPerNode      32
 #endif
 
-setenv RST_FILE_PREFIX   restart
-setenv IC_FILE_PREFIX    ${RST_FILE_PREFIX}
-setenv FC_FILE_PREFIX    ${RST_FILE_PREFIX}
-setenv fcDir             fc
-setenv DIAG_FILE_PREFIX  diag
+setenv RSTFilePrefix  restart
+setenv ICFilePrefix   ${RSTFilePrefix}
+setenv FCFilePrefix   ${RSTFilePrefix}
+setenv fcDir          fc
+setenv DIAGFilePrefix diag
 
-setenv AN_FILE_PREFIX    an
-setenv anDir             ${AN_FILE_PREFIX}
-setenv BG_FILE_PREFIX    ${RST_FILE_PREFIX}
-setenv bgDir             bg
+setenv ANFilePrefix   an
+setenv anDir          ${ANFilePrefix}
+setenv BGFilePrefix   ${RSTFilePrefix}
+setenv bgDir          bg
 
-setenv MPASDiagVars      cldfrac
-setenv MPASSeaVars       sst,xice
+setenv anStatePrefix analysis
+
+setenv MPASDiagVars cldfrac
+setenv MPASSeaVars sst,xice
 set MPASHydroVars = (qc qi qr qs qg)
 setenv MPASStandardANVars theta,rho,u,qv,uReconstructZonal,uReconstructMeridional
 
@@ -157,6 +162,7 @@ setenv DACYPEPerMember ${DACYPEPerMember}
 @ DACYNodes = ${DACYNodesPerMember} * ${nEnsDAMembers}
 setenv DACYNodes ${DACYNodes}
 
+setenv nulljob 0
 #
 # Run directories
 # =============================================
@@ -164,7 +170,7 @@ setenv DACYNodes ${DACYNodes}
 setenv PKGBASE          MPAS-Workflow
 setenv EXPUSER          ${USER}
 setenv TOP_EXP_DIR      /glade/scratch/${EXPUSER}/pandac
-setenv EXPDIR           ${TOP_EXP_DIR}/${EXPUSER}_${EXPNAME}_${MPAS_RES}
+setenv EXPDIR           ${TOP_EXP_DIR}/${EXPUSER}_${ExpName}_${MPAS_RES}
 
 ## immediate subdirectories
 setenv DA_WORK_DIR      ${EXPDIR}/DACY
@@ -176,8 +182,10 @@ mkdir -p ${JOBCONTROL}
 
 ## directories copied from PKGBASE
 setenv MAIN_SCRIPT_DIR  ${EXPDIR}/${PKGBASE}
-setenv CONFIGDIR        ${MAIN_SCRIPT_DIR}/config
-setenv RESSPECIFICDIR   ${MAIN_SCRIPT_DIR}/${MPAS_RES}
+
+setenv CONFIGDIR        ${MAIN_SCRIPT_DIR}/config #ONLY used by da_wrapper
+
+setenv RESSPECIFICDIR   ${MAIN_SCRIPT_DIR}/${MPAS_RES} #ONLY used by da_wrapper
 
 ## directory string formatter for EDA members
 # argument to memberDir.py
@@ -288,7 +296,7 @@ module load python/3.7.5
 setenv BUILDUSER         ${USER}
 setenv TOP_BUILD_DIR     /glade/work/${BUILDUSER}/pandac
 #MPAS-JEDI
-if ( "$DATYPE" =~ *"eda"* ) then
+if ( "$DAType" =~ *"eda"* ) then
   setenv DAEXE           mpas_eda.x
 else
   setenv DAEXE           mpas_variational.x
@@ -313,11 +321,8 @@ setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
 
 #Cycling tools
-#TODO(JJG): move time advancing to python using datetime objects
-setenv advanceCYMDH     /glade/u/home/guerrett/bin/advance_cymdh
-
 set pyDir = ${MAIN_SCRIPT_DIR}/tools
-set pyTools = (memberDir)
+set pyTools = (memberDir advanceCYMDH)
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"
 end

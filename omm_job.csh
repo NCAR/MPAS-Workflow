@@ -1,15 +1,8 @@
 #!/bin/csh
-#PBS -N OMMTYPECDATE_EXPNAME
+#PBS -N OMMTypeArgDateArg_ExpNameArg
 #PBS -l select=2:ncpus=18:mpiprocs=18:mem=109GB
-
-## 30km
-#   #PBS -l walltime=0:20:00
-
-## 120km
-#PBS -l walltime=0:06:00
-
-#PBS -q QUEUENAME
-#PBS -A ACCOUNTNUM
+#PBS -A AccountNumArg
+#PBS -q QueueNameArg
 #PBS -m ae
 #PBS -k eod
 #PBS -o log.job.out
@@ -22,19 +15,19 @@ date
 # =============================================
 source ./setup.csh
 
-setenv DATE            CDATE
-setenv BG_STATE_DIR    BGDIR
-setenv BG_STATE_PREFIX BGSTATEPREFIX
+setenv self_Date          DateArg
+setenv self_bgStateDir    bgStateDirArg
+setenv self_bgStatePrefix bgStatePrefixArg
 
 #
 # Time info for namelist, yaml etc:
 # =============================================
-set yy = `echo ${DATE} | cut -c 1-4`
-set mm = `echo ${DATE} | cut -c 5-6`
-set dd = `echo ${DATE} | cut -c 7-8`
-set hh = `echo ${DATE} | cut -c 9-10`
+set yy = `echo ${self_Date} | cut -c 1-4`
+set mm = `echo ${self_Date} | cut -c 5-6`
+set dd = `echo ${self_Date} | cut -c 7-8`
+set hh = `echo ${self_Date} | cut -c 9-10`
 
-set FILE_DATE  = ${yy}-${mm}-${dd}_${hh}.00.00
+set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 
 # Remove old logs
 rm jedi.log*
@@ -45,8 +38,11 @@ rm jedi.log*
 
 # Link/copy bg from other directory and ensure that MPASDiagVars are present
 # =========================================================================
-set bgFileOther = ${BG_STATE_DIR}/${BG_STATE_PREFIX}.$FILE_DATE.nc
-set bgFileDA = ./${BG_FILE_PREFIX}.$FILE_DATE.nc
+
+set memDir = `${memberDir} ${omm} 0`
+set other = ${self_bgStateDir}${memDir}
+set bgFileOther = ${other}/${self_bgStatePrefix}.$fileDate.nc
+set bgFileDA = ./${BGFilePrefix}.$fileDate.nc
 
 set copyDiags = 0
 foreach var ({$MPASDiagVars})
@@ -57,7 +53,7 @@ foreach var ({$MPASDiagVars})
 end
 if ( $copyDiags > 0 ) then
   ln -fsv ${bgFileOther} ${bgFileDA}_orig
-  set diagFile = ${BG_STATE_DIR}/${DIAG_FILE_PREFIX}.$FILE_DATE.nc
+  set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
   cp ${bgFileDA}_orig ${bgFileDA}
 
   # Copy diagnostic variables used in DA to bg
@@ -69,7 +65,7 @@ endif
 
 # Remove existing analysis file, if any
 # =====================================
-rm analysis.${FILE_DATE}.nc
+rm ${anStatePrefix}.${fileDate}.nc
 
 # ===================
 # ===================
@@ -97,7 +93,7 @@ endif
 
 # Remove garbage analysis file
 # ============================
-rm analysis.${FILE_DATE}.nc
+rm ${anStatePrefix}.${fileDate}.nc
 
 date
 

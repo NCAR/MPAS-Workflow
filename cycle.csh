@@ -14,134 +14,130 @@
     mkdir -p ${MAIN_SCRIPT_DIR}
     cp -rpP ./* ${MAIN_SCRIPT_DIR}/
     cd ${MAIN_SCRIPT_DIR}
-    echo "0" > ${JOBCONTROL}/last_ensfc_job
+    echo "$nulljob" > ${JOBCONTROL}/last_ensfc_job
     set member = 1
     while ( $member <= ${nEnsDAMembers} )
-      echo "0" > ${JOBCONTROL}/last_fc_mem${member}_job
-      echo "0" > ${JOBCONTROL}/last_fcvf_mem${member}_job
+      echo "$nulljob" > ${JOBCONTROL}/last_fc_mem${member}_job
+      echo "$nulljob" > ${JOBCONTROL}/last_fcvf_mem${member}_job
       @ member++
     end
-    echo "0" > ${JOBCONTROL}/last_da_job
-    echo "0" > ${JOBCONTROL}/last_omm_job
-    echo "0" > ${JOBCONTROL}/last_null_job
+    echo "$nulljob" > ${JOBCONTROL}/last_da_job
+    echo "$nulljob" > ${JOBCONTROL}/last_omm_job
+    echo "$nulljob" > ${JOBCONTROL}/last_null_job
 
     ## workflow component selection
-    set VERIFYBG = 1
-    set VERIFYAN = 1
+    set DACY = 1
+    set VERIFYAN = 0
+
+    set FCCY = 1
+    set VERIFYBG = 0
+
+    set FCVF = 0
     set VERIFYFC = 0
 
-    # TODO(JJG): replace ONLY* flags with forceIFExists
-    #            or skipIFExists flags for individual
+    # TODO(JJG): add forceIFExists or skipIFExists
+    #            flags for individual
     #            DA/FC/OMM/VF stages
-    set ONLYFCVF = 0
-    set ONLYOMM = 1
+    set ONLYVF = 0
 
 #
 # 2, CYCLE:
 # =========
 
     echo "==============================================================\n"
-    echo "Cycling workflow for experiment: ${EXPNAME}\n"
+    echo "Cycling workflow for experiment: ${ExpName}\n"
     echo "==============================================================\n"
-    setenv C_DATE     ${S_DATE}  # current-cycle date (will change)
+    setenv cycle_Date ${ExpStartDate}  # initialize current cycle date
 
-    ## determine first FCVF date on or after C_DATE
-    set N_FCVFDATE = ${FIRSTCYCLE}
-    while ( ${N_FCVFDATE} < ${C_DATE} )
-      set N_FCVFDATE = `$advanceCYMDH ${N_FCVFDATE} ${FCVF_INTERVAL_HR}`
+    ## determine first FCVF date on or after cycle_Date
+    set nextFCVFDate = ${FIRSTCYCLE}
+    while ( ${nextFCVFDate} < ${cycle_Date} )
+      set nextFCVFDate = `$advanceCYMDH ${nextFCVFDate} ${FCVF_INTERVAL_HR}`
     end
 
     ## cycling
-    while ( ${C_DATE} <= ${E_DATE} )
-      set P_DATE = `$advanceCYMDH ${C_DATE} -${CY_WINDOW_HR}`
-      set N_DATE = `$advanceCYMDH ${C_DATE} ${CY_WINDOW_HR}`
-      setenv P_DATE ${P_DATE}
-      setenv N_DATE ${N_DATE}
-
-      set FCCY_PCYCLE_DIR = ${FCCY_WORK_DIR}/${P_DATE}
-      setenv DA_PCYCLE_DIR "${DA_WORK_DIR}/${P_DATE}"
+    while ( ${cycle_Date} <= ${ExpEndDate} )
+      set prevDate = `$advanceCYMDH ${cycle_Date} -${CYWindowHR}`
+      set nextDate = `$advanceCYMDH ${cycle_Date} ${CYWindowHR}`
+      setenv prevDate ${prevDate}
+      setenv nextDate ${nextDate}
 
       ## First cycle "forecast" established offline
-      # TODO: make FIRSTCYCLE behavior part of FCCY application
-      #       instead of top-level workflow with zero-length fc_job
-      if ( ${C_DATE} == ${FIRSTCYCLE} ) then
+      # TODO: make FIRSTCYCLE behavior part of FCCY or seperate application
+      #       instead of top-level workflow using zero-length fc_job
+      if ( ${cycle_Date} == ${FIRSTCYCLE} ) then
         mkdir -p ${FCCY_WORK_DIR}
-        rm -r ${FCCY_PCYCLE_DIR}
+        rm -r ${FCCY_WORK_DIR}/${prevDate}
         set member = 1
         while ( $member <= ${nEnsDAMembers} )
-          set memDir = `${memberDir} $DATYPE $member`
-          if ( "$DATYPE" =~ *"eda"* ) then
-            mkdir ${FCCY_PCYCLE_DIR}
+          set memDir = `${memberDir} $DAType $member`
+          if ( "$DAType" =~ *"eda"* ) then
+            mkdir ${FCCY_WORK_DIR}/${prevDate}
             set FCINIT = "$ensembleICFirstCycle"`${memberDir} ens $member "${fixedEnsMemFmt}"`
           else
             set FCINIT = $deterministicICFirstCycle
           endif
-          ln -sf ${FCINIT} ${FCCY_PCYCLE_DIR}${memDir}
+          ln -sf ${FCINIT} ${FCCY_WORK_DIR}/${prevDate}${memDir}
           @ member++
         end
         setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
-        setenv BGPREFIX ${RST_FILE_PREFIX}
+        setenv bgStatePrefix ${RSTFilePrefix}
       else
-        setenv VARBC_TABLE ${DA_PCYCLE_DIR}/${VARBC_ANA}
-        setenv BGPREFIX ${FC_FILE_PREFIX}
+        setenv VARBC_TABLE ${DA_WORK_DIR}/${prevDate}/${VARBC_ANA}
+        setenv bgStatePrefix ${FCFilePrefix}
       endif
 
-      setenv DA_CCYCLE_DIR "${DA_WORK_DIR}/${C_DATE}"
-      setenv FCCY_CCYCLE_DIR "${FCCY_WORK_DIR}/${C_DATE}"
+      echo "\nWorking on cycle: ${cycle_Date}"
 
-      echo "\nWorking on cycle: ${C_DATE}"
+#------- cycling DA ---------
+      set DAWorkDir=${DA_WORK_DIR}/${cycle_Date}
 
-#------- analysis step ---------
-      set DAWorkDir=${DA_CCYCLE_DIR}
+      if ( ${DACY} > 1 ) then
+        echo "\nanalysis at ${cycle_Date}"
 
-      if ( ${ONLYOMM} == 0 && ${ONLYFCVF} == 0 ) then
-        echo "\nanalysis at ${C_DATE}"
-
-        set thisDependsOn=ensfc
+        set child_DependsOn=ensfc
 
         mkdir -p ${DAWorkDir}
         cp setup.csh ${DAWorkDir}/
 
-        if ( "$DATYPE" =~ *"eda"* ) then
+        if ( "$DAType" =~ *"eda"* ) then
           set ChildScript=None
           # TODO(JJG): cycling-da verification not yet enabled for EDA
         else
-          set ChildScript=${DAWorkDir}/vf_job_${C_DATE}_${EXPNAME}.csh
-          sed -e 's@CDATE@'${C_DATE}'@' \
-              -e 's@ACCOUNTNUM@'${VFACCOUNTNUM}'@' \
-              -e 's@QUEUENAME@'${VFQUEUENAME}'@' \
-              -e 's@EXPNAME@'${EXPNAME}'@' \
+          set ChildScript=${DAWorkDir}/vf_job_${cycle_Date}_${ExpName}.csh
+          sed -e 's@DateArg@'${cycle_Date}'@' \
+              -e 's@AccountNumArg@'${VFACCOUNTNUM}'@' \
+              -e 's@QueueNameArg@'${VFQUEUENAME}'@' \
+              -e 's@ExpNameArg@'${ExpName}'@' \
               vf_job.csh > ${ChildScript}
           chmod 744 ${ChildScript}
         endif
 
-        set JobScript=${DAWorkDir}/da_job_${C_DATE}_${EXPNAME}.csh
-        sed -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
-            -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
-            -e 's@EXPNAME@'${EXPNAME}'@' \
+        set JobScript=${DAWorkDir}/da_job_${cycle_Date}_${ExpName}.csh
+        sed -e 's@AccountNumArg@'${CYACCOUNTNUM}'@' \
+            -e 's@QueueNameArg@'${CYQUEUENAME}'@' \
+            -e 's@ExpNameArg@'${ExpName}'@' \
             -e 's@NNODE@'${DACYNodes}'@' \
             -e 's@NPE@'${DACYPEPerNode}'@g' \
-            -e 's@CDATE@'${C_DATE}'@' \
-            -e 's@DATYPESUB@'${DATYPE}'@' \
-            -e 's@BGDIR@'${FCCY_PCYCLE_DIR}'@' \
-            -e 's@BGSTATEPREFIX@'${BGPREFIX}'@' \
+            -e 's@DateArg@'${cycle_Date}'@' \
+            -e 's@DATypeArg@'${DAType}'@' \
+            -e 's@bgStateDirArg@'${FCCY_WORK_DIR}/${prevDate}'@' \
+            -e 's@bgStatePrefixArg@'${bgStatePrefix}'@' \
             da_job.csh > ${JobScript}
         chmod 744 ${JobScript}
 
         set myWrapper = da_wrapper
-        set WrapperScript=${DAWorkDir}/${myWrapper}_${C_DATE}_${EXPNAME}.csh
-        sed -e 's@CDATE@'${C_DATE}'@' \
-            -e 's@WINDOWHR@'${CY_WINDOW_HR}'@' \
-            -e 's@OBSLIST@DA_OBS_LIST@' \
-            -e 's@VARBCTABLE@'${VARBC_TABLE}'@' \
-            -e 's@DATYPESUB@'${DATYPE}'@' \
-            -e 's@DAMODESUB@da@' \
-            -e 's@DIAGTYPE@cycle-da@' \
-            -e 's@DAJOBSCRIPT@'${JobScript}'@' \
-            -e 's@DEPENDTYPE@'${thisDependsOn}'@' \
-            -e 's@VFJOBSCRIPT@'${ChildScript}'@' \
-            -e 's@CONFIGDIR@'${CONFIGDIR}'@' \
-            -e 's@RESSPECIFICDIR@'${RESSPECIFICDIR}'@' \
+        set WrapperScript=${DAWorkDir}/${myWrapper}_${cycle_Date}_${ExpName}.csh
+        sed -e 's@DateArg@'${cycle_Date}'@' \
+            -e 's@WindowHRArg@'${CYWindowHR}'@' \
+            -e 's@ObsListArg@DAObsList@' \
+            -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
+            -e 's@bgStatePrefixArg@'${bgStatePrefix}'@' \
+            -e 's@DATypeArg@'${DAType}'@' \
+            -e 's@DAModeArg@da@' \
+            -e 's@DAJobScriptArg@'${JobScript}'@' \
+            -e 's@DependTypeArg@'${child_DependsOn}'@' \
+            -e 's@VFJobScriptArg@'${ChildScript}'@' \
             ${myWrapper}.csh > ${WrapperScript}
 
         chmod 744 ${WrapperScript}
@@ -151,28 +147,27 @@
         ${WrapperScript} >& ${myWrapper}.log
       endif
 
-#------- verify an step ---------
-      if ( ${VERIFYAN} > 0 && ${ONLYFCVF} == 0 ) then
-        set VFARGS = (${DAWorkDir}/${anDir} ${AN_FILE_PREFIX} ${anDir} ${C_DATE})
+#------- verify analysis state ---------
+      if ( ${VERIFYAN} > 0 ) then
+        set VFARGS = (${DA_WORK_DIR}/${cycle_Date}/${anDir} ${ANFilePrefix} ${anDir} ${cycle_Date})
         set myWrapper = ${omm}_wrapper
-        set thisDependsOn=da
+        set child_DependsOn=da
 
         set member = 1
         while ( $member <= ${nEnsDAMembers} )
           cd ${MAIN_SCRIPT_DIR}
-          set memDir = `${memberDir} $DATYPE $member`
+          set memDir = `${memberDir} $DAType $member`
           set StateDir = $VFARGS[1]${memDir}
           set WorkDir = ${VF_WORK_DIR}/$VFARGS[3]${memDir}/$VFARGS[4]
 
           set WrapperScript=${myWrapper}_OMA.csh
-          sed -e 's@VFSTATEDATE_in@'$VFARGS[4]'@' \
-              -e 's@WINDOWHR_in@'${CY_WINDOW_HR}'@' \
-              -e 's@VFSTATEDIR_in@'${StateDir}'@' \
-              -e 's@VFFILEPREFIX_in@'$VFARGS[2]'@' \
-              -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
-              -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
-              -e 's@DIAGTYPE_in@oma@' \
-              -e 's@DEPENDTYPE_in@'${thisDependsOn}'@' \
+          sed -e 's@DateArg@'$VFARGS[4]'@' \
+              -e 's@DAWindowHRArg@'${CYWindowHR}'@' \
+              -e 's@StateDirArg@'${StateDir}'@' \
+              -e 's@StatePrefixArg@'$VFARGS[2]'@' \
+              -e 's@WorkDirArg@'${WorkDir}'@' \
+              -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
+              -e 's@DependTypeArg@'${child_DependsOn}'@' \
               ${myWrapper}.csh > ${WrapperScript}
           chmod 744 ${WrapperScript}
           ./${WrapperScript}
@@ -180,30 +175,30 @@
         end
       endif
 
-#------- verify first bg step ---------
-      if ( ${C_DATE} == ${FIRSTCYCLE} && ${VERIFYBG} > 0 && ${ONLYFCVF} == 0 ) then
-        set VFARGS = (${DAWorkDir}/${bgDir} ${BGPREFIX} ${bgDir} ${C_DATE})
+#------- verify FIRSTCYCLE bg state ---------
+      if ( ${cycle_Date} == ${FIRSTCYCLE} && ${VERIFYBG} > 0 ) then
+        set VFARGS = (${DA_WORK_DIR}/${cycle_Date}/${bgDir} ${bgStatePrefix} ${bgDir} ${cycle_Date})
         set myWrapper = ${omm}_wrapper
         # TODO: currently depends on da to add MPASDiagVars to BG file.
         #       can do that instead with a zero-length fc_job
-        set thisDependsOn=da
+        set child_DependsOn=da
 
         set member = 1
         while ( $member <= ${nEnsDAMembers} )
           cd ${MAIN_SCRIPT_DIR}
-          set memDir = `${memberDir} $DATYPE $member`
+          set memDir = `${memberDir} $DAType $member`
           set StateDir = $VFARGS[1]${memDir}
           set WorkDir = ${VF_WORK_DIR}/$VFARGS[3]${memDir}/$VFARGS[4]
 
           set WrapperScript=${myWrapper}_OMB.csh
-          sed -e 's@VFSTATEDATE_in@'$VFARGS[4]'@' \
-              -e 's@WINDOWHR_in@'${CY_WINDOW_HR}'@' \
-              -e 's@VFSTATEDIR_in@'${StateDir}'@' \
-              -e 's@VFFILEPREFIX_in@'$VFARGS[2]'@' \
-              -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
-              -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
-              -e 's@DIAGTYPE_in@omb@' \
-              -e 's@DEPENDTYPE_in@'${thisDependsOn}'@' \
+          sed -e 's@DateArg@'$VFARGS[4]'@' \
+              -e 's@DAWindowHRArg@'${CYWindowHR}'@' \
+              -e 's@StateDirArg@'${StateDir}'@' \
+              -e 's@StatePrefixArg@'$VFARGS[2]'@' \
+              -e 's@WorkDirArg@'${WorkDir}'@' \
+              -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
+              -e 's@CYOMMTypeArg@omb@' \
+              -e 's@DependTypeArg@'${child_DependsOn}'@' \
               ${myWrapper}.csh > ${WrapperScript}
           chmod 744 ${WrapperScript}
           ./${WrapperScript}
@@ -212,192 +207,189 @@
         end
       endif
 
-#------- cycling forecast step ---------
-      if ( ${ONLYFCVF} == 0 ) then
-        if ( ${ONLYOMM} == 0 ) then
-          set thisDependsOn=da
-          rm ${JOBCONTROL}/last_ensfc_job
-          set member = 1
-          while ( $member <= ${nEnsDAMembers} )
-            cd ${MAIN_SCRIPT_DIR}
-            set memDir = `${memberDir} $DATYPE $member`
-            set StateDir = ${DAWorkDir}/${anDir}${memDir}
-            set WorkDir = ${FCCY_CCYCLE_DIR}${memDir}
+#------- cycling forecast ---------
+      if ( ${FCCY} > 0 ) then
+        set child_DependsOn=da
+        rm ${JOBCONTROL}/last_ensfc_job
+        set member = 1
+        while ( $member <= ${nEnsDAMembers} )
+          cd ${MAIN_SCRIPT_DIR}
+          set memDir = `${memberDir} $DAType $member`
+          set StateDir = ${DA_WORK_DIR}/${cycle_Date}/${anDir}${memDir}
+          set WorkDir = ${FCCY_WORK_DIR}/${cycle_Date}${memDir}
 
-            rm -rf ${WorkDir}
-            mkdir -p ${WorkDir}
-            cp setup.csh ${WorkDir}/
+          rm -rf ${WorkDir}
+          mkdir -p ${WorkDir}
+          cp setup.csh ${WorkDir}/
 
-            echo "\n${CY_WINDOW_HR}-hr cycle FC from ${C_DATE} to ${N_DATE} for member $member"
-            set JobScript=${WorkDir}/fc_job_${C_DATE}_${EXPNAME}.csh
-            sed -e 's@CDATE@'${C_DATE}'@' \
-                -e 's@JobMinutes@'${FCCYJobMinutes}'@' \
-                -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
-                -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
-                -e 's@EXPNAME@'${EXPNAME}'@' \
-                -e 's@ICDIR@'${StateDir}'@' \
-                -e 's@ICSTATEPREFIX@'${AN_FILE_PREFIX}'@' \
-                -e 's@FCLENGTHHR@'${CY_WINDOW_HR}'@' \
-                -e 's@OUTDTHR@'${CY_WINDOW_HR}'@' \
-                fc_job.csh > ${JobScript}
-            chmod 744 ${JobScript}
+          echo "\n${CYWindowHR}-hr cycle FC from ${cycle_Date} to ${nextDate} for member $member"
+          set JobScript=${WorkDir}/fc_job_${cycle_Date}_${ExpName}.csh
+          sed -e 's@icDateArg@'${cycle_Date}'@' \
+              -e 's@JobMinutes@'${FCCYJobMinutes}'@' \
+              -e 's@AccountNumArg@'${CYACCOUNTNUM}'@' \
+              -e 's@QueueNameArg@'${CYQUEUENAME}'@' \
+              -e 's@ExpNameArg@'${ExpName}'@' \
+              -e 's@icStateDirArg@'${StateDir}'@' \
+              -e 's@icStatePrefixArg@'${ANFilePrefix}'@' \
+              -e 's@fcLengthHRArg@'${CYWindowHR}'@' \
+              -e 's@fcIntervalHRArg@'${CYWindowHR}'@' \
+              fc_job.csh > ${JobScript}
+          chmod 744 ${JobScript}
 
-            cd ${WorkDir}
+          cd ${WorkDir}
 
-            set JDEP=`cat ${JOBCONTROL}/last_${thisDependsOn}_job`
-
-            if ( ${JDEP} == 0 ) then
-              set JFC = `qsub -h ${JobScript}`
-            else
-              set JFC = `qsub -W depend=afterok:${JDEP} ${JobScript}`
+          set JALL=(`cat ${JOBCONTROL}/last_${child_DependsOn}_job`)
+          set JDEP = ''
+          foreach J ($JALL)
+            if (${J} != "$nulljob" ) then
+              set JDEP = ${JDEP}:${J}
             endif
-            echo "${JFC}" >> ${JOBCONTROL}/last_ensfc_job
-            echo "${JFC}" > ${JOBCONTROL}/last_fc_mem${member}_job
-
-            @ member++
           end
-        endif
+          set JFC = `qsub -W depend=afterok:${JDEP} ${JobScript}`
+          echo "${JFC}" >> ${JOBCONTROL}/last_ensfc_job
+          echo "${JFC}" > ${JOBCONTROL}/last_fc_mem${member}_job
 
-#------- verify bg step ---------
-        if ( ${VERIFYBG} > 0 ) then
-          set VFARGS = (${FCCY_CCYCLE_DIR} ${FC_FILE_PREFIX} ${bgDir} ${N_DATE})
-          set myWrapper = ${omm}_wrapper
-
-          set member = 1
-          while ( $member <= ${nEnsDAMembers} )
-            set thisDependsOn=fc_mem${member}
-
-            cd ${MAIN_SCRIPT_DIR}
-            set memDir = `${memberDir} $DATYPE $member`
-            set StateDir = $VFARGS[1]${memDir}
-            set WorkDir = ${VF_WORK_DIR}/$VFARGS[3]${memDir}/$VFARGS[4]
-
-            set WrapperScript=${myWrapper}_OMB.csh
-            sed -e 's@VFSTATEDATE_in@'$VFARGS[4]'@' \
-                -e 's@WINDOWHR_in@'${CY_WINDOW_HR}'@' \
-                -e 's@VFSTATEDIR_in@'${StateDir}'@' \
-                -e 's@VFFILEPREFIX_in@'$VFARGS[2]'@' \
-                -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
-                -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
-                -e 's@DIAGTYPE_in@omb@' \
-                -e 's@DEPENDTYPE_in@'${thisDependsOn}'@' \
-                ${myWrapper}.csh > ${WrapperScript}
-            chmod 744 ${WrapperScript}
-            ./${WrapperScript}
-
-            set JDEP=`cat ${JOBCONTROL}/last_${thisDependsOn}_job`
-            if ( "${JDEP}" != 0 ) qrls $JDEP
-
-            @ member++
-          end
-        endif
-
+          @ member++
+        end
       endif
 
-#------- extended forecast step ---------
-      if ( ${VERIFYFC} > 0 && ${C_DATE} == ${N_FCVFDATE}) then
-        if ( "$DATYPE" =~ *"eda"* ) then
+#------- verify forecasted bg state ---------
+      if ( ${VERIFYBG} > 0 ) then
+        set VFARGS = (${FCCY_WORK_DIR}/${cycle_Date} ${FCFilePrefix} ${bgDir} ${nextDate})
+        set myWrapper = ${omm}_wrapper
+
+        set member = 1
+        while ( $member <= ${nEnsDAMembers} )
+          set child_DependsOn=fc_mem${member}
+
+          cd ${MAIN_SCRIPT_DIR}
+          set memDir = `${memberDir} $DAType $member`
+          set StateDir = $VFARGS[1]${memDir}
+          set WorkDir = ${VF_WORK_DIR}/$VFARGS[3]${memDir}/$VFARGS[4]
+
+          set WrapperScript=${myWrapper}_OMB.csh
+          sed -e 's@DateArg@'$VFARGS[4]'@' \
+              -e 's@DAWindowHRArg@'${CYWindowHR}'@' \
+              -e 's@StateDirArg@'${StateDir}'@' \
+              -e 's@StatePrefixArg@'$VFARGS[2]'@' \
+              -e 's@WorkDirArg@'${WorkDir}'@' \
+              -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
+              -e 's@CYOMMTypeArg@omb@' \
+              -e 's@DependTypeArg@'${child_DependsOn}'@' \
+              ${myWrapper}.csh > ${WrapperScript}
+          chmod 744 ${WrapperScript}
+          ./${WrapperScript}
+
+          @ member++
+        end
+      endif
+
+
+      if ( ${cycle_Date} == ${nextFCVFDate}) then
+        if ( "$DAType" =~ *"eda"* ) then
           echo "WARNING: verifying forecast not enabled for EDA"
         else
           set member = 1
-          set memDir = `${memberDir} $DATYPE $member`
+          set memDir = `${memberDir} $DAType $member`
 
-          set FCVFWorkDir=${FCVF_WORK_DIR}/${C_DATE}${memDir}
-          set E_VFDATE = `$advanceCYMDH ${C_DATE} ${FCVF_LENGTH_HR}`
+          set FCVFWorkDir=${FCVF_WORK_DIR}/${cycle_Date}${memDir}
+          set finalFCVFDate = `$advanceCYMDH ${cycle_Date} ${FCVFWindowHR}`
 
-          if ( ${ONLYOMM} == 0 ) then
-            set thisDependsOn=da
+#------- verification forecast ---------
+          if ( ${FCVF} == 0 ) then
+            set child_DependsOn=da
 
             cd ${MAIN_SCRIPT_DIR}
             rm -rf ${FCVFWorkDir}
             mkdir -p ${FCVFWorkDir}
             cp setup.csh ${FCVFWorkDir}/
 
-            set StateDir = ${DAWorkDir}/${anDir}${memDir}
+            set StateDir = ${DA_WORK_DIR}/${cycle_Date}/${anDir}${memDir}
 
-            echo "\n${FCVF_LENGTH_HR}-hr verification FC from ${C_DATE} to ${E_VFDATE}"
-            set JobScript=${FCVFWorkDir}/fcvf_job_${C_DATE}_${EXPNAME}.csh
-            sed -e 's@CDATE@'${C_DATE}'@' \
+            echo "\n${FCVFWindowHR}-hr verification FC from ${cycle_Date} to ${finalFCVFDate}"
+            set JobScript=${FCVFWorkDir}/fcvf_job_${cycle_Date}_${ExpName}.csh
+            sed -e 's@icDateArg@'${cycle_Date}'@' \
                 -e 's@JobMinutes@'${FCVFJobMinutes}'@' \
-                -e 's@ACCOUNTNUM@'${CYACCOUNTNUM}'@' \
-                -e 's@QUEUENAME@'${CYQUEUENAME}'@' \
-                -e 's@EXPNAME@'${EXPNAME}'@' \
-                -e 's@ICDIR@'${StateDir}'@' \
-                -e 's@ICSTATEPREFIX@'${AN_FILE_PREFIX}'@' \
-                -e 's@FCLENGTHHR@'${FCVF_LENGTH_HR}'@' \
-                -e 's@OUTDTHR@'${FCVF_DT_HR}'@' \
+                -e 's@AccountNumArg@'${CYACCOUNTNUM}'@' \
+                -e 's@QueueNameArg@'${CYQUEUENAME}'@' \
+                -e 's@ExpNameArg@'${ExpName}'@' \
+                -e 's@icStateDirArg@'${StateDir}'@' \
+                -e 's@icStatePrefixArg@'${ANFilePrefix}'@' \
+                -e 's@fcLengthHRArg@'${FCVFWindowHR}'@' \
+                -e 's@fcIntervalHRArg@'${FCVF_DT_HR}'@' \
                 fc_job.csh > ${JobScript}
             chmod 744 ${JobScript}
 
             cd ${FCVFWorkDir}
 
-            set JDEP=`cat ${JOBCONTROL}/last_${thisDependsOn}_job`
-
-            if ( ${JDEP} == 0 ) then
-              set JFCVF = `qsub -h ${JobScript}`
-            else
-              set JFCVF = `qsub -W depend=afterok:${JDEP} ${JobScript}`
-            endif
+            set JALL=(`cat ${JOBCONTROL}/last_${child_DependsOn}_job`)
+            set JDEP = ''
+            foreach J ($JALL)
+              if (${J} != "$nulljob" ) then
+                set JDEP = ${JDEP}:${J}
+              endif
+            end
+            set JFCVF = `qsub -W depend=afterok:${JDEP} ${JobScript}`
             echo "${JFCVF}" > ${JOBCONTROL}/last_fcvf_mem${member}_job
           endif
 
-#------- verify fc step ---------
-          set thisDependsOn=fcvf_mem${member}
+#------- verify fc state(s) ---------
+          if ( ${VERIFYFC} == 0 ) then
 
-          set VFARGS = (${FCVFWorkDir} ${FC_FILE_PREFIX} ${fcDir} ${C_DATE})
-          set myWrapper = ${omm}_wrapper
+            set child_DependsOn=fcvf_mem${member}
 
-          set StateDir = $VFARGS[1]${memDir}
-          set dateWorkDir = ${VF_WORK_DIR}/$VFARGS[3]${memDir}/$VFARGS[4]
-          mkdir -p ${dateWorkDir}
+            set VFARGS = (${FCVFWorkDir} ${FCFilePrefix} ${fcDir} ${cycle_Date})
+            set myWrapper = ${omm}_wrapper
 
-          cd ${MAIN_SCRIPT_DIR}
+            set StateDir = $VFARGS[1]${memDir}
+            set dateWorkDir = ${VF_WORK_DIR}/$VFARGS[3]${memDir}/$VFARGS[4]
+            mkdir -p ${dateWorkDir}
 
-          @ dt = 0
-          while ( $VFARGS[4] <= ${E_VFDATE} )
-            set WorkDir = $dateWorkDir/${dt}hr
-            # TODO(JJG) can these two logical conditions be replaced
-            #           with VERIFYAN and VERIFYBG code?
-            #           i.e., generic state verification
-            if ( $dt == 0 )  then
-              ## 0 hour fc length same as analysis (requires previous VERIFYAN)
-              rm -r ${WorkDir}
-              ln -sf ${VF_WORK_DIR}/${anDir}${memDir}/${C_DATE} ${WorkDir}
-            else if ( ${dt} == ${CY_WINDOW_HR} ) then
-              ## CY_WINDOW_HR fc length same as background (requires previous VERIFYBG)
-              rm -r ${WorkDir}
-              ln -sf ${VF_WORK_DIR}/${bgDir}${memDir}/${N_DATE} ${WorkDir}
-            else
-              set WrapperScript=${myWrapper}_OMF.csh
-              sed -e 's@VFSTATEDATE_in@'$VFARGS[4]'@' \
-                  -e 's@WINDOWHR_in@'${VF_WINDOW_HR}'@' \
-                  -e 's@VFSTATEDIR_in@'${StateDir}'@' \
-                  -e 's@VFFILEPREFIX_in@'$VFARGS[2]'@' \
-                  -e 's@VFCYCLEDIR_in@'${WorkDir}'@' \
-                  -e 's@VARBCTABLE_in@'${VARBC_TABLE}'@' \
-                  -e 's@DIAGTYPE_in@omf@' \
-                  -e 's@DEPENDTYPE_in@'${thisDependsOn}'@' \
-                  ${myWrapper}.csh > ${WrapperScript}
-              chmod 744 ${WrapperScript}
-              ./${WrapperScript}
-            endif
+            cd ${MAIN_SCRIPT_DIR}
 
-            set VFARGS[4] = `$advanceCYMDH $VFARGS[4] ${FCVF_DT_HR}`
-            @ dt = $dt + $FCVF_DT_HR
-          end
+            @ dt = 0
+            while ( $VFARGS[4] <= ${finalFCVFDate} )
+              set WorkDir = $dateWorkDir/${dt}hr
+              # TODO(JJG) can these two logical conditions be replaced
+              #           with VERIFYAN and VERIFYBG code?
+              #           i.e., generic state verification
+              if ( $dt == 0 )  then
+                ## 0 hour fc length same as analysis (requires previous VERIFYAN)
+                rm -r ${WorkDir}
+                ln -sf ${VF_WORK_DIR}/${anDir}${memDir}/${cycle_Date} ${WorkDir}
+              else if ( ${dt} == ${CYWindowHR} ) then
+                ## CYWindowHR fc length same as background (requires previous VERIFYBG)
+                rm -r ${WorkDir}
+                ln -sf ${VF_WORK_DIR}/${bgDir}${memDir}/${nextDate} ${WorkDir}
+              else
+                set WrapperScript=${myWrapper}_OMF.csh
+                sed -e 's@DateArg@'$VFARGS[4]'@' \
+                    -e 's@DAWindowHRArg@'${DAVFWindowHR}'@' \
+                    -e 's@StateDirArg@'${StateDir}'@' \
+                    -e 's@StatePrefixArg@'$VFARGS[2]'@' \
+                    -e 's@WorkDirArg@'${WorkDir}'@' \
+                    -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
+                    -e 's@CYOMMTypeArg@omf@' \
+                    -e 's@DependTypeArg@'${child_DependsOn}'@' \
+                    ${myWrapper}.csh > ${WrapperScript}
+                chmod 744 ${WrapperScript}
+                ./${WrapperScript}
+              endif
 
-          set JDEP=`cat ${JOBCONTROL}/last_${thisDependsOn}_job`
-          if ( "${JDEP}" != 0 ) qrls $JDEP
+              set VFARGS[4] = `$advanceCYMDH $VFARGS[4] ${FCVF_DT_HR}`
+              @ dt = $dt + $FCVF_DT_HR
+            end
+          endif
         endif
 
-        set N_FCVFDATE = `$advanceCYMDH ${N_FCVFDATE} ${FCVF_INTERVAL_HR}`
+        set nextFCVFDate = `$advanceCYMDH ${nextFCVFDate} ${FCVF_INTERVAL_HR}`
       endif
 
       cd ${MAIN_SCRIPT_DIR}
 
 #------- advance date ---------
-      set C_DATE = `$advanceCYMDH ${C_DATE} ${CY_WINDOW_HR}`
-      setenv C_DATE ${C_DATE}
+      set cycle_Date = `$advanceCYMDH ${cycle_Date} ${CYWindowHR}`
+      setenv cycle_Date ${cycle_Date}
     end
 
     exit 0

@@ -1,7 +1,7 @@
 EnsembleApplication:
   members: nEnsDAMembers
 resolution:
-  gridfname: "./restart.2018-04-15_00.00.00.nc"
+  gridfname: "./bgStatePrefix.2018-04-15_00.00.00.nc"
 model:
   name: MPAS
   tstep: PT6H
@@ -10,11 +10,11 @@ ModelVariables
 minimizer:
   algorithm: DRIPCG
 output:
-  filename: anOOPSMemberDir/analysis.$Y-$M-$D_$h.$m.$s.nc
+  filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
 variational:
   iteration:
   - resolution:
-      gridfname: "./restart.2018-04-15_00.00.00.nc"
+      gridfname: "./bgStatePrefix.2018-04-15_00.00.00.nc"
     linearmodel:
       varchange: Identity
       version: MPASIdTLM
@@ -29,7 +29,7 @@ AnalysisVariables
     diagnostics:
       departures: depbg
 #  - resolution:
-#      gridfname: "./restart.2018-04-15_00.00.00.nc"
+#      gridfname: "./bgStatePrefix.2018-04-15_00.00.00.nc"
 #    linearmodel:
 #      varchange: Identity
 #      version: MPASIdTLM
@@ -53,7 +53,7 @@ cost_function:
     Background:
       state:
       - variables: *incvars
-        filename: bgOOPSMemberDir/restart.2018-04-15_00.00.00.nc
+        filename: bgOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
         date: &adate '2018-04-15T00:00:00Z'
     Covariance:
       covariance: ensemble

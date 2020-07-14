@@ -1,7 +1,7 @@
 #!/bin/csh
-#PBS -N vfCDATE_EXPNAME
-#PBS -A ACCOUNTNUM
-#PBS -q QUEUENAME
+#PBS -N vfDateArg_ExpNameArg
+#PBS -A AccountNumArg
+#PBS -q QueueNameArg
 #PBS -l select=1:ncpus=18:mpiprocs=18
 #PBS -l walltime=0:15:00
 #PBS -m ae
@@ -18,16 +18,17 @@ source ./setup.csh
 
 module load python/3.7.5
 
-setenv DATE CDATE
+setenv self_Date DateArg
+
 #
 # Time info:
 # ==========
-set yy = `echo ${DATE} | cut -c 1-4`
-set mm = `echo ${DATE} | cut -c 5-6`
-set dd = `echo ${DATE} | cut -c 7-8`
-set hh = `echo ${DATE} | cut -c 9-10`
+set yy = `echo ${self_Date} | cut -c 1-4`
+set mm = `echo ${self_Date} | cut -c 5-6`
+set dd = `echo ${self_Date} | cut -c 7-8`
+set hh = `echo ${self_Date} | cut -c 9-10`
 
-set FILE_DATE  = ${yy}-${mm}-${dd}_${hh}.00.00
+set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 
 
 #
@@ -65,7 +66,7 @@ date
 # ========================================================
 mkdir -p diagnostic_stats/model
 cd diagnostic_stats/model
-ln -sf ../${BG_FILE_PREFIX}.${FILE_DATE}.nc ../
+ln -sf ../${BGFilePrefix}.${fileDate}.nc ../
 
 set mainScript="writediag_modelspace.py"
 ln -fs ${pyModelDir}/*.py ./

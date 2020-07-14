@@ -1,7 +1,7 @@
 #!/bin/csh
-#PBS -N daCDATE_EXPNAME
-#PBS -A ACCOUNTNUM
-#PBS -q QUEUENAME
+#PBS -N daDateArg_ExpNameArg
+#PBS -A AccountNumArg
+#PBS -q QueueNameArg
 #PBS -l select=NNODE:ncpus=NPE:mpiprocs=NPE:mem=109GB
 #PBS -l walltime=0:25:00
 #PBS -m ae
@@ -16,20 +16,20 @@ date
 # =============================================
 source ./setup.csh
 
-setenv DATE            CDATE
-setenv DA_TYPE         DATYPESUB
-setenv BG_STATE_DIR    BGDIR
-setenv BG_STATE_PREFIX BGSTATEPREFIX
+setenv self_Date          DateArg
+setenv self_DAType        DATypeArg
+setenv self_bgStateDir    bgStateDirArg
+setenv self_bgStatePrefix bgStatePrefixArg
 
 #
 # Time info for namelist, yaml etc:
 # =============================================
-set yy = `echo ${DATE} | cut -c 1-4`
-set mm = `echo ${DATE} | cut -c 5-6`
-set dd = `echo ${DATE} | cut -c 7-8`
-set hh = `echo ${DATE} | cut -c 9-10`
+set yy = `echo ${self_Date} | cut -c 1-4`
+set mm = `echo ${self_Date} | cut -c 5-6`
+set dd = `echo ${self_Date} | cut -c 7-8`
+set hh = `echo ${self_Date} | cut -c 9-10`
 
-set FILE_DATE  = ${yy}-${mm}-${dd}_${hh}.00.00
+set fileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
 
 # Remove old logs
 rm jedi.log*
@@ -40,8 +40,8 @@ rm jedi.log*
 
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $DA_TYPE $member`
-  set other = ${BG_STATE_DIR}${memDir}
+  set memDir = `${memberDir} $self_DAType $member`
+  set other = ${self_bgStateDir}${memDir}
   set bg = ./${bgDir}${memDir}
   set an = ./${anDir}${memDir}
   mkdir -p ${bg}
@@ -49,8 +49,8 @@ while ( $member <= ${nEnsDAMembers} )
 
   # Link/copy bg from other directory and ensure that MPASDiagVars are present
   # =========================================================================
-  set bgFileOther = ${other}/${BG_STATE_PREFIX}.$FILE_DATE.nc
-  set bgFileDA = ${bg}/${BG_FILE_PREFIX}.$FILE_DATE.nc
+  set bgFileOther = ${other}/${self_bgStatePrefix}.$fileDate.nc
+  set bgFileDA = ${bg}/${BGFilePrefix}.$fileDate.nc
 
   set copyDiags = 0
   foreach var ({$MPASDiagVars})
@@ -61,7 +61,7 @@ while ( $member <= ${nEnsDAMembers} )
   end
   if ( $copyDiags > 0 ) then
     ln -fsv ${bgFileOther} ${bgFileDA}_orig
-    set diagFile = ${other}/${DIAG_FILE_PREFIX}.$FILE_DATE.nc
+    set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
     cp ${bgFileDA}_orig ${bgFileDA}
 
     # Copy diagnostic variables used in DA to bg
@@ -73,14 +73,14 @@ while ( $member <= ${nEnsDAMembers} )
 
   # Remove existing analysis file, if any
   # =====================================
-  rm ${an}/analysis.${FILE_DATE}.nc
+  rm ${an}/${anStatePrefix}.${fileDate}.nc
 
   @ member++
 end
 
 # link one of the backgrounds to a local RST file
 # used to initialize the MPAS mesh
-ln -sf ${bgFileDA} ./${BG_FILE_PREFIX}.$FILE_DATE.nc
+ln -sf ${bgFileDA} ./${BGFilePrefix}.$fileDate.nc
 
 
 # ===================
@@ -109,7 +109,7 @@ endif
 
 ## add hydrometeors to update variables (if needed)
 set UpdateHydrometeors = 0
-foreach obs ($DA_OBS_LIST)
+foreach obs ($DAObsList)
   ## determine if hydrometeor analysis variables are needed
   if ( "$obs" =~ "all"* ) then
     set UpdateHydrometeors = 1
@@ -127,26 +127,23 @@ endif
 # =============================================
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $DA_TYPE $member`
+  set memDir = `${memberDir} $self_DAType $member`
 
   set bg = ./${bgDir}${memDir}
   set an = ./${anDir}${memDir}
 
   ## copy background to analysis
-  set bgFile = ${bg}/${BG_FILE_PREFIX}.$FILE_DATE.nc
-  set anFile = ${an}/${AN_FILE_PREFIX}.$FILE_DATE.nc
+  set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
+  set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
   cp ${bgFile} ${anFile}
 
   ## replace ANVars with output analysis values
-  set anFileDA = ${an}/analysis.$FILE_DATE.nc
+  set anFileDA = ${an}/${anStatePrefix}.$fileDate.nc
   ncks -A -v ${MPASANVars} ${anFileDA} ${anFile}
   rm ${anFileDA}
 
   @ member++
 end
-
-#cp ${BG_FILE_PREFIX}.${FILE_DATE}.nc ${AN_FILE_PREFIX}.${FILE_DATE}.nc
-#ncks -A -v theta,rho,u,qv,uReconstructZonal,uReconstructMeridional analysis.${FILE_DATE}.nc ${AN_FILE_PREFIX}.${FILE_DATE}.nc
 
 date
 

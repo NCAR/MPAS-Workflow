@@ -3,7 +3,7 @@
         ObsDataIn:
           obsfile: InDBDir/abi_g16_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: OutDBDir/obsPrefix_DATYPE_abi_g16.nc4
+          obsfile: OutDBDir/obsPrefix_DAMode_abi_g16.nc4
         simulate:
           variables: [brightness_temperature]
           channels: &abi_channels 8-10
@@ -64,9 +64,9 @@
 #              err0: [2.06, 1.35, 3.10]
 #              err1: [27.64, 22.93, 21.59]
       - Filter: GOMsaver
-        filename: OutDBDir/geoPrefix_DATYPE_abi_g16.nc4
+        filename: OutDBDir/geoPrefix_DAMode_abi_g16.nc4
       - Filter: YDIAGsaver
-        filename: OutDBDir/diagPrefix_DATYPE_abi_g16.nc4
+        filename: OutDBDir/diagPrefix_DAMode_abi_g16.nc4
         filter variables:
         - name: brightness_temperature_assuming_clear_sky
           channels: *abi_channels

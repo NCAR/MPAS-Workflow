@@ -14,62 +14,60 @@
 # =========================================
     set ONLYVERIFY=0
 
-    setenv C_DATE           VFSTATEDATE_in
-    setenv WINDOW_HR        WINDOWHR_in
-    setenv VF_STATE_DIR     VFSTATEDIR_in
-    setenv VF_FILE_PREFIX   VFFILEPREFIX_in
-    setenv VF_CYCLE_DIR     VFCYCLEDIR_in
-    setenv VARBC_TABLE      VARBCTABLE_in
-    setenv DIAG_TYPE        DIAGTYPE_in
-    setenv DEPEND_TYPE      DEPENDTYPE_in
+    # parent
+    setenv self_DependsOn   DependTypeArg
 
-    set WORKDIR=${VF_CYCLE_DIR}
-    mkdir -p ${WORKDIR}
-    ln -sf ${MAIN_SCRIPT_DIR}/setup.csh ${WORKDIR}/
+    # self
+    setenv self_Date        DateArg
+    setenv self_StateDir    StateDirArg
+    setenv self_StatePrefix StatePrefixArg
+    setenv self_WorkDir     WorkDirArg
+    setenv self_VARBCTable  VARBCTableArg
+
+    mkdir -p ${self_WorkDir}
+    ln -sf ${MAIN_SCRIPT_DIR}/setup.csh ${self_WorkDir}/
 
 #------- omm step ---------
 
-    set VFSCRIPT=${WORKDIR}/vf_job_${C_DATE}_${EXPNAME}.csh
-    sed -e 's@CDATE@'${C_DATE}'@' \
-        -e 's@ACCOUNTNUM@'${VFACCOUNTNUM}'@' \
-        -e 's@QUEUENAME@'${VFQUEUENAME}'@' \
-        -e 's@EXPNAME@'${EXPNAME}'@' \
+    set VFSCRIPT=${self_WorkDir}/vf_job_${self_Date}_${ExpName}.csh
+    sed -e 's@DateArg@'${self_Date}'@' \
+        -e 's@AccountNumArg@'${VFACCOUNTNUM}'@' \
+        -e 's@QueueNameArg@'${VFQUEUENAME}'@' \
+        -e 's@ExpNameArg@'${ExpName}'@' \
         vf_job.csh > ${VFSCRIPT}
     chmod 744 ${VFSCRIPT}
 
-    set OMMSCRIPT=${WORKDIR}/${omm}_job_${C_DATE}_${EXPNAME}.csh
-    sed -e 's@OMMTYPE@'${DIAG_TYPE}'@' \
-        -e 's@ACCOUNTNUM@'${VFACCOUNTNUM}'@' \
-        -e 's@QUEUENAME@'${VFQUEUENAME}'@' \
-        -e 's@EXPNAME@'${EXPNAME}'@' \
-        -e 's@CDATE@'${C_DATE}'@' \
-        -e 's@BGDIR@'${VF_STATE_DIR}'@' \
-        -e 's@BGSTATEPREFIX@'${VF_FILE_PREFIX}'@' \
+    set OMMSCRIPT=${self_WorkDir}/${omm}_job_${self_Date}_${ExpName}.csh
+    sed -e 's@OMMTypeArg@CYOMMTypeArg@' \
+        -e 's@AccountNumArg@'${VFACCOUNTNUM}'@' \
+        -e 's@QueueNameArg@'${VFQUEUENAME}'@' \
+        -e 's@ExpNameArg@'${ExpName}'@' \
+        -e 's@DateArg@'${self_Date}'@' \
+        -e 's@bgStateDirArg@'${self_StateDir}'@' \
+        -e 's@bgStatePrefixArg@'${self_StatePrefix}'@' \
         ${omm}_job.csh > ${OMMSCRIPT}
     chmod 744 ${OMMSCRIPT}
 
-    set da_wrapper=${WORKDIR}/da_wrapper_${C_DATE}_${EXPNAME}.csh
-    sed -e 's@CDATE@'${C_DATE}'@' \
-        -e 's@WINDOWHR@'${WINDOW_HR}'@' \
-        -e 's@OBSLIST@OMM_OBS_LIST@' \
-        -e 's@VARBCTABLE@'${VARBC_TABLE}'@' \
-        -e 's@DATYPESUB@'${omm}'@' \
-        -e 's@DAMODESUB@'${omm}'@' \
-        -e 's@DIAGTYPE@'${omm}'@' \
-        -e 's@DAJOBSCRIPT@'${OMMSCRIPT}'@' \
-        -e 's@DEPENDTYPE@'${DEPEND_TYPE}'@' \
-        -e 's@VFJOBSCRIPT@'${VFSCRIPT}'@' \
-        -e 's@CONFIGDIR@'${CONFIGDIR}'@' \
-        -e 's@RESSPECIFICDIR@'${RESSPECIFICDIR}'@' \
+    set da_wrapper=${self_WorkDir}/da_wrapper_${self_Date}_${ExpName}.csh
+    sed -e 's@DateArg@'${self_Date}'@' \
+        -e 's@WindowHRArg@DAWindowHRArg@' \
+        -e 's@ObsListArg@OMMObsList@' \
+        -e 's@VARBCTableArg@'${self_VARBCTable}'@' \
+        -e 's@bgStatePrefixArg@'${self_StatePrefix}'@' \
+        -e 's@DATypeArg@'${omm}'@' \
+        -e 's@DAModeArg@'${omm}'@' \
+        -e 's@DAJobScriptArg@'${OMMSCRIPT}'@' \
+        -e 's@DependTypeArg@'${self_DependsOn}'@' \
+        -e 's@VFJobScriptArg@'${VFSCRIPT}'@' \
         da_wrapper.csh > ${da_wrapper}
     chmod 744 ${da_wrapper}
 
-    cd ${WORKDIR}
+    cd ${self_WorkDir}
 
     if ( ${ONLYVERIFY} == 0 ) then
-        echo "${DIAG_TYPE} and verification at ${C_DATE}"
+        echo "CYOMMTypeArg and verification at ${self_Date}"
         ${da_wrapper} >& da_wrapper.log
     else
-        echo "verification at ${C_DATE}"
+        echo "verification at ${self_Date}"
         qsub ${VFSCRIPT}
    endif

@@ -3,7 +3,7 @@
         ObsDataIn:
           obsfile: InDBDir/abi_g16_obs_2018041500.nc4
         ObsDataOut:
-          obsfile: OutDBDir/obsPrefix_DATYPE_abi-clr_g16.nc4
+          obsfile: OutDBDir/obsPrefix_DAMode_abi-clr_g16.nc4
         simulate:
           variables: [brightness_temperature]
           channels: &abi_channels 7-16
@@ -26,9 +26,9 @@
             name: sensor_zenith_angle@MetaData
           maxvalue: 65.0
       - Filter: GOMsaver
-        filename: OutDBDir/geoPrefix_DATYPE_abi-clr_g16.nc4
+        filename: OutDBDir/geoPrefix_DAMode_abi-clr_g16.nc4
       - Filter: YDIAGsaver
-        filename: OutDBDir/diagPrefix_DATYPE_abi-clr_g16.nc4
+        filename: OutDBDir/diagPrefix_DAMode_abi-clr_g16.nc4
         filter variables:
         - name: brightness_temperature_assuming_clear_sky
           channels: *abi_channels
