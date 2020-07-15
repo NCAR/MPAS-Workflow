@@ -4,10 +4,10 @@
 # Initial and final times of the period:
 # =========================================
 # First cycle date (used to initiate new experiments)
-setenv FIRSTCYCLE 2018041500 # experiment first cycle date
+setenv FirstCycleDate 2018041500 # experiment first cycle date
 
 # Experiment start and end date
-# NOTE: can be set beyond FIRSTCYCLE in order to continue
+# NOTE: can be set beyond FirstCycleDate in order to continue
 # from previously generated workflow output
 setenv ExpStartDate 2018041500 
 #setenv ExpEndDate 2018051418
@@ -104,50 +104,57 @@ setenv diagPrefix     ydiags
 setenv updateSea         1
 
 setenv CYWindowHR        6               # interval between cycle DA
-setenv FCVFWindowHR      72              # length of verification forecasts
-setenv FCVF_DT_HR        6               # interval between OMF verification times of an individual forecast
-setenv FCVF_INTERVAL_HR  12              # interval between OMF forecast initial times
-setenv DAVFWindowHR      ${FCVF_DT_HR}   # window of observations included in verification
+setenv ExtendedFCWindowHR      72              # length of verification forecasts
+setenv ExtendedFC_DT_HR        6               # interval between OMF verification times of an individual forecast
+setenv ExtendedFC_INTERVAL_HR  12              # interval between OMF forecast initial times
+setenv DAVFWindowHR      ${ExtendedFC_DT_HR}   # window of observations included in verification
 
 # TODO: enable logic (somewhere else) to use different super-obbing/thinning for DA/OMM jobs
 setenv MPAS_RES            120km
 setenv MPAS_NCELLS         40962
 setenv RADTHINDISTANCE     "200.0"
 setenv RADTHINAMOUNT       "0.98"
-setenv FCCYJobMinutes      5
-setenv FCVFJobMinutes      40
+setenv CyclingFCJobMinutes      5
+setenv ExtendedFCJobMinutes      40
+setenv OMMNodes 2
+setenv OMMPEPerNode 18
 if ( "$DAType" =~ *"eda"* || "$DAType" == "${omm}") then
-  setenv DACYNodesPerMember 2
-  setenv DACYPEPerNode      18
+  setenv CyclingDANodesPerMember ${OMMNodes}
+  setenv CyclingDAPEPerNode      ${OMMPEPerNode}
 else
-  setenv DACYNodesPerMember 4
-  setenv DACYPEPerNode      32
+  setenv CyclingDANodesPerMember 4
+  setenv CyclingDAPEPerNode      32
 endif
 
 #setenv MPAS_RES           30km
 #setenv MPAS_NCELLS        655362
 #setenv RADTHINDISTANCE    "60.0"
 #setenv RADTHINAMOUNT      "0.75"
-#setenv FCCYJobMinutes     10
-#setenv FCVFJobMinutes     60
+#setenv CyclingFCJobMinutes     10
+#setenv ExtendedFCJobMinutes     60
+#setenv OMMNodes 8
+#setenv OMMPEPerNode 16
 #if ( "$DAType" =~ *"eda"* ) then
-#  setenv DACYNodesPerMember 8
-#  setenv DACYPEPerNode      16
+#  setenv CyclingDANodesPerMember ${OMMNodes}
+#  setenv CyclingDAPEPerNode      ${OMMPEPerNode}
 #else
-#  setenv DACYNodesPerMember 16
-#  setenv DACYPEPerNode      32
+#  setenv CyclingDANodesPerMember 16
+#  setenv CyclingDAPEPerNode      32
 #endif
+H
+setenv RSTFilePrefix   restart
+setenv ICFilePrefix    ${RSTFilePrefix}
+setenv FirstCycleFilePrefix ${RSTFilePrefix}
+#setenv FirstCycleFilePrefix x1.${MPAS_NCELLS}.init
 
-setenv RSTFilePrefix  restart
-setenv ICFilePrefix   ${RSTFilePrefix}
-setenv FCFilePrefix   ${RSTFilePrefix}
-setenv fcDir          fc
-setenv DIAGFilePrefix diag
+setenv FCFilePrefix    ${RSTFilePrefix}
+setenv fcDir           fc
+setenv DIAGFilePrefix  diag
 
-setenv ANFilePrefix   an
-setenv anDir          ${ANFilePrefix}
-setenv BGFilePrefix   ${RSTFilePrefix}
-setenv bgDir          bg
+setenv ANFilePrefix    an
+setenv anDir           ${ANFilePrefix}
+setenv BGFilePrefix    ${RSTFilePrefix}
+setenv bgDir           bg
 
 setenv anStatePrefix analysis
 
@@ -156,11 +163,11 @@ setenv MPASSeaVars sst,xice
 set MPASHydroVars = (qc qi qr qs qg)
 setenv MPASStandardANVars theta,rho,u,qv,uReconstructZonal,uReconstructMeridional
 
-@ DACYPEPerMember = ${DACYNodesPerMember} * ${DACYPEPerNode}
-setenv DACYPEPerMember ${DACYPEPerMember}
+@ CyclingDAPEPerMember = ${CyclingDANodesPerMember} * ${CyclingDAPEPerNode}
+setenv CyclingDAPEPerMember ${CyclingDAPEPerMember}
 
-@ DACYNodes = ${DACYNodesPerMember} * ${nEnsDAMembers}
-setenv DACYNodes ${DACYNodes}
+@ CyclingDANodes = ${CyclingDANodesPerMember} * ${nEnsDAMembers}
+setenv CyclingDANodes ${CyclingDANodes}
 
 setenv nulljob 0
 #
@@ -173,11 +180,11 @@ setenv TOP_EXP_DIR      /glade/scratch/${EXPUSER}/pandac
 setenv EXPDIR           ${TOP_EXP_DIR}/${EXPUSER}_${ExpName}_${MPAS_RES}
 
 ## immediate subdirectories
-setenv DA_WORK_DIR      ${EXPDIR}/DACY
-setenv FCCY_WORK_DIR    ${EXPDIR}/FCCY
-setenv FCVF_WORK_DIR    ${EXPDIR}/FCVF
-setenv VF_WORK_DIR      ${EXPDIR}/VF
-setenv JOBCONTROL       ${EXPDIR}/JOBCONTROL
+setenv CyclingDAWorkDir    ${EXPDIR}/CyclingDA
+setenv CyclingFCWorkDir    ${EXPDIR}/CyclingFC
+setenv ExtendedFCWorkDir   ${EXPDIR}/ExtendedFC
+setenv VerificationWorkDir ${EXPDIR}/Verification
+setenv JOBCONTROL          ${EXPDIR}/JOBCONTROL
 mkdir -p ${JOBCONTROL}
 
 ## directories copied from PKGBASE
@@ -202,21 +209,22 @@ setenv FIXED_INPUT           ${TOP_STATIC_DIR}/fixed_input
 
 ## deterministic input
 #GFS
-setenv GFSANA6HFC_FIRSTCYCLE /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
+setenv GFSANA6HFC_FirstCycle /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
 setenv GFSANA6HFC_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
 #generic names
-setenv deterministicICFirstCycle ${GFSANA6HFC_FIRSTCYCLE}
+setenv deterministicICFirstCycle ${GFSANA6HFC_FirstCycle}
 
 ## ensemble input
 #GEFS
 set GEFSANA6HFC_DIR = /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC
-set GEFSANA6HFC_FIRSTCYCLE = ${GEFSANA6HFC_DIR}/2018041418
+set GEFSANA6HFC_FirstCycle = ${GEFSANA6HFC_DIR}/2018041418
 set gefsMemFmt = "/{:02d}"
 set nGEFSMembers = 20
 
 #generic names
+setenv dynamicEnsembleB ${CyclingFCWorkDir}
 setenv fixedEnsembleB ${GEFSANA6HFC_DIR}
-setenv ensembleICFirstCycle ${GEFSANA6HFC_FIRSTCYCLE}
+setenv ensembleICFirstCycle ${GEFSANA6HFC_FirstCycle}
 setenv fixedEnsMemFmt "${gefsMemFmt}"
 setenv nFixedMembers ${nGEFSMembers}
 
@@ -236,7 +244,7 @@ setenv DA_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_DA_NML
 setenv FC_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_FC_NML
 
 ## Background Error
-setenv bumpLocDir            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_bumploc_${DACYPEPerMember}pe
+setenv bumpLocDir            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_bumploc_${CyclingDAPEPerMember}pe
 setenv bumpLocPrefix         bumploc_2000_5
 
 ## Observations
@@ -331,16 +339,16 @@ end
 #
 # job submission settings
 # =============================================
-#setenv ACCOUNTNUM NMMM0015
-setenv ACCOUNTNUM NMMM0043
+#setenv AccountNumber NMMM0015
+setenv AccountNumber NMMM0043
 
-setenv CYACCOUNTNUM ${ACCOUNTNUM}
-setenv VFACCOUNTNUM ${ACCOUNTNUM}
+setenv CYAccountNumber ${AccountNumber}
+setenv VFAccountNumber ${AccountNumber}
 
-#setenv CYQUEUENAME premium
-setenv CYQUEUENAME regular
-#setenv CYQUEUENAME economy
+#setenv CYQueueName premium
+setenv CYQueueName regular
+#setenv CYQueueName economy
 
-#setenv VFQUEUENAME premium
-#setenv VFQUEUENAME regular
-setenv VFQUEUENAME economy
+#setenv VFQueueName premium
+#setenv VFQueueName regular
+setenv VFQueueName economy

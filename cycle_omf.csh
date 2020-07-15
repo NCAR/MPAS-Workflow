@@ -54,46 +54,46 @@
       setenv IC_CYCLE_DIR "${IC_DIR}/${cycle_Date}"
 
 #------- extended forecast step --------- 
-      setenv FC_CYCLE_DIR "${FCVF_WORK_DIR}/${IC_STATE}/${cycle_Date}"
-      set FCWorkDir=${FC_CYCLE_DIR}
-      set finalFCVFDate = `$advanceCYMDH ${cycle_Date} ${FCVFWindowHR}`
+      setenv FC_CYCLE_DIR "${ExtendedFCWorkDir}/${IC_STATE}/${cycle_Date}"
+      set fcWorkDir=${FC_CYCLE_DIR}
+      set finalExtendedFCDate = `$advanceCYMDH ${cycle_Date} ${ExtendedFCWindowHR}`
 
       echo ""
       echo "Working on cycle: ${cycle_Date}"
 
       if ( ${ONLYOMM} == 0 ) then
 
-        rm -rf ${FCWorkDir}
-        mkdir -p ${FCWorkDir}
+        rm -rf ${fcWorkDir}
+        mkdir -p ${fcWorkDir}
 
         cd ${MAIN_SCRIPT_DIR}
-        ln -sf setup.csh ${FCWorkDir}/
+        ln -sf setup.csh ${fcWorkDir}/
 
         echo ""
-        echo "${FCVFWindowHR}-hr verification FC from ${cycle_Date} to ${finalFCVFDate}"
-        set fcvf_job=${FCWorkDir}/fcvf_job_${cycle_Date}_${ExpName}.csh
+        echo "${ExtendedFCWindowHR}-hr verification FC from ${cycle_Date} to ${finalExtendedFCDate}"
+        set fcvf_job=${fcWorkDir}/fcvf_job_${cycle_Date}_${ExpName}.csh
         sed -e 's@icDateArg@'${cycle_Date}'@' \
-            -e 's@JobMinutes@'${FCVFJobMinutes}'@' \
-            -e 's@AccountNumArg@'${CYACCOUNTNUM}'@' \
-            -e 's@QueueNameArg@'${CYQUEUENAME}'@' \
+            -e 's@JobMinutes@'${ExtendedFCJobMinutes}'@' \
+            -e 's@AccountNumberArg@'${CYAccountNumber}'@' \
+            -e 's@QueueNameArg@'${CYQueueName}'@' \
             -e 's@ExpNameArg@'${ExpName}'@' \
             -e 's@icStateDirArg@'${IC_CYCLE_DIR}'@' \
             -e 's@icStatePrefixArg@'${IC_STATE_PREFIX}'@' \
-            -e 's@fcLengthHRArg@'${FCVFWindowHR}'@' \
-            -e 's@fcIntervalHRArg@'${FCVF_DT_HR}'@' \
+            -e 's@fcLengthHRArg@'${ExtendedFCWindowHR}'@' \
+            -e 's@fcIntervalHRArg@'${ExtendedFC_DT_HR}'@' \
             fc_job.csh > ${fcvf_job}
         chmod 744 ${fcvf_job}
 
-        cd ${FCWorkDir}
+        cd ${fcWorkDir}
 
-        set JFCVF = `qsub -h ${fcvf_job}`
-        echo "${JFCVF}" > ${JOBCONTROL}/last_fcvf_job
+        set JExtendedFC = `qsub -h ${fcvf_job}`
+        echo "${JExtendedFC}" > ${JOBCONTROL}/last_fcvf_job
       else
-        set JFCVF = 0
+        set JExtendedFC = 0
       endif
 
 #------- verify fc step ---------
-      setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${fcDir}-${IC_STATE}/${cycle_Date}"
+      setenv VF_CYCLE_DIR "${VerificationWorkDir}/${fcDir}-${IC_STATE}/${cycle_Date}"
       mkdir -p ${VF_CYCLE_DIR}
       cd ${VF_CYCLE_DIR}
 
@@ -106,7 +106,7 @@
       set OMMSCRIPT=${omm}_wrapper_OMF_${dt}hr.csh
       sed -e 's@DateArg@'${thisVFDate}'@' \
           -e 's@DAWindowHRArg@'${DAVFWindowHR}'@' \
-          -e 's@StateDirArg@'${FCWorkDir}'@' \
+          -e 's@StateDirArg@'${fcWorkDir}'@' \
           -e 's@StatePrefixArg@'${IC_STATE_PREFIX}'@' \
           -e 's@WorkDirArg@'${VF_DIR}'@' \
           -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
@@ -117,17 +117,17 @@
       ./${OMMSCRIPT}
 
       ## all other fc lengths
-      set thisVFDate = `$advanceCYMDH ${thisVFDate} ${FCVF_DT_HR}`
-      @ dt = $dt + $FCVF_DT_HR
+      set thisVFDate = `$advanceCYMDH ${thisVFDate} ${ExtendedFC_DT_HR}`
+      @ dt = $dt + $ExtendedFC_DT_HR
 
-      while ( ${thisVFDate} <= ${finalFCVFDate} )
+      while ( ${thisVFDate} <= ${finalExtendedFCDate} )
         cd ${MAIN_SCRIPT_DIR}
         set VF_DIR = "${VF_CYCLE_DIR}/${dt}hr"
 
         set OMMSCRIPT=${omm}_wrapper_OMF_${dt}hr.csh
         sed -e 's@DateArg@'${thisVFDate}'@' \
             -e 's@DAWindowHRArg@'${DAVFWindowHR}'@' \
-            -e 's@StateDirArg@'${FCWorkDir}'@' \
+            -e 's@StateDirArg@'${fcWorkDir}'@' \
             -e 's@StatePrefixArg@'${FCFilePrefix}'@' \
             -e 's@WorkDirArg@'${VF_DIR}'@' \
             -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
@@ -137,16 +137,16 @@
         chmod 744 ${OMMSCRIPT}
         ./${OMMSCRIPT}
 
-        set thisVFDate = `$advanceCYMDH ${thisVFDate} ${FCVF_DT_HR}`
-        @ dt = $dt + $FCVF_DT_HR
+        set thisVFDate = `$advanceCYMDH ${thisVFDate} ${ExtendedFC_DT_HR}`
+        @ dt = $dt + $ExtendedFC_DT_HR
       end
 
-      if ( ${JFCVF} != 0 ) then
-        qrls $JFCVF
+      if ( ${JExtendedFC} != 0 ) then
+        qrls $JExtendedFC
       endif
 
 #------- advance date ---------
-      set cycle_Date = `$advanceCYMDH ${cycle_Date} ${FCVF_INTERVAL_HR}`
+      set cycle_Date = `$advanceCYMDH ${cycle_Date} ${ExtendedFC_INTERVAL_HR}`
       setenv cycle_Date ${cycle_Date}
 
     end

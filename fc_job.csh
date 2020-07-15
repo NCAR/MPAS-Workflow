@@ -1,6 +1,6 @@
 #!/bin/csh
-#PBS -N fcicDateArg_ExpNameArg
-#PBS -A AccountNumArg
+#PBS -N fcinDateArg_ExpNameArg
+#PBS -A AccountNumberArg
 #PBS -q QueueNameArg
 #PBS -l select=4:ncpus=32:mpiprocs=32:mem=109GB
 #PBS -l walltime=00:JobMinutes:00
@@ -17,13 +17,13 @@ date
 # =============================================
 source ./setup.csh
 
-setenv self_icDate        icDateArg
+setenv self_icDate        inDateArg
+setenv self_icStateDir    inStateDirArg
+setenv self_icStatePrefix inStatePrefixArg
 setenv self_fcLengthHR    fcLengthHRArg
 setenv self_fcIntervalHR  fcIntervalHRArg
-setenv self_icStateDir    icStateDirArg
-setenv self_icStatePrefix icStatePrefixArg
 
-setenv FC_LENGTH_STR 0_${self_fcLengthHR}:00:00
+setenv config_run_duration 0_${self_fcLengthHR}:00:00
 setenv OUT_DT_STR 0_${self_fcIntervalHR}:00:00
 
 #
@@ -36,20 +36,11 @@ set hh = `echo ${self_icDate} | cut -c 9-10`
 set icFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set icNMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 
+set icFileExt = "${icFileDate}.nc"
+set icFile = ${ICFilePrefix}.${fcFileExt}
+
 ## link initial forecast state:
-ln -sf ${self_icStateDir}/${self_icStatePrefix}.${icFileDate}.nc ./${ICFilePrefix}.${icFileDate}.nc
-
-## zero-length forecast case
-if ( ${self_fcLengthHR} == 0 ) then
-  ## copy IC file to forecast name
-  mv ./${ICFilePrefix}.${icFileDate}.nc ./${ICFilePrefix}.${icFileDate}.nc_tmp
-  cp ${ICFilePrefix}.${icFileDate}.nc_tmp ${FCFilePrefix}.${icFileDate}.nc
-
-  ## Add MPASDiagVars to the next cycle bg file
-  ncks -A -v ${MPASDiagVars} ${self_icStateDir}/${DIAGFilePrefix}.${icFileDate}.nc ${FCFilePrefix}.${icFileDate}.nc
-  exit 0
-endif
-
+ln -sf ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
 
 #
 # Copy/link static files:
@@ -66,7 +57,7 @@ cat >! newnamelist << EOF
   /config_start_time /c\
    config_start_time      = '${icNMLDate}'
   /config_run_duration/c\
-   config_run_duration    = '${FC_LENGTH_STR}'
+   config_run_duration    = '${config_run_duration}'
 EOF
 sed -f newnamelist orig_namelist.atmosphere >! namelist.atmosphere
 rm newnamelist
@@ -75,20 +66,27 @@ set STREAMS=streams.atmosphere
 sed -e 's@OUT_DT_STR@'${OUT_DT_STR}'@' \
     ${STREAMS}_TEMPLATE > ${STREAMS}
 
-#
-# Run the executable:
-# =============================================
-ln -sf ${MPASBUILDDIR}/${FCEXE} ./
-mpiexec ./${FCEXE}
+if ( ${self_fcLengthHR} == 0 ) then
+  ## zero-length forecast case
+  mv ./${icFile} ./${icFile}_tmp
+  cp ${icFile}_tmp ${FCFilePrefix}.${icFileExt}
+  ln -sf ${self_icStateDir}/${DIAGFilePrefix}.${icFileExt} ./
+else
+  #
+  # Run the executable:
+  # =============================================
+  ln -sf ${MPASBUILDDIR}/${FCEXE} ./
+  mpiexec ./${FCEXE}
 
-#
-# Check status:
-# =============================================
-grep "Finished running the atmosphere core" log.atmosphere.0000.out
-if ( $status != 0 ) then
-  touch ./FAIL
-  echo "ERROR in $0 : MPAS-Model forecast failed" >> ./FAIL
-  exit 1
+  #
+  # Check status:
+  # =============================================
+  grep "Finished running the atmosphere core" log.atmosphere.0000.out
+  if ( $status != 0 ) then
+    touch ./FAIL
+    echo "ERROR in $0 : MPAS-Model forecast failed" >> ./FAIL
+    exit 1
+  endif
 endif
 
 set fcDate = `$advanceCYMDH ${self_icDate} ${self_fcIntervalHR}`
@@ -102,23 +100,39 @@ while ( ${fcDate} <= ${finalFCDate} )
   set dd = `echo ${fcDate} | cut -c 7-8`
   set hh = `echo ${fcDate} | cut -c 9-10`
   set fcFileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
+  set fcFileExt = ${fcFileDate}.nc
+  set fcFile = ${FCFilePrefix}.${fcFileExt}
+  set fcFileNoSea = ${fcFile}.NOSEA
 
   ## move restart to forecast name
-  mv ${RSTFilePrefix}.${fcFileDate}.nc ${FCFilePrefix}.${fcFileDate}.nc
+  mv ${RSTFilePrefix}.${fcFileExt} ${fcFile}
 
   ## Update MPAS sea surface variables:
   if ( ${updateSea} ) then
     #delete MPASSeaVars from previous GFS ANA
-    ncks -a -x -v ${MPASSeaVars} ${FCFilePrefix}.${fcFileDate}.nc ${FCFilePrefix}.${fcFileDate}.nosea.nc
+    ncks -a -x -v ${MPASSeaVars} ${fcFile} ${fcFileNoSea}
 
     #append MPASSeaVars from current GFS ANA
-    setenv SST_FILE ${GFSSST_DIR}/${fcDate}/x1.${MPAS_NCELLS}.sfc_update.${fcFileDate}.nc
-    ncks -A -v ${MPASSeaVars} ${SST_FILE} ${FCFilePrefix}.nosea.${fcFileDate}.nc
-    mv  ${FCFilePrefix}.nosea.${fcFileDate}.nc  ${FCFilePrefix}.${fcFileDate}.nc
+    set SST_FILE = ${GFSSST_DIR}/${fcDate}/x1.${MPAS_NCELLS}.sfc_update.${fcFileExt}
+    ncks -A -v ${MPASSeaVars} ${SST_FILE} ${fcFileNoSea}
+    mv  ${fcFileNoSea} ${fcFile}
   endif
 
-  ## Add MPASDiagVars to the next cycle bg file
-  ncks -A -v ${MPASDiagVars} ${DIAGFilePrefix}.${fcFileDate}.nc ${FCFilePrefix}.${fcFileDate}.nc
+  ## Add MPASDiagVars to the next cycle bg file (if needed)
+  set copyDiags = 0
+  foreach var ({$MPASDiagVars})
+    ncdump -h ${fcFile} | grep $var
+    if ( $status != 0 ) then
+      @ copyDiags++
+    endif 
+  end
+  set diagFile = ${DIAGFilePrefix}.${fcFileExt}
+  if ( $copyDiags > 0 ) then
+    ncks -A -v ${MPASDiagVars} ${diagFile} ${fcFile}
+  endif
+  rm ${diagFile}
+
+#  echo `pwd`"/${fcFile}" > outList${fcDate}
 
   set fcDate = `$advanceCYMDH ${fcDate} ${self_fcIntervalHR}`
   setenv fcDate ${fcDate}

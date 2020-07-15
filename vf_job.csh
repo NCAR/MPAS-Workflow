@@ -1,5 +1,5 @@
 #!/bin/csh
-#PBS -N vfDateArg_ExpNameArg
+#PBS -N vfinDateArg_ExpNameArg
 #PBS -A AccountNumArg
 #PBS -q QueueNameArg
 #PBS -l select=1:ncpus=18:mpiprocs=18
@@ -18,7 +18,7 @@ source ./setup.csh
 
 module load python/3.7.5
 
-setenv self_Date DateArg
+setenv self_Date inDateArg
 
 #
 # Time info:

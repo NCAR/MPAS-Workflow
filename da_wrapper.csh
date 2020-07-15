@@ -9,11 +9,11 @@ source ./setup.csh
 setenv self_DependsOn     DependTypeArg
 
 #self
-setenv self_Date          DateArg
+setenv self_Date          inDateArg
+setenv self_bgStatePrefix inStatePrefixArg
 setenv self_WindowHR      WindowHRArg
 set self_ObsList = ("${ObsListArg}")
 setenv self_VARBCTable    VARBCTableArg
-setenv self_bgStatePrefix bgStatePrefixArg
 setenv self_DAType        DATypeArg
 setenv self_DAMode        DAModeArg
 
@@ -216,11 +216,11 @@ sed -f fulllineSEDF.yaml orig_jedi0.yaml >! orig_jedi1.yaml
 rm fulllineSEDF.yaml
 
 if ( "$self_DAType" =~ *"eda"* ) then
-  set topEnsBDir = ${FCCY_WORK_DIR}
+  set ensBDir = ${dynamicEnsembleB}
   set ensBMemFmt = "${oopsMemFmt}"
   set nEnsBMembers = ${nEnsDAMembers}
 else
-  set topEnsBDir = ${fixedEnsembleB}
+  set ensBDir = ${fixedEnsembleB}
   set ensBMemFmt = "${fixedEnsMemFmt}"
   set nEnsBMembers = ${nFixedMembers}
 endif
@@ -244,7 +244,7 @@ while ( $member <= ${nEnsBMembers} )
      set adate = ${adate}\\
   endif
 cat >>! ${ensbsed}SEDF.yaml << EOF
-      - filename: ${topEnsBDir}/${prevDate}${memDir}/${FCFilePrefix}.${FileDate}.nc\
+      - filename: ${ensBDir}/${prevDate}${memDir}/${FCFilePrefix}.${FileDate}.nc\
         date: *${adate}
 EOF
 

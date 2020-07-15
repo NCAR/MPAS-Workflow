@@ -1,8 +1,8 @@
 #!/bin/csh
-#PBS -N OMMTypeArgDateArg_ExpNameArg
-#PBS -l select=2:ncpus=18:mpiprocs=18:mem=109GB
-#PBS -A AccountNumArg
+#PBS -N StateTypeArginDateArg_ExpNameArg
+#PBS -A AccountNumberArg
 #PBS -q QueueNameArg
+#PBS -l select=NNODE:ncpus=NPE:mpiprocs=NPE:mem=109GB
 #PBS -m ae
 #PBS -k eod
 #PBS -o log.job.out
@@ -15,9 +15,9 @@ date
 # =============================================
 source ./setup.csh
 
-setenv self_Date          DateArg
-setenv self_bgStateDir    bgStateDirArg
-setenv self_bgStatePrefix bgStatePrefixArg
+setenv self_Date          inDateArg
+setenv self_bgStateDir    inStateDirArg
+setenv self_bgStatePrefix inStatePrefixArg
 
 #
 # Time info for namelist, yaml etc:
@@ -65,7 +65,8 @@ endif
 
 # Remove existing analysis file, if any
 # =====================================
-rm ${anStatePrefix}.${fileDate}.nc
+set anFile = ${anStatePrefix}.${fileDate}.nc
+rm ${anFile}
 
 # ===================
 # ===================
@@ -74,11 +75,6 @@ rm ${anStatePrefix}.${fileDate}.nc
 # ===================
 ln -sf ${JEDIBUILDDIR}/bin/${OMMEXE} ./
 mpiexec ./${OMMEXE} ./jedi.yaml ./jedi.log >& jedi.log.all
-
-#WITH DEBUGGER
-#module load arm-forge/19.1
-#setenv MPI_SHEPHERD true
-#ddt --connect ${JEDIBUILDDIR}/bin/${OMMEXE}  ./jedi.yaml ./jedi.log
 
 #
 # Check status:
@@ -93,7 +89,7 @@ endif
 
 # Remove garbage analysis file
 # ============================
-rm ${anStatePrefix}.${fileDate}.nc
+rm ${anFile}
 
 date
 

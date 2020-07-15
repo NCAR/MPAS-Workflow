@@ -43,7 +43,7 @@
     set OMF_DIR=/glade/scratch/wuyl/test2/pandac/test_120km/DA/noAHI
     set FCFilePrefix=${RSTFilePrefix}
 
-    set STATE_DIR = "${FCVF_WORK_DIR}/${OMM_STATE}"
+    set STATE_DIR = "${ExtendedFCWorkDir}/${OMM_STATE}"
     mkdir -p ${STATE_DIR}
 
 #
@@ -67,11 +67,11 @@
         ln -sf ${OMF_DIR}/${P_DATE} .
       endif
 
-      setenv VF_CYCLE_DIR "${VF_WORK_DIR}/${fcDir}-${OMM_STATE}/${cycle_Date}"
+      setenv VF_CYCLE_DIR "${VerificationWorkDir}/${fcDir}-${OMM_STATE}/${cycle_Date}"
       set WORKDIR=${VF_CYCLE_DIR}
 
-      setenv VF_PCYCLE_DIR "${VF_WORK_DIR}/${fcDir}-${OMM_STATE}/${P_DATE}"
-      if ( ${cycle_Date} == ${FIRSTCYCLE} ) then
+      setenv VF_PCYCLE_DIR "${VerificationWorkDir}/${fcDir}-${OMM_STATE}/${P_DATE}"
+      if ( ${cycle_Date} == ${FirstCycleDate} ) then
          setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
       else
          setenv VARBC_TABLE ${VF_PCYCLE_DIR}/${VARBC_ANA}

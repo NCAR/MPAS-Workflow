@@ -1,6 +1,6 @@
 #!/bin/csh
-#PBS -N daDateArg_ExpNameArg
-#PBS -A AccountNumArg
+#PBS -N dainDateArg_ExpNameArg
+#PBS -A AccountNumberArg
 #PBS -q QueueNameArg
 #PBS -l select=NNODE:ncpus=NPE:mpiprocs=NPE:mem=109GB
 #PBS -l walltime=0:25:00
@@ -16,10 +16,10 @@ date
 # =============================================
 source ./setup.csh
 
-setenv self_Date          DateArg
+setenv self_Date          inDateArg
+setenv self_bgStatePrefix inStatePrefixArg
+setenv self_bgStateDirs   (inStateDirsArg)
 setenv self_DAType        DATypeArg
-setenv self_bgStateDir    bgStateDirArg
-setenv self_bgStatePrefix bgStatePrefixArg
 
 #
 # Time info for namelist, yaml etc:
@@ -40,8 +40,10 @@ rm jedi.log*
 
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
+  set other = $self_bgStateDirs[$member]
+
+  # TODO(JJG): centralize this directory name construction (cycle.csh?)
   set memDir = `${memberDir} $self_DAType $member`
-  set other = ${self_bgStateDir}${memDir}
   set bg = ./${bgDir}${memDir}
   set an = ./${anDir}${memDir}
   mkdir -p ${bg}
@@ -125,10 +127,11 @@ endif
 #
 # Update analyzed variables:
 # =============================================
+#rm outList${self_Date}
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
+  # TODO(JJG): centralize this directory name construction (cycle.csh?)
   set memDir = `${memberDir} $self_DAType $member`
-
   set bg = ./${bgDir}${memDir}
   set an = ./${anDir}${memDir}
 
@@ -141,6 +144,8 @@ while ( $member <= ${nEnsDAMembers} )
   set anFileDA = ${an}/${anStatePrefix}.$fileDate.nc
   ncks -A -v ${MPASANVars} ${anFileDA} ${anFile}
   rm ${anFileDA}
+
+#  echo `pwd`"/${anFile}" >> outList${self_Date}
 
   @ member++
 end
