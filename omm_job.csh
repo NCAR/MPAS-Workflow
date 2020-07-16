@@ -1,5 +1,5 @@
 #!/bin/csh
-#PBS -N StateTypeArginDateArg_ExpNameArg
+#PBS -N omStateTypeArginDateArg_ExpNameArg
 #PBS -A AccountNumberArg
 #PBS -q QueueNameArg
 #PBS -l select=NNODE:ncpus=NPE:mpiprocs=NPE:mem=109GB
@@ -16,8 +16,13 @@ date
 source ./setup.csh
 
 setenv self_Date          inDateArg
-setenv self_bgStateDir    inStateDirArg
-setenv self_bgStatePrefix inStatePrefixArg
+setenv self_StateDirs   (inStateDirsArg)
+setenv self_StatePrefix inStatePrefixArg
+
+if ( ${#self_StateDirs} != 1 ) then
+  echo "ERROR in $0 : self_StateDirs must be == 1"
+  exit 1
+endif
 
 #
 # Time info for namelist, yaml etc:
@@ -40,8 +45,8 @@ rm jedi.log*
 # =========================================================================
 
 set memDir = `${memberDir} ${omm} 0`
-set other = ${self_bgStateDir}${memDir}
-set bgFileOther = ${other}/${self_bgStatePrefix}.$fileDate.nc
+set other = ${self_StateDirs[1]}${memDir}
+set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
 set bgFileDA = ./${BGFilePrefix}.$fileDate.nc
 
 set copyDiags = 0

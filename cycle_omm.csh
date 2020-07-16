@@ -81,16 +81,23 @@
 #------- perform omm calculation ---------
       cd ${MAIN_SCRIPT_DIR}
 
-      set OMMSCRIPT=omm_wrapper_TEMP.csh
-      sed -e 's@DateArg@'${cycle_Date}'@' \
-          -e 's@DAWindowHRArg@'${CYWindowHR}'@' \
-          -e 's@StateDirArg@'${STATE_PCYCLE_DIR}'@' \
-          -e 's@StatePrefixArg@'${FCFilePrefix}'@' \
-          -e 's@WorkDirArg@'${WORKDIR}'@' \
-          -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
-          -e 's@CYOMMTypeArg@omb-'${OMM_STATE}'@' \
+      set OMMSCRIPT=jobANDverify_TEMP.csh
+      sed -e 's@WorkDirArg@'${WORKDIR}'@' \
+          -e 's@JobNameArg@'${omm}'_job@' \
           -e 's@DependTypeArg@null@' \
-          omm_wrapper.csh > ${OMMSCRIPT}
+          -e 's@wrapDateArg@'${cycle_Date}'@' \
+          -e 's@wrapStateDirsArg@'${STATE_PCYCLE_DIR}'@' \
+          -e 's@wrapStatePrefixArg@'${FCFilePrefix}'@' \
+          -e 's@wrapStateTypeArg@'${OMM_STATE}'@' \
+          -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
+          -e 's@wrapDAWindowHRArg@'${CYWindowHR}'@' \
+          -e 's@wrapDATypeArg@'${omm}'@g' \
+          -e 's@wrapDAModeArg@'${omm}'@g' \
+          -e 's@wrapAccountNumberArg@'${VFAccountNumber}'@' \
+          -e 's@wrapQueueNameArg@'${VFQueueName}'@' \
+          -e 's@wrapNNODEArg@'${OMMNodes}'@' \
+          -e 's@wrapNPEArg@'${OMMPEPerNode}'@g' \
+          jobANDverify.csh > ${OMMSCRIPT}
       chmod 744 ${OMMSCRIPT}
       ./${OMMSCRIPT}
 

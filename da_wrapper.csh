@@ -5,9 +5,6 @@
 # =============================================
 source ./setup.csh
 
-#parent
-setenv self_DependsOn     DependTypeArg
-
 #self
 setenv self_Date          inDateArg
 setenv self_bgStatePrefix inStatePrefixArg
@@ -303,22 +300,22 @@ rm ${modelsed}SEDF.yaml
 
 # Submit DA job script
 # =================================
-#TODO: move all job control to top-level cycling/workflow scripts
-set JALL=(`cat ${JOBCONTROL}/last_${self_DependsOn}_job`)
-set JDEP = ''
-foreach J ($JALL)
-  if (${J} != "$nulljob" ) then
-    set JDEP = ${JDEP}:${J}
-  endif
-end
-set JDA = `qsub -W depend=afterok${JDEP} ${self_DAJobScript}`
-
-echo "${JDA}" > ${JOBCONTROL}/last_${self_DAMode}_job
-
-# Submit VF job script
-# =================================
-if ( ${VERIFYAFTERDA} > 0 && ${self_VFJobScript} != "None" ) then
-  set JVF = `qsub -W depend=afterok:$JDA ${self_VFJobScript}`
-endif
+##TODO: move all job control to top-level cycling/workflow scripts
+#set JALL=(`cat ${JOBCONTROL}/last_${self_DependsOn}_job`)
+#set JDEP = ''
+#foreach J ($JALL)
+#  if (${J} != "$nulljob" ) then
+#    set JDEP = ${JDEP}:${J}
+#  endif
+#end
+#set JDA = `qsub -W depend=afterok${JDEP} ${self_DAJobScript}`
+#
+#echo "${JDA}" > ${JOBCONTROL}/last_${self_DAMode}_job
+#
+## Submit VF job script
+## =================================
+#if ( ${VERIFYAFTERDA} > 0 && ${self_VFJobScript} != "None" ) then
+#  set JVF = `qsub -W depend=afterok:$JDA ${self_VFJobScript}`
+#endif
 
 exit

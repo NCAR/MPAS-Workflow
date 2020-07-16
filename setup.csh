@@ -84,12 +84,6 @@ setenv ExpName ${ExpName}${ExpSuffix}
 #
 # verification settings
 # =============================================
-## VERIFYAFTERDA
-# whether to calculate obs-space verification statistics after DA
-# If > 0, a vf_job will be submitted after both omm_job and da_job in da_wrapper
-# TODO: add model-space verification
-setenv VERIFYAFTERDA  1
-
 ## File Prefixes for obs, geovals, and hofx-diagnostics
 # NOTE: these are self-consistent across multiple applications
 #       and can be changed to any non-empty string

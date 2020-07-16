@@ -18,7 +18,7 @@ source ./setup.csh
 
 setenv self_Date          inDateArg
 setenv self_bgStatePrefix inStatePrefixArg
-setenv self_bgStateDirs   (inStateDirsArg)
+setenv self_bgStateDirs   (inStateDirArg)
 setenv self_DAType        DATypeArg
 
 #

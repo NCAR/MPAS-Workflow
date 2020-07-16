@@ -103,16 +103,23 @@
       cd ${MAIN_SCRIPT_DIR}
       set VF_DIR = "${VF_CYCLE_DIR}/${dt}hr"
 
-      set OMMSCRIPT=${omm}_wrapper_OMF_${dt}hr.csh
-      sed -e 's@DateArg@'${thisVFDate}'@' \
-          -e 's@DAWindowHRArg@'${DAVFWindowHR}'@' \
-          -e 's@StateDirArg@'${fcWorkDir}'@' \
-          -e 's@StatePrefixArg@'${IC_STATE_PREFIX}'@' \
-          -e 's@WorkDirArg@'${VF_DIR}'@' \
-          -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
-          -e 's@CYOMMTypeArg@omf@' \
+      set OMMSCRIPT=jobANDverify_OMF_${dt}hr.csh
+      sed -e 's@WorkDirArg@'${VF_DIR}'@' \
+          -e 's@JobNameArg@'${omm}'_job@' \
+          -e 's@wrapDateArg@'${thisVFDate}'@' \
           -e 's@DependTypeArg@fcvf@' \
-          ${omm}_wrapper.csh > ${OMMSCRIPT}
+          -e 's@wrapStateDirsArg@'${fcWorkDir}'@' \
+          -e 's@wrapStatePrefixArg@'${IC_STATE_PREFIX}'@' \
+          -e 's@wrapStateTypeArg@fc@' \
+          -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
+          -e 's@wrapWindowHRArg@'${DAVFWindowHR}'@' \
+          -e 's@wrapDATypeArg@'${omm}'@g' \
+          -e 's@wrapDAModeArg@'${omm}'@g' \
+          -e 's@wrapAccountNumberArg@'${VFAccountNumber}'@' \
+          -e 's@wrapQueueNameArg@'${VFQueueName}'@' \
+          -e 's@wrapNNODEArg@'${OMMNodes}'@' \
+          -e 's@wrapNPEArg@'${OMMPEPerNode}'@g' \
+          jobANDverify.csh > ${OMMSCRIPT}
       chmod 744 ${OMMSCRIPT}
       ./${OMMSCRIPT}
 
@@ -124,16 +131,23 @@
         cd ${MAIN_SCRIPT_DIR}
         set VF_DIR = "${VF_CYCLE_DIR}/${dt}hr"
 
-        set OMMSCRIPT=${omm}_wrapper_OMF_${dt}hr.csh
-        sed -e 's@DateArg@'${thisVFDate}'@' \
-            -e 's@DAWindowHRArg@'${DAVFWindowHR}'@' \
-            -e 's@StateDirArg@'${fcWorkDir}'@' \
-            -e 's@StatePrefixArg@'${FCFilePrefix}'@' \
-            -e 's@WorkDirArg@'${VF_DIR}'@' \
-            -e 's@VARBCTableArg@'${VARBC_TABLE}'@' \
-            -e 's@CYOMMTypeArg@omf@' \
+        set OMMSCRIPT=jobANDverify_OMF_${dt}hr.csh
+        sed -e 's@WorkDirArg@'${VF_DIR}'@' \
+            -e 's@JobNameArg@'${omm}'_job@' \
             -e 's@DependTypeArg@fcvf@' \
-            ${omm}_wrapper.csh > ${OMMSCRIPT}
+            -e 's@wrapDateArg@'${thisVFDate}'@' \
+            -e 's@wrapStateDirsArg@'${fcWorkDir}'@' \
+            -e 's@wrapStatePrefixArg@'${FCFilePrefix}'@' \
+            -e 's@wrapStateTypeArg@fc@' \
+            -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
+            -e 's@wrapWindowHRArg@'${DAVFWindowHR}'@' \
+            -e 's@wrapDATypeArg@'${omm}'@g' \
+            -e 's@wrapDAModeArg@'${omm}'@g' \
+            -e 's@wrapAccountNumberArg@'${VFAccountNumber}'@' \
+            -e 's@wrapQueueNameArg@'${VFQueueName}'@' \
+            -e 's@wrapNNODEArg@'${OMMNodes}'@' \
+            -e 's@wrapNPEArg@'${OMMPEPerNode}'@g' \
+            jobANDverify.csh > ${OMMSCRIPT}
         chmod 744 ${OMMSCRIPT}
         ./${OMMSCRIPT}
 

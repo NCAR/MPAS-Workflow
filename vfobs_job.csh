@@ -1,13 +1,13 @@
 #!/bin/csh
-#PBS -N vfinDateArg_ExpNameArg
+#PBS -N vfobsinDateArg_ExpNameArg
 #PBS -A AccountNumArg
 #PBS -q QueueNameArg
 #PBS -l select=1:ncpus=18:mpiprocs=18
 #PBS -l walltime=0:15:00
 #PBS -m ae
 #PBS -k eod
-#PBS -o vf.log.job.out 
-#PBS -e vf.log.job.err
+#PBS -o vfobs.log.job.out 
+#PBS -e vfobs.log.job.err
 
 date
 
@@ -17,19 +17,6 @@ date
 source ./setup.csh
 
 module load python/3.7.5
-
-setenv self_Date inDateArg
-
-#
-# Time info:
-# ==========
-set yy = `echo ${self_Date} | cut -c 1-4`
-set mm = `echo ${self_Date} | cut -c 5-6`
-set dd = `echo ${self_Date} | cut -c 7-8`
-set hh = `echo ${self_Date} | cut -c 9-10`
-
-set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
-
 
 #
 # collect obs-space diagnostic statistics into DB files:
@@ -56,23 +43,6 @@ while ( $success != 0 )
     sleep 3
   endif
 end
-cd -
-
-date
-
-
-#
-# collect model-space diagnostic statistics into DB files:
-# ========================================================
-mkdir -p diagnostic_stats/model
-cd diagnostic_stats/model
-ln -sf ../${BGFilePrefix}.${fileDate}.nc ../
-
-set mainScript="writediag_modelspace.py"
-ln -fs ${pyModelDir}/*.py ./
-ln -fs ${pyModelDir}/${mainScript} ./
-
-python ${mainScript} >& diags.log
 cd -
 
 date
