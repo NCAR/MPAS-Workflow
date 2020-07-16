@@ -22,15 +22,15 @@
     setenv self_WorkDir     WorkDirArg
     setenv self_JobName     JobNameArg
     setenv self_Date        wrapDateArg
-    setenv self_inStateDirs   (wrapStateDirsArg)
+    setenv self_inStateDir  wrapStateDirArg
     setenv self_inStatePrefix wrapStatePrefixArg
     setenv self_DAType      wrapDATypeArg
 
     mkdir -p ${self_WorkDir}
-    cp ${MAIN_SCRIPT_DIR}/setup.csh ${self_WorkDir}/
+    ln -sf ${MAIN_SCRIPT_DIR}/setup.csh ${self_WorkDir}/
 
-    set myWrapper = da_wrapper
-    set WrapperScript=${self_WorkDir}/${myWrapper}_${self_Date}.csh
+    set myWrapper = jedi_wrapper
+    set WrapperScript=${self_WorkDir}/${myWrapper}.csh
     sed -e 's@inDateArg@'${self_Date}'@' \
         -e 's@inStatePrefixArg@'${self_inStatePrefix}'@' \
         -e 's@WindowHRArg@wrapWindowHRArg@' \
@@ -38,50 +38,49 @@
         -e 's@VARBCTableArg@wrapVARBCTableArg@' \
         -e 's@DATypeArg@'${self_DAType}'@' \
         -e 's@DAModeArg@wrapDAModeArg@' \
-#        -e 's@DAJobScriptArg@'${JobScript}'@' \
-#        -e 's@VFJobScriptArg@'${VFScript}'@' \
-        ${myWrapper}.csh > ${WrapperScript}
+        ${MAIN_SCRIPT_DIR}/${myWrapper}.csh > ${WrapperScript}
     chmod 744 ${WrapperScript}
+    cd ${self_WorkDir}
+    ${WrapperScript} >& ${myWrapper}.log
 
-    set JobScript=${self_WorkDir}/${self_JobName}_${self_Date}.csh
+    set JobScript=${self_WorkDir}/${self_JobName}.csh
     sed -e 's@inDateArg@'${self_Date}'@' \
-        -e 's@inStateDirsArg@'${self_inStateDirs}'@' \
+        -e 's@inStateDirArg@'${self_inStateDir}'@' \
         -e 's@inStatePrefixArg@'${self_inStatePrefix}'@' \
         -e 's@StateTypeArg@wrapStateTypeArg@' \
         -e 's@DATypeArg@'${self_DAType}'@' \
         -e 's@ExpNameArg@'${ExpName}'@' \
         -e 's@AccountNumberArg@wrapAccountNumberArg@' \
         -e 's@QueueNameArg@wrapQueueNameArg@' \
-        -e 's@NNODE@wrapNNODEArg@' \
-        -e 's@NPE@wrapNPEArg@g' \
-        ${self_JobName}.csh > ${JobScript}
+        -e 's@NNODEArg@wrapNNODEArg@' \
+        -e 's@NPEArg@wrapNPEArg@g' \
+        ${MAIN_SCRIPT_DIR}/${self_JobName}.csh > ${JobScript}
     chmod 744 ${JobScript}
 
-    if ( ${#self_inStateDirs} > 1 ) then
+    if ( "$self_DAType" =~ *"eda"* ) then
       #NOTE: verification not set up for multiple states yet
-      set VFScript=None
+      set VFOBSScript=None
+      set VFMODELScript=None
     else
-      set VFOBSScript=${self_WorkDir}/vfobs_job_${self_Date}.csh
+      set VFOBSScript=${self_WorkDir}/vfobs_job.csh
       sed -e 's@inDateArg@'${self_Date}'@' \
           -e 's@AccountNumberArg@'${VFAccountNumber}'@' \
           -e 's@QueueNameArg@'${VFQueueName}'@' \
           -e 's@ExpNameArg@'${ExpName}'@' \
-          vfobs_job.csh > ${VFOBSScript}
+          ${MAIN_SCRIPT_DIR}/vfobs_job.csh > ${VFOBSScript}
       chmod 744 ${VFOBSScript}
 
-      set VFMODELScript=${self_WorkDir}/vfmodel_job_${self_Date}.csh
+      set VFMODELScript=${self_WorkDir}/vfmodel_job.csh
       sed -e 's@inDateArg@'${self_Date}'@' \
-          -e 's@inStateDirArg@'${self_inStateDirs}'@' \
+          -e 's@inStateDirArg@'${self_inStateDir}'@' \
           -e 's@inStatePrefixArg@'${self_inStatePrefix}'@' \
           -e 's@AccountNumberArg@'${VFAccountNumber}'@' \
           -e 's@QueueNameArg@'${VFQueueName}'@' \
           -e 's@ExpNameArg@'${ExpName}'@' \
-          vfmodel_job.csh > ${VFMODELScript}
+          ${MAIN_SCRIPT_DIR}/vfmodel_job.csh > ${VFMODELScript}
       chmod 744 ${VFMODELScript}
     endif
 
-    cd ${self_WorkDir}
-    ${WrapperScript} >& ${myWrapper}.log
     echo ${JobScript} > JobScripts
     echo ${VFOBSScript} >> JobScripts
     echo ${VFMODELScript} >> JobScripts

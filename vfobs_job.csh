@@ -9,6 +9,16 @@
 #PBS -o vfobs.log.job.out 
 #PBS -e vfobs.log.job.err
 
+#   #SBATCH --job-name=vfobsinDateArg_ExpNameArg
+#   #SBATCH --account=AccountNumberArg
+#   #SBATCH --ntasks=1
+#   #SBATCH --cpus-per-task=18
+#   #SBATCH --mem=42G
+#   #SBATCH --time=0:15:00
+#   #SBATCH --partition=dav
+#   #SBATCH --output=vfobs.log.job.out
+
+
 date
 
 #

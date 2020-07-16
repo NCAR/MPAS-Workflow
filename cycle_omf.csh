@@ -72,15 +72,15 @@
         echo ""
         echo "${ExtendedFCWindowHR}-hr verification FC from ${cycle_Date} to ${finalExtendedFCDate}"
         set fcvf_job=${fcWorkDir}/fcvf_job_${cycle_Date}_${ExpName}.csh
-        sed -e 's@icDateArg@'${cycle_Date}'@' \
-            -e 's@JobMinutes@'${ExtendedFCJobMinutes}'@' \
-            -e 's@AccountNumberArg@'${CYAccountNumber}'@' \
-            -e 's@QueueNameArg@'${CYQueueName}'@' \
-            -e 's@ExpNameArg@'${ExpName}'@' \
+        sed -e 's@inDateArg@'${cycle_Date}'@' \
             -e 's@icStateDirArg@'${IC_CYCLE_DIR}'@' \
             -e 's@icStatePrefixArg@'${IC_STATE_PREFIX}'@' \
             -e 's@fcLengthHRArg@'${ExtendedFCWindowHR}'@' \
             -e 's@fcIntervalHRArg@'${ExtendedFC_DT_HR}'@' \
+            -e 's@JobMinutesArg@'${ExtendedFCJobMinutes}'@' \
+            -e 's@AccountNumberArg@'${CYAccountNumber}'@' \
+            -e 's@QueueNameArg@'${CYQueueName}'@' \
+            -e 's@ExpNameArg@'${ExpName}'@' \
             fc_job.csh > ${fcvf_job}
         chmod 744 ${fcvf_job}
 
@@ -103,12 +103,12 @@
       cd ${MAIN_SCRIPT_DIR}
       set VF_DIR = "${VF_CYCLE_DIR}/${dt}hr"
 
-      set OMMSCRIPT=jobANDverify_OMF_${dt}hr.csh
+      set OMMSCRIPT=appANDverify_OMF_${dt}hr.csh
       sed -e 's@WorkDirArg@'${VF_DIR}'@' \
           -e 's@JobNameArg@'${omm}'_job@' \
           -e 's@wrapDateArg@'${thisVFDate}'@' \
           -e 's@DependTypeArg@fcvf@' \
-          -e 's@wrapStateDirsArg@'${fcWorkDir}'@' \
+          -e 's@wrapStateDirArg@'${fcWorkDir}'@' \
           -e 's@wrapStatePrefixArg@'${IC_STATE_PREFIX}'@' \
           -e 's@wrapStateTypeArg@fc@' \
           -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
@@ -119,7 +119,7 @@
           -e 's@wrapQueueNameArg@'${VFQueueName}'@' \
           -e 's@wrapNNODEArg@'${OMMNodes}'@' \
           -e 's@wrapNPEArg@'${OMMPEPerNode}'@g' \
-          jobANDverify.csh > ${OMMSCRIPT}
+          appANDverify.csh > ${OMMSCRIPT}
       chmod 744 ${OMMSCRIPT}
       ./${OMMSCRIPT}
 
@@ -131,12 +131,12 @@
         cd ${MAIN_SCRIPT_DIR}
         set VF_DIR = "${VF_CYCLE_DIR}/${dt}hr"
 
-        set OMMSCRIPT=jobANDverify_OMF_${dt}hr.csh
+        set OMMSCRIPT=appANDverify_OMF_${dt}hr.csh
         sed -e 's@WorkDirArg@'${VF_DIR}'@' \
             -e 's@JobNameArg@'${omm}'_job@' \
             -e 's@DependTypeArg@fcvf@' \
             -e 's@wrapDateArg@'${thisVFDate}'@' \
-            -e 's@wrapStateDirsArg@'${fcWorkDir}'@' \
+            -e 's@wrapStateDirArg@'${fcWorkDir}'@' \
             -e 's@wrapStatePrefixArg@'${FCFilePrefix}'@' \
             -e 's@wrapStateTypeArg@fc@' \
             -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
@@ -147,7 +147,7 @@
             -e 's@wrapQueueNameArg@'${VFQueueName}'@' \
             -e 's@wrapNNODEArg@'${OMMNodes}'@' \
             -e 's@wrapNPEArg@'${OMMPEPerNode}'@g' \
-            jobANDverify.csh > ${OMMSCRIPT}
+            appANDverify.csh > ${OMMSCRIPT}
         chmod 744 ${OMMSCRIPT}
         ./${OMMSCRIPT}
 

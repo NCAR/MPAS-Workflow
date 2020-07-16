@@ -2,11 +2,22 @@
 #PBS -N omStateTypeArginDateArg_ExpNameArg
 #PBS -A AccountNumberArg
 #PBS -q QueueNameArg
-#PBS -l select=NNODE:ncpus=NPE:mpiprocs=NPE:mem=109GB
+#PBS -l select=NNODEArg:ncpus=NPEArg:mpiprocs=NPEArg:mem=109GB
+#PBS -l walltime=0:10:00
 #PBS -m ae
 #PBS -k eod
 #PBS -o log.job.out
 #PBS -e log.job.err
+#   #SBATCH --job-name=omStateTypeArginDateArg_ExpNameArg
+#   #SBATCH --account=AccountNumberArg
+#   #SBATCH --ntasks=NNODEArg
+#   #SBATCH --cpus-per-task=NPEArg
+#   #SBATCH --mem=109G
+#   #SBATCH --time=0:10:00
+#   #SBATCH --partition=dav
+#   #SBATCH --output=log.job.out
+
+
 
 date
 
@@ -14,23 +25,19 @@ date
 #set environment:
 # =============================================
 source ./setup.csh
+setenv cycle_Date       inDateArg
+#source ${MAIN_SCRIPT_DIR}/setupCycleNames.csh
 
-setenv self_Date          inDateArg
-setenv self_StateDirs   (inStateDirsArg)
+setenv self_StateDir    inStateDirArg
 setenv self_StatePrefix inStatePrefixArg
-
-if ( ${#self_StateDirs} != 1 ) then
-  echo "ERROR in $0 : self_StateDirs must be == 1"
-  exit 1
-endif
 
 #
 # Time info for namelist, yaml etc:
 # =============================================
-set yy = `echo ${self_Date} | cut -c 1-4`
-set mm = `echo ${self_Date} | cut -c 5-6`
-set dd = `echo ${self_Date} | cut -c 7-8`
-set hh = `echo ${self_Date} | cut -c 9-10`
+set yy = `echo ${cycle_Date} | cut -c 1-4`
+set mm = `echo ${cycle_Date} | cut -c 5-6`
+set dd = `echo ${cycle_Date} | cut -c 7-8`
+set hh = `echo ${cycle_Date} | cut -c 9-10`
 
 set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 
@@ -45,7 +52,7 @@ rm jedi.log*
 # =========================================================================
 
 set memDir = `${memberDir} ${omm} 0`
-set other = ${self_StateDirs[1]}${memDir}
+set other = ${self_StateDir}${memDir}
 set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
 set bgFileDA = ./${BGFilePrefix}.$fileDate.nc
 

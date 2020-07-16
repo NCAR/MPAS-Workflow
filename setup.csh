@@ -41,11 +41,11 @@ setenv OutDBDir dbOut
 
 ## DAType
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DAType 3denvar
+setenv DAType eda_3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DAType" =~ *"eda"* ) then
-  setenv nEnsDAMembers 20
+  setenv nEnsDAMembers 2
 endif
 
 ## DAObsList
@@ -135,7 +135,7 @@ endif
 #  setenv CyclingDANodesPerMember 16
 #  setenv CyclingDAPEPerNode      32
 #endif
-H
+
 setenv RSTFilePrefix   restart
 setenv ICFilePrefix    ${RSTFilePrefix}
 setenv FirstCycleFilePrefix ${RSTFilePrefix}
@@ -184,7 +184,7 @@ mkdir -p ${JOBCONTROL}
 ## directories copied from PKGBASE
 setenv MAIN_SCRIPT_DIR  ${EXPDIR}/${PKGBASE}
 
-setenv CONFIGDIR        ${MAIN_SCRIPT_DIR}/config #ONLY used by da_wrapper
+setenv CONFIGDIR        ${MAIN_SCRIPT_DIR}/config #ONLY used by jedi_wrapper
 
 setenv RESSPECIFICDIR   ${MAIN_SCRIPT_DIR}/${MPAS_RES} #ONLY used by da_wrapper
 
@@ -333,8 +333,8 @@ end
 #
 # job submission settings
 # =============================================
-#setenv AccountNumber NMMM0015
-setenv AccountNumber NMMM0043
+setenv AccountNumber NMMM0015
+#setenv AccountNumber NMMM0043
 
 setenv CYAccountNumber ${AccountNumber}
 setenv VFAccountNumber ${AccountNumber}
@@ -346,3 +346,16 @@ setenv CYQueueName regular
 #setenv VFQueueName premium
 #setenv VFQueueName regular
 setenv VFQueueName economy
+
+##PBSPro (cheyenne)
+setenv SUBMIT qsub
+setenv DEPSTART ""
+setenv DEPEND "-W depend=afterok"
+setenv DEPSEP ":"
+
+##SLURM (casper)
+setenv SUBMIT sbatch
+setenv DEPSTART ""
+setenv DEPEND "--dependency=afterok"
+setenv DEPSEP ":"
+

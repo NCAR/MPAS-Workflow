@@ -3,12 +3,19 @@
 #PBS -A AccountNumberArg
 #PBS -q QueueNameArg
 #PBS -l select=4:ncpus=32:mpiprocs=32:mem=109GB
-#PBS -l walltime=00:JobMinutes:00
+#PBS -l walltime=00:JobMinutesArg:00
 #PBS -m ae
 #PBS -k eod
-#   #PBS -V 
 #PBS -o log.job.out
 #PBS -e log.job.err
+#   #SBATCH --job-name=fcinDateArg_ExpNameArg
+#   #SBATCH --account=AccountNumberArg
+#   #SBATCH --ntasks=4
+#   #SBATCH --cpus-per-task=32
+#   #SBATCH --mem=109G
+#   #SBATCH --time=0:JobMinutesArg:00
+#   #SBATCH --partition=dav
+#   #SBATCH --output=log.job.out
 
 date
 
@@ -16,23 +23,24 @@ date
 # Setup environment:
 # =============================================
 source ./setup.csh
+setenv cycle_Date         inDateArg
+source ./setupCycleNames.csh
 
-setenv self_icDate        inDateArg
 setenv self_icStateDir    inStateDirArg
 setenv self_icStatePrefix inStatePrefixArg
 setenv self_fcLengthHR    fcLengthHRArg
 setenv self_fcIntervalHR  fcIntervalHRArg
 
 setenv config_run_duration 0_${self_fcLengthHR}:00:00
-setenv OUT_DT_STR 0_${self_fcIntervalHR}:00:00
+setenv output_interval 0_${self_fcIntervalHR}:00:00
 
 #
 # Time info for namelist, yaml etc:
 # =============================================
-set yy = `echo ${self_icDate} | cut -c 1-4`
-set mm = `echo ${self_icDate} | cut -c 5-6`
-set dd = `echo ${self_icDate} | cut -c 7-8`
-set hh = `echo ${self_icDate} | cut -c 9-10`
+set yy = `echo ${cycle_Date} | cut -c 1-4`
+set mm = `echo ${cycle_Date} | cut -c 5-6`
+set dd = `echo ${cycle_Date} | cut -c 7-8`
+set hh = `echo ${cycle_Date} | cut -c 9-10`
 set icFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set icNMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 
@@ -63,7 +71,7 @@ sed -f newnamelist orig_namelist.atmosphere >! namelist.atmosphere
 rm newnamelist
 
 set STREAMS=streams.atmosphere
-sed -e 's@OUT_DT_STR@'${OUT_DT_STR}'@' \
+sed -e 's@OUT_DT_STR@'${output_interval}'@' \
     ${STREAMS}_TEMPLATE > ${STREAMS}
 
 if ( ${self_fcLengthHR} == 0 ) then
@@ -89,8 +97,8 @@ else
   endif
 endif
 
-set fcDate = `$advanceCYMDH ${self_icDate} ${self_fcIntervalHR}`
-set finalFCDate = `$advanceCYMDH ${self_icDate} ${self_fcLengthHR}`
+set fcDate = `$advanceCYMDH ${cycle_Date} ${self_fcIntervalHR}`
+set finalFCDate = `$advanceCYMDH ${cycle_Date} ${self_fcLengthHR}`
 while ( ${fcDate} <= ${finalFCDate} )
   #
   # Update/add fields to output for DA

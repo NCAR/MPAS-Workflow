@@ -81,12 +81,12 @@
 #------- perform omm calculation ---------
       cd ${MAIN_SCRIPT_DIR}
 
-      set OMMSCRIPT=jobANDverify_TEMP.csh
+      set OMMSCRIPT=appANDverify_TEMP.csh
       sed -e 's@WorkDirArg@'${WORKDIR}'@' \
           -e 's@JobNameArg@'${omm}'_job@' \
           -e 's@DependTypeArg@null@' \
           -e 's@wrapDateArg@'${cycle_Date}'@' \
-          -e 's@wrapStateDirsArg@'${STATE_PCYCLE_DIR}'@' \
+          -e 's@wrapStateDirArg@'${STATE_PCYCLE_DIR}'@' \
           -e 's@wrapStatePrefixArg@'${FCFilePrefix}'@' \
           -e 's@wrapStateTypeArg@'${OMM_STATE}'@' \
           -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
@@ -97,7 +97,7 @@
           -e 's@wrapQueueNameArg@'${VFQueueName}'@' \
           -e 's@wrapNNODEArg@'${OMMNodes}'@' \
           -e 's@wrapNPEArg@'${OMMPEPerNode}'@g' \
-          jobANDverify.csh > ${OMMSCRIPT}
+          appANDverify.csh > ${OMMSCRIPT}
       chmod 744 ${OMMSCRIPT}
       ./${OMMSCRIPT}
 

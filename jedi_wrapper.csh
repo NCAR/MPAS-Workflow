@@ -4,9 +4,10 @@
 # Setup environment:
 # =============================================
 source ./setup.csh
+setenv cycle_Date          inDateArg
+source ${MAIN_SCRIPT_DIR}/setupCycleNames.csh
 
 #self
-setenv self_Date          inDateArg
 setenv self_bgStatePrefix inStatePrefixArg
 setenv self_WindowHR      WindowHRArg
 set self_ObsList = ("${ObsListArg}")
@@ -22,15 +23,15 @@ setenv self_VFJobScript   VFJobScriptArg
 #
 # Time info for namelist, yaml etc:
 # =============================================
-set yy = `echo ${self_Date} | cut -c 1-4`
-set mm = `echo ${self_Date} | cut -c 5-6`
-set dd = `echo ${self_Date} | cut -c 7-8`
-set hh = `echo ${self_Date} | cut -c 9-10`
+set yy = `echo ${cycle_Date} | cut -c 1-4`
+set mm = `echo ${cycle_Date} | cut -c 5-6`
+set dd = `echo ${cycle_Date} | cut -c 7-8`
+set hh = `echo ${cycle_Date} | cut -c 9-10`
 set FileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set NMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set ConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
-set prevDate = `$advanceCYMDH ${self_Date} -${self_WindowHR}`
+set prevDate = `$advanceCYMDH ${cycle_Date} -${self_WindowHR}`
 set yy = `echo ${prevDate} | cut -c 1-4`
 set mm = `echo ${prevDate} | cut -c 5-6`
 set dd = `echo ${prevDate} | cut -c 7-8`
@@ -50,7 +51,7 @@ endif
 
 #@ HALF_DT_HR_PLUS = ${HALF_DT_HR}
 @ HALF_DT_HR_MINUS = ${HALF_DT_HR} + ${ODD_DT}
-set halfprevDate = `$advanceCYMDH ${self_Date} -${HALF_DT_HR_MINUS}`
+set halfprevDate = `$advanceCYMDH ${cycle_Date} -${HALF_DT_HR_MINUS}`
 set yy = `echo ${halfprevDate} | cut -c 1-4`
 set mm = `echo ${halfprevDate} | cut -c 5-6`
 set dd = `echo ${halfprevDate} | cut -c 7-8`
@@ -95,23 +96,23 @@ end
 
 # Link conventional data
 # ======================
-ln -fsv $CONV_OBS_DIR/${self_Date}/aircraft_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${self_Date}/gnssro_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${self_Date}/satwind_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${self_Date}/sfc_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${self_Date}/sondes_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${cycle_Date}/aircraft_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${cycle_Date}/gnssro_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${cycle_Date}/satwind_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${cycle_Date}/sfc_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${cycle_Date}/sondes_obs*.nc4 ${InDBDir}/
 
 # Link AMSUA data
 # ==============
-ln -fsv $AMSUA_OBS_DIR/${self_Date}/amsua*_obs_*.nc4 ${InDBDir}/
+ln -fsv $AMSUA_OBS_DIR/${cycle_Date}/amsua*_obs_*.nc4 ${InDBDir}/
 
 # Link ABI data
 # ============
-ln -fsv $ABI_OBS_DIR/${self_Date}/abi*_obs_*.nc4 ${InDBDir}/
+ln -fsv $ABI_OBS_DIR/${cycle_Date}/abi*_obs_*.nc4 ${InDBDir}/
 
 # Link AHI data
 # ============
-ln -fsv $AHI_OBS_DIR/${self_Date}/ahi*_obs_*.nc4 ${InDBDir}/
+ln -fsv $AHI_OBS_DIR/${cycle_Date}/ahi*_obs_*.nc4 ${InDBDir}/
 
 # Link VarBC prior
 # ====================
@@ -148,7 +149,7 @@ foreach obs ($self_ObsList)
     endif
   else if ( "$obs" =~ *"conv"* ) then
     #KLUDGE to handle missing qv for sondes at single time
-    if ( ${self_Date} == 2018043006 ) then
+    if ( ${cycle_Date} == 2018043006 ) then
       set SUBYAML=${SUBYAML}-2018043006
     endif
   endif
@@ -163,6 +164,7 @@ foreach obs ($self_ObsList)
   endif
 end
 
+
 ## QC characteristics
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' orig_jedi0.yaml
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' orig_jedi0.yaml
@@ -176,7 +178,6 @@ sed -i 's@obsPrefix@'${obsPrefix}'@g' orig_jedi0.yaml
 sed -i 's@geoPrefix@'${geoPrefix}'@g' orig_jedi0.yaml
 sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi0.yaml
 sed -i 's@DAMode@'${self_DAMode}'@g' orig_jedi0.yaml
-
 if ( "$self_DAType" =~ *"eda"* ) then
   sed -i 's@OOPSMemberDir@/%{member}%@g' orig_jedi0.yaml
   sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' orig_jedi0.yaml
@@ -184,9 +185,10 @@ else
   sed -i 's@OOPSMemberDir@@g' orig_jedi0.yaml
 endif
 sed -i 's@bgStatePrefix@'${self_bgStatePrefix}'@g' orig_jedi0.yaml
-sed -i 's@bgStateDir@'${bgDir}'@g' orig_jedi0.yaml
+sed -i 's@bgStateDir@'${CyclingDAInDir}'@g' orig_jedi0.yaml
 sed -i 's@anStatePrefix@'${anStatePrefix}'@g' orig_jedi0.yaml
-sed -i 's@anStateDir@'${anDir}'@g' orig_jedi0.yaml
+sed -i 's@anStateDir@'${CyclingDAOutDir}'@g' orig_jedi0.yaml
+
 
 # TODO(JJG): revise these date replacements to loop over
 #            all relevant dates to this application (e.g., 4DEnVar?)
@@ -197,11 +199,12 @@ sed -i 's@2018-04-14T18:00:00Z@'${prevConfDate}'@g'  orig_jedi0.yaml
 
 ## revise current date
 sed -i 's@2018-04-15_00.00.00@'${FileDate}'@g' orig_jedi0.yaml
-sed -i 's@2018041500@'${self_Date}'@g' orig_jedi0.yaml
+sed -i 's@2018041500@'${cycle_Date}'@g' orig_jedi0.yaml
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' orig_jedi0.yaml
 
 ## revise window length
 sed -i 's@PT6H@PT'${self_WindowHR}'H@g' orig_jedi0.yaml
+
 
 ## revise full line configs
 cat >! fulllineSEDF.yaml << EOF
@@ -212,44 +215,6 @@ EOF
 sed -f fulllineSEDF.yaml orig_jedi0.yaml >! orig_jedi1.yaml
 rm fulllineSEDF.yaml
 
-if ( "$self_DAType" =~ *"eda"* ) then
-  set ensBDir = ${dynamicEnsembleB}
-  set ensBMemFmt = "${oopsMemFmt}"
-  set nEnsBMembers = ${nEnsDAMembers}
-else
-  set ensBDir = ${fixedEnsembleB}
-  set ensBMemFmt = "${fixedEnsMemFmt}"
-  set nEnsBMembers = ${nFixedMembers}
-endif
-
-## fill in ensemble B config
-# TODO(JJG): how does self_ ensemble config generation need to be
-#            modified for 4DEnVar?
-sed -i 's@bumpLocDir@'${bumpLocDir}'@g' orig_jedi1.yaml
-sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' orig_jedi1.yaml
-
-set ensbsed = EnsembleBMembers
-cat >! ${ensbsed}SEDF.yaml << EOF
-/${ensbsed}/c\
-EOF
-
-set member = 1
-while ( $member <= ${nEnsBMembers} )
-  set memDir = `${memberDir} ens $member "${ensBMemFmt}"`
-  set adate = adate
-  if ( $member < ${nEnsBMembers} ) then
-     set adate = ${adate}\\
-  endif
-cat >>! ${ensbsed}SEDF.yaml << EOF
-      - filename: ${ensBDir}/${prevDate}${memDir}/${FCFilePrefix}.${FileDate}.nc\
-        date: *${adate}
-EOF
-
-  @ member++
-end
-sed -f ${ensbsed}SEDF.yaml orig_jedi1.yaml >! orig_jedi2.yaml
-rm ${ensbsed}SEDF.yaml
-
 
 ## fill in model and analysis variable configs
 set JEDIANVars = ( \
@@ -259,7 +224,6 @@ set JEDIANVars = ( \
   uReconstructMeridional \
   surface_pressure \
 )
-
 if ( $AnalyzeHydrometeors == 1 ) then
   foreach hydro ($MPASHydroVars)
     set JEDIANVars = ($JEDIANVars index_$hydro)
@@ -292,30 +256,49 @@ EOF
 
   @ ivar++
 end
-sed -f ${analysissed}SEDF.yaml orig_jedi2.yaml >! orig_jedi3.yaml
+sed -f ${analysissed}SEDF.yaml orig_jedi1.yaml >! orig_jedi2.yaml
 rm ${analysissed}SEDF.yaml
-sed -f ${modelsed}SEDF.yaml orig_jedi3.yaml >! jedi.yaml
+sed -f ${modelsed}SEDF.yaml orig_jedi2.yaml >! orig_jedi3.yaml
 rm ${modelsed}SEDF.yaml
 
 
-# Submit DA job script
-# =================================
-##TODO: move all job control to top-level cycling/workflow scripts
-#set JALL=(`cat ${JOBCONTROL}/last_${self_DependsOn}_job`)
-#set JDEP = ''
-#foreach J ($JALL)
-#  if (${J} != "$nulljob" ) then
-#    set JDEP = ${JDEP}:${J}
-#  endif
-#end
-#set JDA = `qsub -W depend=afterok${JDEP} ${self_DAJobScript}`
-#
-#echo "${JDA}" > ${JOBCONTROL}/last_${self_DAMode}_job
-#
-## Submit VF job script
-## =================================
-#if ( ${VERIFYAFTERDA} > 0 && ${self_VFJobScript} != "None" ) then
-#  set JVF = `qsub -W depend=afterok:$JDA ${self_VFJobScript}`
-#endif
+## fill in ensemble B config
+# TODO(JJG): how does ensemble B config generation need to be
+#            modified for 4DEnVar?
+# TODO(JJG): move this to da_job as not needed for OMM
+if ( "$self_DAType" =~ *"eda"* ) then
+  set ensBDir = ${dynamicEnsembleB}
+  set ensBMemFmt = "${oopsMemFmt}"
+  set nEnsBMembers = ${nEnsDAMembers}
+else
+  set ensBDir = ${fixedEnsembleB}
+  set ensBMemFmt = "${fixedEnsMemFmt}"
+  set nEnsBMembers = ${nFixedMembers}
+endif
+
+sed -i 's@bumpLocDir@'${bumpLocDir}'@g' orig_jedi3.yaml
+sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' orig_jedi3.yaml
+
+set ensbsed = EnsembleBMembers
+cat >! ${ensbsed}SEDF.yaml << EOF
+/${ensbsed}/c\
+EOF
+
+set member = 1
+while ( $member <= ${nEnsBMembers} )
+  set memDir = `${memberDir} ens $member "${ensBMemFmt}"`
+  set adate = adate
+  if ( $member < ${nEnsBMembers} ) then
+     set adate = ${adate}\\
+  endif
+cat >>! ${ensbsed}SEDF.yaml << EOF
+      - filename: ${ensBDir}/${prevDate}${memDir}/${FCFilePrefix}.${FileDate}.nc\
+        date: *${adate}
+EOF
+
+  @ member++
+end
+sed -f ${ensbsed}SEDF.yaml orig_jedi3.yaml >! jedi.yaml
+rm ${ensbsed}SEDF.yaml
 
 exit

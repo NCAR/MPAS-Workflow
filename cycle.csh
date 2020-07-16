@@ -18,12 +18,11 @@
     set member = 1
     while ( $member <= ${nEnsDAMembers} )
       echo "$nulljob" > ${JOBCONTROL}/fc_mem${member}
-      echo "$nulljob" > ${JOBCONTROL}/fcvf_mem${member}
+      echo "$nulljob" > ${JOBCONTROL}/exfc_mem${member}
       @ member++
     end
-    echo "$nulljob" > ${JOBCONTROL}/da
-    echo "$nulljob" > ${JOBCONTROL}/omm
-    echo "$nulljob" > ${JOBCONTROL}/null
+    echo "$nulljob" > ${JOBCONTROL}/da_job
+    echo "$nulljob" > ${JOBCONTROL}/omm_job
 
     ## workflow component selection
     set doCyclingDA = 1
@@ -31,14 +30,14 @@
     set doDiagnoseMeanOMB = 0
     set doDiagnoseMeanBG = 0
 
-    set doOMA = 1
-    set doDiagnoseOMA = 1
-    set doDiagnoseAN = 1
+    set doOMA = 0
+    set doDiagnoseOMA = 0
+    set doDiagnoseAN = 0
 
     set doCyclingFC = 1
-    set doOMB = 1
-    set doDiagnoseOMB = 1
-    set doDiagnoseBG = 1
+    set doOMB = 0
+    set doDiagnoseOMB = 0
+    set doDiagnoseBG = 0
 
     set doExtendedFC = 0
     set doOMF = 0
@@ -57,51 +56,10 @@
     echo "Cycling workflow for experiment: ${ExpName}\n"
     echo "==============================================================\n"
 
-    set CyclingDAInPrefix = ${BGFilePrefix}
-    set CyclingDAOutPrefix = ${ANFilePrefix}
-
     ## cycling
     setenv cycle_Date ${ExpStartDate}  # initialize cycling date
     while ( ${cycle_Date} <= ${ExpEndDate} )
-      set prevDate = `$advanceCYMDH ${cycle_Date} -${CYWindowHR}`
-      set nextDate = `$advanceCYMDH ${cycle_Date} ${CYWindowHR}`
-      setenv prevDate ${prevDate}
-      setenv nextDate ${nextDate}
-
-      ## setup cycle directory names
-      set CyclingDADir = ${CyclingDAWorkDir}/${cycle_Date}
-      set prevCyclingDADir = ${CyclingDAWorkDir}/${prevDate}
-      set CyclingFCDir = ${CyclingFCWorkDir}/${cycle_Date}
-      set prevCyclingFCDir = ${CyclingFCWorkDir}/${prevDate}
-      set ExtendedFCDir = ${ExtendedFCWorkDir}/${cycle_Date}
-
-      set CyclingDAInDirs = ()
-      set CyclingDAOutDirs = ()
-      set CyclingFCDirs = ()
-      set prevCyclingFCDirs = ()
-      set ExtendedFCDirs = ()
-
-      set VerifyBGDirs = ()
-      set VerifyANDirs = ()
-      set VerifyFirstBGDirs = ()
-      set VerifyFCDirs = ()
-
-      set member = 1
-      while ( $member <= ${nEnsDAMembers} )
-        set memDir = `${memberDir} $DAType $member`
-        set CyclingDAInDirs[$member] = ${CyclingDADir}/${bgDir}${memDir}
-        set CyclingDAOutDirs[$member] = ${CyclingDADir}/${anDir}${memDir}
-        set CyclingFCDirs[$member] = ${CyclingFCDir}${memDir}
-        set prevCyclingFCDirs[$member] = ${prevCyclingFCDir}${memDir}
-        set ExtendedFCDirs[$member] = ${ExtendedFCDir}${memDir}
-
-        set VerifyANDirs[$member] = ${VerificationWorkDir}/${anDir}${memDir}/${cycle_Date}
-        set VerifyBGDirs[$member] = ${VerificationWorkDir}/${bgDir}${memDir}/${nextDate}
-        set VerifyFirstBGDirs[$member] = ${VerificationWorkDir}/${bgDir}${memDir}/${cycle_Date}
-        set VerifyFCDirs[$member] = ${VerificationWorkDir}/${fcDir}${memDir}/${cycle_Date}
-        @ member++
-      end
-
+      source ${MAIN_SCRIPT_DIR}/setupCycleNames.csh
 
       ## First cycle "forecast" established offline
       # TODO: make FirstCycleDate behavior part of CyclingFC or seperate application
@@ -130,7 +88,7 @@
 
       echo "\nWorking on cycle: ${cycle_Date}"
 
-#------- cycling DA ---------
+#------- CyclingDA ---------
       set WorkDir = ${CyclingDADir}
       set child_DependsOn=ensfc
 
@@ -141,13 +99,14 @@
       end
 
       if ( $active > 0 ) then
-        set myWrapper = jobANDverify
-        set WrapperScript=${myWrapper}_CyclingDA.csh
+        cd ${MAIN_SCRIPT_DIR}
+        set myWrapper = appANDverify
+        set WrapperScript=${MAIN_SCRIPT_DIR}/${myWrapper}_CyclingDA.csh
         sed -e 's@WorkDirArg@'${WorkDir}'@' \
             -e 's@JobNameArg@da_job@' \
             -e 's@DependTypeArg@'${child_DependsOn}'@' \
             -e 's@wrapDateArg@'${cycle_Date}'@' \
-            -e 's@wrapStateDirsArg@'$prevCyclingFCDirs'@' \
+            -e 's@wrapStateDirArg@'${prevCyclingFCDir}'@' \
             -e 's@wrapStatePrefixArg@'${bgStatePrefix}'@' \
             -e 's@wrapStateTypeArg@bg@' \
             -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
@@ -158,9 +117,9 @@
             -e 's@wrapQueueNameArg@'${CYQueueName}'@' \
             -e 's@wrapNNODEArg@'${CyclingDANodes}'@' \
             -e 's@wrapNPEArg@'${CyclingDAPEPerNode}'@g' \
-            ${myWrapper}.csh > ${WrapperScript}
+            ${MAIN_SCRIPT_DIR}/${myWrapper}.csh > ${WrapperScript}
         chmod 744 ${WrapperScript}
-        ./${WrapperScript}
+        ${WrapperScript}
 
         cd ${WorkDir}
         # TODO: replace this job control with automatic creation of cylc suite.rc file
@@ -169,43 +128,47 @@
         set JobDependencies=(`cat JobDependencies`)
         set i = 1
         while ($i < ${#JobScripts})
-          if ( $doJobs[$i] == 1 && "$Script" != "None" ) then
+          set JobScript = "$JobScripts[$i]"
+          if ( $doJobs[$i] == 1 && "$JobScript" != "None" ) then
             set JALL=(`cat ${JOBCONTROL}/$JobDependencies[$i]`)
-            set JDEP = ''
+            set JDEP = "${DEPSTART}"
             foreach J ($JALL)
-              if (${J} != "$nulljob" ) set JDEP = ${JDEP}:${J}
+              if (${J} != "$nulljob" ) set JDEP = ${JDEP}"${DEPSEP}"${J}
             end
-            set J = `qsub -W depend=afterok${JDEP} $JobScripts[$i]`
+            if ($JDEP != "") set JDEP = "${DEPEND}"${JDEP}
+            set J = `${SUBMIT} ${JDEP} $JobScript`
+            if ($SUBMIT == sbatch) set J = `echo $J | sed 's@Submitted batch job @@'`
             echo "${J}" > ${JOBCONTROL}/$JobTypes[$i]
           endif
           @ i++
         end
       endif
 
-#------- verify analysis state ---------
-      set myWrapper = jobANDverify
+
+#------- VerifyAN ---------
+      set myWrapper = appANDverify
       set doJobs = ($doOMA $doDiagnoseOMA $doDiagnoseAN)
       set active = 0
       foreach activate ($doJobs)
         @ active = $active + $activate
       end
 
-      set child_DependsOn=da
+      set child_DependsOn=da_job
       set member = 1
       while ( $member <= ${nEnsDAMembers} )
-        cd ${MAIN_SCRIPT_DIR}
-        set child_ARGS = ($CyclingDAOutDirs[$member] ${CyclingDAOutPrefix} ${anDir} ${cycle_Date} ${CYWindowHR})
+        set child_ARGS = ($CyclingDAOutDirs[$member] ${ANFilePrefix} ${anDir} ${cycle_Date} ${CYWindowHR})
         set WorkDir = $VerifyANDirs[$member]
         @ member++
 
         if ( $active == 0 ) continue
 
-        set WrapperScript=${myWrapper}_OMA.csh
+        cd ${MAIN_SCRIPT_DIR}
+        set WrapperScript=${MAIN_SCRIPT_DIR}/${myWrapper}_OMA.csh
         sed -e 's@WorkDirArg@'${WorkDir}'@' \
             -e 's@JobNameArg@'${omm}'_job@' \
             -e 's@DependTypeArg@'${child_DependsOn}'@' \
             -e 's@wrapDateArg@'$child_ARGS[4]'@' \
-            -e 's@wrapStateDirsArg@'$child_ARGS[1]'@' \
+            -e 's@wrapStateDirArg@'$child_ARGS[1]'@' \
             -e 's@wrapStatePrefixArg@'$child_ARGS[2]'@' \
             -e 's@wrapStateTypeArg@'$child_ARGS[3]'@' \
             -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
@@ -216,9 +179,9 @@
             -e 's@wrapQueueNameArg@'${VFQueueName}'@' \
             -e 's@wrapNNODEArg@'${OMMNodes}'@' \
             -e 's@wrapNPEArg@'${OMMPEPerNode}'@g' \
-            ${myWrapper}.csh > ${WrapperScript}
+            ${MAIN_SCRIPT_DIR}/${myWrapper}.csh > ${WrapperScript}
         chmod 744 ${WrapperScript}
-        ./${WrapperScript}
+        ${WrapperScript}
 
         cd ${WorkDir}
         set JobScripts=(`cat JobScripts`)
@@ -226,45 +189,48 @@
         set JobDependencies=(`cat JobDependencies`)
         set i = 1
         while ($i < ${#JobScripts})
-          if ( $doJobs[$i] == 1 && "$Script" != "None" ) then
+          set JobScript = "$JobScripts[$i]"
+          if ( $doJobs[$i] == 1 && "$JobScript" != "None" ) then
             set JALL=(`cat ${JOBCONTROL}/$JobDependencies[$i]`)
-            set JDEP = ''
+            set JDEP = "${DEPSTART}"
             foreach J ($JALL)
-              if (${J} != "$nulljob" ) set JDEP = ${JDEP}:${J}
+              if (${J} != "$nulljob" ) set JDEP = ${JDEP}"${DEPSEP}"${J}
             end
-            set J = `qsub -W depend=afterok${JDEP} $JobScripts[$i]`
+            if ($JDEP != "") set JDEP = "${DEPEND}"${JDEP}
+            set J = `${SUBMIT} "${JDEP}" $JobScript`
+            if ($SUBMIT == sbatch) set J = `echo $J | sed 's@Submitted batch job @@'`
             echo "${J}" > ${JOBCONTROL}/$JobTypes[$i]
           endif
           @ i++
         end
       end
 
-#------- verify FirstCycleDate bg state ---------
+#------- VerifyBG at FirstCycleDate ---------
       if ( ${cycle_Date} == ${FirstCycleDate} ) then
         # TODO: somehow replace this w/ generalized VerifyBG below
-        set myWrapper = jobANDverify
+        set myWrapper = appANDverify
         set doJobs = ($doOMB $doDiagnoseOMB $doDiagnoseBG)
         set active = 0
         foreach activate ($doJobs)
           @ active = $active + $activate
         end
 
-        set child_DependsOn=da
+        set child_DependsOn=da_job
         set member = 1
         while ( $member <= ${nEnsDAMembers} )
-          cd ${MAIN_SCRIPT_DIR}
-          set child_ARGS = ($CyclingDAInDirs[$member] ${CyclingDAInPrefix} ${bgDir} ${cycle_Date} ${CYWindowHR})
           set WorkDir = $VerifyFirstBGDirs[$member]
+          set child_ARGS = ($CyclingDAInDirs[$member] ${BGFilePrefix} ${bgDir} ${cycle_Date} ${CYWindowHR})
           @ member++
 
           if ( $active == 0 ) continue
 
-          set WrapperScript=${myWrapper}_OMB.csh
+          cd ${MAIN_SCRIPT_DIR}
+          set WrapperScript=${MAIN_SCRIPT_DIR}/${myWrapper}_OMB.csh
           sed -e 's@WorkDirArg@'${WorkDir}'@' \
               -e 's@JobNameArg@'${omm}'_job@' \
               -e 's@DependTypeArg@'${child_DependsOn}'@' \
               -e 's@wrapDateArg@'$child_ARGS[4]'@' \
-              -e 's@wrapStateDirsArg@'$child_ARGS[1]'@' \
+              -e 's@wrapStateDirArg@'$child_ARGS[1]'@' \
               -e 's@wrapStatePrefixArg@'$child_ARGS[2]'@' \
               -e 's@wrapStateTypeArg@'$child_ARGS[3]'@' \
               -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
@@ -275,9 +241,9 @@
               -e 's@wrapQueueNameArg@'${VFQueueName}'@' \
               -e 's@wrapNNODEArg@'${OMMNodes}'@' \
               -e 's@wrapNPEArg@'${OMMPEPerNode}'@g' \
-              ${myWrapper}.csh > ${WrapperScript}
+              ${MAIN_SCRIPT_DIR}/${myWrapper}.csh > ${WrapperScript}
           chmod 744 ${WrapperScript}
-          ./${WrapperScript}
+          ${WrapperScript}
 
           cd ${WorkDir}
           set JobScripts=(`cat JobScripts`)
@@ -285,13 +251,16 @@
           set JobDependencies=(`cat JobDependencies`)
           set i = 1
           while ($i < ${#JobScripts})
-            if ( $doJobs[$i] == 1 && "$Script" != "None" ) then
+            set JobScript = "$JobScripts[$i]"
+            if ( $doJobs[$i] == 1 && "$JobScript" != "None" ) then
               set JALL=(`cat ${JOBCONTROL}/$JobDependencies[$i]`)
-              set JDEP = ''
+              set JDEP = "${DEPSTART}"
               foreach J ($JALL)
-                if (${J} != "$nulljob" ) set JDEP = ${JDEP}:${J}
+                if (${J} != "$nulljob" ) set JDEP = ${JDEP}"${DEPSEP}"${J}
               end
-              set J = `qsub -W depend=afterok${JDEP} $JobScripts[$i]`
+              if ($JDEP != "") set JDEP = "${DEPEND}"${JDEP}
+              set J = `${SUBMIT} "${JDEP}" $JobScript`
+              if ($SUBMIT == sbatch) set J = `echo $J | sed 's@Submitted batch job @@'`
               echo "${J}" > ${JOBCONTROL}/$JobTypes[$i]
             endif
             @ i++
@@ -299,8 +268,8 @@
         end
       endif
 
-#------- cycling forecast ---------
-      set child_DependsOn=da
+#------- CyclingFC ---------
+      set child_DependsOn=da_job
       set member = 1
       while ( $member <= ${nEnsDAMembers} )
         set WorkDir = $CyclingFCDirs[$member]
@@ -312,61 +281,65 @@
           echo "\n${CYWindowHR}-hr cycle FC from ${cycle_Date} to ${nextDate} for member $member"
 
           cd ${MAIN_SCRIPT_DIR}
-          cp setup.csh ${WorkDir}/
-          set JobScript=${WorkDir}/fc_job_${cycle_Date}_${ExpName}.csh
-          sed -e 's@icDateArg@'${cycle_Date}'@' \
+          ln -sf ${MAIN_SCRIPT_DIR}/setup.csh ${WorkDir}/
+          set JobScript=${WorkDir}/fc_job.csh
+          sed -e 's@inDateArg@'${cycle_Date}'@' \
               -e 's@inStateDirArg@'$CyclingDAOutDirs[$member]'@' \
-              -e 's@inStatePrefixArg@'${CyclingDAOutPrefix}'@' \
+              -e 's@inStatePrefixArg@'${ANFilePrefix}'@' \
               -e 's@fcLengthHRArg@'${CYWindowHR}'@' \
               -e 's@fcIntervalHRArg@'${CYWindowHR}'@' \
-              -e 's@JobMinutes@'${CyclingFCJobMinutes}'@' \
+              -e 's@JobMinutesArg@'${CyclingFCJobMinutes}'@' \
               -e 's@AccountNumberArg@'${CYAccountNumber}'@' \
               -e 's@QueueNameArg@'${CYQueueName}'@' \
               -e 's@ExpNameArg@'${ExpName}'@' \
-              fc_job.csh > ${JobScript}
+              ${MAIN_SCRIPT_DIR}/fc_job.csh > ${JobScript}
           chmod 744 ${JobScript}
 
           cd ${WorkDir}
 
           set JALL=(`cat ${JOBCONTROL}/${child_DependsOn}`)
-          set JDEP = ''
+          set JDEP = "${DEPSTART}"
           foreach J ($JALL)
             if (${J} != "$nulljob" ) then
-              set JDEP = ${JDEP}:${J}
+              set JDEP = ${JDEP}"${DEPSEP}"${J}
             endif
           end
-          set JFC = `qsub -W depend=afterok:${JDEP} ${JobScript}`
-          echo "${JFC}" >> ${JOBCONTROL}/ensfc
-          echo "${JFC}" > ${JOBCONTROL}/fc_mem${member}
+          if ($JDEP != "") set JDEP = "${DEPEND}"${JDEP}
+          set J = `${SUBMIT} "${JDEP}" ${JobScript}`
+          if ($SUBMIT == sbatch) set J = `echo $J | sed 's@Submitted batch job @@'`
+          echo "${J}" >> ${JOBCONTROL}/ensfc
+          echo "${J}" > ${JOBCONTROL}/fc_mem${member}
         endif
         @ member++
       end
 
-#------- verify forecasted bg state ---------
-      set myWrapper = jobANDverify
+exit
+
+
+#------- VerifyBG ---------
+      set myWrapper = appANDverify
       set doJobs = ($doOMB $doDiagnoseOMB $doDiagnoseBG)
       foreach activate ($doJobs)
         @ active = $active + $activate
       end
 
-      set VerifyBGDirs = ()
       set member = 1
       while ( $member <= ${nEnsDAMembers} )
+        set WorkDir = $VerifyBGDirs[$member]
         set child_ARGS = ($CyclingFCDirs[$member] ${FCFilePrefix} ${bgDir} ${nextDate} ${CYWindowHR})
         set child_DependsOn=fc_mem${member}
 
-        cd ${MAIN_SCRIPT_DIR}
-        set WorkDir = $VerifyBGDirs[$member]
         @ member++
 
         if ( $active == 0 ) continue
 
-        set WrapperScript=${myWrapper}_OMB.csh
+        cd ${MAIN_SCRIPT_DIR}
+        set WrapperScript=${MAIN_SCRIPT_DIR}/${myWrapper}_OMB.csh
         sed -e 's@WorkDirArg@'${WorkDir}'@' \
             -e 's@JobNameArg@'${omm}'_job@' \
             -e 's@DependTypeArg@'${child_DependsOn}'@' \
             -e 's@wrapDateArg@'$child_ARGS[4]'@' \
-            -e 's@wrapStateDirsArg@'$child_ARGS[1]'@' \
+            -e 's@wrapStateDirArg@'$child_ARGS[1]'@' \
             -e 's@wrapStatePrefixArg@'$child_ARGS[2]'@' \
             -e 's@wrapStateTypeArg@'$child_ARGS[3]'@' \
             -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
@@ -377,9 +350,9 @@
             -e 's@wrapQueueNameArg@'${VFQueueName}'@' \
             -e 's@wrapNNODEArg@'${OMMNodes}'@' \
             -e 's@wrapNPEArg@'${OMMPEPerNode}'@g' \
-            ${myWrapper}.csh > ${WrapperScript}
+            ${MAIN_SCRIPT_DIR}/${myWrapper}.csh > ${WrapperScript}
         chmod 744 ${WrapperScript}
-        ./${WrapperScript}
+        ${WrapperScript}
 
         cd ${WorkDir}
         ${SubmitWrapperJobs}
@@ -388,13 +361,16 @@
         set JobDependencies=(`cat JobDependencies`)
         set i = 1
         while ($i < ${#JobScripts})
-          if ( $doJobs[$i] == 1 && "$Script" != "None" ) then
+          set JobScript = "$JobScripts[$i]"
+          if ( $doJobs[$i] == 1 && "$JobScript" != "None" ) then
             set JALL=(`cat ${JOBCONTROL}/$JobDependencies[$i]`)
-            set JDEP = ''
+            set JDEP = "${DEPSTART}"
             foreach J ($JALL)
-              if (${J} != "$nulljob" ) set JDEP = ${JDEP}:${J}
+              if (${J} != "$nulljob" ) set JDEP = ${JDEP}"${DEPSEP}"${J}
             end
-            set J = `qsub -W depend=afterok${JDEP} $JobScripts[$i]`
+            if ($JDEP != "") set JDEP = "${DEPEND}"${JDEP}
+            set J = `${SUBMIT} "${JDEP}" $JobScript`
+            if ($SUBMIT == sbatch) set J = `echo $J | sed 's@Submitted batch job @@'`
             echo "${J}" > ${JOBCONTROL}/$JobTypes[$i]
           endif
           @ i++
@@ -412,9 +388,9 @@
         else
           set member = 1
 
-#------- verification forecast ---------
+#------- ExtendedFC ---------
           if ( ${doExtendedFC} == 0 ) then
-            set child_DependsOn=da
+            set child_DependsOn=da_job
             rm -rf $ExtendedFCDirs[$member]
             mkdir -p $ExtendedFCDirs[$member]
 
@@ -422,37 +398,39 @@
             echo "\n${ExtendedFCWindowHR}-hr verification FC from ${cycle_Date} to ${finalExtendedFCDate}"
 
             cd ${MAIN_SCRIPT_DIR}
-            cp setup.csh $ExtendedFCDirs[$member]/
-            set JobScript=$ExtendedFCDirs[$member]/fcvf_job_${cycle_Date}_${ExpName}.csh
-            sed -e 's@icDateArg@'${cycle_Date}'@' \
+            ln -sf ${MAIN_SCRIPT_DIR}/setup.csh $ExtendedFCDirs[$member]/
+            set JobScript=$ExtendedFCDirs[$member]/fc_job.csh
+            sed -e 's@inDateArg@'${cycle_Date}'@' \
                 -e 's@inStateDirArg@'$CyclingDAOutDirs[$member]'@' \
-                -e 's@inStatePrefixArg@'${CyclingDAOutPrefix}'@' \
+                -e 's@inStatePrefixArg@'${ANFilePrefix}'@' \
                 -e 's@fcLengthHRArg@'${ExtendedFCWindowHR}'@' \
                 -e 's@fcIntervalHRArg@'${ExtendedFC_DT_HR}'@' \
-                -e 's@JobMinutes@'${ExtendedFCJobMinutes}'@' \
+                -e 's@JobMinutesArg@'${ExtendedFCJobMinutes}'@' \
                 -e 's@AccountNumberArg@'${CYAccountNumber}'@' \
                 -e 's@QueueNameArg@'${CYQueueName}'@' \
                 -e 's@ExpNameArg@'${ExpName}'@' \
-                fc_job.csh > ${JobScript}
+                ${MAIN_SCRIPT_DIR}/fc_job.csh > ${JobScript}
             chmod 744 ${JobScript}
 
             cd $ExtendedFCDirs[$member]
 
             set JALL=(`cat ${JOBCONTROL}/${child_DependsOn}`)
-            set JDEP = ''
+            set JDEP = "${DEPSTART}"
             foreach J ($JALL)
               if (${J} != "$nulljob" ) then
-                set JDEP = ${JDEP}:${J}
+                set JDEP = ${JDEP}"${DEPSEP}"${J}
               endif
             end
-            set JExtendedFC = `qsub -W depend=afterok:${JDEP} ${JobScript}`
-            echo "${JExtendedFC}" > ${JOBCONTROL}/fcvf_mem${member}
+            if ($JDEP != "") set JDEP = "${DEPEND}"${JDEP}
+            set J = `${SUBMIT} "${JDEP}" ${JobScript}`
+            if ($SUBMIT == sbatch) set J = `echo $J | sed 's@Submitted batch job @@'`
+            echo "${J}" > ${JOBCONTROL}/exfc_mem${member}
           endif
 
 
 #------- verify fc state(s) ---------
-          set child_DependsOn=fcvf_mem${member}
-          set myWrapper = jobANDverify
+          set child_DependsOn=exfc_mem${member}
+          set myWrapper = appANDverify
 
           set doJobs = ($doOMF $doDiagnoseOMF $doDiagnoseFC)
           set active = 0
@@ -479,12 +457,12 @@
 #            else if ( $active > 0 ) then
             if ( $active > 0 ) then
               cd ${MAIN_SCRIPT_DIR}
-              set WrapperScript=${myWrapper}_OMF.csh
+              set WrapperScript=${MAIN_SCRIPT_DIR}/${myWrapper}_OMF.csh
               sed -e 's@WorkDirArg@'${WorkDir}'@' \
                   -e 's@JobNameArg@'${omm}'_job@' \
                   -e 's@DependTypeArg@'${child_DependsOn}'@' \
                   -e 's@wrapDateArg@'$child_ARGS[4]'@' \
-                  -e 's@wrapStateDirsArg@'$child_ARGS[1]'@' \
+                  -e 's@wrapStateDirArg@'$child_ARGS[1]'@' \
                   -e 's@wrapStatePrefixArg@'$child_ARGS[2]'@' \
                   -e 's@wrapStateTypeArg@'$child_ARGS[3]'@' \
                   -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
@@ -495,9 +473,9 @@
                   -e 's@wrapQueueNameArg@'${VFQueueName}'@' \
                   -e 's@wrapNNODEArg@'${OMMNodes}'@' \
                   -e 's@wrapNPEArg@'${OMMPEPerNode}'@g' \
-                  ${myWrapper}.csh > ${WrapperScript}
+                  ${MAIN_SCRIPT_DIR}/${myWrapper}.csh > ${WrapperScript}
               chmod 744 ${WrapperScript}
-              ./${WrapperScript}
+              ${WrapperScript}
 
               cd ${WorkDir}
               set JobScripts=(`cat JobScripts`)
@@ -505,13 +483,16 @@
               set JobDependencies=(`cat JobDependencies`)
               set i = 1
               while ($i < ${#JobScripts})
-                if ( $doJobs[$i] == 1 && "$Script" != "None" ) then
+                set JobScript = "$JobScripts[$i]"
+                if ( $doJobs[$i] == 1 && "$JobScript" != "None" ) then
                   set JALL=(`cat ${JOBCONTROL}/$JobDependencies[$i]`)
-                  set JDEP = ''
+                  set JDEP = "${DEPSTART}"
                   foreach J ($JALL)
-                    if (${J} != "$nulljob" ) set JDEP = ${JDEP}:${J}
+                    if (${J} != "$nulljob" ) set JDEP = ${JDEP}"${DEPSEP}"${J}
                   end
-                  set J = `qsub -W depend=afterok${JDEP} $JobScripts[$i]`
+                  if ($JDEP != "") set JDEP = "${DEPEND}"${JDEP}
+                  set J = `${SUBMIT} "${JDEP}" $JobScript`
+                  if ($SUBMIT == sbatch) set J = `echo $J | sed 's@Submitted batch job @@'`
                   echo "${J}" > ${JOBCONTROL}/$JobTypes[$i]
                 endif
                 @ i++

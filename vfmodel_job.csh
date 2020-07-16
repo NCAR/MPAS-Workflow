@@ -9,6 +9,16 @@
 #PBS -o vfmodel.log.job.out 
 #PBS -e vfmodel.log.job.err
 
+#   #SBATCH --job-name=vfmodelinDateArg_ExpNameArg
+#   #SBATCH --account=AccountNumberArg
+#   #SBATCH --ntasks=1
+#   #SBATCH --cpus-per-task=18
+#   #SBATCH --mem=42G
+#   #SBATCH --time=0:15:00
+#   #SBATCH --partition=dav
+#   #SBATCH --output=vfobs.log.job.out
+
+
 date
 
 #
@@ -18,17 +28,17 @@ source ./setup.csh
 
 module load python/3.7.5
 
-setenv self_Date        inDateArg
+setenv cycle_Date       inDateArg
 setenv self_StateDir    inStateDirArg
 setenv self_StatePrefix inStatePrefixArg
 
 #
 # Time info:
 # ==========
-set yy = `echo ${self_Date} | cut -c 1-4`
-set mm = `echo ${self_Date} | cut -c 5-6`
-set dd = `echo ${self_Date} | cut -c 7-8`
-set hh = `echo ${self_Date} | cut -c 9-10`
+set yy = `echo ${cycle_Date} | cut -c 1-4`
+set mm = `echo ${cycle_Date} | cut -c 5-6`
+set dd = `echo ${cycle_Date} | cut -c 7-8`
+set hh = `echo ${cycle_Date} | cut -c 9-10`
 
 set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 

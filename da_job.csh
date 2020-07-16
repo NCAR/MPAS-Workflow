@@ -2,12 +2,21 @@
 #PBS -N dainDateArg_ExpNameArg
 #PBS -A AccountNumberArg
 #PBS -q QueueNameArg
-#PBS -l select=NNODE:ncpus=NPE:mpiprocs=NPE:mem=109GB
+#PBS -l select=NNODEArg:ncpus=NPEArg:mpiprocs=NPEArg:mem=109GB
 #PBS -l walltime=0:25:00
 #PBS -m ae
 #PBS -k eod
 #PBS -o log.job.out
 #PBS -e log.job.err
+#   #SBATCH --job-name=dainDateArg_ExpNameArg
+#   #SBATCH --account=AccountNumberArg
+#   #SBATCH --ntasks=NNODEArg
+#   #SBATCH --cpus-per-task=NPEArg
+#   #SBATCH --mem=109G
+#   #SBATCH --time=0:25:00
+#   #SBATCH --partition=dav
+#   #SBATCH --output=log.job.out
+
 
 date
 
@@ -15,19 +24,19 @@ date
 # Setup environment:
 # =============================================
 source ./setup.csh
-
-setenv self_Date          inDateArg
+setenv cycle_Date         inDateArg
+source ${MAIN_SCRIPT_DIR}/setupCycleNames.csh
 setenv self_bgStatePrefix inStatePrefixArg
-setenv self_bgStateDirs   (inStateDirArg)
+setenv self_bgStateDir    inStateDirArg
 setenv self_DAType        DATypeArg
 
 #
 # Time info for namelist, yaml etc:
 # =============================================
-set yy = `echo ${self_Date} | cut -c 1-4`
-set mm = `echo ${self_Date} | cut -c 5-6`
-set dd = `echo ${self_Date} | cut -c 7-8`
-set hh = `echo ${self_Date} | cut -c 9-10`
+set yy = `echo ${cycle_Date} | cut -c 1-4`
+set mm = `echo ${cycle_Date} | cut -c 5-6`
+set dd = `echo ${cycle_Date} | cut -c 7-8`
+set hh = `echo ${cycle_Date} | cut -c 9-10`
 
 set fileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
 
@@ -40,12 +49,11 @@ rm jedi.log*
 
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set other = $self_bgStateDirs[$member]
-
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
   set memDir = `${memberDir} $self_DAType $member`
-  set bg = ./${bgDir}${memDir}
-  set an = ./${anDir}${memDir}
+  set other = ${self_bgStateDir}${memDir}
+  set bg = $CyclingDAInDirs[$member]${memDir}
+  set an = $CyclingDAOutDirs[$member]${memDir}
   mkdir -p ${bg}
   mkdir -p ${an}
 
@@ -127,13 +135,13 @@ endif
 #
 # Update analyzed variables:
 # =============================================
-#rm outList${self_Date}
+#rm outList${cycle_Date}
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
   set memDir = `${memberDir} $self_DAType $member`
-  set bg = ./${bgDir}${memDir}
-  set an = ./${anDir}${memDir}
+  set bg = $CyclingDAInDirs[$member]${memDir}
+  set an = $CyclingDAOutDirs[$member]${memDir}
 
   ## copy background to analysis
   set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
@@ -145,7 +153,7 @@ while ( $member <= ${nEnsDAMembers} )
   ncks -A -v ${MPASANVars} ${anFileDA} ${anFile}
   rm ${anFileDA}
 
-#  echo `pwd`"/${anFile}" >> outList${self_Date}
+#  echo `pwd`"/${anFile}" >> outList${cycle_Date}
 
   @ member++
 end
