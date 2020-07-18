@@ -39,3 +39,18 @@ while ( $member <= ${nEnsDAMembers} )
   set VerifyFCDirs = ($VerifyFCDirs ${VerificationWorkDir}/${fcDir}${memDir}/${cycle_Date})
   @ member++
 end
+
+set VerifyFCDirsStepsMembers = ()
+
+#@ dt = 0
+#set step = 1
+#while ( $dt <= ${ExtendedFCWindowHR} )
+#  set member = 1
+#  @ index = ($step * ${nEnsDAMembers}) + $member
+#  while ( $member <= ${nEnsDAMembers} )
+#    set VerifyFCDirsStepsMembers = ($VerifyFCDirsStepsMembers )
+#    @ member++
+#  end
+#  @ step++
+#end
+

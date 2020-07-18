@@ -1,14 +1,14 @@
 #!/bin/csh
-#PBS -N dainDateArg_ExpNameArg
-#PBS -A AccountNumberArg
-#PBS -q QueueNameArg
-#PBS -l select=NNODEArg:ncpus=NPEArg:mpiprocs=NPEArg:mem=109GB
-#PBS -l walltime=0:25:00
-#PBS -m ae
-#PBS -k eod
-#PBS -o log.job.out
-#PBS -e log.job.err
-#   #SBATCH --job-name=dainDateArg_ExpNameArg
+#  #PBS -N da_ExpNameArg
+#  #PBS -A AccountNumberArg
+#  #PBS -q QueueNameArg
+#  #PBS -l select=NNODEArg:ncpus=NPEArg:mpiprocs=NPEArg:mem=109GB
+#  #PBS -l walltime=0:25:00
+#  #PBS -m ae
+#  #PBS -k eod
+#  #PBS -o log.job.out
+#  #PBS -e log.job.err
+#   #SBATCH --job-name=da_ExpNameArg
 #   #SBATCH --account=AccountNumberArg
 #   #SBATCH --ntasks=NNODEArg
 #   #SBATCH --cpus-per-task=NPEArg
@@ -17,18 +17,23 @@
 #   #SBATCH --partition=dav
 #   #SBATCH --output=log.job.out
 
-
 date
 
 #
 # Setup environment:
 # =============================================
-source ./setup.csh
-setenv cycle_Date         inDateArg
-source ${MAIN_SCRIPT_DIR}/setupCycleNames.csh
-setenv self_bgStatePrefix inStatePrefixArg
-setenv self_bgStateDir    inStateDirArg
-setenv self_DAType        DATypeArg
+source ./control.csh
+set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
+set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
+set cycle_Date = ${yymmdd}${hh}
+source ./getCycleDirectories.csh
+
+set self_WorkDir = $WorkDirsArg
+set self_StateDirs = ($inStateDirsArg)
+set self_StatePrefix = inStatePrefixArg
+
+mkdir -p ${self_WorkDir}
+cd ${self_WorkDir}
 
 #
 # Time info for namelist, yaml etc:
@@ -50,16 +55,15 @@ rm jedi.log*
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
-  set memDir = `${memberDir} $self_DAType $member`
-  set other = ${self_bgStateDir}${memDir}
-  set bg = $CyclingDAInDirs[$member]${memDir}
-  set an = $CyclingDAOutDirs[$member]${memDir}
+  set other = $self_StateDirs[$member]
+  set bg = $CyclingDAInDirs[$member]
+  set an = $CyclingDAOutDirs[$member]
   mkdir -p ${bg}
   mkdir -p ${an}
 
   # Link/copy bg from other directory and ensure that MPASDiagVars are present
   # =========================================================================
-  set bgFileOther = ${other}/${self_bgStatePrefix}.$fileDate.nc
+  set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
   set bgFileDA = ${bg}/${BGFilePrefix}.$fileDate.nc
 
   set copyDiags = 0
@@ -138,10 +142,8 @@ endif
 #rm outList${cycle_Date}
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  # TODO(JJG): centralize this directory name construction (cycle.csh?)
-  set memDir = `${memberDir} $self_DAType $member`
-  set bg = $CyclingDAInDirs[$member]${memDir}
-  set an = $CyclingDAOutDirs[$member]${memDir}
+  set bg = $CyclingDAInDirs[$member]
+  set an = $CyclingDAOutDirs[$member]
 
   ## copy background to analysis
   set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc

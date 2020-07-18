@@ -1,37 +1,60 @@
 #!/bin/csh
 
+date
+
+set ArgMember = "$1"
+set ArgDT = "$2"
+set ArgStateType = "$3"
+
 #
 # Setup environment:
 # =============================================
-source ./setup.csh
-setenv cycle_Date          inDateArg
-source ${MAIN_SCRIPT_DIR}/setupCycleNames.csh
+source ./control.csh
+set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
+set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
+set cycle_Date = ${yymmdd}${hh}
+set validDate = `$advanceCYMDH ${cycle_Date} ${ArgDT}`
+source ./getCycleDirectories.csh
 
-#self
-setenv self_bgStatePrefix inStatePrefixArg
-setenv self_WindowHR      WindowHRArg
+set test = `echo $ArgMember | grep '^[0-9]*$'`
+set isInt = (! $status)
+if ( $isInt && "$ArgMember" != "0") then
+  set self_WorkDir = $WorkDirsArg[$ArgMember]
+else
+  set self_WorkDir = $WorkDirsArg
+endif
+set test = `echo $ArgDT | grep '^[0-9]*$'`
+set isInt = (! $status)
+if ( ! $IsInt) then
+  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
+if ($ArgDT > 0 || "$ArgStateType" =~ "FC") then
+  set self_WorkDir = $self_WorkDir/${ArgDT}hr
+endif
+
+set self_bgStatePrefix = inStatePrefixArg
+set self_WindowHR = WindowHRArg
 set self_ObsList = ("${ObsListArg}")
-setenv self_VARBCTable    VARBCTableArg
-setenv self_DAType        DATypeArg
-setenv self_DAMode        DAModeArg
+set self_VARBCTable = VARBCTableArg
+set self_DAType = DATypeArg
+set self_DAMode = DAModeArg
 
-#children
-setenv self_DAJobScript   DAJobScriptArg
-setenv self_VFJobScript   VFJobScriptArg
-
+mkdir -p ${self_WorkDir}
+cd ${self_WorkDir}
 
 #
 # Time info for namelist, yaml etc:
 # =============================================
-set yy = `echo ${cycle_Date} | cut -c 1-4`
-set mm = `echo ${cycle_Date} | cut -c 5-6`
-set dd = `echo ${cycle_Date} | cut -c 7-8`
-set hh = `echo ${cycle_Date} | cut -c 9-10`
+set yy = `echo ${validDate} | cut -c 1-4`
+set mm = `echo ${validDate} | cut -c 5-6`
+set dd = `echo ${validDate} | cut -c 7-8`
+set hh = `echo ${validDate} | cut -c 9-10`
 set FileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set NMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set ConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
-set prevDate = `$advanceCYMDH ${cycle_Date} -${self_WindowHR}`
+set prevDate = `$advanceCYMDH ${validDate} -${self_WindowHR}`
 set yy = `echo ${prevDate} | cut -c 1-4`
 set mm = `echo ${prevDate} | cut -c 5-6`
 set dd = `echo ${prevDate} | cut -c 7-8`
@@ -51,7 +74,7 @@ endif
 
 #@ HALF_DT_HR_PLUS = ${HALF_DT_HR}
 @ HALF_DT_HR_MINUS = ${HALF_DT_HR} + ${ODD_DT}
-set halfprevDate = `$advanceCYMDH ${cycle_Date} -${HALF_DT_HR_MINUS}`
+set halfprevDate = `$advanceCYMDH ${validDate} -${HALF_DT_HR_MINUS}`
 set yy = `echo ${halfprevDate} | cut -c 1-4`
 set mm = `echo ${halfprevDate} | cut -c 5-6`
 set dd = `echo ${halfprevDate} | cut -c 7-8`
@@ -96,23 +119,23 @@ end
 
 # Link conventional data
 # ======================
-ln -fsv $CONV_OBS_DIR/${cycle_Date}/aircraft_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${cycle_Date}/gnssro_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${cycle_Date}/satwind_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${cycle_Date}/sfc_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${cycle_Date}/sondes_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${validDate}/aircraft_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${validDate}/gnssro_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${validDate}/satwind_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${validDate}/sfc_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${validDate}/sondes_obs*.nc4 ${InDBDir}/
 
 # Link AMSUA data
 # ==============
-ln -fsv $AMSUA_OBS_DIR/${cycle_Date}/amsua*_obs_*.nc4 ${InDBDir}/
+ln -fsv $AMSUA_OBS_DIR/${validDate}/amsua*_obs_*.nc4 ${InDBDir}/
 
 # Link ABI data
 # ============
-ln -fsv $ABI_OBS_DIR/${cycle_Date}/abi*_obs_*.nc4 ${InDBDir}/
+ln -fsv $ABI_OBS_DIR/${validDate}/abi*_obs_*.nc4 ${InDBDir}/
 
 # Link AHI data
 # ============
-ln -fsv $AHI_OBS_DIR/${cycle_Date}/ahi*_obs_*.nc4 ${InDBDir}/
+ln -fsv $AHI_OBS_DIR/${validDate}/ahi*_obs_*.nc4 ${InDBDir}/
 
 # Link VarBC prior
 # ====================
@@ -127,7 +150,7 @@ cp -v ${CONFIGDIR}/applicationBase/${self_DAType}.yaml orig_jedi0.yaml
 
 set AnalyzeHydrometeors = 0
 
-## Add selected observations (see setup.csh)
+## Add selected observations (see control.csh)
 foreach obs ($self_ObsList)
   echo "Preparing YAML for ${obs} observations"
   set missing=0
@@ -149,7 +172,7 @@ foreach obs ($self_ObsList)
     endif
   else if ( "$obs" =~ *"conv"* ) then
     #KLUDGE to handle missing qv for sondes at single time
-    if ( ${cycle_Date} == 2018043006 ) then
+    if ( ${validDate} == 2018043006 ) then
       set SUBYAML=${SUBYAML}-2018043006
     endif
   endif
@@ -199,7 +222,7 @@ sed -i 's@2018-04-14T18:00:00Z@'${prevConfDate}'@g'  orig_jedi0.yaml
 
 ## revise current date
 sed -i 's@2018-04-15_00.00.00@'${FileDate}'@g' orig_jedi0.yaml
-sed -i 's@2018041500@'${cycle_Date}'@g' orig_jedi0.yaml
+sed -i 's@2018041500@'${validDate}'@g' orig_jedi0.yaml
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' orig_jedi0.yaml
 
 ## revise window length

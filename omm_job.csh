@@ -1,14 +1,14 @@
 #!/bin/csh
-#PBS -N omStateTypeArginDateArg_ExpNameArg
-#PBS -A AccountNumberArg
-#PBS -q QueueNameArg
-#PBS -l select=NNODEArg:ncpus=NPEArg:mpiprocs=NPEArg:mem=109GB
-#PBS -l walltime=0:10:00
-#PBS -m ae
-#PBS -k eod
-#PBS -o log.job.out
-#PBS -e log.job.err
-#   #SBATCH --job-name=omStateTypeArginDateArg_ExpNameArg
+#  #PBS -N om_ExpNameArg
+#  #PBS -A AccountNumberArg
+#  #PBS -q QueueNameArg
+#  #PBS -l select=NNODEArg:ncpus=NPEArg:mpiprocs=NPEArg:mem=109GB
+#  #PBS -l walltime=0:10:00
+#  #PBS -m ae
+#  #PBS -k eod
+#  #PBS -o log.job.out
+#  #PBS -e log.job.err
+#   #SBATCH --job-name=om_ExpNameArg
 #   #SBATCH --account=AccountNumberArg
 #   #SBATCH --ntasks=NNODEArg
 #   #SBATCH --cpus-per-task=NPEArg
@@ -17,27 +17,50 @@
 #   #SBATCH --partition=dav
 #   #SBATCH --output=log.job.out
 
-
-
 date
 
-#
-#set environment:
-# =============================================
-source ./setup.csh
-setenv cycle_Date       inDateArg
-#source ${MAIN_SCRIPT_DIR}/setupCycleNames.csh
+set ArgMember = "$1"
+set ArgDT = "$2"
+set ArgStateType = "$3"
 
-setenv self_StateDir    inStateDirArg
-setenv self_StatePrefix inStatePrefixArg
+#
+# Setup environment:
+# =============================================
+source ./control.csh
+set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
+set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
+set cycle_Date = ${yymmdd}${hh}
+set validDate = `$advanceCYMDH ${cycle_Date} ${ArgDT}`
+source ./getCycleDirectories.csh
+
+set test = `echo $ArgMember | grep '^[0-9]*$'`
+set isInt = (! $status)
+if ( $isInt && "$ArgMember" != "0") then
+  set self_WorkDir = $WorkDirsArg[$ArgMember]
+else
+  set self_WorkDir = $WorkDirsArg
+endif
+set test = `echo $ArgDT | grep '^[0-9]*$'`
+set isInt = (! $status)
+if ( ! $IsInt) then
+  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
+if ($ArgDT > 0 || "$ArgStateType" =~ "FC") then
+  set self_WorkDir = $self_WorkDir/${ArgDT}hr
+endif
+set self_StateDir = $inStateDirsArg[$ArgMember]
+set self_StatePrefix = inStatePrefixArg
+
+cd ${self_WorkDir}
 
 #
 # Time info for namelist, yaml etc:
 # =============================================
-set yy = `echo ${cycle_Date} | cut -c 1-4`
-set mm = `echo ${cycle_Date} | cut -c 5-6`
-set dd = `echo ${cycle_Date} | cut -c 7-8`
-set hh = `echo ${cycle_Date} | cut -c 9-10`
+set yy = `echo ${validDate} | cut -c 1-4`
+set mm = `echo ${validDate} | cut -c 5-6`
+set dd = `echo ${validDate} | cut -c 7-8`
+set hh = `echo ${validDate} | cut -c 9-10`
 
 set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 
@@ -51,8 +74,7 @@ rm jedi.log*
 # Link/copy bg from other directory and ensure that MPASDiagVars are present
 # =========================================================================
 
-set memDir = `${memberDir} ${omm} 0`
-set other = ${self_StateDir}${memDir}
+set other = $self_StateDir
 set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
 set bgFileDA = ./${BGFilePrefix}.$fileDate.nc
 

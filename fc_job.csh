@@ -1,14 +1,14 @@
 #!/bin/csh
-#PBS -N fcinDateArg_ExpNameArg
-#PBS -A AccountNumberArg
-#PBS -q QueueNameArg
-#PBS -l select=4:ncpus=32:mpiprocs=32:mem=109GB
-#PBS -l walltime=00:JobMinutesArg:00
-#PBS -m ae
-#PBS -k eod
-#PBS -o log.job.out
-#PBS -e log.job.err
-#   #SBATCH --job-name=fcinDateArg_ExpNameArg
+#  #PBS -N fc_ExpNameArg
+#  #PBS -A AccountNumberArg
+#  #PBS -q QueueNameArg
+#  #PBS -l select=4:ncpus=32:mpiprocs=32:mem=109GB
+#  #PBS -l walltime=00:JobMinutesArg:00
+#  #PBS -m ae
+#  #PBS -k eod
+#  #PBS -o log.job.out
+#  #PBS -e log.job.err
+#   #SBATCH --job-name=fc_ExpNameArg
 #   #SBATCH --account=AccountNumberArg
 #   #SBATCH --ntasks=4
 #   #SBATCH --cpus-per-task=32
@@ -19,20 +19,35 @@
 
 date
 
+set ArgMember = "$1"
+
 #
 # Setup environment:
 # =============================================
-source ./setup.csh
-setenv cycle_Date         inDateArg
-source ./setupCycleNames.csh
+#source ./control.csh
+set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
+set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
+set cycle_Date = ${yymmdd}${hh}
+source ./getCycleDirectories.csh
 
-setenv self_icStateDir    inStateDirArg
-setenv self_icStatePrefix inStatePrefixArg
-setenv self_fcLengthHR    fcLengthHRArg
-setenv self_fcIntervalHR  fcIntervalHRArg
+set test = `echo $ArgMember | grep '^[0-9]*$'`
+set isInt = (! $status)
+if ( $isInt && "$ArgMember" != "0") then
+  set self_WorkDir = $WorkDirsArg[$ArgMember]
+else
+  set self_WorkDir = $WorkDirsArg
+endif
 
-setenv config_run_duration 0_${self_fcLengthHR}:00:00
-setenv output_interval 0_${self_fcIntervalHR}:00:00
+set self_icStateDir = $CyclingDAOutDirs[$ArgMember]
+set self_icStatePrefix = ${ANFilePrefix}
+set self_fcLengthHR = fcLengthHRArg
+set self_fcIntervalHR = fcIntervalHRArg
+
+set config_run_duration = 0_${self_fcLengthHR}:00:00
+set output_interval = 0_${self_fcIntervalHR}:00:00
+
+mkdir -p ${self_WorkDir}
+cd ${self_WorkDir}
 
 #
 # Time info for namelist, yaml etc:

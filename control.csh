@@ -41,7 +41,7 @@ setenv OutDBDir dbOut
 
 ## DAType
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DAType eda_3denvar
+setenv DAType 3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DAType" =~ *"eda"* ) then
@@ -100,7 +100,7 @@ setenv updateSea         1
 setenv CYWindowHR        6               # interval between cycle DA
 setenv ExtendedFCWindowHR      72              # length of verification forecasts
 setenv ExtendedFC_DT_HR        6               # interval between OMF verification times of an individual forecast
-setenv ExtendedFC_INTERVAL_HR  12              # interval between OMF forecast initial times
+setenv ExtendedFCTimes         T00,T12         # times of the day to run extended forecast
 setenv DAVFWindowHR      ${ExtendedFC_DT_HR}   # window of observations included in verification
 
 # TODO: enable logic (somewhere else) to use different super-obbing/thinning for DA/OMM jobs
@@ -112,6 +112,11 @@ setenv CyclingFCJobMinutes      5
 setenv ExtendedFCJobMinutes      40
 setenv OMMNodes 2
 setenv OMMPEPerNode 18
+setenv VerifyObsNodes 1
+setenv VerifyObsPEPerNode 18
+setenv VerifyModelNodes 1
+setenv VerifyModelPEPerNode 18
+
 if ( "$DAType" =~ *"eda"* || "$DAType" == "${omm}") then
   setenv CyclingDANodesPerMember ${OMMNodes}
   setenv CyclingDAPEPerNode      ${OMMPEPerNode}
@@ -171,22 +176,21 @@ setenv nulljob 0
 setenv PKGBASE          MPAS-Workflow
 setenv EXPUSER          ${USER}
 setenv TOP_EXP_DIR      /glade/scratch/${EXPUSER}/pandac
-setenv EXPDIR           ${TOP_EXP_DIR}/${EXPUSER}_${ExpName}_${MPAS_RES}
+setenv WholeExpName     ${EXPUSER}_${ExpName}_${MPAS_RES}
+setenv EXPDIR           ${TOP_EXP_DIR}/${WholeExpName}
 
 ## immediate subdirectories
 setenv CyclingDAWorkDir    ${EXPDIR}/CyclingDA
 setenv CyclingFCWorkDir    ${EXPDIR}/CyclingFC
 setenv ExtendedFCWorkDir   ${EXPDIR}/ExtendedFC
 setenv VerificationWorkDir ${EXPDIR}/Verification
-setenv JOBCONTROL          ${EXPDIR}/JOBCONTROL
-mkdir -p ${JOBCONTROL}
 
 ## directories copied from PKGBASE
 setenv MAIN_SCRIPT_DIR  ${EXPDIR}/${PKGBASE}
 
-setenv CONFIGDIR        ${MAIN_SCRIPT_DIR}/config #ONLY used by jedi_wrapper
+setenv CONFIGDIR        ${MAIN_SCRIPT_DIR}/config #ONLY used by jediPrep
 
-setenv RESSPECIFICDIR   ${MAIN_SCRIPT_DIR}/${MPAS_RES} #ONLY used by da_wrapper
+setenv RESSPECIFICDIR   ${MAIN_SCRIPT_DIR}/${MPAS_RES} #ONLY used by jediPrep
 
 ## directory string formatter for EDA members
 # argument to memberDir.py
@@ -323,7 +327,8 @@ setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
 
 #Cycling tools
-set pyDir = ${MAIN_SCRIPT_DIR}/tools
+#set pyDir = ${MAIN_SCRIPT_DIR}/tools
+set pyDir = tools
 set pyTools = (memberDir advanceCYMDH)
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"
