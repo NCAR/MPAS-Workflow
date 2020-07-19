@@ -1,7 +1,7 @@
 EnsembleApplication:
   members: nEnsDAMembers
 resolution:
-  gridfname: "./bgStatePrefix.2018-04-15_00.00.00.nc"
+  gridfname: meshFile
 model:
   name: MPAS
   tstep: PT6H
@@ -14,7 +14,7 @@ output:
 variational:
   iteration:
   - resolution:
-      gridfname: "./bgStatePrefix.2018-04-15_00.00.00.nc"
+      gridfname: meshFile
     linearmodel:
       varchange: Identity
       version: MPASIdTLM
@@ -29,7 +29,7 @@ AnalysisVariables
     diagnostics:
       departures: depbg
 #  - resolution:
-#      gridfname: "./bgStatePrefix.2018-04-15_00.00.00.nc"
+#      gridfname: meshFile
 #    linearmodel:
 #      varchange: Identity
 #      version: MPASIdTLM

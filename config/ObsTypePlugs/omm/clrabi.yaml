@@ -6,7 +6,7 @@
           obsfile: OutDBDir/obsPrefix_DAMode_abi-clr_g16.nc4
         simulate:
           variables: [brightness_temperature]
-          channels: &abi_channels 7-16
+          channels: &clrabi_channels 7-16
       ObsOperator:
         name: CRTM
         Absorbers: [H2O,O3,CO2]
@@ -31,16 +31,16 @@
         filename: OutDBDir/diagPrefix_DAMode_abi-clr_g16.nc4
         filter variables:
         - name: brightness_temperature_assuming_clear_sky
-          channels: *abi_channels
+          channels: *clrabi_channels
         - name: weightingfunction_of_atmosphere_layer
-          channels: *abi_channels
+          channels: *clrabi_channels
         - name: pressure_level_at_peak_of_weightingfunction
-          channels: *abi_channels
+          channels: *clrabi_channels
         - name: brightness_temperature_jacobian_air_temperature
-          channels: *abi_channels
+          channels: *clrabi_channels
         - name: brightness_temperature_jacobian_humidity_mixing_ratio
-          channels: *abi_channels
+          channels: *clrabi_channels
         - name: brightness_temperature_jacobian_surface_emissivity
-          channels: *abi_channels
+          channels: *clrabi_channels
         - name: brightness_temperature_jacobian_surface_temperature
-          channels: *abi_channels
+          channels: *clrabi_channels
