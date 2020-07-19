@@ -42,7 +42,7 @@ else
 endif
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isInt = (! $status)
-if ( ! $IsInt) then
+if ( ! $isInt) then
   echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
   exit 1
 endif
@@ -50,9 +50,12 @@ if ($ArgDT > 0 || "$ArgStateType" =~ "FC") then
   set self_WorkDir = $self_WorkDir/${ArgDT}hr
 endif
 
-module load python/3.7.5
+echo "WorkDir = ${self_WorkDir}"
 
 cd ${self_WorkDir}
+
+module load python/3.7.5
+
 
 #
 # collect obs-space diagnostic statistics into DB files:

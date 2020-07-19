@@ -7,14 +7,13 @@ set self_inStateDirs = wrapStateDirsArg
 set self_inStatePrefix = wrapStatePrefixArg
 set self_DAType = wrapDATypeArg
 
-echo "Making multiple job scripts for wrapStateTypeArg state"
+echo "Making run and verify job scripts for wrapStateTypeArg state"
 
 set myWrapper = jediPrep
 set WrapperScript=${MAIN_SCRIPT_DIR}/${myWrapper}${self_cylcTaskType}.csh
 sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
-    -e 's@inStatePrefixArg@'${self_inStatePrefix}'@' \
     -e 's@WindowHRArg@wrapWindowHRArg@' \
-    -e 's@ObsListArg@OMMObsList@' \
+    -e 's@ObsListArg@wrapObsListArg@' \
     -e 's@VARBCTableArg@wrapVARBCTableArg@' \
     -e 's@DATypeArg@'${self_DAType}'@' \
     -e 's@DAModeArg@wrapDAModeArg@' \
@@ -44,7 +43,7 @@ else
       -e 's@AccountNumberArg@'${VFAccountNumber}'@' \
       -e 's@QueueNameArg@'${VFQueueName}'@' \
       -e 's@ExpNameArg@'${ExpName}'@' \
-      vfobs_job.csh > ${VFObsScript}
+      vfobs.csh > ${VFObsScript}
   chmod 744 ${VFObsScript}
 
   set VFModelScript=${MAIN_SCRIPT_DIR}/VerifyModelwrapStateTypeArg.csh
@@ -54,7 +53,7 @@ else
       -e 's@AccountNumberArg@'${VFAccountNumber}'@' \
       -e 's@QueueNameArg@'${VFQueueName}'@' \
       -e 's@ExpNameArg@'${ExpName}'@' \
-      vfmodel_job.csh > ${VFModelScript}
+      vfmodel.csh > ${VFModelScript}
   chmod 744 ${VFModelScript}
 endif
 

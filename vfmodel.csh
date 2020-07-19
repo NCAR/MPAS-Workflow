@@ -42,7 +42,7 @@ else
 endif
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isInt = (! $status)
-if ( ! $IsInt) then
+if ( ! $isInt) then
   echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
   exit 1
 endif
@@ -52,9 +52,11 @@ endif
 setenv self_StateDir    $inStateDirsArg[$ArgMember]
 setenv self_StatePrefix inStatePrefixArg
 
-module load python/3.7.5
+echo "WorkDir = ${self_WorkDir}"
 
 cd ${self_WorkDir}
+
+module load python/3.7.5
 
 #
 # Time info:

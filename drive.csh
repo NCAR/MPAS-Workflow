@@ -5,18 +5,17 @@
 source control.csh
 cd ${MAIN_SCRIPT_DIR}
 
-echo "test cylc setup" 
+echo "Initializing ${PKGBASE}"
 module purge
 module load cylc
 module load graphviz
 
 rm -fr ${HOME}/cylc-run/${WholeExpName}
-mkdir /glade/scratch/${USER}/pandac/cylc-run_${WholeExpName}
 
 cat >! suite.rc << EOF
 #!Jinja2
 [meta]
-  title = "MPAS-Workflow"
+  title = "${PKGBASE}"
   {% set ExtFChrs = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
   {% set EnsDAMembers = range(1, ${nEnsDAMembers}+1, 1) %}
   {% set ExtendedFCMembers = [0] %}
@@ -30,16 +29,14 @@ cat >! suite.rc << EOF
   [[dependencies]]
 #    # Initial cycle point
     [[[R1]]]    # Run once, at the initial point.
-      {% for mem in EnsDAMembers%}
-        graph = CyclingDA => CyclingFC{{mem}}
-      {% endfor %}
+      graph = CyclingDA => CyclingEnsFC
     [[[PT${CYWindowHR}H]]]
       graph = '''
+      CyclingEnsFC[-PT${CYWindowHR}H]:succeed-all => CyclingDA => CyclingEnsFC
       {% for mem in EnsDAMembers%}
-        CyclingFC{{mem}}[-PT${CYWindowHR}H] => CyclingDA => CyclingFC{{mem}}
-        CyclingDA => CalculateOMA{{mem}} & VerifyModelAN{{mem}}
-        CalculateOMA{{mem}} => VerifyObsAN{{mem}}
+        CyclingDA => CalculateOMAN{{mem}} & VerifyModelAN{{mem}}
         CyclingFC{{mem}}[-PT${CYWindowHR}H] => CalculateOMBG{{mem}} & VerifyModelBG{{mem}}
+        CalculateOMAN{{mem}} => VerifyObsAN{{mem}}
         CalculateOMBG{{mem}} => VerifyObsBG{{mem}}
       {% endfor %}
       '''
@@ -48,53 +45,33 @@ cat >! suite.rc << EOF
 #      {% for mem in ExtendedFCMembers%}
 #        CyclingDA => ExtendedFC{{mem}}
 #        {% for dt in ExtFChrs%}
-#          ExtendedFC{{mem}} => CalculateOMF{{mem}}-{{dt}}hr
+#          ExtendedFC{{mem}} => CalculateOMF{{mem}}-{{dt}}hr & VerifyModelAN{{mem}}-{{dt}}hr
+#          CalculateOMFC{{mem}} => VerifyObsFC{{mem}}
 #        {% endfor %}
 #      {% endfor %}
 #      '''
 [runtime]
   [[root]] # suite defaults
     pre-script = "cd  ${MAIN_SCRIPT_DIR}/"
-  [[CyclingDA]]
-    pre-script = ${MAIN_SCRIPT_DIR}/jediPrepCyclingDA.csh "0" "0" "DA"
-    script = ${MAIN_SCRIPT_DIR}/CyclingDA.csh
+#Base components
+  [[CyclingBasePBS]]
     [[[job]]]
-#      batch system = pbs
-#      shell = /bin/csh
-      batch system = slurm
-      execution time limit = PT25M
+      batch system = pbs
     [[[directives]]]
-#      -j = oe
-#      -S = /bin/csh
-#      -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=109GB
-#      -q = ${CYQueueName}
-#      -A = ${CYAccountNumber}
-#      -l = /bin/csh
-      --account=${CYAccountNumber}
-      --mem=109G
-      --ntasks=${CyclingDANodes}
-      --cpus-per-task=${CyclingDAPEPerNode}
-      --partition=dav
-{% for mem in EnsDAMembers%}
-  [[CyclingFC{{mem}}]]
-    script = ${MAIN_SCRIPT_DIR}/CyclingFC.csh "{{mem}}"
-    [[[job]]]
-#      batch system = pbs
-      batch system = slurm
-      shell = /bin/csh
-      execution time limit = PT${CyclingFCJobMinutes}M
-    [[[directives]]]
-#      -j = oe
-#      -S = /bin/csh
-#      -l = select=4:ncpus=32:mpiprocs=32
-#      -q = ${CYQueueName}
-#      -A = ${CYAccountNumber}
-#      -l = /bin/csh
-      --account=${CYAccountNumber}
-      --ntasks=4
-      --cpus-per-task=32
-      --partition=dav
-{% endfor %}
+      -j = oe
+      -S = /bin/csh
+      -q = ${CYQueueName}
+      -A = ${CYAccountNumber}
+#  [[CyclingBaseSLURM]]
+#    [[[job]]]
+#      batch system = slurm
+#      execution time limit = PT25M
+#    [[[directives]]]
+#      --account=${CYAccountNumber}
+#      --mem=109G
+#      --ntasks=${CyclingDANodes}
+#      --cpus-per-task=${CyclingDAPEPerNode}
+#      --partition=dav
   [[VerifyBase]]
     [[[job]]]
       batch system = pbs
@@ -115,11 +92,33 @@ cat >! suite.rc << EOF
         -l = select=${OMMNodes}:ncpus=${OMMPEPerNode}:mpiprocs=${OMMPEPerNode}
         -q = ${VFQueueName}
         -A = ${VFAccountNumber}
+#Actual components
+  [[CyclingDA]]
+    inherit = CyclingBasePBS
+    pre-script = cd ${MAIN_SCRIPT_DIR}; ${MAIN_SCRIPT_DIR}/jediPrepCyclingDA.csh "0" "0" "DA"
+    script = ${MAIN_SCRIPT_DIR}/CyclingDA.csh
+    [[[job]]]
+      execution time limit = PT25M
+    [[[directives]]]
+      -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=109GB
+  [[CyclingEnsFC]]
+    inherit = CyclingBasePBS
+    script = ${MAIN_SCRIPT_DIR}/CyclingFC.csh "\$Member"
+    [[[job]]]
+      execution time limit = PT${CyclingFCJobMinutes}M
+    [[[directives]]]
+      -l = select=4:ncpus=32:mpiprocs=32
 {% for mem in EnsDAMembers%}
-  {% for state in ['BG', 'AN']%}
+  [[CyclingFC{{mem}}]]
+    inherit = CyclingEnsFC
+    [[[environment]]]
+      Member = {{mem}}
+{% endfor %}
+{% for state in ['BG', 'AN']%}
+  {% for mem in EnsDAMembers%}
     [[CalculateOM{{state}}{{mem}}]]
       inherit = OMMBase
-      pre-script = ${MAIN_SCRIPT_DIR}/jediPrepCalculateOM{{state}}.csh "{{mem}}" "0" "{{state}}"
+      pre-script = cd ${MAIN_SCRIPT_DIR}; ${MAIN_SCRIPT_DIR}/jediPrepCalculateOM{{state}}.csh "{{mem}}" "0" "{{state}}"
       script = ${MAIN_SCRIPT_DIR}/CalculateOM{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[VerifyObs{{state}}{{mem}}]]
       inherit = VerifyBase
@@ -131,20 +130,16 @@ cat >! suite.rc << EOF
 {% endfor %}
 {% for mem in ExtendedFCMembers%}
   [[ExtendedFC{{mem}}]]
+    inherit = CyclingBasePBS
     script = ${MAIN_SCRIPT_DIR}/ExtendedFC.csh "{{mem}}"
     [[[job]]]
-      batch system = pbs
       execution time limit = PT${ExtendedFCJobMinutes}M
     [[[directives]]]
-      -j = oe
-      -S = /bin/csh
       -l = select=4:ncpus=32:mpiprocs=32
-      -q = ${CYQueueName}
-      -A = ${CYAccountNumber}
   {% for dt in ExtFChrs %}
     [[CalculateOMFC{{mem}}-{{dt}}hr]]
       inherit = OMMBase
-      pre-script = ${MAIN_SCRIPT_DIR}/jediPrepCalculateOMFC.csh "{{mem}}" "{{dt}}" "FC"
+      pre-script = cd ${MAIN_SCRIPT_DIR}; ${MAIN_SCRIPT_DIR}/jediPrepCalculateOMFC.csh "{{mem}}" "{{dt}}" "FC"
       script = ${MAIN_SCRIPT_DIR}/CalculateOMFC.csh "{{mem}}" "{{dt}}" "FC"
     [[VerifyObsFC{{mem}}-{{dt}}hr]]
       inherit = VerifyBase
@@ -168,6 +163,6 @@ EOF
 
 cylc register ${WholeExpName} ${MAIN_SCRIPT_DIR}
 cylc validate ${WholeExpName}
-#cylc run ${WholeExpName}
+cylc run ${WholeExpName}
 
 exit

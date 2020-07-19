@@ -327,8 +327,7 @@ setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
 
 #Cycling tools
-#set pyDir = ${MAIN_SCRIPT_DIR}/tools
-set pyDir = tools
+set pyDir = ${MAIN_SCRIPT_DIR}/tools
 set pyTools = (memberDir advanceCYMDH)
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"
@@ -338,8 +337,8 @@ end
 #
 # job submission settings
 # =============================================
-setenv AccountNumber NMMM0015
-#setenv AccountNumber NMMM0043
+#setenv AccountNumber NMMM0015
+setenv AccountNumber NMMM0043
 
 setenv CYAccountNumber ${AccountNumber}
 setenv VFAccountNumber ${AccountNumber}

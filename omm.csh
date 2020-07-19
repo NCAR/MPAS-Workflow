@@ -42,7 +42,7 @@ else
 endif
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isInt = (! $status)
-if ( ! $IsInt) then
+if ( ! $isInt) then
   echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
   exit 1
 endif
@@ -51,6 +51,8 @@ if ($ArgDT > 0 || "$ArgStateType" =~ "FC") then
 endif
 set self_StateDir = $inStateDirsArg[$ArgMember]
 set self_StatePrefix = inStatePrefixArg
+
+echo "WorkDir = ${self_WorkDir}"
 
 cd ${self_WorkDir}
 
@@ -73,10 +75,14 @@ rm jedi.log*
 
 # Link/copy bg from other directory and ensure that MPASDiagVars are present
 # =========================================================================
-
 set other = $self_StateDir
+set bg = ./${bgDir}
+set an = ./${anDir}
+mkdir -p ${bg}
+mkdir -p ${an}
+
 set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
-set bgFileDA = ./${BGFilePrefix}.$fileDate.nc
+set bgFileDA = ${bg}/${BGFilePrefix}.$fileDate.nc
 
 set copyDiags = 0
 foreach var ({$MPASDiagVars})
@@ -97,9 +103,36 @@ else
   ln -fsv ${bgFileOther} ${bgFileDA}
 endif
 
+# link one of the backgrounds to a local RST file
+# used to initialize the MPAS mesh
+ln -sf ${bgFileDA} ./${BGFilePrefix}.$fileDate.nc
+
+#set other = $self_StateDir
+#set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
+#set bgFileDA = ./${BGFilePrefix}.$fileDate.nc
+#
+#set copyDiags = 0
+#foreach var ({$MPASDiagVars})
+#  ncdump -h ${bgFileOther} | grep $var
+#  if ( $status != 0 ) then
+#    @ copyDiags++
+#  endif 
+#end
+#if ( $copyDiags > 0 ) then
+#  ln -fsv ${bgFileOther} ${bgFileDA}_orig
+#  set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
+#  cp ${bgFileDA}_orig ${bgFileDA}
+#
+#  # Copy diagnostic variables used in DA to bg
+#  # ==========================================
+#  ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFileDA}
+#else
+#  ln -fsv ${bgFileOther} ${bgFileDA}
+#endif
+
 # Remove existing analysis file, if any
 # =====================================
-set anFile = ${anStatePrefix}.${fileDate}.nc
+set anFile = ${an}/${anStatePrefix}.${fileDate}.nc
 rm ${anFile}
 
 # ===================
@@ -116,9 +149,9 @@ mpiexec ./${OMMEXE} ./jedi.yaml ./jedi.log >& jedi.log.all
 #grep "Finished running the atmosphere core" log.atmosphere.0000.out
 grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
-    touch ./FAIL
-    echo "ERROR in $0 : jedi application failed" >> ./FAIL
-    exit 1
+  touch ./FAIL
+  echo "ERROR in $0 : jedi application failed" >> ./FAIL
+  exit 1
 endif
 
 # Remove garbage analysis file

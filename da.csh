@@ -22,6 +22,8 @@ date
 #
 # Setup environment:
 # =============================================
+pwd
+echo "da"
 source ./control.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -32,7 +34,8 @@ set self_WorkDir = $WorkDirsArg
 set self_StateDirs = ($inStateDirsArg)
 set self_StatePrefix = inStatePrefixArg
 
-mkdir -p ${self_WorkDir}
+echo "WorkDir = ${self_WorkDir}"
+
 cd ${self_WorkDir}
 
 #
@@ -116,9 +119,9 @@ mpiexec ./${DAEXE} ./jedi.yaml ./jedi.log >& jedi.log.all
 #grep "Finished running the atmosphere core" log.atmosphere.0000.out
 grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
-    touch ./FAIL
-    echo "ERROR in $0 : jedi application failed" >> ./FAIL
-    exit 1
+  touch ./FAIL
+  echo "ERROR in $0 : jedi application failed" >> ./FAIL
+  exit 1
 endif
 
 ## add hydrometeors to update variables (if needed)

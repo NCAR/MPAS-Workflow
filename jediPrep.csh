@@ -1,5 +1,7 @@
 #!/bin/csh
 
+#TODO: move this script functionality and relevent control's to python + maybe yaml
+
 date
 
 set ArgMember = "$1"
@@ -9,6 +11,8 @@ set ArgStateType = "$3"
 #
 # Setup environment:
 # =============================================
+pwd
+echo "prep"
 source ./control.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -25,7 +29,7 @@ else
 endif
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isInt = (! $status)
-if ( ! $IsInt) then
+if ( ! $isInt) then
   echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
   exit 1
 endif
@@ -33,7 +37,8 @@ if ($ArgDT > 0 || "$ArgStateType" =~ "FC") then
   set self_WorkDir = $self_WorkDir/${ArgDT}hr
 endif
 
-set self_bgStatePrefix = inStatePrefixArg
+echo "WorkDir = ${self_WorkDir}"
+
 set self_WindowHR = WindowHRArg
 set self_ObsList = ("${ObsListArg}")
 set self_VARBCTable = VARBCTableArg
@@ -50,9 +55,10 @@ set yy = `echo ${validDate} | cut -c 1-4`
 set mm = `echo ${validDate} | cut -c 5-6`
 set dd = `echo ${validDate} | cut -c 7-8`
 set hh = `echo ${validDate} | cut -c 9-10`
-set FileDate = ${yy}-${mm}-${dd}_${hh}.00.00
+set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set NMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set ConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
+set meshFile = ${BGFilePrefix}.${fileDate}.nc
 
 set prevDate = `$advanceCYMDH ${validDate} -${self_WindowHR}`
 set yy = `echo ${prevDate} | cut -c 1-4`
@@ -207,10 +213,13 @@ if ( "$self_DAType" =~ *"eda"* ) then
 else
   sed -i 's@OOPSMemberDir@@g' orig_jedi0.yaml
 endif
-sed -i 's@bgStatePrefix@'${self_bgStatePrefix}'@g' orig_jedi0.yaml
-sed -i 's@bgStateDir@'${CyclingDAInDir}'@g' orig_jedi0.yaml
+sed -i 's@meshFile@'${meshFile}'@g' orig_jedi0.yaml
+sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' orig_jedi0.yaml
+#sed -i 's@bgStateDir@'${CyclingDAInDir}'@g' orig_jedi0.yaml
+sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' orig_jedi0.yaml
 sed -i 's@anStatePrefix@'${anStatePrefix}'@g' orig_jedi0.yaml
-sed -i 's@anStateDir@'${CyclingDAOutDir}'@g' orig_jedi0.yaml
+#sed -i 's@anStateDir@'${CyclingDAOutDir}'@g' orig_jedi0.yaml
+sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' orig_jedi0.yaml
 
 
 # TODO(JJG): revise these date replacements to loop over
@@ -221,7 +230,7 @@ sed -i 's@2018041418@'${prevDate}'@g' orig_jedi0.yaml
 sed -i 's@2018-04-14T18:00:00Z@'${prevConfDate}'@g'  orig_jedi0.yaml
 
 ## revise current date
-sed -i 's@2018-04-15_00.00.00@'${FileDate}'@g' orig_jedi0.yaml
+sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' orig_jedi0.yaml
 sed -i 's@2018041500@'${validDate}'@g' orig_jedi0.yaml
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' orig_jedi0.yaml
 
@@ -267,7 +276,7 @@ set ivar = 1
 while ( $ivar <= ${#JEDIANVars} )
   set var = $JEDIANVars[$ivar]
   if ( $ivar < ${#JEDIANVars} ) then
-     set var = ${var}\\
+    set var = ${var}\\
   endif
 cat >>! ${analysissed}SEDF.yaml << EOF
       - $var
@@ -288,7 +297,7 @@ rm ${modelsed}SEDF.yaml
 ## fill in ensemble B config
 # TODO(JJG): how does ensemble B config generation need to be
 #            modified for 4DEnVar?
-# TODO(JJG): move this to da_job as not needed for OMM
+# TODO(JJG): move this to da as not needed for OMM
 if ( "$self_DAType" =~ *"eda"* ) then
   set ensBDir = ${dynamicEnsembleB}
   set ensBMemFmt = "${oopsMemFmt}"
@@ -312,10 +321,10 @@ while ( $member <= ${nEnsBMembers} )
   set memDir = `${memberDir} ens $member "${ensBMemFmt}"`
   set adate = adate
   if ( $member < ${nEnsBMembers} ) then
-     set adate = ${adate}\\
+    set adate = ${adate}\\
   endif
 cat >>! ${ensbsed}SEDF.yaml << EOF
-      - filename: ${ensBDir}/${prevDate}${memDir}/${FCFilePrefix}.${FileDate}.nc\
+      - filename: ${ensBDir}/${prevDate}${memDir}/${FCFilePrefix}.${fileDate}.nc\
         date: *${adate}
 EOF
 

@@ -24,7 +24,7 @@ set ArgMember = "$1"
 #
 # Setup environment:
 # =============================================
-#source ./control.csh
+source ./control.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set cycle_Date = ${yymmdd}${hh}
@@ -46,6 +46,9 @@ set self_fcIntervalHR = fcIntervalHRArg
 set config_run_duration = 0_${self_fcLengthHR}:00:00
 set output_interval = 0_${self_fcIntervalHR}:00:00
 
+echo "WorkDir = ${self_WorkDir}"
+
+rm -r ${self_WorkDir}
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
@@ -59,8 +62,8 @@ set hh = `echo ${cycle_Date} | cut -c 9-10`
 set icFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set icNMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 
-set icFileExt = "${icFileDate}.nc"
-set icFile = ${ICFilePrefix}.${fcFileExt}
+set icFileExt = ${icFileDate}.nc
+set icFile = ${ICFilePrefix}.${icFileExt}
 
 ## link initial forecast state:
 ln -sf ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
