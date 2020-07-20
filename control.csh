@@ -117,6 +117,8 @@ setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 18
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 18
+setenv AllFCNodes 4
+setenv AllFCPEPerNode 32
 
 if ( "$DAType" =~ *"eda"* || "$DAType" == "${omm}") then
   setenv CyclingDANodesPerMember ${CalcOMMNodes}
@@ -134,6 +136,8 @@ endif
 #setenv ExtendedFCJobMinutes     60
 #setenv CalcOMMNodes 8
 #setenv CalcOMMPEPerNode 16
+#setenv AllFCNodes 8
+#setenv AllFCPEPerNode 16
 #if ( "$DAType" =~ *"eda"* ) then
 #  setenv CyclingDANodesPerMember ${CalcOMMNodes}
 #  setenv CyclingDAPEPerNode      ${CalcOMMPEPerNode}
