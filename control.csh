@@ -108,18 +108,19 @@ setenv MPAS_RES            120km
 setenv MPAS_NCELLS         40962
 setenv RADTHINDISTANCE     "200.0"
 setenv RADTHINAMOUNT       "0.98"
-setenv CyclingFCJobMinutes      5
-setenv ExtendedFCJobMinutes      40
-setenv OMMNodes 2
-setenv OMMPEPerNode 18
+setenv CyclingFCJobMinutes 5
+setenv ExtendedFCJobMinutes 40
+setenv CalcOMMJobMinutes 10
+setenv CalcOMMNodes 2
+setenv CalcOMMPEPerNode 18
 setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 18
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 18
 
 if ( "$DAType" =~ *"eda"* || "$DAType" == "${omm}") then
-  setenv CyclingDANodesPerMember ${OMMNodes}
-  setenv CyclingDAPEPerNode      ${OMMPEPerNode}
+  setenv CyclingDANodesPerMember ${CalcOMMNodes}
+  setenv CyclingDAPEPerNode      ${CalcOMMPEPerNode}
 else
   setenv CyclingDANodesPerMember 4
   setenv CyclingDAPEPerNode      32
@@ -131,11 +132,11 @@ endif
 #setenv RADTHINAMOUNT      "0.75"
 #setenv CyclingFCJobMinutes     10
 #setenv ExtendedFCJobMinutes     60
-#setenv OMMNodes 8
-#setenv OMMPEPerNode 16
+#setenv CalcOMMNodes 8
+#setenv CalcOMMPEPerNode 16
 #if ( "$DAType" =~ *"eda"* ) then
-#  setenv CyclingDANodesPerMember ${OMMNodes}
-#  setenv CyclingDAPEPerNode      ${OMMPEPerNode}
+#  setenv CyclingDANodesPerMember ${CalcOMMNodes}
+#  setenv CyclingDAPEPerNode      ${CalcOMMPEPerNode}
 #else
 #  setenv CyclingDANodesPerMember 16
 #  setenv CyclingDAPEPerNode      32
@@ -186,11 +187,11 @@ setenv ExtendedFCWorkDir   ${EXPDIR}/ExtendedFC
 setenv VerificationWorkDir ${EXPDIR}/Verification
 
 ## directories copied from PKGBASE
-setenv MAIN_SCRIPT_DIR  ${EXPDIR}/${PKGBASE}
+setenv mainScriptDir  ${EXPDIR}/${PKGBASE}
 
-setenv CONFIGDIR        ${MAIN_SCRIPT_DIR}/config #ONLY used by jediPrep
+setenv CONFIGDIR        ${mainScriptDir}/config #ONLY used by jediPrep
 
-setenv RESSPECIFICDIR   ${MAIN_SCRIPT_DIR}/${MPAS_RES} #ONLY used by jediPrep
+setenv RESSPECIFICDIR   ${mainScriptDir}/${MPAS_RES} #ONLY used by jediPrep
 
 ## directory string formatter for EDA members
 # argument to memberDir.py
@@ -323,11 +324,12 @@ setenv MPASBUILD         MPAS_${COMPILER}_debug=0${CUSTOMPIO}
 setenv MPASBUILDDIR      ${TOP_BUILD_DIR}/libs/build/${MPASBUILD}
 
 #Verification tools
+#TODO: add these to the repo, possibly under graphics/plot/postprocess/tools directory
 setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
 
 #Cycling tools
-set pyDir = ${MAIN_SCRIPT_DIR}/tools
+set pyDir = ${mainScriptDir}/tools
 set pyTools = (memberDir advanceCYMDH)
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"

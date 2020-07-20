@@ -18,7 +18,7 @@ set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set cycle_Date = ${yymmdd}${hh}
 set validDate = `$advanceCYMDH ${cycle_Date} ${ArgDT}`
-source ./getCycleDirectories.csh
+source ./getCycleVars.csh
 
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isInt = (! $status)
@@ -48,25 +48,16 @@ set self_DAMode = DAModeArg
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
-#
-# Time info for namelist, yaml etc:
-# =============================================
-set yy = `echo ${validDate} | cut -c 1-4`
-set mm = `echo ${validDate} | cut -c 5-6`
-set dd = `echo ${validDate} | cut -c 7-8`
-set hh = `echo ${validDate} | cut -c 9-10`
-set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
-set NMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
-set ConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
-set meshFile = ${BGFilePrefix}.${fileDate}.nc
-
+##
+## Previous time info for yaml entries:
+## ====================================
 set prevDate = `$advanceCYMDH ${validDate} -${self_WindowHR}`
 set yy = `echo ${prevDate} | cut -c 1-4`
 set mm = `echo ${prevDate} | cut -c 5-6`
 set dd = `echo ${prevDate} | cut -c 7-8`
 set hh = `echo ${prevDate} | cut -c 9-10`
 set prevFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
-#set prevNMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
+set prevNMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set prevConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
 #TODO: HALF STEP ONLY WORKS FOR INTEGER VALUES OF WindowHR
@@ -94,6 +85,7 @@ set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 # ============================================================
 
 # MPAS mesh graph info
+set meshFile = ./${BGFilePrefix}.${fileDate}.nc
 ln -sf $GRAPHINFO_DIR/x1.${MPAS_NCELLS}.graph.info* .
 
 # lookup tables
@@ -115,6 +107,7 @@ rm newnamelist
 # =============
 # OBSERVATIONS
 # =============
+rm -r ${InDBDir}
 mkdir -p ${InDBDir}
 set member = 1
 while ( $member <= ${nEnsDAMembers} )

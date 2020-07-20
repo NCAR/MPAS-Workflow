@@ -1,21 +1,4 @@
 #!/bin/csh
-#  #PBS -N da_ExpNameArg
-#  #PBS -A AccountNumberArg
-#  #PBS -q QueueNameArg
-#  #PBS -l select=NNODEArg:ncpus=NPEArg:mpiprocs=NPEArg:mem=109GB
-#  #PBS -l walltime=0:25:00
-#  #PBS -m ae
-#  #PBS -k eod
-#  #PBS -o log.job.out
-#  #PBS -e log.job.err
-#   #SBATCH --job-name=da_ExpNameArg
-#   #SBATCH --account=AccountNumberArg
-#   #SBATCH --ntasks=NNODEArg
-#   #SBATCH --cpus-per-task=NPEArg
-#   #SBATCH --mem=109G
-#   #SBATCH --time=0:25:00
-#   #SBATCH --partition=dav
-#   #SBATCH --output=log.job.out
 
 date
 
@@ -28,7 +11,8 @@ source ./control.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set cycle_Date = ${yymmdd}${hh}
-source ./getCycleDirectories.csh
+set validDate = ${cycle_Date}
+source ./getCycleVars.csh
 
 set self_WorkDir = $WorkDirsArg
 set self_StateDirs = ($inStateDirsArg)
@@ -38,22 +22,10 @@ echo "WorkDir = ${self_WorkDir}"
 
 cd ${self_WorkDir}
 
-#
-# Time info for namelist, yaml etc:
-# =============================================
-set yy = `echo ${cycle_Date} | cut -c 1-4`
-set mm = `echo ${cycle_Date} | cut -c 5-6`
-set dd = `echo ${cycle_Date} | cut -c 7-8`
-set hh = `echo ${cycle_Date} | cut -c 9-10`
-
-set fileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
+set meshFile = ./${BGFilePrefix}.${fileDate}.nc
 
 # Remove old logs
 rm jedi.log*
-
-##############################################################################
-# EVERYTHING BEYOND HERE MUST HAPPEN AFTER THE PREVIOUS FORECAST IS COMPLETED
-##############################################################################
 
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
@@ -95,9 +67,8 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-# link one of the backgrounds to a local RST file
-# used to initialize the MPAS mesh
-ln -sf ${bgFileDA} ./${BGFilePrefix}.$fileDate.nc
+# use one of the backgrounds as the meshFile (see jediPrep)
+ln -sf ${bgFileDA} ${meshFile}
 
 
 # ===================
@@ -142,7 +113,7 @@ endif
 #
 # Update analyzed variables:
 # =============================================
-#rm outList${cycle_Date}
+#rm outList${validDate}
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set bg = $CyclingDAInDirs[$member]
@@ -158,7 +129,7 @@ while ( $member <= ${nEnsDAMembers} )
   ncks -A -v ${MPASANVars} ${anFileDA} ${anFile}
   rm ${anFileDA}
 
-#  echo `pwd`"/${anFile}" >> outList${cycle_Date}
+#  echo `pwd`"/${anFile}" >> outList${validDate}
 
   @ member++
 end

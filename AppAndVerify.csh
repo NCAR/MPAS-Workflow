@@ -5,12 +5,19 @@ set self_WorkDirs = wrapWorkDirsArg
 set self_cylcTaskType = cylcTaskTypeArg
 set self_inStateDirs = wrapStateDirsArg
 set self_inStatePrefix = wrapStatePrefixArg
+set self_StateType = wrapStateTypeArg
 set self_DAType = wrapDATypeArg
 
-echo "Making run and verify job scripts for wrapStateTypeArg state"
-
 set myWrapper = jediPrep
-set WrapperScript=${MAIN_SCRIPT_DIR}/${myWrapper}${self_cylcTaskType}.csh
+foreach name ( \
+  ${myWrapper}${self_cylcTaskType} \
+  ${self_cylcTaskType} \
+  VerifyObs${self_StateType} \
+  VerifyModel${self_StateType} \
+)
+  echo "Making $name job script for ${self_StateType} state"
+end
+set WrapperScript=${mainScriptDir}/${myWrapper}${self_cylcTaskType}.csh
 sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
     -e 's@WindowHRArg@wrapWindowHRArg@' \
     -e 's@ObsListArg@wrapObsListArg@' \
@@ -20,16 +27,11 @@ sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
     ${myWrapper}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}
 
-set JobScript=${MAIN_SCRIPT_DIR}/${self_cylcTaskType}.csh
+set JobScript=${mainScriptDir}/${self_cylcTaskType}.csh
 sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
     -e 's@inStateDirsArg@'${self_inStateDirs}'@' \
     -e 's@inStatePrefixArg@'${self_inStatePrefix}'@' \
     -e 's@DATypeArg@'${self_DAType}'@' \
-    -e 's@ExpNameArg@'${ExpName}'@' \
-    -e 's@AccountNumberArg@wrapAccountNumberArg@' \
-    -e 's@QueueNameArg@wrapQueueNameArg@' \
-    -e 's@NNODEArg@wrapNNODEArg@' \
-    -e 's@NPEArg@wrapNPEArg@g' \
     AppNameArg.csh > ${JobScript}
 chmod 744 ${JobScript}
 
@@ -38,21 +40,15 @@ if ( "$self_DAType" =~ *"eda"* ) then
   set VFOBSScript=None
   set VFMODELScript=None
 else
-  set VFObsScript=${MAIN_SCRIPT_DIR}/VerifyObswrapStateTypeArg.csh
+  set VFObsScript=${mainScriptDir}/VerifyObs${self_StateType}.csh
   sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
-      -e 's@AccountNumberArg@'${VFAccountNumber}'@' \
-      -e 's@QueueNameArg@'${VFQueueName}'@' \
-      -e 's@ExpNameArg@'${ExpName}'@' \
       vfobs.csh > ${VFObsScript}
   chmod 744 ${VFObsScript}
 
-  set VFModelScript=${MAIN_SCRIPT_DIR}/VerifyModelwrapStateTypeArg.csh
+  set VFModelScript=${mainScriptDir}/VerifyModel${self_StateType}.csh
   sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
       -e 's@inStateDirsArg@'${self_inStateDirs}'@' \
       -e 's@inStatePrefixArg@'${self_inStatePrefix}'@' \
-      -e 's@AccountNumberArg@'${VFAccountNumber}'@' \
-      -e 's@QueueNameArg@'${VFQueueName}'@' \
-      -e 's@ExpNameArg@'${ExpName}'@' \
       vfmodel.csh > ${VFModelScript}
   chmod 744 ${VFModelScript}
 endif

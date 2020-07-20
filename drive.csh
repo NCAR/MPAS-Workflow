@@ -1,9 +1,11 @@
 #!/bin/csh
 
+date
+
 ./MakeCyclingScripts.csh
 
 source control.csh
-cd ${MAIN_SCRIPT_DIR}
+cd ${mainScriptDir}
 
 echo "Initializing ${PKGBASE}"
 module purge
@@ -25,7 +27,7 @@ cat >! suite.rc << EOF
 [scheduling]
   max active cycle points = 200
   initial cycle point = 20180415T00
-  final cycle point   = 20180415T00
+  final cycle point   = 20180415T06
   [[dependencies]]
 #    # Initial cycle point
     [[[R1]]]    # Run once, at the initial point.
@@ -34,10 +36,13 @@ cat >! suite.rc << EOF
       graph = '''
       CyclingEnsFC[-PT${CYWindowHR}H]:succeed-all => CyclingDA => CyclingEnsFC
       {% for mem in EnsDAMembers%}
-        CyclingDA => CalculateOMAN{{mem}} & VerifyModelAN{{mem}}
-        CyclingFC{{mem}}[-PT${CYWindowHR}H] => CalculateOMBG{{mem}} & VerifyModelBG{{mem}}
-        CalculateOMAN{{mem}} => VerifyObsAN{{mem}}
-        CalculateOMBG{{mem}} => VerifyObsBG{{mem}}
+        CyclingDA => \
+          CalcOMAN{{mem}} \
+          & VerifyModelAN{{mem}}
+        CyclingFC{{mem}}[-PT${CYWindowHR}H] => \
+          CalcOMBG{{mem}} & VerifyModelBG{{mem}}
+#        CalcOMAN{{mem}} => VerifyObsAN{{mem}}
+#        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
       {% endfor %}
       '''
 #    [[[${ExtendedFCTimes}]]]
@@ -45,14 +50,17 @@ cat >! suite.rc << EOF
 #      {% for mem in ExtendedFCMembers%}
 #        CyclingDA => ExtendedFC{{mem}}
 #        {% for dt in ExtFChrs%}
-#          ExtendedFC{{mem}} => CalculateOMF{{mem}}-{{dt}}hr & VerifyModelAN{{mem}}-{{dt}}hr
-#          CalculateOMFC{{mem}} => VerifyObsFC{{mem}}
+#          ExtendedFC{{mem}} => CalcOMF{{mem}}-{{dt}}hr & VerifyModelAN{{mem}}-{{dt}}hr
+#          CalcOMFC{{mem}} => VerifyObsFC{{mem}}
 #        {% endfor %}
 #      {% endfor %}
 #      '''
 [runtime]
   [[root]] # suite defaults
-    pre-script = "cd  ${MAIN_SCRIPT_DIR}/"
+    pre-script = "cd  \$origin/; \$myPreScript"
+    [[[environment]]]
+      origin = ${mainScriptDir}
+      myPreScript = ""
 #Base components
   [[CyclingBasePBS]]
     [[[job]]]
@@ -62,16 +70,18 @@ cat >! suite.rc << EOF
       -S = /bin/csh
       -q = ${CYQueueName}
       -A = ${CYAccountNumber}
+      -m = ae
+      -k = eod
 #  [[CyclingBaseSLURM]]
 #    [[[job]]]
 #      batch system = slurm
 #      execution time limit = PT25M
 #    [[[directives]]]
-#      --account=${CYAccountNumber}
-#      --mem=109G
-#      --ntasks=${CyclingDANodes}
-#      --cpus-per-task=${CyclingDAPEPerNode}
-#      --partition=dav
+#      --account = ${CYAccountNumber}
+#      --mem = 109G
+#      --ntasks = ${CyclingDANodes}
+#      --cpus-per-task = ${CyclingDAPEPerNode}
+#      --partition = dav
   [[VerifyBase]]
     [[[job]]]
       batch system = pbs
@@ -82,28 +92,33 @@ cat >! suite.rc << EOF
         -l = select=${VerifyObsNodes}:ncpus=${VerifyObsPEPerNode}:mpiprocs=${VerifyObsPEPerNode}
         -q = ${VFQueueName}
         -A = ${VFAccountNumber}
+        -m = ae
+        -k = eod
   [[OMMBase]]
     [[[job]]]
       batch system = pbs
-      execution time limit = PT10M
+      execution time limit = PT${CalcOMMJobMinutes}M
       [[[directives]]]
         -j = oe
         -S = /bin/csh
-        -l = select=${OMMNodes}:ncpus=${OMMPEPerNode}:mpiprocs=${OMMPEPerNode}
+        -l = select=${CalcOMMNodes}:ncpus=${CalcOMMPEPerNode}:mpiprocs=${CalcOMMPEPerNode}
         -q = ${VFQueueName}
         -A = ${VFAccountNumber}
+        -m = ae
+        -k = eod
 #Actual components
   [[CyclingDA]]
     inherit = CyclingBasePBS
-    pre-script = cd ${MAIN_SCRIPT_DIR}; ${MAIN_SCRIPT_DIR}/jediPrepCyclingDA.csh "0" "0" "DA"
-    script = ${MAIN_SCRIPT_DIR}/CyclingDA.csh
+    script = \$origin/CyclingDA.csh
+    [[[environment]]]
+      myPreScript = \$origin/jediPrepCyclingDA.csh "0" "0" "DA"
     [[[job]]]
       execution time limit = PT25M
     [[[directives]]]
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=109GB
   [[CyclingEnsFC]]
     inherit = CyclingBasePBS
-    script = ${MAIN_SCRIPT_DIR}/CyclingFC.csh "\$Member"
+    script = \$origin/CyclingFC.csh "\$Member"
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
     [[[directives]]]
@@ -116,37 +131,39 @@ cat >! suite.rc << EOF
 {% endfor %}
 {% for state in ['BG', 'AN']%}
   {% for mem in EnsDAMembers%}
-    [[CalculateOM{{state}}{{mem}}]]
+    [[CalcOM{{state}}{{mem}}]]
       inherit = OMMBase
-      pre-script = cd ${MAIN_SCRIPT_DIR}; ${MAIN_SCRIPT_DIR}/jediPrepCalculateOM{{state}}.csh "{{mem}}" "0" "{{state}}"
-      script = ${MAIN_SCRIPT_DIR}/CalculateOM{{state}}.csh "{{mem}}" "0" "{{state}}"
+      script = \$origin/CalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
+      [[[environment]]]
+        myPreScript = \$origin/jediPrepCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[VerifyObs{{state}}{{mem}}]]
       inherit = VerifyBase
-      script = ${MAIN_SCRIPT_DIR}/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}"
+      script = \$origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[VerifyModel{{state}}{{mem}}]]
       inherit = VerifyBase
-      script = ${MAIN_SCRIPT_DIR}/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
+      script = \$origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
   {% endfor %}
 {% endfor %}
 {% for mem in ExtendedFCMembers%}
   [[ExtendedFC{{mem}}]]
     inherit = CyclingBasePBS
-    script = ${MAIN_SCRIPT_DIR}/ExtendedFC.csh "{{mem}}"
+    script = \$origin/ExtendedFC.csh "{{mem}}"
     [[[job]]]
       execution time limit = PT${ExtendedFCJobMinutes}M
     [[[directives]]]
       -l = select=4:ncpus=32:mpiprocs=32
   {% for dt in ExtFChrs %}
-    [[CalculateOMFC{{mem}}-{{dt}}hr]]
+    [[CalcOMFC{{mem}}-{{dt}}hr]]
       inherit = OMMBase
-      pre-script = cd ${MAIN_SCRIPT_DIR}; ${MAIN_SCRIPT_DIR}/jediPrepCalculateOMFC.csh "{{mem}}" "{{dt}}" "FC"
-      script = ${MAIN_SCRIPT_DIR}/CalculateOMFC.csh "{{mem}}" "{{dt}}" "FC"
+      script = \$origin/CalcOMFC.csh "{{mem}}" "{{dt}}" "FC"
+      [[[environment]]]
+        myPreScript = \$origin/jediPrepCalcOMFC.csh "{{mem}}" "0" "FC"
     [[VerifyObsFC{{mem}}-{{dt}}hr]]
       inherit = VerifyBase
-      script = ${MAIN_SCRIPT_DIR}/VerifyObsFC.csh "{{mem}}" "{{dt}}" "FC"
+      script = \$origin/VerifyObsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[VerifyModelFC{{mem}}-{{dt}}hr]]
       inherit = VerifyBase
-      script = ${MAIN_SCRIPT_DIR}/VerifyModelFC.csh "{{mem}}" "{{dt}}" "FC"
+      script = \$origin/VerifyModelFC.csh "{{mem}}" "{{dt}}" "FC"
   {% endfor %}
 {% endfor %}
 [visualization]
@@ -161,7 +178,7 @@ EOF
 ##      {% set CYCLEDATE = CYCLE_POINT %}
 #      {{ CYCLE_POINT | strftime('%Y%m%d%H') }}
 
-cylc register ${WholeExpName} ${MAIN_SCRIPT_DIR}
+cylc register ${WholeExpName} ${mainScriptDir}
 cylc validate ${WholeExpName}
 cylc run ${WholeExpName}
 

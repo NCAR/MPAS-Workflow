@@ -1,32 +1,30 @@
 #!/bin/csh -f
 source ./control.csh
-set cycle_Date = $FirstCycleDate
 set AppAndVerify = AppAndVerify
 
 echo "==============================================================\n"
 echo "Making cycling scripts for experiment: ${ExpName}\n"
 echo "==============================================================\n"
 
-rm -rf ${MAIN_SCRIPT_DIR}
-mkdir -p ${MAIN_SCRIPT_DIR}
+rm -rf ${mainScriptDir}
+mkdir -p ${mainScriptDir}
 set cyclingParts = ( \
   control.csh \
-  getCycleDirectories.csh \
+  getCycleVars.csh \
   tools \
   config \
   ${MPAS_RES} \
 )
 foreach part ($cyclingParts)
-  cp -rP $part ${MAIN_SCRIPT_DIR}/
+  cp -rP $part ${mainScriptDir}/
 end
-#cp control.csh ${MAIN_SCRIPT_DIR}/
-#cp getCycleDirectories.csh ${MAIN_SCRIPT_DIR}/
-
-source getCycleDirectories.csh
 
 ## First cycle "forecast" established offline
 # TODO: make FirstCycleDate behavior part of CyclingFC or seperate application
-#       instead of top-level workflow using zero-length fc
+#       instead of work-flow initialization? Could use zero-length fc or new fcinit
+set cycle_Date = $FirstCycleDate
+set validDate = $cycle_Date
+source getCycleVars.csh
 if ( ${cycle_Date} == ${FirstCycleDate} ) then
   mkdir -p ${CyclingFCWorkDir}
   rm -r ${prevCyclingFCDir}
@@ -55,7 +53,7 @@ endif
 #TODO: enable mean state diagnostics; only works for deterministic DA
 set WorkDir = ${CyclingDADir}
 set cylcTaskType = CyclingDA
-set WrapperScript=${MAIN_SCRIPT_DIR}/${AppAndVerify}DA.csh
+set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
 sed -e 's@wrapWorkDirsArg@CyclingDADir@' \
     -e 's@AppNameArg@da@' \
     -e 's@cylcTaskTypeArg@'${cylcTaskType}'@' \
@@ -68,10 +66,6 @@ sed -e 's@wrapWorkDirsArg@CyclingDADir@' \
     -e 's@wrapDATypeArg@'${DAType}'@g' \
     -e 's@wrapDAModeArg@da@g' \
     -e 's@wrapObsListArg@DAObsList@' \
-    -e 's@wrapAccountNumberArg@'${CYAccountNumber}'@' \
-    -e 's@wrapQueueNameArg@'${CYQueueName}'@' \
-    -e 's@wrapNNODEArg@'${CyclingDANodes}'@' \
-    -e 's@wrapNPEArg@'${CyclingDAPEPerNode}'@g' \
     ${AppAndVerify}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}
 ${WrapperScript}
@@ -80,42 +74,36 @@ rm ${WrapperScript}
 
 #------- CyclingFC ---------
 echo "Making CyclingFC job script"
-set JobScript=${MAIN_SCRIPT_DIR}/CyclingFC.csh
+set JobScript=${mainScriptDir}/CyclingFC.csh
 sed -e 's@WorkDirsArg@CyclingFCDirs@' \
     -e 's@fcLengthHRArg@'${CYWindowHR}'@' \
     -e 's@fcIntervalHRArg@'${CYWindowHR}'@' \
-    -e 's@JobMinutesArg@'${CyclingFCJobMinutes}'@' \
-    -e 's@AccountNumberArg@'${CYAccountNumber}'@' \
-    -e 's@QueueNameArg@'${CYQueueName}'@' \
-    -e 's@ExpNameArg@'${ExpName}'@' \
     fc.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 
 #------- ExtendedFC ---------
 echo "Making ExtendedFC job script"
-set JobScript=${MAIN_SCRIPT_DIR}/ExtendedFC.csh
+set JobScript=${mainScriptDir}/ExtendedFC.csh
 sed -e 's@WorkDirsArg@ExtendedFCDirs@' \
+    -e 's@fcLengthHRArg@'${ExtendedFCWindowHR}'@' \
     -e 's@fcIntervalHRArg@'${ExtendedFC_DT_HR}'@' \
-    -e 's@JobMinutesArg@'${ExtendedFCJobMinutes}'@' \
-    -e 's@AccountNumberArg@'${CYAccountNumber}'@' \
-    -e 's@QueueNameArg@'${CYQueueName}'@' \
-    -e 's@ExpNameArg@'${ExpName}'@' \
     fc.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 
-#------- CalculateOM{{state}}, VerifyObs{{state}}, VerifyModel{{state}} ---------
+#------- CalcOM{{state}}, VerifyObs{{state}}, VerifyModel{{state}} ---------
 foreach state (AN BG FC)
   if (${state} == AN) then
-    set child_ARGS = (CyclingDAOutDirs ${ANFilePrefix} ${CYWindowHR})
+    set child_ARGS = (CyclingDAOutDirs ${ANFilePrefix} ${CYWindowHR} Verify${state}Dirs)
   else if (${state} == BG) then
-    set child_ARGS = (CyclingFCDirs ${FCFilePrefix} ${CYWindowHR})
+    set child_ARGS = (prevCyclingFCDirs ${FCFilePrefix} ${CYWindowHR} prevVerify${state}Dirs)
   else if (${state} == FC) then
-    set child_ARGS = (ExtendedFCDirs ${FCFilePrefix} ${DAVFWindowHR})
+    set child_ARGS = (ExtendedFCDirs ${FCFilePrefix} ${DAVFWindowHR} Verify${state}Dirs)
   endif
-  set cylcTaskType = CalculateOM${state}
-  set WrapperScript=${MAIN_SCRIPT_DIR}/${AppAndVerify}${state}.csh
+  set cylcTaskType = CalcOM${state}
+  set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh
+#  sed -e 's@wrapWorkDirsArg@'$child_ARGS[4]'@' \
   sed -e 's@wrapWorkDirsArg@Verify'${state}'Dirs@' \
       -e 's@AppNameArg@'${omm}'@' \
       -e 's@cylcTaskTypeArg@'${cylcTaskType}'@' \
@@ -127,10 +115,6 @@ foreach state (AN BG FC)
       -e 's@wrapDATypeArg@'${omm}'@g' \
       -e 's@wrapDAModeArg@'${omm}'@g' \
       -e 's@wrapObsListArg@OMMObsList@' \
-      -e 's@wrapAccountNumberArg@'${VFAccountNumber}'@' \
-      -e 's@wrapQueueNameArg@'${VFQueueName}'@' \
-      -e 's@wrapNNODEArg@'${OMMNodes}'@' \
-      -e 's@wrapNPEArg@'${OMMPEPerNode}'@g' \
       ${AppAndVerify}.csh > ${WrapperScript}
   chmod 744 ${WrapperScript}
   ${WrapperScript}

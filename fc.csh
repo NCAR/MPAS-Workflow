@@ -1,21 +1,4 @@
 #!/bin/csh
-#  #PBS -N fc_ExpNameArg
-#  #PBS -A AccountNumberArg
-#  #PBS -q QueueNameArg
-#  #PBS -l select=4:ncpus=32:mpiprocs=32:mem=109GB
-#  #PBS -l walltime=00:JobMinutesArg:00
-#  #PBS -m ae
-#  #PBS -k eod
-#  #PBS -o log.job.out
-#  #PBS -e log.job.err
-#   #SBATCH --job-name=fc_ExpNameArg
-#   #SBATCH --account=AccountNumberArg
-#   #SBATCH --ntasks=4
-#   #SBATCH --cpus-per-task=32
-#   #SBATCH --mem=109G
-#   #SBATCH --time=0:JobMinutesArg:00
-#   #SBATCH --partition=dav
-#   #SBATCH --output=log.job.out
 
 date
 
@@ -28,7 +11,8 @@ source ./control.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set cycle_Date = ${yymmdd}${hh}
-source ./getCycleDirectories.csh
+set validDate = ${cycle_Date}
+source ./getCycleVars.csh
 
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isInt = (! $status)
@@ -52,17 +36,7 @@ rm -r ${self_WorkDir}
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
-#
-# Time info for namelist, yaml etc:
-# =============================================
-set yy = `echo ${cycle_Date} | cut -c 1-4`
-set mm = `echo ${cycle_Date} | cut -c 5-6`
-set dd = `echo ${cycle_Date} | cut -c 7-8`
-set hh = `echo ${cycle_Date} | cut -c 9-10`
-set icFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
-set icNMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
-
-set icFileExt = ${icFileDate}.nc
+set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 
 ## link initial forecast state:
@@ -81,7 +55,7 @@ cp namelist.atmosphere orig_namelist.atmosphere
 # =============================================
 cat >! newnamelist << EOF
   /config_start_time /c\
-   config_start_time      = '${icNMLDate}'
+   config_start_time      = '${NMLDate}'
   /config_run_duration/c\
    config_run_duration    = '${config_run_duration}'
 EOF
@@ -93,7 +67,7 @@ sed -e 's@OUT_DT_STR@'${output_interval}'@' \
     ${STREAMS}_TEMPLATE > ${STREAMS}
 
 if ( ${self_fcLengthHR} == 0 ) then
-  ## zero-length forecast case
+  ## zero-length forecast case (NOT CURRENTLY USED)
   mv ./${icFile} ./${icFile}_tmp
   cp ${icFile}_tmp ${FCFilePrefix}.${icFileExt}
   ln -sf ${self_icStateDir}/${DIAGFilePrefix}.${icFileExt} ./
@@ -115,8 +89,8 @@ else
   endif
 endif
 
-set fcDate = `$advanceCYMDH ${cycle_Date} ${self_fcIntervalHR}`
-set finalFCDate = `$advanceCYMDH ${cycle_Date} ${self_fcLengthHR}`
+set fcDate = `$advanceCYMDH ${validDate} ${self_fcIntervalHR}`
+set finalFCDate = `$advanceCYMDH ${validDate} ${self_fcLengthHR}`
 while ( ${fcDate} <= ${finalFCDate} )
   #
   # Update/add fields to output for DA
