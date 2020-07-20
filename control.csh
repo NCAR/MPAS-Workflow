@@ -97,29 +97,37 @@ setenv diagPrefix     ydiags
 # =============================================
 setenv updateSea         1
 
-setenv CYWindowHR        6               # interval between cycle DA
-setenv ExtendedFCWindowHR      72              # length of verification forecasts
-setenv ExtendedFC_DT_HR        6               # interval between OMF verification times of an individual forecast
-setenv ExtendedFCTimes         T00,T12         # times of the day to run extended forecast
-setenv DAVFWindowHR      ${ExtendedFC_DT_HR}   # window of observations included in verification
+setenv CYWindowHR         6               # interval between cycle DA
+setenv ExtendedFCWindowHR 72              # length of verification forecasts
+setenv ExtendedFC_DT_HR   6               # interval between OMF verification times of an individual forecast
+setenv ExtendedFCTimes    T00,T12         # times of the day to run extended forecast
+setenv DAVFWindowHR       ${ExtendedFC_DT_HR}   # window of observations included in verification
 
-# TODO: enable logic (somewhere else) to use different super-obbing/thinning for DA/OMM jobs
+## 120km
 setenv MPAS_RES            120km
 setenv MPAS_NCELLS         40962
+# TODO: enable logic (somewhere else) to use different super-obbing/thinning for DA/OMM jobs
 setenv RADTHINDISTANCE     "200.0"
 setenv RADTHINAMOUNT       "0.98"
+
 setenv CyclingFCJobMinutes 5
+setenv CyclingFCNodes 4
+setenv CyclingFCPEPerNode 32
+
 setenv ExtendedFCJobMinutes 40
+setenv ExtendedFCNodes ${CyclingFCNodes}
+setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
+
 setenv CalcOMMJobMinutes 10
 setenv CalcOMMNodes 2
 setenv CalcOMMPEPerNode 18
+
 setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 18
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 18
-setenv AllFCNodes 4
-setenv AllFCPEPerNode 32
 
+setenv CyclingDAJobMinutes 25
 if ( "$DAType" =~ *"eda"* || "$DAType" == "${omm}") then
   setenv CyclingDANodesPerMember ${CalcOMMNodes}
   setenv CyclingDAPEPerNode      ${CalcOMMPEPerNode}
@@ -128,16 +136,25 @@ else
   setenv CyclingDAPEPerNode      32
 endif
 
+## 30km
 #setenv MPAS_RES           30km
 #setenv MPAS_NCELLS        655362
 #setenv RADTHINDISTANCE    "60.0"
 #setenv RADTHINAMOUNT      "0.75"
+
 #setenv CyclingFCJobMinutes     10
+#setenv CyclingFCNodes 8
+#setenv CyclingFCPEPerNode 32
+
 #setenv ExtendedFCJobMinutes     60
+#setenv ExtendedFCNodes ${CyclingFCNodes}
+#setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
+
+#setenv CalcOMMJobMinutes 10
 #setenv CalcOMMNodes 8
 #setenv CalcOMMPEPerNode 16
-#setenv AllFCNodes 8
-#setenv AllFCPEPerNode 16
+
+#setenv CyclingDAJobMinutes 25
 #if ( "$DAType" =~ *"eda"* ) then
 #  setenv CyclingDANodesPerMember ${CalcOMMNodes}
 #  setenv CyclingDAPEPerNode      ${CalcOMMPEPerNode}

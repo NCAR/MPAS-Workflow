@@ -41,14 +41,14 @@ cat >! suite.rc << EOF
           & VerifyModelAN{{mem}}
         CyclingFC{{mem}}[-PT${CYWindowHR}H] => \
           CalcOMBG{{mem}} & VerifyModelBG{{mem}}
-#        CalcOMAN{{mem}} => VerifyObsAN{{mem}}
-#        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
+        CalcOMAN{{mem}} => VerifyObsAN{{mem}}
+        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
       {% endfor %}
       '''
 #    [[[${ExtendedFCTimes}]]]
 #      graph = '''
+#      CyclingDA => ExtendedEnsFC
 #      {% for mem in ExtendedFCMembers%}
-#        CyclingDA => ExtendedFC{{mem}}
 #        {% for dt in ExtFChrs%}
 #          ExtendedFC{{mem}} => CalcOMF{{mem}}-{{dt}}hr & VerifyModelAN{{mem}}-{{dt}}hr
 #          CalcOMFC{{mem}} => VerifyObsFC{{mem}}
@@ -62,9 +62,11 @@ cat >! suite.rc << EOF
       origin = ${mainScriptDir}
       myPreScript = ""
 #Base components
-  [[CyclingBasePBS]]
+## PBS
+  [[JobBase]]
     [[[job]]]
       batch system = pbs
+      execution time limit = PT60M
     [[[directives]]]
       -j = oe
       -S = /bin/csh
@@ -72,62 +74,53 @@ cat >! suite.rc << EOF
       -A = ${CYAccountNumber}
       -m = ae
       -k = eod
-#  [[CyclingBaseSLURM]]
+      -l = select=1:ncpus=36:mpiprocs=36
+## SLURM
+#  [[JobBase]]
 #    [[[job]]]
 #      batch system = slurm
-#      execution time limit = PT25M
 #    [[[directives]]]
 #      --account = ${CYAccountNumber}
-#      --mem = 109G
-#      --ntasks = ${CyclingDANodes}
-#      --cpus-per-task = ${CyclingDAPEPerNode}
+#      --mem = 45G
+#      --ntasks = 1
+#      --cpus-per-task = 36
 #      --partition = dav
   [[VerifyBase]]
+    inherit = JobBase
     [[[job]]]
-      batch system = pbs
       execution time limit = PT15M
-      [[[directives]]]
-        -j = oe
-        -S = /bin/csh
-        -l = select=${VerifyObsNodes}:ncpus=${VerifyObsPEPerNode}:mpiprocs=${VerifyObsPEPerNode}
-        -q = ${VFQueueName}
-        -A = ${VFAccountNumber}
-        -m = ae
-        -k = eod
+    [[[directives]]]
+      -q = ${VFQueueName}
+      -A = ${VFAccountNumber}
+      -l = select=1:ncpus=${VerifyObsPEPerNode}:mpiprocs=${VerifyObsPEPerNode}
   [[OMMBase]]
+    inherit = JobBase
     [[[job]]]
-      batch system = pbs
       execution time limit = PT${CalcOMMJobMinutes}M
-      [[[directives]]]
-        -j = oe
-        -S = /bin/csh
-        -l = select=${CalcOMMNodes}:ncpus=${CalcOMMPEPerNode}:mpiprocs=${CalcOMMPEPerNode}
-        -q = ${VFQueueName}
-        -A = ${VFAccountNumber}
-        -m = ae
-        -k = eod
-#Actual components
+    [[[directives]]]
+      -q = ${VFQueueName}
+      -A = ${VFAccountNumber}
+      -l = select=${CalcOMMNodes}:ncpus=${CalcOMMPEPerNode}:mpiprocs=${CalcOMMPEPerNode}:mem=109GB
+#Cycling components
   [[CyclingDA]]
-    inherit = CyclingBasePBS
+    inherit = JobBase
     script = \$origin/CyclingDA.csh
     [[[environment]]]
       myPreScript = \$origin/jediPrepCyclingDA.csh "0" "0" "DA"
     [[[job]]]
-      execution time limit = PT25M
+      execution time limit = PT${CyclingDAJobMinutes}M
     [[[directives]]]
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=109GB
   [[CyclingEnsFC]]
-    inherit = CyclingBasePBS
-    script = \$origin/CyclingFC.csh "\$Member"
+    inherit = JobBase
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
     [[[directives]]]
-      -l = select=4:ncpus=32:mpiprocs=32
+      -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
 {% for mem in EnsDAMembers%}
   [[CyclingFC{{mem}}]]
     inherit = CyclingEnsFC
-    [[[environment]]]
-      Member = {{mem}}
+    script = \$origin/CyclingFC.csh "{{mem}}"
 {% endfor %}
 {% for state in ['BG', 'AN']%}
   {% for mem in EnsDAMembers%}
@@ -144,14 +137,16 @@ cat >! suite.rc << EOF
       script = \$origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
   {% endfor %}
 {% endfor %}
-{% for mem in ExtendedFCMembers%}
-  [[ExtendedFC{{mem}}]]
-    inherit = CyclingBasePBS
-    script = \$origin/ExtendedFC.csh "{{mem}}"
+  [[ExtendedEnsFC]]
+    inherit = JobBase
     [[[job]]]
       execution time limit = PT${ExtendedFCJobMinutes}M
     [[[directives]]]
-      -l = select=4:ncpus=32:mpiprocs=32
+      -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
+{% for mem in ExtendedFCMembers%}
+  [[ExtendedFC{{mem}}]]
+    inherit = ExtendedEnsFC
+    script = \$origin/ExtendedFC.csh "{{mem}}"
   {% for dt in ExtFChrs %}
     [[CalcOMFC{{mem}}-{{dt}}hr]]
       inherit = OMMBase
