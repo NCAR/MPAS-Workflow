@@ -10,8 +10,8 @@ echo "da"
 source ./control.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set cycle_Date = ${yymmdd}${hh}
-set validDate = ${cycle_Date}
+set thisCycleDate = ${yymmdd}${hh}
+set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 set self_WorkDir = $WorkDirsArg
@@ -113,7 +113,7 @@ endif
 #
 # Update analyzed variables:
 # =============================================
-#rm outList${validDate}
+#rm outList${thisValidDate}
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set bg = $CyclingDAInDirs[$member]
@@ -129,7 +129,7 @@ while ( $member <= ${nEnsDAMembers} )
   ncks -A -v ${MPASANVars} ${anFileDA} ${anFile}
   rm ${anFileDA}
 
-#  echo `pwd`"/${anFile}" >> outList${validDate}
+#  echo `pwd`"/${anFile}" >> outList${thisValidDate}
 
   @ member++
 end

@@ -16,8 +16,8 @@ echo "prep"
 source ./control.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set cycle_Date = ${yymmdd}${hh}
-set validDate = `$advanceCYMDH ${cycle_Date} ${ArgDT}`
+set thisCycleDate = ${yymmdd}${hh}
+set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
 set test = `echo $ArgMember | grep '^[0-9]*$'`
@@ -51,16 +51,16 @@ cd ${self_WorkDir}
 ##
 ## Previous time info for yaml entries:
 ## ====================================
-set prevDate = `$advanceCYMDH ${validDate} -${self_WindowHR}`
-set yy = `echo ${prevDate} | cut -c 1-4`
-set mm = `echo ${prevDate} | cut -c 5-6`
-set dd = `echo ${prevDate} | cut -c 7-8`
-set hh = `echo ${prevDate} | cut -c 9-10`
+set prevValidDate = `$advanceCYMDH ${thisValidDate} -${self_WindowHR}`
+set yy = `echo ${prevValidDate} | cut -c 1-4`
+set mm = `echo ${prevValidDate} | cut -c 5-6`
+set dd = `echo ${prevValidDate} | cut -c 7-8`
+set hh = `echo ${prevValidDate} | cut -c 9-10`
 set prevFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set prevNMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set prevConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
-#TODO: HALF STEP ONLY WORKS FOR INTEGER VALUES OF WindowHR
+#TODO: HALF STEP ONLY WORKS FOR INTEGER VALUES OF self_WindowHR
 @ HALF_DT_HR = ${self_WindowHR} / 2
 @ ODD_DT = ${self_WindowHR} % 2
 @ HALF_mi_ = ${ODD_DT} * 30
@@ -71,11 +71,11 @@ endif
 
 #@ HALF_DT_HR_PLUS = ${HALF_DT_HR}
 @ HALF_DT_HR_MINUS = ${HALF_DT_HR} + ${ODD_DT}
-set halfprevDate = `$advanceCYMDH ${validDate} -${HALF_DT_HR_MINUS}`
-set yy = `echo ${halfprevDate} | cut -c 1-4`
-set mm = `echo ${halfprevDate} | cut -c 5-6`
-set dd = `echo ${halfprevDate} | cut -c 7-8`
-set hh = `echo ${halfprevDate} | cut -c 9-10`
+set halfprevValidDate = `$advanceCYMDH ${thisValidDate} -${HALF_DT_HR_MINUS}`
+set yy = `echo ${halfprevValidDate} | cut -c 1-4`
+set mm = `echo ${halfprevValidDate} | cut -c 5-6`
+set dd = `echo ${halfprevValidDate} | cut -c 7-8`
+set hh = `echo ${halfprevValidDate} | cut -c 9-10`
 set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 
 # ============================================================
@@ -118,23 +118,23 @@ end
 
 # Link conventional data
 # ======================
-ln -fsv $CONV_OBS_DIR/${validDate}/aircraft_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${validDate}/gnssro_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${validDate}/satwind_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${validDate}/sfc_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${validDate}/sondes_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
+ln -fsv $CONV_OBS_DIR/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
 
 # Link AMSUA data
 # ==============
-ln -fsv $AMSUA_OBS_DIR/${validDate}/amsua*_obs_*.nc4 ${InDBDir}/
+ln -fsv $AMSUA_OBS_DIR/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
 
 # Link ABI data
 # ============
-ln -fsv $ABI_OBS_DIR/${validDate}/abi*_obs_*.nc4 ${InDBDir}/
+ln -fsv $ABI_OBS_DIR/${thisValidDate}/abi*_obs_*.nc4 ${InDBDir}/
 
 # Link AHI data
 # ============
-ln -fsv $AHI_OBS_DIR/${validDate}/ahi*_obs_*.nc4 ${InDBDir}/
+ln -fsv $AHI_OBS_DIR/${thisValidDate}/ahi*_obs_*.nc4 ${InDBDir}/
 
 # Link VarBC prior
 # ====================
@@ -171,7 +171,7 @@ foreach obs ($self_ObsList)
     endif
   else if ( "$obs" =~ *"conv"* ) then
     #KLUDGE to handle missing qv for sondes at single time
-    if ( ${validDate} == 2018043006 ) then
+    if ( ${thisValidDate} == 2018043006 ) then
       set SUBYAML=${SUBYAML}-2018043006
     endif
   endif
@@ -219,12 +219,12 @@ sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' orig_jedi0.yaml
 #            all relevant dates to this application (e.g., 4DEnVar?)
 ## revise previous date
 sed -i 's@2018-04-14_18.00.00@'${prevFileDate}'@g' orig_jedi0.yaml
-sed -i 's@2018041418@'${prevDate}'@g' orig_jedi0.yaml
+sed -i 's@2018041418@'${prevValidDate}'@g' orig_jedi0.yaml
 sed -i 's@2018-04-14T18:00:00Z@'${prevConfDate}'@g'  orig_jedi0.yaml
 
 ## revise current date
 sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' orig_jedi0.yaml
-sed -i 's@2018041500@'${validDate}'@g' orig_jedi0.yaml
+sed -i 's@2018041500@'${thisValidDate}'@g' orig_jedi0.yaml
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' orig_jedi0.yaml
 
 ## revise window length
@@ -317,7 +317,7 @@ while ( $member <= ${nEnsBMembers} )
     set adate = ${adate}\\
   endif
 cat >>! ${ensbsed}SEDF.yaml << EOF
-      - filename: ${ensBDir}/${prevDate}${memDir}/${FCFilePrefix}.${fileDate}.nc\
+      - filename: ${ensBDir}/${prevValidDate}${memDir}/${FCFilePrefix}.${fileDate}.nc\
         date: *${adate}
 EOF
 
@@ -326,4 +326,4 @@ end
 sed -f ${ensbsed}SEDF.yaml orig_jedi3.yaml >! jedi.yaml
 rm ${ensbsed}SEDF.yaml
 
-exit
+exit 0

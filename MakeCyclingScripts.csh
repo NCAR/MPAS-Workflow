@@ -22,10 +22,10 @@ end
 ## First cycle "forecast" established offline
 # TODO: make FirstCycleDate behavior part of CyclingFC or seperate application
 #       instead of work-flow initialization? Could use zero-length fc or new fcinit
-set cycle_Date = $FirstCycleDate
-set validDate = $cycle_Date
+set thisCycleDate = $FirstCycleDate
+set thisValidDate = $thisCycleDate
 source getCycleVars.csh
-if ( ${cycle_Date} == ${FirstCycleDate} ) then
+if ( ${thisCycleDate} == ${FirstCycleDate} ) then
   mkdir -p ${CyclingFCWorkDir}
   rm -r ${prevCyclingFCDir}
   set member = 1
@@ -57,7 +57,6 @@ set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
 sed -e 's@wrapWorkDirsArg@CyclingDADir@' \
     -e 's@AppNameArg@da@' \
     -e 's@cylcTaskTypeArg@'${cylcTaskType}'@' \
-    -e 's@wrapMemberArg@ALL@' \
     -e 's@wrapStateDirsArg@prevCyclingFCDirs@' \
     -e 's@wrapStatePrefixArg@'${bgStatePrefix}'@' \
     -e 's@wrapStateTypeArg@DA@' \
@@ -95,15 +94,14 @@ chmod 744 ${JobScript}
 #------- CalcOM{{state}}, VerifyObs{{state}}, VerifyModel{{state}} ---------
 foreach state (AN BG FC)
   if (${state} == AN) then
-    set child_ARGS = (CyclingDAOutDirs ${ANFilePrefix} ${CYWindowHR} Verify${state}Dirs)
+    set child_ARGS = (CyclingDAOutDirs ${ANFilePrefix} ${CYWindowHR})
   else if (${state} == BG) then
-    set child_ARGS = (prevCyclingFCDirs ${FCFilePrefix} ${CYWindowHR} prevVerify${state}Dirs)
+    set child_ARGS = (prevCyclingFCDirs ${FCFilePrefix} ${CYWindowHR})
   else if (${state} == FC) then
-    set child_ARGS = (ExtendedFCDirs ${FCFilePrefix} ${DAVFWindowHR} Verify${state}Dirs)
+    set child_ARGS = (ExtendedFCDirs ${FCFilePrefix} ${DAVFWindowHR})
   endif
   set cylcTaskType = CalcOM${state}
   set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh
-#  sed -e 's@wrapWorkDirsArg@'$child_ARGS[4]'@' \
   sed -e 's@wrapWorkDirsArg@Verify'${state}'Dirs@' \
       -e 's@AppNameArg@'${omm}'@' \
       -e 's@cylcTaskTypeArg@'${cylcTaskType}'@' \

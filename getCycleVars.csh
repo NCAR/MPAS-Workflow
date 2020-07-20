@@ -1,18 +1,18 @@
 #!/bin/csh -f
-set prevDate = `$advanceCYMDH ${cycle_Date} -${CYWindowHR}`
-set nextDate = `$advanceCYMDH ${cycle_Date} ${CYWindowHR}`
-setenv prevDate ${prevDate}
-setenv nextDate ${nextDate}
+set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CYWindowHR}`
+#set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CYWindowHR}`
+setenv prevCycleDate ${prevCycleDate}
+#setenv nextCycleDate ${nextCycleDate}
 
 ## setup cycle directory names
-set CyclingDADir = ${CyclingDAWorkDir}/${cycle_Date}
+set CyclingDADir = ${CyclingDAWorkDir}/${thisCycleDate}
 set CyclingDAInDir = ${CyclingDADir}/${bgDir}
 set CyclingDAOutDir = ${CyclingDADir}/${anDir}
 
-set prevCyclingDADir = ${CyclingDAWorkDir}/${prevDate}
-set CyclingFCDir = ${CyclingFCWorkDir}/${cycle_Date}
-set prevCyclingFCDir = ${CyclingFCWorkDir}/${prevDate}
-set ExtendedFCDir = ${ExtendedFCWorkDir}/${cycle_Date}
+set prevCyclingDADir = ${CyclingDAWorkDir}/${prevCycleDate}
+set CyclingFCDir = ${CyclingFCWorkDir}/${thisCycleDate}
+set prevCyclingFCDir = ${CyclingFCWorkDir}/${prevCycleDate}
+set ExtendedFCDir = ${ExtendedFCWorkDir}/${thisCycleDate}
 
 set CyclingDAInDirs = ()
 set CyclingDAOutDirs = ()
@@ -40,45 +40,30 @@ while ( $member <= ${nEnsDAMembers} )
   set CyclingFCDirs = ($CyclingFCDirs ${CyclingFCDir}${memDir})
   set prevCyclingFCDirs = ($prevCyclingFCDirs ${prevCyclingFCDir}${memDir})
   set ExtendedFCDirs = ($ExtendedFCDirs ${ExtendedFCDir}${memDir})
-  set VerifyANDirs = ($VerifyANDirs ${VerificationWorkDir}/${anDir}${memDir}/${cycle_Date})
-  set VerifyBGDirs = ($VerifyBGDirs ${VerificationWorkDir}/${bgDir}${memDir}/${cycle_Date})
-  set VerifyFCDirs = ($VerifyFCDirs ${VerificationWorkDir}/${fcDir}${memDir}/${cycle_Date})
+  set VerifyANDirs = ($VerifyANDirs ${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
+  set VerifyBGDirs = ($VerifyBGDirs ${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate})
+  set VerifyFCDirs = ($VerifyFCDirs ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
 
-#  set VerifyANInDirs = ($VerifyANInDirs ${VerificationWorkDir}/${anDir}${memDir}/${cycle_Date}/${bgDir}
-#  set VerifyBGInDirs = ($VerifyBGInDirs ${VerificationWorkDir}/${bgDir}${memDir}/${cycle_Date}/${bgDir}
-#  set VerifyFCInDirs = ($VerifyFCInDirs ${VerificationWorkDir}/${fcDir}${memDir}/${cycle_Date}/${bgDir}
+#  set VerifyANInDirs = ($VerifyANInDirs ${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate}/${bgDir}
+#  set VerifyBGInDirs = ($VerifyBGInDirs ${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate}/${bgDir}
+#  set VerifyFCInDirs = ($VerifyFCInDirs ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate}/${bgDir}
 #
-#  set VerifyANOutDirs = ($VerifyANOutDirs ${VerificationWorkDir}/${anDir}${memDir}/${cycle_Date}/${anDir}
-#  set VerifyBGOutDirs = ($VerifyBGOutDirs ${VerificationWorkDir}/${bgDir}${memDir}/${cycle_Date}/${anDir}
-#  set VerifyFCOutDirs = ($VerifyFCOutDirs ${VerificationWorkDir}/${fcDir}${memDir}/${cycle_Date}/${anDir}
+#  set VerifyANOutDirs = ($VerifyANOutDirs ${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate}/${anDir}
+#  set VerifyBGOutDirs = ($VerifyBGOutDirs ${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate}/${anDir}
+#  set VerifyFCOutDirs = ($VerifyFCOutDirs ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate}/${anDir}
 
-#  set VerifyFirstBGDirs = ($VerifyFirstBGDirs ${VerificationWorkDir}/${bgDir}${memDir}/${cycle_Date})
+#  set VerifyFirstBGDirs = ($VerifyFirstBGDirs ${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate})
 
   @ member++
 end
 
-set VerifyFCDirsStepsMembers = ()
-
-#@ dt = 0
-#set step = 1
-#while ( $dt <= ${ExtendedFCWindowHR} )
-#  set member = 1
-#  @ index = ($step * ${nEnsDAMembers}) + $member
-#  while ( $member <= ${nEnsDAMembers} )
-#    set VerifyFCDirsStepsMembers = ($VerifyFCDirsStepsMembers )
-#    @ member++
-#  end
-#  @ step++
-#end
-
-
 #
-# Time info for namelist, yaml etc:
+# Universal time info for namelist, yaml etc:
 # =============================================
-set yy = `echo ${validDate} | cut -c 1-4`
-set mm = `echo ${validDate} | cut -c 5-6`
-set dd = `echo ${validDate} | cut -c 7-8`
-set hh = `echo ${validDate} | cut -c 9-10`
+set yy = `echo ${thisValidDate} | cut -c 1-4`
+set mm = `echo ${thisValidDate} | cut -c 5-6`
+set dd = `echo ${thisValidDate} | cut -c 7-8`
+set hh = `echo ${thisValidDate} | cut -c 9-10`
 set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set NMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set ConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z

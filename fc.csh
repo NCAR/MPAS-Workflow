@@ -10,8 +10,8 @@ set ArgMember = "$1"
 source ./control.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set cycle_Date = ${yymmdd}${hh}
-set validDate = ${cycle_Date}
+set thisCycleDate = ${yymmdd}${hh}
+set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 set test = `echo $ArgMember | grep '^[0-9]*$'`
@@ -89,8 +89,8 @@ else
   endif
 endif
 
-set fcDate = `$advanceCYMDH ${validDate} ${self_fcIntervalHR}`
-set finalFCDate = `$advanceCYMDH ${validDate} ${self_fcLengthHR}`
+set fcDate = `$advanceCYMDH ${thisValidDate} ${self_fcIntervalHR}`
+set finalFCDate = `$advanceCYMDH ${thisValidDate} ${self_fcLengthHR}`
 while ( ${fcDate} <= ${finalFCDate} )
   #
   # Update/add fields to output for DA

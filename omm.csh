@@ -12,8 +12,8 @@ set ArgStateType = "$3"
 source ./control.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set cycle_Date = ${yymmdd}${hh}
-set validDate = `$advanceCYMDH ${cycle_Date} ${ArgDT}`
+set thisCycleDate = ${yymmdd}${hh}
+set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
 set test = `echo $ArgMember | grep '^[0-9]*$'`
