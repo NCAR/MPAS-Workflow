@@ -1,5 +1,5 @@
     - ObsSpace:
-        name: ahi_himawari8
+        name: ahi-clr_himawari8
         ObsDataIn:
           obsfile: InDBDir/ahi_himawari8_obs_2018041500.nc4
         ObsDataOut:

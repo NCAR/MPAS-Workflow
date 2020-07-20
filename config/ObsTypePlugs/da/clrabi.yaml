@@ -1,5 +1,5 @@
     - ObsSpace:
-        name: abi_g16
+        name: abi-clr_g16
         ObsDataIn:
           obsfile: InDBDir/abi_g16_obs_2018041500.nc4
         ObsDataOut:
