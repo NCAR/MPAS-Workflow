@@ -18,7 +18,7 @@ cat >! suite.rc << EOF
 #!Jinja2
 [meta]
   title = "${PKGBASE}"
-  {% set ExtFChrs = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
+  {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
   {% set EnsDAMembers = range(1, ${nEnsDAMembers}+1, 1) %}
   {% set ExtendedFCMembers = [0] %}
 [cylc]
@@ -32,26 +32,36 @@ cat >! suite.rc << EOF
 #    # Initial cycle point
     [[[R1]]]    # Run once, at the initial point.
       graph = CyclingDA => CyclingEnsFC
-    [[[PT${CYWindowHR}H]]]
+    [[[PT${CyclingWindowHR}H]]]
       graph = '''
-      CyclingEnsFC[-PT${CYWindowHR}H]:succeed-all => CyclingDA => CyclingEnsFC
-      {% for mem in EnsDAMembers%}
-        CyclingDA => \
-          CalcOMAN{{mem}} \
-          & VerifyModelAN{{mem}}
-        CyclingFC{{mem}}[-PT${CYWindowHR}H] => \
-          CalcOMBG{{mem}} & VerifyModelBG{{mem}}
-        CalcOMAN{{mem}} => VerifyObsAN{{mem}}
-        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
+      CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => CyclingDA => CyclingEnsFC
+#      {% for mem in EnsDAMembers%}
+#        CyclingDA => \
+#          CalcOMAN{{mem}} \
+#          & VerifyModelAN{{mem}}
+#        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => \
+#          CalcOMBG{{mem}} & VerifyModelBG{{mem}}
+#        CalcOMAN{{mem}} => VerifyObsAN{{mem}}
+#        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
+#      {% endfor %}
+      '''
+## Extended forecast from mean of analysis states
+    [[[${ExtendedMeanFCTimes}]]]
+      graph = '''
+      CyclingDA => MeanAnalysis => ExtendedMeanFC
+      {% for dt in ExtendedFCLengths%}
+        ExtendedMeanFC => CalcOMMeanFC{{dt}}hr & VerifyModelMeanFC{{dt}}hr
+        CalcOMMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
       {% endfor %}
       '''
-#    [[[${ExtendedFCTimes}]]]
+## Extended forecast from ensemble of analysis states
+#    [[[${ExtendedEnsFCTimes}]]]
 #      graph = '''
 #      CyclingDA => ExtendedEnsFC
 #      {% for mem in ExtendedFCMembers%}
-#        {% for dt in ExtFChrs%}
-#          ExtendedFC{{mem}} => CalcOMF{{mem}}-{{dt}}hr & VerifyModelAN{{mem}}-{{dt}}hr
-#          CalcOMFC{{mem}} => VerifyObsFC{{mem}}
+#        {% for dt in ExtendedFCLengths%}
+#          ExtendedFC{{mem}} => CalcOMEnsFC{{mem}}-{{dt}}hr & VerifyModelEnsFC{{mem}}-{{dt}}hr
+#          CalcOMEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
 #        {% endfor %}
 #      {% endfor %}
 #      '''
@@ -137,28 +147,53 @@ cat >! suite.rc << EOF
       script = \$origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
   {% endfor %}
 {% endfor %}
-  [[ExtendedEnsFC]]
+  [[ExtendedFCBase]]
     inherit = JobBase
     [[[job]]]
       execution time limit = PT${ExtendedFCJobMinutes}M
     [[[directives]]]
       -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
+## Extended mean analysis, forecast, and verification
+  [[MeanAnalysis]]
+    inherit = JobBase
+    script = \$origin/MeanAnalysis.csh
+    [[[job]]]
+      execution time limit = PT5M
+  [[ExtendedMeanFC]]
+    inherit = ExtendedFCBase
+    script = \$origin/ExtendedMeanFC.csh "0"
+{% for dt in ExtendedFCLengths %}
+  [[CalcOMMeanFC{{dt}}hr]]
+    inherit = OMMBase
+    script = \$origin/CalcOMMeanFC.csh "0" "{{dt}}" "FC"
+    [[[environment]]]
+      myPreScript = \$origin/jediPrepCalcOMMeanFC.csh "0" "{{dt}}" "FC"
+  [[VerifyObsMeanFC{{dt}}hr]]
+    inherit = VerifyBase
+    script = \$origin/VerifyObsMeanFC.csh "0" "{{dt}}" "FC"
+  [[VerifyModelMeanFC{{dt}}hr]]
+    inherit = VerifyBase
+    script = \$origin/VerifyModelMeanFC.csh "0" "{{dt}}" "FC"
+{% endfor %}
+## Extended ensemble forecasts and verification
+  [[ExtendedEnsFC]]
+    inherit = ExtendedFCBase
 {% for mem in ExtendedFCMembers%}
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
-    script = \$origin/ExtendedFC.csh "{{mem}}"
-  {% for dt in ExtFChrs %}
-    [[CalcOMFC{{mem}}-{{dt}}hr]]
+    script = \$origin/ExtendedEnsFC.csh "{{mem}}"
+  {% for dt in ExtendedFCLengths %}
+    [[CalcOMEnsFC{{mem}}-{{dt}}hr]]
       inherit = OMMBase
-      script = \$origin/CalcOMFC.csh "{{mem}}" "{{dt}}" "FC"
+      script = \$origin/CalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
       [[[environment]]]
-        myPreScript = \$origin/jediPrepCalcOMFC.csh "{{mem}}" "0" "FC"
-    [[VerifyObsFC{{mem}}-{{dt}}hr]]
+        myPreScript = \$origin/jediPrepCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
       inherit = VerifyBase
-      script = \$origin/VerifyObsFC.csh "{{mem}}" "{{dt}}" "FC"
-    [[VerifyModelFC{{mem}}-{{dt}}hr]]
+      script = \$origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
       inherit = VerifyBase
-      script = \$origin/VerifyModelFC.csh "{{mem}}" "{{dt}}" "FC"
+      script = \$origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   {% endfor %}
 {% endfor %}
 [visualization]

@@ -5,8 +5,6 @@ date
 #
 # Setup environment:
 # =============================================
-pwd
-echo "da"
 source ./control.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -14,7 +12,7 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-set self_WorkDir = $WorkDirsArg
+set self_WorkDir = $CyclingDADir
 set self_StateDirs = ($inStateDirsArg)
 set self_StatePrefix = inStatePrefixArg
 
@@ -113,7 +111,9 @@ endif
 #
 # Update analyzed variables:
 # =============================================
-#rm outList${thisValidDate}
+#TODO: do this in a separate post-processing script
+#      either in parallel or using only single processor
+#      instead of full set of job processors
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set bg = $CyclingDAInDirs[$member]
@@ -128,8 +128,6 @@ while ( $member <= ${nEnsDAMembers} )
   set anFileDA = ${an}/${anStatePrefix}.$fileDate.nc
   ncks -A -v ${MPASANVars} ${anFileDA} ${anFile}
   rm ${anFileDA}
-
-#  echo `pwd`"/${anFile}" >> outList${thisValidDate}
 
   @ member++
 end

@@ -41,11 +41,11 @@ setenv OutDBDir dbOut
 
 ## DAType
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DAType 3denvar
+setenv DAType eda_3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DAType" =~ *"eda"* ) then
-  setenv nEnsDAMembers 2
+  setenv nEnsDAMembers 5
 endif
 
 ## DAObsList
@@ -95,13 +95,14 @@ setenv diagPrefix     ydiags
 #
 # cycling settings
 # =============================================
-setenv updateSea         1
+setenv updateSea 1
 
-setenv CYWindowHR         6               # interval between cycle DA
-setenv ExtendedFCWindowHR 72              # length of verification forecasts
-setenv ExtendedFC_DT_HR   6               # interval between OMF verification times of an individual forecast
-setenv ExtendedFCTimes    T00,T12         # times of the day to run extended forecast
-setenv DAVFWindowHR       ${ExtendedFC_DT_HR}   # window of observations included in verification
+setenv CyclingWindowHR 6                # forecast interval between CyclingDA analyses
+setenv ExtendedFCWindowHR 72            # length of verification forecasts
+setenv ExtendedFC_DT_HR 6               # interval between OMF verification times of an individual forecast
+setenv ExtendedMeanFCTimes T00,T12      # times of the day to run extended forecast from mean analysis
+setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of extended forecasts
+setenv DAVFWindowHR ${ExtendedFC_DT_HR} # window of observations included in verification
 
 ## 120km
 setenv MPAS_RES            120km
@@ -345,6 +346,8 @@ setenv MPASBUILD         MPAS_${COMPILER}_debug=0${CUSTOMPIO}
 setenv MPASBUILDDIR      ${TOP_BUILD_DIR}/libs/build/${MPASBUILD}
 
 #Verification tools
+setenv meanStateExe      average_netcdf_files_parallel_mpas_${COMPILER}.x
+setenv meanStateBuildDir /glade/work/guerrett/pandac/work/meanState
 #TODO: add these to the repo, possibly under graphics/plot/postprocess/tools directory
 setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
@@ -360,29 +363,12 @@ end
 #
 # job submission settings
 # =============================================
-#setenv AccountNumber NMMM0015
-setenv AccountNumber NMMM0043
+## StandardAccountNumber
+# OPTIONS: NMMM0015, NMMM0043
+setenv StandardAccountNumber NMMM0043
 
-setenv CYAccountNumber ${AccountNumber}
-setenv VFAccountNumber ${AccountNumber}
-
-#setenv CYQueueName premium
+setenv CYAccountNumber ${StandardAccountNumber}
 setenv CYQueueName regular
-#setenv CYQueueName economy
 
-#setenv VFQueueName premium
-#setenv VFQueueName regular
+setenv VFAccountNumber ${StandardAccountNumber}
 setenv VFQueueName economy
-
-##PBSPro (cheyenne)
-setenv SUBMIT qsub
-setenv DEPSTART ""
-setenv DEPEND "-W depend=afterok"
-setenv DEPSEP ":"
-
-##SLURM (casper)
-setenv SUBMIT sbatch
-setenv DEPSTART ""
-setenv DEPEND "--dependency=afterok"
-setenv DEPSEP ":"
-

@@ -1,6 +1,6 @@
 #!/bin/csh -f
-set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CYWindowHR}`
-#set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CYWindowHR}`
+set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
+#set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`
 setenv prevCycleDate ${prevCycleDate}
 #setenv nextCycleDate ${nextCycleDate}
 
@@ -14,21 +14,26 @@ set CyclingFCDir = ${CyclingFCWorkDir}/${thisCycleDate}
 set prevCyclingFCDir = ${CyclingFCWorkDir}/${prevCycleDate}
 set ExtendedFCDir = ${ExtendedFCWorkDir}/${thisCycleDate}
 
+set memDir = /mean
+set MeanAnalysisDir = ${CyclingDAOutDir}${memDir}
+set ExtendedMeanFCDir = ${ExtendedFCDir}${memDir}
+set VerifyMeanFCDirs = ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate}
+
 set CyclingDAInDirs = ()
 set CyclingDAOutDirs = ()
 set CyclingFCDirs = ()
 set prevCyclingFCDirs = ()
-set ExtendedFCDirs = ()
+set ExtendedEnsFCDirs = ()
 
 set VerifyBGDirs = ()
 set VerifyANDirs = ()
-set VerifyFCDirs = ()
+set VerifyEnsFCDirs = ()
 #set VerifyBGInDirs = ()
 #set VerifyANInDirs = ()
-#set VerifyFCInDirs = ()
+#set VerifyEnsFCInDirs = ()
 #set VerifyBGOutDirs = ()
 #set VerifyANOutDirs = ()
-#set VerifyFCOutDirs = ()
+#set VerifyEnsFCOutDirs = ()
 
 #set VerifyFirstBGDirs = ()
 
@@ -39,18 +44,18 @@ while ( $member <= ${nEnsDAMembers} )
   set CyclingDAOutDirs = ($CyclingDAOutDirs ${CyclingDAOutDir}${memDir})
   set CyclingFCDirs = ($CyclingFCDirs ${CyclingFCDir}${memDir})
   set prevCyclingFCDirs = ($prevCyclingFCDirs ${prevCyclingFCDir}${memDir})
-  set ExtendedFCDirs = ($ExtendedFCDirs ${ExtendedFCDir}${memDir})
+  set ExtendedEnsFCDirs = ($ExtendedEnsFCDirs ${ExtendedFCDir}${memDir})
   set VerifyANDirs = ($VerifyANDirs ${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
   set VerifyBGDirs = ($VerifyBGDirs ${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate})
-  set VerifyFCDirs = ($VerifyFCDirs ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
+  set VerifyEnsFCDirs = ($VerifyEnsFCDirs ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
 
 #  set VerifyANInDirs = ($VerifyANInDirs ${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate}/${bgDir}
 #  set VerifyBGInDirs = ($VerifyBGInDirs ${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate}/${bgDir}
-#  set VerifyFCInDirs = ($VerifyFCInDirs ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate}/${bgDir}
+#  set VerifyEnsFCInDirs = ($VerifyEnsFCInDirs ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate}/${bgDir}
 #
 #  set VerifyANOutDirs = ($VerifyANOutDirs ${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate}/${anDir}
 #  set VerifyBGOutDirs = ($VerifyBGOutDirs ${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate}/${anDir}
-#  set VerifyFCOutDirs = ($VerifyFCOutDirs ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate}/${anDir}
+#  set VerifyEnsFCOutDirs = ($VerifyEnsFCOutDirs ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate}/${anDir}
 
 #  set VerifyFirstBGDirs = ($VerifyFirstBGDirs ${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate})
 

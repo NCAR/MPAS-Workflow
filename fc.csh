@@ -18,11 +18,12 @@ set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isInt = (! $status)
 if ( $isInt && "$ArgMember" != "0") then
   set self_WorkDir = $WorkDirsArg[$ArgMember]
+  set self_icStateDir = $StateDirsArg[$ArgMember]
 else
   set self_WorkDir = $WorkDirsArg
+  set self_icStateDir = $StateDirsArg
 endif
 
-set self_icStateDir = $CyclingDAOutDirs[$ArgMember]
 set self_icStatePrefix = ${ANFilePrefix}
 set self_fcLengthHR = fcLengthHRArg
 set self_fcIntervalHR = fcIntervalHRArg
@@ -89,12 +90,15 @@ else
   endif
 endif
 
+#
+# Update/add fields to output for DA
+# =============================================
+#TODO: do this in a separate post-processing script
+#      either in parallel or using only single processor
+#      instead of full set of job processors
 set fcDate = `$advanceCYMDH ${thisValidDate} ${self_fcIntervalHR}`
 set finalFCDate = `$advanceCYMDH ${thisValidDate} ${self_fcLengthHR}`
 while ( ${fcDate} <= ${finalFCDate} )
-  #
-  # Update/add fields to output for DA
-  # =============================================
   set yy = `echo ${fcDate} | cut -c 1-4`
   set mm = `echo ${fcDate} | cut -c 5-6`
   set dd = `echo ${fcDate} | cut -c 7-8`
@@ -131,8 +135,6 @@ while ( ${fcDate} <= ${finalFCDate} )
     ncks -A -v ${MPASDiagVars} ${diagFile} ${fcFile}
   endif
   rm ${diagFile}
-
-#  echo `pwd`"/${fcFile}" > outList${fcDate}
 
   set fcDate = `$advanceCYMDH ${fcDate} ${self_fcIntervalHR}`
   setenv fcDate ${fcDate}

@@ -29,7 +29,7 @@ if ( ! $isInt) then
   echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
   exit 1
 endif
-if ($ArgDT > 0 || "$ArgStateType" =~ "FC") then
+if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
   set self_WorkDir = $self_WorkDir/${ArgDT}hr
 endif
 

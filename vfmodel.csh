@@ -20,8 +20,10 @@ set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isInt = (! $status)
 if ( $isInt && "$ArgMember" != "0") then
   set self_WorkDir = $WorkDirsArg[$ArgMember]
+  set self_StateDir = $inStateDirsArg[$ArgMember]
 else
   set self_WorkDir = $WorkDirsArg
+  set self_StateDir = $inStateDirsArg
 endif
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isInt = (! $status)
@@ -29,10 +31,9 @@ if ( ! $isInt) then
   echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
   exit 1
 endif
-if ($ArgDT > 0 || "$ArgStateType" =~ "FC") then
+if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
   set self_WorkDir = $self_WorkDir/${ArgDT}hr
 endif
-setenv self_StateDir    $inStateDirsArg[$ArgMember]
 setenv self_StatePrefix inStatePrefixArg
 
 echo "WorkDir = ${self_WorkDir}"

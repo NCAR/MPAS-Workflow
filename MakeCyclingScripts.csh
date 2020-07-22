@@ -14,6 +14,7 @@ set cyclingParts = ( \
   tools \
   config \
   ${MPAS_RES} \
+  MeanAnalysis.csh \
 )
 foreach part ($cyclingParts)
   cp -rP $part ${mainScriptDir}/
@@ -28,10 +29,10 @@ source getCycleVars.csh
 if ( ${thisCycleDate} == ${FirstCycleDate} ) then
   mkdir -p ${CyclingFCWorkDir}
   rm -r ${prevCyclingFCDir}
+  if ( "$DAType" =~ *"eda"* ) mkdir -p ${prevCyclingFCDir}
   set member = 1
   while ( $member <= ${nEnsDAMembers} )
     if ( "$DAType" =~ *"eda"* ) then
-      mkdir ${prevCyclingFCDir}
       set InitialFC = "$ensembleICFirstCycle"`${memberDir} ens $member "${fixedEnsMemFmt}"`
     else
       set InitialFC = $deterministicICFirstCycle
@@ -61,7 +62,7 @@ sed -e 's@wrapWorkDirsArg@CyclingDADir@' \
     -e 's@wrapStatePrefixArg@'${bgStatePrefix}'@' \
     -e 's@wrapStateTypeArg@DA@' \
     -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
-    -e 's@wrapWindowHRArg@'${CYWindowHR}'@' \
+    -e 's@wrapWindowHRArg@'${CyclingWindowHR}'@' \
     -e 's@wrapDATypeArg@'${DAType}'@g' \
     -e 's@wrapDAModeArg@da@g' \
     -e 's@wrapObsListArg@DAObsList@' \
@@ -75,16 +76,29 @@ rm ${WrapperScript}
 echo "Making CyclingFC job script"
 set JobScript=${mainScriptDir}/CyclingFC.csh
 sed -e 's@WorkDirsArg@CyclingFCDirs@' \
-    -e 's@fcLengthHRArg@'${CYWindowHR}'@' \
-    -e 's@fcIntervalHRArg@'${CYWindowHR}'@' \
+    -e 's@StateDirsArg@CyclingDAOutDirs@' \
+    -e 's@fcLengthHRArg@'${CyclingWindowHR}'@' \
+    -e 's@fcIntervalHRArg@'${CyclingWindowHR}'@' \
     fc.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 
-#------- ExtendedFC ---------
-echo "Making ExtendedFC job script"
-set JobScript=${mainScriptDir}/ExtendedFC.csh
-sed -e 's@WorkDirsArg@ExtendedFCDirs@' \
+#------- ExtendedMeanFC ---------
+echo "Making ExtendedMeanFC job script"
+set JobScript=${mainScriptDir}/ExtendedMeanFC.csh
+sed -e 's@WorkDirsArg@ExtendedMeanFCDir@' \
+    -e 's@StateDirsArg@MeanAnalysisDir@' \
+    -e 's@fcLengthHRArg@'${ExtendedFCWindowHR}'@' \
+    -e 's@fcIntervalHRArg@'${ExtendedFC_DT_HR}'@' \
+    fc.csh > ${JobScript}
+chmod 744 ${JobScript}
+
+
+#------- ExtendedEnsFC ---------
+echo "Making ExtendedEnsFC job script"
+set JobScript=${mainScriptDir}/ExtendedEnsFC.csh
+sed -e 's@WorkDirsArg@ExtendedEnsFCDirs@' \
+    -e 's@StateDirsArg@CyclingDAOutDirs@' \
     -e 's@fcLengthHRArg@'${ExtendedFCWindowHR}'@' \
     -e 's@fcIntervalHRArg@'${ExtendedFC_DT_HR}'@' \
     fc.csh > ${JobScript}
@@ -92,24 +106,26 @@ chmod 744 ${JobScript}
 
 
 #------- CalcOM{{state}}, VerifyObs{{state}}, VerifyModel{{state}} ---------
-foreach state (AN BG FC)
+foreach state (AN BG MeanFC EnsFC)
   if (${state} == AN) then
-    set child_ARGS = (CyclingDAOutDirs ${ANFilePrefix} ${CYWindowHR})
+    set myArgs = (CyclingDAOutDirs ${ANFilePrefix} ${CyclingWindowHR})
   else if (${state} == BG) then
-    set child_ARGS = (prevCyclingFCDirs ${FCFilePrefix} ${CYWindowHR})
-  else if (${state} == FC) then
-    set child_ARGS = (ExtendedFCDirs ${FCFilePrefix} ${DAVFWindowHR})
+    set myArgs = (prevCyclingFCDirs ${FCFilePrefix} ${CyclingWindowHR})
+  else if (${state} == MeanFC) then
+    set myArgs = (ExtendedMeanFCDir ${FCFilePrefix} ${DAVFWindowHR})
+  else if (${state} == EnsFC) then
+    set myArgs = (ExtendedEnsFCDirs ${FCFilePrefix} ${DAVFWindowHR})
   endif
   set cylcTaskType = CalcOM${state}
   set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh
   sed -e 's@wrapWorkDirsArg@Verify'${state}'Dirs@' \
       -e 's@AppNameArg@'${omm}'@' \
       -e 's@cylcTaskTypeArg@'${cylcTaskType}'@' \
-      -e 's@wrapStateDirsArg@'$child_ARGS[1]'@' \
-      -e 's@wrapStatePrefixArg@'$child_ARGS[2]'@' \
+      -e 's@wrapStateDirsArg@'$myArgs[1]'@' \
+      -e 's@wrapStatePrefixArg@'$myArgs[2]'@' \
       -e 's@wrapStateTypeArg@'${state}'@' \
       -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
-      -e 's@wrapWindowHRArg@'$child_ARGS[3]'@' \
+      -e 's@wrapWindowHRArg@'$myArgs[3]'@' \
       -e 's@wrapDATypeArg@'${omm}'@g' \
       -e 's@wrapDAModeArg@'${omm}'@g' \
       -e 's@wrapObsListArg@OMMObsList@' \

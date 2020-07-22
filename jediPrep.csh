@@ -11,8 +11,6 @@ set ArgStateType = "$3"
 #
 # Setup environment:
 # =============================================
-pwd
-echo "prep"
 source ./control.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -25,7 +23,7 @@ set isInt = (! $status)
 if ( $isInt && "$ArgMember" != "0") then
   set self_WorkDir = $WorkDirsArg[$ArgMember]
 else
-  set self_WorkDir = $WorkDirsArg
+ set self_WorkDir = $WorkDirsArg
 endif
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isInt = (! $status)
@@ -33,7 +31,7 @@ if ( ! $isInt) then
   echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
   exit 1
 endif
-if ($ArgDT > 0 || "$ArgStateType" =~ "FC") then
+if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
   set self_WorkDir = $self_WorkDir/${ArgDT}hr
 endif
 
@@ -191,30 +189,6 @@ end
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' orig_jedi0.yaml
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' orig_jedi0.yaml
 
-
-## File naming
-sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' orig_jedi0.yaml
-sed -i 's@InDBDir@'${InDBDir}'@g' orig_jedi0.yaml
-sed -i 's@OutDBDir@'${OutDBDir}'@g' orig_jedi0.yaml
-sed -i 's@obsPrefix@'${obsPrefix}'@g' orig_jedi0.yaml
-sed -i 's@geoPrefix@'${geoPrefix}'@g' orig_jedi0.yaml
-sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi0.yaml
-sed -i 's@DAMode@'${self_DAMode}'@g' orig_jedi0.yaml
-if ( "$self_DAType" =~ *"eda"* ) then
-  sed -i 's@OOPSMemberDir@/%{member}%@g' orig_jedi0.yaml
-  sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' orig_jedi0.yaml
-else
-  sed -i 's@OOPSMemberDir@@g' orig_jedi0.yaml
-endif
-sed -i 's@meshFile@'${meshFile}'@g' orig_jedi0.yaml
-sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' orig_jedi0.yaml
-#sed -i 's@bgStateDir@'${CyclingDAInDir}'@g' orig_jedi0.yaml
-sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' orig_jedi0.yaml
-sed -i 's@anStatePrefix@'${anStatePrefix}'@g' orig_jedi0.yaml
-#sed -i 's@anStateDir@'${CyclingDAOutDir}'@g' orig_jedi0.yaml
-sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' orig_jedi0.yaml
-
-
 # TODO(JJG): revise these date replacements to loop over
 #            all relevant dates to this application (e.g., 4DEnVar?)
 ## revise previous date
@@ -229,6 +203,29 @@ sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' orig_jedi0.yaml
 
 ## revise window length
 sed -i 's@PT6H@PT'${self_WindowHR}'H@g' orig_jedi0.yaml
+
+
+## File naming
+sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' orig_jedi0.yaml
+sed -i 's@InDBDir@'${InDBDir}'@g' orig_jedi0.yaml
+sed -i 's@OutDBDir@'${OutDBDir}'@g' orig_jedi0.yaml
+sed -i 's@obsPrefix@'${obsPrefix}'@g' orig_jedi0.yaml
+sed -i 's@geoPrefix@'${geoPrefix}'@g' orig_jedi0.yaml
+sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi0.yaml
+sed -i 's@DAMode@'${self_DAMode}'@g' orig_jedi0.yaml
+sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' orig_jedi0.yaml
+if ( "$self_DAType" =~ *"eda"* ) then
+  sed -i 's@OOPSMemberDir@/%{member}%@g' orig_jedi0.yaml
+else
+  sed -i 's@OOPSMemberDir@@g' orig_jedi0.yaml
+endif
+sed -i 's@meshFile@'${meshFile}'@g' orig_jedi0.yaml
+sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' orig_jedi0.yaml
+#sed -i 's@bgStateDir@'${CyclingDAInDir}'@g' orig_jedi0.yaml
+sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' orig_jedi0.yaml
+sed -i 's@anStatePrefix@'${anStatePrefix}'@g' orig_jedi0.yaml
+#sed -i 's@anStateDir@'${CyclingDAOutDir}'@g' orig_jedi0.yaml
+sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' orig_jedi0.yaml
 
 
 ## revise full line configs
