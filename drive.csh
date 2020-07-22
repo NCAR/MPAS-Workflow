@@ -30,7 +30,7 @@ cat >! suite.rc << EOF
   final cycle point   = 20180415T06
   [[dependencies]]
 ## Initial cycle point
-    [[[R1]]]    # Run once, at the initial point.
+    [[[R1]]]
       graph = CyclingDA => CyclingEnsFC
 ## Cycling and verification every CyclingWindowHR
     [[[PT${CyclingWindowHR}H]]]
