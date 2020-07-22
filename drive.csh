@@ -29,21 +29,22 @@ cat >! suite.rc << EOF
   initial cycle point = 20180415T00
   final cycle point   = 20180415T06
   [[dependencies]]
-#    # Initial cycle point
+## Initial cycle point
     [[[R1]]]    # Run once, at the initial point.
       graph = CyclingDA => CyclingEnsFC
+## Cycling and verification every CyclingWindowHR
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
       CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => CyclingDA => CyclingEnsFC
-#      {% for mem in EnsDAMembers%}
-#        CyclingDA => \
-#          CalcOMAN{{mem}} \
-#          & VerifyModelAN{{mem}}
-#        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => \
-#          CalcOMBG{{mem}} & VerifyModelBG{{mem}}
-#        CalcOMAN{{mem}} => VerifyObsAN{{mem}}
-#        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
-#      {% endfor %}
+      {% for mem in EnsDAMembers%}
+        CyclingDA => \
+          CalcOMAN{{mem}} \
+          & VerifyModelAN{{mem}}
+        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => \
+          CalcOMBG{{mem}} & VerifyModelBG{{mem}}
+        CalcOMAN{{mem}} => VerifyObsAN{{mem}}
+        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
+      {% endfor %}
       '''
 ## Extended forecast from mean of analysis states
     [[[${ExtendedMeanFCTimes}]]]
