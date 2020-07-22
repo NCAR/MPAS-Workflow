@@ -31,7 +31,6 @@ set JobScript=${mainScriptDir}/${self_cylcTaskType}.csh
 sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
     -e 's@inStateDirsArg@'${self_inStateDirs}'@' \
     -e 's@inStatePrefixArg@'${self_inStatePrefix}'@' \
-    -e 's@DATypeArg@'${self_DAType}'@' \
     AppNameArg.csh > ${JobScript}
 chmod 744 ${JobScript}
 

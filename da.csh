@@ -25,6 +25,8 @@ set meshFile = ./${BGFilePrefix}.${fileDate}.nc
 # Remove old logs
 rm jedi.log*
 
+# Link/copy bg from StateDirs and ensure that MPASDiagVars are present
+# ====================================================================
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
@@ -34,8 +36,6 @@ while ( $member <= ${nEnsDAMembers} )
   mkdir -p ${bg}
   mkdir -p ${an}
 
-  # Link/copy bg from other directory and ensure that MPASDiagVars are present
-  # =========================================================================
   set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
   set bgFileDA = ${bg}/${BGFilePrefix}.$fileDate.nc
 

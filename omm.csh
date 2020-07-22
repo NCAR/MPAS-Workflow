@@ -45,10 +45,6 @@ set meshFile = ./${BGFilePrefix}.${fileDate}.nc
 # Remove old logs
 rm jedi.log*
 
-#################################################################
-# EVERYTHING BEYOND HERE MUST HAPPEN AFTER OMM STATE IS AVAILABLE
-#################################################################
-
 # Link/copy bg from other directory and ensure that MPASDiagVars are present
 # =========================================================================
 set other = $self_StateDir
