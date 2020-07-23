@@ -58,7 +58,9 @@ ln -fs ${pyModelDir}/${mainScript} ./
 
 set success = 1
 while ( $success != 0 )
-  python ${mainScript} >& diags.log
+  mv diags.log diags.log_LAST
+
+  python ${mainScript} "${thisValidDate}" >& diags.log
 
   set success = $?
 

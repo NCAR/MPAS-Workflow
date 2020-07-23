@@ -53,7 +53,6 @@ set success = 1
 while ( $success != 0 )
   mv diags.log diags.log_LAST
 
-  ## MULTIPLE PROCESSORS
   python ${mainScript} -n ${NUMPROC} -p ../../${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} >& diags.log
 
   set success = $?
