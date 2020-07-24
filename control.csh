@@ -1,18 +1,9 @@
 #!/bin/csh -f
 
-#
-# Initial and final times of the period:
-# =========================================
-# First cycle date (used to initiate new experiments)
-setenv FirstCycleDate 2018041500 # experiment first cycle date
 
-# Experiment start and end date
-# NOTE: can be set beyond FirstCycleDate in order to continue
-# from previously generated workflow output
-setenv ExpStartDate 2018041500 
-#setenv ExpEndDate 2018051418
-setenv ExpEndDate 2018041500
-
+## FirstCycleDate
+# used to initiate new experiments
+setenv FirstCycleDate 2018041500
 
 #
 # OMM/VARBC settings
@@ -41,11 +32,11 @@ setenv OutDBDir dbOut
 
 ## DAType
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DAType eda_3denvar
+setenv DAType 3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DAType" =~ *"eda"* ) then
-  setenv nEnsDAMembers 5
+  setenv nEnsDAMembers 20
 endif
 
 ## DAObsList
@@ -78,7 +69,7 @@ foreach obs ($expObsList)
 end
 
 ## add unique suffix
-set ExpSuffix = "_NMEM"${nEnsDAMembers}debug
+set ExpSuffix = "_NMEM"${nEnsDAMembers}
 setenv ExpName ${ExpName}${ExpSuffix}
 
 #

@@ -27,7 +27,7 @@ cat >! suite.rc << EOF
 [scheduling]
   max active cycle points = 200
   initial cycle point = 20180415T00
-  final cycle point   = 20180415T06
+  final cycle point   = 20180418T00
   [[dependencies]]
 ## Initial cycle point
     [[[R1]]]
