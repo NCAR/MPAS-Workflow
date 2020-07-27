@@ -33,9 +33,9 @@ if ( ${thisCycleDate} == ${FirstCycleDate} ) then
   set member = 1
   while ( $member <= ${nEnsDAMembers} )
     if ( "$DAType" =~ *"eda"* ) then
-      set InitialFC = "$ensembleICFirstCycle"`${memberDir} ens $member "${fixedEnsMemFmt}"`
+      set InitialFC = "$firstEnsFCDir"`${memberDir} ens $member "${firstEnsFCMemFmt}"`
     else
-      set InitialFC = $deterministicICFirstCycle
+      set InitialFC = $firstDetermFCDir
     endif
     ln -sf ${InitialFC} $prevCyclingFCDirs[$member]
 

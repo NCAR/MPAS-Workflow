@@ -289,13 +289,15 @@ rm ${modelsed}SEDF.yaml
 #            modified for 4DEnVar?
 # TODO(JJG): move this to da as not needed for OMM
 if ( "$self_DAType" =~ *"eda"* ) then
-  set ensBDir = ${dynamicEnsembleB}
-  set ensBMemFmt = "${oopsMemFmt}"
-  set nEnsBMembers = ${nEnsDAMembers}
+  set ensBDir = ${dynamicEnsBDir}
+  set ensBFilePrefix = ${dynamicEnsBFilePrefix}
+  set ensBMemFmt = "${dynamicEnsBMemFmt}"
+  set ensBNMembers = ${dynamicEnsBNMembers}
 else
-  set ensBDir = ${fixedEnsembleB}
-  set ensBMemFmt = "${fixedEnsMemFmt}"
-  set nEnsBMembers = ${nFixedMembers}
+  set ensBDir = ${fixedEnsBDir}
+  set ensBFilePrefix = ${fixedEnsBFilePrefix}
+  set ensBMemFmt = "${fixedEnsBMemFmt}"
+  set ensBNMembers = ${fixedEnsBNMembers}
 endif
 
 sed -i 's@bumpLocDir@'${bumpLocDir}'@g' orig_jedi3.yaml
@@ -307,14 +309,14 @@ cat >! ${ensbsed}SEDF.yaml << EOF
 EOF
 
 set member = 1
-while ( $member <= ${nEnsBMembers} )
+while ( $member <= ${ensBNMembers} )
   set memDir = `${memberDir} ens $member "${ensBMemFmt}"`
   set adate = adate
-  if ( $member < ${nEnsBMembers} ) then
+  if ( $member < ${ensBNMembers} ) then
     set adate = ${adate}\\
   endif
 cat >>! ${ensbsed}SEDF.yaml << EOF
-      - filename: ${ensBDir}/${prevValidDate}${memDir}/${FCFilePrefix}.${fileDate}.nc\
+      - filename: ${ensBDir}/${prevValidDate}${memDir}/${ensBFilePrefix}.${fileDate}.nc\
         date: *${adate}
 EOF
 

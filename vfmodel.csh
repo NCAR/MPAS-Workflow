@@ -52,7 +52,7 @@ set other = $self_StateDir
 set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
 ln -sf ${bgFileOther} ../restart.$fileDate.nc
 
-set mainScript="writediag_modelspace.py"
+set mainScript="writediagstats_modelspace.py"
 ln -fs ${pyModelDir}/*.py ./
 ln -fs ${pyModelDir}/${mainScript} ./
 

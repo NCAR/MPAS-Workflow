@@ -32,7 +32,7 @@ setenv OutDBDir dbOut
 
 ## DAType
 #OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
-setenv DAType 3denvar
+setenv DAType eda_3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DAType" =~ *"eda"* ) then
@@ -69,7 +69,7 @@ foreach obs ($expObsList)
 end
 
 ## add unique suffix
-set ExpSuffix = "_NMEM"${nEnsDAMembers}
+set ExpSuffix = "_NMEM"${nEnsDAMembers}debug
 setenv ExpName ${ExpName}${ExpSuffix}
 
 #
@@ -221,33 +221,42 @@ setenv FIXED_INPUT           ${TOP_STATIC_DIR}/fixed_input
 
 ## deterministic input
 #GFS
-setenv GFSANA6HFC_FirstCycle /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
-setenv GFSANA6HFC_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
-#generic names
-setenv deterministicICFirstCycle ${GFSANA6HFC_FirstCycle}
+setenv GFS6hfcFORFirstCycle  /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
+#setenv GFSANA6HFC_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
 
 ## ensemble input
 #GEFS
-set GEFSANA6HFC_DIR = /glade/scratch/wuyl/test2/pandac/test_120km/EnsFC
-set GEFSANA6HFC_FirstCycle = ${GEFSANA6HFC_DIR}/2018041418
 set gefsMemFmt = "/{:02d}"
 set nGEFSMembers = 20
 
-#generic names
-setenv dynamicEnsembleB ${CyclingFCWorkDir}
-setenv fixedEnsembleB ${GEFSANA6HFC_DIR}
-setenv ensembleICFirstCycle ${GEFSANA6HFC_FirstCycle}
-setenv fixedEnsMemFmt "${gefsMemFmt}"
-setenv nFixedMembers ${nGEFSMembers}
+set GEFS6hfcFOREnsBDir = /glade/scratch/wuyl/test2/pandac/test_120km/120km_EnsFC
+set GEFS6hfcFOREnsBFilePrefix = EnsForCov
 
-if ( $nEnsDAMembers > $nFixedMembers ) then
+set GEFS6hfcFORFirstCycle = /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/120kmEnsFCFirstCycle/2018041418
+
+#deterministic DA
+setenv firstDetermFCDir ${GFS6hfcFORFirstCycle}
+setenv fixedEnsBMemFmt "${gefsMemFmt}"
+setenv fixedEnsBNMembers ${nGEFSMembers}
+setenv fixedEnsBDir ${GEFS6hfcFOREnsBDir}
+setenv fixedEnsBFilePrefix ${GEFS6hfcFOREnsBFilePrefix}
+
+#ensemble DA
+setenv firstEnsFCMemFmt "${gefsMemFmt}"
+setenv firstEnsFCNMembers ${nGEFSMembers}
+setenv firstEnsFCDir ${GEFS6hfcFORFirstCycle}
+
+if ( $nEnsDAMembers > $firstEnsFCNMembers ) then
   echo "WARNING: nEnsDAMembers must be <= nFixedMembers, changing ensemble size"
-  setenv nEnsDAMembers = ${nFixedMembers}
+  setenv nEnsDAMembers ${nFixedMembers}
 endif
+setenv dynamicEnsBMemFmt "${oopsMemFmt}"
+setenv dynamicEnsBNMembers ${nEnsDAMembers}
+setenv dynamicEnsBDir ${CyclingFCWorkDir}
+setenv dynamicEnsBFilePrefix ${FCFilePrefix}
 
-
-setenv GFSANA6HFC_OMF_DIR    ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
-setenv GFSANA_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA
+#setenv GFSANA6HFC_OMF_DIR    ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
+#setenv GFSANA_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA
 setenv GFSSST_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSSST
 
 ## MPAS-Model and MPAS-JEDI
