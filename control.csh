@@ -31,7 +31,7 @@ setenv InDBDir  dbIn
 setenv OutDBDir dbOut
 
 ## DAType
-#OPTIONS: ${omm}, omf, varbc, 3dvar, 3denvar, eda_3denvar
+#OPTIONS: ${omm}, omf, varbc, 3dvarId, 3denvar, eda_3denvar
 setenv DAType eda_3denvar
 
 setenv nEnsDAMembers 1
@@ -69,7 +69,7 @@ foreach obs ($expObsList)
 end
 
 ## add unique suffix
-set ExpSuffix = "_NMEM"${nEnsDAMembers}debug
+set ExpSuffix = "_NMEM"${nEnsDAMembers}
 setenv ExpName ${ExpName}${ExpSuffix}
 
 #
@@ -89,7 +89,7 @@ setenv diagPrefix     ydiags
 setenv updateSea 1
 
 setenv CyclingWindowHR 6                # forecast interval between CyclingDA analyses
-setenv ExtendedFCWindowHR 72            # length of verification forecasts
+setenv ExtendedFCWindowHR 6             # length of verification forecasts
 setenv ExtendedFC_DT_HR 6               # interval between OMF verification times of an individual forecast
 setenv ExtendedMeanFCTimes T00,T12      # times of the day to run extended forecast from mean analysis
 setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of extended forecasts

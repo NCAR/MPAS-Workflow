@@ -13,11 +13,11 @@ module load cylc
 module load graphviz
 
 rm -fr ${HOME}/cylc-run/${WholeExpName}
-
+echo "creating suite.rc"
 cat >! suite.rc << EOF
 #!Jinja2
 [meta]
-  title = "${PKGBASE}"
+  title = "${PKGBASE}--${WholeExpName}"
   {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
   {% set EnsDAMembers = range(1, ${nEnsDAMembers}+1, 1) %}
   {% set ExtendedFCMembers = [0] %}
@@ -26,8 +26,8 @@ cat >! suite.rc << EOF
   [[environment]]
 [scheduling]
   max active cycle points = 200
-  initial cycle point = 20180415T00
-  final cycle point   = 20180418T00
+  initial cycle point = 20180422T00
+  final cycle point   = 20180514T18
   [[dependencies]]
 ## Initial cycle point
     [[[R1]]]
@@ -37,33 +37,52 @@ cat >! suite.rc << EOF
       graph = '''
       CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => CyclingDA => CyclingEnsFC
       {% for mem in EnsDAMembers%}
-        CyclingDA => \
-          CalcOMAN{{mem}} \
-          & VerifyModelAN{{mem}}
-        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => \
-          CalcOMBG{{mem}} & VerifyModelBG{{mem}}
+        CyclingDA => VerifyModelAN{{mem}}
+        CyclingDA => CalcOMAN{{mem}}
         CalcOMAN{{mem}} => VerifyObsAN{{mem}}
+        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => VerifyModelBG{{mem}}
+        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => CalcOMBG{{mem}}
         CalcOMBG{{mem}} => VerifyObsBG{{mem}}
       {% endfor %}
       '''
-## Extended forecast from mean of analysis states
+## Extended forecast and verification from mean of analysis states
     [[[${ExtendedMeanFCTimes}]]]
       graph = '''
       CyclingDA => MeanAnalysis => ExtendedMeanFC
       {% for dt in ExtendedFCLengths%}
-        ExtendedMeanFC => CalcOMMeanFC{{dt}}hr & VerifyModelMeanFC{{dt}}hr
+        ExtendedMeanFC => VerifyModelMeanFC{{dt}}hr
+        ExtendedMeanFC => CalcOMMeanFC{{dt}}hr
         CalcOMMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
       {% endfor %}
       '''
-## Extended forecast from ensemble of analysis states
+## Extended forecast and verification from ensemble of analysis states
 #    [[[${ExtendedEnsFCTimes}]]]
 #      graph = '''
 #      CyclingDA => ExtendedEnsFC
 #      {% for mem in ExtendedFCMembers%}
 #        {% for dt in ExtendedFCLengths%}
-#          ExtendedFC{{mem}} => CalcOMEnsFC{{mem}}-{{dt}}hr & VerifyModelEnsFC{{mem}}-{{dt}}hr
+#          ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}-{{dt}}hr
+#          ExtendedFC{{mem}} => CalcOMEnsFC{{mem}}-{{dt}}hr
 #          CalcOMEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
 #        {% endfor %}
+#      {% endfor %}
+#      '''
+### Verification every CyclingWindowHR
+#    [[[PT${CyclingWindowHR}H]]]
+#      graph = '''
+#      {% for mem in EnsDAMembers%}
+#        VerifyModelAN{{mem}}
+#        VerifyModelBG{{mem}}
+#        VerifyObsAN{{mem}}
+#        VerifyObsBG{{mem}}
+#      {% endfor %}
+#      '''
+### Verification at mean of analysis states
+#    [[[${ExtendedMeanFCTimes}]]]
+#      graph = '''
+#      {% for dt in ExtendedFCLengths%}
+#        VerifyModelMeanFC{{dt}}hr
+#        VerifyObsMeanFC{{dt}}hr
 #      {% endfor %}
 #      '''
 [runtime]
@@ -203,11 +222,6 @@ cat >! suite.rc << EOF
   number of cycle points = 20
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
-
-#    [[[environment]]]
-#      CYCLE_POINT = \$CYLC_TASK_CYCLE_POINT
-##      {% set CYCLEDATE = CYCLE_POINT %}
-#      {{ CYCLE_POINT | strftime('%Y%m%d%H') }}
 
 cylc register ${WholeExpName} ${mainScriptDir}
 cylc validate ${WholeExpName}
