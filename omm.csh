@@ -47,14 +47,22 @@ rm jedi.log*
 
 # Link/copy bg from other directory and ensure that MPASDiagVars are present
 # =========================================================================
-set other = $self_StateDir
 set bg = ./${bgDir}
 set an = ./${anDir}
 mkdir -p ${bg}
 mkdir -p ${an}
 
-set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
-set bgFileDA = ${bg}/${BGFilePrefix}.$fileDate.nc
+set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$fileDate.nc
+set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
+
+ln -fsv ${bgFileOther} ${bgFile}_orig
+cp ${bgFile}_orig ${bgFile}
+
+# Remove existing analysis file, then link to bg file
+# ===================================================
+set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
+rm ${anFile}
+ln -sf ${bgFile} ${anFile}
 
 set copyDiags = 0
 foreach var ({$MPASDiagVars})
@@ -64,47 +72,14 @@ foreach var ({$MPASDiagVars})
   endif 
 end
 if ( $copyDiags > 0 ) then
-  ln -fsv ${bgFileOther} ${bgFileDA}_orig
-  set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
-  cp ${bgFileDA}_orig ${bgFileDA}
-
   # Copy diagnostic variables used in DA to bg
   # ==========================================
-  ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFileDA}
-else
-  ln -fsv ${bgFileOther} ${bgFileDA}
+  set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
+  ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFile}
 endif
 
 # use the background as the meshFile (see jediPrep)
-ln -sf ${bgFileDA} ${meshFile}
-
-#set other = $self_StateDir
-#set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
-#set bgFileDA = ./${BGFilePrefix}.$fileDate.nc
-#
-#set copyDiags = 0
-#foreach var ({$MPASDiagVars})
-#  ncdump -h ${bgFileOther} | grep $var
-#  if ( $status != 0 ) then
-#    @ copyDiags++
-#  endif 
-#end
-#if ( $copyDiags > 0 ) then
-#  ln -fsv ${bgFileOther} ${bgFileDA}_orig
-#  set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
-#  cp ${bgFileDA}_orig ${bgFileDA}
-#
-#  # Copy diagnostic variables used in DA to bg
-#  # ==========================================
-#  ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFileDA}
-#else
-#  ln -fsv ${bgFileOther} ${bgFileDA}
-#endif
-
-# Remove existing analysis file, if any
-# =====================================
-set anFile = ${an}/${anStatePrefix}.${fileDate}.nc
-rm ${anFile}
+ln -sf ${bgFile} ${meshFile}
 
 # ===================
 # ===================

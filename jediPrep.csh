@@ -223,7 +223,7 @@ sed -i 's@meshFile@'${meshFile}'@g' orig_jedi0.yaml
 sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' orig_jedi0.yaml
 #sed -i 's@bgStateDir@'${CyclingDAInDir}'@g' orig_jedi0.yaml
 sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' orig_jedi0.yaml
-sed -i 's@anStatePrefix@'${anStatePrefix}'@g' orig_jedi0.yaml
+sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' orig_jedi0.yaml
 #sed -i 's@anStateDir@'${CyclingDAOutDir}'@g' orig_jedi0.yaml
 sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' orig_jedi0.yaml
 

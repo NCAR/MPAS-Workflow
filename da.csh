@@ -37,8 +37,19 @@ while ( $member <= ${nEnsDAMembers} )
   mkdir -p ${an}
 
   set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
-  set bgFileDA = ${bg}/${BGFilePrefix}.$fileDate.nc
+  set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
+  ln -fsv ${bgFileOther} ${bgFile}_orig
+  cp ${bgFile}_orig ${bgFile}
+
+  # Remove existing analysis file, then link to bg file
+  # ===================================================
+  set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
+  rm ${anFile}
+  ln -sf ${bgFile} ${anFile}
+
+  # Copy diagnostic variables used in DA to bg (if needed)
+  # ======================================================
   set copyDiags = 0
   foreach var ({$MPASDiagVars})
     ncdump -h ${bgFileOther} | grep $var
@@ -47,26 +58,15 @@ while ( $member <= ${nEnsDAMembers} )
     endif 
   end
   if ( $copyDiags > 0 ) then
-    ln -fsv ${bgFileOther} ${bgFileDA}_orig
     set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
-    cp ${bgFileDA}_orig ${bgFileDA}
-
-    # Copy diagnostic variables used in DA to bg
-    # ==========================================
-    ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFileDA}
-  else
-    ln -fsv ${bgFileOther} ${bgFileDA}
+    ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFile}
   endif
-
-  # Remove existing analysis file, if any
-  # =====================================
-  rm ${an}/${anStatePrefix}.${fileDate}.nc
 
   @ member++
 end
 
 # use one of the backgrounds as the meshFile (see jediPrep)
-ln -sf ${bgFileDA} ${meshFile}
+ln -sf ${bgFile} ${meshFile}
 
 
 # ===================
@@ -93,44 +93,44 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-## add hydrometeors to update variables (if needed)
-set UpdateHydrometeors = 0
-foreach obs ($DAObsList)
-  ## determine if hydrometeor analysis variables are needed
-  if ( "$obs" =~ "all"* ) then
-    set UpdateHydrometeors = 1
-  endif
-end
-set MPASANVars = $MPASStandardANVars
-if ( $UpdateHydrometeors == 1 ) then
-  foreach hydro ($MPASHydroANVars)
-    set MPASANVars = $MPASANVars,$hydro
-  end
-endif
-
+### add hydrometeors to update variables (if needed)
+#set UpdateHydrometeors = 0
+#foreach obs ($DAObsList)
+#  ## determine if hydrometeor analysis variables are needed
+#  if ( "$obs" =~ "all"* ) then
+#    set UpdateHydrometeors = 1
+#  endif
+#end
+#set MPASANVars = $MPASStandardANVars
+#if ( $UpdateHydrometeors == 1 ) then
+#  foreach hydro ($MPASHydroANVars)
+#    set MPASANVars = $MPASANVars,$hydro
+#  end
+#endif
 #
-# Update analyzed variables:
-# =============================================
-#TODO: do this in a separate post-processing script
-#      either in parallel or using only single processor
-#      instead of full set of job processors
-set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set bg = $CyclingDAInDirs[$member]
-  set an = $CyclingDAOutDirs[$member]
-
-  ## copy background to analysis
-  set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
-  set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
-  cp ${bgFile} ${anFile}
-
-  ## replace ANVars with output analysis values
-  set anFileDA = ${an}/${anStatePrefix}.$fileDate.nc
-  ncks -A -v ${MPASANVars} ${anFileDA} ${anFile}
-  rm ${anFileDA}
-
-  @ member++
-end
+##
+## Update analyzed variables:
+## =============================================
+##TODO: do this in a separate post-processing script
+##      either in parallel or using only single processor
+##      instead of full set of job processors
+#set member = 1
+#while ( $member <= ${nEnsDAMembers} )
+#  set bg = $CyclingDAInDirs[$member]
+#  set an = $CyclingDAOutDirs[$member]
+#
+#  ## copy background to analysis
+#  set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
+#  set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
+#  cp ${bgFile} ${anFile}
+#
+#  ## replace ANVars with output analysis values
+#  set anFileDA = ${an}/${anStatePrefix}.$fileDate.nc
+#  ncks -A -v ${MPASANVars} ${anFileDA} ${anFile}
+#  rm ${anFileDA}
+#
+#  @ member++
+#end
 
 date
 
