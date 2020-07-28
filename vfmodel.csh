@@ -52,22 +52,21 @@ set other = $self_StateDir
 set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
 ln -sf ${bgFileOther} ../restart.$fileDate.nc
 
-set mainScript="writediagstats_modelspace.py"
 ln -fs ${pyModelDir}/*.py ./
-ln -fs ${pyModelDir}/${mainScript} ./
 
-set success = 1
-while ( $success != 0 )
-  mv diags.log diags.log_LAST
+foreach mainScript (writediag_modelspace writediagstats_modelspace)
+  ln -fs ${pyModelDir}/${mainScript}.py ./
 
-  python ${mainScript} "${thisValidDate}" >& diags.log
-
-  set success = $?
-
-  if ( $success != 0 ) then
-    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh
-    sleep 3
-  endif
+  set success = 1
+  while ( $success != 0 )
+    mv log.$mainScript log.${mainScript}_LAST
+    python ${mainScript}.py "${thisValidDate}" >& log.$mainScript
+    set success = $?
+    if ( $success != 0 ) then
+      source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh
+      sleep 3
+    endif
+  end
 end
 
 cd -

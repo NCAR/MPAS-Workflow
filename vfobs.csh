@@ -44,16 +44,16 @@ module load python/3.7.5
 mkdir -p ${self_WorkDir}/diagnostic_stats/obs
 cd ${self_WorkDir}/diagnostic_stats/obs
 
-set mainScript="writediagstats_obsspace.py"
+set mainScript="writediagstats_obsspace"
 ln -fs ${pyObsDir}/*.py ./
-ln -fs ${pyObsDir}/${mainScript} ./
+ln -fs ${pyObsDir}/${mainScript}.py ./
 set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 
 set success = 1
 while ( $success != 0 )
-  mv diags.log diags.log_LAST
+  mv log.${mainScript} log.${mainScript}_LAST
 
-  python ${mainScript} -n ${NUMPROC} -p ../../${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} >& diags.log
+  python ${mainScript}.py -n ${NUMPROC} -p ../../${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} >& log.${mainScript}
 
   set success = $?
 
