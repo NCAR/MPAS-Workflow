@@ -363,12 +363,13 @@ end
 #
 # job submission settings
 # =============================================
-## StandardAccountNumber
+## *AccountNumber
 # OPTIONS: NMMM0015, NMMM0043
 setenv StandardAccountNumber NMMM0043
-
 setenv CYAccountNumber ${StandardAccountNumber}
-setenv CYQueueName regular
-
 setenv VFAccountNumber ${StandardAccountNumber}
+
+## *QueueName
+# OPTIONS: economy, regular, premium
+setenv CYQueueName premium
 setenv VFQueueName economy
