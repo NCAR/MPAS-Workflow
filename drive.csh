@@ -26,8 +26,8 @@ cat >! suite.rc << EOF
   [[environment]]
 [scheduling]
   max active cycle points = 200
-  initial cycle point = 20180422T00
-  final cycle point   = 20180514T18
+  initial cycle point = 20180415T00
+  final cycle point   = 20180426T00
   [[dependencies]]
 ## Initial cycle point
     [[[R1]]]
@@ -86,14 +86,13 @@ cat >! suite.rc << EOF
 #      {% endfor %}
 #      '''
 [runtime]
+#Base components
   [[root]] # suite defaults
     pre-script = "cd  \$origin/; \$myPreScript"
     [[[environment]]]
       origin = ${mainScriptDir}
       myPreScript = ""
-#Base components
 ## PBS
-  [[JobBase]]
     [[[job]]]
       batch system = pbs
       execution time limit = PT60M
@@ -106,9 +105,9 @@ cat >! suite.rc << EOF
       -k = eod
       -l = select=1:ncpus=36:mpiprocs=36
 ## SLURM
-#  [[JobBase]]
 #    [[[job]]]
 #      batch system = slurm
+#      execution time limit = PT60M
 #    [[[directives]]]
 #      --account = ${CYAccountNumber}
 #      --mem = 45G
@@ -116,7 +115,6 @@ cat >! suite.rc << EOF
 #      --cpus-per-task = 36
 #      --partition = dav
   [[VerifyBase]]
-    inherit = JobBase
     [[[job]]]
       execution time limit = PT15M
     [[[directives]]]
@@ -124,7 +122,6 @@ cat >! suite.rc << EOF
       -A = ${VFAccountNumber}
       -l = select=1:ncpus=${VerifyObsPEPerNode}:mpiprocs=${VerifyObsPEPerNode}
   [[OMMBase]]
-    inherit = JobBase
     [[[job]]]
       execution time limit = PT${CalcOMMJobMinutes}M
     [[[directives]]]
@@ -133,16 +130,14 @@ cat >! suite.rc << EOF
       -l = select=${CalcOMMNodes}:ncpus=${CalcOMMPEPerNode}:mpiprocs=${CalcOMMPEPerNode}:mem=109GB
 #Cycling components
   [[CyclingDA]]
-    inherit = JobBase
     script = \$origin/CyclingDA.csh
     [[[environment]]]
       myPreScript = \$origin/jediPrepCyclingDA.csh "0" "0" "DA"
     [[[job]]]
       execution time limit = PT${CyclingDAJobMinutes}M
     [[[directives]]]
-      -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=109GB
+      -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
   [[CyclingEnsFC]]
-    inherit = JobBase
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
     [[[directives]]]
@@ -168,14 +163,12 @@ cat >! suite.rc << EOF
   {% endfor %}
 {% endfor %}
   [[ExtendedFCBase]]
-    inherit = JobBase
     [[[job]]]
       execution time limit = PT${ExtendedFCJobMinutes}M
     [[[directives]]]
       -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
 ## Extended mean analysis, forecast, and verification
   [[MeanAnalysis]]
-    inherit = JobBase
     script = \$origin/MeanAnalysis.csh
     [[[job]]]
       execution time limit = PT5M

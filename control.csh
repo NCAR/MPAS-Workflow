@@ -120,6 +120,7 @@ setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 18
 
 setenv CyclingDAJobMinutes 25
+setenv CyclingDAMemory 45
 if ( "$DAType" =~ *"eda"* || "$DAType" == "${omm}") then
   setenv CyclingDANodesPerMember ${CalcOMMNodes}
   setenv CyclingDAPEPerNode      ${CalcOMMPEPerNode}
@@ -147,6 +148,7 @@ endif
 #setenv CalcOMMPEPerNode 16
 
 #setenv CyclingDAJobMinutes 25
+#setenv CyclingDAMemory 109
 #if ( "$DAType" =~ *"eda"* ) then
 #  setenv CyclingDANodesPerMember ${CalcOMMNodes}
 #  setenv CyclingDAPEPerNode      ${CalcOMMPEPerNode}
