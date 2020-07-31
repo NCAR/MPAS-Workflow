@@ -175,6 +175,7 @@ foreach obs ($self_ObsList)
   endif
 
   ## determine if hydrometeor variables will be analyzed
+  # TODO: instead should grep for Clouds in ${CONFIGDIR}/${SUBYAML}.yaml
   if ( "$obs" =~ "all"* ) then
     set AnalyzeHydrometeors = 1
   endif
@@ -230,8 +231,8 @@ sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' orig_jedi0.yaml
 
 ## revise full line configs
 cat >! fulllineSEDF.yaml << EOF
-  /window_begin: /c\
-  window_begin: '${halfprevConfDate}'
+  /window begin: /c\
+  window begin: '${halfprevConfDate}'
 EOF
 
 sed -f fulllineSEDF.yaml orig_jedi0.yaml >! orig_jedi1.yaml
@@ -273,7 +274,7 @@ cat >>! ${analysissed}SEDF.yaml << EOF
 EOF
 
 cat >>! ${modelsed}SEDF.yaml << EOF
-  - $var
+    - $var
 EOF
 
   @ ivar++
@@ -311,13 +312,15 @@ EOF
 set member = 1
 while ( $member <= ${ensBNMembers} )
   set memDir = `${memberDir} ens $member "${ensBMemFmt}"`
-  set adate = adate
+  set incvars = incvars
   if ( $member < ${ensBNMembers} ) then
-    set adate = ${adate}\\
+    set incvars = ${incvars}\\
   endif
+# TODO: this indentation only works for pure EnVar, not Hybrid EnVar
 cat >>! ${ensbsed}SEDF.yaml << EOF
-      - filename: ${ensBDir}/${prevValidDate}${memDir}/${ensBFilePrefix}.${fileDate}.nc\
-        date: *${adate}
+    - filename: ${ensBDir}/${prevValidDate}${memDir}/${ensBFilePrefix}.${fileDate}.nc\
+      date: *adate\
+      state variables: *${incvars}
 EOF
 
   @ member++

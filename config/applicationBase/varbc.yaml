@@ -1,28 +1,21 @@
-resolution:
-  gridfname: meshFile
-model:
-  name: MPAS
-  tstep: PT6H
-  variables:
-ModelVariables
-minimizer:
-  algorithm: DRIPCG
 output:
-  filename: "./anStatePrefix.$Y-$M-$D_$h.$m.$s.nc"
+  filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
 variational:
-  iteration:
-  - resolution:
+  minimizer:
+    algorithm: DRIPCG
+  iterations:
+  - geometry:
       gridfname: meshFile
-    linearmodel:
-      varchange: Identity
-      version: MPASIdTLM
+    linear model:
+      name: MPASIdTLM
+      variable change: Identity
       tstep: PT0H
       trajectory:
         tstep: PT0H
-      variables: &incvars
+      tlm variables: &incvars
 AnalysisVariables
     ninner: '15'
-    gradient_norm_reduction: 1e-10
+    gradient norm reduction: 1e-10
     test: 'on'
     diagnostics:
       departures: depbg
@@ -30,20 +23,24 @@ final:
   diagnostics:
     # no need to write out analysis departures
     departures_: depan
-cost_function:
-  cost_type: 3D-Var
-  window_begin: '2018-04-14T21:00:00Z'
-  window_length: PT6H
-  variables: *incvars
-  varchange: Identity
-  Jb:
-    Background:
-      state:
-      - variables: *incvars
-        filename: "./restart.2018-04-15_00.00.00.nc"
-        date: '2018-04-15T00:00:00Z'
-    Covariance:
-      covariance: MPASstatic
-      date: '2018-04-15T00:00:00Z'
-  Jo:
-    ObsTypes:
+cost function:
+  cost type: 3D-Var
+  window begin: '2018-04-14T21:00:00Z'
+  window length: PT6H
+  geometry:
+    gridfname: meshFile
+  model:
+    name: MPAS
+    tstep: PT6H
+    model variables:
+ModelVariables
+  analysis variables: *incvars
+  varable change: Identity
+  background:
+    state variables: *incvars
+    filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
+    date: &adate '2018-04-15T00:00:00Z'
+  background error:
+    covariance model: MPASstatic
+    date: *adate
+  observations:

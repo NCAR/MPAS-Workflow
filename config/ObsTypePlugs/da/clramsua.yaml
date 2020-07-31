@@ -1,190 +1,184 @@
-    - ObsSpace:
-        name: amsua_n19
-        ObsDataIn:
-          obsfile: InDBDir/amsua_n19_obs_2018041500.nc4
-        ObsDataOut:
-          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_n19.nc4
-        simulate:
-          variables: [brightness_temperature]
-          channels: 5-7,9
-      Covariance:
-        covariance: diagonal
-      ObsFilters:
-      - Filter: PreQC
-        maxvalue: 0
-        apply_at_iterations: 0
-      - Filter: Background Check
-        threshold: 3
-#      - Filter: Thinning
-#        amount: RADTHINAMOUNT
-#        random_seed: 0
-#        apply_at_iterations: 0
-#      - Filter: Gaussian_Thinning
-#        horizontal_mesh: RADTHINDISTANCE #km
-#        apply_at_iterations: 0
-#      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n19.nc4
-      ObsOperator: &crtmdry
-        name: CRTM
-        Absorbers: [H2O,O3]
-        LinearObsOperator:
-          Absorbers: [H2O]
-        ObsOptions: &crtmopts
-          Sensor_ID: amsua_n19
-          EndianType: little_endian
-          CoefficientPath: CRTMTABLES
-    - ObsSpace:
-        name: amsua_n15
-        ObsDataIn:
-          obsfile: InDBDir/amsua_n15_obs_2018041500.nc4
-        ObsDataOut:
-          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_n15.nc4
-        simulate:
-          variables: [brightness_temperature]
-          channels: 5-9
-      Covariance:
-        covariance: diagonal
-      ObsFilters:
-      - Filter: PreQC
-        maxvalue: 0
-        apply_at_iterations: 0
-      - Filter: Background Check
-        threshold: 3
-#      - Filter: Thinning
-#        amount: RADTHINAMOUNT
-#        random_seed: 0
-#        apply_at_iterations: 0
-#      - Filter: Gaussian_Thinning
-#        horizontal_mesh: RADTHINDISTANCE #km
-#        apply_at_iterations: 0
-#      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n15.nc4
-      ObsOperator:
-        <<: *crtmdry
-        ObsOptions:
-          <<: *crtmopts
-          Sensor_ID: amsua_n15
-    - ObsSpace:
-        name: amsua_n18
-        ObsDataIn:
-          obsfile: InDBDir/amsua_n18_obs_2018041500.nc4
-        ObsDataOut:
-          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_n18.nc4
-        simulate:
-          variables: [brightness_temperature]
-          channels: 5-9
-      Covariance:
-        covariance: diagonal
-      ObsFilters:
-      - Filter: PreQC
-        maxvalue: 0
-        apply_at_iterations: 0
-      - Filter: Background Check
-        threshold: 3
-#      - Filter: Thinning
-#        amount: RADTHINAMOUNT
-#        random_seed: 0
-#        apply_at_iterations: 0
-#      - Filter: Gaussian_Thinning
-#        horizontal_mesh: RADTHINDISTANCE #km
-#        apply_at_iterations: 0
-#      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n18.nc4
-      ObsOperator:
-        <<: *crtmdry
-        ObsOptions:
-          <<: *crtmopts
-          Sensor_ID: amsua_n18
-    - ObsSpace:
-        name: amsua_metop-a
-        ObsDataIn:
-          obsfile: InDBDir/amsua_metop-a_obs_2018041500.nc4
-        ObsDataOut:
-          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_metop-a.nc4
-        simulate:
-          variables: [brightness_temperature]
-          channels: 5,6,9
-      Covariance:
-        covariance: diagonal
-      ObsFilters:
-      - Filter: PreQC
-        maxvalue: 0
-        apply_at_iterations: 0
-      - Filter: Background Check
-        threshold: 3
-#      - Filter: Thinning
-#        amount: RADTHINAMOUNT
-#        random_seed: 0
-#        apply_at_iterations: 0
-#      - Filter: Gaussian_Thinning
-#        horizontal_mesh: RADTHINDISTANCE #km
-#        apply_at_iterations: 0
-#      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-a.nc4
-      ObsOperator:
-        <<: *crtmdry
-        ObsOptions:
-          <<: *crtmopts
-          Sensor_ID: amsua_metop-a
-#    - ObsSpace:
-#        name: amsua_metop-b
-#        ObsDataIn:
-#          obsfile: InDBDir/amsua_metop-b_obs_2018041500.nc4
-#        ObsDataOut:
-#          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_metop-b.nc4
-#        simulate:
-#          variables: [brightness_temperature]
-#          channels: 8,9
-#      Covariance:
-#        covariance: diagonal
-#      ObsFilters:
-#      - Filter: PreQC
-#        maxvalue: 0
-#        apply_at_iterations: 0
-#      - Filter: Background Check
-#        threshold: 3
-#      - Filter: Thinning
-#        amount: RADTHINAMOUNT
-#        random_seed: 0
-#        apply_at_iterations: 0
-#      - Filter: Gaussian_Thinning
-#        horizontal_mesh: RADTHINDISTANCE #km
-#        apply_at_iterations: 0
-#      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-b.nc4
-#      ObsOperator:
-#        <<: *crtmdry
-#        ObsOptions:
-#          <<: *crtmopts
-#          Sensor_ID: amsua_metop-b
-    - ObsSpace:
-        name: amsua_aqua
-        ObsDataIn:
-          obsfile: InDBDir/amsua_aqua_obs_2018041500.nc4
-        ObsDataOut:
-          obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_aqua.nc4
-        simulate:
-          variables: [brightness_temperature]
-          channels: 8,9
-      Covariance:
-        covariance: diagonal
-      ObsFilters:
-      - Filter: PreQC
-        maxvalue: 0
-        apply_at_iterations: 0
-      - Filter: Background Check
-        threshold: 3
-#      - Filter: Thinning
-#        amount: RADTHINAMOUNT
-#        random_seed: 0
-#        apply_at_iterations: 0
-#      - Filter: Gaussian_Thinning
-#        horizontal_mesh: RADTHINDISTANCE #km
-#        apply_at_iterations: 0
-#      - Filter: GOMsaver
-#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_aqua.nc4
-      ObsOperator:
-        <<: *crtmdry
-        ObsOptions:
-          <<: *crtmopts
-          Sensor_ID: amsua_aqua
+  - obs space:
+      name: amsua_n19
+      obsdatain:
+        obsfile: InDBDir/amsua_n19_obs_2018041500.nc4
+      obsdataout:
+        obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_n19.nc4
+      simulated variables: [brightness_temperature]
+      channels: 5-7,9
+    obs error:
+      covariance model: diagonal
+    obs filters:
+    - filter: PreQC
+      maxvalue: 0
+      apply at iterations: 0
+    - filter: Background Check
+      threshold: 3
+#    - filter: Thinning
+#      amount: RADTHINAMOUNT
+#      random_seed: 0
+#      apply at iterations: 0
+#    - filter: Gaussian_Thinning
+#      horizontal_mesh: RADTHINDISTANCE #km
+#      apply at iterations: 0
+#    - filter: GOMsaver
+#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n19.nc4
+    obs operator: &crtmdry
+      name: CRTM
+      Absorbers: [H2O,O3]
+      linear obs operator:
+        Absorbers: [H2O]
+      obs options: &crtmopts
+        Sensor_ID: amsua_n19
+        EndianType: little_endian
+        CoefficientPath: CRTMTABLES
+  - obs space:
+      name: amsua_n15
+      obsdatain:
+        obsfile: InDBDir/amsua_n15_obs_2018041500.nc4
+      obsdataout:
+        obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_n15.nc4
+      simulated variables: [brightness_temperature]
+      channels: 5-9
+    obs error:
+      covariance model: diagonal
+    obs filters:
+    - filter: PreQC
+      maxvalue: 0
+      apply at iterations: 0
+    - filter: Background Check
+      threshold: 3
+#    - filter: Thinning
+#      amount: RADTHINAMOUNT
+#      random_seed: 0
+#      apply at iterations: 0
+#    - filter: Gaussian_Thinning
+#      horizontal_mesh: RADTHINDISTANCE #km
+#      apply at iterations: 0
+#    - filter: GOMsaver
+#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n15.nc4
+    obs operator:
+      <<: *crtmdry
+      obs options:
+        <<: *crtmopts
+        Sensor_ID: amsua_n15
+  - obs space:
+      name: amsua_n18
+      obsdatain:
+        obsfile: InDBDir/amsua_n18_obs_2018041500.nc4
+      obsdataout:
+        obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_n18.nc4
+      simulated variables: [brightness_temperature]
+      channels: 5-9
+    obs error:
+      covariance model: diagonal
+    obs filters:
+    - filter: PreQC
+      maxvalue: 0
+      apply at iterations: 0
+    - filter: Background Check
+      threshold: 3
+#    - filter: Thinning
+#      amount: RADTHINAMOUNT
+#      random_seed: 0
+#      apply at iterations: 0
+#    - filter: Gaussian_Thinning
+#      horizontal_mesh: RADTHINDISTANCE #km
+#      apply at iterations: 0
+#    - filter: GOMsaver
+#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n18.nc4
+    obs operator:
+      <<: *crtmdry
+      obs options:
+        <<: *crtmopts
+        Sensor_ID: amsua_n18
+  - obs space:
+      name: amsua_metop-a
+      obsdatain:
+        obsfile: InDBDir/amsua_metop-a_obs_2018041500.nc4
+      obsdataout:
+        obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_metop-a.nc4
+      simulated variables: [brightness_temperature]
+      channels: 5,6,9
+    obs error:
+      covariance model: diagonal
+    obs filters:
+    - filter: PreQC
+      maxvalue: 0
+      apply at iterations: 0
+    - filter: Background Check
+      threshold: 3
+#    - filter: Thinning
+#      amount: RADTHINAMOUNT
+#      random_seed: 0
+#      apply at iterations: 0
+#    - filter: Gaussian_Thinning
+#      horizontal_mesh: RADTHINDISTANCE #km
+#      apply at iterations: 0
+#    - filter: GOMsaver
+#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-a.nc4
+    obs operator:
+      <<: *crtmdry
+      obs options:
+        <<: *crtmopts
+        Sensor_ID: amsua_metop-a
+#  - obs space:
+#      name: amsua_metop-b
+#      obsdatain:
+#        obsfile: InDBDir/amsua_metop-b_obs_2018041500.nc4
+#      obsdataout:
+#        obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_metop-b.nc4
+#      simulated variables: [brightness_temperature]
+#      channels: 8,9
+#    obs error:
+#      covariance model: diagonal
+#    obs filters:
+#    - filter: PreQC
+#      maxvalue: 0
+#      apply at iterations: 0
+#    - filter: Background Check
+#      threshold: 3
+#    - filter: Thinning
+#      amount: RADTHINAMOUNT
+#      random_seed: 0
+#      apply at iterations: 0
+#    - filter: Gaussian_Thinning
+#      horizontal_mesh: RADTHINDISTANCE #km
+#      apply at iterations: 0
+#    - filter: GOMsaver
+#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-b.nc4
+#    obs operator:
+#      <<: *crtmdry
+#      obs options:
+#        <<: *crtmopts
+#        Sensor_ID: amsua_metop-b
+  - obs space:
+      name: amsua_aqua
+      obsdatain:
+        obsfile: InDBDir/amsua_aqua_obs_2018041500.nc4
+      obsdataout:
+        obsfile: OutDBDirOOPSMemberDir/obsPrefix_DAMode_amsua_aqua.nc4
+      simulated variables: [brightness_temperature]
+      channels: 8,9
+    obs error:
+      covariance model: diagonal
+    obs filters:
+    - filter: PreQC
+      maxvalue: 0
+      apply at iterations: 0
+    - filter: Background Check
+      threshold: 3
+#    - filter: Thinning
+#      amount: RADTHINAMOUNT
+#      random_seed: 0
+#      apply at iterations: 0
+#    - filter: Gaussian_Thinning
+#      horizontal_mesh: RADTHINDISTANCE #km
+#      apply at iterations: 0
+#    - filter: GOMsaver
+#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_aqua.nc4
+    obs operator:
+      <<: *crtmdry
+      obs options:
+        <<: *crtmopts
+        Sensor_ID: amsua_aqua

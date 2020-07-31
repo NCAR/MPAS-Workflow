@@ -1,184 +1,178 @@
-    - ObsSpace:
-        name: amsua_n19
-        ObsDataIn:
-          obsfile: InDBDir/amsua_n19_obs_2018041500.nc4
-        ObsDataOut:
-          obsfile: OutDBDir/obsPrefix_DAMode_amsua_n19.nc4
-        simulate:
-          variables: [brightness_temperature]
-          channels: &clramsua_channels 5-14
-      Covariance:
-        covariance: diagonal
-      ObsFilters:
-      - Filter: Domain Check
-        filter variables:
-        - name: brightness_temperature
-          channels: *clramsua_channels
-        where:
-        - variable:
-            name: water_area_fraction@GeoVaLs
-          minvalue: 1.0
-#      - Filter: PreQC
-#        maxvalue: 0
-#        apply_at_iterations: 0
-      - Filter: GOMsaver
-        filename: OutDBDir/geoPrefix_DAMode_amsua_n19.nc4
-      ObsOperator: &crtmdry
-        name: CRTM
-        Absorbers: [H2O,O3]
-        LinearObsOperator:
-          Absorbers: [H2O]
-        ObsOptions: &clramsuacrtmopts
-          Sensor_ID: amsua_n19
-          EndianType: little_endian
-          CoefficientPath: CRTMTABLES
-    - ObsSpace:
-        name: amsua_n15
-        ObsDataIn:
-          obsfile: InDBDir/amsua_n15_obs_2018041500.nc4
-        ObsDataOut:
-          obsfile: OutDBDir/obsPrefix_DAMode_amsua_n15.nc4
-        simulate:
-          variables: [brightness_temperature]
-          channels: *clramsua_channels
-      Covariance:
-        covariance: diagonal
-      ObsFilters:
-      - Filter: Domain Check
-        filter variables:
-        - name: brightness_temperature
-          channels: *clramsua_channels
-        where:
-        - variable:
-            name: water_area_fraction@GeoVaLs
-          minvalue: 1.0
-#      - Filter: PreQC
-#        maxvalue: 0
-#        apply_at_iterations: 0
-      - Filter: GOMsaver
-        filename: OutDBDir/geoPrefix_DAMode_amsua_n15.nc4
-      ObsOperator:
-        <<: *crtmdry
-        ObsOptions:
-          <<: *clramsuacrtmopts
-          Sensor_ID: amsua_n15
-    - ObsSpace:
-        name: amsua_n18
-        ObsDataIn:
-          obsfile: InDBDir/amsua_n18_obs_2018041500.nc4
-        ObsDataOut:
-          obsfile: OutDBDir/obsPrefix_DAMode_amsua_n18.nc4
-        simulate:
-          variables: [brightness_temperature]
-          channels: *clramsua_channels
-      Covariance:
-        covariance: diagonal
-      ObsFilters:
-      - Filter: Domain Check
-        filter variables:
-        - name: brightness_temperature
-          channels: *clramsua_channels
-        where:
-        - variable:
-            name: water_area_fraction@GeoVaLs
-          minvalue: 1.0
-#      - Filter: PreQC
-#        maxvalue: 0
-#        apply_at_iterations: 0
-      - Filter: GOMsaver
-        filename: OutDBDir/geoPrefix_DAMode_amsua_n18.nc4
-      ObsOperator:
-        <<: *crtmdry
-        ObsOptions:
-          <<: *clramsuacrtmopts
-          Sensor_ID: amsua_n18
-    - ObsSpace:
-        name: amsua_metop-a
-        ObsDataIn:
-          obsfile: InDBDir/amsua_metop-a_obs_2018041500.nc4
-        ObsDataOut:
-          obsfile: OutDBDir/obsPrefix_DAMode_amsua_metop-a.nc4
-        simulate:
-          variables: [brightness_temperature]
-          channels: *clramsua_channels
-      Covariance:
-        covariance: diagonal
-      ObsFilters:
-      - Filter: Domain Check
-        filter variables:
-        - name: brightness_temperature
-          channels: *clramsua_channels
-        where:
-        - variable:
-            name: water_area_fraction@GeoVaLs
-          minvalue: 1.0
-#      - Filter: PreQC
-#        maxvalue: 0
-#        apply_at_iterations: 0
-      - Filter: GOMsaver
-        filename: OutDBDir/geoPrefix_DAMode_amsua_metop-a.nc4
-      ObsOperator:
-        <<: *crtmdry
-        ObsOptions:
-          <<: *clramsuacrtmopts
-          Sensor_ID: amsua_metop-a
-    - ObsSpace:
-        name: amsua_metop-b
-        ObsDataIn:
-          obsfile: InDBDir/amsua_metop-b_obs_2018041500.nc4
-        ObsDataOut:
-          obsfile: OutDBDir/obsPrefix_DAMode_amsua_metop-b.nc4
-        simulate:
-          variables: [brightness_temperature]
-          channels: *clramsua_channels
-      Covariance:
-        covariance: diagonal
-      ObsFilters:
-      - Filter: Domain Check
-        filter variables:
-        - name: brightness_temperature
-          channels: *clramsua_channels
-        where:
-        - variable:
-            name: water_area_fraction@GeoVaLs
-          minvalue: 1.0
-#      - Filter: PreQC
-#        maxvalue: 0
-#        apply_at_iterations: 0
-      - Filter: GOMsaver
-        filename: OutDBDir/geoPrefix_DAMode_amsua_metop-b.nc4
-      ObsOperator:
-        <<: *crtmdry
-        ObsOptions:
-          <<: *clramsuacrtmopts
-          Sensor_ID: amsua_metop-b
-    - ObsSpace:
-        name: amsua_aqua
-        ObsDataIn:
-          obsfile: InDBDir/amsua_aqua_obs_2018041500.nc4
-        ObsDataOut:
-          obsfile: OutDBDir/obsPrefix_DAMode_amsua_aqua.nc4
-        simulate:
-          variables: [brightness_temperature]
-          channels: *clramsua_channels
-      Covariance:
-        covariance: diagonal
-      ObsFilters:
-      - Filter: Domain Check
-        filter variables:
-        - name: brightness_temperature
-          channels: *clramsua_channels
-        where:
-        - variable:
-            name: water_area_fraction@GeoVaLs
-          minvalue: 1.0
-#      - Filter: PreQC
-#        maxvalue: 0
-#        apply_at_iterations: 0
-      - Filter: GOMsaver
-        filename: OutDBDir/geoPrefix_DAMode_amsua_aqua.nc4
-      ObsOperator:
-        <<: *crtmdry
-        ObsOptions:
-          <<: *clramsuacrtmopts
-          Sensor_ID: amsua_aqua
+  - obs space:
+      name: amsua_n19
+      obsdatain:
+        obsfile: InDBDir/amsua_n19_obs_2018041500.nc4
+      obsdataout:
+        obsfile: OutDBDir/obsPrefix_DAMode_amsua_n19.nc4
+      simulated variables: [brightness_temperature]
+      channels: &clramsua_channels 5-14
+    obs error:
+      covariance model: diagonal
+    obs filters:
+    - filter: Domain Check
+      filter variables:
+      - name: brightness_temperature
+        channels: *clramsua_channels
+      where:
+      - variable:
+          name: water_area_fraction@GeoVaLs
+        minvalue: 1.0
+#    - filter: PreQC
+#      maxvalue: 0
+#      apply at iterations: 0
+    - filter: GOMsaver
+      filename: OutDBDir/geoPrefix_DAMode_amsua_n19.nc4
+    obs operator: &crtmdry
+      name: CRTM
+      Absorbers: [H2O,O3]
+      linear obs operator:
+        Absorbers: [H2O]
+      obs options: &clramsuacrtmopts
+        Sensor_ID: amsua_n19
+        EndianType: little_endian
+        CoefficientPath: CRTMTABLES
+  - obs space:
+      name: amsua_n15
+      obsdatain:
+        obsfile: InDBDir/amsua_n15_obs_2018041500.nc4
+      obsdataout:
+        obsfile: OutDBDir/obsPrefix_DAMode_amsua_n15.nc4
+      simulated variables: [brightness_temperature]
+      channels: *clramsua_channels
+    obs error:
+      covariance model: diagonal
+    obs filters:
+    - filter: Domain Check
+      filter variables:
+      - name: brightness_temperature
+        channels: *clramsua_channels
+      where:
+      - variable:
+          name: water_area_fraction@GeoVaLs
+        minvalue: 1.0
+#    - filter: PreQC
+#      maxvalue: 0
+#      apply at iterations: 0
+    - filter: GOMsaver
+      filename: OutDBDir/geoPrefix_DAMode_amsua_n15.nc4
+    obs operator:
+      <<: *crtmdry
+      obs options:
+        <<: *clramsuacrtmopts
+        Sensor_ID: amsua_n15
+  - obs space:
+      name: amsua_n18
+      obsdatain:
+        obsfile: InDBDir/amsua_n18_obs_2018041500.nc4
+      obsdataout:
+        obsfile: OutDBDir/obsPrefix_DAMode_amsua_n18.nc4
+      simulated variables: [brightness_temperature]
+      channels: *clramsua_channels
+    obs error:
+      covariance model: diagonal
+    obs filters:
+    - filter: Domain Check
+      filter variables:
+      - name: brightness_temperature
+        channels: *clramsua_channels
+      where:
+      - variable:
+          name: water_area_fraction@GeoVaLs
+        minvalue: 1.0
+#    - filter: PreQC
+#      maxvalue: 0
+#      apply at iterations: 0
+    - filter: GOMsaver
+      filename: OutDBDir/geoPrefix_DAMode_amsua_n18.nc4
+    obs operator:
+      <<: *crtmdry
+      obs options:
+        <<: *clramsuacrtmopts
+        Sensor_ID: amsua_n18
+  - obs space:
+      name: amsua_metop-a
+      obsdatain:
+        obsfile: InDBDir/amsua_metop-a_obs_2018041500.nc4
+      obsdataout:
+        obsfile: OutDBDir/obsPrefix_DAMode_amsua_metop-a.nc4
+      simulated variables: [brightness_temperature]
+      channels: *clramsua_channels
+    obs error:
+      covariance model: diagonal
+    obs filters:
+    - filter: Domain Check
+      filter variables:
+      - name: brightness_temperature
+        channels: *clramsua_channels
+      where:
+      - variable:
+          name: water_area_fraction@GeoVaLs
+        minvalue: 1.0
+#    - filter: PreQC
+#      maxvalue: 0
+#      apply at iterations: 0
+    - filter: GOMsaver
+      filename: OutDBDir/geoPrefix_DAMode_amsua_metop-a.nc4
+    obs operator:
+      <<: *crtmdry
+      obs options:
+        <<: *clramsuacrtmopts
+        Sensor_ID: amsua_metop-a
+  - obs space:
+      name: amsua_metop-b
+      obsdatain:
+        obsfile: InDBDir/amsua_metop-b_obs_2018041500.nc4
+      obsdataout:
+        obsfile: OutDBDir/obsPrefix_DAMode_amsua_metop-b.nc4
+      simulated variables: [brightness_temperature]
+      channels: *clramsua_channels
+    obs error:
+      covariance model: diagonal
+    obs filters:
+    - filter: Domain Check
+      filter variables:
+      - name: brightness_temperature
+        channels: *clramsua_channels
+      where:
+      - variable:
+          name: water_area_fraction@GeoVaLs
+        minvalue: 1.0
+#    - filter: PreQC
+#      maxvalue: 0
+#      apply at iterations: 0
+    - filter: GOMsaver
+      filename: OutDBDir/geoPrefix_DAMode_amsua_metop-b.nc4
+    obs operator:
+      <<: *crtmdry
+      obs options:
+        <<: *clramsuacrtmopts
+        Sensor_ID: amsua_metop-b
+  - obs space:
+      name: amsua_aqua
+      obsdatain:
+        obsfile: InDBDir/amsua_aqua_obs_2018041500.nc4
+      obsdataout:
+        obsfile: OutDBDir/obsPrefix_DAMode_amsua_aqua.nc4
+      simulated variables: [brightness_temperature]
+      channels: *clramsua_channels
+    obs error:
+      covariance model: diagonal
+    obs filters:
+    - filter: Domain Check
+      filter variables:
+      - name: brightness_temperature
+        channels: *clramsua_channels
+      where:
+      - variable:
+          name: water_area_fraction@GeoVaLs
+        minvalue: 1.0
+#    - filter: PreQC
+#      maxvalue: 0
+#      apply at iterations: 0
+    - filter: GOMsaver
+      filename: OutDBDir/geoPrefix_DAMode_amsua_aqua.nc4
+    obs operator:
+      <<: *crtmdry
+      obs options:
+        <<: *clramsuacrtmopts
+        Sensor_ID: amsua_aqua

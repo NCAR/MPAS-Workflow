@@ -1,79 +1,76 @@
-resolution:
-  gridfname: meshFile
-model:
-  name: MPAS
-  tstep: PT6H
-  variables:
-ModelVariables
-minimizer:
-  algorithm: DRIPCG
 output:
   filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
 variational:
-  iteration:
-  - resolution:
+  minimizer:
+    algorithm: DRIPCG
+  iterations:
+  - geometry:
       gridfname: meshFile
-    linearmodel:
-      varchange: Identity
-      version: MPASIdTLM
+    linear model:
+      name: MPASIdTLM
+      variable change: Identity
       tstep: PT0H
       trajectory:
         tstep: PT0H
-      variables: &incvars
+      tlm variables: &incvars
 AnalysisVariables
     ninner: '60'
-    gradient_norm_reduction: 1e-10
+    gradient norm reduction: 1e-10
     test: 'on'
     diagnostics:
       departures: depbg
-#  - resolution:
+#  - geometry:
 #      gridfname: meshFile
-#    linearmodel:
-#      varchange: Identity
-#      version: MPASIdTLM
+#    linear model:
+#      name: MPASIdTLM
+#      variable change: Identity
 #      tstep: PT0H
 #      trajectory:
 #        tstep: PT0H
-#      variables: *incvars
+#      tlm variables: *incvars
 #    ninner: '60'
-#    gradient_norm_reduction: 1e-10
+#    gradient norm reduction: 1e-10
 #    test: 'on'
 final:
   diagnostics:
     departures: depan
-cost_function:
-  cost_type: 3D-Var
-  window_begin: '2018-04-14T21:00:00Z'
-  window_length: PT6H
-  variables: *incvars
-  varchange: Identity
-  Jb:
-    Background:
-      state:
-      - variables: *incvars
-        filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
-        date: &adate '2018-04-15T00:00:00Z'
-    Covariance:
-      covariance: ensemble
-      date: *adate
-      localization:
-        localization: BUMP
-        timeslots:
-        - *adate
-        variables: *incvars
-        bump:
-          datadir: bumpLocDir
-          prefix: bumpLocPrefix
-          default_seed: 1
-          method: loc
-          strategy: common  #specific_univariate
-          new_hdiag: 0
-          new_nicas: 0
-          load_nicas: 1
-          lsqrt: 1
-          mpicom: 2
-      members:
+cost function:
+  cost type: 3D-Var
+  window begin: '2018-04-14T21:00:00Z'
+  window length: PT6H
+  geometry:
+    gridfname: meshFile
+  model:
+    name: MPAS
+    tstep: PT6H
+    model variables:
+ModelVariables
+  analysis variables: *incvars
+  varable change: Identity
+  background:
+    state variables: *incvars
+    filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
+    date: &adate '2018-04-15T00:00:00Z'
+  background error:
+    covariance model: ensemble
+    date: *adate
+    localization:
+      localization method: BUMP
+      timeslots:
+      - *adate
+      localization variables: *incvars
+      bump:
+        datadir: bumpLocDir
+        prefix: bumpLocPrefix
+        default_seed: 1
+        method: loc
+        strategy: common  #specific_univariate
+        new_hdiag: 0
+        new_nicas: 0
+        load_nicas: 1
+        lsqrt: 1
+        mpicom: 2
+    members:
 EnsembleBMembers
-      variables: *incvars
-  Jo:
-    ObsTypes:
+    variables: *incvars
+  observations:

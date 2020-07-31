@@ -42,6 +42,7 @@ endif
 ## DAObsList
 #OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
 #NOTE: the "clr" and "all" prefixes are used for clear-sky
+# TODO: instead should grep for Clouds in sub-yaml's
 #      and all-sky scenes for radiances.  The "all" prefix
 #      signals to DA and OMM jobs to include hydrometeors among
 #      the analysis variables.
