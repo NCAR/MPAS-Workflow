@@ -55,14 +55,12 @@ mkdir -p ${an}
 set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$fileDate.nc
 set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
-ln -fsv ${bgFileOther} ${bgFile}_orig
-cp ${bgFile}_orig ${bgFile}
+ln -fsv ${bgFileOther} ${bgFile}
 
 # Remove existing analysis file, then link to bg file
 # ===================================================
 set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
 rm ${anFile}
-ln -sf ${bgFile} ${anFile}
 
 set copyDiags = 0
 foreach var ({$MPASDiagVars})
