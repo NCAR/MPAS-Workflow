@@ -151,7 +151,7 @@ set AnalyzeHydrometeors = 0
 foreach obs ($self_ObsList)
   echo "Preparing YAML for ${obs} observations"
   set missing=0
-  set SUBYAML=ObsTypePlugs/${self_DAMode}/${obs}
+  set SUBYAML=ObsPlugs/${self_DAMode}/${obs}
   if ( "$obs" =~ *"abi"* ) then
     find ${InDBDir}/abi*_obs_*.nc4 -mindepth 0 -maxdepth 0
     if ($? > 0) then
