@@ -84,8 +84,8 @@ ln -sf ${bgFile} ${meshFile}
 # Run the executable:
 # ===================
 # ===================
-ln -sf ${JEDIBUILDDIR}/bin/${OMMEXE} ./
-mpiexec ./${OMMEXE} ./jedi.yaml ./jedi.log >& jedi.log.all
+ln -sf ${OMMBuildDir}/${OMMEXE} ./
+mpiexec ./${OMMEXE} $appyaml ./jedi.log >& jedi.log.all
 
 #
 # Check status:

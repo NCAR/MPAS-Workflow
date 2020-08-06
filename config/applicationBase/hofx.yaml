@@ -1,4 +1,4 @@
-window begin: '2018-04-14T21:00:00Z'
+window begin: 'WindowBegin'
 window length: PT6H
 geometry:
   gridfname: meshFile

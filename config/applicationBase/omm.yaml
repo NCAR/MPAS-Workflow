@@ -12,8 +12,7 @@ variational:
       tstep: PT0H
       trajectory:
         tstep: PT0H
-      tlm variables: &incvars
-AnalysisVariables
+      tlm variables: &incvars [AnalysisVariables]
     ninner: '0'
     gradient norm reduction: 1e-10
     test: 'on'
@@ -25,15 +24,14 @@ final:
     departures_: depan
 cost function:
   cost type: 3D-Var
-  window begin: '2018-04-14T21:00:00Z'
+  window begin: 'WindowBegin'
   window length: PT6H
   geometry:
     gridfname: meshFile
   model:
     name: MPAS
     tstep: PT6H
-    model variables:
-ModelVariables
+    model variables: [ModelVariables]
   analysis variables: *incvars
   varable change: Identity
   background:

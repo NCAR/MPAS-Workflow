@@ -37,11 +37,28 @@ while ( $member <= ${nEnsDAMembers} )
   rm -r $prevCyclingFCDirs[$member]
   mkdir -p $prevCyclingFCDirs[$member]
 
-  ln -sf ${InitialFC}/${RSTFilePrefix}.${fileDate}.nc \
-    $prevCyclingFCDirs[$member]/${FCFilePrefix}.${fileDate}.nc
+  set fcFile = $prevCyclingFCDirs[$member]/${FCFilePrefix}.${fileDate}.nc
+  ln -sf ${InitialFC}/${RSTFilePrefix}.${fileDate}.nc ${fcFile}_orig
 
-  ln -sf ${InitialFC}/${DIAGFilePrefix}.${fileDate}.nc \
-    $prevCyclingFCDirs[$member]/${DIAGFilePrefix}.${fileDate}.nc
+  set diagFile = $prevCyclingFCDirs[$member]/${DIAGFilePrefix}.${fileDate}.nc
+  ln -sf ${InitialFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
+
+  ## Add MPASDiagVars to the next cycle bg file (if needed)
+  set copyDiags = 0
+  foreach var ({$MPASDiagVars})
+    ncdump -h ${fcFile}_orig | grep $var
+    if ( $status != 0 ) then
+      @ copyDiags++
+    endif
+  end
+  ln -sf ${fcFile}_orig ${fcFile}
+#TODO: only want to do this at R1 cylc position
+#  if ( $copyDiags > 0 ) then
+#    rm ${fcFile}
+#    cp ${fcFile}_orig ${fcFile}
+#    ncks -A -v ${MPASDiagVars} ${diagFile} ${fcFile}
+#  endif
+#  rm ${diagFile}
 
   @ member++
 end

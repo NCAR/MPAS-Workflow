@@ -19,6 +19,8 @@ set MeanAnalysisDir = ${CyclingDAOutDir}${memDir}
 set ExtendedMeanFCDir = ${ExtendedFCDir}${memDir}
 set VerifyMeanFCDirs = ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate}
 
+set CyclingInflationDir = ${CyclingInflationWorkDir}/${thisCycleDate}
+
 set CyclingDAInDirs = ()
 set CyclingDAOutDirs = ()
 set CyclingFCDirs = ()

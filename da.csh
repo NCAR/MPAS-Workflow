@@ -66,6 +66,7 @@ while ( $member <= ${nEnsDAMembers} )
 end
 
 # use one of the backgrounds as the meshFile (see jediPrep)
+#TODO: create link until gridfname is used
 ln -sf ${bgFile} ${meshFile}
 
 
@@ -74,13 +75,13 @@ ln -sf ${bgFile} ${meshFile}
 # Run the executable:
 # ===================
 # ===================
-ln -sf ${JEDIBUILDDIR}/bin/${DAEXE} ./
-mpiexec ./${DAEXE} ./jedi.yaml ./jedi.log >& jedi.log.all
+ln -sf ${DABuildDir}/${DAEXE} ./
+mpiexec ./${DAEXE} $appyaml ./jedi.log >& jedi.log.all
 
 #WITH DEBUGGER
 #module load arm-forge/19.1
 #setenv MPI_SHEPHERD true
-#ddt --connect ${JEDIBUILDDIR}/bin/${DAEXE}  ./jedi.yaml ./jedi.log
+#ddt --connect ${DABuildDir}/bin/${DAEXE} $appyaml ./jedi.log
 
 #
 # Check status:

@@ -43,16 +43,33 @@ set icFile = ${ICFilePrefix}.${icFileExt}
 ## link initial forecast state:
 ln -sf ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
 
-#
-# Copy/link static files:
-# =============================================
-cp $FC_NML_DIR/* .
+# ====================
+# Model-specific files
+# ====================
+## link MPAS mesh graph info
 ln -sf $GRAPHINFO_DIR/x1.${MPAS_NCELLS}.graph.info* .
-ln -sf ${TOP_BUILD_DIR}/libs/build/${MPASBUILD}/src/core_atmosphere/physics/physics_wrf/files/* .
-cp namelist.atmosphere orig_namelist.atmosphere
+
+## link lookup tables
+ln -sf ${FCStaticFiles} .
+
+## link static stream_list configs
+foreach staticfile ( \
+stream_list.${MPASCore}.surface \
+stream_list.${MPASCore}.diagnostics \
+stream_list.${MPASCore}.output \
+)
+  ln -sf $FC_NML_DIR/$staticfile .
+end
+## copy dynamic namelist/streams configs
+set NL = namelist.${MPASCore}
+set STREAMS = streams.${MPASCore}
+foreach dynamicfile ($NL ${STREAMS})
+  rm $dynamicfile
+  cp $FC_NML_DIR/$dynamicfile ./
+end
 
 #
-# Revise time info in namelist
+# Revise time info in namelist/streams
 # =============================================
 cat >! newnamelist << EOF
   /config_start_time /c\
@@ -60,12 +77,12 @@ cat >! newnamelist << EOF
   /config_run_duration/c\
    config_run_duration    = '${config_run_duration}'
 EOF
-sed -f newnamelist orig_namelist.atmosphere >! namelist.atmosphere
+cp $NL orig_$NL
+sed -f newnamelist orig_$NL >! $NL
 rm newnamelist
+rm orig_$NL
 
-set STREAMS=streams.atmosphere
-sed -e 's@OUT_DT_STR@'${output_interval}'@' \
-    ${STREAMS}_TEMPLATE > ${STREAMS}
+sed -i 's@outputIntervalArg@'${output_interval}'@' ${STREAMS}
 
 if ( ${self_fcLengthHR} == 0 ) then
   ## zero-length forecast case (NOT CURRENTLY USED)
@@ -76,13 +93,13 @@ else
   #
   # Run the executable:
   # =============================================
-  ln -sf ${MPASBUILDDIR}/${FCEXE} ./
+  ln -sf ${FCBuildDir}/${FCEXE} ./
   mpiexec ./${FCEXE}
 
   #
   # Check status:
   # =============================================
-  grep "Finished running the atmosphere core" log.atmosphere.0000.out
+  grep "Finished running the ${MPASCore} core" log.${MPASCore}.0000.out
   if ( $status != 0 ) then
     touch ./FAIL
     echo "ERROR in $0 : MPAS-Model forecast failed" >> ./FAIL

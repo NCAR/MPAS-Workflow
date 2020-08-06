@@ -12,6 +12,14 @@ module purge
 module load cylc
 module load graphviz
 
+set CriticalPath = "CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => CyclingDA =>"
+set CyclingDAFinished = "CyclingDA =>"
+if ($nEnsDAMembers > 1) then
+  set CyclingDAFinished = "RTPPInflation =>"
+  set CriticalPath = "$CriticalPath ${CyclingDAFinished}"
+endif
+set CriticalPath = "$CriticalPath CyclingEnsFC"
+
 rm -fr ${HOME}/cylc-run/${WholeExpName}
 echo "creating suite.rc"
 cat >! suite.rc << EOF
@@ -27,38 +35,40 @@ cat >! suite.rc << EOF
 [scheduling]
   max active cycle points = 200
   initial cycle point = 20180415T00
-  final cycle point   = 20180426T00
+  final cycle point   = 20180418T00
   [[dependencies]]
 ## Initial cycle point
-    [[[R1]]]
-      graph = CyclingDA => CyclingEnsFC
-## Cycling and verification every CyclingWindowHR
+#    [[[R1]]]
+#      graph = MakeScripts => CyclingDA
+## Cycling every CyclingWindowHR
     [[[PT${CyclingWindowHR}H]]]
-      graph = '''
-      CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => CyclingDA => CyclingEnsFC
-      {% for mem in EnsDAMembers%}
-        CyclingDA => VerifyModelAN{{mem}}
-        CyclingDA => CalcOMAN{{mem}}
-        CalcOMAN{{mem}} => VerifyObsAN{{mem}}
-        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => VerifyModelBG{{mem}}
-        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => CalcOMBG{{mem}}
-        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
-      {% endfor %}
-      '''
-## Extended forecast and verification from mean of analysis states
-    [[[${ExtendedMeanFCTimes}]]]
-      graph = '''
-      CyclingDA => MeanAnalysis => ExtendedMeanFC
-      {% for dt in ExtendedFCLengths%}
-        ExtendedMeanFC => VerifyModelMeanFC{{dt}}hr
-        ExtendedMeanFC => CalcOMMeanFC{{dt}}hr
-        CalcOMMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
-      {% endfor %}
-      '''
+      graph = ${CriticalPath}
+### Verification every CyclingWindowHR
+#    [[[PT${CyclingWindowHR}H]]]
+#      graph = '''
+#      {% for mem in EnsDAMembers%}
+#        ${CyclingDAFinished}VerifyModelAN{{mem}}
+#        ${CyclingDAFinished}CalcOMAN{{mem}}
+#        CalcOMAN{{mem}} => VerifyObsAN{{mem}}
+#        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => VerifyModelBG{{mem}}
+#        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => CalcOMBG{{mem}}
+#        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
+#      {% endfor %}
+#      '''
+### Extended forecast and verification from mean of analysis states
+#    [[[${ExtendedMeanFCTimes}]]]
+#      graph = '''
+#      ${CyclingDAFinished}MeanAnalysis => ExtendedMeanFC
+#      {% for dt in ExtendedFCLengths%}
+#        ExtendedMeanFC => VerifyModelMeanFC{{dt}}hr
+#        ExtendedMeanFC => CalcOMMeanFC{{dt}}hr
+#        CalcOMMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
+#      {% endfor %}
+#      '''
 ## Extended forecast and verification from ensemble of analysis states
 #    [[[${ExtendedEnsFCTimes}]]]
 #      graph = '''
-#      CyclingDA => ExtendedEnsFC
+#      ${CyclingDAFinished}ExtendedEnsFC
 #      {% for mem in ExtendedFCMembers%}
 #        {% for dt in ExtendedFCLengths%}
 #          ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}-{{dt}}hr
@@ -137,6 +147,12 @@ cat >! suite.rc << EOF
       execution time limit = PT${CyclingDAJobMinutes}M
     [[[directives]]]
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
+  [[RTPPInflation]]
+    script = \$origin/RTPPInflation.csh
+    [[[job]]]
+      execution time limit = PT${CyclingInflationJobMinutes}M
+    [[[directives]]]
+      -l = select=${CyclingInflationNodesPerMember}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
   [[CyclingEnsFC]]
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M

@@ -82,22 +82,34 @@ set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 # ============================================================
 # ============================================================
 
-# MPAS mesh graph info
-set meshFile = ./${BGFilePrefix}.${fileDate}.nc
+# ====================
+# Model-specific files
+# ====================
+## link MPAS mesh graph info
 ln -sf $GRAPHINFO_DIR/x1.${MPAS_NCELLS}.graph.info* .
 
-# lookup tables
-ln -sf ${MPASBUILDDIR}/src/core_atmosphere/physics/physics_wrf/files/* .
+## link lookup tables
+ln -sf ${FCStaticFiles} .
 
-# Copy/revise time info in MPAS namelist
-# ======================================
-cp -v $DA_NML_DIR/* .
+## link static stream settings
 
+## link static stream_list/streams configs
+foreach staticfile ( \
+stream_list.${MPASCore}.surface \
+stream_list.${MPASCore}.diagnostics \
+stream_list.${MPASCore}.output \
+streams.${MPASCore} \
+)
+  ln -sf $DA_NML_DIR/$staticfile .
+end
+
+## copy/modify dynamic namelist
 cp -v ${RESSPECIFICDIR}/namelist.atmosphere_da ./namelist.atmosphere
 cp -v namelist.atmosphere orig_namelist.atmosphere
+set indent = "   "
 cat >! newnamelist << EOF
   /config_start_time /c\
-   config_start_time      = '${NMLDate}'
+${indent}config_start_time = '${NMLDate}'
 EOF
 sed -f newnamelist orig_namelist.atmosphere >! namelist.atmosphere
 rm newnamelist
@@ -139,193 +151,154 @@ ln -fsv $AHI_OBS_DIR/${thisValidDate}/ahi*_obs_*.nc4 ${InDBDir}/
 ln -fsv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 
 
+# =============
 # Generate yaml
-# =======================================
-
-## Copy BASE MPAS-JEDI yaml
-cp -v ${CONFIGDIR}/applicationBase/${self_DAType}.yaml orig_jedi0.yaml
-
-set AnalyzeHydrometeors = 0
+# =============
+## Copy applicationBase yaml
+set thisYAML = orig.yaml
+cp -v ${CONFIGDIR}/applicationBase/${self_DAType}.yaml $thisYAML
 
 ## Add selected observations (see control.csh)
+set checkForMissingObs = (abi ahi amsua mhs)
 foreach obs ($self_ObsList)
   echo "Preparing YAML for ${obs} observations"
   set missing=0
-  set SUBYAML=ObsPlugs/${self_DAMode}/${obs}
-  if ( "$obs" =~ *"abi"* ) then
-    find ${InDBDir}/abi*_obs_*.nc4 -mindepth 0 -maxdepth 0
-    if ($? > 0) then
-      set missing=1
-    else
-      set brokenLinks=( `find ${InDBDir}/abi*_obs_*.nc4 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
-      foreach link ($brokenLinks)
-        set missing=1
-      end
-    endif
-    if ($missing == 0) then
-      echo "ABI data is present and selected; adding ABI to the YAML"
-    else
-      echo "ABI data is selected, but missing; NOT adding ABI to the YAML"
-    endif
-  else if ( "$obs" =~ *"conv"* ) then
+  set SUBYAML=${CONFIGDIR}/ObsPlugs/${self_DAMode}/${obs}
+  if ( "$obs" =~ *"conv"* ) then
     #KLUDGE to handle missing qv for sondes at single time
     if ( ${thisValidDate} == 2018043006 ) then
       set SUBYAML=${SUBYAML}-2018043006
     endif
-  endif
-
-  ## determine if hydrometeor variables will be analyzed
-  # TODO: instead should grep for Clouds in ${CONFIGDIR}/${SUBYAML}.yaml
-  if ( "$obs" =~ "all"* ) then
-    set AnalyzeHydrometeors = 1
+  else
+    foreach inst ($checkForMissingObs)
+      if ( "$obs" =~ *"${inst}"* ) then
+        find ${InDBDir}/${inst}*_obs_*.nc4 -mindepth 0 -maxdepth 0
+        if ($? > 0) then
+          @ missing++
+        else
+          set brokenLinks=( `find ${InDBDir}/${inst}*_obs_*.nc4 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
+          foreach link ($brokenLinks)
+            @ missing++
+          end
+        endif
+      endif
+    end
   endif
 
   if ($missing == 0) then
-    cat ${CONFIGDIR}/${SUBYAML}.yaml >> orig_jedi0.yaml
+    echo "${obs} data is present and selected; adding ${obs} to the YAML"
+    cat ${SUBYAML}.yaml >> $thisYAML
+  else
+    echo "${obs} data is selected, but missing; NOT adding ${obs} to the YAML"
   endif
 end
 
 
 ## QC characteristics
-sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' orig_jedi0.yaml
-sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' orig_jedi0.yaml
+sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
+sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
 
 # TODO(JJG): revise these date replacements to loop over
 #            all relevant dates to this application (e.g., 4DEnVar?)
-## revise previous date
-sed -i 's@2018-04-14_18.00.00@'${prevFileDate}'@g' orig_jedi0.yaml
-sed -i 's@2018041418@'${prevValidDate}'@g' orig_jedi0.yaml
-sed -i 's@2018-04-14T18:00:00Z@'${prevConfDate}'@g'  orig_jedi0.yaml
+## previous date
+sed -i 's@2018-04-14_18.00.00@'${prevFileDate}'@g' $thisYAML
+sed -i 's@2018041418@'${prevValidDate}'@g' $thisYAML
+sed -i 's@2018-04-14T18:00:00Z@'${prevConfDate}'@g'  $thisYAML
 
-## revise current date
-sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' orig_jedi0.yaml
-sed -i 's@2018041500@'${thisValidDate}'@g' orig_jedi0.yaml
-sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' orig_jedi0.yaml
+## current date
+sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' $thisYAML
+sed -i 's@2018041500@'${thisValidDate}'@g' $thisYAML
+sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 
-## revise window length
-sed -i 's@PT6H@PT'${self_WindowHR}'H@g' orig_jedi0.yaml
+## window length
+sed -i 's@PT6H@PT'${self_WindowHR}'H@g' $thisYAML
 
+## window beginning
+sed -i 's@WindowBegin@'${halfprevConfDate}'@' $thisYAML
 
-## File naming
-sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' orig_jedi0.yaml
-sed -i 's@InDBDir@'${InDBDir}'@g' orig_jedi0.yaml
-sed -i 's@OutDBDir@'${OutDBDir}'@g' orig_jedi0.yaml
-sed -i 's@obsPrefix@'${obsPrefix}'@g' orig_jedi0.yaml
-sed -i 's@geoPrefix@'${geoPrefix}'@g' orig_jedi0.yaml
-sed -i 's@diagPrefix@'${diagPrefix}'@g' orig_jedi0.yaml
-sed -i 's@DAMode@'${self_DAMode}'@g' orig_jedi0.yaml
-sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' orig_jedi0.yaml
+## file naming
+sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' $thisYAML
+sed -i 's@InDBDir@'${InDBDir}'@g' $thisYAML
+sed -i 's@OutDBDir@'${OutDBDir}'@g' $thisYAML
+sed -i 's@obsPrefix@'${obsPrefix}'@g' $thisYAML
+sed -i 's@geoPrefix@'${geoPrefix}'@g' $thisYAML
+sed -i 's@diagPrefix@'${diagPrefix}'@g' $thisYAML
+sed -i 's@DAMode@'${self_DAMode}'@g' $thisYAML
+sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' $thisYAML
 if ( "$self_DAType" =~ *"eda"* ) then
-  sed -i 's@OOPSMemberDir@/%{member}%@g' orig_jedi0.yaml
+  sed -i 's@OOPSMemberDir@/%{member}%@g' $thisYAML
 else
-  sed -i 's@OOPSMemberDir@@g' orig_jedi0.yaml
+  sed -i 's@OOPSMemberDir@@g' $thisYAML
 endif
-sed -i 's@meshFile@'${meshFile}'@g' orig_jedi0.yaml
-sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' orig_jedi0.yaml
-#sed -i 's@bgStateDir@'${CyclingDAInDir}'@g' orig_jedi0.yaml
-sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' orig_jedi0.yaml
-sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' orig_jedi0.yaml
-#sed -i 's@anStateDir@'${CyclingDAOutDir}'@g' orig_jedi0.yaml
-sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' orig_jedi0.yaml
+set meshFile = ./${BGFilePrefix}.${fileDate}.nc
+sed -i 's@meshFile@'${meshFile}'@g' $thisYAML
+sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' $thisYAML
+sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
+sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' $thisYAML
+sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' $thisYAML
+set prevYAML = $thisYAML
 
 
-## revise full line configs
-cat >! fulllineSEDF.yaml << EOF
-  /window begin: /c\
-  window begin: '${halfprevConfDate}'
-EOF
-
-sed -f fulllineSEDF.yaml orig_jedi0.yaml >! orig_jedi1.yaml
-rm fulllineSEDF.yaml
-
-
-## fill in model and analysis variable configs
-set JEDIANVars = ( \
-  temperature \
-  spechum \
-  uReconstructZonal \
-  uReconstructMeridional \
-  surface_pressure \
-)
-if ( $AnalyzeHydrometeors == 1 ) then
-  foreach hydro ($MPASHydroVars)
-    set JEDIANVars = ($JEDIANVars index_$hydro)
+## model and analysis variables
+set AnalysisVariables = ($StandardAnalysisVariables)
+# if any CRTM yaml section includes Clouds, then analyze hydrometeors
+grep '^\ \+Clouds' $prevYAML
+if ( $status == 0 ) then
+  foreach hydro ($MPASHydroVariables)
+    set AnalysisVariables = ($AnalysisVariables index_$hydro)
   end
 endif
-
-set analysissed = AnalysisVariables
-set modelsed = ModelVariables
-cat >! ${analysissed}SEDF.yaml << EOF
-/${analysissed}/c\
-EOF
-
-cat >! ${modelsed}SEDF.yaml << EOF
-/${modelsed}/c\
-EOF
-
-set ivar = 1
-while ( $ivar <= ${#JEDIANVars} )
-  set var = $JEDIANVars[$ivar]
-  if ( $ivar < ${#JEDIANVars} ) then
-    set var = ${var}\\
-  endif
-cat >>! ${analysissed}SEDF.yaml << EOF
-      - $var
-EOF
-
-cat >>! ${modelsed}SEDF.yaml << EOF
-    - $var
-EOF
-
-  @ ivar++
+set VarSub = ""
+foreach var ($AnalysisVariables)
+  set VarSub = "$VarSub$var,"
 end
-sed -f ${analysissed}SEDF.yaml orig_jedi1.yaml >! orig_jedi2.yaml
-rm ${analysissed}SEDF.yaml
-sed -f ${modelsed}SEDF.yaml orig_jedi2.yaml >! orig_jedi3.yaml
-rm ${modelsed}SEDF.yaml
+# remove trailing comma
+set VarSub = `echo "$VarSub" | sed 's/.$//'`
+sed -i 's@ModelVariables@'$VarSub'@' $prevYAML
+sed -i 's@AnalysisVariables@'$VarSub'@' $prevYAML
 
 
-## fill in ensemble B config
+## ensemble covariance
+# localization
+sed -i 's@bumpLocDir@'${bumpLocDir}'@g' $prevYAML
+sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' $prevYAML
+# ensemble forecasts
 # TODO(JJG): how does ensemble B config generation need to be
 #            modified for 4DEnVar?
 # TODO(JJG): move this to da as not needed for OMM
 if ( "$self_DAType" =~ *"eda"* ) then
-  set ensBDir = ${dynamicEnsBDir}
-  set ensBFilePrefix = ${dynamicEnsBFilePrefix}
-  set ensBMemFmt = "${dynamicEnsBMemFmt}"
-  set ensBNMembers = ${dynamicEnsBNMembers}
+  set ensPbDir = ${dynamicEnsBDir}
+  set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
+  set ensPbMemFmt = "${dynamicEnsBMemFmt}"
+  set ensPbNMembers = ${dynamicEnsBNMembers}
 else
-  set ensBDir = ${fixedEnsBDir}
-  set ensBFilePrefix = ${fixedEnsBFilePrefix}
-  set ensBMemFmt = "${fixedEnsBMemFmt}"
-  set ensBNMembers = ${fixedEnsBNMembers}
+  set ensPbDir = ${fixedEnsBDir}
+  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
+  set ensPbMemFmt = "${fixedEnsBMemFmt}"
+  set ensPbNMembers = ${fixedEnsBNMembers}
 endif
-
-sed -i 's@bumpLocDir@'${bumpLocDir}'@g' orig_jedi3.yaml
-sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' orig_jedi3.yaml
-
-set ensbsed = EnsembleBMembers
-cat >! ${ensbsed}SEDF.yaml << EOF
-/${ensbsed}/c\
+set enspsed = EnsemblePbMembers
+cat >! ${enspsed}SEDF.yaml << EOF
+/${enspsed}/c\
 EOF
 
-set member = 1
-while ( $member <= ${ensBNMembers} )
-  set memDir = `${memberDir} ens $member "${ensBMemFmt}"`
-  set incvars = incvars
-  if ( $member < ${ensBNMembers} ) then
-    set incvars = ${incvars}\\
-  endif
 # TODO: this indentation only works for pure EnVar, not Hybrid EnVar
-cat >>! ${ensbsed}SEDF.yaml << EOF
-    - filename: ${ensBDir}/${prevValidDate}${memDir}/${ensBFilePrefix}.${fileDate}.nc\
-      date: *adate\
-      state variables: *${incvars}
+set indent = "    "
+set member = 1
+while ( $member <= ${ensPbNMembers} )
+  set memDir = `${memberDir} ens $member "${ensPbMemFmt}"`
+  set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
+  if ( $member < ${ensPbNMembers} ) then
+    set filename = ${filename}\\
+  endif
+cat >>! ${enspsed}SEDF.yaml << EOF
+${indent}- <<: *state\
+${indent}  filename: ${filename}
 EOF
 
   @ member++
 end
-sed -f ${ensbsed}SEDF.yaml orig_jedi3.yaml >! jedi.yaml
-rm ${ensbsed}SEDF.yaml
+sed -f ${enspsed}SEDF.yaml $prevYAML >! $appyaml
+rm ${enspsed}SEDF.yaml
 
 exit 0

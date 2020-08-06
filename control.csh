@@ -36,16 +36,16 @@ setenv DAType eda_3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DAType" =~ *"eda"* ) then
+  #setenv nEnsDAMembers 5
   setenv nEnsDAMembers 20
 endif
+setenv RTPPInflationFactor 0.5
 
 ## DAObsList
 #OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
-#NOTE: the "clr" and "all" prefixes are used for clear-sky
-# TODO: instead should grep for Clouds in sub-yaml's
-#      and all-sky scenes for radiances.  The "all" prefix
-#      signals to DA and OMM jobs to include hydrometeors among
-#      the analysis variables.
+# clr == clear-sky
+# all == all-sky
+# cld == cloudy-sky
 #set DAObsList = ()
 set DAObsList = (conv clramsua)
 #set DAObsList = (conv clramsua clrabi)
@@ -71,6 +71,7 @@ end
 
 ## add unique suffix
 set ExpSuffix = "_NMEM"${nEnsDAMembers}
+if ($nEnsDAMembers > 1) set ExpSuffix = ${ExpSuffix}_RTPP${RTPPInflationFactor}
 setenv ExpName ${ExpName}${ExpSuffix}
 
 #
@@ -130,6 +131,11 @@ else
   setenv CyclingDAPEPerNode      32
 endif
 
+setenv CyclingInflationJobMinutes 25
+setenv CyclingInflationMemory 45
+setenv CyclingInflationNodesPerMember ${CalcOMMNodes}
+setenv CyclingInflationPEPerNode      ${CalcOMMPEPerNode}
+
 ## 30km
 #setenv MPAS_RES           30km
 #setenv MPAS_NCELLS        655362
@@ -177,7 +183,15 @@ setenv anStatePrefix analysis
 setenv MPASDiagVars cldfrac
 setenv MPASSeaVars sst,xice
 set MPASHydroVars = (qc qi qr qs qg)
-setenv MPASStandardANVars theta,rho,u,qv,uReconstructZonal,uReconstructMeridional
+#setenv MPASStandardANVars theta,rho,u,qv,uReconstructZonal,uReconstructMeridional
+
+set StandardAnalysisVariables = ( \
+  temperature \
+  spechum \
+  uReconstructZonal \
+  uReconstructMeridional \
+  surface_pressure \
+)
 
 @ CyclingDAPEPerMember = ${CyclingDANodesPerMember} * ${CyclingDAPEPerNode}
 setenv CyclingDAPEPerMember ${CyclingDAPEPerMember}
@@ -199,6 +213,7 @@ setenv EXPDIR           ${TOP_EXP_DIR}/${WholeExpName}
 ## immediate subdirectories
 setenv CyclingDAWorkDir    ${EXPDIR}/CyclingDA
 setenv CyclingFCWorkDir    ${EXPDIR}/CyclingFC
+setenv CyclingInflationWorkDir ${EXPDIR}/CyclingInflation
 setenv ExtendedFCWorkDir   ${EXPDIR}/ExtendedFC
 setenv VerificationWorkDir ${EXPDIR}/Verification
 
@@ -333,20 +348,34 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   setenv DAEXE           mpas_variational.x
 endif
-setenv OMMEXE            mpas_variational.x
+set DABundleBuild = _build=RelWithDebInfo
+set DABuildFeature = _feature--eda_sci
+setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${DABundleBuild}${DABuildFeature}
+setenv DABuildDir      ${TOP_BUILD_DIR}/build/${DABuild}/bin
+
+setenv OMMEXE           mpas_variational.x
+set OMMBundleBuild = _build=RelWithDebInfo
+set OMMBuildFeature = _feature--eda_sci
+setenv OMMBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${OMMBundleBuild}${OMMBuildFeature}
+setenv OMMBuildDir      ${TOP_BUILD_DIR}/build/${OMMBuild}/bin
+
+setenv RTPPEXE           mpas_rtpp.x
+set RTPPBundleBuild = _build=RelWithDebInfo
+set RTPPBuildFeature = _feature--rtpp_app
+setenv RTPPBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${RTPPBundleBuild}${RTPPBuildFeature}
+setenv RTPPBuildDir      ${TOP_BUILD_DIR}/build/${RTPPBuild}/bin
+
+
 setenv HOFXEXE           mpas_hofx_nomodel.x
 
-set BUNDLEBUILD = _build=RelWithDebInfo
-set BUILDFEATURE = _feature--eda_sci
-#set BUILDFEATURE = _feature--eda_sci_OLD #(before ATLAS, OBS-MODEL Trait separation)
-
-setenv JEDIBUILD         mpas-bundle${CUSTOMPIO}_${COMPILER}${BUNDLEBUILD}${BUILDFEATURE}
-setenv JEDIBUILDDIR      ${TOP_BUILD_DIR}/build/${JEDIBUILD}
+setenv appyaml jedi.yaml
 
 #MPAS-Model
-setenv FCEXE             atmosphere_model
-setenv MPASBUILD         MPAS_${COMPILER}_debug=0${CUSTOMPIO}
-setenv MPASBUILDDIR      ${TOP_BUILD_DIR}/libs/build/${MPASBUILD}
+setenv MPASCore        atmosphere
+setenv FCEXE           ${MPASCore}_model
+setenv FCBuild         MPAS_${COMPILER}_debug=0${CUSTOMPIO}
+setenv FCBuildDir      ${TOP_BUILD_DIR}/libs/build/${FCBuild}
+setenv FCStaticFiles   ${FCBuildDir}/src/core_atmosphere/physics/physics_wrf/files/*
 
 #Verification tools
 setenv meanStateExe      average_netcdf_files_parallel_mpas_${COMPILER}.x
