@@ -35,7 +35,6 @@
 /
 &io
     config_pio_num_iotasks = 0
-!    config_pio_num_iotasks = 18
     config_pio_stride = 1
 /
 &decomposition
