@@ -15,6 +15,7 @@ set cyclingParts = ( \
   config \
   ${MPAS_RES} \
   MeanAnalysis.csh \
+  RTPPInflation.csh \
 )
 foreach part ($cyclingParts)
   cp -rP $part ${mainScriptDir}/
@@ -26,28 +27,28 @@ end
 set thisCycleDate = $FirstCycleDate
 set thisValidDate = $thisCycleDate
 source getCycleVars.csh
-if ( ${thisCycleDate} == ${FirstCycleDate} ) then
-  mkdir -p ${CyclingFCWorkDir}
-  rm -r ${prevCyclingFCDir}
-  if ( "$DAType" =~ *"eda"* ) mkdir -p ${prevCyclingFCDir}
-  set member = 1
-  while ( $member <= ${nEnsDAMembers} )
-    if ( "$DAType" =~ *"eda"* ) then
-      set InitialFC = "$firstEnsFCDir"`${memberDir} ens $member "${firstEnsFCMemFmt}"`
-    else
-      set InitialFC = $firstDetermFCDir
-    endif
-    ln -sf ${InitialFC} $prevCyclingFCDirs[$member]
+set member = 1
+while ( $member <= ${nEnsDAMembers} )
+  if ( "$DAType" =~ *"eda"* ) then
+    set InitialFC = "$firstEnsFCDir"`${memberDir} ens $member "${firstEnsFCMemFmt}"`
+  else
+    set InitialFC = $firstDetermFCDir
+  endif
+  rm -r $prevCyclingFCDirs[$member]
+  mkdir -p $prevCyclingFCDirs[$member]
 
-    @ member++
-  end
-#TODO: currently RSTFilePrefix and FCFilePrefix must be the same
-  setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
-  setenv bgStatePrefix ${RSTFilePrefix}
-else
-  setenv VARBC_TABLE ${prevCyclingDADir}/${VARBC_ANA}
-  setenv bgStatePrefix ${FCFilePrefix}
-endif
+  ln -sf ${InitialFC}/${RSTFilePrefix}.${fileDate}.nc \
+    $prevCyclingFCDirs[$member]/${FCFilePrefix}.${fileDate}.nc
+
+  ln -sf ${InitialFC}/${DIAGFilePrefix}.${fileDate}.nc \
+    $prevCyclingFCDirs[$member]/${DIAGFilePrefix}.${fileDate}.nc
+
+  @ member++
+end
+setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
+
+#TODO: enable VARBC updating between cycles
+#  setenv VARBC_TABLE ${prevCyclingDADir}/${VARBC_ANA}
 
 
 #------- CyclingDA ---------
@@ -59,7 +60,7 @@ sed -e 's@wrapWorkDirsArg@CyclingDADir@' \
     -e 's@AppNameArg@da@' \
     -e 's@cylcTaskTypeArg@'${cylcTaskType}'@' \
     -e 's@wrapStateDirsArg@prevCyclingFCDirs@' \
-    -e 's@wrapStatePrefixArg@'${bgStatePrefix}'@' \
+    -e 's@wrapStatePrefixArg@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeArg@DA@' \
     -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
     -e 's@wrapWindowHRArg@'${CyclingWindowHR}'@' \
