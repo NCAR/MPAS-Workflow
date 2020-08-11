@@ -25,7 +25,7 @@ set meshFile = ./${BGFilePrefix}.${fileDate}.nc
 # Remove old logs
 rm jedi.log*
 
-# Link/copy bg from StateDirs and ensure that MPASDiagVars are present
+# Link/copy bg from StateDirs and ensure that MPASDiagVariables are present
 # ====================================================================
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
@@ -51,7 +51,7 @@ while ( $member <= ${nEnsDAMembers} )
   # Copy diagnostic variables used in DA to bg (if needed)
   # ======================================================
   set copyDiags = 0
-  foreach var ({$MPASDiagVars})
+  foreach var ({$MPASDiagVariables})
     ncdump -h ${bgFileOther} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
@@ -59,7 +59,7 @@ while ( $member <= ${nEnsDAMembers} )
   end
   if ( $copyDiags > 0 ) then
     set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
-    ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFile}
+    ncks -A -v ${MPASDiagVariables} ${diagFile} ${bgFile}
   endif
 
   @ member++
@@ -102,10 +102,10 @@ endif
 #    set UpdateHydrometeors = 1
 #  endif
 #end
-#set MPASANVars = $MPASStandardANVars
+#set MPASANVariables = $MPASStandardANVariables
 #if ( $UpdateHydrometeors == 1 ) then
-#  foreach hydro ($MPASHydroANVars)
-#    set MPASANVars = $MPASANVars,$hydro
+#  foreach hydro ($MPASHydroANVariables)
+#    set MPASANVariables = $MPASANVariables,$hydro
 #  end
 #endif
 #
@@ -125,9 +125,9 @@ endif
 #  set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
 #  cp ${bgFile} ${anFile}
 #
-#  ## replace ANVars with output analysis values
+#  ## replace ANVariables with output analysis values
 #  set anFileDA = ${an}/${anStatePrefix}.$fileDate.nc
-#  ncks -A -v ${MPASANVars} ${anFileDA} ${anFile}
+#  ncks -A -v ${MPASANVariables} ${anFileDA} ${anFile}
 #  rm ${anFileDA}
 #
 #  @ member++

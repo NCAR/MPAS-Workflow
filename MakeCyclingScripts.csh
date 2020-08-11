@@ -43,9 +43,9 @@ while ( $member <= ${nEnsDAMembers} )
   set diagFile = $prevCyclingFCDirs[$member]/${DIAGFilePrefix}.${fileDate}.nc
   ln -sf ${InitialFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
 
-  ## Add MPASDiagVars to the next cycle bg file (if needed)
+  ## Add MPASDiagVariables to the next cycle bg file (if needed)
   set copyDiags = 0
-  foreach var ({$MPASDiagVars})
+  foreach var ({$MPASDiagVariables})
     ncdump -h ${fcFile}_orig | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
@@ -56,7 +56,7 @@ while ( $member <= ${nEnsDAMembers} )
 #  if ( $copyDiags > 0 ) then
 #    rm ${fcFile}
 #    cp ${fcFile}_orig ${fcFile}
-#    ncks -A -v ${MPASDiagVars} ${diagFile} ${fcFile}
+#    ncks -A -v ${MPASDiagVariables} ${diagFile} ${fcFile}
 #  endif
 #  rm ${diagFile}
 

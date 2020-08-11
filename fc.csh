@@ -130,18 +130,18 @@ while ( ${fcDate} <= ${finalFCDate} )
 
   ## Update MPAS sea surface variables:
   if ( ${updateSea} ) then
-    #delete MPASSeaVars from previous GFS ANA
-    ncks -a -x -v ${MPASSeaVars} ${fcFile} ${fcFileNoSea}
+    #delete MPASSeaVariables from previous GFS ANA
+    ncks -a -x -v ${MPASSeaVariables} ${fcFile} ${fcFileNoSea}
 
-    #append MPASSeaVars from current GFS ANA
+    #append MPASSeaVariables from current GFS ANA
     set SST_FILE = ${GFSSST_DIR}/${fcDate}/x1.${MPAS_NCELLS}.sfc_update.${fcFileExt}
-    ncks -A -v ${MPASSeaVars} ${SST_FILE} ${fcFileNoSea}
+    ncks -A -v ${MPASSeaVariables} ${SST_FILE} ${fcFileNoSea}
     mv  ${fcFileNoSea} ${fcFile}
   endif
 
-  ## Add MPASDiagVars to the next cycle bg file (if needed)
+  ## Add MPASDiagVariables to the next cycle bg file (if needed)
   set copyDiags = 0
-  foreach var ({$MPASDiagVars})
+  foreach var ({$MPASDiagVariables})
     ncdump -h ${fcFile} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
@@ -149,7 +149,7 @@ while ( ${fcDate} <= ${finalFCDate} )
   end
   set diagFile = ${DIAGFilePrefix}.${fcFileExt}
   if ( $copyDiags > 0 ) then
-    ncks -A -v ${MPASDiagVars} ${diagFile} ${fcFile}
+    ncks -A -v ${MPASDiagVariables} ${diagFile} ${fcFile}
   endif
   rm ${diagFile}
 

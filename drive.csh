@@ -12,6 +12,7 @@ module purge
 module load cylc
 module load graphviz
 
+## CriticalPath
 set CriticalPath = "CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => CyclingDA =>"
 set CyclingDAFinished = "CyclingDA =>"
 if ($nEnsDAMembers > 1) then
@@ -19,6 +20,15 @@ if ($nEnsDAMembers > 1) then
   set CriticalPath = "$CriticalPath ${CyclingDAFinished}"
 endif
 set CriticalPath = "$CriticalPath CyclingEnsFC"
+
+#set CriticalPath = \
+#'''    [[[PT'${CyclingWindowHR}'H]]]
+#      graph = '${CriticalPath}'
+#'''
+
+## Verification
+#set CyclingDAFinished = ""
+#set CriticalPath = ""
 
 rm -fr ${HOME}/cylc-run/${WholeExpName}
 echo "creating suite.rc"
@@ -43,7 +53,7 @@ cat >! suite.rc << EOF
 ## Cycling every CyclingWindowHR
     [[[PT${CyclingWindowHR}H]]]
       graph = ${CriticalPath}
-### Verification every CyclingWindowHR
+### BG/AN verification (all members)
 #    [[[PT${CyclingWindowHR}H]]]
 #      graph = '''
 #      {% for mem in EnsDAMembers%}
@@ -55,16 +65,17 @@ cat >! suite.rc << EOF
 #        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
 #      {% endfor %}
 #      '''
-### Extended forecast and verification from mean of analysis states
-#    [[[${ExtendedMeanFCTimes}]]]
-#      graph = '''
-#      ${CyclingDAFinished}MeanAnalysis => ExtendedMeanFC
-#      {% for dt in ExtendedFCLengths%}
-#        ExtendedMeanFC => VerifyModelMeanFC{{dt}}hr
-#        ExtendedMeanFC => CalcOMMeanFC{{dt}}hr
-#        CalcOMMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
-#      {% endfor %}
-#      '''
+## Extended forecast and verification from mean of analysis states
+    [[[${ExtendedMeanFCTimes}]]]
+      graph = '''
+      ${CyclingDAFinished}MeanAnalysis => ExtendedMeanFC
+      {% for dt in ExtendedFCLengths%}
+        ExtendedMeanFC => VerifyModelMeanFC{{dt}}hr
+        ExtendedMeanFC => CalcOMMeanFC{{dt}}hr
+        VerifyModelMeanFC{{dt}}hr
+        CalcOMMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
+      {% endfor %}
+      '''
 ## Extended forecast and verification from ensemble of analysis states
 #    [[[${ExtendedEnsFCTimes}]]]
 #      graph = '''
@@ -182,12 +193,15 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT${ExtendedFCJobMinutes}M
     [[[directives]]]
+      -q = ${VFQueueName}
       -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
 ## Extended mean analysis, forecast, and verification
   [[MeanAnalysis]]
     script = \$origin/MeanAnalysis.csh
     [[[job]]]
       execution time limit = PT5M
+    [[[directives]]]
+      -q = ${VFQueueName}
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
     script = \$origin/ExtendedMeanFC.csh "0"

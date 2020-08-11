@@ -45,7 +45,7 @@ set meshFile = ./${BGFilePrefix}.${fileDate}.nc
 # Remove old logs
 rm jedi.log*
 
-# Link/copy bg from other directory and ensure that MPASDiagVars are present
+# Link/copy bg from other directory and ensure that MPASDiagVariables are present
 # =========================================================================
 set bg = ./${bgDir}
 set an = ./${anDir}
@@ -63,7 +63,7 @@ set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
 rm ${anFile}
 
 set copyDiags = 0
-foreach var ({$MPASDiagVars})
+foreach var ({$MPASDiagVariables})
   ncdump -h ${bgFileOther} | grep $var
   if ( $status != 0 ) then
     @ copyDiags++
@@ -73,7 +73,7 @@ if ( $copyDiags > 0 ) then
   # Copy diagnostic variables used in DA to bg
   # ==========================================
   set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
-  ncks -A -v ${MPASDiagVars} ${diagFile} ${bgFile}
+  ncks -A -v ${MPASDiagVariables} ${diagFile} ${bgFile}
 endif
 
 # use the background as the meshFile (see jediPrep)

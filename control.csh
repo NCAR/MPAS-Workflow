@@ -39,7 +39,7 @@ if ( "$DAType" =~ *"eda"* ) then
   #setenv nEnsDAMembers 5
   setenv nEnsDAMembers 20
 endif
-setenv RTPPInflationFactor 0.5
+setenv RTPPInflationFactor 0.85
 
 ## DAObsList
 #OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
@@ -180,10 +180,10 @@ setenv bgDir           bg
 
 setenv anStatePrefix analysis
 
-setenv MPASDiagVars cldfrac
-setenv MPASSeaVars sst,xice
-set MPASHydroVars = (qc qi qr qs qg)
-#setenv MPASStandardANVars theta,rho,u,qv,uReconstructZonal,uReconstructMeridional
+setenv MPASDiagVariables cldfrac
+setenv MPASSeaVariables sst,xice
+set MPASHydroVariables = (qc qi qr qs qg)
+#setenv MPASStandardANVariables theta,rho,u,qv,uReconstructZonal,uReconstructMeridional
 
 set StandardAnalysisVariables = ( \
   temperature \
