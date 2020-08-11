@@ -117,9 +117,9 @@ setenv CalcOMMNodes 2
 setenv CalcOMMPEPerNode 18
 
 setenv VerifyObsNodes 1
-setenv VerifyObsPEPerNode 18
+setenv VerifyObsPEPerNode 36
 setenv VerifyModelNodes 1
-setenv VerifyModelPEPerNode 18
+setenv VerifyModelPEPerNode 36
 
 setenv CyclingDAJobMinutes 25
 setenv CyclingDAMemory 45

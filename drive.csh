@@ -30,6 +30,9 @@ set CriticalPath = "$CriticalPath CyclingEnsFC"
 #set CyclingDAFinished = ""
 #set CriticalPath = ""
 
+set initialCyclePoint = 20180415T00
+set finalCyclePoint   = 20180418T00
+
 rm -fr ${HOME}/cylc-run/${WholeExpName}
 echo "creating suite.rc"
 cat >! suite.rc << EOF
@@ -44,8 +47,8 @@ cat >! suite.rc << EOF
   [[environment]]
 [scheduling]
   max active cycle points = 200
-  initial cycle point = 20180415T00
-  final cycle point   = 20180418T00
+  initial cycle point = ${initialCyclePoint}
+  final cycle point   = ${finalCyclePoint}
   [[dependencies]]
 ## Initial cycle point
 #    [[[R1]]]
@@ -135,13 +138,13 @@ cat >! suite.rc << EOF
 #      --ntasks = 1
 #      --cpus-per-task = 36
 #      --partition = dav
-  [[VerifyBase]]
+  [[VerifyModelBase]]
     [[[job]]]
-      execution time limit = PT15M
+      execution time limit = PT5M
     [[[directives]]]
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
-      -l = select=1:ncpus=${VerifyObsPEPerNode}:mpiprocs=${VerifyObsPEPerNode}
+      -l = select=${VerifyModelNodes}:ncpus=${VerifyModelPEPerNode}:mpiprocs=${VerifyModelPEPerNode}
   [[OMMBase]]
     [[[job]]]
       execution time limit = PT${CalcOMMJobMinutes}M
@@ -149,6 +152,13 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
       -l = select=${CalcOMMNodes}:ncpus=${CalcOMMPEPerNode}:mpiprocs=${CalcOMMPEPerNode}:mem=109GB
+  [[VerifyObsBase]]
+    [[[job]]]
+      execution time limit = PT5M
+    [[[directives]]]
+      -q = ${VFQueueName}
+      -A = ${VFAccountNumber}
+      -l = select=${VerifyObsNodes}:ncpus=${VerifyObsPEPerNode}:mpiprocs=${VerifyObsPEPerNode}
 #Cycling components
   [[CyclingDA]]
     script = \$origin/CyclingDA.csh
@@ -182,10 +192,10 @@ cat >! suite.rc << EOF
       [[[environment]]]
         myPreScript = \$origin/jediPrepCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[VerifyObs{{state}}{{mem}}]]
-      inherit = VerifyBase
+      inherit = VerifyObsBase
       script = \$origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[VerifyModel{{state}}{{mem}}]]
-      inherit = VerifyBase
+      inherit = VerifyModelBase
       script = \$origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
   {% endfor %}
 {% endfor %}
@@ -212,10 +222,10 @@ cat >! suite.rc << EOF
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMMeanFC.csh "0" "{{dt}}" "FC"
   [[VerifyObsMeanFC{{dt}}hr]]
-    inherit = VerifyBase
+    inherit = VerifyObsBase
     script = \$origin/VerifyObsMeanFC.csh "0" "{{dt}}" "FC"
   [[VerifyModelMeanFC{{dt}}hr]]
-    inherit = VerifyBase
+    inherit = VerifyModelBase
     script = \$origin/VerifyModelMeanFC.csh "0" "{{dt}}" "FC"
 {% endfor %}
 ## Extended ensemble forecasts and verification
@@ -232,17 +242,17 @@ cat >! suite.rc << EOF
       [[[environment]]]
         myPreScript = \$origin/jediPrepCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
-      inherit = VerifyBase
+      inherit = VerifyObsBase
       script = \$origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
-      inherit = VerifyBase
+      inherit = VerifyModelBase
       script = \$origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   {% endfor %}
 {% endfor %}
 [visualization]
-  initial cycle point = 20180415T00
-  final cycle point   = 20180415T00
-  number of cycle points = 20
+  initial cycle point = ${initialCyclePoint}
+  final cycle point   = ${finalCyclePoint}
+  number of cycle points = 30
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
 
