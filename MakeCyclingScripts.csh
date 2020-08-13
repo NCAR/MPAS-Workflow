@@ -13,7 +13,7 @@ set cyclingParts = ( \
   getCycleVars.csh \
   tools \
   config \
-  ${MPAS_RES} \
+  ${MPASGridDescriptor} \
   MeanAnalysis.csh \
   RTPPInflation.csh \
 )

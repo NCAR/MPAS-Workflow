@@ -47,42 +47,34 @@ ln -sf ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sf $GRAPHINFO_DIR/x1.${MPAS_NCELLS}.graph.info* .
+ln -sf $GRAPHINFO_DIR/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
 ln -sf ${FCStaticFiles} .
 
-## link static stream_list configs
+## link/copy stream_list/streams configs
 foreach staticfile ( \
 stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
-  ln -sf $FC_NML_DIR/$staticfile .
+  ln -sf $fcModelConfigDir/$staticfile .
 end
-## copy dynamic namelist/streams configs
-set NL = namelist.${MPASCore}
 set STREAMS = streams.${MPASCore}
-foreach dynamicfile ($NL ${STREAMS})
-  rm $dynamicfile
-  cp $FC_NML_DIR/$dynamicfile ./
-end
-
-#
-# Revise time info in namelist/streams
-# =============================================
-cat >! newnamelist << EOF
-  /config_start_time /c\
-   config_start_time      = '${NMLDate}'
-  /config_run_duration/c\
-   config_run_duration    = '${config_run_duration}'
-EOF
-cp $NL orig_$NL
-sed -f newnamelist orig_$NL >! $NL
-rm newnamelist
-rm orig_$NL
-
+rm ${STREAMS}
+cp -v $fcModelConfigDir/${STREAMS} .
+sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
 sed -i 's@outputIntervalArg@'${output_interval}'@' ${STREAMS}
+
+## copy/modify dynamic namelist
+set NL = namelist.atmosphere
+rm ${NL}
+cp -v ${fcModelConfigDir}/${NL} .
+sed -i 's@startTime@'${NMLDate}'@' $NL
+sed -i 's@fcLength@'${config_run_duration}'@' $NL
+sed -i 's@nCells@'${MPASnCells}'@' $NL
+sed -i 's@modelDT@'${MPASTimeStep}'@' $NL
+sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NL
 
 if ( ${self_fcLengthHR} == 0 ) then
   ## zero-length forecast case (NOT CURRENTLY USED)
@@ -134,7 +126,7 @@ while ( ${fcDate} <= ${finalFCDate} )
     ncks -a -x -v ${MPASSeaVariables} ${fcFile} ${fcFileNoSea}
 
     #append MPASSeaVariables from current GFS ANA
-    set SST_FILE = ${GFSSST_DIR}/${fcDate}/x1.${MPAS_NCELLS}.sfc_update.${fcFileExt}
+    set SST_FILE = ${GFSSST_DIR}/${fcDate}/x1.${MPASnCells}.sfc_update.${fcFileExt}
     ncks -A -v ${MPASSeaVariables} ${SST_FILE} ${fcFileNoSea}
     mv  ${fcFileNoSea} ${fcFile}
   endif

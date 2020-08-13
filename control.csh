@@ -32,7 +32,7 @@ setenv OutDBDir dbOut
 
 ## DAType
 #OPTIONS: ${omm}, omf, varbc, 3dvarId, 3denvar, eda_3denvar
-setenv DAType eda_3denvar
+setenv DAType 3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DAType" =~ *"eda"* ) then
@@ -98,8 +98,10 @@ setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of ex
 setenv DAVFWindowHR ${ExtendedFC_DT_HR} # window of observations included in verification
 
 ## 120km
-setenv MPAS_RES            120km
-setenv MPAS_NCELLS         40962
+setenv MPASGridDescriptor 120km
+setenv MPASnCells 40962
+setenv MPASTimeStep 720.0
+setenv MPASDiffusionLengthScale 120000.0
 # TODO: enable logic (somewhere else) to use different super-obbing/thinning for DA/OMM jobs
 setenv RADTHINDISTANCE     "200.0"
 setenv RADTHINAMOUNT       "0.98"
@@ -137,8 +139,10 @@ setenv CyclingInflationNodesPerMember ${CalcOMMNodes}
 setenv CyclingInflationPEPerNode      ${CalcOMMPEPerNode}
 
 ## 30km
-#setenv MPAS_RES           30km
-#setenv MPAS_NCELLS        655362
+#setenv MPASGridDescriptor 30km
+#setenv MPASnCells 655362
+#setenv MPASTimeStep 180.0
+#setenv MPASDiffusionLengthScale 15000.0
 #setenv RADTHINDISTANCE    "60.0"
 #setenv RADTHINAMOUNT      "0.75"
 
@@ -167,7 +171,7 @@ setenv CyclingInflationPEPerNode      ${CalcOMMPEPerNode}
 setenv RSTFilePrefix   restart
 setenv ICFilePrefix    ${RSTFilePrefix}
 setenv FirstCycleFilePrefix ${RSTFilePrefix}
-#setenv FirstCycleFilePrefix x1.${MPAS_NCELLS}.init
+#setenv FirstCycleFilePrefix x1.${MPASnCells}.init
 
 setenv FCFilePrefix    ${RSTFilePrefix}
 setenv fcDir           fc
@@ -208,7 +212,7 @@ setenv nulljob 0
 setenv PKGBASE          MPAS-Workflow
 setenv EXPUSER          ${USER}
 setenv TOP_EXP_DIR      /glade/scratch/${EXPUSER}/pandac
-setenv WholeExpName     ${EXPUSER}_${ExpName}_${MPAS_RES}
+setenv WholeExpName     ${EXPUSER}_${ExpName}_${MPASGridDescriptor}
 setenv EXPDIR           ${TOP_EXP_DIR}/${WholeExpName}
 
 ## immediate subdirectories
@@ -221,9 +225,10 @@ setenv VerificationWorkDir ${EXPDIR}/Verification
 ## directories copied from PKGBASE
 setenv mainScriptDir  ${EXPDIR}/${PKGBASE}
 
-setenv CONFIGDIR        ${mainScriptDir}/config #ONLY used by jediPrep
-
-setenv RESSPECIFICDIR   ${mainScriptDir}/${MPAS_RES} #ONLY used by jediPrep
+setenv CONFIGDIR        ${mainScriptDir}/config
+setenv daModelConfigDir ${CONFIGDIR}/mpas/da
+setenv fcModelConfigDir ${CONFIGDIR}/mpas/fc
+setenv rtppModelConfigDir ${CONFIGDIR}/mpas/rtpp
 
 ## directory string formatter for EDA members
 # argument to memberDir.py
@@ -241,7 +246,7 @@ setenv FIXED_INPUT           ${TOP_STATIC_DIR}/fixed_input
 ## deterministic input
 #GFS
 setenv GFS6hfcFORFirstCycle  /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
-#setenv GFSANA6HFC_DIR        ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
+#setenv GFSANA6HFC_DIR        ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA6HFC
 
 ## ensemble input
 #GEFS
@@ -274,18 +279,15 @@ setenv dynamicEnsBNMembers ${nEnsDAMembers}
 setenv dynamicEnsBDir ${CyclingFCWorkDir}
 setenv dynamicEnsBFilePrefix ${FCFilePrefix}
 
-#setenv GFSANA6HFC_OMF_DIR    ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA6HFC
-#setenv GFSANA_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSANA
-setenv GFSSST_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSSST
+#setenv GFSANA6HFC_OMF_DIR    ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA6HFC
+#setenv GFSANA_DIR            ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA
+setenv GFSSST_DIR            ${FIXED_INPUT}/${MPASGridDescriptor}/GFSSST
 
 ## MPAS-Model and MPAS-JEDI
-setenv GRAPHINFO_DIR         ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_graph
-setenv DA_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_DA_NML
-setenv FC_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_FC_NML
-setenv RTPP_NML_DIR          ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_RTPP_NML
+setenv GRAPHINFO_DIR         ${FIXED_INPUT}/${MPASGridDescriptor}/graph
 
 ## Background Error
-setenv bumpLocDir            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_bumploc_${CyclingDAPEPerMember}pe
+setenv bumpLocDir            ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${CyclingDAPEPerMember}pe
 setenv bumpLocPrefix         bumploc_2000_5
 
 ## Observations

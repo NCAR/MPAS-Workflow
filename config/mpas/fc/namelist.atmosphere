@@ -1,8 +1,8 @@
 &nhyd_model
     config_time_integration_order = 2
-    config_dt =  180.0
-   config_start_time      = '2018-04-15_00:00:00'
-    config_run_duration = '0_06:00:00'
+    config_dt = modelDT
+    config_start_time = 'startTime'
+    config_run_duration = 'fcLength'
     config_split_dynamics_transport = true
     config_number_of_sub_steps = 2
     config_dynamics_split_steps = 3
@@ -13,7 +13,7 @@
     config_h_theta_eddy_visc4 = 0.0
     config_v_theta_eddy_visc2 = 0.0
     config_horiz_mixing = '2d_smagorinsky'
-    config_len_disp = 15000.0
+    config_len_disp = diffusionLengthScale
     config_visc4_2dsmag = 0.05
     config_w_adv_order = 3
     config_theta_adv_order = 3
@@ -38,10 +38,11 @@
     config_pio_stride = 1
 /
 &decomposition
-    config_block_decomp_file_prefix = 'x1.655362.graph.info.part.'
+    config_block_decomp_file_prefix = 'x1.nCells.graph.info.part.'
 /
 &restart
     config_do_restart = true
+    config_do_DAcycling = true
 /
 &printout
     config_print_global_minmax_vel = true
@@ -60,13 +61,8 @@
     config_o3climatology = true
     config_bucket_update = 'none'
     config_physics_suite = 'mesoscale_reference'
-!    config_gwdo_scheme = 'off'
     config_microp_re = true
 /
 &soundings
     config_sounding_interval = 'none'
 /
-&assimilation
-    config_jedi_da = true
-/
-

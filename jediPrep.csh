@@ -86,33 +86,34 @@ set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sf $GRAPHINFO_DIR/x1.${MPAS_NCELLS}.graph.info* .
+ln -sf $GRAPHINFO_DIR/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
 ln -sf ${FCStaticFiles} .
 
 ## link static stream settings
 
-## link static stream_list/streams configs
+## link/copy stream_list/streams configs
 foreach staticfile ( \
 stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
-streams.${MPASCore} \
 )
-  ln -sf $DA_NML_DIR/$staticfile .
+  ln -sf $daModelConfigDir/$staticfile .
 end
+set STREAMS = streams.${MPASCore}
+rm ${STREAMS}
+cp -v $daModelConfigDir/${STREAMS} .
+sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
 
 ## copy/modify dynamic namelist
-cp -v ${RESSPECIFICDIR}/namelist.atmosphere_da ./namelist.atmosphere
-cp -v namelist.atmosphere orig_namelist.atmosphere
-set indent = "   "
-cat >! newnamelist << EOF
-  /config_start_time /c\
-${indent}config_start_time = '${NMLDate}'
-EOF
-sed -f newnamelist orig_namelist.atmosphere >! namelist.atmosphere
-rm newnamelist
+set NL = namelist.${MPASCore}
+rm $NL
+cp -v ${daModelConfigDir}/${NL} .
+sed -i 's@startTime@'${NMLDate}'@' $NL
+sed -i 's@nCells@'${MPASnCells}'@' $NL
+sed -i 's@modelDT@'${MPASTimeStep}'@' $NL
+sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NL
 
 # =============
 # OBSERVATIONS

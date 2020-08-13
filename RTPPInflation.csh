@@ -39,20 +39,23 @@ cp $anDirs[1]/${anPrefix}.$fileDate.nc ${meanDir}
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sf $GRAPHINFO_DIR/x1.${MPAS_NCELLS}.graph.info* .
+ln -sf $GRAPHINFO_DIR/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
 ln -sf ${FCStaticFiles} .
 
-## link static stream_list/streams configs
+## link/copy stream_list/streams configs
 foreach staticfile ( \
 stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
-streams.${MPASCore} \
 )
-  ln -sf $RTPP_NML_DIR/$staticfile .
+  ln -sf $rtppModelConfigDir/$staticfile .
 end
+set STREAMS = streams.${MPASCore}
+rm ${STREAMS}
+cp -v $rtppModelConfigDir/${STREAMS} .
+sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
 
 ## link namelist.atmosphere already modifed for this cycle
 ln -sf $CyclingDADir/namelist.atmosphere ./

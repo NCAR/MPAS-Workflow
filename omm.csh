@@ -71,6 +71,8 @@ if ( $copyDiags > 0 ) then
   # Copy diagnostic variables used in DA to bg
   # ==========================================
   set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
+  mv ${bgFile} ${bgFile}${OrigFileSuffix}
+  cp -v ${bgFile}${OrigFileSuffix} ${bgFile}
   ncks -A -v ${MPASDiagVariables} ${diagFile} ${bgFile}
 endif
 
