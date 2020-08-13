@@ -230,7 +230,7 @@ if ( "$self_DAType" =~ *"eda"* ) then
 else
   sed -i 's@OOPSMemberDir@@g' $thisYAML
 endif
-set meshFile = ./${BGFilePrefix}.${fileDate}.nc
+set meshFile = ${self_WorkDir}/${bgDir}/${BGFilePrefix}.$fileDate.nc
 sed -i 's@meshFile@'${meshFile}'@g' $thisYAML
 sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' $thisYAML
 sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML

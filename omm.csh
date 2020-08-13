@@ -40,8 +40,6 @@ echo "WorkDir = ${self_WorkDir}"
 
 cd ${self_WorkDir}
 
-set meshFile = ./${BGFilePrefix}.${fileDate}.nc
-
 # Remove old logs
 rm jedi.log*
 
@@ -76,8 +74,8 @@ if ( $copyDiags > 0 ) then
   ncks -A -v ${MPASDiagVariables} ${diagFile} ${bgFile}
 endif
 
-# use the background as the meshFile (see jediPrep)
-ln -sf ${bgFile} ${meshFile}
+# use the background as the localMeshFile (see jediPrep)
+ln -sf ${bgFile} ${localMeshFile}
 
 # ===================
 # ===================

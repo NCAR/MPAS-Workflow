@@ -20,8 +20,6 @@ echo "WorkDir = ${self_WorkDir}"
 
 cd ${self_WorkDir}
 
-set meshFile = ./${BGFilePrefix}.${fileDate}.nc
-
 # Remove old logs
 rm jedi.log*
 
@@ -39,8 +37,8 @@ while ( $member <= ${nEnsDAMembers} )
   set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
   set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
-  ln -fsv ${bgFileOther} ${bgFile}_orig
-  cp ${bgFile}_orig ${bgFile}
+  ln -fsv ${bgFileOther} ${bgFile}${OrigFileSuffix}
+  cp ${bgFile}${OrigFileSuffix} ${bgFile}
 
   # Remove existing analysis file, then link to bg file
   # ===================================================
@@ -60,15 +58,16 @@ while ( $member <= ${nEnsDAMembers} )
   if ( $copyDiags > 0 ) then
     set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
     ncks -A -v ${MPASDiagVariables} ${diagFile} ${bgFile}
+    rm ${bgFile}${OrigFileSuffix}
+    cp ${bgFile} ${bgFile}${OrigFileSuffix}
   endif
 
   @ member++
 end
 
-# use one of the backgrounds as the meshFile (see jediPrep)
+# use one of the backgrounds as the localMeshFile (see jediPrep)
 #TODO: create link until gridfname is used
-ln -sf ${bgFile} ${meshFile}
-
+ln -sf ${bgFile} ${localMeshFile}
 
 # ===================
 # ===================

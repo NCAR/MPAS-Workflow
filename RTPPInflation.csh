@@ -21,8 +21,10 @@ echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
-set bgPrefix = $FCFilePrefix
-set bgDirs = ($prevCyclingFCDirs)
+#set bgPrefix = $FCFilePrefix
+#set bgDirs = ($prevCyclingFCDirs)
+set bgPrefix = $BGFilePrefix
+set bgDirs = ($CyclingDAInDirs)
 set anPrefix = $ANFilePrefix
 set anDirs = ($CyclingDAOutDirs)
 
@@ -49,7 +51,7 @@ stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 streams.${MPASCore} \
 )
-  ln -sf $DA_NML_DIR/$staticfile .
+  ln -sf $RTPP_NML_DIR/$staticfile .
 end
 
 ## link namelist.atmosphere already modifed for this cycle
@@ -71,9 +73,10 @@ sed -i 's@RTPPInflationFactor@'${RTPPInflationFactor}'@g' $thisYAML
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 
 # use one of the backgrounds as the meshFile
-set meshFile = $bgDirs[1]/${bgPrefix}.$fileDate.nc
+set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
+
 #TODO: create link until gridfname is used
-ln -sf $meshFile ./
+ln -sf $meshFile ${localMeshFile}
 
 ## file naming
 sed -i 's@meshFile@'${meshFile}'@g' $thisYAML
@@ -87,23 +90,11 @@ set prevYAML = $thisYAML
 # averaged and/or remain constant through RTPP
 set AnalysisVariables = ( \
   $StandardAnalysisVariables \
-  xice \
-  snowc \
-  skintemp \
-  snowh \
-  u10 \
-  v10 \
-  smois \
-  tslb \
-  w \
+  pressure_p \
 )
-# if any CRTM yaml section includes Clouds, then analyze hydrometeors
-grep '^\ \+Clouds' $CyclingDADir/$appyaml
-if ( $status == 0 ) then
-  foreach hydro ($MPASHydroVariables)
-    set AnalysisVariables = ($AnalysisVariables index_$hydro)
-  end
-endif
+foreach hydro ($MPASHydroVariables)
+  set AnalysisVariables = ($AnalysisVariables index_$hydro)
+end
 set StateVariables = ( \
   $AnalysisVariables \
   index_qv \
@@ -134,10 +125,12 @@ foreach PMatrix (Pb Pa)
   if ($PMatrix == Pb) then
     set ensPDirs = ($bgDirs)
     set ensPFilePrefix = ${bgPrefix}
+    set ensPFileSuffix = ${OrigFileSuffix}
   endif
   if ($PMatrix == Pa) then
     set ensPDirs = ($anDirs)
     set ensPFilePrefix = ${anPrefix}
+    set ensPFileSuffix = ""
   endif
 
   set enspsed = Ensemble${PMatrix}Members
@@ -147,7 +140,7 @@ EOF
 
   set member = 1
   while ( $member <= ${nEnsDAMembers} )
-    set filename = $ensPDirs[$member]/${ensPFilePrefix}.${fileDate}.nc
+    set filename = $ensPDirs[$member]/${ensPFilePrefix}.${fileDate}.nc${ensPFileSuffix}
     ## copy original analysis files for diagnosing RTPP behavior (not necessary)
     if ($PMatrix == Pa) then
       set memDir = "."`${memberDir} ens $member "${oopsMemFmt}"`

@@ -177,20 +177,21 @@ setenv ANFilePrefix    an
 setenv anDir           ${ANFilePrefix}
 setenv BGFilePrefix    ${RSTFilePrefix}
 setenv bgDir           bg
-
 setenv anStatePrefix analysis
+
+setenv OrigFileSuffix  _orig
 
 setenv MPASDiagVariables cldfrac
 setenv MPASSeaVariables sst,xice
-set MPASHydroVariables = (qc qi qr qs qg)
+set MPASHydroVariables = (qc qi qg qr qs)
 #setenv MPASStandardANVariables theta,rho,u,qv,uReconstructZonal,uReconstructMeridional
 
 set StandardAnalysisVariables = ( \
-  temperature \
   spechum \
-  uReconstructZonal \
-  uReconstructMeridional \
   surface_pressure \
+  temperature \
+  uReconstructMeridional \
+  uReconstructZonal \
 )
 
 @ CyclingDAPEPerMember = ${CyclingDANodesPerMember} * ${CyclingDAPEPerNode}
@@ -281,6 +282,7 @@ setenv GFSSST_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_GFSSST
 setenv GRAPHINFO_DIR         ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_graph
 setenv DA_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_DA_NML
 setenv FC_NML_DIR            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_FC_NML
+setenv RTPP_NML_DIR          ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_RTPP_NML
 
 ## Background Error
 setenv bumpLocDir            ${FIXED_INPUT}/${MPAS_RES}/${MPAS_RES}_bumploc_${CyclingDAPEPerMember}pe
