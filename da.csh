@@ -93,45 +93,6 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-### add hydrometeors to update variables (if needed)
-#set UpdateHydrometeors = 0
-#foreach obs ($DAObsList)
-#  ## determine if hydrometeor analysis variables are needed
-#  if ( "$obs" =~ "all"* ) then
-#    set UpdateHydrometeors = 1
-#  endif
-#end
-#set MPASANVariables = $MPASStandardANVariables
-#if ( $UpdateHydrometeors == 1 ) then
-#  foreach hydro ($MPASHydroANVariables)
-#    set MPASANVariables = $MPASANVariables,$hydro
-#  end
-#endif
-#
-##
-## Update analyzed variables:
-## =============================================
-##TODO: do this in a separate post-processing script
-##      either in parallel or using only single processor
-##      instead of full set of job processors
-#set member = 1
-#while ( $member <= ${nEnsDAMembers} )
-#  set bg = $CyclingDAInDirs[$member]
-#  set an = $CyclingDAOutDirs[$member]
-#
-#  ## copy background to analysis
-#  set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
-#  set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
-#  cp ${bgFile} ${anFile}
-#
-#  ## replace ANVariables with output analysis values
-#  set anFileDA = ${an}/${anStatePrefix}.$fileDate.nc
-#  ncks -A -v ${MPASANVariables} ${anFileDA} ${anFile}
-#  rm ${anFileDA}
-#
-#  @ member++
-#end
-
 date
 
 exit 0

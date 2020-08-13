@@ -188,7 +188,6 @@ setenv OrigFileSuffix  _orig
 setenv MPASDiagVariables cldfrac
 setenv MPASSeaVariables sst,xice
 set MPASHydroVariables = (qc qi qg qr qs)
-#setenv MPASStandardANVariables theta,rho,u,qv,uReconstructZonal,uReconstructMeridional
 
 set StandardAnalysisVariables = ( \
   spechum \
