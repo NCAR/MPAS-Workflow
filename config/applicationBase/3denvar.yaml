@@ -60,6 +60,7 @@ cost function:
       bump:
         datadir: bumpLocDir
         prefix: bumpLocPrefix
+        #verbosity: main
         default_seed: 1
         method: loc
         strategy: common  #specific_univariate
@@ -68,7 +69,6 @@ cost function:
         load_nicas: 1
         lsqrt: 1
         mpicom: 2
-#        verbosity: main
     _: &state
       date: *adate
       state variables: *incvars
