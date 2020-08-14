@@ -115,20 +115,14 @@ while ( ${fcDate} <= ${finalFCDate} )
   set fcFileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
   set fcFileExt = ${fcFileDate}.nc
   set fcFile = ${FCFilePrefix}.${fcFileExt}
-  set fcFileNoSea = ${fcFile}.NOSEA
 
   ## move restart to forecast name
   mv ${RSTFilePrefix}.${fcFileExt} ${fcFile}
 
-  ## Update MPAS sea surface variables:
+  ## Update MPASSeaVariables from GFS ANA:
   if ( ${updateSea} ) then
-    #delete MPASSeaVariables from previous GFS ANA
-    ncks -a -x -v ${MPASSeaVariables} ${fcFile} ${fcFileNoSea}
-
-    #append MPASSeaVariables from current GFS ANA
     set SST_FILE = ${GFSSST_DIR}/${fcDate}/x1.${MPASnCells}.sfc_update.${fcFileExt}
-    ncks -A -v ${MPASSeaVariables} ${SST_FILE} ${fcFileNoSea}
-    mv  ${fcFileNoSea} ${fcFile}
+    ncks -A -v ${MPASSeaVariables} ${SST_FILE} ${fcFile}
   endif
 
   ## Add MPASDiagVariables to the next cycle bg file (if needed)
