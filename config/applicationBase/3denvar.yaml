@@ -68,6 +68,7 @@ cost function:
         load_nicas: 1
         lsqrt: 1
         mpicom: 2
+#        verbosity: main
     _: &state
       date: *adate
       state variables: *incvars
