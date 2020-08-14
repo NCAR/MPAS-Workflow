@@ -32,7 +32,7 @@ setenv OutDBDir dbOut
 
 ## DAType
 #OPTIONS: ${omm}, omf, varbc, 3dvarId, 3denvar, eda_3denvar
-setenv DAType 3denvar
+setenv DAType eda_3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DAType" =~ *"eda"* ) then
@@ -245,14 +245,14 @@ setenv FIXED_INPUT           ${TOP_STATIC_DIR}/fixed_input
 ## deterministic input
 #GFS
 setenv GFS6hfcFORFirstCycle  /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
-#setenv GFSANA6HFC_DIR        ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA6HFC
+#setenv GFSANA6hfc_DIR        ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA6HFC
 
 ## ensemble input
 #GEFS
 set gefsMemFmt = "/{:02d}"
 set nGEFSMembers = 20
 
-set GEFS6hfcFOREnsBDir = /glade/scratch/wuyl/test2/pandac/test_120km/120km_EnsFC
+set GEFS6hfcFOREnsBDir = /glade/p/mmm/parc/liuz/pandac_common/120km_EnsFC
 set GEFS6hfcFOREnsBFilePrefix = EnsForCov
 
 set GEFS6hfcFORFirstCycle = /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/120kmEnsFCFirstCycle/2018041418
@@ -278,7 +278,7 @@ setenv dynamicEnsBNMembers ${nEnsDAMembers}
 setenv dynamicEnsBDir ${CyclingFCWorkDir}
 setenv dynamicEnsBFilePrefix ${FCFilePrefix}
 
-#setenv GFSANA6HFC_OMF_DIR    ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA6HFC
+#setenv GFSANA6hfc_OMF_DIR    ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA6HFC
 #setenv GFSANA_DIR            ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA
 setenv GFSSST_DIR            ${FIXED_INPUT}/${MPASGridDescriptor}/GFSSST
 
