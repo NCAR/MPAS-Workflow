@@ -22,8 +22,7 @@ foreach part ($cyclingParts)
 end
 
 ## First cycle "forecast" established offline
-# TODO: make FirstCycleDate behavior part of CyclingFC or seperate application
-#       instead of work-flow initialization? Could use zero-length fc or new fcinit
+# TODO: Setup FirstCycleDate using a new fcinit job type and put in R1 cylc position
 set thisCycleDate = $FirstCycleDate
 set thisValidDate = $thisCycleDate
 source getCycleVars.csh
@@ -38,7 +37,9 @@ while ( $member <= ${nEnsDAMembers} )
   mkdir -p $prevCyclingFCDirs[$member]
 
   set fcFile = $prevCyclingFCDirs[$member]/${FCFilePrefix}.${fileDate}.nc
-  ln -sf ${InitialFC}/${RSTFilePrefix}.${fileDate}.nc ${fcFile}_orig
+  ln -sf ${InitialFC}/${RSTFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
+  rm ${fcFile}
+  cp -v ${fcFile}${OrigFileSuffix} ${fcFile}
 
   set diagFile = $prevCyclingFCDirs[$member]/${DIAGFilePrefix}.${fileDate}.nc
   ln -sf ${InitialFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
@@ -46,16 +47,13 @@ while ( $member <= ${nEnsDAMembers} )
   ## Add MPASDiagVariables to the next cycle bg file (if needed)
   set copyDiags = 0
   foreach var ({$MPASDiagVariables})
-    ncdump -h ${fcFile}_orig | grep $var
+    ncdump -h ${fcFile} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
     endif
   end
-  ln -sf ${fcFile}_orig ${fcFile}
-#TODO: only want to do this at R1 cylc position
+# Takes too long on command-line.  Make it part of a job (R1).
 #  if ( $copyDiags > 0 ) then
-#    rm ${fcFile}
-#    cp ${fcFile}_orig ${fcFile}
 #    ncks -A -v ${MPASDiagVariables} ${diagFile} ${fcFile}
 #  endif
 #  rm ${diagFile}

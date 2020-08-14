@@ -38,7 +38,7 @@ while ( $member <= ${nEnsDAMembers} )
   set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
   ln -fsv ${bgFileOther} ${bgFile}${OrigFileSuffix}
-  cp ${bgFile}${OrigFileSuffix} ${bgFile}
+  cp -v ${bgFile}${OrigFileSuffix} ${bgFile}
 
   # Remove existing analysis file, then link to bg file
   # ===================================================
