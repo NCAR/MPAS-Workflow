@@ -94,17 +94,17 @@ set prevYAML = $thisYAML
 set AnalysisVariables = ( \
   $StandardAnalysisVariables \
   pressure_p \
+  pressure \
+  rho \
+  theta \
+  u \
+  index_qv \
 )
 foreach hydro ($MPASHydroVariables)
   set AnalysisVariables = ($AnalysisVariables index_$hydro)
 end
 set StateVariables = ( \
   $AnalysisVariables \
-  index_qv \
-  pressure \
-  rho \
-  theta \
-  u \
 )
 foreach VarGroup (AnalysisVariables StateVariables)
   if (${VarGroup} == AnalysisVariables) then
