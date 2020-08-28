@@ -352,13 +352,13 @@ else
   setenv DAEXE           mpas_variational.x
 endif
 set DABundleBuild = _build=RelWithDebInfo
-set DABuildFeature = _feature--eda_sci
+set DABuildFeature = _feature--eda
 setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${DABundleBuild}${DABuildFeature}
 setenv DABuildDir      ${TOP_BUILD_DIR}/build/${DABuild}/bin
 
 setenv OMMEXE           mpas_variational.x
 set OMMBundleBuild = _build=RelWithDebInfo
-set OMMBuildFeature = _feature--eda_sci
+set OMMBuildFeature = _feature--eda
 setenv OMMBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${OMMBundleBuild}${OMMBuildFeature}
 setenv OMMBuildDir      ${TOP_BUILD_DIR}/build/${OMMBuild}/bin
 

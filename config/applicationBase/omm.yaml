@@ -6,13 +6,6 @@ variational:
   iterations:
   - geometry:
       gridfname: meshFile
-    linear model:
-      name: MPASIdTLM
-      variable change: Identity
-      tstep: PT0H
-      trajectory:
-        tstep: PT0H
-      tlm variables: &incvars [AnalysisVariables]
     ninner: '0'
     gradient norm reduction: 1e-10
     test: 'on'
@@ -28,12 +21,7 @@ cost function:
   window length: PT6H
   geometry:
     gridfname: meshFile
-  model:
-    name: MPAS
-    tstep: PT6H
-    model variables: [ModelVariables]
-  analysis variables: *incvars
-  varable change: Identity
+  analysis variables: &incvars [AnalysisVariables]
   background:
     state variables: *incvars
     filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
