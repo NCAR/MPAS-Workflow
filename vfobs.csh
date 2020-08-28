@@ -54,6 +54,9 @@ while ( $success != 0 )
   mv log.${mainScript} log.${mainScript}_LAST
 
   python ${mainScript}.py -n ${NUMPROC} -p ../../${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} >& log.${mainScript}
+#TODO: use absolute path of obs
+# --> requires modifying ufo_file_utils.py to remove directory from file names when determining osKey
+#  python ${mainScript}.py -n ${NUMPROC} -p ${self_WorkDir}/${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} >& log.${mainScript}
 
   set success = $?
 
