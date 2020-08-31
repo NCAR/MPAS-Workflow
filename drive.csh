@@ -2,15 +2,7 @@
 
 date
 
-./MakeCyclingScripts.csh
-
 source control.csh
-cd ${mainScriptDir}
-
-echo "Initializing ${PKGBASE}"
-module purge
-module load cylc
-module load graphviz
 
 ## Top-level workflow controls
 set RunCriticalPath = True
@@ -23,6 +15,22 @@ set VerifyExtendedEnsFC = False
 set initialCyclePoint = 20180418T06
 set finalCyclePoint   = 20180425T00
 
+## Initialize cycling directory if this is the first cycle point
+set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
+set hh = `echo ${FirstCycleDate} | cut -c 9-10`
+set firstCyclePoint = ${yymmdd}T${hh}
+if ($initialCyclePoint == $firstCyclePoint) then
+  ./MakeCyclingScripts.csh
+endif
+
+## Change to the cylc suite directory
+cd ${mainScriptDir}
+
+echo "Initializing ${PKGBASE}"
+module purge
+module load cylc
+module load graphviz
+
 rm -fr ${HOME}/cylc-run/${WholeExpName}
 echo "creating suite.rc"
 cat >! suite.rc << EOF
@@ -32,20 +40,21 @@ cat >! suite.rc << EOF
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
 {% set VerifyEnsBGAN = ${VerifyEnsBGAN} %}
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
+#TODO: put warm-start file copying in InitEnsFC/firstfc script
+{# set firstCyclePoint = "${firstCyclePoint}" #}
+{% set initialCyclePoint = "${initialCyclePoint}" %}
+{% set finalCyclePoint = "${finalCyclePoint}" %}
 {% if VerifyOnly %}
   {% set RunCriticalPath = False %}
 {% endif %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
-{% if RunCriticalPath %}
-  {% set CriticalPath = "CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => CyclingDA => " %}
-  {% if (nEnsDAMembers > 1 and RTPPInflationFactor > 0.0) %}
-    {% set CriticalPath = CriticalPath+"RTPPInflation => " %}
-  {% endif %}
-  {% set CriticalPath = CriticalPath+"CyclingDAFinished => CyclingEnsFC" %}
-{% else %}
-  {% set CriticalPath = "" %}
+{% set CriticalPath = "" %}
+{% set CriticalPath = CriticalPath+"CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => CyclingDA" %}
+{% if (nEnsDAMembers > 1 and RTPPInflationFactor > 0.0) %}
+  {% set CriticalPath = CriticalPath+" => RTPPInflation" %}
 {% endif %}
+{% set CriticalPath = CriticalPath+" => CyclingDAFinished => CyclingEnsFC" %}
 [meta]
   title = "${PKGBASE}--${WholeExpName}"
   {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
@@ -56,9 +65,14 @@ cat >! suite.rc << EOF
   [[environment]]
 [scheduling]
   max active cycle points = 200
-  initial cycle point = ${initialCyclePoint}
-  final cycle point   = ${finalCyclePoint}
+  initial cycle point = {{initialCyclePoint}}
+  final cycle point   = {{finalCyclePoint}}
   [[dependencies]]
+#TODO: put warm-start file copying in InitEnsFC/firstfc script
+#{# if initialCyclePoint == firstCyclePoint #}
+#    [[[R1]]]
+#      graph = InitEnsFC => CyclingDA
+#{# endif #}
 {% if RunCriticalPath %}
 ## Critical path for cycling
     [[[PT${CyclingWindowHR}H]]]
@@ -73,7 +87,6 @@ cat >! suite.rc << EOF
     {% for dt in ExtendedFCLengths %}
         ExtendedMeanFC => VerifyModelMeanFC{{dt}}hr
         ExtendedMeanFC => CalcOMMeanFC{{dt}}hr
-        VerifyModelMeanFC{{dt}}hr
         CalcOMMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
     {% endfor %}
   {% else %}
@@ -194,6 +207,8 @@ cat >! suite.rc << EOF
     [[[directives]]]
       -l = select=${CyclingInflationNodesPerMember}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
   [[CyclingDAFinished]]
+    [[[job]]]
+      batch system = background
   [[CyclingEnsFC]]
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
@@ -269,8 +284,8 @@ cat >! suite.rc << EOF
   {% endfor %}
 {% endfor %}
 [visualization]
-  initial cycle point = ${initialCyclePoint}
-  final cycle point   = ${finalCyclePoint}
+  initial cycle point = {{initialCyclePoint}}
+  final cycle point   = {{finalCyclePoint}}
   number of cycle points = 200
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
