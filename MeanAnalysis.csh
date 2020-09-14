@@ -22,26 +22,26 @@ mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
 set memberPrefix = ${self_StatePrefix}.${fileDate}mem
-set analysisName = ${self_StatePrefix}.$fileDate.nc
+set meanName = ${self_StatePrefix}.$fileDate.nc
 set varianceName = ${self_StatePrefix}.$fileDate.variance.nc
 
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set appMember = `${memberDir} ens $member "{:03d}"`
 # set appMember = printf "%03d" $member`
-  ln -sf $self_StateDirs[$member]/${analysisName} ./${memberPrefix}${appMember}
+  ln -sf $self_StateDirs[$member]/${meanName} ./${memberPrefix}${appMember}
   @ member++
 end
 
 if (${nEnsDAMembers} == 1) then
   ## pass-through for mean
-  ln -sf $self_StateDirs[1]/${analysisName} ./
+  ln -sf $self_StateDirs[1]/${meanName} ./
 else
   ## make copy for mean
-  cp $self_StateDirs[1]/${analysisName} ./
+  cp $self_StateDirs[1]/${meanName} ./
 
   ## make copy for variance
-  cp $self_StateDirs[1]/${analysisName} ./${varianceName}
+  cp $self_StateDirs[1]/${meanName} ./${varianceName}
 
   # ===================
   # ===================
@@ -49,7 +49,7 @@ else
   # ===================
   # ===================
   set arg1 = ${self_WorkDir}
-  set arg2 = ${analysisName}
+  set arg2 = ${meanName}
   set arg3 = ${varianceName}
   set arg4 = ${memberPrefix}
   set arg5 = ${nEnsDAMembers}
@@ -57,17 +57,15 @@ else
   ln -sf ${meanStateBuildDir}/${meanStateExe} ./
   mpiexec ./${meanStateExe} "$arg1" "$arg2" "$arg3" "$arg4" "$arg5" >& log
 
-  ##
-  ## Check status:
-  ## =============================================
-  #grep 'CHARACTERISTIC STRING' log
-  #if ( $status != 0 ) then
-  #  touch ./FAIL
-  #  echo "ERROR in $0 : mean state application failed" >> ./FAIL
-  #  exit 1
-  #endif
-
-  ## massage output as needed...
+  #
+  # Check status:
+  # =============================================
+  grep 'All done' log
+  if ( $status != 0 ) then
+    touch ./FAIL
+    echo "ERROR in $0 : mean state application failed" >> ./FAIL
+    exit 1
+  endif
 endif
 
 date
