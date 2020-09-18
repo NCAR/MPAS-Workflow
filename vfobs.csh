@@ -5,6 +5,7 @@ date
 set ArgMember = "$1"
 set ArgDT = "$2"
 set ArgStateType = "$3"
+set ArgNMembers = "$4"
 
 #
 # Setup environment:
@@ -37,7 +38,6 @@ echo "WorkDir = ${self_WorkDir}"
 
 module load python/3.7.5
 
-
 #
 # collect obs-space diagnostic statistics into DB files:
 # ======================================================
@@ -52,11 +52,15 @@ set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 set success = 1
 while ( $success != 0 )
   mv log.${mainScript} log.${mainScript}_LAST
+  setenv baseCommand "python ${mainScript}.py -n ${NUMPROC} -p ${self_WorkDir}/${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix}"
 
-  python ${mainScript}.py -n ${NUMPROC} -p ../../${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} >& log.${mainScript}
-#TODO: use absolute path of obs
-# --> requires modifying ufo_file_utils.py to remove directory from file names when determining osKey
-#  python ${mainScript}.py -n ${NUMPROC} -p ${self_WorkDir}/${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} >& log.${mainScript}
+  if ($ArgMember == 0 && $ArgNMembers > 0) then
+    echo "${baseCommand} -m $ArgNMembers -e ${VerificationWorkDir}/${bgDir}${oopsMemFmt}/${thisCycleDate}/${OutDBDir}"
+    ${baseCommand} -m $ArgNMembers -e "${VerificationWorkDir}/${bgDir}${oopsMemFmt}/${thisCycleDate}/${OutDBDir}" >& log.${mainScript}
+  else
+    echo "${baseCommand}"
+    ${baseCommand} >& log.${mainScript}
+  endif
 
   set success = $?
 

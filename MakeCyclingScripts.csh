@@ -15,6 +15,7 @@ set cyclingParts = ( \
   config \
   ${MPASGridDescriptor} \
   MeanAnalysis.csh \
+  MeanBackground.csh \
   RTPPInflation.csh \
 )
 foreach part ($cyclingParts)
@@ -122,11 +123,13 @@ chmod 744 ${JobScript}
 
 
 #------- CalcOM{{state}}, VerifyObs{{state}}, VerifyModel{{state}} ---------
-foreach state (AN BG MeanFC EnsFC)
+foreach state (AN BG MeanBG MeanFC EnsFC)
   if (${state} == AN) then
     set myArgs = (CyclingDAOutDirs ${ANFilePrefix} ${CyclingWindowHR})
   else if (${state} == BG) then
     set myArgs = (prevCyclingFCDirs ${FCFilePrefix} ${CyclingWindowHR})
+  else if (${state} == MeanBG) then
+    set myArgs = (CyclingDAInDir/mean ${FCFilePrefix} ${CyclingWindowHR})
   else if (${state} == MeanFC) then
     set myArgs = (ExtendedMeanFCDir ${FCFilePrefix} ${DAVFWindowHR})
   else if (${state} == EnsFC) then

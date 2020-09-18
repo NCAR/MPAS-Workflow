@@ -316,10 +316,12 @@ setenv OPT /glade/work/miesch/modules
 module use $OPT/modulefiles/core
 
 set COMPILER=gnu-openmpi
+set mainModule = ${COMPILER}/9.1.0-v0.3
 #set COMPILER=intel-impi
+#set mainModule = ${COMPILER}
 
 module purge
-module load jedi/${COMPILER}
+module load jedi/${mainModule}
 
 #USE FOR OLD CODE (BEFORE APRIL 15)
 #module load jedi/gnu-openmpi/7.4.0-v0.1
@@ -384,7 +386,8 @@ setenv FCStaticFiles   ${FCBuildDir}/src/core_atmosphere/physics/physics_wrf/fil
 setenv meanStateExe      average_netcdf_files_parallel_mpas_${COMPILER}.x
 setenv meanStateBuildDir /glade/work/guerrett/pandac/work/meanState
 #TODO: add these to the repo, possibly under graphics/plot/postprocess/tools directory
-setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
+#setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
+setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_ens
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
 
 #Cycling tools

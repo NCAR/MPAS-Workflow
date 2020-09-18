@@ -6,14 +6,16 @@ source control.csh
 
 ## Top-level workflow controls
 set RunCriticalPath = True
-set VerifyOnly = False
-set VerifyExtendedMeanFC = True
-set VerifyEnsBGAN = False
+set VerifyOnly = True
+set VerifyExtendedMeanFC = False
+set VerifyEnsBG = True
+set VerifyMeanBG = True
+set VerifyEnsAN = False
 set VerifyExtendedEnsFC = False
 
 ## Cycle bounds
-set initialCyclePoint = 20180418T06
-set finalCyclePoint   = 20180425T00
+set initialCyclePoint = 20180415T00
+set finalCyclePoint   = 20180415T12
 
 ## Initialize cycling directory if this is the first cycle point
 set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
@@ -35,31 +37,37 @@ rm -fr ${HOME}/cylc-run/${WholeExpName}
 echo "creating suite.rc"
 cat >! suite.rc << EOF
 #!Jinja2
-{% set RunCriticalPath = ${RunCriticalPath} %}
-{% set VerifyOnly = ${VerifyOnly} %}
-{% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
-{% set VerifyEnsBGAN = ${VerifyEnsBGAN} %}
-{% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
-#TODO: put warm-start file copying in InitEnsFC/firstfc script
-{# set firstCyclePoint = "${firstCyclePoint}" #}
+# cycle dates
 {% set initialCyclePoint = "${initialCyclePoint}" %}
 {% set finalCyclePoint = "${finalCyclePoint}" %}
+#TODO: put warm-start file copying in InitEnsFC/firstfc script for R1 cycle point
+{# set firstCyclePoint = "${firstCyclePoint}" #}
+# cycling components
+{% set RunCriticalPath = ${RunCriticalPath} %}
+{% set VerifyOnly = ${VerifyOnly} %}
 {% if VerifyOnly %}
   {% set RunCriticalPath = False %}
 {% endif %}
+{% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
+{% set VerifyEnsBG = ${VerifyEnsBG} %}
+{% set VerifyMeanBG = ${VerifyMeanBG} %}
+{% set VerifyEnsAN = ${VerifyEnsAN} %}
+{% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
+[meta]
+  title = "${PKGBASE}--${WholeExpName}"
+# fixed cycle dependency settings
 {% set CriticalPath = "" %}
 {% set CriticalPath = CriticalPath+"CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => CyclingDA" %}
 {% if (nEnsDAMembers > 1 and RTPPInflationFactor > 0.0) %}
   {% set CriticalPath = CriticalPath+" => RTPPInflation" %}
 {% endif %}
 {% set CriticalPath = CriticalPath+" => CyclingDAFinished => CyclingEnsFC" %}
-[meta]
-  title = "${PKGBASE}--${WholeExpName}"
-  {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
-  {% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
-  {% set VerifyMembers = range(1, nEnsDAMembers+1, 3) %}
+{% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
+{% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
+{# set VerifyMembers = range(1, nEnsDAMembers+1, 1) #}
+{% set VerifyMembers = EnsDAMembers %}
 [cylc]
   UTC mode = False
   [[environment]]
@@ -97,8 +105,37 @@ cat >! suite.rc << EOF
   {% endif %}
       '''
 {% endif %}
-{% if VerifyEnsBGAN %}
-## Ensemble BG/AN verification
+{% if VerifyEnsBG %}
+## Ensemble BG verification
+    [[[PT${CyclingWindowHR}H]]]
+      graph = '''
+  {% for mem in VerifyMembers %}
+    {% if not VerifyOnly %}
+#        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => VerifyModelBG{{mem}}
+        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => CalcOMBG{{mem}}
+#        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
+    {% else %}
+#        VerifyModelBG{{mem}}
+#        VerifyObsBG{{mem}}
+    {% endif %}
+  {% endfor %}
+      '''
+  {% if VerifyMeanBG and nEnsDAMembers > 1 %}
+## Obs-space verification of mean background
+    [[[PT${CyclingWindowHR}H]]]
+      graph = '''
+    {% if not VerifyOnly %}
+        CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => MeanBackground
+        MeanBackground => CalcOMMeanBG
+        CalcOMBG:succeed-all & CalcOMMeanBG => VerifyObsMeanBG
+    {% else %}
+        VerifyObsMeanBG
+    {% endif %}
+      '''
+  {% endif %}
+{% endif %}
+{% if VerifyEnsAN %}
+## Ensemble AN verification
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
   {% for mem in VerifyMembers %}
@@ -106,14 +143,9 @@ cat >! suite.rc << EOF
         CyclingDAFinished => VerifyModelAN{{mem}}
         CyclingDAFinished => CalcOMAN{{mem}}
         CalcOMAN{{mem}} => VerifyObsAN{{mem}}
-        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => VerifyModelBG{{mem}}
-        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => CalcOMBG{{mem}}
-        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
     {% else %}
         VerifyModelAN{{mem}}
-        VerifyModelBG{{mem}}
         VerifyObsAN{{mem}}
-        VerifyObsBG{{mem}}
     {% endif %}
   {% endfor %}
       '''
@@ -186,7 +218,7 @@ cat >! suite.rc << EOF
       -l = select=${CalcOMMNodes}:ncpus=${CalcOMMPEPerNode}:mpiprocs=${CalcOMMPEPerNode}:mem=109GB
   [[VerifyObsBase]]
     [[[job]]]
-      execution time limit = PT5M
+      execution time limit = PT10M
     [[[directives]]]
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
@@ -243,46 +275,72 @@ cat >! suite.rc << EOF
       myPreScript = \$origin/jediPrepCalcOMMeanFC.csh "0" "{{dt}}" "FC"
   [[VerifyObsMeanFC{{dt}}hr]]
     inherit = VerifyObsBase
-    script = \$origin/VerifyObsMeanFC.csh "0" "{{dt}}" "FC"
+    script = \$origin/VerifyObsMeanFC.csh "0" "{{dt}}" "FC" "0"
   [[VerifyModelMeanFC{{dt}}hr]]
     inherit = VerifyModelBase
     script = \$origin/VerifyModelMeanFC.csh "0" "{{dt}}" "FC"
 {% endfor %}
   [[ExtendedEnsFC]]
     inherit = ExtendedFCBase
+{% for state in ['BG', 'AN']%}
+  [[CalcOM{{state}}]]
+    inherit = OMMBase
+  [[VerifyObs{{state}}]]
+    inherit = VerifyObsBase
+  [[VerifyModel{{state}}]]
+    inherit = VerifyModelBase
+{% endfor %}
 {% for mem in VerifyMembers %}
 ## Ensemble BG/AN verification
   {% for state in ['BG', 'AN']%}
-    [[CalcOM{{state}}{{mem}}]]
-      inherit = OMMBase
-      script = \$origin/CalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
-      [[[environment]]]
-        myPreScript = \$origin/jediPrepCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
-    [[VerifyObs{{state}}{{mem}}]]
-      inherit = VerifyObsBase
-      script = \$origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}"
-    [[VerifyModel{{state}}{{mem}}]]
-      inherit = VerifyModelBase
-      script = \$origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
+  [[CalcOM{{state}}{{mem}}]]
+    inherit = CalcOM{{state}}
+    script = \$origin/CalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
+    [[[environment]]]
+      myPreScript = \$origin/jediPrepCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
+  [[VerifyObs{{state}}{{mem}}]]
+    inherit = VerifyObs{{state}}
+    script = \$origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
+  [[VerifyModel{{state}}{{mem}}]]
+    inherit = VerifyModel{{state}}
+    script = \$origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
   {% endfor %}
 ## Extended ensemble forecasts and verification
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
     script = \$origin/ExtendedEnsFC.csh "{{mem}}"
   {% for dt in ExtendedFCLengths %}
-    [[CalcOMEnsFC{{mem}}-{{dt}}hr]]
-      inherit = OMMBase
-      script = \$origin/CalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-      [[[environment]]]
-        myPreScript = \$origin/jediPrepCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-    [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
-      inherit = VerifyObsBase
-      script = \$origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-    [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
-      inherit = VerifyModelBase
-      script = \$origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+  [[CalcOMEnsFC{{mem}}-{{dt}}hr]]
+    inherit = OMMBase
+    script = \$origin/CalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    [[[environment]]]
+      myPreScript = \$origin/jediPrepCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+  [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
+    inherit = VerifyObsBase
+    script = \$origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
+  [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
+    inherit = VerifyModelBase
+    script = \$origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   {% endfor %}
 {% endfor %}
+## Mean/ensemble background verification
+  [[MeanBackground]]
+    script = \$origin/MeanBackground.csh
+    [[[job]]]
+      execution time limit = PT5M
+    [[[directives]]]
+      -q = ${VFQueueName}
+  [[CalcOMMeanBG]]
+    inherit = OMMBase
+    script = \$origin/CalcOMMeanBG.csh "0" "0" "BG"
+    [[[environment]]]
+      myPreScript = \$origin/jediPrepCalcOMMeanBG.csh "0" "0" "BG"
+  [[VerifyObsMeanBG]]
+    inherit = VerifyObsBase
+    script = \$origin/VerifyObsMeanBG.csh "0" "0" "BG" "{{nEnsDAMembers}}"
+  [[VerifyModelMeanBG]]
+    inherit = VerifyModelBase
+    script = \$origin/VerifyModelMeanBG.csh "0" "0" "BG"
 [visualization]
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
