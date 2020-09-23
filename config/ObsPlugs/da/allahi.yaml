@@ -29,10 +29,10 @@
     - filter: Thinning
       amount: RADTHINAMOUNT
       random_seed: 0
-      apply at iterations: 0
 #    - filter: Gaussian_Thinning
 #      horizontal_mesh: RADTHINDISTANCE #km
     - filter: BlackList
+      apply at iterations: 0, 1
       filter variables:
       - name: brightness_temperature
         channels: *ahi_channels
@@ -57,6 +57,9 @@
             x1: [15.87, 20.75, 25.21]
             err0: [1.94, 1.88, 2.26]
             err1: [20.05, 24.75, 25.90]
+    - filter: Background Check
+      threshold: 3.0
+      apply at iterations: 0, 1
 #    - filter: GOMsaver
 #      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_ahi_himawari8.nc4
 #    - filter: YDIAGsaver

@@ -36,7 +36,9 @@
 #      apply at iterations: 0
     - filter: Gaussian_Thinning
       horizontal_mesh: RADTHINDISTANCE #km
-      apply at iterations: 0
+    - filter: Background Check
+      threshold: 3.0
+      apply at iterations: 0, 1
 #    - filter: GOMsaver
 #      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_abi_g16.nc4
 #    - filter: YDIAGsaver
@@ -56,5 +58,3 @@
 #        channels: *clrabi_channels
 #      - name: brightness_temperature_jacobian_surface_temperature
 #        channels: *clrabi_channels
-#    - filter: Background Check
-#      threshold: 3.0

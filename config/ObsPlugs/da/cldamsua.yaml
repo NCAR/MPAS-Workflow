@@ -11,9 +11,9 @@
     obs filters:
     - filter: PreQC
       maxvalue: 0
-      apply at iterations: 0
     - filter: Background Check
       threshold: 3
+      apply at iterations: 0, 1
 #    - filter: GOMsaver
 #      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n19_cld.nc4
     obs operator: &crtmcloud
@@ -39,9 +39,9 @@
     obs filters:
     - filter: PreQC
       maxvalue: 0
-      apply at iterations: 0
     - filter: Background Check
       threshold: 3
+      apply at iterations: 0, 1
 #    - filter: GOMsaver
 #      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n15_cld.nc4
     obs operator:
@@ -62,9 +62,9 @@
     obs filters:
     - filter: PreQC
       maxvalue: 0
-      apply at iterations: 0
     - filter: Background Check
       threshold: 3
+      apply at iterations: 0, 1
 #    - filter: GOMsaver
 #      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n18_cld.nc4
     obs operator:
@@ -85,9 +85,9 @@
     obs filters:
     - filter: PreQC
       maxvalue: 0
-      apply at iterations: 0
     - filter: Background Check
       threshold: 3
+      apply at iterations: 0, 1
 #    - filter: GOMsaver
 #      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-a_cld.nc4
     obs operator:
@@ -108,9 +108,9 @@
     obs filters:
     - filter: PreQC
       maxvalue: 0
-      apply at iterations: 0
     - filter: Background Check
       threshold: 3
+      apply at iterations: 0, 1
 #    - filter: GOMsaver
 #      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-b_cld.nc4
     obs operator:
@@ -131,9 +131,9 @@
     obs filters:
     - filter: PreQC
       maxvalue: 0
-      apply at iterations: 0
     - filter: Background Check
       threshold: 3
+      apply at iterations: 0, 1
 #    - filter: GOMsaver
 #      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_aqua_cld.nc4
     obs operator:

@@ -12,9 +12,9 @@
     obs filters:
     - filter: PreQC
       maxvalue: 3
-      apply at iterations: 0
     - filter: Background Check
       threshold: 3.0
+      apply at iterations: 0, 1
   - obs space:
       name: Aircraft
       obsdatain:
@@ -29,9 +29,9 @@
     obs filters:
     - filter: PreQC
       maxvalue: 3
-      apply at iterations: 0
     - filter: Background Check
       threshold: 3.0
+      apply at iterations: 0, 1
   - obs space:
       name: Satwind
       obsdatain:
@@ -46,13 +46,12 @@
     obs filters:
     - filter: PreQC
       maxvalue: 3
-      apply at iterations: 0
     - filter: Background Check
       threshold: 3.0
+      apply at iterations: 0, 1
 #    - filter: Thinning
 #      amount: RADTHINAMOUNT
 #      random_seed: 0
-#      apply at iterations: 0
 #    - filter: Gaussian_Thinning
 #      horizontal_mesh: RADTHINDISTANCE #km
   - obs space:
@@ -85,9 +84,11 @@
         maxvalue: 200
     - filter: Background Check
       threshold: 3.0
+      apply at iterations: 0, 1
     - filter: ROobserror
       variable: refractivity
       errmodel: NBAM
+      apply at iterations: 0, 1
   - obs space:
       name: SfcPCorrected
       obsdatain:
@@ -105,10 +106,11 @@
     obs filters:
     - filter: PreQC
       maxvalue: 3
-      apply at iterations: 0
     - filter: Difference Check
       reference: station_elevation@MetaData
       value: surface_altitude@GeoVaLs
       threshold: 200.0
+      apply at iterations: 0, 1
     - filter: Background Check
       threshold: 3.0
+      apply at iterations: 0, 1

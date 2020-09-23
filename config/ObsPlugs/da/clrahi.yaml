@@ -27,26 +27,9 @@
       - variable:
           name: cloud_area_fraction@MetaData
         maxvalue: 0.05
-    - filter: BlackList
-      filter variables:
-      - name: brightness_temperature
-        channels: *clrahi_channels
-      action:
-        name: assign error
-        error function:
-          name: ObsErrorModelRamp@ObsFunction
-          channels: *clrahi_channels
-          options:
-            channels: *clrahi_channels
-            xvar:
-              name: SymmCldImpactIR@ObsFunction
-              channels: *clrahi_channels
-              options:
-                channels: *clrahi_channels
-            x0: [1.0, 1.0, 1.0]
-            x1: [15.87, 20.75, 25.21]
-            err0: [1.94, 1.88, 2.26]
-            err1: [20.05, 24.75, 25.90]
+    - filter: Background Check
+      threshold: 3.0
+      apply at iterations: 0, 1
 #    - filter: GOMsaver
 #      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_ahi_himawari8.nc4
 #    - filter: YDIAGsaver
