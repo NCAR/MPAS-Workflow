@@ -7,6 +7,7 @@ set self_inStateDirs = wrapStateDirsArg
 set self_inStatePrefix = wrapStatePrefixArg
 set self_StateType = wrapStateTypeArg
 set self_DAType = wrapDATypeArg
+set self_nOuter = wrapnOuterArg
 
 set myWrapper = jediPrep
 foreach name ( \
@@ -41,6 +42,7 @@ if ( "$self_DAType" =~ *"eda"* ) then
 else
   set VFObsScript=${mainScriptDir}/VerifyObs${self_StateType}.csh
   sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
+      -e 's@nOuterArg@'${self_nOuter}'@' \
       vfobs.csh > ${VFObsScript}
   chmod 744 ${VFObsScript}
 

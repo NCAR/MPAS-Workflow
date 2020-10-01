@@ -81,6 +81,7 @@ sed -e 's@wrapWorkDirsArg@CyclingDADir@' \
     -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
     -e 's@wrapWindowHRArg@'${CyclingWindowHR}'@' \
     -e 's@wrapDATypeArg@'${DAType}'@g' \
+    -e 's@wrapnOuterArg@1@g' \
     -e 's@wrapDAModeArg@da@g' \
     -e 's@wrapObsListArg@DAObsList@' \
     ${AppAndVerify}.csh > ${WrapperScript}
@@ -146,6 +147,7 @@ foreach state (AN BG MeanBG MeanFC EnsFC)
       -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
       -e 's@wrapWindowHRArg@'$myArgs[3]'@' \
       -e 's@wrapDATypeArg@'${omm}'@g' \
+      -e 's@wrapnOuterArg@0@g' \
       -e 's@wrapDAModeArg@'${omm}'@g' \
       -e 's@wrapObsListArg@OMMObsList@' \
       ${AppAndVerify}.csh > ${WrapperScript}
