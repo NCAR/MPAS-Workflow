@@ -43,6 +43,15 @@ set VerifyEnsFCDirs = ()
 #set VerifyFirstBGDirs = ()
 
 set member = 1
+set VerifyBGPrefix = ${VerificationWorkDir}/${bgDir}
+set VerifyANPrefix = ${VerificationWorkDir}/${anDir}
+#set VerifyObsDAEnsFmt = "${CyclingDADir}/${OutDBDir}${oopsMemFmt}"
+#set VerifyObsBGEnsFmt = "${VerifyBGPrefix}${oopsMemFmt}/${thisCycleDate}/${OutDBDir}"
+#set VerifyObsANEnsFmt = "${VerifyANPrefix}${oopsMemFmt}/${thisCycleDate}/${OutDBDir}"
+#echo "VerifyObsDAEnsFmt = ${VerifyObsDAEnsFmt}"
+#echo "VerifyObsBGEnsFmt = ${VerifyObsBGEnsFmt}"
+#echo "VerifyObsANEnsFmt = ${VerifyObsANEnsFmt}"
+
 while ( $member <= ${nEnsDAMembers} )
   set memDir = `${memberDir} $DAType $member`
   set CyclingDAInDirs = ($CyclingDAInDirs ${CyclingDAInDir}${memDir})
@@ -50,8 +59,8 @@ while ( $member <= ${nEnsDAMembers} )
   set CyclingFCDirs = ($CyclingFCDirs ${CyclingFCDir}${memDir})
   set prevCyclingFCDirs = ($prevCyclingFCDirs ${prevCyclingFCDir}${memDir})
   set ExtendedEnsFCDirs = ($ExtendedEnsFCDirs ${ExtendedFCDir}${memDir})
-  set VerifyANDirs = ($VerifyANDirs ${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
-  set VerifyBGDirs = ($VerifyBGDirs ${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate})
+  set VerifyANDirs = ($VerifyANDirs ${VerifyANPrefix}${memDir}/${thisCycleDate})
+  set VerifyBGDirs = ($VerifyBGDirs ${VerifyBGPrefix}${memDir}/${thisCycleDate})
   set VerifyEnsFCDirs = ($VerifyEnsFCDirs ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
 
 #  set VerifyANInDirs = ($VerifyANInDirs ${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate}/${bgDir}

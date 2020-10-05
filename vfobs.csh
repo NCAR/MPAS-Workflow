@@ -33,6 +33,7 @@ endif
 if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
   set self_WorkDir = $self_WorkDir/${ArgDT}hr
 endif
+setenv NOUTER nOuterArg
 
 echo "WorkDir = ${self_WorkDir}"
 
@@ -54,7 +55,7 @@ while ( $success != 0 )
   mv log.${mainScript} log.${mainScript}_LAST
   setenv baseCommand "python ${mainScript}.py -n ${NUMPROC} -p ${self_WorkDir}/${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix}"
 
-  if ($ArgMember == 0 && $ArgNMembers > 0) then
+  if ($ArgMember == 0 && $ArgNMembers > 1) then
     echo "${baseCommand} -m $ArgNMembers -e ${VerificationWorkDir}/${bgDir}${oopsMemFmt}/${thisCycleDate}/${OutDBDir}"
     ${baseCommand} -m $ArgNMembers -e "${VerificationWorkDir}/${bgDir}${oopsMemFmt}/${thisCycleDate}/${OutDBDir}" >& log.${mainScript}
   else
