@@ -247,11 +247,11 @@ if ( $status == 0 ) then
   end
 endif
 foreach VarGroup (Analysis Model State)
-  if (${VarGroup} == Analysis || \
-      ${VarGroup} == Model) then
+  if (${VarGroup} == Analysis) then
     set Variables = ($AnalysisVariables)
   endif
-  if (${VarGroup} == State) then
+  if (${VarGroup} == State || \
+      ${VarGroup} == Model) then
     set Variables = ($StateVariables)
   endif
   set VarSub = ""
