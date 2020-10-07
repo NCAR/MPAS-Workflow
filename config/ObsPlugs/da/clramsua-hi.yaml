@@ -14,8 +14,8 @@
     - filter: Background Check
       threshold: 3
       apply at iterations: 0, 1
-#    - filter: GOMsaver
-#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n19.nc4
+    - filter: GOMsaver
+      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n19.nc4
     obs operator: &crtmdry
       name: CRTM
       Absorbers: [H2O,O3]
@@ -41,8 +41,8 @@
     - filter: Background Check
       threshold: 3
       apply at iterations: 0, 1
-#    - filter: GOMsaver
-#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n15.nc4
+    - filter: GOMsaver
+      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n15.nc4
     obs operator:
       <<: *crtmdry
       obs options:
@@ -64,8 +64,8 @@
     - filter: Background Check
       threshold: 3
       apply at iterations: 0, 1
-#    - filter: GOMsaver
-#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n18.nc4
+    - filter: GOMsaver
+      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n18.nc4
     obs operator:
       <<: *crtmdry
       obs options:
@@ -87,8 +87,8 @@
     - filter: Background Check
       threshold: 3
       apply at iterations: 0, 1
-#    - filter: GOMsaver
-#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-a.nc4
+    - filter: GOMsaver
+      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-a.nc4
     obs operator:
       <<: *crtmdry
       obs options:
@@ -110,8 +110,8 @@
 #    - filter: Background Check
 #      threshold: 3
 #      apply at iterations: 0, 1
-##      - filter: GOMsaver
-##        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-b.nc4
+#      - filter: GOMsaver
+#        filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-b.nc4
 #    obs operator:
 #      <<: *crtmdry
 #      obs options:
@@ -133,8 +133,8 @@
     - filter: Background Check
       threshold: 3
       apply at iterations: 0, 1
-#    - filter: GOMsaver
-#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_aqua.nc4
+    - filter: GOMsaver
+      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_aqua.nc4
     obs operator:
       <<: *crtmdry
       obs options:

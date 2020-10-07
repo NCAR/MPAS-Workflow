@@ -19,8 +19,8 @@
 #      random_seed: 0
 #    - filter: Gaussian_Thinning
 #      horizontal_mesh: RADTHINDISTANCE #km
-#    - filter: GOMsaver
-#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n19.nc4
+    - filter: GOMsaver
+      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n19.nc4
     obs operator: &crtmdry
       name: CRTM
       Absorbers: [H2O,O3]
@@ -51,8 +51,8 @@
 #      random_seed: 0
 #    - filter: Gaussian_Thinning
 #      horizontal_mesh: RADTHINDISTANCE #km
-#    - filter: GOMsaver
-#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n15.nc4
+    - filter: GOMsaver
+      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n15.nc4
     obs operator:
       <<: *crtmdry
       obs options:
@@ -79,8 +79,8 @@
 #      random_seed: 0
 #    - filter: Gaussian_Thinning
 #      horizontal_mesh: RADTHINDISTANCE #km
-#    - filter: GOMsaver
-#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n18.nc4
+    - filter: GOMsaver
+      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_n18.nc4
     obs operator:
       <<: *crtmdry
       obs options:
@@ -107,8 +107,8 @@
 #      random_seed: 0
 #    - filter: Gaussian_Thinning
 #      horizontal_mesh: RADTHINDISTANCE #km
-#    - filter: GOMsaver
-#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-a.nc4
+    - filter: GOMsaver
+      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_metop-a.nc4
     obs operator:
       <<: *crtmdry
       obs options:
@@ -163,8 +163,8 @@
 #      random_seed: 0
 #    - filter: Gaussian_Thinning
 #      horizontal_mesh: RADTHINDISTANCE #km
-#    - filter: GOMsaver
-#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_aqua.nc4
+    - filter: GOMsaver
+      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_amsua_aqua.nc4
     obs operator:
       <<: *crtmdry
       obs options:

@@ -77,22 +77,22 @@
     - filter: Background Check
       threshold: 3.0
       apply at iterations: 0, 1
-#    - filter: GOMsaver
-#      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_abi_g16.nc4
-#    - filter: YDIAGsaver
-#      filename: OutDBDirOOPSMemberDir/diagPrefix_DAMode_abi_g16.nc4
-#      filter variables:
-#      - name: brightness_temperature_assuming_clear_sky
-#        channels: *abi_channels
-#      - name: weightingfunction_of_atmosphere_layer
-#        channels: *abi_channels
-#      - name: pressure_level_at_peak_of_weightingfunction
-#        channels: *abi_channels
-#      - name: brightness_temperature_jacobian_air_temperature
-#        channels: *abi_channels
-#      - name: brightness_temperature_jacobian_humidity_mixing_ratio
-#        channels: *abi_channels
-#      - name: brightness_temperature_jacobian_surface_emissivity
-#        channels: *abi_channels
-#      - name: brightness_temperature_jacobian_surface_temperature
-#        channels: *abi_channels
+    - filter: GOMsaver
+      filename: OutDBDirOOPSMemberDir/geoPrefix_DAMode_abi_g16.nc4
+    - filter: YDIAGsaver
+      filename: OutDBDirOOPSMemberDir/diagPrefix_DAMode_abi_g16.nc4
+      filter variables:
+      - name: brightness_temperature_assuming_clear_sky
+        channels: *abi_channels
+      - name: weightingfunction_of_atmosphere_layer
+        channels: *abi_channels
+      - name: pressure_level_at_peak_of_weightingfunction
+        channels: *abi_channels
+      - name: brightness_temperature_jacobian_air_temperature
+        channels: *abi_channels
+      - name: brightness_temperature_jacobian_humidity_mixing_ratio
+        channels: *abi_channels
+      - name: brightness_temperature_jacobian_surface_emissivity
+        channels: *abi_channels
+      - name: brightness_temperature_jacobian_surface_temperature
+        channels: *abi_channels
