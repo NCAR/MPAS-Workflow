@@ -1,5 +1,3 @@
-ensemble application:
-  members: nEnsDAMembers
 output:
   filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
 variational:
@@ -13,6 +11,7 @@ variational:
     test: 'on'
     diagnostics:
       departures: depbg
+    obs perturbations: ObsPerturbations
 #  - geometry:
 #      gridfname: meshFile
 #    ninner: '60'
@@ -29,7 +28,7 @@ cost function:
     gridfname: meshFile
   analysis variables: &incvars [AnalysisVariables]
   background:
-    state variables: *incvars
+    state variables: [StateVariables]
     filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
     date: &adate '2018-04-15T00:00:00Z'
   background error:
@@ -58,4 +57,5 @@ cost function:
     members:
 EnsemblePbMembers
     variables: *incvars
+  obs perturbations seed: MemberSeed
   observations:

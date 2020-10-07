@@ -5,11 +5,15 @@ date
 source control.csh
 
 ## Top-level workflow controls
-set RunCriticalPath = True
-set VerifyOnly = True
+# CriticalPathType: controls dependcies between and chilrdren of
+#                   DA and FC cycling components
+# options: Bypass, Reanalysis, Reforecast, Normal
+set CriticalPathType = Normal
+set VerifyOnly = False
+set VerifyDeterministicDA = True
 set VerifyExtendedMeanFC = False
-set VerifyEnsBG = True
-set VerifyMeanBG = True
+set VerifyEnsBG = False
+set VerifyMeanBG = False
 set VerifyEnsAN = False
 set VerifyExtendedEnsFC = False
 
@@ -43,11 +47,12 @@ cat >! suite.rc << EOF
 #TODO: put warm-start file copying in InitEnsFC/firstfc script for R1 cycle point
 {# set firstCyclePoint = "${firstCyclePoint}" #}
 # cycling components
-{% set RunCriticalPath = ${RunCriticalPath} %}
+{% set CriticalPathType = "${CriticalPathType}" %}
 {% set VerifyOnly = ${VerifyOnly} %}
 {% if VerifyOnly %}
-  {% set RunCriticalPath = False %}
+  {% set CriticalPathType = "Bypass" %}
 {% endif %}
+{% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
 {% set VerifyEnsBG = ${VerifyEnsBG} %}
 {% set VerifyMeanBG = ${VerifyMeanBG} %}
@@ -57,17 +62,31 @@ cat >! suite.rc << EOF
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
 [meta]
   title = "${PKGBASE}--${WholeExpName}"
-# fixed cycle dependency settings
-{% set CriticalPath = "" %}
-{% set CriticalPath = CriticalPath+"CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => CyclingDA" %}
-{% if (nEnsDAMembers > 1 and RTPPInflationFactor > 0.0) %}
-  {% set CriticalPath = CriticalPath+" => RTPPInflation" %}
+# critical path cycle dependencies
+  {% set CPGraph = "" %}
+{% if CriticalPathType == "Bypass" %}
+  {% set CPGraph = CPGraph + "\\n        CyclingDAFinished" %}
+  {% set CPGraph = CPGraph + "\\n        CyclingFCFinished" %}
+{% elif CriticalPathType == "Reanalysis" %}
+  {% set CPGraph = CPGraph + "\\n        CyclingDA => CyclingDAFinished" %}
+  {% set CPGraph = CPGraph + "\\n        CyclingFCFinished" %}
+{% elif CriticalPathType == "Reforecast" %}
+  {% set CPGraph = CPGraph + "\\n        CyclingFC" %}
+  {% set CPGraph = CPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
+  {% set CPGraph = CPGraph + "\\n        CyclingDAFinished" %}
+{% else %}
+  {% set CPGraph = CPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H] => CyclingDA" %}
+  {% if (nEnsDAMembers > 1 and RTPPInflationFactor > 0.0) %}
+    {% set CPGraph = CPGraph+" => RTPPInflation" %}
+  {% endif %}
+  {% set CPGraph = CPGraph + " => CyclingDAFinished" %}
+  {% set CPGraph = CPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
+  {% set CPGraph = CPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
 {% endif %}
-{% set CriticalPath = CriticalPath+" => CyclingDAFinished => CyclingEnsFC" %}
+# verification and extended forecast controls
 {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
 {% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
-{# set VerifyMembers = range(1, nEnsDAMembers+1, 1) #}
-{% set VerifyMembers = EnsDAMembers %}
+{% set VerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 [cylc]
   UTC mode = False
   [[environment]]
@@ -81,10 +100,19 @@ cat >! suite.rc << EOF
 #    [[[R1]]]
 #      graph = InitEnsFC => CyclingDA
 #{# endif #}
-{% if RunCriticalPath %}
 ## Critical path for cycling
     [[[PT${CyclingWindowHR}H]]]
-      graph = {{CriticalPath}}
+      graph = '''{{CPGraph}}
+      '''
+## Many kinds of verification
+{% if VerifyDeterministicDA and nEnsDAMembers < 2 %}
+#TODO: enable VerifyObsDA to handle more than one ensemble member
+#      and use feedback files from EDA for VerifyMeanBG
+## Verification of deterministic DA with observations (BG+AN)
+    [[[PT${CyclingWindowHR}H]]]
+      graph = '''
+        CyclingDAFinished => VerifyObsDA
+      '''
 {% endif %}
 {% if VerifyExtendedMeanFC %}
 ## Extended forecast and verification from mean of analysis states
@@ -105,34 +133,39 @@ cat >! suite.rc << EOF
   {% endif %}
       '''
 {% endif %}
-{% if VerifyEnsBG %}
+{% if (VerifyEnsBG or (VerifyMeanBG and nEnsDAMembers > 1)) and not VerifyOnly%}
 ## Ensemble BG verification
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
-  {% for mem in VerifyMembers %}
-    {% if not VerifyOnly %}
-#        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => VerifyModelBG{{mem}}
-        CyclingFC{{mem}}[-PT${CyclingWindowHR}H] => CalcOMBG{{mem}}
-#        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
-    {% else %}
-#        VerifyModelBG{{mem}}
-#        VerifyObsBG{{mem}}
-    {% endif %}
-  {% endfor %}
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => CalcOMBG
       '''
-  {% if VerifyMeanBG and nEnsDAMembers > 1 %}
+{% endif %}
+{% if VerifyEnsBG %}
+    [[[PT${CyclingWindowHR}H]]]
+      graph = '''
+  {% if not VerifyOnly %}
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
+    {% for mem in VerifyMembers %}
+        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
+    {% endfor %}
+  {% else %}
+        VerifyModelBG
+        VerifyObsBG
+  {% endif %}
+      '''
+{% endif %}
+{% if VerifyMeanBG and nEnsDAMembers > 1 %}
 ## Obs-space verification of mean background
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
-    {% if not VerifyOnly %}
-        CyclingEnsFC[-PT${CyclingWindowHR}H]:succeed-all => MeanBackground
+  {% if not VerifyOnly %}
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => MeanBackground
         MeanBackground => CalcOMMeanBG
         CalcOMBG:succeed-all & CalcOMMeanBG => VerifyObsMeanBG
-    {% else %}
+  {% else %}
         VerifyObsMeanBG
-    {% endif %}
-      '''
   {% endif %}
+      '''
 {% endif %}
 {% if VerifyEnsAN %}
 ## Ensemble AN verification
@@ -241,16 +274,19 @@ cat >! suite.rc << EOF
   [[CyclingDAFinished]]
     [[[job]]]
       batch system = background
-  [[CyclingEnsFC]]
+  [[CyclingFC]]
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
     [[[directives]]]
       -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
 {% for mem in EnsDAMembers %}
-  [[CyclingFC{{mem}}]]
-    inherit = CyclingEnsFC
+  [[CyclingMemberFC{{mem}}]]
+    inherit = CyclingFC
     script = \$origin/CyclingFC.csh "{{mem}}"
 {% endfor %}
+  [[CyclingFCFinished]]
+    [[[job]]]
+      batch system = background
   [[ExtendedFCBase]]
     [[[job]]]
       execution time limit = PT${ExtendedFCJobMinutes}M
@@ -282,6 +318,9 @@ cat >! suite.rc << EOF
 {% endfor %}
   [[ExtendedEnsFC]]
     inherit = ExtendedFCBase
+  [[VerifyObsDA]]
+    inherit = VerifyObsBase
+    script = \$origin/VerifyObsDA.csh "0" "0" "DA" "0"
 {% for state in ['BG', 'AN']%}
   [[CalcOM{{state}}]]
     inherit = OMMBase

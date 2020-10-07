@@ -71,7 +71,7 @@ end
 
 ## add unique suffix
 set ExpSuffix = "_NMEM"${nEnsDAMembers}
-if ($nEnsDAMembers > 1) set ExpSuffix = ${ExpSuffix}_RTPP${RTPPInflationFactor}
+if ($nEnsDAMembers > 1 && ${RTPPInflationFactor} != "0.0") set ExpSuffix = ${ExpSuffix}_RTPP${RTPPInflationFactor}
 setenv ExpName ${ExpName}${ExpSuffix}
 
 #
@@ -196,7 +196,27 @@ set StandardAnalysisVariables = ( \
   uReconstructMeridional \
   uReconstructZonal \
 )
-
+set StandardStateVariables = ( \
+  $StandardAnalysisVariables \
+  theta \
+  rho \
+  u \
+  index_qv \
+  pressure \
+  landmask \
+  xice \
+  snowc \
+  skintemp \
+  ivgtyp \
+  isltyp \
+  snowh \
+  vegfra \
+  u10 \
+  v10 \
+  lai \
+  smois \
+  tslb \
+)
 @ CyclingDAPEPerMember = ${CyclingDANodesPerMember} * ${CyclingDAPEPerNode}
 setenv CyclingDAPEPerMember ${CyclingDAPEPerMember}
 
@@ -316,9 +336,8 @@ setenv OPT /glade/work/miesch/modules
 module use $OPT/modulefiles/core
 
 set COMPILER=gnu-openmpi
-set mainModule = ${COMPILER}/9.1.0-v0.3
 #set COMPILER=intel-impi
-#set mainModule = ${COMPILER}
+set mainModule = ${COMPILER}
 
 module purge
 module load jedi/${mainModule}
@@ -326,8 +345,7 @@ module load jedi/${mainModule}
 #USE FOR OLD CODE (BEFORE APRIL 15)
 #module load jedi/gnu-openmpi/7.4.0-v0.1
 
-#setenv CUSTOMPIO         ""
-setenv CUSTOMPIO         _pio2_5_0_debug=1
+setenv CUSTOMPIO         ""
 if ( CUSTOMPIO != "" ) then
   module unload pio
 endif
@@ -354,13 +372,13 @@ else
   setenv DAEXE           mpas_variational.x
 endif
 set DABundleBuild = _build=RelWithDebInfo
-set DABuildFeature = _feature--eda
+set DABuildFeature = ''
 setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${DABundleBuild}${DABuildFeature}
 setenv DABuildDir      ${TOP_BUILD_DIR}/build/${DABuild}/bin
 
 setenv OMMEXE           mpas_variational.x
 set OMMBundleBuild = _build=RelWithDebInfo
-set OMMBuildFeature = _feature--eda
+set OMMBuildFeature = ''
 setenv OMMBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${OMMBundleBuild}${OMMBuildFeature}
 setenv OMMBuildDir      ${TOP_BUILD_DIR}/build/${OMMBuild}/bin
 
@@ -387,7 +405,8 @@ setenv meanStateExe      average_netcdf_files_parallel_mpas_${COMPILER}.x
 setenv meanStateBuildDir /glade/work/guerrett/pandac/work/meanState
 #TODO: add these to the repo, possibly under graphics/plot/postprocess/tools directory
 #setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
-setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_ens
+setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_debug
+
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
 
 #Cycling tools
@@ -402,8 +421,8 @@ end
 # job submission settings
 # =============================================
 ## *AccountNumber
-# OPTIONS: NMMM0015, NMMM0043
-setenv StandardAccountNumber NMMM0043
+# OPTIONS: NMMM0015
+setenv StandardAccountNumber NMMM0015
 setenv CYAccountNumber ${StandardAccountNumber}
 setenv VFAccountNumber ${StandardAccountNumber}
 

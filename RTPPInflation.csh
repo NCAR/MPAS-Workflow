@@ -83,7 +83,7 @@ ln -sf $meshFile ${localMeshFile}
 
 ## file naming
 sed -i 's@meshFile@'${meshFile}'@g' $thisYAML
-sed -i 's@OOPSMemberDir@/%{member}%@g' $thisYAML
+sed -i 's@OOPSMemberDir@/mem%{member}%@g' $thisYAML
 sed -i 's@anStatePrefix@'${anPrefix}'@g' $thisYAML
 sed -i 's@anStateDir@'${CyclingDAOutDir}'@g' $thisYAML
 set prevYAML = $thisYAML

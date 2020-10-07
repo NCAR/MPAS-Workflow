@@ -226,11 +226,6 @@ sed -i 's@geoPrefix@'${geoPrefix}'@g' $thisYAML
 sed -i 's@diagPrefix@'${diagPrefix}'@g' $thisYAML
 sed -i 's@DAMode@'${self_DAMode}'@g' $thisYAML
 sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' $thisYAML
-if ( "$self_DAType" =~ *"eda"* ) then
-  sed -i 's@OOPSMemberDir@/%{member}%@g' $thisYAML
-else
-  sed -i 's@OOPSMemberDir@@g' $thisYAML
-endif
 set meshFile = ${self_WorkDir}/${bgDir}/${BGFilePrefix}.$fileDate.nc
 sed -i 's@meshFile@'${meshFile}'@g' $thisYAML
 sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' $thisYAML
@@ -242,21 +237,41 @@ set prevYAML = $thisYAML
 
 ## model and analysis variables
 set AnalysisVariables = ($StandardAnalysisVariables)
+set StateVariables = ($StandardStateVariables)
 # if any CRTM yaml section includes Clouds, then analyze hydrometeors
 grep '^\ \+Clouds' $prevYAML
 if ( $status == 0 ) then
   foreach hydro ($MPASHydroVariables)
     set AnalysisVariables = ($AnalysisVariables index_$hydro)
+    set StateVariables = ($StateVariables index_$hydro)
   end
 endif
-set VarSub = ""
-foreach var ($AnalysisVariables)
-  set VarSub = "$VarSub$var,"
+foreach VarGroup (Analysis Model State)
+  if (${VarGroup} == Analysis || \
+      ${VarGroup} == Model) then
+    set Variables = ($AnalysisVariables)
+  endif
+  if (${VarGroup} == State) then
+    set Variables = ($StateVariables)
+  endif
+  set VarSub = ""
+  foreach var ($Variables)
+    set VarSub = "$VarSub$var,"
+  end
+  # remove trailing comma
+  set VarSub = `echo "$VarSub" | sed 's/.$//'`
+  sed -i 's@'$VarGroup'Variables@'$VarSub'@' $prevYAML
 end
-# remove trailing comma
-set VarSub = `echo "$VarSub" | sed 's/.$//'`
-sed -i 's@ModelVariables@'$VarSub'@' $prevYAML
-sed -i 's@AnalysisVariables@'$VarSub'@' $prevYAML
+
+#set VarSub = ""
+#foreach var ($AnalysisVariables)
+#  set VarSub = "$VarSub$var,"
+#end
+## remove trailing comma
+#set VarSub = `echo "$VarSub" | sed 's/.$//'`
+#sed -i 's@ModelVariables@'$VarSub'@' $prevYAML
+#sed -i 's@AnalysisVariables@'$VarSub'@' $prevYAML
+
 
 
 ## ensemble covariance
@@ -299,7 +314,37 @@ EOF
 
   @ member++
 end
-sed -f ${enspsed}SEDF.yaml $prevYAML >! $appyaml
+set thisYAML = last.yaml
+sed -f ${enspsed}SEDF.yaml $prevYAML >! $thisYAML
 rm ${enspsed}SEDF.yaml
+set prevYAML = $thisYAML
+
+#TODO: move eda yaml construction to da module
+if ( "$self_DAType" =~ *"eda"* ) then
+  set member = 1
+  echo "files:" > $appyaml
+  while ( $member <= ${ensPbNMembers} )
+    # create member-specific yaml
+    set thisYAML = member_$member.yaml
+    cp $prevYAML $thisYAML
+    set memDir = `${memberDir} eda $member`
+    sed -i 's@OOPSMemberDir@'${memDir}'@g' $thisYAML
+    if ($member == 1) then
+      sed -i 's@ObsPerturbations@false@g' $thisYAML
+    else
+      sed -i 's@ObsPerturbations@true@g' $thisYAML
+    endif
+    sed -i 's@MemberSeed@'$member'@g' $thisYAML
+
+    # add member yaml name to list of member yamls
+    echo "  - $thisYAML" >> $appyaml
+
+    @ member++
+  end
+else
+  cp $prevYAML $appyaml
+  sed -i 's@OOPSMemberDir@@g' $appyaml
+endif
+
 
 exit 0
