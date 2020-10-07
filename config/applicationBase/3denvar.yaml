@@ -6,6 +6,7 @@ variational:
   iterations:
   - geometry:
       gridfname: meshFile
+      deallocate non-da fields: true
     ninner: '60'
     gradient norm reduction: 1e-10
     test: 'on'
@@ -13,6 +14,7 @@ variational:
       departures: depbg
 #  - geometry:
 #      gridfname: meshFile
+#      deallocate non-da fields: true
 #    ninner: '60'
 #    gradient norm reduction: 1e-10
 #    test: 'on'
@@ -25,6 +27,7 @@ cost function:
   window length: PT6H
   geometry:
     gridfname: meshFile
+    deallocate non-da fields: true
   analysis variables: &incvars [AnalysisVariables]
   background:
     state variables: [StateVariables]

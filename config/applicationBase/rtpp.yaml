@@ -2,6 +2,7 @@ output:
   filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
 geometry:
   gridfname: meshFile
+  deallocate non-da fields: true
 analysis variables: [AnalysisVariables]
 background:
   _: &state
