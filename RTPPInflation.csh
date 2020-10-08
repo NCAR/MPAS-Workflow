@@ -106,11 +106,11 @@ end
 set StateVariables = ( \
   $AnalysisVariables \
 )
-foreach VarGroup (AnalysisVariables StateVariables)
-  if (${VarGroup} == AnalysisVariables) then
+foreach VarGroup (Analysis State)
+  if (${VarGroup} == Analysis) then
     set Variables = ($AnalysisVariables)
   endif
-  if (${VarGroup} == StateVariables) then
+  if (${VarGroup} == State) then
     set Variables = ($StateVariables)
   endif
   set VarSub = ""
@@ -119,7 +119,7 @@ foreach VarGroup (AnalysisVariables StateVariables)
   end
   # remove trailing comma
   set VarSub = `echo "$VarSub" | sed 's/.$//'`
-  sed -i 's@'$VarGroup'@'$VarSub'@' $prevYAML
+  sed -i 's@'$VarGroup'Variables@'$VarSub'@' $prevYAML
 end
 
 ## fill in ensemble B config and link/copy analysis ensemble members
