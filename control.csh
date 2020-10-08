@@ -216,6 +216,7 @@ set StandardStateVariables = ( \
   lai \
   smois \
   tslb \
+  pressure_p \
 )
 @ CyclingDAPEPerMember = ${CyclingDANodesPerMember} * ${CyclingDAPEPerNode}
 setenv CyclingDAPEPerMember ${CyclingDAPEPerMember}
