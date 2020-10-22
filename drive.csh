@@ -7,7 +7,7 @@ source control.csh
 ## Top-level workflow controls
 # CriticalPathType: controls dependcies between and chilrdren of
 #                   DA and FC cycling components
-# options: Bypass, Reanalysis, Reforecast, Normal
+# options: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
 set VerifyOnly = False
 set VerifyDeterministicDA = True
