@@ -405,8 +405,8 @@ setenv FCStaticFiles   ${FCBuildDir}/src/core_atmosphere/physics/physics_wrf/fil
 setenv meanStateExe      average_netcdf_files_parallel_mpas_${COMPILER}.x
 setenv meanStateBuildDir /glade/work/guerrett/pandac/work/meanState
 #TODO: add these to the repo, possibly under graphics/plot/postprocess/tools directory
-#setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
-setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_debug
+setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
+#setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_debug
 
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
 
