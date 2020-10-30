@@ -89,7 +89,9 @@ set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 ln -sf $GRAPHINFO_DIR/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
-ln -sf ${FCStaticFiles} .
+foreach fileGlob ($FCLookupFileGlobs)
+  ln -sf ${FCLookupDir}/*${fileGlob} .
+end
 
 ## link static stream settings
 

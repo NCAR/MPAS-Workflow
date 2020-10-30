@@ -50,7 +50,9 @@ ln -sf ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
 ln -sf $GRAPHINFO_DIR/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
-ln -sf ${FCStaticFiles} .
+foreach fileGlob ($FCLookupFileGlobs)
+  ln -sf ${FCLookupDir}/*${fileGlob} .
+end
 
 ## link/copy stream_list/streams configs
 foreach staticfile ( \

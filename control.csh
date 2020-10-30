@@ -368,38 +368,34 @@ setenv BUILDUSER         ${USER}
 setenv TOP_BUILD_DIR     /glade/work/${BUILDUSER}/pandac
 #MPAS-JEDI
 if ( "$DAType" =~ *"eda"* ) then
-  setenv DAEXE           mpas_eda.x
+  setenv DAEXE           mpasjedi_eda.x
 else
-  setenv DAEXE           mpas_variational.x
+  setenv DAEXE           mpasjedi_variational.x
 endif
-set DABundleBuild = _build=RelWithDebInfo
-set DABuildFeature = ''
-setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${DABundleBuild}${DABuildFeature}
+setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}
 setenv DABuildDir      ${TOP_BUILD_DIR}/build/${DABuild}/bin
 
-setenv OMMEXE           mpas_variational.x
-set OMMBundleBuild = _build=RelWithDebInfo
-set OMMBuildFeature = ''
-setenv OMMBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${OMMBundleBuild}${OMMBuildFeature}
-setenv OMMBuildDir      ${TOP_BUILD_DIR}/build/${OMMBuild}/bin
+setenv OMMEXE          mpasjedi_variational.x
+setenv OMMBuild        mpas-bundle${CUSTOMPIO}_${COMPILER}
+setenv OMMBuildDir     ${TOP_BUILD_DIR}/build/${OMMBuild}/bin
 
-setenv RTPPEXE           mpas_rtpp.x
-set RTPPBundleBuild = _build=RelWithDebInfo
-set RTPPBuildFeature = _feature--rtpp_app
-setenv RTPPBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${RTPPBundleBuild}${RTPPBuildFeature}
-setenv RTPPBuildDir      ${TOP_BUILD_DIR}/build/${RTPPBuild}/bin
+setenv RTPPEXE         mpasjedi_rtpp.x
+setenv RTPPBuild       mpas-bundle${CUSTOMPIO}_${COMPILER}_feature--rtpp_app
+setenv RTPPBuildDir    ${TOP_BUILD_DIR}/build/${RTPPBuild}/bin
 
 
-setenv HOFXEXE           mpas_hofx_nomodel.x
+setenv HOFXEXE         mpasjedi_hofx_nomodel.x
 
-setenv appyaml jedi.yaml
+setenv appyaml         jedi.yaml
 
 #MPAS-Model
 setenv MPASCore        atmosphere
-setenv FCEXE           ${MPASCore}_model
-setenv FCBuild         MPAS_${COMPILER}_debug=0${CUSTOMPIO}
-setenv FCBuildDir      ${TOP_BUILD_DIR}/libs/build/${FCBuild}
-setenv FCStaticFiles   ${FCBuildDir}/src/core_atmosphere/physics/physics_wrf/files/*
+setenv FCEXE           mpas_${MPASCore}
+set FCProject = MPAS
+setenv FCBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}
+setenv FCBuildDir      ${TOP_BUILD_DIR}/build/${FCBuild}/bin
+setenv FCLookupDir     ${TOP_BUILD_DIR}/build/${FCBuild}/${FCProject}/core_${MPASCore}
+set FCLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
 
 #Verification tools
 setenv meanStateExe      average_netcdf_files_parallel_mpas_${COMPILER}.x
