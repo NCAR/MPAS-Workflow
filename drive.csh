@@ -12,9 +12,9 @@ set CriticalPathType = Normal
 set VerifyOnly = False
 set VerifyDeterministicDA = True
 set VerifyExtendedMeanFC = False
-set VerifyEnsBG = False
-set VerifyMeanBG = False
-set VerifyEnsAN = False
+set VerifyMemberBG = False
+set VerifyEnsMeanBG = False
+set VerifyMemberAN = False
 set VerifyExtendedEnsFC = False
 
 ## Cycle bounds
@@ -54,9 +54,9 @@ cat >! suite.rc << EOF
 {% endif %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
-{% set VerifyEnsBG = ${VerifyEnsBG} %}
-{% set VerifyMeanBG = ${VerifyMeanBG} %}
-{% set VerifyEnsAN = ${VerifyEnsAN} %}
+{% set VerifyMemberBG = ${VerifyMemberBG} %}
+{% set VerifyEnsMeanBG = ${VerifyEnsMeanBG} %}
+{% set VerifyMemberAN = ${VerifyMemberAN} %}
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
@@ -107,7 +107,7 @@ cat >! suite.rc << EOF
 ## Many kinds of verification
 {% if VerifyDeterministicDA and nEnsDAMembers < 2 %}
 #TODO: enable VerifyObsDA to handle more than one ensemble member
-#      and use feedback files from EDA for VerifyMeanBG
+#      and use feedback files from EDA for VerifyEnsMeanBG
 ## Verification of deterministic DA with observations (BG+AN)
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
@@ -133,14 +133,14 @@ cat >! suite.rc << EOF
   {% endif %}
       '''
 {% endif %}
-{% if (VerifyEnsBG or (VerifyMeanBG and nEnsDAMembers > 1)) and not VerifyOnly%}
+{% if (VerifyMemberBG or (VerifyEnsMeanBG and nEnsDAMembers > 1)) and not VerifyOnly%}
 ## Ensemble BG verification
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => CalcOMBG
       '''
 {% endif %}
-{% if VerifyEnsBG %}
+{% if VerifyMemberBG %}
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
   {% if not VerifyOnly %}
@@ -154,20 +154,20 @@ cat >! suite.rc << EOF
   {% endif %}
       '''
 {% endif %}
-{% if VerifyMeanBG and nEnsDAMembers > 1 %}
+{% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
 ## Obs-space verification of mean background
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
   {% if not VerifyOnly %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => MeanBackground
-        MeanBackground => CalcOMMeanBG
-        CalcOMBG:succeed-all & CalcOMMeanBG => VerifyObsMeanBG
+        MeanBackground => CalcOMEnsMeanBG
+        CalcOMBG:succeed-all & CalcOMEnsMeanBG => VerifyObsEnsMeanBG
   {% else %}
-        VerifyObsMeanBG
+        VerifyObsEnsMeanBG
   {% endif %}
       '''
 {% endif %}
-{% if VerifyEnsAN %}
+{% if VerifyMemberAN %}
 ## Ensemble AN verification
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
@@ -369,17 +369,17 @@ cat >! suite.rc << EOF
       execution time limit = PT5M
     [[[directives]]]
       -q = ${VFQueueName}
-  [[CalcOMMeanBG]]
+  [[CalcOMEnsMeanBG]]
     inherit = OMMBase
-    script = \$origin/CalcOMMeanBG.csh "0" "0" "BG"
+    script = \$origin/CalcOMEnsMeanBG.csh "0" "0" "BG"
     [[[environment]]]
-      myPreScript = \$origin/jediPrepCalcOMMeanBG.csh "0" "0" "BG"
-  [[VerifyObsMeanBG]]
+      myPreScript = \$origin/jediPrepCalcOMEnsMeanBG.csh "0" "0" "BG"
+  [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
-    script = \$origin/VerifyObsMeanBG.csh "0" "0" "BG" "{{nEnsDAMembers}}"
-  [[VerifyModelMeanBG]]
+    script = \$origin/VerifyObsEnsMeanBG.csh "0" "0" "BG" "{{nEnsDAMembers}}"
+  [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
-    script = \$origin/VerifyModelMeanBG.csh "0" "0" "BG"
+    script = \$origin/VerifyModelEnsMeanBG.csh "0" "0" "BG"
 [visualization]
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}

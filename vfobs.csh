@@ -33,7 +33,6 @@ endif
 if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
   set self_WorkDir = $self_WorkDir/${ArgDT}hr
 endif
-setenv NOUTER nOuterArg
 
 echo "WorkDir = ${self_WorkDir}"
 
@@ -45,7 +44,7 @@ module load python/3.7.5
 mkdir -p ${self_WorkDir}/diagnostic_stats/obs
 cd ${self_WorkDir}/diagnostic_stats/obs
 
-set mainScript="writediagstats_obsspace"
+set mainScript="DiagnoseObsStatistics"
 ln -fs ${pyObsDir}/*.py ./
 ln -fs ${pyObsDir}/${mainScript}.py ./
 set NUMPROC=`cat $PBS_NODEFILE | wc -l`
@@ -53,7 +52,7 @@ set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 set success = 1
 while ( $success != 0 )
   mv log.${mainScript} log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py -n ${NUMPROC} -p ${self_WorkDir}/${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix}"
+  setenv baseCommand "python ${mainScript}.py -n ${NUMPROC} -p ${self_WorkDir}/${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} -app jediAppNameArg -nout nOuterArg"
 
   if ($ArgMember == 0 && $ArgNMembers > 1) then
     echo "${baseCommand} -m $ArgNMembers -e ${VerificationWorkDir}/${bgDir}${oopsMemFmt}/${thisCycleDate}/${OutDBDir}"

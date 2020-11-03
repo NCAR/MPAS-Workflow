@@ -1,96 +1,96 @@
-  - obs space:
-      name: Radiosonde
-      obsdatain:
-        obsfile: InDBDir/sondes_obs_2018041500.nc4
-      obsdataout:
-        obsfile: OutDBDir/obsPrefix_DAMode_sondes.nc4
-      simulated variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind]
-    obs operator:
-      name: VertInterp
-    obs error:
-      covariance model: diagonal
-    obs filters:
-    - filter: PreQC
-      maxvalue: 3
-  - obs space:
-      name: Aircraft
-      obsdatain:
-        obsfile: InDBDir/aircraft_obs_2018041500.nc4
-      obsdataout:
-        obsfile: OutDBDir/obsPrefix_DAMode_aircraft.nc4
-      simulated variables: [air_temperature, eastward_wind, northward_wind, specific_humidity]
-    obs operator:
-      name: VertInterp
-    obs error:
-      covariance model: diagonal
-    obs filters:
-    - filter: PreQC
-      maxvalue: 3
-  - obs space:
-      name: Satwind
-      obsdatain:
-        obsfile: InDBDir/satwind_obs_2018041500.nc4
-      obsdataout:
-        obsfile: OutDBDir/obsPrefix_DAMode_satwind.nc4
-      simulated variables: [eastward_wind, northward_wind]
-    obs operator:
-      name: VertInterp
-    obs error:
-      covariance model: diagonal
-    obs filters:
-    - filter: PreQC
-      maxvalue: 3
-  - obs space:
-      name: GnssroRef
-      obsdatain:
-        obsfile: InDBDir/gnssro_obs_2018041500.nc4
-      obsdataout:
-        obsfile: OutDBDir/obsPrefix_DAMode_gnssroref.nc4
-      simulated variables: [refractivity]
-    obs operator:
-      name: GnssroRef
-      obs options:
-        use_compress: 0
-    obs error:
-      covariance model: diagonal
-    obs filters:
-    - filter: Domain Check
-      where:
-      - variable:
-          name: altitude@MetaData
-        minvalue: 0
-        maxvalue: 30000
-      - variable:
-          name: earth_radius_of_curvature@MetaData
-        minvalue: 6250000
-        maxvalue: 6450000
-      - variable:
-          name: geoid_height_above_reference_ellipsoid@MetaData
-        minvalue: -200
-        maxvalue: 200
-    - filter: ROobserror
-      variable: refractivity
-      errmodel: NBAM
-#    - filter: Bounds Check
-#      minvalue: -10.0
-  - obs space:
-      name: SfcPCorrected
-      obsdatain:
-        obsfile: InDBDir/sfc_obs_2018041500.nc4
-      obsdataout:
-        obsfile: OutDBDir/obsPrefix_DAMode_sfcp.nc4
-      simulated variables: [surface_pressure]
-    obs operator:
-      name: SfcPCorrected
-      da_psfc_scheme: UKMO   # or WRFDA
-    linear obs operator:
-      name: Identity
-    obs error:
-      covariance model: diagonal
-    obs filters:
-    - filter: PreQC
-      maxvalue: 3
-    - filter: Difference Check
-      reference: station_elevation@MetaData
-      value: surface_altitude@GeoVaLs
-      threshold: 200.0
+- obs space:
+    name: Radiosonde
+    obsdatain:
+      obsfile: InDBDir/sondes_obs_2018041500.nc4
+    obsdataout:
+      obsfile: OutDBDir/obsPrefix_AppType_sondes.nc4
+    simulated variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind]
+  obs operator:
+    name: VertInterp
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
+- obs space:
+    name: Aircraft
+    obsdatain:
+      obsfile: InDBDir/aircraft_obs_2018041500.nc4
+    obsdataout:
+      obsfile: OutDBDir/obsPrefix_AppType_aircraft.nc4
+    simulated variables: [air_temperature, eastward_wind, northward_wind, specific_humidity]
+  obs operator:
+    name: VertInterp
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
+- obs space:
+    name: Satwind
+    obsdatain:
+      obsfile: InDBDir/satwind_obs_2018041500.nc4
+    obsdataout:
+      obsfile: OutDBDir/obsPrefix_AppType_satwind.nc4
+    simulated variables: [eastward_wind, northward_wind]
+  obs operator:
+    name: VertInterp
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
+- obs space:
+    name: GnssroRef
+    obsdatain:
+      obsfile: InDBDir/gnssro_obs_2018041500.nc4
+    obsdataout:
+      obsfile: OutDBDir/obsPrefix_AppType_gnssroref.nc4
+    simulated variables: [refractivity]
+  obs operator:
+    name: GnssroRef
+    obs options:
+      use_compress: 0
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - filter: Domain Check
+    where:
+    - variable:
+        name: altitude@MetaData
+      minvalue: 0
+      maxvalue: 30000
+    - variable:
+        name: earth_radius_of_curvature@MetaData
+      minvalue: 6250000
+      maxvalue: 6450000
+    - variable:
+        name: geoid_height_above_reference_ellipsoid@MetaData
+      minvalue: -200
+      maxvalue: 200
+  - filter: ROobserror
+    variable: refractivity
+    errmodel: NBAM
+#  - filter: Bounds Check
+#    minvalue: -10.0
+- obs space:
+    name: SfcPCorrected
+    obsdatain:
+      obsfile: InDBDir/sfc_obs_2018041500.nc4
+    obsdataout:
+      obsfile: OutDBDir/obsPrefix_AppType_sfcp.nc4
+    simulated variables: [surface_pressure]
+  obs operator:
+    name: SfcPCorrected
+    da_psfc_scheme: UKMO   # or WRFDA
+  linear obs operator:
+    name: Identity
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
+  - filter: Difference Check
+    reference: station_elevation@MetaData
+    value: surface_altitude@GeoVaLs
+    threshold: 200.0

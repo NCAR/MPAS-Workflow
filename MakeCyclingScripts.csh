@@ -73,16 +73,17 @@ set WorkDir = ${CyclingDADir}
 set cylcTaskType = CyclingDA
 set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
 sed -e 's@wrapWorkDirsArg@CyclingDADir@' \
-    -e 's@AppNameArg@da@' \
+    -e 's@AppScriptNameArg@da@' \
     -e 's@cylcTaskTypeArg@'${cylcTaskType}'@' \
     -e 's@wrapStateDirsArg@prevCyclingFCDirs@' \
     -e 's@wrapStatePrefixArg@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeArg@DA@' \
     -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
     -e 's@wrapWindowHRArg@'${CyclingWindowHR}'@' \
-    -e 's@wrapDATypeArg@'${DAType}'@g' \
+    -e 's@wrapAppNameArg@'${DAType}'@g' \
+    -e 's@wrapjediAppNameArg@variational@g' \
     -e 's@wrapnOuterArg@1@g' \
-    -e 's@wrapDAModeArg@da@g' \
+    -e 's@wrapAppTypeArg@da@g' \
     -e 's@wrapObsListArg@DAObsList@' \
     ${AppAndVerify}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}
@@ -124,12 +125,12 @@ chmod 744 ${JobScript}
 
 
 #------- CalcOM{{state}}, VerifyObs{{state}}, VerifyModel{{state}} ---------
-foreach state (AN BG MeanBG MeanFC EnsFC)
+foreach state (AN BG EnsMeanBG MeanFC EnsFC)
   if (${state} == AN) then
     set myArgs = (CyclingDAOutDirs ${ANFilePrefix} ${CyclingWindowHR})
   else if (${state} == BG) then
     set myArgs = (prevCyclingFCDirs ${FCFilePrefix} ${CyclingWindowHR})
-  else if (${state} == MeanBG) then
+  else if (${state} == EnsMeanBG) then
     set myArgs = (CyclingDAInDir/mean ${FCFilePrefix} ${CyclingWindowHR})
   else if (${state} == MeanFC) then
     set myArgs = (ExtendedMeanFCDir ${FCFilePrefix} ${DAVFWindowHR})
@@ -139,16 +140,17 @@ foreach state (AN BG MeanBG MeanFC EnsFC)
   set cylcTaskType = CalcOM${state}
   set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh
   sed -e 's@wrapWorkDirsArg@Verify'${state}'Dirs@' \
-      -e 's@AppNameArg@'${omm}'@' \
+      -e 's@AppScriptNameArg@'${omm}'@' \
       -e 's@cylcTaskTypeArg@'${cylcTaskType}'@' \
       -e 's@wrapStateDirsArg@'$myArgs[1]'@' \
       -e 's@wrapStatePrefixArg@'$myArgs[2]'@' \
       -e 's@wrapStateTypeArg@'${state}'@' \
       -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
       -e 's@wrapWindowHRArg@'$myArgs[3]'@' \
-      -e 's@wrapDATypeArg@'${omm}'@g' \
+      -e 's@wrapAppNameArg@'${omm}'@g' \
+      -e 's@wrapjediAppNameArg@hofx@g' \
       -e 's@wrapnOuterArg@0@g' \
-      -e 's@wrapDAModeArg@'${omm}'@g' \
+      -e 's@wrapAppTypeArg@'${omm}'@g' \
       -e 's@wrapObsListArg@OMMObsList@' \
       ${AppAndVerify}.csh > ${WrapperScript}
   chmod 744 ${WrapperScript}

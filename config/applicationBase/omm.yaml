@@ -1,34 +1,12 @@
-output:
-  filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
-variational:
-  minimizer:
-    algorithm: DRIPCG
-  iterations:
-  - geometry:
-      gridfname: meshFile
-      deallocate non-da fields: true
-    ninner: '0'
-    gradient norm reduction: 1e-10
-    test: 'on'
-    diagnostics:
-      departures: depbg
-final:
-  diagnostics:
-    # no need to write out analysis departures
-    departures_: depan
-cost function:
-  cost type: 3D-Var
-  window begin: 'WindowBegin'
-  window length: PT6H
-  geometry:
-    gridfname: meshFile
-    deallocate non-da fields: true
-  analysis variables: &incvars [AnalysisVariables]
-  background:
-    state variables: [StateVariables]
-    filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
-    date: &adate '2018-04-15T00:00:00Z'
-  background error:
-    covariance model: MPASstatic
-    date: *adate
-  observations:
+window begin: 'WindowBegin'
+window length: PT6H
+forecast length: PT6H
+geometry:
+  gridfname: meshFile
+forecasts:
+  state variables: [ModelVariables]
+  filename: "./restart.2018-04-15_00.00.00.nc"
+  date: '2018-04-15T00:00:00Z'
+#Prints:
+#  frequency: PT3H
+observations:

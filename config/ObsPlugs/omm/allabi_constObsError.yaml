@@ -1,55 +1,55 @@
-  - obs space:
-      name: ABI-GOES16
-      obsdatain:
-        obsfile: InDBDir/abi_g16_obs_2018041500.nc4
-      obsdataout:
-        obsfile: OutDBDir/obsPrefix_DAMode_abi_g16.nc4
-      simulated variables: [brightness_temperature]
-      channels: &abi_channels 7-11,13-16
-    obs operator:
-      name: CRTM
-      Absorbers: [H2O,O3,CO2]
+- obs space:
+    name: ABI-GOES16
+    obsdatain:
+      obsfile: InDBDir/abi_g16_obs_2018041500.nc4
+    obsdataout:
+      obsfile: OutDBDir/obsPrefix_AppType_abi_g16.nc4
+    simulated variables: [brightness_temperature]
+    channels: &abi_channels 7-11,13-16
+  obs operator:
+    name: CRTM
+    Absorbers: [H2O,O3,CO2]
+    Clouds: [Water, Ice, Rain, Snow, Graupel]
+    linear obs operator:
+      Absorbers: [H2O]
       Clouds: [Water, Ice, Rain, Snow, Graupel]
-      linear obs operator:
-        Absorbers: [H2O]
-        Clouds: [Water, Ice, Rain, Snow, Graupel]
-      obs options:
-        Sensor_ID: abi_g16
-        EndianType: little_endian
-        CoefficientPath: CRTMTABLES
-        IRVISlandCoeff: USGS
-    obs error:
-      covariance model: diagonal
-    obs filters:
-    - filter: Domain Check
-      where:
-      - variable:
-          name: sensor_zenith_angle@MetaData
-        maxvalue: 65.0
-#    - filter: Domain Check
-#      where:
-#      - variable:
-#          name: water_area_fraction@GeoVaLs
-#        minvalue: 0.99
+    obs options:
+      Sensor_ID: abi_g16
+      EndianType: little_endian
+      CoefficientPath: CRTMTABLES
+      IRVISlandCoeff: USGS
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - filter: Domain Check
+    where:
+    - variable:
+        name: sensor_zenith_angle@MetaData
+      maxvalue: 65.0
+#  - filter: Domain Check
+#    where:
+#    - variable:
+#        name: water_area_fraction@GeoVaLs
+#      minvalue: 0.99
 ##        - variable:
 ##            name: solar_zenith_angle@MetaData
 ##          maxvalue: 65.0
-    - filter: GOMsaver
-      filename: OutDBDir/geoPrefix_DAMode_abi_g16.nc4
-    - filter: YDIAGsaver
-      filename: OutDBDir/diagPrefix_DAMode_abi_g16.nc4
-      filter variables:
-      - name: brightness_temperature_assuming_clear_sky
-        channels: *abi_channels
-      - name: weightingfunction_of_atmosphere_layer
-        channels: *abi_channels
-      - name: pressure_level_at_peak_of_weightingfunction
-        channels: *abi_channels
-      - name: brightness_temperature_jacobian_air_temperature
-        channels: *abi_channels
-      - name: brightness_temperature_jacobian_humidity_mixing_ratio
-        channels: *abi_channels
-      - name: brightness_temperature_jacobian_surface_emissivity
-        channels: *abi_channels
-      - name: brightness_temperature_jacobian_surface_temperature
-        channels: *abi_channels
+  - filter: GOMsaver
+    filename: OutDBDir/geoPrefix_AppType_abi_g16.nc4
+  - filter: YDIAGsaver
+    filename: OutDBDir/diagPrefix_AppType_abi_g16.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *abi_channels
+    - name: weightingfunction_of_atmosphere_layer
+      channels: *abi_channels
+    - name: pressure_level_at_peak_of_weightingfunction
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_air_temperature
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_humidity_mixing_ratio
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_surface_temperature
+      channels: *abi_channels

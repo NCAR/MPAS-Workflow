@@ -5,6 +5,9 @@
 # used to initiate new experiments
 setenv FirstCycleDate 2018041500
 
+set applicationIndex = ( da omm )
+set applicationObsIndent = ( 2 0 )
+
 #
 # OMM/VARBC settings
 # =============================================
@@ -375,7 +378,8 @@ endif
 setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}
 setenv DABuildDir      ${TOP_BUILD_DIR}/build/${DABuild}/bin
 
-setenv OMMEXE          mpasjedi_variational.x
+setenv OMMEXE          mpasjedi_hofx_nomodel.x
+
 setenv OMMBuild        mpas-bundle${CUSTOMPIO}_${COMPILER}
 setenv OMMBuildDir     ${TOP_BUILD_DIR}/build/${OMMBuild}/bin
 
@@ -384,7 +388,7 @@ setenv RTPPBuild       mpas-bundle${CUSTOMPIO}_${COMPILER}_feature--rtpp_app
 setenv RTPPBuildDir    ${TOP_BUILD_DIR}/build/${RTPPBuild}/bin
 
 
-setenv HOFXEXE         mpasjedi_hofx_nomodel.x
+#setenv HOFXEXE         mpasjedi_hofx_nomodel.x
 
 setenv appyaml         jedi.yaml
 
@@ -402,13 +406,11 @@ setenv meanStateExe      average_netcdf_files_parallel_mpas_${COMPILER}.x
 setenv meanStateBuildDir /glade/work/guerrett/pandac/work/meanState
 #TODO: add these to the repo, possibly under graphics/plot/postprocess/tools directory
 setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
-#setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_debug
-
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
 
 #Cycling tools
 set pyDir = ${mainScriptDir}/tools
-set pyTools = (memberDir advanceCYMDH)
+set pyTools = (memberDir advanceCYMDH nSpaces)
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"
 end

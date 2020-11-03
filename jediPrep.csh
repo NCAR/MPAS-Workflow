@@ -40,8 +40,8 @@ echo "WorkDir = ${self_WorkDir}"
 set self_WindowHR = WindowHRArg
 set self_ObsList = ("${ObsListArg}")
 set self_VARBCTable = VARBCTableArg
-set self_DAType = DATypeArg
-set self_DAMode = DAModeArg
+set self_AppName = AppNameArg
+set self_AppType = AppTypeArg
 
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
@@ -124,7 +124,7 @@ rm -r ${InDBDir}
 mkdir -p ${InDBDir}
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $self_DAType $member`
+  set memDir = `${memberDir} $self_AppName $member`
   mkdir -p ${OutDBDir}${memDir}
   @ member++
 end
@@ -159,14 +159,24 @@ ln -fsv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 # =============
 ## Copy applicationBase yaml
 set thisYAML = orig.yaml
-cp -v ${CONFIGDIR}/applicationBase/${self_DAType}.yaml $thisYAML
+cp -v ${CONFIGDIR}/applicationBase/${self_AppName}.yaml $thisYAML
+
+set index = 0
+set nIndent = 0
+foreach application (${applicationIndex})
+  @ index++
+  if ( $application == ${self_AppType} ) then
+    set nIndent = $applicationObsIndent[$index]
+  endif
+end
+set obsIndent = "`${nSpaces} $nIndent`"
 
 ## Add selected observations (see control.csh)
 set checkForMissingObs = (abi ahi amsua mhs)
 foreach obs ($self_ObsList)
   echo "Preparing YAML for ${obs} observations"
   set missing=0
-  set SUBYAML=${CONFIGDIR}/ObsPlugs/${self_DAMode}/${obs}
+  set SUBYAML=${CONFIGDIR}/ObsPlugs/${self_AppType}/${obs}
   if ( "$obs" =~ *"conv"* ) then
     #KLUDGE to handle missing qv for sondes at single time
     if ( ${thisValidDate} == 2018043006 ) then
@@ -190,7 +200,7 @@ foreach obs ($self_ObsList)
 
   if ($missing == 0) then
     echo "${obs} data is present and selected; adding ${obs} to the YAML"
-    cat ${SUBYAML}.yaml >> $thisYAML
+    sed 's/^/'"$obsIndent"'/' ${SUBYAML}.yaml >> $thisYAML
   else
     echo "${obs} data is selected, but missing; NOT adding ${obs} to the YAML"
   endif
@@ -226,7 +236,7 @@ sed -i 's@OutDBDir@'${OutDBDir}'@g' $thisYAML
 sed -i 's@obsPrefix@'${obsPrefix}'@g' $thisYAML
 sed -i 's@geoPrefix@'${geoPrefix}'@g' $thisYAML
 sed -i 's@diagPrefix@'${diagPrefix}'@g' $thisYAML
-sed -i 's@DAMode@'${self_DAMode}'@g' $thisYAML
+sed -i 's@AppType@'${self_AppType}'@g' $thisYAML
 sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' $thisYAML
 set meshFile = ${self_WorkDir}/${bgDir}/${BGFilePrefix}.$fileDate.nc
 sed -i 's@meshFile@'${meshFile}'@g' $thisYAML
@@ -284,7 +294,7 @@ sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' $prevYAML
 # TODO(JJG): how does ensemble B config generation need to be
 #            modified for 4DEnVar?
 # TODO(JJG): move this to da as not needed for OMM
-if ( "$self_DAType" =~ *"eda"* ) then
+if ( "$self_AppName" =~ *"eda"* ) then
   set ensPbDir = ${dynamicEnsBDir}
   set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
   set ensPbMemFmt = "${dynamicEnsBMemFmt}"
@@ -322,7 +332,7 @@ rm ${enspsed}SEDF.yaml
 set prevYAML = $thisYAML
 
 #TODO: move eda yaml construction to da module
-if ( "$self_DAType" =~ *"eda"* ) then
+if ( "$self_AppName" =~ *"eda"* ) then
   set member = 1
   echo "files:" > $appyaml
   while ( $member <= ${ensPbNMembers} )
