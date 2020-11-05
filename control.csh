@@ -19,7 +19,8 @@ setenv omm  omm
 
 ## OMMObsList
 # OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
-set OMMObsList = (conv clramsua cldamsua clrabi allabi clrahi allahi)
+set OMMObsList = (conv clramsua cldamsua allabi allahi)
+#set OMMObsList = (conv clramsua cldamsua clrabi allabi clrahi allahi)
 #set OMMObsList = (clramsua clrabi)
 #set OMMObsList = (allabi_SCI)
 #set OMMObsList = (allabi_constObsError)
@@ -118,8 +119,9 @@ setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
 setenv CalcOMMJobMinutes 10
-setenv CalcOMMNodes 2
-setenv CalcOMMPEPerNode 18
+setenv CalcOMMNodes 1
+setenv CalcOMMPEPerNode 36
+setenv CalcOMMMemory 109
 
 setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 36
@@ -129,8 +131,8 @@ setenv VerifyModelPEPerNode 36
 setenv CyclingDAJobMinutes 25
 setenv CyclingDAMemory 45
 if ( "$DAType" =~ *"eda"* || "$DAType" == "${omm}") then
-  setenv CyclingDANodesPerMember ${CalcOMMNodes}
-  setenv CyclingDAPEPerNode      ${CalcOMMPEPerNode}
+  setenv CyclingDANodesPerMember 2
+  setenv CyclingDAPEPerNode      18
 else
   setenv CyclingDANodesPerMember 4
   setenv CyclingDAPEPerNode      32
@@ -158,17 +160,18 @@ setenv CyclingInflationPEPerNode      ${CalcOMMPEPerNode}
 #setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
 #setenv CalcOMMJobMinutes 10
-#setenv CalcOMMNodes 8
+#setenv CalcOMMNodes 32
 #setenv CalcOMMPEPerNode 16
+#setenv CalcOMMMemory 109
 
 #setenv CyclingDAJobMinutes 25
 #setenv CyclingDAMemory 109
 #if ( "$DAType" =~ *"eda"* ) then
-#  setenv CyclingDANodesPerMember ${CalcOMMNodes}
-#  setenv CyclingDAPEPerNode      ${CalcOMMPEPerNode}
+#  setenv CyclingDANodesPerMember 64
+#  setenv CyclingDAPEPerNode      8
 #else
-#  setenv CyclingDANodesPerMember 16
-#  setenv CyclingDAPEPerNode      32
+#  setenv CyclingDANodesPerMember 64
+#  setenv CyclingDAPEPerNode      8
 #endif
 
 setenv RSTFilePrefix   restart
@@ -420,8 +423,8 @@ end
 # job submission settings
 # =============================================
 ## *AccountNumber
-# OPTIONS: NMMM0015
-setenv StandardAccountNumber NMMM0015
+# OPTIONS: NMMM0015, NMMM0043
+setenv StandardAccountNumber NMMM0043
 setenv CYAccountNumber ${StandardAccountNumber}
 setenv VFAccountNumber ${StandardAccountNumber}
 

@@ -248,7 +248,7 @@ cat >! suite.rc << EOF
     [[[directives]]]
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
-      -l = select=${CalcOMMNodes}:ncpus=${CalcOMMPEPerNode}:mpiprocs=${CalcOMMPEPerNode}:mem=109GB
+      -l = select=${CalcOMMNodes}:ncpus=${CalcOMMPEPerNode}:mpiprocs=${CalcOMMPEPerNode}:mem=${CalcOMMMemory}GB
   [[VerifyObsBase]]
     [[[job]]]
       execution time limit = PT10M
