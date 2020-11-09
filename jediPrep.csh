@@ -356,7 +356,7 @@ if ( "$self_AppName" =~ *"eda"* ) then
 else
   cp $prevYAML $appyaml
   sed -i 's@OOPSMemberDir@@g' $appyaml
-  sed -i 's@ObsPerturbations@false@g' $appYAML
+  sed -i 's@ObsPerturbations@false@g' $appyaml
   sed -i 's@MemberSeed@1@g' $appyaml
 endif
 
