@@ -6,6 +6,7 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_ahi_himawari8.nc4
     simulated variables: [brightness_temperature]
     channels: &clrahi_channels 7-16
+    obs perturbations seed: MemberSeed
   obs operator:
     name: CRTM
     Absorbers: [H2O,O3,CO2]

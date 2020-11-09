@@ -5,6 +5,7 @@
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_sondes.nc4
     simulated variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind, specific_humidity]
+    obs perturbations seed: MemberSeed
   obs operator:
     name: VertInterp
   obs error:
@@ -22,6 +23,7 @@
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_aircraft.nc4
     simulated variables: [air_temperature, eastward_wind, northward_wind, specific_humidity]
+    obs perturbations seed: MemberSeed
   obs operator:
     name: VertInterp
   obs error:
@@ -39,6 +41,7 @@
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_satwind.nc4
     simulated variables: [eastward_wind, northward_wind]
+    obs perturbations seed: MemberSeed
   obs operator:
     name: VertInterp
   obs error:
@@ -61,6 +64,7 @@
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_gnssroref.nc4
     simulated variables: [refractivity]
+    obs perturbations seed: MemberSeed
   obs operator:
     name: GnssroRef
     obs options:
@@ -96,6 +100,7 @@
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_sfcp.nc4
     simulated variables: [surface_pressure]
+    obs perturbations seed: MemberSeed
   obs operator:
     name: SfcPCorrected
     da_psfc_scheme: UKMO   # or WRFDA

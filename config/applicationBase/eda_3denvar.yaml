@@ -60,5 +60,4 @@ cost function:
     members:
 EnsemblePbMembers
     variables: *incvars
-  obs perturbations seed: MemberSeed
   observations:

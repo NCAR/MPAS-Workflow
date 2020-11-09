@@ -6,6 +6,7 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n19.nc4
     simulated variables: [brightness_temperature]
     channels: 5-7,9
+    obs perturbations seed: MemberSeed
   obs error:
     covariance model: diagonal
   obs filters:
@@ -38,6 +39,7 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n15.nc4
     simulated variables: [brightness_temperature]
     channels: 5-9
+    obs perturbations seed: MemberSeed
   obs error:
     covariance model: diagonal
   obs filters:
@@ -66,6 +68,7 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n18.nc4
     simulated variables: [brightness_temperature]
     channels: 5-9
+    obs perturbations seed: MemberSeed
   obs error:
     covariance model: diagonal
   obs filters:
@@ -94,6 +97,7 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_metop-a.nc4
     simulated variables: [brightness_temperature]
     channels: 5,6,9
+    obs perturbations seed: MemberSeed
   obs error:
     covariance model: diagonal
   obs filters:
@@ -122,6 +126,7 @@
 #      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_metop-b.nc4
 #    simulated variables: [brightness_temperature]
 #    channels: 8,9
+#    obs perturbations seed: MemberSeed
 #  obs error:
 #    covariance model: diagonal
 #  obs filters:
@@ -150,6 +155,7 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_aqua.nc4
     simulated variables: [brightness_temperature]
     channels: 8,9
+    obs perturbations seed: MemberSeed
   obs error:
     covariance model: diagonal
   obs filters:

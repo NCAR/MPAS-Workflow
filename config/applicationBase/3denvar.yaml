@@ -12,6 +12,7 @@ variational:
     test: 'on'
     diagnostics:
       departures: depbg
+    obs perturbations: ObsPerturbations
 #  - geometry:
 #      gridfname: meshFile
 #      deallocate non-da fields: true
