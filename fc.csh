@@ -139,7 +139,7 @@ while ( ${fcDate} <= ${finalFCDate} )
   if ( $copyDiags > 0 ) then
     ncks -A -v ${MPASDiagVariables} ${diagFile} ${fcFile}
   endif
-  rm ${diagFile}
+  # rm ${diagFile}
 
   set fcDate = `$advanceCYMDH ${fcDate} ${self_fcIntervalHR}`
   setenv fcDate ${fcDate}
