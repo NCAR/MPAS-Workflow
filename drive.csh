@@ -10,7 +10,7 @@ source control.csh
 # options: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
 set VerifyOnly = False
-set VerifyDeterministicDA = True
+set VerifyDeterministicDA = False
 set VerifyExtendedMeanFC = False
 set VerifyMemberBG = False
 set VerifyEnsMeanBG = False
