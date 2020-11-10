@@ -285,79 +285,120 @@ end
 #sed -i 's@AnalysisVariables@'$VarSub'@' $prevYAML
 
 
+# TODO(JJG): move the J terms below to da.csh as not needed for OMM
 
-## ensemble covariance
-# localization
+## ensemble Jb localization
 sed -i 's@bumpLocDir@'${bumpLocDir}'@g' $prevYAML
 sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' $prevYAML
-# ensemble forecasts
-# TODO(JJG): how does ensemble B config generation need to be
-#            modified for 4DEnVar?
-# TODO(JJG): move this to da as not needed for OMM
+
+set enspsed = EnsemblePbMembers
 if ( "$self_AppName" =~ *"eda"* ) then
+  echo "files:" > $appyaml
+
   set ensPbDir = ${dynamicEnsBDir}
   set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
   set ensPbMemFmt = "${dynamicEnsBMemFmt}"
   set ensPbNMembers = ${dynamicEnsBNMembers}
-else
-  set ensPbDir = ${fixedEnsBDir}
-  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
-  set ensPbMemFmt = "${fixedEnsBMemFmt}"
-  set ensPbNMembers = ${fixedEnsBNMembers}
-endif
-set enspsed = EnsemblePbMembers
+
+  set member = 1
+  while ( $member <= ${ensPbNMembers} )
+    set memberyaml = member_$member.yaml
+
+    # add member yaml name to list of member yamls
+    echo "  - $memberyaml" >> $appyaml
+
+    # create member-specific yaml
+    cp $prevYAML $memberyaml
+
+    ## ensemble Jb forecasts
+    # TODO(JJG): how does ensemble B config generation need to be
+    #            modified for 4DEnVar?
+    # TODO: this indentation only works for pure EnVar, not Hybrid EnVar
+    set indent = "    "
+    set bmember = 0
+    set bremain = ${ensPbNMembers}
+    if ( $LeaveOneOutEDA == True ) then
+      @ bremain--
+    endif
 cat >! ${enspsed}SEDF.yaml << EOF
 /${enspsed}/c\
 EOF
 
-# TODO: this indentation only works for pure EnVar, not Hybrid EnVar
-set indent = "    "
-set member = 1
-while ( $member <= ${ensPbNMembers} )
-  set memDir = `${memberDir} ens $member "${ensPbMemFmt}"`
-  set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
-  if ( $member < ${ensPbNMembers} ) then
-    set filename = ${filename}\\
-  endif
+    while ( $bmember < ${ensPbNMembers} )
+      @ bmember++
+      if ( $bmember == $member && $LeaveOneOutEDA == True ) then
+        continue
+      endif
+      set memDir = `${memberDir} ens $bmember "${ensPbMemFmt}"`
+      set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
+      if ( $bremain > 1 ) then
+        set filename = ${filename}\\
+      endif
 cat >>! ${enspsed}SEDF.yaml << EOF
 ${indent}- <<: *state\
 ${indent}  filename: ${filename}
 EOF
 
-  @ member++
-end
-set thisYAML = last.yaml
-sed -f ${enspsed}SEDF.yaml $prevYAML >! $thisYAML
-rm ${enspsed}SEDF.yaml
-set prevYAML = $thisYAML
+      @ bremain--
+    end
+    set thisYAML = last.yaml
+    sed -f ${enspsed}SEDF.yaml $memberyaml >! $thisYAML
+    rm ${enspsed}SEDF.yaml
+    cp $thisYAML $memberyaml
 
-#TODO: move eda yaml construction to da module
-if ( "$self_AppName" =~ *"eda"* ) then
-  set member = 1
-  echo "files:" > $appyaml
-  while ( $member <= ${ensPbNMembers} )
-    # create member-specific yaml
-    set thisYAML = member_$member.yaml
-    cp $prevYAML $thisYAML
+    ## Jo term
     set memDir = `${memberDir} eda $member`
-    sed -i 's@OOPSMemberDir@'${memDir}'@g' $thisYAML
+    sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
     if ($member == 1) then
-      sed -i 's@ObsPerturbations@false@g' $thisYAML
+      sed -i 's@ObsPerturbations@false@g' $memberyaml
     else
-      sed -i 's@ObsPerturbations@true@g' $thisYAML
+      sed -i 's@ObsPerturbations@true@g' $memberyaml
     endif
-    sed -i 's@MemberSeed@'$member'@g' $thisYAML
-
-    # add member yaml name to list of member yamls
-    echo "  - $thisYAML" >> $appyaml
+    sed -i 's@MemberSeed@'$member'@g' $memberyaml
 
     @ member++
   end
 else
-  cp $prevYAML $appyaml
-  sed -i 's@OOPSMemberDir@@g' $appyaml
-  sed -i 's@ObsPerturbations@false@g' $appyaml
-  sed -i 's@MemberSeed@1@g' $appyaml
+  set memberyaml = $appyaml
+  cp $prevYAML $memberyaml
+
+  ## ensemble Jb forecasts
+  set ensPbDir = ${fixedEnsBDir}
+  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
+  set ensPbMemFmt = "${fixedEnsBMemFmt}"
+  set ensPbNMembers = ${fixedEnsBNMembers}
+
+cat >! ${enspsed}SEDF.yaml << EOF
+/${enspsed}/c\
+EOF
+
+  # TODO(JJG): how does ensemble B config generation need to be
+  #            modified for 4DEnVar?
+  # TODO: this indentation only works for pure EnVar, not Hybrid EnVar
+  set indent = "    "
+  set bmember = 0
+  while ( $bmember < ${ensPbNMembers} )
+    @ bmember++
+    set memDir = `${memberDir} ens $bmember "${ensPbMemFmt}"`
+    set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
+    if ( $bmember < ${ensPbNMembers} ) then
+      set filename = ${filename}\\
+    endif
+cat >>! ${enspsed}SEDF.yaml << EOF
+${indent}- <<: *state\
+${indent}  filename: ${filename}
+EOF
+
+  end
+  set thisYAML = last.yaml
+  sed -f ${enspsed}SEDF.yaml $memberyaml >! $thisYAML
+  rm ${enspsed}SEDF.yaml
+  cp $thisYAML $memberyaml
+
+  ## Jo term
+  sed -i 's@OOPSMemberDir@@g' $memberyaml
+  sed -i 's@ObsPerturbations@false@g' $memberyaml
+  sed -i 's@MemberSeed@1@g' $memberyaml
 endif
 
 

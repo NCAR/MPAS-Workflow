@@ -44,6 +44,7 @@ if ( "$DAType" =~ *"eda"* ) then
   setenv nEnsDAMembers 20
 endif
 setenv RTPPInflationFactor 0.85
+setenv LeaveOneOutEDA False
 
 ## DAObsList
 #OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
@@ -76,6 +77,7 @@ end
 ## add unique suffix
 set ExpSuffix = "_NMEM"${nEnsDAMembers}
 if ($nEnsDAMembers > 1 && ${RTPPInflationFactor} != "0.0") set ExpSuffix = ${ExpSuffix}_RTPP${RTPPInflationFactor}
+if ($nEnsDAMembers > 1 && ${LeaveOneOutEDA} == True) set ExpSuffix = ${ExpSuffix}_LeaveOut
 setenv ExpName ${ExpName}${ExpSuffix}
 
 #
