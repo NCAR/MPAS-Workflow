@@ -98,10 +98,6 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-# Remove garbage analysis file
-# ============================
-rm ${anFile}
-
 date
 
 exit 0

@@ -112,6 +112,7 @@ cat >! suite.rc << EOF
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
         CyclingDAFinished => VerifyObsDA
+        VerifyObsDA => CleanupCyclingDA
       '''
 {% endif %}
 {% if VerifyExtendedMeanFC %}
@@ -124,6 +125,7 @@ cat >! suite.rc << EOF
         ExtendedMeanFC => VerifyModelMeanFC{{dt}}hr
         ExtendedMeanFC => CalcOMMeanFC{{dt}}hr
         CalcOMMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
+        VerifyObsMeanFC{{dt}}hr => CleanupCalcOMMeanFC{{dt}}hr
     {% endfor %}
   {% else %}
     {% for dt in ExtendedFCLengths %}
@@ -147,6 +149,7 @@ cat >! suite.rc << EOF
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
     {% for mem in VerifyMembers %}
         CalcOMBG{{mem}} => VerifyObsBG{{mem}}
+        VerifyObsBG{{mem}} => CleanupCalcOMBG{{mem}}
     {% endfor %}
   {% else %}
         VerifyModelBG
@@ -162,6 +165,8 @@ cat >! suite.rc << EOF
         CyclingFCFinished[-PT${CyclingWindowHR}H] => MeanBackground
         MeanBackground => CalcOMEnsMeanBG
         CalcOMBG:succeed-all & CalcOMEnsMeanBG => VerifyObsEnsMeanBG
+        VerifyObsEnsMeanBG => CleanupCalcOMEnsMeanBG
+        VerifyObsEnsMeanBG => CleanupCalcOMBG
   {% else %}
         VerifyObsEnsMeanBG
   {% endif %}
@@ -176,6 +181,7 @@ cat >! suite.rc << EOF
         CyclingDAFinished => VerifyModelAN{{mem}}
         CyclingDAFinished => CalcOMAN{{mem}}
         CalcOMAN{{mem}} => VerifyObsAN{{mem}}
+        VerifyObsAN{{mem}} => CleanupCalcOMAN{{mem}}
     {% else %}
         VerifyModelAN{{mem}}
         VerifyObsAN{{mem}}
@@ -194,6 +200,7 @@ cat >! suite.rc << EOF
         ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}-{{dt}}hr
         ExtendedFC{{mem}} => CalcOMEnsFC{{mem}}-{{dt}}hr
         CalcOMEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
+        VerifyObsEnsFC{{mem}}-{{dt}}hr => CleanupCalcOMEnsFC{{mem}}-{{dt}}hr
       {% endfor %}
     {% endfor %}
   {% else %}
@@ -256,6 +263,9 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
       -l = select=${VerifyObsNodes}:ncpus=${VerifyObsPEPerNode}:mpiprocs=${VerifyObsPEPerNode}
+  [[CleanupBase]]
+    [[[job]]]
+      batch system = background
 #Cycling components
   [[CyclingDA]]
     script = \$origin/CyclingDA.csh
@@ -265,6 +275,9 @@ cat >! suite.rc << EOF
       execution time limit = PT${CyclingDAJobMinutes}M
     [[[directives]]]
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
+  [[CleanupCyclingDA]]
+    inherit = CleanupBase
+    script = \$origin/CleanupCyclingDA.csh
   [[RTPPInflation]]
     script = \$origin/RTPPInflation.csh
     [[[job]]]
@@ -309,6 +322,9 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOMMeanFC.csh "0" "{{dt}}" "FC"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMMeanFC.csh "0" "{{dt}}" "FC"
+  [[CleanupCalcOMMeanFC{{dt}}hr]]
+    inherit = CleanupBase
+    script = \$origin/CleanupCalcOMMeanFC.csh "0" "{{dt}}" "FC"
   [[VerifyObsMeanFC{{dt}}hr]]
     inherit = VerifyObsBase
     script = \$origin/VerifyObsMeanFC.csh "0" "{{dt}}" "FC" "0"
@@ -324,6 +340,8 @@ cat >! suite.rc << EOF
 {% for state in ['BG', 'AN']%}
   [[CalcOM{{state}}]]
     inherit = OMMBase
+  [[CleanupCalcOM{{state}}]]
+    inherit = CleanupBase
   [[VerifyObs{{state}}]]
     inherit = VerifyObsBase
   [[VerifyModel{{state}}]]
@@ -337,6 +355,9 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
+  [[CleanupCalcOM{{state}}{{mem}}]]
+    inherit = CleanupCalcOM{{state}}
+    script = \$origin/CleanupCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
   [[VerifyObs{{state}}{{mem}}]]
     inherit = VerifyObs{{state}}
     script = \$origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
@@ -354,6 +375,9 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+  [[CleanupCalcOMEnsFC{{mem}}-{{dt}}hr]]
+    inherit = CleanupBase
+    script = \$origin/CleanupCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyObsBase
     script = \$origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
@@ -374,6 +398,9 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOMEnsMeanBG.csh "0" "0" "BG"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMEnsMeanBG.csh "0" "0" "BG"
+  [[CleanupCalcOMEnsMeanBG]]
+    inherit = CleanupBase
+    script = \$origin/CleanupCalcOMEnsMeanBG.csh "0" "0" "BG"
   [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
     script = \$origin/VerifyObsEnsMeanBG.csh "0" "0" "BG" "{{nEnsDAMembers}}"
