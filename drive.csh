@@ -275,12 +275,6 @@ cat >! suite.rc << EOF
       execution time limit = PT${CyclingDAJobMinutes}M
     [[[directives]]]
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
-  [[VerifyObsDA]]
-    inherit = VerifyObsBase
-    script = \$origin/VerifyObsDA.csh "0" "0" "DA" "0"
-  [[CleanupCyclingDA]]
-    inherit = CleanupBase
-    script = \$origin/CleanupCyclingDA.csh
   [[RTPPInflation]]
     script = \$origin/RTPPInflation.csh
     [[[job]]]
@@ -290,6 +284,12 @@ cat >! suite.rc << EOF
   [[CyclingDAFinished]]
     [[[job]]]
       batch system = background
+  [[VerifyObsDA]]
+    inherit = VerifyObsBase
+    script = \$origin/VerifyObsDA.csh "0" "0" "DA" "0"
+  [[CleanupCyclingDA]]
+    inherit = CleanupBase
+    script = \$origin/CleanupCyclingDA.csh
   [[CyclingFC]]
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
