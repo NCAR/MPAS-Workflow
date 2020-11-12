@@ -29,6 +29,16 @@ set OMMObsList = (conv clramsua cldamsua allabi allahi)
 #
 # DA settings
 # =============================================
+## DAObsList
+#OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
+# clr == clear-sky
+# all == all-sky
+# cld == cloudy-sky
+#set DAObsList = ()
+set DAObsList = (conv clramsua)
+#set DAObsList = (conv clramsua clrabi)
+#set DAObsList = (conv clramsua allabi)
+
 ## InDBDir and OutDBDir control the names of the database directories
 # on input and output from jedi applications
 setenv InDBDir  dbIn
@@ -45,40 +55,45 @@ if ( "$DAType" =~ *"eda"* ) then
 endif
 setenv RTPPInflationFactor 0.85
 setenv LeaveOneOutEDA False
+set ExpSuffix = ''
 
-## DAObsList
-#OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
-# clr == clear-sky
-# all == all-sky
-# cld == cloudy-sky
-#set DAObsList = ()
-set DAObsList = (conv clramsua)
-#set DAObsList = (conv clramsua clrabi)
-#set DAObsList = (conv clramsua allabi)
+#GEFS reference case (override above settings)
+#====================================================
+#setenv DAType eda_3denvar
+#setenv nEnsDAMembers 20
+#setenv RTPPInflationFactor 0.0
+#setenv LeaveOneOutEDA False
+#set ExpSuffix = _GEFSVerify
+#====================================================
 
+## ExpName - experiment name
+#(1) populate unique suffix
+set ExpSuffix = ${ExpSuffix}'_NMEM'${nEnsDAMembers}
+
+if ($nEnsDAMembers > 1 && ${RTPPInflationFactor} != "0.0") set ExpSuffix = ${ExpSuffix}_RTPP${RTPPInflationFactor}
+if ($nEnsDAMembers > 1 && ${LeaveOneOutEDA} == True) set ExpSuffix = ${ExpSuffix}_LeaveOut
+
+#(2) add observation selection info
 ## ABI super-obbing footprint (used for both OMM and DA)
 #OPTIONS: 15X15, 59X59 
 set ABISUPEROB = 15X15
 
 ## make experiment title from DA/OMM settings
-setenv ExpName ${DAType}
+setenv ExpObsName ''
 if ( "$DAType" == "${omm}" ) then
   set expObsList=($OMMObsList)
 else
   set expObsList=($DAObsList)
 endif
 foreach obs ($expObsList)
-  setenv ExpName ${ExpName}_${obs}
+  setenv ExpObsName ${ExpObsName}_${obs}
   if ( "$obs" =~ *"abi"* ) then
-    setenv ExpName ${ExpName}${ABISUPEROB}
+    setenv ExpObsName ${ExpObsName}${ABISUPEROB}
   endif
 end
 
-## add unique suffix
-set ExpSuffix = "_NMEM"${nEnsDAMembers}
-if ($nEnsDAMembers > 1 && ${RTPPInflationFactor} != "0.0") set ExpSuffix = ${ExpSuffix}_RTPP${RTPPInflationFactor}
-if ($nEnsDAMembers > 1 && ${LeaveOneOutEDA} == True) set ExpSuffix = ${ExpSuffix}_LeaveOut
-setenv ExpName ${ExpName}${ExpSuffix}
+#(3) combine for whole ExpName
+setenv ExpName ${DAType}${ExpObsName}${ExpSuffix}
 
 #
 # verification settings
