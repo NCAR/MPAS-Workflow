@@ -242,13 +242,6 @@ cat >! suite.rc << EOF
 #      --ntasks = 1
 #      --cpus-per-task = 36
 #      --partition = dav
-  [[VerifyModelBase]]
-    [[[job]]]
-      execution time limit = PT5M
-    [[[directives]]]
-      -q = ${VFQueueName}
-      -A = ${VFAccountNumber}
-      -l = select=${VerifyModelNodes}:ncpus=${VerifyModelPEPerNode}:mpiprocs=${VerifyModelPEPerNode}
   [[OMMBase]]
     [[[job]]]
       execution time limit = PT${CalcOMMJobMinutes}M
@@ -256,6 +249,13 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
       -l = select=${CalcOMMNodes}:ncpus=${CalcOMMPEPerNode}:mpiprocs=${CalcOMMPEPerNode}:mem=${CalcOMMMemory}GB
+  [[VerifyModelBase]]
+    [[[job]]]
+      execution time limit = PT5M
+    [[[directives]]]
+      -q = ${VFQueueName}
+      -A = ${VFAccountNumber}
+      -l = select=${VerifyModelNodes}:ncpus=${VerifyModelPEPerNode}:mpiprocs=${VerifyModelPEPerNode}
   [[VerifyObsBase]]
     [[[job]]]
       execution time limit = PT10M
@@ -275,6 +275,9 @@ cat >! suite.rc << EOF
       execution time limit = PT${CyclingDAJobMinutes}M
     [[[directives]]]
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
+  [[VerifyObsDA]]
+    inherit = VerifyObsBase
+    script = \$origin/VerifyObsDA.csh "0" "0" "DA" "0"
   [[CleanupCyclingDA]]
     inherit = CleanupBase
     script = \$origin/CleanupCyclingDA.csh
@@ -334,18 +337,15 @@ cat >! suite.rc << EOF
 {% endfor %}
   [[ExtendedEnsFC]]
     inherit = ExtendedFCBase
-  [[VerifyObsDA]]
-    inherit = VerifyObsBase
-    script = \$origin/VerifyObsDA.csh "0" "0" "DA" "0"
 {% for state in ['BG', 'AN']%}
   [[CalcOM{{state}}]]
     inherit = OMMBase
-  [[CleanupCalcOM{{state}}]]
-    inherit = CleanupBase
-  [[VerifyObs{{state}}]]
-    inherit = VerifyObsBase
   [[VerifyModel{{state}}]]
     inherit = VerifyModelBase
+  [[VerifyObs{{state}}]]
+    inherit = VerifyObsBase
+  [[CleanupCalcOM{{state}}]]
+    inherit = CleanupBase
 {% endfor %}
 {% for mem in VerifyMembers %}
 ## Ensemble BG/AN verification
@@ -355,15 +355,15 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
-  [[CleanupCalcOM{{state}}{{mem}}]]
-    inherit = CleanupCalcOM{{state}}
-    script = \$origin/CleanupCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
-  [[VerifyObs{{state}}{{mem}}]]
-    inherit = VerifyObs{{state}}
-    script = \$origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
   [[VerifyModel{{state}}{{mem}}]]
     inherit = VerifyModel{{state}}
     script = \$origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
+  [[VerifyObs{{state}}{{mem}}]]
+    inherit = VerifyObs{{state}}
+    script = \$origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
+  [[CleanupCalcOM{{state}}{{mem}}]]
+    inherit = CleanupCalcOM{{state}}
+    script = \$origin/CleanupCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
   {% endfor %}
 ## Extended ensemble forecasts and verification
   [[ExtendedFC{{mem}}]]
@@ -375,15 +375,15 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-  [[CleanupCalcOMEnsFC{{mem}}-{{dt}}hr]]
-    inherit = CleanupBase
-    script = \$origin/CleanupCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-  [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
-    inherit = VerifyObsBase
-    script = \$origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyModelBase
     script = \$origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+  [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
+    inherit = VerifyObsBase
+    script = \$origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
+  [[CleanupCalcOMEnsFC{{mem}}-{{dt}}hr]]
+    inherit = CleanupBase
+    script = \$origin/CleanupCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   {% endfor %}
 {% endfor %}
 ## Mean/ensemble background verification
@@ -398,15 +398,15 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOMEnsMeanBG.csh "0" "0" "BG"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMEnsMeanBG.csh "0" "0" "BG"
-  [[CleanupCalcOMEnsMeanBG]]
-    inherit = CleanupBase
-    script = \$origin/CleanupCalcOMEnsMeanBG.csh "0" "0" "BG"
-  [[VerifyObsEnsMeanBG]]
-    inherit = VerifyObsBase
-    script = \$origin/VerifyObsEnsMeanBG.csh "0" "0" "BG" "{{nEnsDAMembers}}"
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
     script = \$origin/VerifyModelEnsMeanBG.csh "0" "0" "BG"
+  [[VerifyObsEnsMeanBG]]
+    inherit = VerifyObsBase
+    script = \$origin/VerifyObsEnsMeanBG.csh "0" "0" "BG" "{{nEnsDAMembers}}"
+  [[CleanupCalcOMEnsMeanBG]]
+    inherit = CleanupBase
+    script = \$origin/CleanupCalcOMEnsMeanBG.csh "0" "0" "BG"
 [visualization]
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
