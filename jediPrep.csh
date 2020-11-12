@@ -349,7 +349,7 @@ EOF
     ## Jo term
     set memDir = `${memberDir} eda $member`
     sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
-    if ($member == 1) then
+    if ($member == 1 || $LeaveOneOutEDA == True) then
       sed -i 's@ObsPerturbations@false@g' $memberyaml
     else
       sed -i 's@ObsPerturbations@true@g' $memberyaml
