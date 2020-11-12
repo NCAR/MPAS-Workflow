@@ -13,8 +13,6 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 set self_WorkDir = $CyclingDADir
-set self_StateDirs = ($inStateDirsArg)
-set self_StatePrefix = inStatePrefixArg
 
 echo "WorkDir = ${self_WorkDir}"
 
