@@ -65,9 +65,12 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-# use one of the backgrounds as the localMeshFile (see jediPrep)
+# use one of the backgrounds as the localTemplateFieldsFile (see jediPrep)
 #TODO: create link until gridfname is used
-ln -sf ${bgFile} ${localMeshFile}
+ln -sf ${bgFile} ${localTemplateFieldsFile}
+
+## link static fields:
+ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
 
 # ===================
 # ===================

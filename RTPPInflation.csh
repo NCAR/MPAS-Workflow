@@ -81,7 +81,10 @@ sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
 
 #TODO: create link until gridfname is used
-ln -sf $meshFile ${localMeshFile}
+ln -sf $meshFile ${localTemplateFieldsFile}
+
+## link static fields:
+ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
 
 ## file naming
 sed -i 's@meshFile@'${meshFile}'@g' $thisYAML

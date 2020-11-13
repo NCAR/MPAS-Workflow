@@ -5,7 +5,7 @@ geometry:
   gridfname: meshFile
 forecasts:
   state variables: [ModelVariables]
-  filename: "./restart.2018-04-15_00.00.00.nc"
+  filename: bgStateDir/bgStatePrefix.2018-04-15_00.00.00.nc
   date: '2018-04-15T00:00:00Z'
 #Prints:
 #  frequency: PT3H

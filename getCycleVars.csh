@@ -87,4 +87,4 @@ set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set NMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set ConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
-set localMeshFile = ${RSTFilePrefix}.$fileDate.nc
+set localTemplateFieldsFile = ${TemplateFilePrefix}.$fileDate.nc

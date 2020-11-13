@@ -46,14 +46,14 @@ setenv OutDBDir dbOut
 
 ## DAType
 #OPTIONS: ${omm}, omf, varbc, 3dvarId, 3denvar, eda_3denvar
-setenv DAType eda_3denvar
+setenv DAType 3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DAType" =~ *"eda"* ) then
   #setenv nEnsDAMembers 5
   setenv nEnsDAMembers 20
 endif
-setenv RTPPInflationFactor 0.85
+setenv RTPPInflationFactor 0.75
 setenv LeaveOneOutEDA False
 set ExpSuffix = ''
 
@@ -93,7 +93,7 @@ foreach obs ($expObsList)
 end
 
 #(3) combine for whole ExpName
-setenv ExpName ${DAType}${ExpObsName}${ExpSuffix}
+setenv ExpName ${DAType}${ExpObsName}${ExpSuffix}_2-stream
 
 #
 # verification settings
@@ -191,22 +191,29 @@ setenv CyclingInflationPEPerNode      ${CalcOMMPEPerNode}
 #  setenv CyclingDAPEPerNode      8
 #endif
 
+
 setenv RSTFilePrefix   restart
-setenv ICFilePrefix    ${RSTFilePrefix}
+setenv ICFilePrefix    mpasin
 setenv FirstCycleFilePrefix ${RSTFilePrefix}
 #setenv FirstCycleFilePrefix x1.${MPASnCells}.init
 
-setenv FCFilePrefix    ${RSTFilePrefix}
+setenv FCFilePrefix    mpasout
 setenv fcDir           fc
 setenv DIAGFilePrefix  diag
 
 setenv ANFilePrefix    an
 setenv anDir           ${ANFilePrefix}
-setenv BGFilePrefix    ${RSTFilePrefix}
-setenv bgDir           bg
-setenv anStatePrefix analysis
+setenv BGFilePrefix    bg
+setenv bgDir           ${BGFilePrefix}
+#setenv anStatePrefix   analysis
+
+setenv TemplateFilePrefix templateFields
+setenv staticFieldsFile /glade/p/mmm/parc/liuz/pandac_common/${MPASGridDescriptor}_GFSANA/x1.${MPASnCells}.init.2018-04-14_18.00.00.nc
+#setenv staticFieldsFile /glade/p/mmm/parc/liuz/pandac_common/${MPASGridDescriptor}_GFSANA_O3/x1.${MPASnCells}.init.2018-04-14_18.00.00.nc
+setenv localStaticFieldsFile static.nc
 
 setenv OrigFileSuffix  _orig
+
 
 setenv MPASDiagVariables cldfrac
 setenv MPASSeaVariables sst,xice
@@ -395,12 +402,12 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   setenv DAEXE           mpasjedi_variational.x
 endif
-setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}
+setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}_feature--use2stream
 setenv DABuildDir      ${TOP_BUILD_DIR}/build/${DABuild}/bin
 
 setenv OMMEXE          mpasjedi_hofx_nomodel.x
 
-setenv OMMBuild        mpas-bundle${CUSTOMPIO}_${COMPILER}
+setenv OMMBuild        mpas-bundle${CUSTOMPIO}_${COMPILER}_feature--use2stream
 setenv OMMBuildDir     ${TOP_BUILD_DIR}/build/${OMMBuild}/bin
 
 setenv RTPPEXE         mpasjedi_rtpp.x
@@ -416,7 +423,7 @@ setenv appyaml         jedi.yaml
 setenv MPASCore        atmosphere
 setenv FCEXE           mpas_${MPASCore}
 set FCProject = MPAS
-setenv FCBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}
+setenv FCBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}_feature--use2stream
 setenv FCBuildDir      ${TOP_BUILD_DIR}/build/${FCBuild}/bin
 setenv FCLookupDir     ${TOP_BUILD_DIR}/build/${FCBuild}/${FCProject}/core_${MPASCore}
 set FCLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)

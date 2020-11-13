@@ -38,7 +38,7 @@ while ( $member <= ${nEnsDAMembers} )
   mkdir -p $prevCyclingFCDirs[$member]
 
   set fcFile = $prevCyclingFCDirs[$member]/${FCFilePrefix}.${fileDate}.nc
-  ln -sf ${InitialFC}/${RSTFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
+  ln -sf ${InitialFC}/${FirstCycleFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
   rm ${fcFile}
   cp -v ${fcFile}${OrigFileSuffix} ${fcFile}
 

@@ -10,16 +10,16 @@ source control.csh
 # options: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
 set VerifyOnly = False
-set VerifyDeterministicDA = False
+set VerifyDeterministicDA = True
 set VerifyExtendedMeanFC = False
-set VerifyMemberBG = False
+set VerifyMemberBG = True
 set VerifyEnsMeanBG = False
 set VerifyMemberAN = False
 set VerifyExtendedEnsFC = False
 
 ## Cycle bounds
 set initialCyclePoint = 20180415T00
-set finalCyclePoint   = 20180415T12
+set finalCyclePoint   = 20180420T00
 
 ## Initialize cycling directory if this is the first cycle point
 set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`

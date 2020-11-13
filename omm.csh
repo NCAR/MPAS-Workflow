@@ -76,8 +76,11 @@ if ( $copyDiags > 0 ) then
   ncks -A -v ${MPASDiagVariables} ${diagFile} ${bgFile}
 endif
 
-# use the background as the localMeshFile (see jediPrep)
-ln -sf ${bgFile} ${localMeshFile}
+# use the background as the localTemplateFieldsFile (see jediPrep)
+ln -sf ${bgFile} ${localTemplateFieldsFile}
+
+## link static fields:
+ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
 
 # ===================
 # ===================

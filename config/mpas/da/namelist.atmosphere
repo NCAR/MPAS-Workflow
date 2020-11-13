@@ -41,7 +41,8 @@
     config_block_decomp_file_prefix = 'x1.nCells.graph.info.part.'
 /
 &restart
-    config_do_restart = true
+    config_do_restart = false
+    config_do_DAcycling = true
 /
 &printout
     config_print_global_minmax_vel = true

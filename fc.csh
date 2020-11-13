@@ -43,6 +43,9 @@ set icFile = ${ICFilePrefix}.${icFileExt}
 ## link initial forecast state:
 ln -sf ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
 
+## link static fields:
+ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
+
 # ====================
 # Model-specific files
 # ====================
@@ -117,9 +120,6 @@ while ( ${fcDate} <= ${finalFCDate} )
   set fcFileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
   set fcFileExt = ${fcFileDate}.nc
   set fcFile = ${FCFilePrefix}.${fcFileExt}
-
-  ## move restart to forecast name
-  mv ${RSTFilePrefix}.${fcFileExt} ${fcFile}
 
   ## Update MPASSeaVariables from GFS ANA:
   if ( ${updateSea} ) then
