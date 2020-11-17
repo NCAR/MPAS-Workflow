@@ -383,7 +383,7 @@ endif
 
 module load nco
 limit stacksize unlimited
-setenv OOPS_TRACE 1
+setenv OOPS_TRACE 0
 setenv OOPS_DEBUG 0
 #setenv OOPS_TRAPFPE 1
 setenv GFORTRAN_CONVERT_UNIT 'native;big_endian:101-200'
