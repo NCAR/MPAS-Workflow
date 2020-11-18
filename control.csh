@@ -93,7 +93,7 @@ foreach obs ($expObsList)
 end
 
 #(3) combine for whole ExpName
-setenv ExpName ${DAType}${ExpObsName}${ExpSuffix}_2-stream
+setenv ExpName ${DAType}${ExpObsName}${ExpSuffix}
 
 #
 # verification settings
@@ -402,12 +402,12 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   setenv DAEXE           mpasjedi_variational.x
 endif
-setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}_feature--use2stream
+setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}
 setenv DABuildDir      ${TOP_BUILD_DIR}/build/${DABuild}/bin
 
 setenv OMMEXE          mpasjedi_hofx_nomodel.x
 
-setenv OMMBuild        mpas-bundle${CUSTOMPIO}_${COMPILER}_feature--use2stream
+setenv OMMBuild        mpas-bundle${CUSTOMPIO}_${COMPILER}
 setenv OMMBuildDir     ${TOP_BUILD_DIR}/build/${OMMBuild}/bin
 
 setenv RTPPEXE         mpasjedi_rtpp.x
@@ -423,7 +423,7 @@ setenv appyaml         jedi.yaml
 setenv MPASCore        atmosphere
 setenv FCEXE           mpas_${MPASCore}
 set FCProject = MPAS
-setenv FCBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}_feature--use2stream
+setenv FCBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}
 setenv FCBuildDir      ${TOP_BUILD_DIR}/build/${FCBuild}/bin
 setenv FCLookupDir     ${TOP_BUILD_DIR}/build/${FCBuild}/${FCProject}/core_${MPASCore}
 set FCLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
