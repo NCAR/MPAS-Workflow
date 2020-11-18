@@ -46,14 +46,14 @@ setenv OutDBDir dbOut
 
 ## DAType
 #OPTIONS: ${omm}, omf, varbc, 3dvarId, 3denvar, eda_3denvar
-setenv DAType 3denvar
+setenv DAType eda_3denvar
 
 setenv nEnsDAMembers 1
 if ( "$DAType" =~ *"eda"* ) then
   #setenv nEnsDAMembers 5
   setenv nEnsDAMembers 20
 endif
-setenv RTPPInflationFactor 0.75
+setenv RTPPInflationFactor 0.90
 setenv LeaveOneOutEDA False
 set ExpSuffix = ''
 
