@@ -229,7 +229,6 @@ cat >! suite.rc << EOF
       -S = /bin/csh
       -q = ${CYQueueName}
       -A = ${CYAccountNumber}
-      -m = ae
       -k = eod
       -l = select=1:ncpus=36:mpiprocs=36
 ## SLURM
@@ -274,12 +273,14 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT${CyclingDAJobMinutes}M
     [[[directives]]]
+      -m = ae
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
   [[RTPPInflation]]
     script = \$origin/RTPPInflation.csh
     [[[job]]]
       execution time limit = PT${CyclingInflationJobMinutes}M
     [[[directives]]]
+      -m = ae
       -l = select=${CyclingInflationNodesPerMember}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
   [[CyclingDAFinished]]
     [[[job]]]
@@ -294,6 +295,7 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
     [[[directives]]]
+      -m = ae
       -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
 {% for mem in EnsDAMembers %}
   [[CyclingMemberFC{{mem}}]]
@@ -307,6 +309,7 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT${ExtendedFCJobMinutes}M
     [[[directives]]]
+      -m = ae
       -q = ${VFQueueName}
       -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
 ## Extended mean analysis, forecast, and verification
@@ -315,6 +318,7 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT5M
     [[[directives]]]
+      -m = ae
       -q = ${VFQueueName}
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
@@ -392,6 +396,7 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT5M
     [[[directives]]]
+      -m = ae
       -q = ${VFQueueName}
   [[CalcOMEnsMeanBG]]
     inherit = OMMBase
