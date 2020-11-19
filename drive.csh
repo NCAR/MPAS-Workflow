@@ -164,10 +164,12 @@ cat >! suite.rc << EOF
   {% if not VerifyOnly %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => MeanBackground
         MeanBackground => CalcOMEnsMeanBG
+        MeanBackground => VerifyModelEnsMeanBG
         CalcOMBG:succeed-all & CalcOMEnsMeanBG => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanupCalcOMEnsMeanBG
         VerifyObsEnsMeanBG => CleanupCalcOMBG
   {% else %}
+        VerifyModelEnsMeanBG
         VerifyObsEnsMeanBG
   {% endif %}
       '''
