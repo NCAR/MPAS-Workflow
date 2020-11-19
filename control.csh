@@ -55,7 +55,7 @@ if ( "$DAType" =~ *"eda"* ) then
 endif
 setenv RTPPInflationFactor 0.90
 setenv LeaveOneOutEDA False
-set ExpSuffix = ''
+set ExpSuffix1 = ''
 
 #GEFS reference case (override above settings)
 #====================================================
@@ -63,15 +63,15 @@ set ExpSuffix = ''
 #setenv nEnsDAMembers 20
 #setenv RTPPInflationFactor 0.0
 #setenv LeaveOneOutEDA False
-#set ExpSuffix = _GEFSVerify
+#set ExpSuffix1 = _GEFSVerify
 #====================================================
 
 ## ExpName - experiment name
 #(1) populate unique suffix
-set ExpSuffix = ${ExpSuffix}'_NMEM'${nEnsDAMembers}
+set ExpSuffix0 = '_NMEM'${nEnsDAMembers}
 
-if ($nEnsDAMembers > 1 && ${RTPPInflationFactor} != "0.0") set ExpSuffix = ${ExpSuffix}_RTPP${RTPPInflationFactor}
-if ($nEnsDAMembers > 1 && ${LeaveOneOutEDA} == True) set ExpSuffix = ${ExpSuffix}_LeaveOut
+if ($nEnsDAMembers > 1 && ${RTPPInflationFactor} != "0.0") set ExpSuffix0 = ${ExpSuffix0}_RTPP${RTPPInflationFactor}
+if ($nEnsDAMembers > 1 && ${LeaveOneOutEDA} == True) set ExpSuffix0 = ${ExpSuffix0}_LeaveOut
 
 #(2) add observation selection info
 ## ABI super-obbing footprint (used for both OMM and DA)
@@ -93,7 +93,7 @@ foreach obs ($expObsList)
 end
 
 #(3) combine for whole ExpName
-setenv ExpName ${DAType}${ExpObsName}${ExpSuffix}
+setenv ExpName ${DAType}${ExpObsName}${ExpSuffix0}${ExpSuffix1}
 
 #
 # verification settings
