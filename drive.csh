@@ -13,13 +13,13 @@ set VerifyOnly = False
 set VerifyDeterministicDA = True
 set VerifyExtendedMeanFC = False
 set VerifyMemberBG = True
-set VerifyEnsMeanBG = False
+set VerifyEnsMeanBG = True
 set VerifyMemberAN = False
 set VerifyExtendedEnsFC = False
 
 ## Cycle bounds
 set initialCyclePoint = 20180415T00
-set finalCyclePoint   = 20180420T00
+set finalCyclePoint   = 20180514T18
 
 ## Initialize cycling directory if this is the first cycle point
 set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
@@ -91,7 +91,9 @@ cat >! suite.rc << EOF
   UTC mode = False
   [[environment]]
 [scheduling]
-  max active cycle points = 200
+  # Maximum number of simultaneous active dates;
+  # useful for constraining non-blocking flows
+  max active cycle points = 40
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
   [[dependencies]]
