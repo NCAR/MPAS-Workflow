@@ -53,7 +53,7 @@ if ( "$DAType" =~ *"eda"* ) then
   #setenv nEnsDAMembers 5
   setenv nEnsDAMembers 20
 endif
-setenv RTPPInflationFactor 0.90
+setenv RTPPInflationFactor 0.85
 setenv LeaveOneOutEDA False
 set ExpSuffix1 = ''
 
