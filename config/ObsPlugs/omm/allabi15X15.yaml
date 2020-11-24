@@ -1,0 +1,83 @@
+- obs space:
+    name: abi_g16
+    obsdatain:
+      obsfile: InDBDir/abi_g16_obs_2018041500.nc4
+    obsdataout:
+      obsfile: OutDBDir/obsPrefix_AppType_abi_g16.nc4
+    simulated variables: [brightness_temperature]
+    channels: &abi_channels 7-16
+  obs operator:
+    name: CRTM
+    Absorbers: [H2O,O3,CO2]
+    Clouds: [Water, Ice, Rain, Snow, Graupel]
+    linear obs operator:
+      Absorbers: [H2O]
+      Clouds: [Water, Ice, Rain, Snow, Graupel]
+    obs options:
+      Sensor_ID: abi_g16
+      EndianType: little_endian
+      CoefficientPath: CRTMTABLES
+      IRVISlandCoeff: USGS
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - filter: Domain Check
+    where:
+    - variable:
+        name: sensor_zenith_angle@MetaData
+      maxvalue: 65.0
+  - filter: BlackList
+    filter variables:
+    - name: brightness_temperature
+      channels: *abi_channels
+#  - filter: Domain Check
+#    where:
+#    - variable:
+#        name: cloud_area_fraction@MetaData
+#      minvalue: 0.05
+    action:
+      name: assign error
+      error function:
+        name: ObsErrorModelRamp@ObsFunction
+        channels: *abi_channels
+        options:
+          channels: *abi_channels
+          xvar:
+            name: SymmCldImpactIR@ObsFunction
+            channels: *abi_channels
+            options:
+              channels: *abi_channels
+## 120 km, w/ bias correction
+          x0: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+          x1: [29.37, 12.54, 15.15, 17.18, 25.68, 26, 28.04, 28.0, 27.13, 23.71]
+          err0: [3.48, 1.98, 2.05, 2.07, 2.24, 2.5, 2.41, 2.44, 2.39, 2.18]
+          err1: [18.7, 16.04, 18.2, 19.14, 26.2, 25, 28.7, 29.02, 28.69, 24.68]
+## 120 km, no bias correction
+#          x0: [1.0, 1.0, 1.0, 1.0, 1.0, 11.0, 1.0, 1.0, 1.0, 1.0]
+#          x1: [33.1, 13.38, 16.33, 19.78, 26.94, 34.58, 29.02, 27.89, 27.91, 26.31]
+#          err0: [3.48, 1.89, 1.8, 2.33, 1.94, 4.16, 2.15, 2.2, 2.29, 1.98]
+#          err1: [19.52, 17.23, 20.12, 19.42, 25.41, 21.21, 27.67, 28.02, 27.78, 24.02]
+## 30 km, no bias correction
+#          x0: [1.0, 1.0, 1.0]
+#          x1: [29.09, 24.19, 32.35]
+#          err0: [2.06, 1.35, 3.10]
+#          err1: [27.64, 22.93, 21.59]
+  - filter: GOMsaver
+    filename: OutDBDir/geoPrefix_AppType_abi_g16.nc4
+  - filter: YDIAGsaver
+    filename: OutDBDir/diagPrefix_AppType_abi_g16.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *abi_channels
+    - name: weightingfunction_of_atmosphere_layer
+      channels: *abi_channels
+    - name: pressure_level_at_peak_of_weightingfunction
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_air_temperature
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_humidity_mixing_ratio
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_surface_temperature
+      channels: *abi_channels

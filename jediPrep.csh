@@ -120,6 +120,16 @@ sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NL
 # =============
 # OBSERVATIONS
 # =============
+# get application index
+set index = 0
+foreach application (${applicationIndex})
+  @ index++
+  if ( $application == ${self_AppType} ) then
+    set myAppIndex = $index
+  endif
+end
+
+# setup directories
 rm -r ${InDBDir}
 mkdir -p ${InDBDir}
 set member = 1
@@ -131,23 +141,24 @@ end
 
 # Link conventional data
 # ======================
-ln -fsv $CONV_OBS_DIR/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
-ln -fsv $CONV_OBS_DIR/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
+ln -fsv $CONVObsDir/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
+ln -fsv $CONVObsDir/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
+ln -fsv $CONVObsDir/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
+ln -fsv $CONVObsDir/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
+ln -fsv $CONVObsDir/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
 
 # Link AMSUA data
 # ==============
-ln -fsv $AMSUA_OBS_DIR/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
+ln -fsv $AMSUAObsDir/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
 
 # Link ABI data
 # ============
-ln -fsv $ABI_OBS_DIR/${thisValidDate}/abi*_obs_*.nc4 ${InDBDir}/
+ln -fsv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.nc4 ${InDBDir}/
 
 # Link AHI data
 # ============
-ln -fsv $AHI_OBS_DIR/${thisValidDate}/ahi*_obs_*.nc4 ${InDBDir}/
+ln -fsv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.nc4 ${InDBDir}/
+
 
 # Link VarBC prior
 # ====================
@@ -161,14 +172,8 @@ ln -fsv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 set thisYAML = orig.yaml
 cp -v ${CONFIGDIR}/applicationBase/${self_AppName}.yaml $thisYAML
 
-set index = 0
-set nIndent = 0
-foreach application (${applicationIndex})
-  @ index++
-  if ( $application == ${self_AppType} ) then
-    set nIndent = $applicationObsIndent[$index]
-  endif
-end
+## indentation of observations array members
+set nIndent = $applicationObsIndent[$myAppIndex]
 set obsIndent = "`${nSpaces} $nIndent`"
 
 ## Add selected observations (see control.csh)

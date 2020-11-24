@@ -8,6 +8,27 @@ setenv FirstCycleDate 2018041500
 set applicationIndex = ( da omm )
 set applicationObsIndent = ( 2 0 )
 
+set index = 0
+foreach application (${applicationIndex})
+  @ index++
+  if ( $application == da ) then
+    set daIndex = $index
+  endif
+  if ( $application == omm ) then
+    set ommIndex = $index
+  endif
+end
+
+## ABI super-obbing footprint, set independently
+#  for da and omm using applicationIndex
+#OPTIONS: 15X15, 59X59
+set ABISuperOb = (59X59 15X15)
+
+## AHI super-obbing footprint set independently
+#  for da and omm using applicationIndex)
+#OPTIONS: 15X15, 101X101
+set AHISuperOb = (101X101 15X15)
+
 #
 # OMM/VARBC settings
 # =============================================
@@ -16,28 +37,36 @@ set applicationObsIndent = ( 2 0 )
 # TODO: enable varbc-only jobs including offline coefficient initialization
 # OPTIONS: omm, [TODO: varbc]
 setenv omm  omm
-
+## abi, ahi
+# adds super-obbing resolution for omm
+set abi = abi$ABISuperOb[$ommIndex]
+set ahi = ahi$AHISuperOb[$ommIndex]
 ## OMMObsList
-# OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
-set OMMObsList = (conv clramsua cldamsua allabi allahi)
-#set OMMObsList = (conv clramsua cldamsua clrabi allabi clrahi allahi)
-#set OMMObsList = (clramsua clrabi)
-#set OMMObsList = (allabi_SCI)
-#set OMMObsList = (allabi_constObsError)
+# OPTIONS: conv, clramsua, cldamsua, clr$abi, all$abi, clr$ahi, all$ahi
+set OMMObsList = (conv clramsua cldamsua all$abi all$ahi)
+#set OMMObsList = (all$abi all$ahi clr$abi clr$ahi)
+#set OMMObsList = (conv clramsua cldamsua clr$abi all$abi clr$ahi all$ahi)
+#set OMMObsList = (clramsua clr$abi)
 
 
 #
 # DA settings
 # =============================================
+# adds super-obbing resolution for da
+set abi = abi$ABISuperOb[$daIndex]
+set ahi = ahi$AHISuperOb[$daIndex]
 ## DAObsList
-#OPTIONS: conv, clramsua, cldamsua, clrabi, allabi, clrahi, allahi
+#OPTIONS: conv, clramsua, cldamsua, clr$abi, all$abi, clr$ahi, all$ahi
 # clr == clear-sky
 # all == all-sky
 # cld == cloudy-sky
 #set DAObsList = ()
 set DAObsList = (conv clramsua)
-#set DAObsList = (conv clramsua clrabi)
-#set DAObsList = (conv clramsua allabi)
+#set DAObsList = (conv clramsua clr$abi)
+#set DAObsList = (conv clramsua all$abi)
+#set DAObsList = (conv clramsua clr$ahi)
+#set DAObsList = (conv clramsua all$ahi)
+#set DAObsList = (conv clramsua all$abi all$ahi)
 
 ## InDBDir and OutDBDir control the names of the database directories
 # on input and output from jedi applications
@@ -74,10 +103,6 @@ if ($nEnsDAMembers > 1 && ${RTPPInflationFactor} != "0.0") set ExpSuffix0 = ${Ex
 if ($nEnsDAMembers > 1 && ${LeaveOneOutEDA} == True) set ExpSuffix0 = ${ExpSuffix0}_LeaveOut
 
 #(2) add observation selection info
-## ABI super-obbing footprint (used for both OMM and DA)
-#OPTIONS: 15X15, 59X59 
-set ABISUPEROB = 15X15
-
 ## make experiment title from DA/OMM settings
 setenv ExpObsName ''
 if ( "$DAType" == "${omm}" ) then
@@ -86,9 +111,8 @@ else
   set expObsList=($DAObsList)
 endif
 foreach obs ($expObsList)
-  setenv ExpObsName ${ExpObsName}_${obs}
-  if ( "$obs" =~ *"abi"* ) then
-    setenv ExpObsName ${ExpObsName}${ABISUPEROB}
+  if ( "$obs" !~ *"conv"* && "$obs" !~ *"clramsua"*) then
+    setenv ExpObsName ${ExpObsName}_${obs}
   endif
 end
 
@@ -341,15 +365,30 @@ setenv bumpLocDir            ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${Cycl
 setenv bumpLocPrefix         bumploc_2000_5
 
 ## Observations
-setenv CONV_OBS_DIR          ${TOP_STATIC_DIR}/obs/conv
-#setenv CONV_OBS_DIR          ${TOP_STATIC_DIR}/obs/conv_liuz
-setenv AMSUA_OBS_DIR         /glade/p/mmm/parc/vahl/gsi_ioda/bias_corr
+setenv CONVObsDir          ${TOP_STATIC_DIR}/obs/conv
+#setenv CONVObsDir          ${TOP_STATIC_DIR}/obs/conv_liuz
+setenv AMSUAObsDir         /glade/p/mmm/parc/vahl/gsi_ioda/bias_corr
 
-# TODO: enable logic (somewhere else) to use different super-obbing/thinning for DA/OMM jobs
-# setenv ABI_OBS_DIR          ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB${ABISUPEROB}_no-bias-correct
-setenv ABI_OBS_DIR           ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB${ABISUPEROB}_const-bias-correct
+set baseABIObsDir = ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB
+set ABIBiasCorrect = _no-bias-correct
+#set ABIBiasCorrect = _const-bias-correct
+set ABIObsDir = ()
+foreach SuperOb ($ABISuperOb)
+  set ABIObsDir = ($ABIObsDir \
+    ${baseABIObsDir}${SuperOb}${ABIBiasCorrect} \
+  )
+end
 
-setenv AHI_OBS_DIR           /glade/work/wuyl/pandac/work/fix_input/AHI_OBS/ioda_cnst_bias
+set baseAHIObsDir = ${TOP_STATIC_DIR}/obs/AHIASR/IODANC_SUPEROB
+#Note: AHI is linked from /glade/work/wuyl/pandac/work/fix_input/AHI_OBS
+set AHIBiasCorrect = _no-bias-correct
+#set AHIBiasCorrect = _const-bias-correct
+set AHIObsDir = ()
+foreach SuperOb ($AHISuperOb)
+  set AHIObsDir = ($AHIObsDir \
+    ${baseAHIObsDir}${SuperOb}${AHIBiasCorrect} \
+  )
+end
 
 ## CRTM
 setenv CRTMTABLES            ${FIXED_INPUT}/crtm_bin/

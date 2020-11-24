@@ -1,11 +1,13 @@
 - obs space:
-    name: ahi_himawari8
+    name: abi_g16
     obsdatain:
-      obsfile: InDBDir/ahi_himawari8_obs_2018041500.nc4
+      obsfile: InDBDir/abi_g16_obs_2018041500.nc4
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_ahi_himawari8.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_abi_g16.nc4
     simulated variables: [brightness_temperature]
-    channels: &ahi_channels 8-10
+    channels: &abi_channels 8-10
+#    channels: &abi_channels 8-10,13-16
+#    channels: &abi_channels 7-11,13-16
     obs perturbations seed: MemberSeed
   obs operator:
     name: CRTM
@@ -15,7 +17,7 @@
       Absorbers: [H2O]
       Clouds: [Water, Ice, Rain, Snow, Graupel]
     obs options:
-      Sensor_ID: ahi_himawari8
+      Sensor_ID: abi_g16
       EndianType: little_endian
       CoefficientPath: CRTMTABLES
       IRVISlandCoeff: USGS
@@ -27,16 +29,20 @@
     - variable:
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
-  - filter: Thinning
-    amount: RADTHINAMOUNT
-    random_seed: 0
-#  - filter: Gaussian_Thinning
-#    horizontal_mesh: RADTHINDISTANCE #km
+#    - variable:
+#        name: water_area_fraction@GeoVaLs
+#      minvalue: 1.0
+#  - filter: Thinning
+#    amount: RADTHINAMOUNT
+#    random_seed: 0
+#    apply at iterations: 0
+  - filter: Gaussian_Thinning
+    horizontal_mesh: RADTHINDISTANCE #km
   - filter: BlackList
     apply at iterations: 0, 1
     filter variables:
     - name: brightness_temperature
-      channels: *ahi_channels
+      channels: *abi_channels
 #  - filter: Domain Check
 #    where:
 #    - variable:
@@ -46,37 +52,48 @@
       name: assign error
       error function:
         name: ObsErrorModelRamp@ObsFunction
-        channels: *ahi_channels
+        channels: *abi_channels
         options:
-          channels: *ahi_channels
+          channels: *abi_channels
           xvar:
             name: SymmCldImpactIR@ObsFunction
-            channels: *ahi_channels
+            channels: *abi_channels
             options:
-              channels: *ahi_channels
+              channels: *abi_channels
+## 120 km, w/ bias correction
           x0: [1.0, 1.0, 1.0]
-          x1: [15.87, 20.75, 25.21]
-          err0: [1.94, 1.88, 2.26]
-          err1: [20.05, 24.75, 25.90]
+          x1: [12.54, 15.15, 17.18]
+          err0: [1.98, 2.05, 2.07]
+          err1: [16.04, 18.2, 19.14]
+## 120 km, no bias correction
+#          x0: [1.0, 1.0, 1.0]
+#          x1: [13.38, 16.33, 19.78]
+#          err0: [1.89, 1.8, 2.33]
+#          err1: [17.23, 20.12, 19.42]
+## 30 km, no bias correction
+#          x0: [1.0, 1.0, 1.0]
+#          x1: [29.09, 24.19, 32.35]
+#          err0: [2.06, 1.35, 3.10]
+#          err1: [27.64, 22.93, 21.59]
   - filter: Background Check
     threshold: 3.0
     apply at iterations: 0, 1
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_ahi_himawari8.nc4
+    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_abi_g16.nc4
   - filter: YDIAGsaver
-    filename: OutDBDirOOPSMemberDir/diagPrefix_AppType_ahi_himawari8.nc4
+    filename: OutDBDirOOPSMemberDir/diagPrefix_AppType_abi_g16.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
-      channels: *ahi_channels
+      channels: *abi_channels
     - name: weightingfunction_of_atmosphere_layer
-      channels: *ahi_channels
+      channels: *abi_channels
     - name: pressure_level_at_peak_of_weightingfunction
-      channels: *ahi_channels
+      channels: *abi_channels
     - name: brightness_temperature_jacobian_air_temperature
-      channels: *ahi_channels
+      channels: *abi_channels
     - name: brightness_temperature_jacobian_humidity_mixing_ratio
-      channels: *ahi_channels
+      channels: *abi_channels
     - name: brightness_temperature_jacobian_surface_emissivity
-      channels: *ahi_channels
+      channels: *abi_channels
     - name: brightness_temperature_jacobian_surface_temperature
-      channels: *ahi_channels
+      channels: *abi_channels
