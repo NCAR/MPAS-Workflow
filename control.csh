@@ -119,6 +119,8 @@ end
 #(3) combine for whole ExpName
 setenv ExpName ${DAType}${ExpObsName}${ExpSuffix0}${ExpSuffix1}
 
+setenv PANDACCommonData   /glade/p/mmm/parc/liuz/pandac_common
+
 #
 # verification settings
 # =============================================
@@ -232,8 +234,8 @@ setenv bgDir           ${BGFilePrefix}
 #setenv anStatePrefix   analysis
 
 setenv TemplateFilePrefix templateFields
-setenv staticFieldsFile /glade/p/mmm/parc/liuz/pandac_common/${MPASGridDescriptor}_GFSANA/x1.${MPASnCells}.init.2018-04-14_18.00.00.nc
-#setenv staticFieldsFile /glade/p/mmm/parc/liuz/pandac_common/${MPASGridDescriptor}_GFSANA_O3/x1.${MPASnCells}.init.2018-04-14_18.00.00.nc
+setenv staticFieldsFile ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA/x1.${MPASnCells}.init.2018-04-14_18.00.00.nc
+#setenv staticFieldsFile ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA_O3/x1.${MPASnCells}.init.2018-04-14_18.00.00.nc
 setenv localStaticFieldsFile static.nc
 
 setenv OrigFileSuffix  _orig
@@ -327,7 +329,7 @@ setenv GFS6hfcFORFirstCycle  /glade/work/liuz/pandac/fix_input/120km_1stCycle_ba
 set gefsMemFmt = "/{:02d}"
 set nGEFSMembers = 20
 
-set GEFS6hfcFOREnsBDir = /glade/p/mmm/parc/liuz/pandac_common/120km_EnsFC
+set GEFS6hfcFOREnsBDir = ${PANDACCommonData}/120km_EnsFC
 set GEFS6hfcFOREnsBFilePrefix = EnsForCov
 
 set GEFS6hfcFORFirstCycle = /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/120kmEnsFCFirstCycle/2018041418
@@ -366,7 +368,7 @@ setenv bumpLocPrefix         bumploc_2000_5
 
 ## Observations
 setenv CONVObsDir          ${TOP_STATIC_DIR}/obs/conv
-#setenv CONVObsDir          ${TOP_STATIC_DIR}/obs/conv_liuz
+
 setenv AMSUAObsDir         /glade/p/mmm/parc/vahl/gsi_ioda/bias_corr
 
 set baseABIObsDir = ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB
