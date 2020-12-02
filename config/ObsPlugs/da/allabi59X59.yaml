@@ -32,6 +32,13 @@
 #    - variable:
 #        name: water_area_fraction@GeoVaLs
 #      minvalue: 1.0
+    apply at iterations: 0, 1
+#  - filter: Domain Check
+#    where:
+#    - variable:
+#        name: cloud_area_fraction@MetaData
+#      maxvalue: 0.01
+#    apply at iterations: 0
 #  - filter: Thinning
 #    amount: RADTHINAMOUNT
 #    random_seed: 0

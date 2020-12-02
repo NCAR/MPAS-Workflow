@@ -27,6 +27,7 @@
     - variable:
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
+    apply at iterations: 0, 1
 #  - filter: Thinning
 #    amount: RADTHINAMOUNT
 #    random_seed: 0
