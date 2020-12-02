@@ -45,14 +45,8 @@ cost function:
       bump:
         datadir: bumpLocDir
         prefix: bumpLocPrefix
-        #verbosity: main
-        default_seed: 1
-        method: loc
-        strategy: common  #specific_univariate
-        new_hdiag: 0
-        new_nicas: 0
+        strategy: common
         load_nicas: 1
-        lsqrt: 1
         mpicom: 2
     _: &state
       date: *adate
