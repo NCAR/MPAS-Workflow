@@ -22,12 +22,12 @@
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n19.nc4
-  obs operator: &crtmdry
+  obs operator: &clramsuacrtm
     name: CRTM
     Absorbers: [H2O,O3]
     linear obs operator:
       Absorbers: [H2O]
-    obs options: &crtmopts
+    obs options: &clramsuacrtmopts
       Sensor_ID: amsua_n19
       EndianType: little_endian
       CoefficientPath: CRTMTABLES
@@ -56,9 +56,9 @@
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n15.nc4
   obs operator:
-    <<: *crtmdry
+    <<: *clramsuacrtm
     obs options:
-      <<: *crtmopts
+      <<: *clramsuacrtmopts
       Sensor_ID: amsua_n15
 - obs space:
     name: amsua_n18
@@ -85,9 +85,9 @@
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n18.nc4
   obs operator:
-    <<: *crtmdry
+    <<: *clramsuacrtm
     obs options:
-      <<: *crtmopts
+      <<: *clramsuacrtmopts
       Sensor_ID: amsua_n18
 - obs space:
     name: amsua_metop-a
@@ -114,9 +114,9 @@
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-a.nc4
   obs operator:
-    <<: *crtmdry
+    <<: *clramsuacrtm
     obs options:
-      <<: *crtmopts
+      <<: *clramsuacrtmopts
       Sensor_ID: amsua_metop-a
 #- obs space:
 #    name: amsua_metop-b
@@ -143,9 +143,9 @@
 #  - filter: GOMsaver
 #    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-b.nc4
 #  obs operator:
-#    <<: *crtmdry
+#    <<: *clramsuacrtm
 #    obs options:
-#      <<: *crtmopts
+#      <<: *clramsuacrtmopts
 #      Sensor_ID: amsua_metop-b
 - obs space:
     name: amsua_aqua
@@ -172,7 +172,7 @@
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_aqua.nc4
   obs operator:
-    <<: *crtmdry
+    <<: *clramsuacrtm
     obs options:
-      <<: *crtmopts
+      <<: *clramsuacrtmopts
       Sensor_ID: amsua_aqua

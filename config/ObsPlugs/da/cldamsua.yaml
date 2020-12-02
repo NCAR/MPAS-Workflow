@@ -17,16 +17,17 @@
     apply at iterations: 0, 1
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n19_cld.nc4
-  obs operator: &crtmcloud
+  obs operator: &cldamsuacrtm
     name: CRTM
     Absorbers: [H2O,O3,CO2]
     Clouds: [Water, Ice, Rain, Snow, Graupel]
     linear obs operator:
       Absorbers: [H2O]
       Clouds: [Water, Ice, Rain, Snow, Graupel]
-    obs options:
-      <<: *crtmopts
+    obs options: &cldamsuacrtmopts
       Sensor_ID: amsua_n19
+      EndianType: little_endian
+      CoefficientPath: CRTMTABLES
 - obs space:
     name: amsua_n15
     obsdatain:
@@ -47,9 +48,9 @@
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n15_cld.nc4
   obs operator:
-    <<: *crtmcloud
+    <<: *cldamsuacrtm
     obs options:
-      <<: *crtmopts
+      <<: *cldamsuacrtmopts
       Sensor_ID: amsua_n15
 - obs space:
     name: amsua_n18
@@ -71,9 +72,9 @@
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n18_cld.nc4
   obs operator:
-    <<: *crtmcloud
+    <<: *cldamsuacrtm
     obs options:
-      <<: *crtmopts
+      <<: *cldamsuacrtmopts
       Sensor_ID: amsua_n18
 - obs space:
     name: amsua_metop-a
@@ -95,9 +96,9 @@
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-a_cld.nc4
   obs operator:
-    <<: *crtmcloud
+    <<: *cldamsuacrtm
     obs options:
-      <<: *crtmopts
+      <<: *cldamsuacrtmopts
       Sensor_ID: amsua_metop-a
 - obs space:
     name: amsua_metop-b
@@ -119,9 +120,9 @@
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-b_cld.nc4
   obs operator:
-    <<: *crtmcloud
+    <<: *cldamsuacrtm
     obs options:
-      <<: *crtmopts
+      <<: *cldamsuacrtmopts
       Sensor_ID: amsua_metop-b
 - obs space:
     name: amsua_aqua
@@ -143,7 +144,7 @@
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_aqua_cld.nc4
   obs operator:
-    <<: *crtmcloud
+    <<: *cldamsuacrtm
     obs options:
-      <<: *crtmopts
+      <<: *cldamsuacrtmopts
       Sensor_ID: amsua_aqua

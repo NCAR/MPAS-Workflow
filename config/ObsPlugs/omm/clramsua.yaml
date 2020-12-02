@@ -21,7 +21,7 @@
 #    maxvalue: 0
   - filter: GOMsaver
     filename: OutDBDir/geoPrefix_AppType_amsua_n19.nc4
-  obs operator: &crtmdry
+  obs operator: &clramsuacrtm
     name: CRTM
     Absorbers: [H2O,O3]
     linear obs operator:
@@ -54,7 +54,7 @@
   - filter: GOMsaver
     filename: OutDBDir/geoPrefix_AppType_amsua_n15.nc4
   obs operator:
-    <<: *crtmdry
+    <<: *clramsuacrtm
     obs options:
       <<: *clramsuacrtmopts
       Sensor_ID: amsua_n15
@@ -82,7 +82,7 @@
   - filter: GOMsaver
     filename: OutDBDir/geoPrefix_AppType_amsua_n18.nc4
   obs operator:
-    <<: *crtmdry
+    <<: *clramsuacrtm
     obs options:
       <<: *clramsuacrtmopts
       Sensor_ID: amsua_n18
@@ -110,7 +110,7 @@
   - filter: GOMsaver
     filename: OutDBDir/geoPrefix_AppType_amsua_metop-a.nc4
   obs operator:
-    <<: *crtmdry
+    <<: *clramsuacrtm
     obs options:
       <<: *clramsuacrtmopts
       Sensor_ID: amsua_metop-a
@@ -138,7 +138,7 @@
   - filter: GOMsaver
     filename: OutDBDir/geoPrefix_AppType_amsua_metop-b.nc4
   obs operator:
-    <<: *crtmdry
+    <<: *clramsuacrtm
     obs options:
       <<: *clramsuacrtmopts
       Sensor_ID: amsua_metop-b
@@ -166,7 +166,7 @@
   - filter: GOMsaver
     filename: OutDBDir/geoPrefix_AppType_amsua_aqua.nc4
   obs operator:
-    <<: *crtmdry
+    <<: *clramsuacrtm
     obs options:
       <<: *clramsuacrtmopts
       Sensor_ID: amsua_aqua

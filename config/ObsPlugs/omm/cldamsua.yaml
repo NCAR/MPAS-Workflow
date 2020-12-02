@@ -31,7 +31,7 @@
     filter variables: &cldamsuaydiag
     - name: brightness_temperature_assuming_clear_sky
       channels: *cldamsua_channels
-  obs operator: &crtmcloud
+  obs operator: &cldamsuacrtm
     name: CRTM
     Absorbers: [H2O,O3,CO2]
     Clouds: [Water, Ice, Rain, Snow, Graupel]
@@ -77,7 +77,7 @@
     - name: brightness_temperature_assuming_clear_sky
       channels: *cldamsuan15_channels
   obs operator:
-    <<: *crtmcloud
+    <<: *cldamsuacrtm
     obs options:
       Sensor_ID: amsua_n15
       EndianType: little_endian
@@ -117,7 +117,7 @@
     - name: brightness_temperature_assuming_clear_sky
       channels: *cldamsuan18_channels
   obs operator:
-    <<: *crtmcloud
+    <<: *cldamsuacrtm
     obs options:
       Sensor_ID: amsua_n18
       EndianType: little_endian
@@ -157,7 +157,7 @@
     - name: brightness_temperature_assuming_clear_sky
       channels: *cldamsuama_channels
   obs operator:
-    <<: *crtmcloud
+    <<: *cldamsuacrtm
     obs options:
       Sensor_ID: amsua_metop-a
       EndianType: little_endian
@@ -193,7 +193,7 @@
     filename: OutDBDir/diagPrefix_AppType_amsua-cld_metop-b.nc4
     filter variables: *cldamsuaydiag
   obs operator:
-    <<: *crtmcloud
+    <<: *cldamsuacrtm
     obs options:
       Sensor_ID: amsua_metop-b
       EndianType: little_endian
@@ -229,7 +229,7 @@
     filename: OutDBDir/diagPrefix_AppType_amsua-cld_aqua.nc4
     filter variables: *cldamsuaydiag
   obs operator:
-    <<: *crtmcloud
+    <<: *cldamsuacrtm
     obs options:
       Sensor_ID: amsua_aqua
       EndianType: little_endian
