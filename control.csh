@@ -22,12 +22,12 @@ end
 ## ABI super-obbing footprint, set independently
 #  for da and omm using applicationIndex
 #OPTIONS: 15X15, 59X59
-set ABISuperOb = (59X59 15X15)
+set ABISuperOb = (59X59 59X59)
 
 ## AHI super-obbing footprint set independently
 #  for da and omm using applicationIndex)
 #OPTIONS: 15X15, 101X101
-set AHISuperOb = (101X101 15X15)
+set AHISuperOb = (101X101 101X101)
 
 #
 # OMM/VARBC settings
