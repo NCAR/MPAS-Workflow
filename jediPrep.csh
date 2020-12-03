@@ -147,9 +147,10 @@ ln -fsv $CONVObsDir/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
 ln -fsv $CONVObsDir/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
 ln -fsv $CONVObsDir/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
 
-# Link AMSUA data
+# Link AMSUA+MHS data
 # ==============
-ln -fsv $AMSUAObsDir/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
+ln -fsv $MWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
+ln -fsv $MWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.nc4 ${InDBDir}/
 
 # Link ABI data
 # ============

@@ -42,10 +42,10 @@ setenv omm  omm
 set abi = abi$ABISuperOb[$ommIndex]
 set ahi = ahi$AHISuperOb[$ommIndex]
 ## OMMObsList
-# OPTIONS: conv, clramsua, cldamsua, clr$abi, all$abi, clr$ahi, all$ahi
-set OMMObsList = (conv clramsua cldamsua all$abi all$ahi)
+# OPTIONS: conv, clramsua, cldamsua, allmhs, clr$abi, all$abi, clr$ahi, all$ahi
+set OMMObsList = (conv clramsua cldamsua allmhs all$abi all$ahi)
 #set OMMObsList = (all$abi all$ahi clr$abi clr$ahi)
-#set OMMObsList = (conv clramsua cldamsua clr$abi all$abi clr$ahi all$ahi)
+#set OMMObsList = (conv clramsua cldamsua allmhs clr$abi all$abi clr$ahi all$ahi)
 #set OMMObsList = (clramsua clr$abi)
 
 
@@ -110,9 +110,25 @@ if ( "$DAType" == "${omm}" ) then
 else
   set expObsList=($DAObsList)
 endif
+
+set MWNoBias = no_bias
+set MWGSIBC = bias_corr
+set MWBiasCorrect = $MWGSIBC
+
+set GEOIRNoBias = _no-bias-correct
+set GEOIRClearBC = _const-bias-correct
+set ABIBiasCorrect = $GEOIRNoBias
+set AHIBiasCorrect = $GEOIRNoBias
+
 foreach obs ($expObsList)
   if ( "$obs" !~ *"conv"* && "$obs" !~ *"clramsua"*) then
     setenv ExpObsName ${ExpObsName}_${obs}
+  endif
+  if ( "$obs" =~ "clrabi"* ) then
+    set ABIBiasCorrect = $GEOIRClearBC
+  endif
+  if ( "$obs" =~ "clrahi"* ) then
+    set AHIBiasCorrect = $GEOIRClearBC
   endif
 end
 
@@ -369,28 +385,36 @@ setenv bumpLocPrefix         bumploc_2000_5
 ## Observations
 setenv CONVObsDir          ${TOP_STATIC_DIR}/obs/conv
 
-setenv AMSUAObsDir         /glade/p/mmm/parc/vahl/gsi_ioda/bias_corr
+set baseMWObsDir = /glade/p/mmm/parc/vahl/gsi_ioda/
+set MWObsDir = ()
+foreach application (${applicationIndex})
+  set MWObsDir = ($MWObsDir \
+    ${baseMWObsDir} \
+  )
+end
+set MWObsDir[$daIndex] = $MWObsDir[$daIndex]$MWBiasCorrect
+set MWObsDir[$ommIndex] = $MWObsDir[$ommIndex]$MWNoBias
 
 set baseABIObsDir = ${TOP_STATIC_DIR}/obs/ABIASR/IODANC_THIN15KM_SUPEROB
-set ABIBiasCorrect = _no-bias-correct
-#set ABIBiasCorrect = _const-bias-correct
 set ABIObsDir = ()
 foreach SuperOb ($ABISuperOb)
   set ABIObsDir = ($ABIObsDir \
-    ${baseABIObsDir}${SuperOb}${ABIBiasCorrect} \
+    ${baseABIObsDir}${SuperOb} \
   )
 end
+set ABIObsDir[$daIndex] = $ABIObsDir[$daIndex]$ABIBiasCorrect
+set ABIObsDir[$ommIndex] = $ABIObsDir[$ommIndex]$GEOIRNoBias
 
 set baseAHIObsDir = ${TOP_STATIC_DIR}/obs/AHIASR/IODANC_SUPEROB
 #Note: AHI is linked from /glade/work/wuyl/pandac/work/fix_input/AHI_OBS
-set AHIBiasCorrect = _no-bias-correct
-#set AHIBiasCorrect = _const-bias-correct
 set AHIObsDir = ()
 foreach SuperOb ($AHISuperOb)
   set AHIObsDir = ($AHIObsDir \
-    ${baseAHIObsDir}${SuperOb}${AHIBiasCorrect} \
+    ${baseAHIObsDir}${SuperOb} \
   )
 end
+set AHIObsDir[$daIndex] = $AHIObsDir[$daIndex]$AHIBiasCorrect
+set AHIObsDir[$ommIndex] = $AHIObsDir[$ommIndex]$GEOIRNoBias
 
 ## CRTM
 setenv CRTMTABLES            ${FIXED_INPUT}/crtm_bin/
