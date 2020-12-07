@@ -244,8 +244,8 @@ sed -i 's@geoPrefix@'${geoPrefix}'@g' $thisYAML
 sed -i 's@diagPrefix@'${diagPrefix}'@g' $thisYAML
 sed -i 's@AppType@'${self_AppType}'@g' $thisYAML
 sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' $thisYAML
-set templateFields = ${self_WorkDir}/${localTemplateFieldsFile}
-sed -i 's@templateFields@'${templateFields}'@g' $thisYAML
+set templateFieldsFile = ${self_WorkDir}/${localTemplateFieldsFile}
+sed -i 's@templateFieldsFile@'${templateFieldsFile}'@g' $thisYAML
 sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' $thisYAML
 sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
 sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' $thisYAML

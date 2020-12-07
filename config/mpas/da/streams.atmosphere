@@ -17,7 +17,7 @@
                   output_interval="none" />
 
 <stream name="output"
-        type="input:output"
+        type="input;output"
         io_type="pnetcdf,cdf5"
         filename_template="history.$Y-$M-$D_$h.$m.$s.nc"
         clobber_mode="overwrite"

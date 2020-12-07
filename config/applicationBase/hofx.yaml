@@ -2,7 +2,7 @@ window begin: 'WindowBegin'
 window length: PT6H
 forecast length: PT6H
 geometry:
-  gridfname: meshFile
+  gridfname: templateFieldsFile
 forecasts:
   state variables:
 ModelVariables
