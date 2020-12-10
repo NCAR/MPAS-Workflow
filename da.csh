@@ -37,8 +37,9 @@ while ( $member <= ${nEnsDAMembers} )
   set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
   set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
+  rm ${bgFile}${OrigFileSuffix} ${bgFile}
   ln -fsv ${bgFileOther} ${bgFile}${OrigFileSuffix}
-  cp -v ${bgFile}${OrigFileSuffix} ${bgFile}
+  cp -v ${bgFileOther} ${bgFile}
 
   # Remove existing analysis file, then link to bg file
   # ===================================================

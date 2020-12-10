@@ -33,27 +33,26 @@ set output_interval = 0_${self_fcIntervalHR}:00:00
 
 echo "WorkDir = ${self_WorkDir}"
 
-rm -r ${self_WorkDir}
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
+## link initial forecast state:
 set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
-
-## link initial forecast state:
+rm ./${icFile}
 ln -sf ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
 
 ## link static fields:
+rm ${localStaticFieldsFile}
 ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
 
-# ====================
-# Model-specific files
-# ====================
 ## link MPAS mesh graph info
+rm ./x1.${MPASnCells}.graph.info*
 ln -sf $GRAPHINFO_DIR/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($FCLookupFileGlobs)
+  rm ./*${fileGlob}
   ln -sf ${FCLookupDir}/*${fileGlob} .
 end
 
@@ -63,6 +62,7 @@ stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
+  rm ./$staticfile
   ln -sf $fcModelConfigDir/$staticfile .
 end
 set STREAMS = streams.${MPASCore}
@@ -83,13 +83,35 @@ sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NL
 
 if ( ${self_fcLengthHR} == 0 ) then
   ## zero-length forecast case (NOT CURRENTLY USED)
+  rm ./${icFile}_tmp
   mv ./${icFile} ./${icFile}_tmp
+  rm ${FCFilePrefix}.${icFileExt}
   cp ${icFile}_tmp ${FCFilePrefix}.${icFileExt}
+  rm ./${DIAGFilePrefix}.${icFileExt}
   ln -sf ${self_icStateDir}/${DIAGFilePrefix}.${icFileExt} ./
 else
+  ## remove previously generated forecasts
+  set fcDate = `$advanceCYMDH ${thisValidDate} ${self_fcIntervalHR}`
+  set finalFCDate = `$advanceCYMDH ${thisValidDate} ${self_fcLengthHR}`
+  while ( ${fcDate} <= ${finalFCDate} )
+    set yy = `echo ${fcDate} | cut -c 1-4`
+    set mm = `echo ${fcDate} | cut -c 5-6`
+    set dd = `echo ${fcDate} | cut -c 7-8`
+    set hh = `echo ${fcDate} | cut -c 9-10`
+    set fcFileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
+    set fcFileExt = ${fcFileDate}.nc
+    set fcFile = ${FCFilePrefix}.${fcFileExt}
+
+    rm ${fcFile}
+
+    set fcDate = `$advanceCYMDH ${fcDate} ${self_fcIntervalHR}`
+    setenv fcDate ${fcDate}
+  end
+
   #
   # Run the executable:
   # =============================================
+  rm ./${FCEXE}
   ln -sf ${FCBuildDir}/${FCEXE} ./
   mpiexec ./${FCEXE}
 
