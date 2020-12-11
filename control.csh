@@ -154,8 +154,8 @@ setenv diagPrefix     ydiags
 setenv updateSea 1
 
 setenv CyclingWindowHR 6                # forecast interval between CyclingDA analyses
-setenv ExtendedFCWindowHR 6             # length of verification forecasts
-setenv ExtendedFC_DT_HR 6               # interval between OMF verification times of an individual forecast
+setenv ExtendedFCWindowHR 240           # length of verification forecasts
+setenv ExtendedFC_DT_HR 12              # interval between OMF verification times of an individual forecast
 setenv ExtendedMeanFCTimes T00,T12      # times of the day to run extended forecast from mean analysis
 setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of extended forecasts
 setenv DAVFWindowHR ${ExtendedFC_DT_HR} # window of observations included in verification
@@ -237,7 +237,7 @@ setenv CyclingInflationPEPerNode      ${CalcOMMPEPerNode}
 setenv RSTFilePrefix   restart
 setenv ICFilePrefix    mpasin
 setenv FirstCycleFilePrefix ${RSTFilePrefix}
-#setenv FirstCycleFilePrefix x1.${MPASnCells}.init
+setenv InitFilePrefix x1.${MPASnCells}.init
 
 setenv FCFilePrefix    mpasout
 setenv fcDir           fc
@@ -250,8 +250,10 @@ setenv bgDir           ${BGFilePrefix}
 #setenv anStatePrefix   analysis
 
 setenv TemplateFilePrefix templateFields
-setenv staticFieldsFile ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA/x1.${MPASnCells}.init.2018-04-14_18.00.00.nc
-#setenv staticFieldsFile ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA_O3/x1.${MPASnCells}.init.2018-04-14_18.00.00.nc
+#TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
+setenv staticFieldsDir ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA/
+#setenv staticFieldsDir ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA_O3/
+setenv staticFieldsFile ${staticFieldsDir}/${InitFilePrefix}.2018-04-14_18.00.00.nc
 setenv localStaticFieldsFile static.nc
 
 setenv OrigFileSuffix  _orig
