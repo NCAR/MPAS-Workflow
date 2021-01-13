@@ -1,4 +1,4 @@
-module load python
+module load python/3.7.5
 ncar_pylib
 module load cylc
 module load git
