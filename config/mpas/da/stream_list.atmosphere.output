@@ -22,3 +22,5 @@ re_ice
 re_snow
 surface_pressure
 cldfrac
+temperature
+spechum

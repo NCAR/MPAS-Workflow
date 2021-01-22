@@ -51,10 +51,8 @@ cost function:
         strategy: common
         load_nicas: 1
         mpicom: 2
-    _: &state
-      date: *adate
-      state variables: *incvars
+    variables: *incvars
     members:
 EnsemblePbMembers
-    variables: *incvars
+EnsemblePbInflation
   observations:

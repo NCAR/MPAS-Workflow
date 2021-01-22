@@ -60,28 +60,39 @@ cat >! suite.rc << EOF
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
+{% set ABEInflation = ${ABEInflation} %}
 [meta]
   title = "${PKGBASE}--${WholeExpName}"
 # critical path cycle dependencies
-  {% set CPGraph = "" %}
+  {% set PrimaryCPGraph = "" %}
+  {% set SecondaryCPGraph = "" %}
 {% if CriticalPathType == "Bypass" %}
-  {% set CPGraph = CPGraph + "\\n        CyclingDAFinished" %}
-  {% set CPGraph = CPGraph + "\\n        CyclingFCFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
 {% elif CriticalPathType == "Reanalysis" %}
-  {% set CPGraph = CPGraph + "\\n        CyclingDA => CyclingDAFinished" %}
-  {% set CPGraph = CPGraph + "\\n        CyclingFCFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA => CyclingDAFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
+  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanupCyclingDA" %}
 {% elif CriticalPathType == "Reforecast" %}
-  {% set CPGraph = CPGraph + "\\n        CyclingFC" %}
-  {% set CPGraph = CPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
-  {% set CPGraph = CPGraph + "\\n        CyclingDAFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
 {% else %}
-  {% set CPGraph = CPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H] => CyclingDA" %}
-  {% if (nEnsDAMembers > 1 and RTPPInflationFactor > 0.0) %}
-    {% set CPGraph = CPGraph+" => RTPPInflation" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
+  {% if (ABEInflation and nEnsDAMembers > 1) %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => CalcOMEnsMeanBG" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => GenerateABEInflation" %}
+    {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        GenerateABEInflation => CleanupCalcOMEnsMeanBG" %}
   {% endif %}
-  {% set CPGraph = CPGraph + " => CyclingDAFinished" %}
-  {% set CPGraph = CPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
-  {% set CPGraph = CPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + " => CyclingDA" %}
+  {% if (RTPPInflationFactor > 0.0 and nEnsDAMembers > 1) %}
+    {% set PrimaryCPGraph = PrimaryCPGraph+" => RTPPInflation" %}
+  {% endif %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + " => CyclingDAFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
+  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanupCyclingDA" %}
 {% endif %}
 # verification and extended forecast controls
 {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
@@ -104,7 +115,7 @@ cat >! suite.rc << EOF
 #{# endif #}
 ## Critical path for cycling
     [[[PT${CyclingWindowHR}H]]]
-      graph = '''{{CPGraph}}
+      graph = '''{{PrimaryCPGraph}}{{SecondaryCPGraph}}
       '''
 ## Many kinds of verification
 {% if VerifyDeterministicDA and nEnsDAMembers < 2 %}
@@ -276,6 +287,7 @@ cat >! suite.rc << EOF
       myPreScript = \$origin/jediPrepCyclingDA.csh "0" "0" "DA"
     [[[job]]]
       execution time limit = PT${CyclingDAJobMinutes}M
+      execution retry delays = 2*PT6S
     [[[directives]]]
       -m = ae
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
@@ -286,6 +298,14 @@ cat >! suite.rc << EOF
     [[[directives]]]
       -m = ae
       -l = select=${CyclingInflationNodesPerMember}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
+  [[GenerateABEInflation]]
+    script = \$origin/GenerateABEInflation.csh
+    [[[job]]]
+      execution time limit = PT10M
+    [[[directives]]]
+      -q = ${CYQueueName}
+      -A = ${CYAccountNumber}
+      -l = select=${VerifyObsNodes}:ncpus=${VerifyObsPEPerNode}:mpiprocs=${VerifyObsPEPerNode}
   [[CyclingDAFinished]]
     [[[job]]]
       batch system = background
@@ -305,6 +325,8 @@ cat >! suite.rc << EOF
   [[CyclingMemberFC{{mem}}]]
     inherit = CyclingFC
     script = \$origin/CyclingFC.csh "{{mem}}"
+    [[[job]]]
+      execution retry delays = 2*PT6S
 {% endfor %}
   [[CyclingFCFinished]]
     [[[job]]]
@@ -363,6 +385,8 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
+    [[[job]]]
+      execution retry delays = 2*PT6S
   [[VerifyModel{{state}}{{mem}}]]
     inherit = VerifyModel{{state}}
     script = \$origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
@@ -407,6 +431,8 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOMEnsMeanBG.csh "0" "0" "BG"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMEnsMeanBG.csh "0" "0" "BG"
+    [[[job]]]
+      execution retry delays = 2*PT6S
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
     script = \$origin/VerifyModelEnsMeanBG.csh "0" "0" "BG"

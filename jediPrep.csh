@@ -297,7 +297,41 @@ end
 sed -i 's@bumpLocDir@'${bumpLocDir}'@g' $prevYAML
 sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' $prevYAML
 
-set enspsed = EnsemblePbMembers
+## ensemble Jb inflation
+set enspbinfsed = EnsemblePbInflation
+set removeInflation = 0
+if ( "$self_AppName" =~ *"eda"* && ${ABEInflation} == True ) then
+  set inflationFields = ${CyclingABEInflationDir}/BT9_ABEIlambda.nc
+  find ${inflationFields} -mindepth 0 -maxdepth 0
+  if ($? > 0) then
+    ## inflation file not generated because all instruments (abi, ahi?) missing at this cylce date
+    #TODO: use last valid inflation factors?
+    set removeInflation = 1
+  else
+    set thisYAML = insertInflation.yaml
+    set indent = "    "
+
+cat >! ${enspbinfsed}SEDF.yaml << EOF
+/${enspbinfsed}/c\
+${indent}inflation field:\
+${indent}  date: *adate\
+${indent}  filename: ${inflationFields}\
+${indent}  no_transf: 1
+EOF
+
+    sed -f ${enspbinfsed}SEDF.yaml $prevYAML >! $thisYAML
+    set prevYAML = $thisYAML
+  endif
+else
+  set removeInflation = 1
+endif
+if ($removeInflation > 0) then
+  # delete the line containing $enspbinfsed
+  sed -i '/^'${enspbinfsed}'/d' $prevYAML
+endif
+
+
+set enspbmemsed = EnsemblePbMembers
 if ( "$self_AppName" =~ *"eda"* ) then
   echo "files:" > $appyaml
 
@@ -310,13 +344,13 @@ if ( "$self_AppName" =~ *"eda"* ) then
   while ( $member <= ${ensPbNMembers} )
     set memberyaml = member_$member.yaml
 
-    # add member yaml name to list of member yamls
+    # add eda-member yaml name to list of member yamls
     echo "  - $memberyaml" >> $appyaml
 
-    # create member-specific yaml
+    # create eda-member-specific yaml
     cp $prevYAML $memberyaml
 
-    ## ensemble Jb forecasts
+    ## ensemble Jb members
     # TODO(JJG): how does ensemble B config generation need to be
     #            modified for 4DEnVar?
     # TODO: this indentation only works for pure EnVar, not Hybrid EnVar
@@ -326,8 +360,8 @@ if ( "$self_AppName" =~ *"eda"* ) then
     if ( $LeaveOneOutEDA == True ) then
       @ bremain--
     endif
-cat >! ${enspsed}SEDF.yaml << EOF
-/${enspsed}/c\
+cat >! ${enspbmemsed}SEDF.yaml << EOF
+/${enspbmemsed}/c\
 EOF
 
     while ( $bmember < ${ensPbNMembers} )
@@ -340,16 +374,18 @@ EOF
       if ( $bremain > 1 ) then
         set filename = ${filename}\\
       endif
-cat >>! ${enspsed}SEDF.yaml << EOF
-${indent}- <<: *state\
+
+cat >>! ${enspbmemsed}SEDF.yaml << EOF
+${indent}- date: *adate\
+${indent}  state variables: *incvars\
 ${indent}  filename: ${filename}
 EOF
 
       @ bremain--
     end
     set thisYAML = last.yaml
-    sed -f ${enspsed}SEDF.yaml $memberyaml >! $thisYAML
-    rm ${enspsed}SEDF.yaml
+    sed -f ${enspbmemsed}SEDF.yaml $memberyaml >! $thisYAML
+    rm ${enspbmemsed}SEDF.yaml
     cp $thisYAML $memberyaml
 
     ## Jo term
@@ -365,17 +401,18 @@ EOF
     @ member++
   end
 else
+  # create deterministic "member" yaml
   set memberyaml = $appyaml
   cp $prevYAML $memberyaml
 
-  ## ensemble Jb forecasts
+  ## ensemble Jb members
   set ensPbDir = ${fixedEnsBDir}
   set ensPbFilePrefix = ${fixedEnsBFilePrefix}
   set ensPbMemFmt = "${fixedEnsBMemFmt}"
   set ensPbNMembers = ${fixedEnsBNMembers}
 
-cat >! ${enspsed}SEDF.yaml << EOF
-/${enspsed}/c\
+cat >! ${enspbmemsed}SEDF.yaml << EOF
+/${enspbmemsed}/c\
 EOF
 
   # TODO(JJG): how does ensemble B config generation need to be
@@ -390,15 +427,17 @@ EOF
     if ( $bmember < ${ensPbNMembers} ) then
       set filename = ${filename}\\
     endif
-cat >>! ${enspsed}SEDF.yaml << EOF
-${indent}- <<: *state\
+
+cat >>! ${enspbmemsed}SEDF.yaml << EOF
+${indent}- date: *adate\
+${indent}  state variables: *incvars\
 ${indent}  filename: ${filename}
 EOF
 
   end
   set thisYAML = last.yaml
-  sed -f ${enspsed}SEDF.yaml $memberyaml >! $thisYAML
-  rm ${enspsed}SEDF.yaml
+  sed -f ${enspbmemsed}SEDF.yaml $memberyaml >! $thisYAML
+  rm ${enspbmemsed}SEDF.yaml
   cp $thisYAML $memberyaml
 
   ## Jo term

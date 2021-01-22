@@ -16,7 +16,7 @@ if (${nEnsDAMembers} < 2) then
   exit 0
 endif
 
-set self_WorkDir = $CyclingInflationDir/RTPP
+set self_WorkDir = $CyclingRTPPInflationDir
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}

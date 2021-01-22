@@ -17,6 +17,7 @@ set cyclingParts = ( \
   MeanAnalysis.csh \
   MeanBackground.csh \
   RTPPInflation.csh \
+  GenerateABEInflation.csh \
 )
 foreach part ($cyclingParts)
   cp -rP $part ${mainScriptDir}/

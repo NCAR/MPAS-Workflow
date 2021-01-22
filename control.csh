@@ -61,9 +61,9 @@ set ahi = ahi$AHISuperOb[$daIndex]
 # all == all-sky
 # cld == cloudy-sky
 #set DAObsList = ()
-set DAObsList = (conv clramsua)
+#set DAObsList = (conv clramsua)
 #set DAObsList = (conv clramsua clr$abi)
-#set DAObsList = (conv clramsua all$abi)
+set DAObsList = (conv clramsua all$abi)
 #set DAObsList = (conv clramsua clr$ahi)
 #set DAObsList = (conv clramsua all$ahi)
 #set DAObsList = (conv clramsua all$abi all$ahi)
@@ -83,8 +83,13 @@ if ( "$DAType" =~ *"eda"* ) then
   setenv nEnsDAMembers 20
 endif
 setenv RTPPInflationFactor 0.85
+setenv ABEInflation True
 setenv LeaveOneOutEDA False
 set ExpSuffix1 = ''
+set ExpSuffix1 = '_BT9x0.5'
+#set ExpSuffix1 = '_17NOV2020CODE'
+#set ExpSuffix1 = '_feature--barycentricWeights'
+#set ExpSuffix1 = '_unstructuredBarycent'
 
 #GEFS reference case (override above settings)
 #====================================================
@@ -100,7 +105,8 @@ set ExpSuffix1 = ''
 set ExpSuffix0 = '_NMEM'${nEnsDAMembers}
 
 if ($nEnsDAMembers > 1 && ${RTPPInflationFactor} != "0.0") set ExpSuffix0 = ${ExpSuffix0}_RTPP${RTPPInflationFactor}
-if ($nEnsDAMembers > 1 && ${LeaveOneOutEDA} == True) set ExpSuffix0 = ${ExpSuffix0}_LeaveOut
+if ($nEnsDAMembers > 1 && ${LeaveOneOutEDA} == True) set ExpSuffix0 = ${ExpSuffix0}_LeaveOneOut
+if ($nEnsDAMembers > 1 && ${ABEInflation} == True) set ExpSuffix0 = ${ExpSuffix0}_ABEI
 
 #(2) add observation selection info
 ## make experiment title from DA/OMM settings
@@ -189,6 +195,7 @@ setenv VerifyModelPEPerNode 36
 
 setenv CyclingDAJobMinutes 25
 setenv CyclingDAMemory 45
+#setenv CyclingDAMemory 109
 if ( "$DAType" =~ *"eda"* || "$DAType" == "${omm}") then
   setenv CyclingDANodesPerMember 2
   setenv CyclingDAPEPerNode      18
@@ -251,6 +258,9 @@ setenv bgDir           ${BGFilePrefix}
 
 setenv TemplateFilePrefix templateFields
 #TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
+#setenv staticFieldsDir $GEFS6hfcFORFirstCycle #includes date 201804141800
+#setenv staticFieldsFile ${staticFieldsDir}/$memDir/${RSTFilePrefix}.2018-04-15_00.00.00.nc
+
 setenv staticFieldsDir ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA/
 #setenv staticFieldsDir ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA_O3/
 setenv staticFieldsFile ${staticFieldsDir}/${InitFilePrefix}.2018-04-14_18.00.00.nc
@@ -339,7 +349,7 @@ setenv FIXED_INPUT           ${TOP_STATIC_DIR}/fixed_input
 
 ## deterministic input
 #GFS
-setenv GFS6hfcFORFirstCycle  /glade/work/liuz/pandac/fix_input/120km_1stCycle_background/2018041418
+setenv GFS6hfcFORFirstCycle  /glade/work/liuz/pandac/fix_input/${MPASGridDescriptor}_1stCycle_background/2018041418
 #setenv GFSANA6hfc_DIR        ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA6HFC
 
 ## ensemble input
@@ -347,10 +357,10 @@ setenv GFS6hfcFORFirstCycle  /glade/work/liuz/pandac/fix_input/120km_1stCycle_ba
 set gefsMemFmt = "/{:02d}"
 set nGEFSMembers = 20
 
-set GEFS6hfcFOREnsBDir = ${PANDACCommonData}/120km_EnsFC
+set GEFS6hfcFOREnsBDir = ${PANDACCommonData}/${MPASGridDescriptor}_EnsFC
 set GEFS6hfcFOREnsBFilePrefix = EnsForCov
 
-set GEFS6hfcFORFirstCycle = /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/120kmEnsFCFirstCycle/2018041418
+set GEFS6hfcFORFirstCycle = /glade/p/mmm/parc/guerrett/pandac/fixed_input/${MPASGridDescriptor}/${MPASGridDescriptor}EnsFCFirstCycle/2018041418
 
 #deterministic DA
 setenv firstDetermFCDir ${GFS6hfcFORFirstCycle}
@@ -381,6 +391,10 @@ setenv GFSSST_DIR            ${FIXED_INPUT}/${MPASGridDescriptor}/GFSSST
 setenv GRAPHINFO_DIR         ${FIXED_INPUT}/${MPASGridDescriptor}/graph
 
 ## Background Error
+#17NOV2020 code
+#setenv bumpLocDir            ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${CyclingDAPEPerMember}pe_old
+
+#After 15 Dec 2020 code
 setenv bumpLocDir            ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${CyclingDAPEPerMember}pe
 setenv bumpLocPrefix         bumploc_2000_5
 
@@ -440,9 +454,6 @@ set mainModule = ${COMPILER}
 module purge
 module load jedi/${mainModule}
 
-#USE FOR OLD CODE (BEFORE APRIL 15)
-#module load jedi/gnu-openmpi/7.4.0-v0.1
-
 setenv CUSTOMPIO         ""
 if ( CUSTOMPIO != "" ) then
   module unload pio
@@ -469,12 +480,17 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   setenv DAEXE           mpasjedi_variational.x
 endif
-setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}
+set BundleFeatureName = ''
+#set BundleFeatureName = $ExpSuffix1
+#set BundleFeatureName = '_17NOV2020'
+#set BundleFeatureName = '_Debug'
+
+setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${BundleFeatureName}
 setenv DABuildDir      ${TOP_BUILD_DIR}/build/${DABuild}/bin
 
 setenv OMMEXE          mpasjedi_hofx_nomodel.x
 
-setenv OMMBuild        mpas-bundle${CUSTOMPIO}_${COMPILER}
+setenv OMMBuild        mpas-bundle${CUSTOMPIO}_${COMPILER}${BundleFeatureName}
 setenv OMMBuildDir     ${TOP_BUILD_DIR}/build/${OMMBuild}/bin
 
 setenv RTPPEXE         mpasjedi_rtpp.x
@@ -490,7 +506,7 @@ setenv appyaml         jedi.yaml
 setenv MPASCore        atmosphere
 setenv FCEXE           mpas_${MPASCore}
 set FCProject = MPAS
-setenv FCBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}
+setenv FCBuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${BundleFeatureName}
 setenv FCBuildDir      ${TOP_BUILD_DIR}/build/${FCBuild}/bin
 setenv FCLookupDir     ${TOP_BUILD_DIR}/build/${FCBuild}/${FCProject}/core_${MPASCore}
 set FCLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
@@ -499,7 +515,11 @@ set FCLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
 setenv meanStateExe      average_netcdf_files_parallel_mpas_${COMPILER}.x
 setenv meanStateBuildDir /glade/work/guerrett/pandac/work/meanState
 #TODO: add these to the repo, possibly under graphics/plot/postprocess/tools directory
-setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
+#setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
+setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_abei
+#setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_abei2.0
+#setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_abei0.5
+
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
 
 #Cycling tools
