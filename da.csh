@@ -84,7 +84,7 @@ mpiexec ./${DAEXE} $appyaml ./jedi.log >& jedi.log.all
 #WITH DEBUGGER
 #module load arm-forge/19.1
 #setenv MPI_SHEPHERD true
-#ddt --connect ${DABuildDir}/bin/${DAEXE} $appyaml ./jedi.log
+#ddt --connect ./${DAEXE} $appyaml ./jedi.log
 
 #
 # Check status:
