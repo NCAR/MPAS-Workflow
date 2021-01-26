@@ -83,9 +83,11 @@ if ( "$DAType" =~ *"eda"* ) then
   setenv nEnsDAMembers 20
 endif
 setenv RTPPInflationFactor 0.85
-setenv ABEInflation True
+setenv ABEInflation False
 setenv LeaveOneOutEDA False
 set ExpSuffix1 = ''
+#set ExpSuffix1 = '_deflateSCI30'
+#set ExpSuffix1 = '_BT9'
 #set ExpSuffix1 = '_BT9x0.5'
 #set ExpSuffix1 = '_17NOV2020CODE'
 #set ExpSuffix1 = '_feature--barycentricWeights'
@@ -543,3 +545,11 @@ setenv VFAccountNumber ${StandardAccountNumber}
 # OPTIONS: economy, regular, premium
 setenv CYQueueName premium
 setenv VFQueueName economy
+
+if ($ABEInflation == True) then
+  setenv EnsMeanBGQueueName ${CYQueueName}
+  setenv EnsMeanBGAccountNumber ${CYAccountNumber}
+else
+  setenv EnsMeanBGQueueName ${VFQueueName}
+  setenv EnsMeanBGAccountNumber ${VFAccountNumber}
+endif

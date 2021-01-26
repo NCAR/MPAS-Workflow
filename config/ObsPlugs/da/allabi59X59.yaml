@@ -71,6 +71,8 @@
           x1: [14.28, 17.89, 20.3]
           err0: [1.86, 1.84, 2.24]
           err1: [16.95, 19.67, 18.51]
+#deflate30%
+#          err1: [11.87, 13.77, 12.96]
   - filter: Background Check
     threshold: 3.0
     apply at iterations: 0, 1

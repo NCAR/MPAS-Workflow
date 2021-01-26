@@ -355,6 +355,8 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOMMeanFC.csh "0" "{{dt}}" "FC"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMMeanFC.csh "0" "{{dt}}" "FC"
+    [[[job]]]
+      execution retry delays = 2*PT6S
   [[CleanupCalcOMMeanFC{{dt}}hr]]
     inherit = CleanupBase
     script = \$origin/CleanupCalcOMMeanFC.csh "0" "{{dt}}" "FC"
@@ -407,6 +409,8 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    [[[job]]]
+      execution retry delays = 2*PT6S
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyModelBase
     script = \$origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
@@ -431,6 +435,9 @@ cat >! suite.rc << EOF
     script = \$origin/CalcOMEnsMeanBG.csh "0" "0" "BG"
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMEnsMeanBG.csh "0" "0" "BG"
+    [[[directives]]]
+      -q = ${EnsMeanBGQueueName}
+      -A = ${EnsMeanBGAccountNumber}
     [[[job]]]
       execution retry delays = 2*PT6S
   [[VerifyModelEnsMeanBG]]
