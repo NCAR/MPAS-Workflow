@@ -301,7 +301,7 @@ sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' $prevYAML
 set enspbinfsed = EnsemblePbInflation
 set removeInflation = 0
 if ( "$self_AppName" =~ *"eda"* && ${ABEInflation} == True ) then
-  set inflationFields = ${CyclingABEInflationDir}/BT9_ABEIlambda.nc
+  set inflationFields = ${CyclingABEInflationDir}/BT${ABEIChannel}_ABEIlambda.nc
   find ${inflationFields} -mindepth 0 -maxdepth 0
   if ($? > 0) then
     ## inflation file not generated because all instruments (abi, ahi?) missing at this cylce date

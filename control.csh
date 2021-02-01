@@ -84,11 +84,10 @@ if ( "$DAType" =~ *"eda"* ) then
 endif
 setenv RTPPInflationFactor 0.85
 setenv ABEInflation False
+setenv ABEIChannel 8
 setenv LeaveOneOutEDA False
 set ExpSuffix1 = ''
 #set ExpSuffix1 = '_deflateSCI30'
-#set ExpSuffix1 = '_BT9'
-#set ExpSuffix1 = '_BT9x0.5'
 #set ExpSuffix1 = '_17NOV2020CODE'
 #set ExpSuffix1 = '_feature--barycentricWeights'
 #set ExpSuffix1 = '_unstructuredBarycent'
@@ -108,7 +107,7 @@ set ExpSuffix0 = '_NMEM'${nEnsDAMembers}
 
 if ($nEnsDAMembers > 1 && ${RTPPInflationFactor} != "0.0") set ExpSuffix0 = ${ExpSuffix0}_RTPP${RTPPInflationFactor}
 if ($nEnsDAMembers > 1 && ${LeaveOneOutEDA} == True) set ExpSuffix0 = ${ExpSuffix0}_LeaveOneOut
-if ($nEnsDAMembers > 1 && ${ABEInflation} == True) set ExpSuffix0 = ${ExpSuffix0}_ABEI
+if ($nEnsDAMembers > 1 && ${ABEInflation} == True) set ExpSuffix0 = ${ExpSuffix0}_ABEI_BT${ABEIChannel}
 
 #(2) add observation selection info
 ## make experiment title from DA/OMM settings
