@@ -287,7 +287,7 @@ cat >! suite.rc << EOF
       myPreScript = \$origin/jediPrepCyclingDA.csh "0" "0" "DA"
     [[[job]]]
       execution time limit = PT${CyclingDAJobMinutes}M
-      execution retry delays = 2*PT6S
+      execution retry delays = 4*PT30S
     [[[directives]]]
       -m = ae
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
@@ -326,7 +326,7 @@ cat >! suite.rc << EOF
     inherit = CyclingFC
     script = \$origin/CyclingFC.csh "{{mem}}"
     [[[job]]]
-      execution retry delays = 2*PT6S
+      execution retry delays = 4*PT30S
 {% endfor %}
   [[CyclingFCFinished]]
     [[[job]]]
@@ -356,7 +356,7 @@ cat >! suite.rc << EOF
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMMeanFC.csh "0" "{{dt}}" "FC"
     [[[job]]]
-      execution retry delays = 2*PT6S
+      execution retry delays = 4*PT30S
   [[CleanupCalcOMMeanFC{{dt}}hr]]
     inherit = CleanupBase
     script = \$origin/CleanupCalcOMMeanFC.csh "0" "{{dt}}" "FC"
@@ -388,7 +388,7 @@ cat >! suite.rc << EOF
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[job]]]
-      execution retry delays = 2*PT6S
+      execution retry delays = 4*PT30S
   [[VerifyModel{{state}}{{mem}}]]
     inherit = VerifyModel{{state}}
     script = \$origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
@@ -410,7 +410,7 @@ cat >! suite.rc << EOF
     [[[environment]]]
       myPreScript = \$origin/jediPrepCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[job]]]
-      execution retry delays = 2*PT6S
+      execution retry delays = 4*PT30S
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyModelBase
     script = \$origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
@@ -439,7 +439,7 @@ cat >! suite.rc << EOF
       -q = ${EnsMeanBGQueueName}
       -A = ${EnsMeanBGAccountNumber}
     [[[job]]]
-      execution retry delays = 2*PT6S
+      execution retry delays = 4*PT30S
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
     script = \$origin/VerifyModelEnsMeanBG.csh "0" "0" "BG"
