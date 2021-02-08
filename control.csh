@@ -82,15 +82,15 @@ if ( "$DAType" =~ *"eda"* ) then
   #setenv nEnsDAMembers 5
   setenv nEnsDAMembers 20
 endif
-setenv RTPPInflationFactor 0.85
+setenv RTPPInflationFactor 0.0
 setenv ABEInflation False
 setenv ABEIChannel 8
-setenv LeaveOneOutEDA False
+setenv LeaveOneOutEDA True
+setenv LeaveOneOutName LeaveOneOut
 set ExpSuffix1 = ''
-#set ExpSuffix1 = '_deflateSCI30'
-#set ExpSuffix1 = '_17NOV2020CODE'
-#set ExpSuffix1 = '_feature--barycentricWeights'
-#set ExpSuffix1 = '_unstructuredBarycent'
+#set ExpSuffix1 = '_noAMSUACh9'
+#set ExpSuffix1 = '_addAMSUACh10'
+#set ExpSuffix1 = '_addAMSUACh10,11'
 
 #GEFS reference case (override above settings)
 #====================================================
@@ -106,7 +106,7 @@ set ExpSuffix1 = ''
 set ExpSuffix0 = '_NMEM'${nEnsDAMembers}
 
 if ($nEnsDAMembers > 1 && ${RTPPInflationFactor} != "0.0") set ExpSuffix0 = ${ExpSuffix0}_RTPP${RTPPInflationFactor}
-if ($nEnsDAMembers > 1 && ${LeaveOneOutEDA} == True) set ExpSuffix0 = ${ExpSuffix0}_LeaveOneOut
+if ($nEnsDAMembers > 1 && ${LeaveOneOutEDA} == True) set ExpSuffix0 = ${ExpSuffix0}_${LeaveOneOutName}
 if ($nEnsDAMembers > 1 && ${ABEInflation} == True) set ExpSuffix0 = ${ExpSuffix0}_ABEI_BT${ABEIChannel}
 
 #(2) add observation selection info
