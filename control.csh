@@ -88,9 +88,6 @@ setenv ABEIChannel 8
 setenv LeaveOneOutEDA True
 setenv LeaveOneOutName LeaveOneOut
 set ExpSuffix1 = ''
-#set ExpSuffix1 = '_noAMSUACh9'
-#set ExpSuffix1 = '_addAMSUACh10'
-#set ExpSuffix1 = '_addAMSUACh10,11'
 
 #GEFS reference case (override above settings)
 #====================================================
@@ -467,6 +464,7 @@ setenv OOPS_DEBUG 0
 #setenv OOPS_TRAPFPE 1
 setenv GFORTRAN_CONVERT_UNIT 'native;big_endian:101-200'
 setenv F_UFMTENDIAN 'big:101-200'
+setenv OMP_NUM_THREADS 1
 
 module load python/3.7.5
 
