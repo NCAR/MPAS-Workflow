@@ -1,0 +1,14 @@
+- obs space:
+    name: Aircraft
+    obsdatain:
+      obsfile: InDBDir/aircraft_obs_2018041500.nc4
+    obsdataout:
+      obsfile: OutDBDir/obsPrefix_AppType_aircraft.nc4
+    simulated variables: [air_temperature, eastward_wind, northward_wind, specific_humidity]
+  obs operator:
+    name: VertInterp
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3

@@ -1,0 +1,23 @@
+- obs space:
+    name: Satwind
+    obsdatain:
+      obsfile: InDBDir/satwind_obs_2018041500.nc4
+    obsdataout:
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_satwind.nc4
+    simulated variables: [eastward_wind, northward_wind]
+    obs perturbations seed: MemberSeed
+  obs operator:
+    name: VertInterp
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
+  - filter: Background Check
+    threshold: 3.0
+    apply at iterations: 0, 1
+#  - filter: Thinning
+#    amount: RADTHINAMOUNT
+#    random_seed: 0
+#  - filter: Gaussian_Thinning
+#    horizontal_mesh: RADTHINDISTANCE #km

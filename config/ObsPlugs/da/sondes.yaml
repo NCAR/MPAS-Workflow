@@ -1,0 +1,18 @@
+- obs space:
+    name: Radiosonde
+    obsdatain:
+      obsfile: InDBDir/sondes_obs_2018041500.nc4
+    obsdataout:
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_sondes.nc4
+    simulated variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind, specific_humidity]
+    obs perturbations seed: MemberSeed
+  obs operator:
+    name: VertInterp
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
+  - filter: Background Check
+    threshold: 3.0
+    apply at iterations: 0, 1

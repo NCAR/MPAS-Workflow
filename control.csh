@@ -19,6 +19,9 @@ foreach application (${applicationIndex})
   endif
 end
 
+## base set of observation types assimilated in all experiments
+set defaultObsList = (sondes aircraft satwind gnssroref sfcp clramsua)
+
 ## ABI super-obbing footprint, set independently
 #  for da and omm using applicationIndex
 #OPTIONS: 15X15, 59X59
@@ -42,10 +45,10 @@ setenv omm  omm
 set abi = abi$ABISuperOb[$ommIndex]
 set ahi = ahi$AHISuperOb[$ommIndex]
 ## OMMObsList
-# OPTIONS: conv, clramsua, cldamsua, allmhs, clr$abi, all$abi, clr$ahi, all$ahi
-set OMMObsList = (conv clramsua cldamsua allmhs all$abi all$ahi)
+# OPTIONS: $defaultObsList, cldamsua, allmhs, clr$abi, all$abi, clr$ahi, all$ahi
+set OMMObsList = ($defaultObsList cldamsua allmhs all$abi all$ahi)
 #set OMMObsList = (all$abi all$ahi clr$abi clr$ahi)
-#set OMMObsList = (conv clramsua cldamsua allmhs clr$abi all$abi clr$ahi all$ahi)
+#set OMMObsList = ($defaultObsList cldamsua allmhs clr$abi all$abi clr$ahi all$ahi)
 #set OMMObsList = (clramsua clr$abi)
 
 
@@ -56,17 +59,17 @@ set OMMObsList = (conv clramsua cldamsua allmhs all$abi all$ahi)
 set abi = abi$ABISuperOb[$daIndex]
 set ahi = ahi$AHISuperOb[$daIndex]
 ## DAObsList
-#OPTIONS: conv, clramsua, cldamsua, clr$abi, all$abi, clr$ahi, all$ahi
+#OPTIONS: $defaultObsList, cldamsua, clr$abi, all$abi, clr$ahi, all$ahi
 # clr == clear-sky
 # all == all-sky
 # cld == cloudy-sky
-#set DAObsList = ()
-#set DAObsList = (conv clramsua)
-#set DAObsList = (conv clramsua clr$abi)
-set DAObsList = (conv clramsua all$abi)
-#set DAObsList = (conv clramsua clr$ahi)
-#set DAObsList = (conv clramsua all$ahi)
-#set DAObsList = (conv clramsua all$abi all$ahi)
+
+set DAObsList = ($defaultObsList)
+#set DAObsList = ($defaultObsList clr$abi)
+#set DAObsList = ($defaultObsList all$abi)
+#set DAObsList = ($defaultObsList clr$ahi)
+#set DAObsList = ($defaultObsList all$ahi)
+#set DAObsList = ($defaultObsList all$abi all$ahi)
 
 ## InDBDir and OutDBDir control the names of the database directories
 # on input and output from jedi applications
@@ -124,8 +127,15 @@ set GEOIRClearBC = _const-bias-correct
 set ABIBiasCorrect = $GEOIRNoBias
 set AHIBiasCorrect = $GEOIRNoBias
 
+
 foreach obs ($expObsList)
-  if ( "$obs" !~ *"conv"* && "$obs" !~ *"clramsua"*) then
+  set isDefault = False
+  foreach default ($defaultObsList)
+    if ("$obs" =~ *"$default"*) then
+      set isDefault = True
+    endif
+  end
+  if ( $isDefault == False ) then
     setenv ExpObsName ${ExpObsName}_${obs}
   endif
   if ( "$obs" =~ "clrabi"* ) then

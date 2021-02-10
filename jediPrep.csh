@@ -178,31 +178,31 @@ set nIndent = $applicationObsIndent[$myAppIndex]
 set obsIndent = "`${nSpaces} $nIndent`"
 
 ## Add selected observations (see control.csh)
-set checkForMissingObs = (abi ahi amsua mhs)
+set checkForMissingObs = (sondes aircraft satwind gnssro sfc amsua mhs abi ahi)
 foreach obs ($self_ObsList)
   echo "Preparing YAML for ${obs} observations"
   set missing=0
   set SUBYAML=${CONFIGDIR}/ObsPlugs/${self_AppType}/${obs}
-  if ( "$obs" =~ *"conv"* ) then
+  if ( "$obs" =~ *"sondes"* ) then
     #KLUDGE to handle missing qv for sondes at single time
     if ( ${thisValidDate} == 2018043006 ) then
       set SUBYAML=${SUBYAML}-2018043006
     endif
-  else
-    foreach inst ($checkForMissingObs)
-      if ( "$obs" =~ *"${inst}"* ) then
-        find ${InDBDir}/${inst}*_obs_*.nc4 -mindepth 0 -maxdepth 0
-        if ($? > 0) then
-          @ missing++
-        else
-          set brokenLinks=( `find ${InDBDir}/${inst}*_obs_*.nc4 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
-          foreach link ($brokenLinks)
-            @ missing++
-          end
-        endif
-      endif
-    end
   endif
+  # check for that obs string matches at least one non-broken observation file link
+  foreach inst ($checkForMissingObs)
+    if ( "$obs" =~ *"${inst}"* ) then
+      find ${InDBDir}/${inst}*_obs_*.nc4 -mindepth 0 -maxdepth 0
+      if ($? > 0) then
+        @ missing++
+      else
+        set brokenLinks=( `find ${InDBDir}/${inst}*_obs_*.nc4 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
+        foreach link ($brokenLinks)
+          @ missing++
+        end
+      endif
+    endif
+  end
 
   if ($missing == 0) then
     echo "${obs} data is present and selected; adding ${obs} to the YAML"

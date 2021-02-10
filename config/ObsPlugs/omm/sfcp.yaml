@@ -1,0 +1,21 @@
+- obs space:
+    name: SfcPCorrected
+    obsdatain:
+      obsfile: InDBDir/sfc_obs_2018041500.nc4
+    obsdataout:
+      obsfile: OutDBDir/obsPrefix_AppType_sfc.nc4
+    simulated variables: [surface_pressure]
+  obs operator:
+    name: SfcPCorrected
+    da_psfc_scheme: UKMO   # or WRFDA
+  linear obs operator:
+    name: Identity
+  obs error:
+    covariance model: diagonal
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
+  - filter: Difference Check
+    reference: station_elevation@MetaData
+    value: surface_altitude@GeoVaLs
+    threshold: 200.0
