@@ -53,6 +53,7 @@ mkdir -p ${an}
 set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$fileDate.nc
 set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
+rm ${bgFile}
 ln -fsv ${bgFileOther} ${bgFile}
 
 # Remove existing analysis file, then link to bg file
@@ -68,9 +69,10 @@ foreach var ({$MPASDiagVariables})
   endif 
 end
 if ( $copyDiags > 0 ) then
-  # Copy diagnostic variables used in DA to bg
-  # ==========================================
+  echo "Copy diagnostic variables used in OMM to bg"
+  # ===============================================
   set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
+  rm ${bgFile}${OrigFileSuffix}
   mv ${bgFile} ${bgFile}${OrigFileSuffix}
   cp -v ${bgFile}${OrigFileSuffix} ${bgFile}
   ncks -A -v ${MPASDiagVariables} ${diagFile} ${bgFile}
