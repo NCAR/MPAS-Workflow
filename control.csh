@@ -316,7 +316,6 @@ setenv CyclingDAPEPerMember ${CyclingDAPEPerMember}
 @ CyclingDANodes = ${CyclingDANodesPerMember} * ${nEnsDAMembers}
 setenv CyclingDANodes ${CyclingDANodes}
 
-setenv nulljob 0
 #
 # Run directories
 # =============================================
@@ -326,6 +325,8 @@ setenv EXPUSER          ${USER}
 setenv TOP_EXP_DIR      /glade/scratch/${EXPUSER}/pandac
 setenv WholeExpName     ${EXPUSER}_${ExpName}_${MPASGridDescriptor}
 setenv EXPDIR           ${TOP_EXP_DIR}/${WholeExpName}
+setenv TMPDIR /glade/scratch/$USER/temp
+mkdir -p $TMPDIR
 
 ## immediate subdirectories
 setenv CyclingDAWorkDir    ${EXPDIR}/CyclingDA
@@ -403,7 +404,11 @@ setenv GRAPHINFO_DIR         ${FIXED_INPUT}/${MPASGridDescriptor}/graph
 #setenv bumpLocDir            ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${CyclingDAPEPerMember}pe_old
 
 #After 15 Dec 2020 code
-setenv bumpLocDir            ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${CyclingDAPEPerMember}pe
+#setenv bumpLocDir            ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${CyclingDAPEPerMember}pe
+
+#After 08 Feb 2021 code
+setenv bumpLocDir            ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${CyclingDAPEPerMember}pe_20210208
+
 setenv bumpLocPrefix         bumploc_2000_5
 
 ## Observations
@@ -472,7 +477,7 @@ limit stacksize unlimited
 setenv OOPS_TRACE 0
 setenv OOPS_DEBUG 0
 #setenv OOPS_TRAPFPE 1
-setenv GFORTRAN_CONVERT_UNIT 'native;big_endian:101-200'
+setenv GFORTRAN_CONVERT_UNIT 'big_endian:101-200'
 setenv F_UFMTENDIAN 'big:101-200'
 setenv OMP_NUM_THREADS 1
 
@@ -492,6 +497,7 @@ endif
 set BundleFeatureName = ''
 #set BundleFeatureName = $ExpSuffix1
 #set BundleFeatureName = '_17NOV2020'
+set BundleFeatureName = '_16FEB2021'
 #set BundleFeatureName = '_Debug'
 
 setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${BundleFeatureName}
