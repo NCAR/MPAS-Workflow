@@ -172,7 +172,8 @@ setenv ExtendedFCWindowHR 240           # length of verification forecasts
 setenv ExtendedFC_DT_HR 12              # interval between OMF verification times of an individual forecast
 setenv ExtendedMeanFCTimes T00,T12      # times of the day to run extended forecast from mean analysis
 setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of extended forecasts
-setenv DAVFWindowHR ${ExtendedFC_DT_HR} # window of observations included in verification
+setenv DAVFWindowHR ${CyclingWindowHR}  # window of observations included in AN/BG verification
+setenv FCVFWindowHR 6                   # window of observations included in forecast verification
 
 ## 120km
 setenv MPASGridDescriptor 120km

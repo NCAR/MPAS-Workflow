@@ -128,15 +128,15 @@ chmod 744 ${JobScript}
 #------- CalcOM{{state}}, VerifyObs{{state}}, VerifyModel{{state}} ---------
 foreach state (AN BG EnsMeanBG MeanFC EnsFC)
   if (${state} == AN) then
-    set myArgs = (CyclingDAOutDirs ${ANFilePrefix} ${CyclingWindowHR})
+    set myArgs = (CyclingDAOutDirs ${ANFilePrefix} ${DAVFWindowHR})
   else if (${state} == BG) then
-    set myArgs = (prevCyclingFCDirs ${FCFilePrefix} ${CyclingWindowHR})
+    set myArgs = (prevCyclingFCDirs ${FCFilePrefix} ${DAVFWindowHR})
   else if (${state} == EnsMeanBG) then
-    set myArgs = (CyclingDAInDir/mean ${FCFilePrefix} ${CyclingWindowHR})
+    set myArgs = (CyclingDAInDir/mean ${FCFilePrefix} ${DAVFWindowHR})
   else if (${state} == MeanFC) then
-    set myArgs = (ExtendedMeanFCDir ${FCFilePrefix} ${DAVFWindowHR})
+    set myArgs = (ExtendedMeanFCDir ${FCFilePrefix} ${FCVFWindowHR})
   else if (${state} == EnsFC) then
-    set myArgs = (ExtendedEnsFCDirs ${FCFilePrefix} ${DAVFWindowHR})
+    set myArgs = (ExtendedEnsFCDirs ${FCFilePrefix} ${FCVFWindowHR})
   endif
   set cylcTaskType = CalcOM${state}
   set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh
