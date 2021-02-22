@@ -214,7 +214,7 @@ else
 endif
 
 setenv CyclingInflationJobMinutes 25
-setenv CyclingInflationMemory 45
+setenv CyclingInflationMemory 109
 setenv CyclingInflationNodesPerMember ${CalcOMMNodes}
 setenv CyclingInflationPEPerNode      ${CalcOMMPEPerNode}
 
