@@ -231,10 +231,9 @@ cat >! suite.rc << EOF
 [runtime]
 #Base components
   [[root]] # suite defaults
-    pre-script = "cd  \$origin/; \$myPreScript"
+    pre-script = "cd  \$origin/"
     [[[environment]]]
       origin = ${mainScriptDir}
-      myPreScript = ""
 ## PBS
     [[[job]]]
       batch system = pbs
@@ -282,9 +281,8 @@ cat >! suite.rc << EOF
       batch system = background
 #Cycling components
   [[CyclingDA]]
+    env-script = cd ${mainScriptDir}; ./jediPrepCyclingDA.csh "0" "0" "DA"
     script = \$origin/CyclingDA.csh
-    [[[environment]]]
-      myPreScript = \$origin/jediPrepCyclingDA.csh "0" "0" "DA"
     [[[job]]]
       execution time limit = PT${CyclingDAJobMinutes}M
       execution retry delays = 4*PT30S
@@ -352,9 +350,8 @@ cat >! suite.rc << EOF
 {% for dt in ExtendedFCLengths %}
   [[CalcOMMeanFC{{dt}}hr]]
     inherit = OMMBase
+    env-script = cd ${mainScriptDir}; ./jediPrepCalcOMMeanFC.csh "0" "{{dt}}" "FC"
     script = \$origin/CalcOMMeanFC.csh "0" "{{dt}}" "FC"
-    [[[environment]]]
-      myPreScript = \$origin/jediPrepCalcOMMeanFC.csh "0" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = 4*PT30S
   [[CleanupCalcOMMeanFC{{dt}}hr]]
@@ -384,9 +381,8 @@ cat >! suite.rc << EOF
   {% for state in ['BG', 'AN']%}
   [[CalcOM{{state}}{{mem}}]]
     inherit = CalcOM{{state}}
+    env-script = cd ${mainScriptDir}; ./jediPrepCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
     script = \$origin/CalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
-    [[[environment]]]
-      myPreScript = \$origin/jediPrepCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[job]]]
       execution retry delays = 4*PT30S
   [[VerifyModel{{state}}{{mem}}]]
@@ -406,9 +402,8 @@ cat >! suite.rc << EOF
   {% for dt in ExtendedFCLengths %}
   [[CalcOMEnsFC{{mem}}-{{dt}}hr]]
     inherit = OMMBase
+    env-script = cd ${mainScriptDir}; ./jediPrepCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     script = \$origin/CalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-    [[[environment]]]
-      myPreScript = \$origin/jediPrepCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = 4*PT30S
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
@@ -432,9 +427,8 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[CalcOMEnsMeanBG]]
     inherit = OMMBase
+    env-script = cd ${mainScriptDir}; ./jediPrepCalcOMEnsMeanBG.csh "0" "0" "BG"
     script = \$origin/CalcOMEnsMeanBG.csh "0" "0" "BG"
-    [[[environment]]]
-      myPreScript = \$origin/jediPrepCalcOMEnsMeanBG.csh "0" "0" "BG"
     [[[directives]]]
       -q = ${EnsMeanBGQueueName}
       -A = ${EnsMeanBGAccountNumber}
