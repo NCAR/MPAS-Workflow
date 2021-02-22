@@ -7,7 +7,6 @@ variational:
   - geometry:
       gridfname: templateFieldsFile
       deallocate non-da fields: true
-#      use bump interpolation: false
     ninner: '60'
     gradient norm reduction: 1e-10
     test: 'on'
@@ -17,7 +16,6 @@ variational:
 #  - geometry:
 #      gridfname: templateFieldsFile
 #      deallocate non-da fields: true
-##      use bump interpolation: false
 #    ninner: '60'
 #    gradient norm reduction: 1e-10
 #    test: 'on'
@@ -31,7 +29,6 @@ cost function:
   geometry:
     gridfname: templateFieldsFile
     deallocate non-da fields: true
-#    use bump interpolation: false
   analysis variables: &incvars [AnalysisVariables]
   background:
     state variables: [StateVariables]
