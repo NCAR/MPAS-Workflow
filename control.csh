@@ -252,7 +252,6 @@ setenv CyclingInflationPEPerNode      ${CalcOMMPEPerNode}
 
 setenv RSTFilePrefix   restart
 setenv ICFilePrefix    mpasin
-setenv FirstCycleFilePrefix ${RSTFilePrefix}
 setenv InitFilePrefix x1.${MPASnCells}.init
 
 setenv FCFilePrefix    mpasout
@@ -270,7 +269,8 @@ setenv TemplateFilePrefix templateFields
 #setenv staticFieldsDir $GEFS6hfcFORFirstCycle #includes date 201804141800
 #setenv staticFieldsFile ${staticFieldsDir}/$memDir/${RSTFilePrefix}.2018-04-15_00.00.00.nc
 
-setenv staticFieldsDir ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA/
+setenv staticFieldsDir /glade/scratch/guerrett/pandac/data/GEFS/init/mpas_120km/000hr/2018041418/01
+#setenv staticFieldsDir ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA/
 #setenv staticFieldsDir ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA_O3/
 setenv staticFieldsFile ${staticFieldsDir}/${InitFilePrefix}.2018-04-14_18.00.00.nc
 setenv localStaticFieldsFile static.nc
@@ -381,7 +381,7 @@ setenv fixedEnsBFilePrefix ${GEFS6hfcFOREnsBFilePrefix}
 
 #ensemble DA
 setenv firstEnsFCMemFmt "${gefsMemFmt}"
-setenv firstEnsFCNMembers ${nGEFSMembers}
+setenv firstEnsFCNMembers 80
 setenv firstEnsFCDir ${GEFS6hfcFORFirstCycle}
 
 if ( $nEnsDAMembers > $firstEnsFCNMembers ) then
@@ -492,13 +492,16 @@ setenv TOP_BUILD_DIR     /glade/work/${BUILDUSER}/pandac
 #MPAS-JEDI
 if ( "$DAType" =~ *"eda"* ) then
   setenv DAEXE           mpasjedi_eda.x
+  setenv FirstCycleFilePrefix ${FCFilePrefix}
 else
   setenv DAEXE           mpasjedi_variational.x
+  setenv FirstCycleFilePrefix ${RSTFilePrefix}
 endif
 set BundleFeatureName = ''
 #set BundleFeatureName = $ExpSuffix1
 #set BundleFeatureName = '_17NOV2020'
-set BundleFeatureName = '_16FEB2021'
+#set BundleFeatureName = '_16FEB2021'
+set BundleFeatureName = '_19FEB2021'
 #set BundleFeatureName = '_Debug'
 
 setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${BundleFeatureName}
