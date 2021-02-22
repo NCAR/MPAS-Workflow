@@ -2,17 +2,20 @@
 <immutable_stream name="static"
                   type="input"
                   filename_template="static.nc"
+                  io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="input"
                   type="input"
                   filename_template="templateFields.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="restart"
                   type="input;output"
                   filename_template="restart.$Y-$M-$D_$h.$m.$s.nc"
                   input_interval="initial_only"
+                  io_type="pnetcdf,cdf5"
                   clobber_mode="overwrite"
                   output_interval="none" />
 
@@ -29,6 +32,7 @@
 <stream name="diagnostics"
         type="output"
         filename_template="diag.$Y-$M-$D_$h.$m.$s.nc"
+        io_type="pnetcdf,cdf5"
         clobber_mode="overwrite"
         output_interval="none" >
 	<file name="stream_list.atmosphere.diagnostics"/>

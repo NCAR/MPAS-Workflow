@@ -2,22 +2,26 @@
 <immutable_stream name="static"
                   type="input"
                   filename_template="static.nc"
+                  io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="input"
                   type="input"
                   filename_template="mpasin.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="da_state"
                   type="output"
                   clobber_mode="truncate"
                   filename_template="mpasout.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
                   output_interval="outputIntervalArg" />
 
 <immutable_stream name="restart"
                   type="input;output"
                   filename_template="restart.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
                   input_interval="initial_only"
                   clobber_mode="overwrite"
                   output_interval="none" />
@@ -25,6 +29,7 @@
 <stream name="output"
         type="none"
         filename_template="history.$Y-$M-$D_$h.$m.$s.nc"
+        io_type="pnetcdf,cdf5"
         output_interval="1_00:00:00" >
 	<file name="stream_list.atmosphere.output"/>
 </stream>
@@ -32,6 +37,7 @@
 <stream name="diagnostics"
         type="output"
         filename_template="diag.$Y-$M-$D_$h.$m.$s.nc"
+        io_type="pnetcdf,cdf5"
         clobber_mode="overwrite"
         output_interval="outputIntervalArg" >
         <file name="stream_list.atmosphere.diagnostics"/>
