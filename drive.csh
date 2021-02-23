@@ -1,25 +1,60 @@
 #!/bin/csh
 
-date
+## Top-level workflow configuration
 
-source control.csh
+# Cycle bounds
+set initialCyclePoint = 20180415T00
+set finalCyclePoint   = 20180514T18
 
-## Top-level workflow controls
-# CriticalPathType: controls dependcies between and chilrdren of
+# CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
 # options: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
-set VerifyOnly = False
+
+# VerifyDeterministicDA: whether to run verification scripts for
+#    obs feedback files from DA.  Does not work for ensemble DA.
+# options: True/False
 set VerifyDeterministicDA = True
+
+# VerifyExtendedMeanFC: whether to run verification scripts across
+#    extended forecast states, first intialized at mean analysis
+# options: True/False
 set VerifyExtendedMeanFC = False
+
+# VerifyMemberBG: whether to run verification scripts for CyclingWindowHR
+#    forecast length. Utilizes critical path forecast states from
+#    individual ensemble member analyses or deterministic analysis
+# options: True/False
 set VerifyMemberBG = True
+
+# VerifyEnsMeanBG: whether to run verification scripts for ensemble
+#    mean background state.
+# options: True/False
 set VerifyEnsMeanBG = True
+
+# DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
+#    space while VerifyEnsMeanBG is True.  Automatically triggers OMF calculation
+#    for all ensemble members. VerifyEnsMeanBG is nearly free when
+#    DiagnoseEnsSpreadBG is True.
+#    mean background state.
+# options: True/False
+set DiagnoseEnsSpreadBG = True
+
+# VerifyEnsMeanAN: whether to run verification scripts for ensemble
+#    mean analysis state.
+# options: True/False
 set VerifyMemberAN = False
+
+# VerifyExtendedEnsBG: whether to run verification scripts across
+#    extended forecast states, first intialized at ensemble of analysis
+#    states.
+# options: True/False
 set VerifyExtendedEnsFC = False
 
-## Cycle bounds
-set initialCyclePoint = 20180415T00
-set finalCyclePoint   = 20180514T18
+date
+
+## Initialize environment and experimental configuration
+source control.csh
 
 ## Initialize cycling directory if this is the first cycle point
 set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
@@ -48,14 +83,11 @@ cat >! suite.rc << EOF
 {# set firstCyclePoint = "${firstCyclePoint}" #}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
-{% set VerifyOnly = ${VerifyOnly} %}
-{% if VerifyOnly %}
-  {% set CriticalPathType = "Bypass" %}
-{% endif %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
 {% set VerifyMemberBG = ${VerifyMemberBG} %}
 {% set VerifyEnsMeanBG = ${VerifyEnsMeanBG} %}
+{% set DiagnoseEnsSpreadBG = ${DiagnoseEnsSpreadBG} %}
 {% set VerifyMemberAN = ${VerifyMemberAN} %}
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
@@ -121,7 +153,7 @@ cat >! suite.rc << EOF
 {% if VerifyDeterministicDA and nEnsDAMembers < 2 %}
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
-## Verification of deterministic DA with observations (BG+AN)
+## Verification of deterministic DA with observations (BG+AN together)
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
         CyclingDAFinished => VerifyObsDA
@@ -132,58 +164,40 @@ cat >! suite.rc << EOF
 ## Extended forecast and verification from mean of analysis states
     [[[${ExtendedMeanFCTimes}]]]
       graph = '''
-  {% if not VerifyOnly %}
         CyclingDAFinished => MeanAnalysis => ExtendedMeanFC
-    {% for dt in ExtendedFCLengths %}
+  {% for dt in ExtendedFCLengths %}
         ExtendedMeanFC => VerifyModelMeanFC{{dt}}hr
         ExtendedMeanFC => CalcOMMeanFC{{dt}}hr
         CalcOMMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
         VerifyObsMeanFC{{dt}}hr => CleanupCalcOMMeanFC{{dt}}hr
-    {% endfor %}
-  {% else %}
-    {% for dt in ExtendedFCLengths %}
-        VerifyModelMeanFC{{dt}}hr
-        VerifyObsMeanFC{{dt}}hr
-    {% endfor %}
-  {% endif %}
+  {% endfor %}
       '''
 {% endif %}
-{% if (VerifyMemberBG or (VerifyEnsMeanBG and nEnsDAMembers > 1)) and not VerifyOnly%}
+{% if VerifyMemberBG %}
 ## Ensemble BG verification
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => CalcOMBG
-      '''
-{% endif %}
-{% if VerifyMemberBG %}
-    [[[PT${CyclingWindowHR}H]]]
-      graph = '''
-  {% if not VerifyOnly %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
-    {% for mem in VerifyMembers %}
+  {% for mem in VerifyMembers %}
         CalcOMBG{{mem}} => VerifyObsBG{{mem}}
         VerifyObsBG{{mem}} => CleanupCalcOMBG{{mem}}
-    {% endfor %}
-  {% else %}
-        VerifyModelBG
-        VerifyObsBG
-  {% endif %}
+  {% endfor %}
       '''
 {% endif %}
 {% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
-## Obs-space verification of mean background
+## Ensemble Mean BG verification
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
-  {% if not VerifyOnly %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => MeanBackground
         MeanBackground => CalcOMEnsMeanBG
         MeanBackground => VerifyModelEnsMeanBG
-        CalcOMBG:succeed-all & CalcOMEnsMeanBG => VerifyObsEnsMeanBG
+        CalcOMEnsMeanBG => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanupCalcOMEnsMeanBG
+  {% if DiagnoseEnsSpreadBG %}
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => CalcOMBG
+        CalcOMBG:succeed-all => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanupCalcOMBG
-  {% else %}
-        VerifyModelEnsMeanBG
-        VerifyObsEnsMeanBG
   {% endif %}
       '''
 {% endif %}
@@ -192,15 +206,10 @@ cat >! suite.rc << EOF
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
   {% for mem in VerifyMembers %}
-    {% if not VerifyOnly %}
         CyclingDAFinished => VerifyModelAN{{mem}}
         CyclingDAFinished => CalcOMAN{{mem}}
         CalcOMAN{{mem}} => VerifyObsAN{{mem}}
         VerifyObsAN{{mem}} => CleanupCalcOMAN{{mem}}
-    {% else %}
-        VerifyModelAN{{mem}}
-        VerifyObsAN{{mem}}
-    {% endif %}
   {% endfor %}
       '''
 {% endif %}
@@ -208,24 +217,15 @@ cat >! suite.rc << EOF
 ## Extended forecast and verification from ensemble of analysis states
     [[[${ExtendedEnsFCTimes}]]]
       graph = '''
-  {% if not VerifyOnly %}
         CyclingDAFinished => ExtendedEnsFC
-    {% for mem in VerifyMembers %}
-      {% for dt in ExtendedFCLengths %}
+  {% for mem in VerifyMembers %}
+    {% for dt in ExtendedFCLengths %}
         ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}-{{dt}}hr
         ExtendedFC{{mem}} => CalcOMEnsFC{{mem}}-{{dt}}hr
         CalcOMEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
         VerifyObsEnsFC{{mem}}-{{dt}}hr => CleanupCalcOMEnsFC{{mem}}-{{dt}}hr
-      {% endfor %}
     {% endfor %}
-  {% else %}
-    {% for mem in VerifyMembers %}
-      {% for dt in ExtendedFCLengths %}
-        VerifyModelEnsFC{{mem}}-{{dt}}hr
-        VerifyObsEnsFC{{mem}}-{{dt}}hr
-      {% endfor %}
-    {% endfor %}
-  {% endif %}
+  {% endfor %}
       '''
 {% endif %}
 [runtime]
@@ -293,6 +293,7 @@ cat >! suite.rc << EOF
     script = \$origin/RTPPInflation.csh
     [[[job]]]
       execution time limit = PT${CyclingInflationJobMinutes}M
+      execution retry delays = 4*PT30S
     [[[directives]]]
       -m = ae
       -l = select=${CyclingInflationNodesPerMember}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
@@ -439,7 +440,11 @@ cat >! suite.rc << EOF
     script = \$origin/VerifyModelEnsMeanBG.csh "0" "0" "BG"
   [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
+{% if DiagnoseEnsSpreadBG %}
     script = \$origin/VerifyObsEnsMeanBG.csh "0" "0" "BG" "{{nEnsDAMembers}}"
+{% else %}
+    script = \$origin/VerifyObsEnsMeanBG.csh "0" "0" "BG" "0"
+{% endif %}
   [[CleanupCalcOMEnsMeanBG]]
     inherit = CleanupBase
     script = \$origin/CleanupCalcOMEnsMeanBG.csh "0" "0" "BG"
