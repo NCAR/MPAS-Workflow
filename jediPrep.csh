@@ -310,6 +310,9 @@ if ( "$self_AppName" =~ *"eda"* && ${ABEInflation} == True ) then
   else
     set thisYAML = insertInflation.yaml
     set indent = "    "
+#NOTE: no_transf=1 allows for spechum and temperature inflation values to be read
+#      directly from inflationFields without a variable transform. Also requires spechum
+#      and temperature to be in stream_list.atmosphere.output.
 
 cat >! ${enspbinfsed}SEDF.yaml << EOF
 /${enspbinfsed}/c\
