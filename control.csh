@@ -265,14 +265,6 @@ setenv bgDir           ${BGFilePrefix}
 #setenv anStatePrefix   analysis
 
 setenv TemplateFilePrefix templateFields
-#TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
-#setenv staticFieldsDir $GEFS6hfcFORFirstCycle #includes date 201804141800
-#setenv staticFieldsFile ${staticFieldsDir}/$memDir/${RSTFilePrefix}.2018-04-15_00.00.00.nc
-
-setenv staticFieldsDir /glade/scratch/guerrett/pandac/data/GEFS/init/mpas_120km/000hr/2018041418/01
-#setenv staticFieldsDir ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA/
-#setenv staticFieldsDir ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA_O3/
-setenv staticFieldsFile ${staticFieldsDir}/${InitFilePrefix}.2018-04-14_18.00.00.nc
 setenv localStaticFieldsFile static.nc
 
 setenv OrigFileSuffix  _orig
@@ -393,9 +385,8 @@ setenv dynamicEnsBNMembers ${nEnsDAMembers}
 setenv dynamicEnsBDir ${CyclingFCWorkDir}
 setenv dynamicEnsBFilePrefix ${FCFilePrefix}
 
-#setenv GFSANA6hfc_OMF_DIR    ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA6HFC
-#setenv GFSANA_DIR            ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA
-setenv GFSSST_DIR            ${FIXED_INPUT}/${MPASGridDescriptor}/GFSSST
+setenv GFSANA_DIR ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA
+setenv GFSSST_DIR ${GFSANA_DIR}
 
 ## MPAS-Model and MPAS-JEDI
 setenv GRAPHINFO_DIR         ${FIXED_INPUT}/${MPASGridDescriptor}/graph
@@ -493,9 +484,16 @@ setenv TOP_BUILD_DIR     /glade/work/${BUILDUSER}/pandac
 if ( "$DAType" =~ *"eda"* ) then
   setenv DAEXE           mpasjedi_eda.x
   setenv FirstCycleFilePrefix ${FCFilePrefix}
+#TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
+  #setenv staticFieldsDir $GEFS6hfcFORFirstCycle #includes date 201804141800
+  #setenv staticFieldsFile ${staticFieldsDir}/$memDir/${RSTFilePrefix}.2018-04-15_00.00.00.nc
+  setenv staticFieldsDir /glade/scratch/guerrett/pandac/data/GEFS/init/mpas_120km/000hr/2018041418/01
+  setenv staticFieldsFile ${staticFieldsDir}/${InitFilePrefix}.2018-04-14_18.00.00.nc
 else
   setenv DAEXE           mpasjedi_variational.x
   setenv FirstCycleFilePrefix ${RSTFilePrefix}
+  setenv staticFieldsDir ${GFSANA_DIR}
+  setenv staticFieldsFile ${staticFieldsDir}/${InitFilePrefix}.2018-04-14_18.00.00.nc
 endif
 set BundleFeatureName = ''
 #set BundleFeatureName = $ExpSuffix1
