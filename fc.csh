@@ -42,10 +42,6 @@ set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
 ln -sf ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
 
-## link static fields:
-rm ${localStaticFieldsFile}
-ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
-
 ## link MPAS mesh graph info
 rm ./x1.${MPASnCells}.graph.info*
 ln -sf $GRAPHINFO_DIR/x1.${MPASnCells}.graph.info* .
@@ -108,6 +104,11 @@ else
     setenv fcDate ${fcDate}
   end
 
+  ## copy static fields:
+  rm ${localStaticFieldsFile}
+  ln -sf ${staticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+  cp -v ${staticFieldsFile} ${localStaticFieldsFile}
+
   #
   # Run the executable:
   # =============================================
@@ -124,6 +125,11 @@ else
     echo "ERROR in $0 : MPAS-Model forecast failed" >> ./FAIL
     exit 1
   endif
+
+  ## change static fields to a link:
+  rm ${localStaticFieldsFile}
+  rm ${localStaticFieldsFile}${OrigFileSuffix}
+  ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
 endif
 
 #
@@ -147,6 +153,12 @@ while ( ${fcDate} <= ${finalFCDate} )
   if ( ${updateSea} ) then
     set SST_FILE = ${GFSSST_DIR}/${fcDate}/x1.${MPASnCells}.sfc_update.${fcFileExt}
     ncks -A -v ${MPASSeaVariables} ${SST_FILE} ${fcFile}
+
+    if ( $status != 0 ) then
+      touch ./FAIL
+      echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $fcFile" >> ./FAIL
+      exit 1
+    endif
   endif
 
   ## Add MPASDiagVariables to the next cycle bg file (if needed)

@@ -70,8 +70,10 @@ end
 #TODO: create link until gridfname is used
 ln -sf ${bgFile} ${localTemplateFieldsFile}
 
-## link static fields:
-ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
+## copy static fields:
+rm ${localStaticFieldsFile}
+ln -sf ${staticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+cp -v ${staticFieldsFile} ${localStaticFieldsFile}
 
 # ===================
 # ===================
@@ -96,6 +98,11 @@ if ( $status != 0 ) then
   echo "ERROR in $0 : jedi application failed" >> ./FAIL
   exit 1
 endif
+
+## change static fields to a link:
+rm ${localStaticFieldsFile}
+rm ${localStaticFieldsFile}${OrigFileSuffix}
+ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
 
 date
 
