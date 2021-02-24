@@ -66,8 +66,7 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-# use one of the backgrounds as the localTemplateFieldsFile (see jediPrep)
-#TODO: create link until gridfname is used
+# use one of the backgrounds as the localTemplateFieldsFile
 ln -sf ${bgFile} ${localTemplateFieldsFile}
 
 ## copy static fields:

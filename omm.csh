@@ -78,7 +78,7 @@ if ( $copyDiags > 0 ) then
   ncks -A -v ${MPASDiagVariables} ${diagFile} ${bgFile}
 endif
 
-# use the background as the localTemplateFieldsFile (see jediPrep)
+# use the background as the localTemplateFieldsFile
 ln -sf ${bgFile} ${localTemplateFieldsFile}
 
 ## copy static fields:

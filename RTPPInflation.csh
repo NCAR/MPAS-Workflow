@@ -77,10 +77,8 @@ sed -i 's@RTPPInflationFactor@'${RTPPInflationFactor}'@g' $thisYAML
 #sed -i 's@2018041500@'${thisValidDate}'@g' $thisYAML
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 
-# use one of the backgrounds as the meshFile
+# use one of the analyses as the localTemplateFieldsFile
 set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
-
-#TODO: create link until gridfname is used
 ln -sf $meshFile ${localTemplateFieldsFile}
 
 ## copy static fields:
@@ -89,7 +87,6 @@ ln -sf ${staticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${staticFieldsFile} ${localStaticFieldsFile}
 
 ## file naming
-sed -i 's@meshFile@'${meshFile}'@g' $thisYAML
 sed -i 's@OOPSMemberDir@/mem%{member}%@g' $thisYAML
 sed -i 's@anStatePrefix@'${anPrefix}'@g' $thisYAML
 sed -i 's@anStateDir@'${CyclingDAOutDir}'@g' $thisYAML

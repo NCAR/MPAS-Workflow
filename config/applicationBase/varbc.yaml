@@ -5,7 +5,6 @@ variational:
     algorithm: DRIPCG
   iterations:
   - geometry:
-      gridfname: templateFieldsFile
       deallocate non-da fields: true
     ninner: '15'
     gradient norm reduction: 1e-10
@@ -21,7 +20,6 @@ cost function:
   window begin: 'WindowBegin'
   window length: PT6H
   geometry:
-    gridfname: templateFieldsFile
     deallocate non-da fields: true
   analysis variables: &incvars [AnalysisVariables]
   background:
