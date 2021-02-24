@@ -90,6 +90,8 @@ setenv ABEInflation False
 setenv ABEIChannel 8
 setenv LeaveOneOutEDA True
 setenv LeaveOneOutName LeaveOneOut
+
+## ExpSuffix1: give an experiment a unique suffix to distinguish it from others
 set ExpSuffix1 = ''
 
 #GEFS reference case (override above settings)
