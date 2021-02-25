@@ -12,17 +12,21 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-set self_StatePrefix = ${FCFilePrefix}
-
+# static work directory
 set self_WorkDir = $CyclingABEInflationDir
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
+# other static variables
+set self_StatePrefix = ${FCFilePrefix}
 set self_AppType = ${omm}
 
-## link static fields:
-ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
+## copy static fields:
+set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
+set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
+rm ${localStaticFieldsFile}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 # gridTemplateFile must include latCell, lonCell, theta, and surface_pressure
 set gridTemplateFile = ${self_WorkDir}/${localStaticFieldsFile}
@@ -30,7 +34,7 @@ set gridTemplateFile = ${self_WorkDir}/${localStaticFieldsFile}
 # could use mean state, but not guaranteed to have all required fields
 #set meanStatePrefix = ${FCFilePrefix}
 #set meanName = ${meanStatePrefix}.$fileDate.nc
-#set gridTemplateFile = $MeanBackgroundDir/$meanName
+#set gridTemplateFile = $MeanBackgroundDirs[1]/$meanName
 
 
 # location of mean background obs-space hofx database

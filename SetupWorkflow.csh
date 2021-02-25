@@ -32,8 +32,10 @@ set member = 1
 while ( $member <= ${nEnsDAMembers} )
   if ( "$DAType" =~ *"eda"* ) then
     set InitialFC = "$firstEnsFCDir"`${memberDir} ens $member "${firstEnsFCMemFmt}"`
+    set FirstCycleFilePrefix = ${FCFilePrefix}
   else
     set InitialFC = $firstDetermFCDir
+    set FirstCycleFilePrefix = ${RSTFilePrefix}
   endif
   rm -r $prevCyclingFCDirs[$member]
   mkdir -p $prevCyclingFCDirs[$member]
@@ -70,22 +72,22 @@ setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
 
 #------- CyclingDA ---------
 #TODO: enable mean state diagnostics; only works for deterministic DA
-set WorkDir = ${CyclingDADir}
+set WorkDir = $CyclingDADirs[1]
 set cylcTaskType = CyclingDA
 set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
-sed -e 's@wrapWorkDirsArg@CyclingDADir@' \
-    -e 's@AppScriptNameArg@da@' \
-    -e 's@cylcTaskTypeArg@'${cylcTaskType}'@' \
-    -e 's@wrapStateDirsArg@prevCyclingFCDirs@' \
-    -e 's@wrapStatePrefixArg@'${FCFilePrefix}'@' \
-    -e 's@wrapStateTypeArg@DA@' \
-    -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
-    -e 's@wrapWindowHRArg@'${CyclingWindowHR}'@' \
-    -e 's@wrapAppNameArg@'${DAType}'@g' \
-    -e 's@wrapjediAppNameArg@variational@g' \
-    -e 's@wrapnOuterArg@1@g' \
-    -e 's@wrapAppTypeArg@da@g' \
-    -e 's@wrapObsListArg@DAObsList@' \
+sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
+    -e 's@AppScriptNameTEMPLATE@da@' \
+    -e 's@cylcTaskTypeTEMPLATE@'${cylcTaskType}'@' \
+    -e 's@wrapStateDirsTEMPLATE@prevCyclingFCDirs@' \
+    -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
+    -e 's@wrapStateTypeTEMPLATE@DA@' \
+    -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \
+    -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
+    -e 's@wrapAppNameTEMPLATE@'${DAType}'@g' \
+    -e 's@wrapjediAppNameTEMPLATE@variational@g' \
+    -e 's@wrapnOuterTEMPLATE@1@g' \
+    -e 's@wrapAppTypeTEMPLATE@da@g' \
+    -e 's@wrapObsListTEMPLATE@DAObsList@' \
     ${AppAndVerify}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}
 ${WrapperScript}
@@ -95,10 +97,10 @@ rm ${WrapperScript}
 #------- CyclingFC ---------
 echo "Making CyclingFC job script"
 set JobScript=${mainScriptDir}/CyclingFC.csh
-sed -e 's@WorkDirsArg@CyclingFCDirs@' \
-    -e 's@StateDirsArg@CyclingDAOutDirs@' \
-    -e 's@fcLengthHRArg@'${CyclingWindowHR}'@' \
-    -e 's@fcIntervalHRArg@'${CyclingWindowHR}'@' \
+sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
+    -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
+    -e 's@fcLengthHRTEMPLATE@'${CyclingWindowHR}'@' \
+    -e 's@fcIntervalHRTEMPLATE@'${CyclingWindowHR}'@' \
     fc.csh > ${JobScript}
 chmod 744 ${JobScript}
 
@@ -106,10 +108,10 @@ chmod 744 ${JobScript}
 #------- ExtendedMeanFC ---------
 echo "Making ExtendedMeanFC job script"
 set JobScript=${mainScriptDir}/ExtendedMeanFC.csh
-sed -e 's@WorkDirsArg@ExtendedMeanFCDir@' \
-    -e 's@StateDirsArg@MeanAnalysisDir@' \
-    -e 's@fcLengthHRArg@'${ExtendedFCWindowHR}'@' \
-    -e 's@fcIntervalHRArg@'${ExtendedFC_DT_HR}'@' \
+sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
+    -e 's@StateDirsTEMPLATE@MeanAnalysisDirs@' \
+    -e 's@fcLengthHRTEMPLATE@'${ExtendedFCWindowHR}'@' \
+    -e 's@fcIntervalHRTEMPLATE@'${ExtendedFC_DT_HR}'@' \
     fc.csh > ${JobScript}
 chmod 744 ${JobScript}
 
@@ -117,10 +119,10 @@ chmod 744 ${JobScript}
 #------- ExtendedEnsFC ---------
 echo "Making ExtendedEnsFC job script"
 set JobScript=${mainScriptDir}/ExtendedEnsFC.csh
-sed -e 's@WorkDirsArg@ExtendedEnsFCDirs@' \
-    -e 's@StateDirsArg@CyclingDAOutDirs@' \
-    -e 's@fcLengthHRArg@'${ExtendedFCWindowHR}'@' \
-    -e 's@fcIntervalHRArg@'${ExtendedFC_DT_HR}'@' \
+sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
+    -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
+    -e 's@fcLengthHRTEMPLATE@'${ExtendedFCWindowHR}'@' \
+    -e 's@fcIntervalHRTEMPLATE@'${ExtendedFC_DT_HR}'@' \
     fc.csh > ${JobScript}
 chmod 744 ${JobScript}
 
@@ -128,31 +130,31 @@ chmod 744 ${JobScript}
 #------- CalcOM{{state}}, VerifyObs{{state}}, VerifyModel{{state}} ---------
 foreach state (AN BG EnsMeanBG MeanFC EnsFC)
   if (${state} == AN) then
-    set myArgs = (CyclingDAOutDirs ${ANFilePrefix} ${DAVFWindowHR})
+    set TemplateVariables = (CyclingDAOutDirs ${ANFilePrefix} ${DAVFWindowHR})
   else if (${state} == BG) then
-    set myArgs = (prevCyclingFCDirs ${FCFilePrefix} ${DAVFWindowHR})
+    set TemplateVariables = (prevCyclingFCDirs ${FCFilePrefix} ${DAVFWindowHR})
   else if (${state} == EnsMeanBG) then
-    set myArgs = (CyclingDAInDir/mean ${FCFilePrefix} ${DAVFWindowHR})
+    set TemplateVariables = (MeanBackgroundDirs ${FCFilePrefix} ${DAVFWindowHR})
   else if (${state} == MeanFC) then
-    set myArgs = (ExtendedMeanFCDir ${FCFilePrefix} ${FCVFWindowHR})
+    set TemplateVariables = (ExtendedMeanFCDirs ${FCFilePrefix} ${FCVFWindowHR})
   else if (${state} == EnsFC) then
-    set myArgs = (ExtendedEnsFCDirs ${FCFilePrefix} ${FCVFWindowHR})
+    set TemplateVariables = (ExtendedEnsFCDirs ${FCFilePrefix} ${FCVFWindowHR})
   endif
   set cylcTaskType = CalcOM${state}
   set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh
-  sed -e 's@wrapWorkDirsArg@Verify'${state}'Dirs@' \
-      -e 's@AppScriptNameArg@'${omm}'@' \
-      -e 's@cylcTaskTypeArg@'${cylcTaskType}'@' \
-      -e 's@wrapStateDirsArg@'$myArgs[1]'@' \
-      -e 's@wrapStatePrefixArg@'$myArgs[2]'@' \
-      -e 's@wrapStateTypeArg@'${state}'@' \
-      -e 's@wrapVARBCTableArg@'${VARBC_TABLE}'@' \
-      -e 's@wrapWindowHRArg@'$myArgs[3]'@' \
-      -e 's@wrapAppNameArg@'${omm}'@g' \
-      -e 's@wrapjediAppNameArg@hofx@g' \
-      -e 's@wrapnOuterArg@0@g' \
-      -e 's@wrapAppTypeArg@'${omm}'@g' \
-      -e 's@wrapObsListArg@OMMObsList@' \
+  sed -e 's@wrapWorkDirsTEMPLATE@Verify'${state}'Dirs@' \
+      -e 's@AppScriptNameTEMPLATE@'${omm}'@' \
+      -e 's@cylcTaskTypeTEMPLATE@'${cylcTaskType}'@' \
+      -e 's@wrapStateDirsTEMPLATE@'$TemplateVariables[1]'@' \
+      -e 's@wrapStatePrefixTEMPLATE@'$TemplateVariables[2]'@' \
+      -e 's@wrapStateTypeTEMPLATE@'${state}'@' \
+      -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \
+      -e 's@wrapWindowHRTEMPLATE@'$TemplateVariables[3]'@' \
+      -e 's@wrapAppNameTEMPLATE@'${omm}'@g' \
+      -e 's@wrapjediAppNameTEMPLATE@hofx@g' \
+      -e 's@wrapnOuterTEMPLATE@0@g' \
+      -e 's@wrapAppTypeTEMPLATE@'${omm}'@g' \
+      -e 's@wrapObsListTEMPLATE@OMMObsList@' \
       ${AppAndVerify}.csh > ${WrapperScript}
   chmod 744 ${WrapperScript}
   ${WrapperScript}

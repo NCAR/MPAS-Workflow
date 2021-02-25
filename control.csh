@@ -1,10 +1,18 @@
 #!/bin/csh -f
 
-
 ## FirstCycleDate
 # used to initiate new experiments
 setenv FirstCycleDate 2018041500
 
+# TODO: split up control.csh so that $advanceCYMDH can be executed properly
+#       prevFirstCycleDate is temporarily hard-coded here
+#       Search prevFirstCycleDate below for context
+set prevFirstCycleDate = 2018041418
+
+## base set of observation types assimilated in all experiments
+set defaultObsList = (sondes aircraft satwind gnssroref sfcp clramsua)
+
+## application indices allowing re-use of common components for similar applications
 set applicationIndex = ( da omm )
 set applicationObsIndent = ( 2 0 )
 
@@ -18,9 +26,6 @@ foreach application (${applicationIndex})
     set ommIndex = $index
   endif
 end
-
-## base set of observation types assimilated in all experiments
-set defaultObsList = (sondes aircraft satwind gnssroref sfcp clramsua)
 
 ## ABI super-obbing footprint, set independently
 #  for da and omm using applicationIndex
@@ -93,6 +98,7 @@ setenv LeaveOneOutName LeaveOneOut
 
 ## ExpSuffix1: give an experiment a unique suffix to distinguish it from others
 set ExpSuffix1 = ''
+set ExpSuffix1 = '_newDirectoryVariables'
 
 #GEFS reference case (override above settings)
 #====================================================
@@ -151,8 +157,6 @@ end
 #(3) combine for whole ExpName
 setenv ExpName ${DAType}${ExpObsName}${ExpSuffix0}${ExpSuffix1}
 
-setenv PANDACCommonData   /glade/p/mmm/parc/liuz/pandac_common
-
 #
 # verification settings
 # =============================================
@@ -167,8 +171,10 @@ setenv diagPrefix     ydiags
 #
 # cycling settings
 # =============================================
-setenv updateSea 1
 
+##################################
+## analysis and forecast intervals
+##################################
 setenv CyclingWindowHR 6                # forecast interval between CyclingDA analyses
 setenv ExtendedFCWindowHR 240           # length of verification forecasts
 setenv ExtendedFC_DT_HR 12              # interval between OMF verification times of an individual forecast
@@ -177,7 +183,14 @@ setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of ex
 setenv DAVFWindowHR ${CyclingWindowHR}  # window of observations included in AN/BG verification
 setenv FCVFWindowHR 6                   # window of observations included in forecast verification
 
-## 120km
+##################################
+## mesh-specific settings
+##################################
+
+## 120km mesh
+## ----------
+
+## grid-spacing, time step, and thinning
 setenv MPASGridDescriptor 120km
 setenv MPASnCells 40962
 setenv MPASTimeStep 720.0
@@ -186,6 +199,7 @@ setenv MPASDiffusionLengthScale 120000.0
 setenv RADTHINDISTANCE     "200.0"
 setenv RADTHINAMOUNT       "0.98"
 
+## job length and node/pe requirements
 setenv CyclingFCJobMinutes 5
 setenv CyclingFCNodes 4
 setenv CyclingFCPEPerNode 32
@@ -220,7 +234,10 @@ setenv CyclingInflationMemory 109
 setenv CyclingInflationNodesPerMember ${CalcOMMNodes}
 setenv CyclingInflationPEPerNode      ${CalcOMMPEPerNode}
 
-## 30km
+## 30km mesh
+## ----------
+
+## grid-spacing, time step, and thinning
 #setenv MPASGridDescriptor 30km
 #setenv MPASnCells 655362
 #setenv MPASTimeStep 180.0
@@ -228,6 +245,7 @@ setenv CyclingInflationPEPerNode      ${CalcOMMPEPerNode}
 #setenv RADTHINDISTANCE    "60.0"
 #setenv RADTHINAMOUNT      "0.75"
 
+## job length and node/pe requirements
 #setenv CyclingFCJobMinutes     10
 #setenv CyclingFCNodes 8
 #setenv CyclingFCPEPerNode 32
@@ -252,6 +270,9 @@ setenv CyclingInflationPEPerNode      ${CalcOMMPEPerNode}
 #endif
 
 
+######################################
+## state file descriptors
+######################################
 setenv RSTFilePrefix   restart
 setenv ICFilePrefix    mpasin
 setenv InitFilePrefix x1.${MPASnCells}.init
@@ -264,7 +285,6 @@ setenv ANFilePrefix    an
 setenv anDir           ${ANFilePrefix}
 setenv BGFilePrefix    bg
 setenv bgDir           ${BGFilePrefix}
-#setenv anStatePrefix   analysis
 
 setenv TemplateFilePrefix templateFields
 setenv localStaticFieldsFile static.nc
@@ -272,6 +292,9 @@ setenv localStaticFieldsFile static.nc
 setenv OrigFileSuffix  _orig
 
 
+####################################
+## workflow-relevant state variables
+####################################
 setenv MPASDiagVariables cldfrac
 setenv MPASSeaVariables sst,xice
 set MPASHydroVariables = (qc qi qg qr qs)
@@ -338,42 +361,57 @@ setenv daModelConfigDir ${CONFIGDIR}/mpas/da
 setenv fcModelConfigDir ${CONFIGDIR}/mpas/fc
 setenv rtppModelConfigDir ${CONFIGDIR}/mpas/rtpp
 
-## directory string formatter for EDA members
-# argument to memberDir.py
-# must match oops/src/oops/util/string_utils::swap_name_member
-setenv oopsMemFmt "/mem{:03d}"
+## workflow tools
+set pyDir = ${mainScriptDir}/tools
+set pyTools = (memberDir advanceCYMDH nSpaces)
+foreach tool ($pyTools)
+  setenv ${tool} "python ${pyDir}/${tool}.py"
+end
 
+## directory string formatter for EDA members
+# third argument to memberDir.py
+setenv flowMemFmt "/mem{:03d}"
+
+#set prevFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} -${CyclingWindowHR}`
+set yy = `echo ${prevFirstCycleDate} | cut -c 1-4`
+set mm = `echo ${prevFirstCycleDate} | cut -c 5-6`
+set dd = `echo ${prevFirstCycleDate} | cut -c 7-8`
+set hh = `echo ${prevFirstCycleDate} | cut -c 9-10`
+set prevFirstFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
+#set prevFirstNMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
+#set prevFirstConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
 #
 # static data directories
 # =============================================
-setenv STATICUSER            guerrett
-setenv TOP_STATIC_DIR        /glade/work/${STATICUSER}/pandac
-setenv FIXED_INPUT           ${TOP_STATIC_DIR}/fixed_input
+setenv STATICUSER       guerrett
+setenv TOP_STATIC_DIR   /glade/work/${STATICUSER}/pandac
+setenv FIXED_INPUT      ${TOP_STATIC_DIR}/fixed_input
+setenv PANDACCommonData /glade/p/mmm/parc/liuz/pandac_common
 
 ## deterministic input
 #GFS
-setenv GFS6hfcFORFirstCycle  /glade/work/liuz/pandac/fix_input/${MPASGridDescriptor}_1stCycle_background/2018041418
-#setenv GFSANA6hfc_DIR        ${FIXED_INPUT}/${MPASGridDescriptor}/GFSANA6HFC
+#setenv GFS6hfcFORFirstCycle  /glade/work/liuz/pandac/fix_input/${MPASGridDescriptor}_1stCycle_background/${prevFirstCycleDate} --> deprecate soon 25-Feb-2021
+setenv GFS6hfcFORFirstCycle ${PANDACCommonData}/${MPASGridDescriptor}_1stCycle_background/${prevFirstCycleDate}
+setenv GFSAnaDir ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA
 
 ## ensemble input
 #GEFS
 set gefsMemFmt = "/{:02d}"
 set nGEFSMembers = 20
-
 set GEFS6hfcFOREnsBDir = ${PANDACCommonData}/${MPASGridDescriptor}_EnsFC
 set GEFS6hfcFOREnsBFilePrefix = EnsForCov
+set GEFSAnaDir = /glade/p/mmm/parc/guerrett/pandac/fixed_input/${MPASGridDescriptor}
+set GEFS6hfcFORFirstCycle = ${GEFSAnaDir}/${MPASGridDescriptor}EnsFCFirstCycle/${prevFirstCycleDate}
 
-set GEFS6hfcFORFirstCycle = /glade/p/mmm/parc/guerrett/pandac/fixed_input/${MPASGridDescriptor}/${MPASGridDescriptor}EnsFCFirstCycle/2018041418
-
-#deterministic DA
+## deterministic DA
 setenv firstDetermFCDir ${GFS6hfcFORFirstCycle}
 setenv fixedEnsBMemFmt "${gefsMemFmt}"
 setenv fixedEnsBNMembers ${nGEFSMembers}
 setenv fixedEnsBDir ${GEFS6hfcFOREnsBDir}
 setenv fixedEnsBFilePrefix ${GEFS6hfcFOREnsBFilePrefix}
 
-#ensemble DA
+## ensemble DA
 setenv firstEnsFCMemFmt "${gefsMemFmt}"
 setenv firstEnsFCNMembers 80
 setenv firstEnsFCDir ${GEFS6hfcFORFirstCycle}
@@ -382,28 +420,55 @@ if ( $nEnsDAMembers > $firstEnsFCNMembers ) then
   echo "WARNING: nEnsDAMembers must be <= nFixedMembers, changing ensemble size"
   setenv nEnsDAMembers ${nFixedMembers}
 endif
-setenv dynamicEnsBMemFmt "${oopsMemFmt}"
+setenv dynamicEnsBMemFmt "${flowMemFmt}"
 setenv dynamicEnsBNMembers ${nEnsDAMembers}
 setenv dynamicEnsBDir ${CyclingFCWorkDir}
 setenv dynamicEnsBFilePrefix ${FCFilePrefix}
 
-setenv GFSANA_DIR ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA
-setenv GFSSST_DIR ${GFSANA_DIR}
+## MPASSeaVariables file info
+setenv updateSea 1
+#if ( "$DAType" =~ *"eda"* ) then
+# TODO: process sst/xice data for all GEFS members at all cycle/forecast dates
+#  # stochastic
+#  setenv SeaAnaDir ${GEFSAnaDir}/GEFS/init/000hr
+#  setenv seaMemFmt "${gefsMemFmt}"
+#  setenv SeaFilePrefix ${InitFilePrefix}
+#else
+  # deterministic
+  setenv SeaAnaDir ${GFSAnaDir}
+  setenv seaMemFmt " "
+  setenv SeaFilePrefix x1.${MPASnCells}.sfc_update
+#endif
 
-## MPAS-Model and MPAS-JEDI
-setenv GRAPHINFO_DIR         ${FIXED_INPUT}/${MPASGridDescriptor}/graph
 
+#############
+## MPAS-Model
+#############
+## directory containing x1.${MPASnCells}.graph.info* files
+setenv GraphInfoDir /glade/work/duda/static_moved_to_campaign
+
+## static.nc source data
+if ( "$DAType" =~ *"eda"* ) then
+  # stochastic
+  setenv staticFieldsDir ${GEFSAnaDir}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv staticMemFmt "${gefsMemFmt}"
+  setenv staticFieldsFile ${InitFilePrefix}.${prevFirstFileDate}.nc
+else
+  # deterministic
+  setenv staticFieldsDir ${GFSAnaDir}/${prevFirstCycleDate}
+  setenv staticMemFmt " "
+  setenv staticFieldsFile ${InitFilePrefix}.${prevFirstFileDate}.nc
+endif
+
+############
+## MPAS-JEDI
+############
 ## Background Error
-#17NOV2020 code
-#setenv bumpLocDir            ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${CyclingDAPEPerMember}pe_old
-
-#After 15 Dec 2020 code
-#setenv bumpLocDir            ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${CyclingDAPEPerMember}pe
-
-#After 08 Feb 2021 code
-setenv bumpLocDir            ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${CyclingDAPEPerMember}pe_20210208
-
-setenv bumpLocPrefix         bumploc_2000_5
+# Last updated 08 Feb 2021
+# works for 36pe/128pe and 120km domain
+#setenv bumpLocDir ${FIXED_INPUT}/${MPASGridDescriptor}/bumploc_${CyclingDAPEPerMember}pe_20210208
+setenv bumpLocDir /glade/scratch/bjung/x_bumploc_20210208
+setenv bumpLocPrefix bumploc_2000_5
 
 ## Observations
 setenv CONVObsDir          ${TOP_STATIC_DIR}/obs/conv
@@ -480,35 +545,25 @@ module load python/3.7.5
 #
 # build directory structures
 # =============================================
-setenv BUILDUSER         ${USER}
+setenv BUILDUSER         guerrett
 setenv TOP_BUILD_DIR     /glade/work/${BUILDUSER}/pandac
-#MPAS-JEDI
+
+
+############
+## MPAS-JEDI
+############
+set BundleFeatureName = ''
+set BundleFeatureName = '_19FEB2021'
+
 if ( "$DAType" =~ *"eda"* ) then
   setenv DAEXE           mpasjedi_eda.x
-  setenv FirstCycleFilePrefix ${FCFilePrefix}
-#TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
-  #setenv staticFieldsDir $GEFS6hfcFORFirstCycle #includes date 201804141800
-  #setenv staticFieldsFile ${staticFieldsDir}/$memDir/${RSTFilePrefix}.2018-04-15_00.00.00.nc
-  setenv staticFieldsDir /glade/scratch/guerrett/pandac/data/GEFS/init/mpas_120km/000hr/2018041418/01
-  setenv staticFieldsFile ${staticFieldsDir}/${InitFilePrefix}.2018-04-14_18.00.00.nc
 else
   setenv DAEXE           mpasjedi_variational.x
-  setenv FirstCycleFilePrefix ${RSTFilePrefix}
-  setenv staticFieldsDir ${GFSANA_DIR}
-  setenv staticFieldsFile ${staticFieldsDir}/${InitFilePrefix}.2018-04-14_18.00.00.nc
 endif
-set BundleFeatureName = ''
-#set BundleFeatureName = $ExpSuffix1
-#set BundleFeatureName = '_17NOV2020'
-#set BundleFeatureName = '_16FEB2021'
-set BundleFeatureName = '_19FEB2021'
-#set BundleFeatureName = '_Debug'
-
 setenv DABuild         mpas-bundle${CUSTOMPIO}_${COMPILER}${BundleFeatureName}
 setenv DABuildDir      ${TOP_BUILD_DIR}/build/${DABuild}/bin
 
 setenv OMMEXE          mpasjedi_hofx_nomodel.x
-
 setenv OMMBuild        mpas-bundle${CUSTOMPIO}_${COMPILER}${BundleFeatureName}
 setenv OMMBuildDir     ${TOP_BUILD_DIR}/build/${OMMBuild}/bin
 
@@ -516,12 +571,12 @@ setenv RTPPEXE         mpasjedi_rtpp.x
 setenv RTPPBuild       mpas-bundle${CUSTOMPIO}_${COMPILER}_feature--rtpp_app
 setenv RTPPBuildDir    ${TOP_BUILD_DIR}/build/${RTPPBuild}/bin
 
-
-#setenv HOFXEXE         mpasjedi_hofx_nomodel.x
-
 setenv appyaml         jedi.yaml
 
-#MPAS-Model
+
+#############
+## MPAS-Model
+#############
 setenv MPASCore        atmosphere
 setenv FCEXE           mpas_${MPASCore}
 set FCProject = MPAS
@@ -530,23 +585,16 @@ setenv FCBuildDir      ${TOP_BUILD_DIR}/build/${FCBuild}/bin
 setenv FCLookupDir     ${TOP_BUILD_DIR}/build/${FCBuild}/${FCProject}/core_${MPASCore}
 set FCLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
 
-#Verification tools
+
+#####################
+## Verification tools
+#####################
 setenv meanStateExe      average_netcdf_files_parallel_mpas_${COMPILER}.x
 setenv meanStateBuildDir /glade/work/guerrett/pandac/work/meanState
 #TODO: add these to the repo, possibly under graphics/plot/postprocess/tools directory
 #setenv pyObsDir          ${FIXED_INPUT}/graphics_obs
 setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_abei
-#setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_abei2.0
-#setenv pyObsDir          ${FIXED_INPUT}/graphics_obs_abei0.5
-
 setenv pyModelDir        ${FIXED_INPUT}/graphics_model
-
-#Cycling tools
-set pyDir = ${mainScriptDir}/tools
-set pyTools = (memberDir advanceCYMDH nSpaces)
-foreach tool ($pyTools)
-  setenv ${tool} "python ${pyDir}/${tool}.py"
-end
 
 
 #

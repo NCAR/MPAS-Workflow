@@ -5,9 +5,9 @@ setenv prevCycleDate ${prevCycleDate}
 #setenv nextCycleDate ${nextCycleDate}
 
 ## setup cycle directory names
-set CyclingDADir = ${CyclingDAWorkDir}/${thisCycleDate}
-set CyclingDAInDir = ${CyclingDADir}/${bgDir}
-set CyclingDAOutDir = ${CyclingDADir}/${anDir}
+set CyclingDADirs = (${CyclingDAWorkDir}/${thisCycleDate})
+set CyclingDAInDir = $CyclingDADirs[1]/${bgDir}
+set CyclingDAOutDir = $CyclingDADirs[1]/${anDir}
 
 set prevCyclingDADir = ${CyclingDAWorkDir}/${prevCycleDate}
 set CyclingFCDir = ${CyclingFCWorkDir}/${thisCycleDate}
@@ -15,12 +15,12 @@ set prevCyclingFCDir = ${CyclingFCWorkDir}/${prevCycleDate}
 set ExtendedFCDir = ${ExtendedFCWorkDir}/${thisCycleDate}
 
 set memDir = /mean
-set MeanBackgroundDir = ${CyclingDAInDir}${memDir}
-set MeanAnalysisDir = ${CyclingDAOutDir}${memDir}
-set ExtendedMeanFCDir = ${ExtendedFCDir}${memDir}
-set VerifyEnsMeanBGDirs = ${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate}
-set VerifyMeanANDirs = ${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate}
-set VerifyMeanFCDirs = ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate}
+set MeanBackgroundDirs = (${CyclingDAInDir}${memDir})
+set MeanAnalysisDirs = (${CyclingDAOutDir}${memDir})
+set ExtendedMeanFCDirs = (${ExtendedFCDir}${memDir})
+set VerifyEnsMeanBGDirs = (${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate})
+set VerifyMeanANDirs = (${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
+set VerifyMeanFCDirs = (${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
 
 set CyclingInflationDir = ${CyclingInflationWorkDir}/${thisCycleDate}
 set CyclingRTPPInflationDir = ${CyclingInflationDir}/RTPP
@@ -47,9 +47,9 @@ set VerifyEnsFCDirs = ()
 set member = 1
 set VerifyBGPrefix = ${VerificationWorkDir}/${bgDir}
 set VerifyANPrefix = ${VerificationWorkDir}/${anDir}
-#set VerifyObsDAEnsFmt = "${CyclingDADir}/${OutDBDir}${oopsMemFmt}"
-#set VerifyObsBGEnsFmt = "${VerifyBGPrefix}${oopsMemFmt}/${thisCycleDate}/${OutDBDir}"
-#set VerifyObsANEnsFmt = "${VerifyANPrefix}${oopsMemFmt}/${thisCycleDate}/${OutDBDir}"
+#set VerifyObsDAEnsFmt = "$CyclingDADirs[1]/${OutDBDir}${flowMemFmt}"
+#set VerifyObsBGEnsFmt = "${VerifyBGPrefix}${flowMemFmt}/${thisCycleDate}/${OutDBDir}"
+#set VerifyObsANEnsFmt = "${VerifyANPrefix}${flowMemFmt}/${thisCycleDate}/${OutDBDir}"
 #echo "VerifyObsDAEnsFmt = ${VerifyObsDAEnsFmt}"
 #echo "VerifyObsBGEnsFmt = ${VerifyObsBGEnsFmt}"
 #echo "VerifyObsANEnsFmt = ${VerifyObsANEnsFmt}"
@@ -77,6 +77,9 @@ while ( $member <= ${nEnsDAMembers} )
 
   @ member++
 end
+
+set ObsDiagnosticsDir = diagnostic_stats/obs
+set ModelDiagnosticsDir = diagnostic_stats/model
 
 #
 # Universal time info for namelist, yaml etc:

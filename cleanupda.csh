@@ -12,10 +12,9 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-set self_WorkDir = $CyclingDADir
-
+# static work directory
+set self_WorkDir = $CyclingDADirs[1]
 echo "WorkDir = ${self_WorkDir}"
-
 cd ${self_WorkDir}
 
 # Remove obs-database output files

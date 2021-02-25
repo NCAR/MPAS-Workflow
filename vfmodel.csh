@@ -2,9 +2,34 @@
 
 date
 
+## args
+# ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
+
+# ArgDT: int, valid forecast length beyond CYLC_TASK_CYCLE_POINT in hours
 set ArgDT = "$2"
+
+# ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
+
+## arg checks
+set test = `echo $ArgMember | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
+  exit 1
+endif
+if ( $ArgMember < 1 ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
+  exit 1
+endif
+
+set test = `echo $ArgDT | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
 
 #
 # Setup environment:
@@ -16,37 +41,22 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isInt = (! $status)
-if ( $isInt && "$ArgMember" != "0") then
-  set self_WorkDir = $WorkDirsArg[$ArgMember]
-  set self_StateDir = $inStateDirsArg[$ArgMember]
-else
-  set self_WorkDir = $WorkDirsArg
-  set self_StateDir = $inStateDirsArg
-endif
-set test = `echo $ArgDT | grep '^[0-9]*$'`
-set isInt = (! $status)
-if ( ! $isInt) then
-  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
-  exit 1
-endif
+# templated work directory
+set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
 if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
   set self_WorkDir = $self_WorkDir/${ArgDT}hr
 endif
-setenv self_StatePrefix inStatePrefixArg
-
 echo "WorkDir = ${self_WorkDir}"
 
-#cd ${self_WorkDir}
-
-module load python/3.7.5
+# other templated variables
+setenv self_StatePrefix inStatePrefixTEMPLATE
+set self_StateDir = $inStateDirsTEMPLATE[$ArgMember]
 
 #
 # collect model-space diagnostic statistics into DB files:
 # ========================================================
-mkdir -p ${self_WorkDir}/diagnostic_stats/model
-cd ${self_WorkDir}/diagnostic_stats/model
+mkdir -p ${self_WorkDir}/${ModelDiagnosticsDir}
+cd ${self_WorkDir}/${ModelDiagnosticsDir}
 
 set other = $self_StateDir
 set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc

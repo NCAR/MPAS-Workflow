@@ -2,9 +2,34 @@
 
 date
 
+## args
+# ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
+
+# ArgDT: int, valid forecast length beyond CYLC_TASK_CYCLE_POINT in hours
 set ArgDT = "$2"
+
+# ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
+
+## arg checks
+set test = `echo $ArgMember | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
+  exit 1
+endif
+if ( $ArgMember < 1 ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
+  exit 1
+endif
+
+set test = `echo $ArgDT | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
 
 #
 # Setup environment:
@@ -16,29 +41,17 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isInt = (! $status)
-if ( $isInt && "$ArgMember" != "0") then
-  set self_WorkDir = $WorkDirsArg[$ArgMember]
-  set self_StateDir = $inStateDirsArg[$ArgMember]
-else
-  set self_WorkDir = $WorkDirsArg
-  set self_StateDir = $inStateDirsArg
-endif
-set test = `echo $ArgDT | grep '^[0-9]*$'`
-set isInt = (! $status)
-if ( ! $isInt) then
-  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
-  exit 1
-endif
+# templated work directory
+set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
 if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
   set self_WorkDir = $self_WorkDir/${ArgDT}hr
 endif
-set self_StatePrefix = inStatePrefixArg
-
 echo "WorkDir = ${self_WorkDir}"
-
 cd ${self_WorkDir}
+
+# other templated variables
+set self_StateDir = $inStateDirsTEMPLATE[$ArgMember]
+set self_StatePrefix = inStatePrefixTEMPLATE
 
 # Remove old logs
 rm jedi.log*
@@ -79,12 +92,14 @@ if ( $copyDiags > 0 ) then
 endif
 
 # use the background as the localTemplateFieldsFile
-ln -sf ${bgFile} ${localTemplateFieldsFile}
+ln -sf ${bgFile} ${localTemplateFieldsFile}## copy static fieldsset staticMemDir = `${memberDir} ens $ArgMember "${staticMemFmt}"`
 
 ## copy static fields:
+set staticMemDir = `${memberDir} ens $ArgMember "${staticMemFmt}"`
+set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
 rm ${localStaticFieldsFile}
-ln -sf ${staticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${staticFieldsFile} ${localStaticFieldsFile}
+ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 # ===================
 # ===================
@@ -108,7 +123,7 @@ endif
 ## change static fields to a link:
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
-ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
+ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 date
 

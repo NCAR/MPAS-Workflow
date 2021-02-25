@@ -12,19 +12,22 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-set self_WorkDir = $MeanAnalysisDir
-set self_StateDirs = ($CyclingDAOutDirs)
-set self_StatePrefix = ${ANFilePrefix}
-
+# static work directory
+set self_WorkDir = $MeanAnalysisDirs[1]
 echo "WorkDir = ${self_WorkDir}"
-
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
+# other static variables
+set self_StateDirs = ($CyclingDAOutDirs)
+set self_StatePrefix = ${ANFilePrefix}
 set memberPrefix = ${self_StatePrefix}.${fileDate}mem
 set meanName = ${self_StatePrefix}.$fileDate.nc
 set varianceName = ${self_StatePrefix}.$fileDate.variance.nc
 
+# ====================================================================
+
+## link analysis members
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set appMember = `${memberDir} ens $member "{:03d}"`

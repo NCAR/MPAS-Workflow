@@ -16,11 +16,13 @@ if (${nEnsDAMembers} < 2) then
   exit 0
 endif
 
+# static work directory
 set self_WorkDir = $CyclingRTPPInflationDir
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
+# other static variables
 #set bgPrefix = $FCFilePrefix
 #set bgDirs = ($prevCyclingFCDirs)
 set bgPrefix = $BGFilePrefix
@@ -29,7 +31,7 @@ set anPrefix = $ANFilePrefix
 set anDirs = ($CyclingDAOutDirs)
 
 ## create RTPP mean output file to be overwritten
-set memDir = `${memberDir} ens 0 "${oopsMemFmt}"`
+set memDir = `${memberDir} ens 0 "${flowMemFmt}"`
 set meanDir = ${CyclingDAOutDir}${memDir}
 mkdir -p ${meanDir}
 cp $anDirs[1]/${anPrefix}.$fileDate.nc ${meanDir}
@@ -39,7 +41,7 @@ cp $anDirs[1]/${anPrefix}.$fileDate.nc ${meanDir}
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sf $GRAPHINFO_DIR/x1.${MPASnCells}.graph.info* .
+ln -sf $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($FCLookupFileGlobs)
@@ -60,7 +62,7 @@ cp -v $rtppModelConfigDir/${STREAMS} .
 sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
 
 ## link namelist.atmosphere already modifed for this cycle
-ln -sf $CyclingDADir/namelist.atmosphere ./
+ln -sf $CyclingDADirs[1]/namelist.atmosphere ./
 
 # =============
 # Generate yaml
@@ -82,9 +84,11 @@ set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
 ln -sf $meshFile ${localTemplateFieldsFile}
 
 ## copy static fields:
+set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
+set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
 rm ${localStaticFieldsFile}
-ln -sf ${staticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${staticFieldsFile} ${localStaticFieldsFile}
+ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 ## file naming
 sed -i 's@OOPSMemberDir@/mem%{member}%@g' $thisYAML
@@ -150,7 +154,7 @@ EOF
     set filename = $ensPDirs[$member]/${ensPFilePrefix}.${fileDate}.nc${ensPFileSuffix}
     ## copy original analysis files for diagnosing RTPP behavior (not necessary)
     if ($PMatrix == Pa) then
-      set memDir = "."`${memberDir} ens $member "${oopsMemFmt}"`
+      set memDir = "."`${memberDir} ens $member "${flowMemFmt}"`
       set anmemberDir = ${anDir}0/${memDir}
       rm -r ${anmemberDir}
       mkdir -p ${anmemberDir}
@@ -194,7 +198,7 @@ endif
 ## change static fields to a link:
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
-ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
+ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 date
 

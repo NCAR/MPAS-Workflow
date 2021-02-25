@@ -4,7 +4,7 @@
 
 # Cycle bounds
 set initialCyclePoint = 20180415T00
-set finalCyclePoint   = 20180514T18
+set finalCyclePoint   = 20180415T06
 
 # CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
@@ -61,7 +61,7 @@ set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
 set hh = `echo ${FirstCycleDate} | cut -c 9-10`
 set firstCyclePoint = ${yymmdd}T${hh}
 if ($initialCyclePoint == $firstCyclePoint) then
-  ./MakeCyclingScripts.csh
+  ./SetupWorkflow.csh
 endif
 
 ## Change to the cylc suite directory
@@ -281,7 +281,7 @@ cat >! suite.rc << EOF
       batch system = background
 #Cycling components
   [[CyclingDA]]
-    env-script = cd ${mainScriptDir}; ./jediPrepCyclingDA.csh "0" "0" "DA"
+    env-script = cd ${mainScriptDir}; ./jediPrepCyclingDA.csh "1" "0" "DA"
     script = \$origin/CyclingDA.csh
     [[[job]]]
       execution time limit = PT${CyclingDAJobMinutes}M
@@ -310,7 +310,7 @@ cat >! suite.rc << EOF
       batch system = background
   [[VerifyObsDA]]
     inherit = VerifyObsBase
-    script = \$origin/VerifyObsDA.csh "0" "0" "DA" "0"
+    script = \$origin/VerifyObsDA.csh "1" "0" "DA" "0"
   [[CleanupCyclingDA]]
     inherit = CleanupBase
     script = \$origin/CleanupCyclingDA.csh
@@ -347,23 +347,23 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
-    script = \$origin/ExtendedMeanFC.csh "0"
+    script = \$origin/ExtendedMeanFC.csh "1"
 {% for dt in ExtendedFCLengths %}
   [[CalcOMMeanFC{{dt}}hr]]
     inherit = OMMBase
-    env-script = cd ${mainScriptDir}; ./jediPrepCalcOMMeanFC.csh "0" "{{dt}}" "FC"
-    script = \$origin/CalcOMMeanFC.csh "0" "{{dt}}" "FC"
+    env-script = cd ${mainScriptDir}; ./jediPrepCalcOMMeanFC.csh "1" "{{dt}}" "FC"
+    script = \$origin/CalcOMMeanFC.csh "1" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = 4*PT30S
   [[CleanupCalcOMMeanFC{{dt}}hr]]
     inherit = CleanupBase
-    script = \$origin/CleanupCalcOMMeanFC.csh "0" "{{dt}}" "FC"
+    script = \$origin/CleanupCalcOMMeanFC.csh "1" "{{dt}}" "FC"
   [[VerifyObsMeanFC{{dt}}hr]]
     inherit = VerifyObsBase
-    script = \$origin/VerifyObsMeanFC.csh "0" "{{dt}}" "FC" "0"
+    script = \$origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0"
   [[VerifyModelMeanFC{{dt}}hr]]
     inherit = VerifyModelBase
-    script = \$origin/VerifyModelMeanFC.csh "0" "{{dt}}" "FC"
+    script = \$origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC"
 {% endfor %}
   [[ExtendedEnsFC]]
     inherit = ExtendedFCBase
@@ -428,8 +428,8 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[CalcOMEnsMeanBG]]
     inherit = OMMBase
-    env-script = cd ${mainScriptDir}; ./jediPrepCalcOMEnsMeanBG.csh "0" "0" "BG"
-    script = \$origin/CalcOMEnsMeanBG.csh "0" "0" "BG"
+    env-script = cd ${mainScriptDir}; ./jediPrepCalcOMEnsMeanBG.csh "1" "0" "BG"
+    script = \$origin/CalcOMEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = ${EnsMeanBGQueueName}
       -A = ${EnsMeanBGAccountNumber}
@@ -437,17 +437,17 @@ cat >! suite.rc << EOF
       execution retry delays = 4*PT30S
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
-    script = \$origin/VerifyModelEnsMeanBG.csh "0" "0" "BG"
+    script = \$origin/VerifyModelEnsMeanBG.csh "1" "0" "BG"
   [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
 {% if DiagnoseEnsSpreadBG %}
-    script = \$origin/VerifyObsEnsMeanBG.csh "0" "0" "BG" "{{nEnsDAMembers}}"
+    script = \$origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsDAMembers}}"
 {% else %}
-    script = \$origin/VerifyObsEnsMeanBG.csh "0" "0" "BG" "0"
+    script = \$origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "0"
 {% endif %}
   [[CleanupCalcOMEnsMeanBG]]
     inherit = CleanupBase
-    script = \$origin/CleanupCalcOMEnsMeanBG.csh "0" "0" "BG"
+    script = \$origin/CleanupCalcOMEnsMeanBG.csh "1" "0" "BG"
 [visualization]
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}

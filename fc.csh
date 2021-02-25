@@ -2,7 +2,21 @@
 
 date
 
+## args
+# ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
+
+## arg checks
+set test = `echo $ArgMember | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
+  exit 1
+endif
+if ( $ArgMember < 1 ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
+  exit 1
+endif
 
 #
 # Setup environment:
@@ -14,27 +28,23 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isInt = (! $status)
-if ( $isInt && "$ArgMember" != "0") then
-  set self_WorkDir = $WorkDirsArg[$ArgMember]
-  set self_icStateDir = $StateDirsArg[$ArgMember]
-else
-  set self_WorkDir = $WorkDirsArg
-  set self_icStateDir = $StateDirsArg
-endif
+# templated work directory
+set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
+echo "WorkDir = ${self_WorkDir}"
+mkdir -p ${self_WorkDir}
+cd ${self_WorkDir}
 
-set self_icStatePrefix = ${ANFilePrefix}
-set self_fcLengthHR = fcLengthHRArg
-set self_fcIntervalHR = fcIntervalHRArg
-
+# other templated variables
+set self_icStateDir = $StateDirsTEMPLATE[$ArgMember]
+set self_fcLengthHR = fcLengthHRTEMPLATE
+set self_fcIntervalHR = fcIntervalHRTEMPLATE
 set config_run_duration = 0_${self_fcLengthHR}:00:00
 set output_interval = 0_${self_fcIntervalHR}:00:00
 
-echo "WorkDir = ${self_WorkDir}"
+# static variables
+set self_icStatePrefix = ${ANFilePrefix}
 
-mkdir -p ${self_WorkDir}
-cd ${self_WorkDir}
+# ====================================================================
 
 ## link initial forecast state:
 set icFileExt = ${fileDate}.nc
@@ -44,7 +54,7 @@ ln -sf ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
 
 ## link MPAS mesh graph info
 rm ./x1.${MPASnCells}.graph.info*
-ln -sf $GRAPHINFO_DIR/x1.${MPASnCells}.graph.info* .
+ln -sf $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($FCLookupFileGlobs)
@@ -65,7 +75,7 @@ set STREAMS = streams.${MPASCore}
 rm ${STREAMS}
 cp -v $fcModelConfigDir/${STREAMS} .
 sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
-sed -i 's@outputIntervalArg@'${output_interval}'@' ${STREAMS}
+sed -i 's@outputInterval@'${output_interval}'@' ${STREAMS}
 
 ## copy/modify dynamic namelist
 set NL = namelist.atmosphere
@@ -105,9 +115,11 @@ else
   end
 
   ## copy static fields:
+  set staticMemDir = `${memberDir} ens $ArgMember "${staticMemFmt}"`
+  set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
   rm ${localStaticFieldsFile}
-  ln -sf ${staticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-  cp -v ${staticFieldsFile} ${localStaticFieldsFile}
+  ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+  cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
   #
   # Run the executable:
@@ -129,7 +141,7 @@ else
   ## change static fields to a link:
   rm ${localStaticFieldsFile}
   rm ${localStaticFieldsFile}${OrigFileSuffix}
-  ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
+  ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}
 endif
 
 #
@@ -149,10 +161,11 @@ while ( ${fcDate} <= ${finalFCDate} )
   set fcFileExt = ${fcFileDate}.nc
   set fcFile = ${FCFilePrefix}.${fcFileExt}
 
-  ## Update MPASSeaVariables from GFS ANA:
+  ## Update MPASSeaVariables from GFS/GEFS analyses:
   if ( ${updateSea} ) then
-    set SST_FILE = ${GFSSST_DIR}/${fcDate}/x1.${MPASnCells}.sfc_update.${fcFileExt}
-    ncks -A -v ${MPASSeaVariables} ${SST_FILE} ${fcFile}
+    set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}"`
+    set SeaFile = ${SeaAnaDir}/${fcDate}${seaMemDir}/${SeaFilePrefix}.${fcFileExt}
+    ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}
 
     if ( $status != 0 ) then
       touch ./FAIL

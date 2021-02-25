@@ -11,7 +11,6 @@ def memberStr():
                   help='Member count')
 
   ## directory string formatter for ensemble members
-  # default matches oops/src/oops/util/string_utils::swap_name_member
   ap.add_argument('fmt', default='/mem{:03d}', type=str, nargs = '?',
                   help='Member string format')
 

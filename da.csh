@@ -12,13 +12,14 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-set self_WorkDir = $CyclingDADir
-set self_StateDirs = ($inStateDirsArg)
-set self_StatePrefix = inStatePrefixArg
-
+# static work directory
+set self_WorkDir = $CyclingDADirs[1]
 echo "WorkDir = ${self_WorkDir}"
-
 cd ${self_WorkDir}
+
+# templated variables
+set self_StateDirs = ($inStateDirsTEMPLATE)
+set self_StatePrefix = inStatePrefixTEMPLATE
 
 # Remove old logs
 rm jedi.log*
@@ -70,9 +71,12 @@ end
 ln -sf ${bgFile} ${localTemplateFieldsFile}
 
 ## copy static fields:
+#TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
+set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
+set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
 rm ${localStaticFieldsFile}
-ln -sf ${staticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${staticFieldsFile} ${localStaticFieldsFile}
+ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 # ===================
 # ===================
@@ -101,7 +105,7 @@ endif
 ## change static fields to a link:
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
-ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
+ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 date
 

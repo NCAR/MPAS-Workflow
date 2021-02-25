@@ -1,13 +1,13 @@
 #!/bin/csh -f
 
 source ./control.csh
-set self_WorkDirs = wrapWorkDirsArg
-set self_cylcTaskType = cylcTaskTypeArg
-set self_inStateDirs = wrapStateDirsArg
-set self_inStatePrefix = wrapStatePrefixArg
-set self_StateType = wrapStateTypeArg
-set self_AppName = wrapAppNameArg
-set self_nOuter = wrapnOuterArg
+set self_WorkDirs = wrapWorkDirsTEMPLATE
+set self_cylcTaskType = cylcTaskTypeTEMPLATE
+set self_inStateDirs = wrapStateDirsTEMPLATE
+set self_inStatePrefix = wrapStatePrefixTEMPLATE
+set self_StateType = wrapStateTypeTEMPLATE
+set self_AppName = wrapAppNameTEMPLATE
+set self_nOuter = wrapnOuterTEMPLATE
 
 set preparationName = jediPrep
 foreach name ( \
@@ -22,21 +22,21 @@ end
 
 #Application preparation
 set PreparationScript=${mainScriptDir}/${preparationName}${self_cylcTaskType}.csh
-sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
-    -e 's@WindowHRArg@wrapWindowHRArg@' \
-    -e 's@ObsListArg@wrapObsListArg@' \
-    -e 's@VARBCTableArg@wrapVARBCTableArg@' \
-    -e 's@AppNameArg@'${self_AppName}'@' \
-    -e 's@AppTypeArg@wrapAppTypeArg@' \
+sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
+    -e 's@WindowHRTEMPLATE@wrapWindowHRTEMPLATE@' \
+    -e 's@ObsListTEMPLATE@wrapObsListTEMPLATE@' \
+    -e 's@VARBCTableTEMPLATE@wrapVARBCTableTEMPLATE@' \
+    -e 's@AppNameTEMPLATE@'${self_AppName}'@' \
+    -e 's@AppTypeTEMPLATE@wrapAppTypeTEMPLATE@' \
     ${preparationName}.csh > ${PreparationScript}
 chmod 744 ${PreparationScript}
 
 #Application
 set JobScript=${mainScriptDir}/${self_cylcTaskType}.csh
-sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
-    -e 's@inStateDirsArg@'${self_inStateDirs}'@' \
-    -e 's@inStatePrefixArg@'${self_inStatePrefix}'@' \
-    AppScriptNameArg.csh > ${JobScript}
+sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
+    -e 's@inStateDirsTEMPLATE@'${self_inStateDirs}'@' \
+    -e 's@inStatePrefixTEMPLATE@'${self_inStatePrefix}'@' \
+    AppScriptNameTEMPLATE.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 #Application verification
@@ -46,22 +46,22 @@ if ( "$self_AppName" =~ *"eda"* ) then
   set VFMODELScript=None
 else
   set VFObsScript=${mainScriptDir}/VerifyObs${self_StateType}.csh
-  sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
-      -e 's@nOuterArg@'${self_nOuter}'@' \
-      -e 's@jediAppNameArg@wrapjediAppNameArg@' \
+  sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
+      -e 's@nOuterTEMPLATE@'${self_nOuter}'@' \
+      -e 's@jediAppNameTEMPLATE@wrapjediAppNameTEMPLATE@' \
       vfobs.csh > ${VFObsScript}
   chmod 744 ${VFObsScript}
 
   set VFModelScript=${mainScriptDir}/VerifyModel${self_StateType}.csh
-  sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
-      -e 's@inStateDirsArg@'${self_inStateDirs}'@' \
-      -e 's@inStatePrefixArg@'${self_inStatePrefix}'@' \
+  sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
+      -e 's@inStateDirsTEMPLATE@'${self_inStateDirs}'@' \
+      -e 's@inStatePrefixTEMPLATE@'${self_inStatePrefix}'@' \
       vfmodel.csh > ${VFModelScript}
   chmod 744 ${VFModelScript}
 endif
 
 #Application cleanup
 set JobScript=${mainScriptDir}/Cleanup${self_cylcTaskType}.csh
-sed -e 's@WorkDirsArg@'${self_WorkDirs}'@' \
-    cleanupAppScriptNameArg.csh > ${JobScript}
+sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
+    cleanupAppScriptNameTEMPLATE.csh > ${JobScript}
 chmod 744 ${JobScript}
