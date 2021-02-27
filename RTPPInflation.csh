@@ -2,9 +2,8 @@
 
 date
 
-#
-# Setup environment:
-# =============================================
+# Setup environment
+# =================
 source config/experiment.csh
 source config/data.csh
 source config/mpas/variables.csh
@@ -37,12 +36,13 @@ set anDirs = ($CyclingDAOutDirs)
 # Remove old logs
 rm jedi.log*
 
+# ================================================================================================
+
 ## create RTPP mean output file to be overwritten
 set memDir = `${memberDir} ens 0 "${flowMemFmt}"`
 set meanDir = ${CyclingDAOutDir}${memDir}
 mkdir -p ${meanDir}
 cp $anDirs[1]/${anPrefix}.$fileDate.nc ${meanDir}
-
 
 # ====================
 # Model-specific files
@@ -202,7 +202,7 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-## change static fields to a link:
+## change static fields to a link, keeping for transparency:
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}

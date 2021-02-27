@@ -2,6 +2,8 @@
 
 date
 
+# Process arguments
+# =================
 ## args
 # ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
@@ -18,9 +20,8 @@ if ( $ArgMember < 1 ) then
   exit 1
 endif
 
-#
-# Setup environment:
-# =============================================
+# Setup environment
+# =================
 source config/experiment.csh
 source config/data.csh
 source config/mpas/variables.csh
@@ -48,7 +49,7 @@ set output_interval = 0_${self_fcIntervalHR}:00:00
 # static variables
 set self_icStatePrefix = ${ANFilePrefix}
 
-# ====================================================================
+# ================================================================================================
 
 ## link initial forecast state:
 set icFileExt = ${fileDate}.nc
@@ -142,7 +143,7 @@ else
     exit 1
   endif
 
-  ## change static fields to a link:
+  ## change static fields to a link, keeping for transparency:
   rm ${localStaticFieldsFile}
   rm ${localStaticFieldsFile}${OrigFileSuffix}
   ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}

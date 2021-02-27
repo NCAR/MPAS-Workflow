@@ -2,9 +2,8 @@
 
 date
 
-#
-# Setup environment:
-# =============================================
+# Setup environment
+# =================
 source config/experiment.csh
 source config/data.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -17,6 +16,8 @@ source ./getCycleVars.csh
 set self_WorkDir = $CyclingDADirs[1]
 echo "WorkDir = ${self_WorkDir}"
 cd ${self_WorkDir}
+
+# ================================================================================================
 
 # Remove obs-database output files
 # ================================

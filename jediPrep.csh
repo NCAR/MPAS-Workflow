@@ -4,6 +4,8 @@
 
 date
 
+# Process arguments
+# =================
 ## args
 # ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
@@ -33,9 +35,8 @@ if ( $isNotInt ) then
   exit 1
 endif
 
-#
-# Setup environment:
-# =============================================
+# Setup environment
+# =================
 source config/experiment.csh
 source config/data.csh
 source config/mpas/variables.csh
@@ -63,10 +64,12 @@ set self_ObsList = ("${ObsListTEMPLATE}")
 set self_VARBCTable = VARBCTableTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
-set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir 
-##
-## Previous time info for yaml entries:
-## ====================================
+set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
+
+# ================================================================================================
+
+# Previous time info for yaml entries
+# ===================================
 set prevValidDate = `$advanceCYMDH ${thisValidDate} -${self_WindowHR}`
 set yy = `echo ${prevValidDate} | cut -c 1-4`
 set mm = `echo ${prevValidDate} | cut -c 5-6`

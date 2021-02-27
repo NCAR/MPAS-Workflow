@@ -2,6 +2,8 @@
 
 date
 
+# Process arguments
+# =================
 ## args
 # ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
@@ -31,9 +33,8 @@ if ( $isNotInt ) then
   exit 1
 endif
 
-#
-# Setup environment:
-# =============================================
+# Setup environment
+# =================
 source config/experiment.csh
 source config/data.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -53,9 +54,10 @@ echo "WorkDir = ${self_WorkDir}"
 setenv self_StatePrefix inStatePrefixTEMPLATE
 set self_StateDir = $inStateDirsTEMPLATE[$ArgMember]
 
-#
-# collect model-space diagnostic statistics into DB files:
-# ========================================================
+# ================================================================================================
+
+# collect model-space diagnostic statistics into DB files
+# =======================================================
 mkdir -p ${self_WorkDir}/${ModelDiagnosticsDir}
 cd ${self_WorkDir}/${ModelDiagnosticsDir}
 

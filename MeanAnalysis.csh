@@ -2,9 +2,8 @@
 
 date
 
-#
-# Setup environment:
-# =============================================
+# Setup environment
+# =================
 source config/experiment.csh
 source config/data.csh
 source config/build.csh
@@ -27,7 +26,7 @@ set memberPrefix = ${self_StatePrefix}.${fileDate}mem
 set meanName = ${self_StatePrefix}.$fileDate.nc
 set varianceName = ${self_StatePrefix}.$fileDate.variance.nc
 
-# ====================================================================
+# ================================================================================================
 
 ## link analysis members
 set member = 1

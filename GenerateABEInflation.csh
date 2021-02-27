@@ -2,9 +2,8 @@
 
 date
 
-#
-# Setup environment:
-# =============================================
+# Setup environment
+# =================
 source config/experiment.csh
 source config/data.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -22,6 +21,8 @@ cd ${self_WorkDir}
 # other static variables
 set self_StatePrefix = ${FCFilePrefix}
 set self_AppType = hofx
+
+# ================================================================================================
 
 ## copy static fields:
 set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`

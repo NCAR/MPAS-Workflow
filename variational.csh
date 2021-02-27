@@ -2,9 +2,8 @@
 
 date
 
-#
-# Setup environment:
-# =============================================
+# Setup environment
+# =================
 source config/experiment.csh
 source config/data.csh
 source config/mpas/variables.csh
@@ -27,8 +26,10 @@ set self_StatePrefix = inStatePrefixTEMPLATE
 # Remove old logs
 rm jedi.log*
 
+# ================================================================================================
+
 # Link/copy bg from StateDirs and ensure that MPASDiagVariables are present
-# ====================================================================
+# =========================================================================
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
@@ -105,7 +106,7 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-## change static fields to a link:
+## change static fields to a link, keeping for transparency:
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}

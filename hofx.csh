@@ -2,6 +2,8 @@
 
 date
 
+# Process arguments
+# =================
 ## args
 # ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
@@ -31,9 +33,8 @@ if ( $isNotInt ) then
   exit 1
 endif
 
-#
-# Setup environment:
-# =============================================
+# Setup environment
+# =================
 source config/experiment.csh
 source config/data.csh
 source config/mpas/variables.csh
@@ -59,8 +60,10 @@ set self_StatePrefix = inStatePrefixTEMPLATE
 # Remove old logs
 rm jedi.log*
 
+# ================================================================================================
+
 # Link/copy bg from other directory and ensure that MPASDiagVariables are present
-# =========================================================================
+# ===============================================================================
 set bg = ./${bgDir}
 set an = ./${anDir}
 mkdir -p ${bg}
@@ -71,6 +74,10 @@ set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
 rm ${bgFile}
 ln -sfv ${bgFileOther} ${bgFile}
+
+# keep a link in place for transparency
+rm ${bgFile}${OrigFileSuffix}
+ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
 
 # Remove existing analysis file, then link to bg file
 # ===================================================
@@ -88,8 +95,7 @@ if ( $copyDiags > 0 ) then
   echo "Copy diagnostic variables used in HofX to bg"
   # ===============================================
   set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
-  rm ${bgFile}${OrigFileSuffix}
-  mv ${bgFile} ${bgFile}${OrigFileSuffix}
+  rm ${bgFile}
   cp -v ${bgFile}${OrigFileSuffix} ${bgFile}
   ncks -A -v ${MPASDiagVariables} ${diagFile} ${bgFile}
 endif
@@ -123,7 +129,7 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-## change static fields to a link:
+## change static fields to a link, keeping for transparency:
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}

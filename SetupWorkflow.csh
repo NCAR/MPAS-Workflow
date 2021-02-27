@@ -130,7 +130,7 @@ sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
 chmod 744 ${JobScript}
 
 
-#------- HofX{{state}}, VerifyObs{{state}}, VerifyModel{{state}} ---------
+#------- HofX{{state}}, VerifyObs{{state}}, VerifyModel{{state}}, CleanHofX{{state}}---------
 foreach state (AN BG EnsMeanBG MeanFC EnsFC)
   if (${state} == AN) then
     set TemplateVariables = (CyclingDAOutDirs ${ANFilePrefix} ${DAVFWindowHR})
