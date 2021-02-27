@@ -28,8 +28,8 @@ rm jedi.log*
 
 # ================================================================================================
 
-# Link/copy bg from StateDirs and ensure that MPASDiagVariables are present
-# =========================================================================
+# Link/copy bg from StateDirs + ensure that MPASJEDIDiagVariables are present
+# ===========================================================================
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
@@ -55,7 +55,7 @@ while ( $member <= ${nEnsDAMembers} )
   # Copy diagnostic variables used in DA to bg (if needed)
   # ======================================================
   set copyDiags = 0
-  foreach var ({$MPASDiagVariables})
+  foreach var ({$MPASJEDIDiagVariables})
     ncdump -h ${bgFileOther} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
@@ -63,7 +63,7 @@ while ( $member <= ${nEnsDAMembers} )
   end
   if ( $copyDiags > 0 ) then
     set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
-    ncks -A -v ${MPASDiagVariables} ${diagFile} ${bgFile}
+    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
     rm ${bgFile}${OrigFileSuffix}
     cp ${bgFile} ${bgFile}${OrigFileSuffix}
   endif
@@ -74,7 +74,7 @@ end
 # use one of the backgrounds as the localTemplateFieldsFile
 ln -sfv ${bgFile} ${localTemplateFieldsFile}
 
-## copy static fields:
+## copy static fields
 #TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
 set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
 set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
@@ -82,11 +82,9 @@ rm ${localStaticFieldsFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
-# ===================
-# ===================
-# Run the executable:
-# ===================
-# ===================
+
+# Run the executable
+# ==================
 ln -sfv ${VariationalBuildDir}/${VariationalEXE} ./
 mpiexec ./${VariationalEXE} $appyaml ./jedi.log >& jedi.log.all
 
@@ -95,9 +93,9 @@ mpiexec ./${VariationalEXE} $appyaml ./jedi.log >& jedi.log.all
 #setenv MPI_SHEPHERD true
 #ddt --connect ./${VariationalEXE} $appyaml ./jedi.log
 
-#
-# Check status:
-# =============================================
+
+# Check status
+# ============
 #grep "Finished running the atmosphere core" log.atmosphere.0000.out
 grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
@@ -106,7 +104,7 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-## change static fields to a link, keeping for transparency:
+## change static fields to a link, keeping for transparency
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}

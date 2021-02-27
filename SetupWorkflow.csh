@@ -51,9 +51,9 @@ while ( $member <= ${nEnsDAMembers} )
   set diagFile = $prevCyclingFCDirs[$member]/${DIAGFilePrefix}.${fileDate}.nc
   ln -sfv ${InitialFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
 
-  ## Add MPASDiagVariables to the next cycle bg file (if needed)
+  ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
   set copyDiags = 0
-  foreach var ({$MPASDiagVariables})
+  foreach var ({$MPASJEDIDiagVariables})
     ncdump -h ${fcFile} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
@@ -61,7 +61,7 @@ while ( $member <= ${nEnsDAMembers} )
   end
 # Takes too long on command-line.  Make it part of a job (R1).
 #  if ( $copyDiags > 0 ) then
-#    ncks -A -v ${MPASDiagVariables} ${diagFile} ${fcFile}
+#    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${fcFile}
 #  endif
 #  rm ${diagFile}
 
@@ -73,8 +73,9 @@ setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
 #  setenv VARBC_TABLE ${prevCyclingDADir}/${VARBC_ANA}
 
 
-#------- CyclingDA ---------
-#TODO: enable mean state diagnostics; only works for deterministic DA
+## jediPrepCyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA
+# *VerifyModelDA is non-functional and unused
+#TODO: enable VerifyObsDA for ensemble DA; only works for deterministic DA
 set WorkDir = $CyclingDADirs[1]
 set cylcTaskType = CyclingDA
 set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
@@ -90,14 +91,13 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapjediAppNameTEMPLATE@variational@g' \
     -e 's@wrapnOuterTEMPLATE@1@g' \
     -e 's@wrapAppTypeTEMPLATE@variational@g' \
-    -e 's@wrapObsListTEMPLATE@variationalObsList@' \
     ${AppAndVerify}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}
 ${WrapperScript}
 rm ${WrapperScript}
 
 
-#------- CyclingFC ---------
+## CyclingFC
 echo "Making CyclingFC job script"
 set JobScript=${mainScriptDir}/CyclingFC.csh
 sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
@@ -108,7 +108,7 @@ sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
 chmod 744 ${JobScript}
 
 
-#------- ExtendedMeanFC ---------
+## ExtendedMeanFC
 echo "Making ExtendedMeanFC job script"
 set JobScript=${mainScriptDir}/ExtendedMeanFC.csh
 sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
@@ -119,7 +119,7 @@ sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
 chmod 744 ${JobScript}
 
 
-#------- ExtendedEnsFC ---------
+## ExtendedEnsFC
 echo "Making ExtendedEnsFC job script"
 set JobScript=${mainScriptDir}/ExtendedEnsFC.csh
 sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
@@ -130,7 +130,7 @@ sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
 chmod 744 ${JobScript}
 
 
-#------- HofX{{state}}, VerifyObs{{state}}, VerifyModel{{state}}, CleanHofX{{state}}---------
+## jediPrepHofX{{state}}, HofX{{state}}, VerifyObs{{state}}, VerifyModel{{state}}, CleanHofX{{state}}
 foreach state (AN BG EnsMeanBG MeanFC EnsFC)
   if (${state} == AN) then
     set TemplateVariables = (CyclingDAOutDirs ${ANFilePrefix} ${DAVFWindowHR})
@@ -157,7 +157,6 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
       -e 's@wrapjediAppNameTEMPLATE@hofx@g' \
       -e 's@wrapnOuterTEMPLATE@0@g' \
       -e 's@wrapAppTypeTEMPLATE@hofx@g' \
-      -e 's@wrapObsListTEMPLATE@hofxObsList@' \
       ${AppAndVerify}.csh > ${WrapperScript}
   chmod 744 ${WrapperScript}
   ${WrapperScript}

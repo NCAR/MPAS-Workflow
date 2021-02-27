@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
-## Uniform 120km mesh
-## ------------------
+# Uniform 120km mesh
+# ------------------
 echo "loading settings for 120km mesh"
 setenv MPASEnsembleGridDescriptor $MPASGridDescriptor
 setenv MPASnCells 40962

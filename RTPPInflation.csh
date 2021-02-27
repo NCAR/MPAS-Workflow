@@ -90,7 +90,7 @@ sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
 ln -sfv $meshFile ${localTemplateFieldsFile}
 
-## copy static fields:
+## copy static fields
 set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
 set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
 rm ${localStaticFieldsFile}
@@ -184,17 +184,15 @@ EOF
 end
 mv $prevYAML $appyaml
 
-# ===================
-# ===================
-# Run the executable:
-# ===================
-# ===================
+
+# Run the executable
+# ==================
 ln -sfv ${RTPPBuildDir}/${RTPPEXE} ./
 mpiexec ./${RTPPEXE} $appyaml >& jedi.log
 
-#
-# Check status:
-# =============================================
+
+# Check status
+# ============
 grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
   touch ./FAIL
@@ -202,7 +200,7 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-## change static fields to a link, keeping for transparency:
+## change static fields to a link, keeping for transparency
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}

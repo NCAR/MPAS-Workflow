@@ -62,8 +62,8 @@ rm jedi.log*
 
 # ================================================================================================
 
-# Link/copy bg from other directory and ensure that MPASDiagVariables are present
-# ===============================================================================
+# Link/copy bg from other directory + ensure that MPASJEDIDiagVariables are present
+# =================================================================================
 set bg = ./${bgDir}
 set an = ./${anDir}
 mkdir -p ${bg}
@@ -85,7 +85,7 @@ set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
 rm ${anFile}
 
 set copyDiags = 0
-foreach var ({$MPASDiagVariables})
+foreach var ({$MPASJEDIDiagVariables})
   ncdump -h ${bgFileOther} | grep $var
   if ( $status != 0 ) then
     @ copyDiags++
@@ -97,30 +97,28 @@ if ( $copyDiags > 0 ) then
   set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
   rm ${bgFile}
   cp -v ${bgFile}${OrigFileSuffix} ${bgFile}
-  ncks -A -v ${MPASDiagVariables} ${diagFile} ${bgFile}
+  ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
 endif
 
 # use the background as the localTemplateFieldsFile
-ln -sfv ${bgFile} ${localTemplateFieldsFile}## copy static fieldsset staticMemDir = `${memberDir} ens $ArgMember "${staticMemFmt}"`
+ln -sfv ${bgFile} ${localTemplateFieldsFile}
 
-## copy static fields:
+## copy static fields
 set staticMemDir = `${memberDir} ens $ArgMember "${staticMemFmt}"`
 set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
 rm ${localStaticFieldsFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
-# ===================
-# ===================
-# Run the executable:
-# ===================
-# ===================
+
+# Run the executable
+# ==================
 ln -sfv ${HofXBuildDir}/${HofXEXE} ./
 mpiexec ./${HofXEXE} $appyaml ./jedi.log >& jedi.log.all
 
-#
-# Check status:
-# =============================================
+
+# Check status
+# ============
 #grep "Finished running the atmosphere core" log.atmosphere.0000.out
 grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
@@ -129,7 +127,7 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-## change static fields to a link, keeping for transparency:
+## change static fields to a link, keeping for transparency
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}

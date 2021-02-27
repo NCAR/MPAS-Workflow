@@ -3,7 +3,7 @@
 ####################################
 ## workflow-relevant state variables
 ####################################
-setenv MPASDiagVariables cldfrac
+setenv MPASJEDIDiagVariables cldfrac
 setenv MPASSeaVariables sst,xice
 set MPASHydroVariables = (qc qi qg qr qs)
 

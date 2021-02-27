@@ -47,6 +47,7 @@ set abi = abi$ABISuperOb[$variationalIndex]
 set ahi = ahi$AHISuperOb[$variationalIndex]
 
 ## variationalObsList
+# observation types assimilated in all variational application instances
 # OPTIONS: $benchmarkObsList, cldamsua, clr$abi, all$abi, clr$ahi, all$ahi
 # clr == clear-sky
 # cld == cloudy-sky
@@ -61,7 +62,7 @@ set variationalObsList = ($benchmarkObsList)
 
 ## DAType
 # OPTIONS: 3denvar, eda_3denvar, 3dvarId
-setenv DAType 3denvar
+setenv DAType eda_3denvar
 
 if ( "$DAType" =~ *"eda"* ) then
   ## nEnsDAMembers
@@ -95,6 +96,7 @@ set abi = abi$ABISuperOb[$hofxIndex]
 set ahi = ahi$AHISuperOb[$hofxIndex]
 
 ## hofxObsList
+# observation types simulated in all hofx application instances
 # OPTIONS: $benchmarkObsList, cldamsua, allmhs, clr$abi, all$abi, clr$ahi, all$ahi
 #TODO: separate amsua and mhs config for each instrument_satellite combo
 

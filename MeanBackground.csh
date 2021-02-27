@@ -47,11 +47,9 @@ else
   ## make copy for variance
   cp $self_StateDirs[1]/${meanName} ./${varianceName}
 
-  # ===================
-  # ===================
-  # Run the executable:
-  # ===================
-  # ===================
+
+  # Run the executable
+  # ==================
   set arg1 = ${self_WorkDir}
   set arg2 = ${meanName}
   set arg3 = ${varianceName}
@@ -61,9 +59,9 @@ else
   ln -sfv ${meanStateBuildDir}/${meanStateExe} ./
   mpiexec ./${meanStateExe} "$arg1" "$arg2" "$arg3" "$arg4" "$arg5" >& log
 
-  #
-  # Check status:
-  # =============================================
+
+  # Check status
+  # ============
   grep 'All done' log
   if ( $status != 0 ) then
     touch ./FAIL

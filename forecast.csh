@@ -51,7 +51,7 @@ set self_icStatePrefix = ${ANFilePrefix}
 
 # ================================================================================================
 
-## link initial forecast state:
+## link initial forecast state
 set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
@@ -119,23 +119,23 @@ else
     setenv fcDate ${fcDate}
   end
 
-  ## copy static fields:
+  ## copy static fields
   set staticMemDir = `${memberDir} ens $ArgMember "${staticMemFmt}"`
   set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
   rm ${localStaticFieldsFile}
   ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
   cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
-  #
-  # Run the executable:
-  # =============================================
+  
+  # Run the executable
+  # ==================
   rm ./${ForecastEXE}
   ln -sfv ${ForecastBuildDir}/${ForecastEXE} ./
   mpiexec ./${ForecastEXE}
 
-  #
-  # Check status:
-  # =============================================
+
+  # Check status
+  # ============
   grep "Finished running the ${MPASCore} core" log.${MPASCore}.0000.out
   if ( $status != 0 ) then
     touch ./FAIL
@@ -143,15 +143,15 @@ else
     exit 1
   endif
 
-  ## change static fields to a link, keeping for transparency:
+  ## change static fields to a link, keeping for transparency
   rm ${localStaticFieldsFile}
   rm ${localStaticFieldsFile}${OrigFileSuffix}
   ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
 endif
 
-#
+
 # Update/add fields to output for DA
-# =============================================
+# ==================================
 #TODO: do this in a separate post-processing script
 #      either in parallel or using only single processor
 #      instead of full set of job processors
@@ -166,7 +166,7 @@ while ( ${fcDate} <= ${finalFCDate} )
   set fcFileExt = ${fcFileDate}.nc
   set fcFile = ${FCFilePrefix}.${fcFileExt}
 
-  ## Update MPASSeaVariables from GFS/GEFS analyses:
+  ## Update MPASSeaVariables from GFS/GEFS analyses
   if ( ${updateSea} ) then
     set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}"`
     set SeaFile = ${SeaAnaDir}/${fcDate}${seaMemDir}/${SeaFilePrefix}.${fcFileExt}
@@ -179,9 +179,9 @@ while ( ${fcDate} <= ${finalFCDate} )
     endif
   endif
 
-  ## Add MPASDiagVariables to the next cycle bg file (if needed)
+  ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
   set copyDiags = 0
-  foreach var ({$MPASDiagVariables})
+  foreach var ({$MPASJEDIDiagVariables})
     ncdump -h ${fcFile} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
@@ -189,7 +189,7 @@ while ( ${fcDate} <= ${finalFCDate} )
   end
   set diagFile = ${DIAGFilePrefix}.${fcFileExt}
   if ( $copyDiags > 0 ) then
-    ncks -A -v ${MPASDiagVariables} ${diagFile} ${fcFile}
+    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${fcFile}
   endif
   # rm ${diagFile}
 

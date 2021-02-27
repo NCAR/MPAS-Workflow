@@ -60,7 +60,7 @@ cd ${self_WorkDir}
 
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
-set self_ObsList = ("${ObsListTEMPLATE}")
+set self_ObsList = ("${AppTypeTEMPLATEObsList}")
 set self_VARBCTable = VARBCTableTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
@@ -324,7 +324,9 @@ end
 #sed -i 's@AnalysisVariables@'$VarSub'@' $prevYAML
 
 
-# TODO(JJG): move the J terms below to variationalPrep.csh as not needed for hofx.csh
+# TODO(JJG): J terms below not needed for hofx application; move to a new variationalPrep.csh.
+#  Can use an intermediate yaml (e.g., jediPrep.yaml) between jediPrep.csh and application-specific
+#  preparations. Could also have an hofxPrep.csh, starts off by just copying yaml.
 
 ## ensemble Jb yaml indentation
 if ( "$self_AppName" =~ *"envar"* ) then

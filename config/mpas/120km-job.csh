@@ -2,10 +2,8 @@
 
 ## job length and node/pe requirements
 
-## Uniform 120km mesh
-## ------------------
-
-## job length and node/pe requirements
+# Uniform 120km mesh
+# ------------------
 setenv CyclingFCJobMinutes 5
 setenv CyclingFCNodes 4
 setenv CyclingFCPEPerNode 32
