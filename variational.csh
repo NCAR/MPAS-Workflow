@@ -5,7 +5,10 @@ date
 #
 # Setup environment:
 # =============================================
-source ./control.csh
+source config/experiment.csh
+source config/data.csh
+source config/mpas/variables.csh
+source config/build.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -39,14 +42,14 @@ while ( $member <= ${nEnsDAMembers} )
   set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
   rm ${bgFile}${OrigFileSuffix} ${bgFile}
-  ln -fsv ${bgFileOther} ${bgFile}${OrigFileSuffix}
+  ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
   cp -v ${bgFileOther} ${bgFile}
 
   # Remove existing analysis file, then link to bg file
   # ===================================================
   set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
   rm ${anFile}
-  ln -sf ${bgFile} ${anFile}
+  ln -sfv ${bgFile} ${anFile}
 
   # Copy diagnostic variables used in DA to bg (if needed)
   # ======================================================
@@ -68,14 +71,14 @@ while ( $member <= ${nEnsDAMembers} )
 end
 
 # use one of the backgrounds as the localTemplateFieldsFile
-ln -sf ${bgFile} ${localTemplateFieldsFile}
+ln -sfv ${bgFile} ${localTemplateFieldsFile}
 
 ## copy static fields:
 #TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
 set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
 set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
 rm ${localStaticFieldsFile}
-ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 # ===================
@@ -83,13 +86,13 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 # Run the executable:
 # ===================
 # ===================
-ln -sf ${DABuildDir}/${DAEXE} ./
-mpiexec ./${DAEXE} $appyaml ./jedi.log >& jedi.log.all
+ln -sfv ${VariationalBuildDir}/${VariationalEXE} ./
+mpiexec ./${VariationalEXE} $appyaml ./jedi.log >& jedi.log.all
 
 #WITH DEBUGGER
 #module load arm-forge/19.1
 #setenv MPI_SHEPHERD true
-#ddt --connect ./${DAEXE} $appyaml ./jedi.log
+#ddt --connect ./${VariationalEXE} $appyaml ./jedi.log
 
 #
 # Check status:
@@ -105,7 +108,7 @@ endif
 ## change static fields to a link:
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
-ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 date
 

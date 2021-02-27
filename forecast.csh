@@ -21,7 +21,11 @@ endif
 #
 # Setup environment:
 # =============================================
-source ./control.csh
+source config/experiment.csh
+source config/data.csh
+source config/mpas/variables.csh
+source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/build.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -50,16 +54,16 @@ set self_icStatePrefix = ${ANFilePrefix}
 set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
-ln -sf ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
+ln -sfv ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
 
 ## link MPAS mesh graph info
 rm ./x1.${MPASnCells}.graph.info*
-ln -sf $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
-foreach fileGlob ($FCLookupFileGlobs)
+foreach fileGlob ($ForecastLookupFileGlobs)
   rm ./*${fileGlob}
-  ln -sf ${FCLookupDir}/*${fileGlob} .
+  ln -sfv ${ForecastLookupDir}/*${fileGlob} .
 end
 
 ## link/copy stream_list/streams configs
@@ -69,18 +73,18 @@ stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
   rm ./$staticfile
-  ln -sf $fcModelConfigDir/$staticfile .
+  ln -sfv $forecastModelConfigDir/$staticfile .
 end
 set STREAMS = streams.${MPASCore}
 rm ${STREAMS}
-cp -v $fcModelConfigDir/${STREAMS} .
+cp -v $forecastModelConfigDir/${STREAMS} .
 sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
 sed -i 's@outputInterval@'${output_interval}'@' ${STREAMS}
 
 ## copy/modify dynamic namelist
 set NL = namelist.atmosphere
 rm ${NL}
-cp -v ${fcModelConfigDir}/${NL} .
+cp -v ${forecastModelConfigDir}/${NL} .
 sed -i 's@startTime@'${NMLDate}'@' $NL
 sed -i 's@fcLength@'${config_run_duration}'@' $NL
 sed -i 's@nCells@'${MPASnCells}'@' $NL
@@ -94,7 +98,7 @@ if ( ${self_fcLengthHR} == 0 ) then
   rm ${FCFilePrefix}.${icFileExt}
   cp ${icFile}_tmp ${FCFilePrefix}.${icFileExt}
   rm ./${DIAGFilePrefix}.${icFileExt}
-  ln -sf ${self_icStateDir}/${DIAGFilePrefix}.${icFileExt} ./
+  ln -sfv ${self_icStateDir}/${DIAGFilePrefix}.${icFileExt} ./
 else
   ## remove previously generated forecasts
   set fcDate = `$advanceCYMDH ${thisValidDate} ${self_fcIntervalHR}`
@@ -118,15 +122,15 @@ else
   set staticMemDir = `${memberDir} ens $ArgMember "${staticMemFmt}"`
   set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
   rm ${localStaticFieldsFile}
-  ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
   cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
   #
   # Run the executable:
   # =============================================
-  rm ./${FCEXE}
-  ln -sf ${FCBuildDir}/${FCEXE} ./
-  mpiexec ./${FCEXE}
+  rm ./${ForecastEXE}
+  ln -sfv ${ForecastBuildDir}/${ForecastEXE} ./
+  mpiexec ./${ForecastEXE}
 
   #
   # Check status:
@@ -141,7 +145,7 @@ else
   ## change static fields to a link:
   rm ${localStaticFieldsFile}
   rm ${localStaticFieldsFile}${OrigFileSuffix}
-  ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}
+  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
 endif
 
 #

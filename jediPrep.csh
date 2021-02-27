@@ -36,7 +36,12 @@ endif
 #
 # Setup environment:
 # =============================================
-source ./control.csh
+source config/experiment.csh
+source config/data.csh
+source config/mpas/variables.csh
+source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/appindex.csh
+source config/build.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -58,7 +63,7 @@ set self_ObsList = ("${ObsListTEMPLATE}")
 set self_VARBCTable = VARBCTableTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
-
+set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir 
 ##
 ## Previous time info for yaml entries:
 ## ====================================
@@ -99,32 +104,32 @@ set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sf $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
-foreach fileGlob ($FCLookupFileGlobs)
-  ln -sf ${FCLookupDir}/*${fileGlob} .
+foreach fileGlob ($ForecastLookupFileGlobs)
+  ln -sfv ${ForecastLookupDir}/*${fileGlob} .
 end
 
 ## link static stream settings
 
 ## link/copy stream_list/streams configs
 foreach staticfile ( \
-stream_list.${MPASCore}.surface \
+#stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
-  ln -sf $daModelConfigDir/$staticfile .
+  ln -sfv $self_ModelConfigDir/$staticfile .
 end
 set STREAMS = streams.${MPASCore}
 rm ${STREAMS}
-cp -v $daModelConfigDir/${STREAMS} .
+cp -v $self_ModelConfigDir/${STREAMS} .
 sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
 
 ## copy/modify dynamic namelist
 set NL = namelist.${MPASCore}
 rm $NL
-cp -v ${daModelConfigDir}/${NL} .
+cp -v ${self_ModelConfigDir}/${NL} .
 sed -i 's@startTime@'${NMLDate}'@' $NL
 sed -i 's@nCells@'${MPASnCells}'@' $NL
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NL
@@ -145,6 +150,7 @@ end
 # setup directories
 rm -r ${InDBDir}
 mkdir -p ${InDBDir}
+rm -r ${OutDBDir}
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set memDir = `${memberDir} $self_AppName $member`
@@ -154,29 +160,29 @@ end
 
 # Link conventional data
 # ======================
-ln -fsv $CONVObsDir/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
-ln -fsv $CONVObsDir/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
-ln -fsv $CONVObsDir/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
-ln -fsv $CONVObsDir/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
-ln -fsv $CONVObsDir/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
+ln -sfv $CONVObsDir/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
+ln -sfv $CONVObsDir/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
+ln -sfv $CONVObsDir/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
+ln -sfv $CONVObsDir/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
+ln -sfv $CONVObsDir/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
 
 # Link AMSUA+MHS data
 # ==============
-ln -fsv $MWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
-ln -fsv $MWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.nc4 ${InDBDir}/
+ln -sfv $MWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
+ln -sfv $MWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.nc4 ${InDBDir}/
 
 # Link ABI data
 # ============
-ln -fsv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.nc4 ${InDBDir}/
+ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.nc4 ${InDBDir}/
 
 # Link AHI data
 # ============
-ln -fsv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.nc4 ${InDBDir}/
+ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.nc4 ${InDBDir}/
 
 
 # Link VarBC prior
 # ====================
-ln -fsv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
+ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 
 
 # =============
@@ -184,7 +190,7 @@ ln -fsv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 # =============
 ## Copy applicationBase yaml
 set thisYAML = orig.yaml
-cp -v ${CONFIGDIR}/applicationBase/${self_AppName}.yaml $thisYAML
+cp -v ${ConfigDir}/applicationBase/${self_AppName}.yaml $thisYAML
 
 ## indentation of observations array members
 set nIndent = $applicationObsIndent[$myAppIndex]
@@ -192,17 +198,21 @@ set obsIndent = "`${nSpaces} $nIndent`"
 
 ## Add selected observations (see control.csh)
 set checkForMissingObs = (sondes aircraft satwind gnssro sfc amsua mhs abi ahi)
+set found = 0
+set obsYAML = observations.yaml
+rm $obsYAML
+touch $obsYAML
 foreach obs ($self_ObsList)
   echo "Preparing YAML for ${obs} observations"
   set missing=0
-  set SUBYAML=${CONFIGDIR}/ObsPlugs/${self_AppType}/${obs}
+  set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${obs}
   if ( "$obs" =~ *"sondes"* ) then
     #KLUDGE to handle missing qv for sondes at single time
     if ( ${thisValidDate} == 2018043006 ) then
       set SUBYAML=${SUBYAML}-2018043006
     endif
   endif
-  # check for that obs string matches at least one non-broken observation file link
+  # check that obs string matches at least one non-broken observation file link
   foreach inst ($checkForMissingObs)
     if ( "$obs" =~ *"${inst}"* ) then
       find ${InDBDir}/${inst}*_obs_*.nc4 -mindepth 0 -maxdepth 0
@@ -219,19 +229,28 @@ foreach obs ($self_ObsList)
 
   if ($missing == 0) then
     echo "${obs} data is present and selected; adding ${obs} to the YAML"
-    sed 's/^/'"$obsIndent"'/' ${SUBYAML}.yaml >> $thisYAML
+    sed 's/^/'"$obsIndent"'/' ${SUBYAML}.yaml >> $obsYAML
+    @ found++
   else
     echo "${obs} data is selected, but missing; NOT adding ${obs} to the YAML"
   endif
 end
+if ($found == 0) then
+  echo "ERROR in $0 : no observation data is available for this date" > ./FAIL
+  exit 1
+endif
 
+cat $obsYAML >> $thisYAML
+
+#TODO: replace cat with sed substitution so that each application can decide what to do when there
+# are zero observations available
 
 ## QC characteristics
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
 
 # TODO(JJG): revise these date replacements to loop over
-#            all relevant dates to this application (e.g., 4DEnVar?)
+#            all dates relevant to this application (e.g., 4DEnVar?)
 ## previous date
 sed -i 's@2018-04-14_18.00.00@'${prevFileDate}'@g' $thisYAML
 sed -i 's@2018041418@'${prevValidDate}'@g' $thisYAML
@@ -302,7 +321,16 @@ end
 #sed -i 's@AnalysisVariables@'$VarSub'@' $prevYAML
 
 
-# TODO(JJG): move the J terms below to da.csh as not needed for OMM
+# TODO(JJG): move the J terms below to variationalPrep.csh as not needed for hofx.csh
+
+## ensemble Jb yaml indentation
+if ( "$self_AppName" =~ *"envar"* ) then
+  set nEnsPbIndent = 4
+else if ( "$self_AppName" =~ *"hybrid"* ) then
+  set nEnsPbIndent = 8
+else
+  set nEnsPbIndent = 0
+endif
 
 ## ensemble Jb localization
 sed -i 's@bumpLocDir@'${bumpLocDir}'@g' $prevYAML
@@ -320,7 +348,7 @@ if ( "$self_AppName" =~ *"eda"* && ${ABEInflation} == True ) then
     set removeInflation = 1
   else
     set thisYAML = insertInflation.yaml
-    set indent = "    "
+    set indent = "`${nSpaces} $nEnsPbIndent`"
 #NOTE: no_transf=1 allows for spechum and temperature inflation values to be read
 #      directly from inflationFields without a variable transform. Also requires spechum
 #      and temperature to be in stream_list.atmosphere.output.
@@ -367,8 +395,7 @@ if ( "$self_AppName" =~ *"eda"* ) then
     ## ensemble Jb members
     # TODO(JJG): how does ensemble B config generation need to be
     #            modified for 4DEnVar?
-    # TODO: this indentation only works for pure EnVar, not Hybrid EnVar
-    set indent = "    "
+    set indent = "`${nSpaces} $nEnsPbIndent`"
     set bmember = 0
     set bremain = ${ensPbNMembers}
     if ( $LeaveOneOutEDA == True ) then
@@ -431,8 +458,7 @@ EOF
 
   # TODO(JJG): how does ensemble B config generation need to be
   #            modified for 4DEnVar?
-  # TODO: this indentation only works for pure EnVar, not Hybrid EnVar
-  set indent = "    "
+  set indent = "`${nSpaces} $nEnsPbIndent`"
   set bmember = 0
   while ( $bmember < ${ensPbNMembers} )
     @ bmember++

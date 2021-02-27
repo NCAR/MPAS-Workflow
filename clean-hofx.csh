@@ -34,7 +34,8 @@ endif
 #
 # Setup environment:
 # =============================================
-source ./control.csh
+source config/experiment.csh
+source config/data.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}

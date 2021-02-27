@@ -1,6 +1,5 @@
 #!/bin/csh -f
 
-source ./control.csh
 set self_WorkDirs = wrapWorkDirsTEMPLATE
 set self_cylcTaskType = cylcTaskTypeTEMPLATE
 set self_inStateDirs = wrapStateDirsTEMPLATE
@@ -15,7 +14,7 @@ foreach name ( \
   ${self_cylcTaskType} \
   VerifyObs${self_StateType} \
   VerifyModel${self_StateType} \
-  Cleanup${self_cylcTaskType} \
+  Clean${self_cylcTaskType} \
 )
   echo "Making $name job script for ${self_StateType} state"
 end
@@ -49,19 +48,19 @@ else
   sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
       -e 's@nOuterTEMPLATE@'${self_nOuter}'@' \
       -e 's@jediAppNameTEMPLATE@wrapjediAppNameTEMPLATE@' \
-      vfobs.csh > ${VFObsScript}
+      verifyobs.csh > ${VFObsScript}
   chmod 744 ${VFObsScript}
 
   set VFModelScript=${mainScriptDir}/VerifyModel${self_StateType}.csh
   sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
       -e 's@inStateDirsTEMPLATE@'${self_inStateDirs}'@' \
       -e 's@inStatePrefixTEMPLATE@'${self_inStatePrefix}'@' \
-      vfmodel.csh > ${VFModelScript}
+      verifymodel.csh > ${VFModelScript}
   chmod 744 ${VFModelScript}
 endif
 
 #Application cleanup
-set JobScript=${mainScriptDir}/Cleanup${self_cylcTaskType}.csh
+set JobScript=${mainScriptDir}/Clean${self_cylcTaskType}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
-    cleanupAppScriptNameTEMPLATE.csh > ${JobScript}
+    clean-AppScriptNameTEMPLATE.csh > ${JobScript}
 chmod 744 ${JobScript}

@@ -38,18 +38,4 @@
 	<file name="stream_list.atmosphere.diagnostics"/>
 </stream>
 
-<stream name="surface"
-        type="none"
-        filename_template="x1.nCells.sfc_update.nc"
-        filename_interval="none"
-        input_interval="none" >
-	<file name="stream_list.atmosphere.surface"/>
-</stream>
-
-<immutable_stream name="iau"
-                  type="none"
-                  filename_template="x1.nCells.AmB.$Y-$M-$D_$h.$m.$s.nc"
-                  filename_interval="none"
-                  packages="iau"
-                  input_interval="none" />
 </streams>

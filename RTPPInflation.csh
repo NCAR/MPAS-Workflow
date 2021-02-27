@@ -5,7 +5,11 @@ date
 #
 # Setup environment:
 # =============================================
-source ./control.csh
+source config/experiment.csh
+source config/data.csh
+source config/mpas/variables.csh
+source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/build.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -30,6 +34,9 @@ set bgDirs = ($CyclingDAInDirs)
 set anPrefix = $ANFilePrefix
 set anDirs = ($CyclingDAOutDirs)
 
+# Remove old logs
+rm jedi.log*
+
 ## create RTPP mean output file to be overwritten
 set memDir = `${memberDir} ens 0 "${flowMemFmt}"`
 set meanDir = ${CyclingDAOutDir}${memDir}
@@ -41,20 +48,20 @@ cp $anDirs[1]/${anPrefix}.$fileDate.nc ${meanDir}
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sf $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($FCLookupFileGlobs)
-  ln -sf ${FCLookupDir}/*${fileGlob} .
+  ln -sfv ${FCLookupDir}/*${fileGlob} .
 end
 
 ## link/copy stream_list/streams configs
 foreach staticfile ( \
-stream_list.${MPASCore}.surface \
+#stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
-  ln -sf $rtppModelConfigDir/$staticfile .
+  ln -sfv $rtppModelConfigDir/$staticfile .
 end
 set STREAMS = streams.${MPASCore}
 rm ${STREAMS}
@@ -62,14 +69,14 @@ cp -v $rtppModelConfigDir/${STREAMS} .
 sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
 
 ## link namelist.atmosphere already modifed for this cycle
-ln -sf $CyclingDADirs[1]/namelist.atmosphere ./
+ln -sfv $CyclingDADirs[1]/namelist.atmosphere ./
 
 # =============
 # Generate yaml
 # =============
 ## Copy applicationBase yaml
 set thisYAML = orig.yaml
-cp -v ${CONFIGDIR}/applicationBase/rtpp.yaml $thisYAML
+cp -v ${ConfigDir}/applicationBase/rtpp.yaml $thisYAML
 
 ## RTPP inflation factor
 sed -i 's@RTPPInflationFactor@'${RTPPInflationFactor}'@g' $thisYAML
@@ -81,13 +88,13 @@ sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 
 # use one of the analyses as the localTemplateFieldsFile
 set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
-ln -sf $meshFile ${localTemplateFieldsFile}
+ln -sfv $meshFile ${localTemplateFieldsFile}
 
 ## copy static fields:
 set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
 set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
 rm ${localStaticFieldsFile}
-ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 ## file naming
@@ -131,7 +138,7 @@ foreach VarGroup (Analysis State)
 end
 
 ## fill in ensemble B config and link/copy analysis ensemble members
-set indent = "  "
+set indent = "`${nSpaces} 2`"
 foreach PMatrix (Pb Pa)
   if ($PMatrix == Pb) then
     set ensPDirs = ($bgDirs)
@@ -182,7 +189,7 @@ mv $prevYAML $appyaml
 # Run the executable:
 # ===================
 # ===================
-ln -sf ${RTPPBuildDir}/${RTPPEXE} ./
+ln -sfv ${RTPPBuildDir}/${RTPPEXE} ./
 mpiexec ./${RTPPEXE} $appyaml >& jedi.log
 
 #
@@ -198,7 +205,7 @@ endif
 ## change static fields to a link:
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
-ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 date
 

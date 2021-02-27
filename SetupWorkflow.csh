@@ -1,27 +1,30 @@
 #!/bin/csh -f
-source ./control.csh
+source config/experiment.csh
 set AppAndVerify = AppAndVerify
 
-echo "==============================================================\n"
-echo "Making cycling scripts for experiment: ${ExpName}\n"
-echo "==============================================================\n"
+echo ""
+echo "======================================================================"
+echo "Setting up a new workflow for ${ExperimentName}"
+echo "======================================================================"
+echo ""
 
 rm -rf ${mainScriptDir}
 mkdir -p ${mainScriptDir}
-set cyclingParts = ( \
-  control.csh \
+set workflowParts = ( \
   getCycleVars.csh \
   tools \
   config \
-  ${MPASGridDescriptor} \
   MeanAnalysis.csh \
   MeanBackground.csh \
   RTPPInflation.csh \
   GenerateABEInflation.csh \
 )
-foreach part ($cyclingParts)
+foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
 end
+
+source config/data.csh
+source config/mpas/variables.csh
 
 ## First cycle "forecast" established offline
 # TODO: Setup FirstCycleDate using a new fcinit job type and put in R1 cylc position
@@ -46,7 +49,7 @@ while ( $member <= ${nEnsDAMembers} )
   cp -v ${fcFile}${OrigFileSuffix} ${fcFile}
 
   set diagFile = $prevCyclingFCDirs[$member]/${DIAGFilePrefix}.${fileDate}.nc
-  ln -sf ${InitialFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
+  ln -sfv ${InitialFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
 
   ## Add MPASDiagVariables to the next cycle bg file (if needed)
   set copyDiags = 0
@@ -76,7 +79,7 @@ set WorkDir = $CyclingDADirs[1]
 set cylcTaskType = CyclingDA
 set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
 sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
-    -e 's@AppScriptNameTEMPLATE@da@' \
+    -e 's@AppScriptNameTEMPLATE@variational@' \
     -e 's@cylcTaskTypeTEMPLATE@'${cylcTaskType}'@' \
     -e 's@wrapStateDirsTEMPLATE@prevCyclingFCDirs@' \
     -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
@@ -86,8 +89,8 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapAppNameTEMPLATE@'${DAType}'@g' \
     -e 's@wrapjediAppNameTEMPLATE@variational@g' \
     -e 's@wrapnOuterTEMPLATE@1@g' \
-    -e 's@wrapAppTypeTEMPLATE@da@g' \
-    -e 's@wrapObsListTEMPLATE@DAObsList@' \
+    -e 's@wrapAppTypeTEMPLATE@variational@g' \
+    -e 's@wrapObsListTEMPLATE@variationalObsList@' \
     ${AppAndVerify}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}
 ${WrapperScript}
@@ -101,7 +104,7 @@ sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
     -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
     -e 's@fcLengthHRTEMPLATE@'${CyclingWindowHR}'@' \
     -e 's@fcIntervalHRTEMPLATE@'${CyclingWindowHR}'@' \
-    fc.csh > ${JobScript}
+    forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 
@@ -112,7 +115,7 @@ sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
     -e 's@StateDirsTEMPLATE@MeanAnalysisDirs@' \
     -e 's@fcLengthHRTEMPLATE@'${ExtendedFCWindowHR}'@' \
     -e 's@fcIntervalHRTEMPLATE@'${ExtendedFC_DT_HR}'@' \
-    fc.csh > ${JobScript}
+    forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 
@@ -123,11 +126,11 @@ sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
     -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
     -e 's@fcLengthHRTEMPLATE@'${ExtendedFCWindowHR}'@' \
     -e 's@fcIntervalHRTEMPLATE@'${ExtendedFC_DT_HR}'@' \
-    fc.csh > ${JobScript}
+    forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 
-#------- CalcOM{{state}}, VerifyObs{{state}}, VerifyModel{{state}} ---------
+#------- HofX{{state}}, VerifyObs{{state}}, VerifyModel{{state}} ---------
 foreach state (AN BG EnsMeanBG MeanFC EnsFC)
   if (${state} == AN) then
     set TemplateVariables = (CyclingDAOutDirs ${ANFilePrefix} ${DAVFWindowHR})
@@ -140,21 +143,21 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
   else if (${state} == EnsFC) then
     set TemplateVariables = (ExtendedEnsFCDirs ${FCFilePrefix} ${FCVFWindowHR})
   endif
-  set cylcTaskType = CalcOM${state}
+  set cylcTaskType = HofX${state}
   set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh
   sed -e 's@wrapWorkDirsTEMPLATE@Verify'${state}'Dirs@' \
-      -e 's@AppScriptNameTEMPLATE@'${omm}'@' \
+      -e 's@AppScriptNameTEMPLATE@hofx@' \
       -e 's@cylcTaskTypeTEMPLATE@'${cylcTaskType}'@' \
       -e 's@wrapStateDirsTEMPLATE@'$TemplateVariables[1]'@' \
       -e 's@wrapStatePrefixTEMPLATE@'$TemplateVariables[2]'@' \
       -e 's@wrapStateTypeTEMPLATE@'${state}'@' \
       -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \
       -e 's@wrapWindowHRTEMPLATE@'$TemplateVariables[3]'@' \
-      -e 's@wrapAppNameTEMPLATE@'${omm}'@g' \
+      -e 's@wrapAppNameTEMPLATE@hofx@g' \
       -e 's@wrapjediAppNameTEMPLATE@hofx@g' \
       -e 's@wrapnOuterTEMPLATE@0@g' \
-      -e 's@wrapAppTypeTEMPLATE@'${omm}'@g' \
-      -e 's@wrapObsListTEMPLATE@OMMObsList@' \
+      -e 's@wrapAppTypeTEMPLATE@hofx@g' \
+      -e 's@wrapObsListTEMPLATE@hofxObsList@' \
       ${AppAndVerify}.csh > ${WrapperScript}
   chmod 744 ${WrapperScript}
   ${WrapperScript}

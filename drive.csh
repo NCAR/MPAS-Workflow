@@ -4,7 +4,7 @@
 
 # Cycle bounds
 set initialCyclePoint = 20180415T00
-set finalCyclePoint   = 20180415T06
+set finalCyclePoint   = 20180514T18
 
 # CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
@@ -53,8 +53,12 @@ set VerifyExtendedEnsFC = False
 
 date
 
-## Initialize environment and experimental configuration
-source control.csh
+## load experiment configuration
+source config/experiment.csh
+
+## load job submission environment
+source config/job.csh
+source config/mpas/${MPASGridDescriptor}-job.csh
 
 ## Initialize cycling directory if this is the first cycle point
 set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
@@ -72,7 +76,7 @@ module purge
 module load cylc
 module load graphviz
 
-rm -fr ${HOME}/cylc-run/${WholeExpName}
+rm -fr ${HOME}/cylc-run/${ExperimentName}
 echo "creating suite.rc"
 cat >! suite.rc << EOF
 #!Jinja2
@@ -94,7 +98,7 @@ cat >! suite.rc << EOF
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
 [meta]
-  title = "${PKGBASE}--${WholeExpName}"
+  title = "${PKGBASE}--${ExperimentName}"
 # critical path cycle dependencies
   {% set PrimaryCPGraph = "" %}
   {% set SecondaryCPGraph = "" %}
@@ -104,7 +108,7 @@ cat >! suite.rc << EOF
 {% elif CriticalPathType == "Reanalysis" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
-  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanupCyclingDA" %}
+  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
 {% elif CriticalPathType == "Reforecast" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
@@ -113,9 +117,9 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => CalcOMEnsMeanBG" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => HofXEnsMeanBG" %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => GenerateABEInflation" %}
-    {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        GenerateABEInflation => CleanupCalcOMEnsMeanBG" %}
+    {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        GenerateABEInflation => CleanHofXEnsMeanBG" %}
   {% endif %}
   {% set PrimaryCPGraph = PrimaryCPGraph + " => CyclingDA" %}
   {% if (RTPPInflationFactor > 0.0 and nEnsDAMembers > 1) %}
@@ -124,7 +128,7 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + " => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
-  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanupCyclingDA" %}
+  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
 {% endif %}
 # verification and extended forecast controls
 {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
@@ -157,7 +161,7 @@ cat >! suite.rc << EOF
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
         CyclingDAFinished => VerifyObsDA
-        VerifyObsDA => CleanupCyclingDA
+        VerifyObsDA => CleanCyclingDA
       '''
 {% endif %}
 {% if VerifyExtendedMeanFC %}
@@ -165,11 +169,11 @@ cat >! suite.rc << EOF
     [[[${ExtendedMeanFCTimes}]]]
       graph = '''
         CyclingDAFinished => MeanAnalysis => ExtendedMeanFC
+        ExtendedMeanFC => HofXMeanFC
+        ExtendedMeanFC => VerifyModelMeanFC
   {% for dt in ExtendedFCLengths %}
-        ExtendedMeanFC => VerifyModelMeanFC{{dt}}hr
-        ExtendedMeanFC => CalcOMMeanFC{{dt}}hr
-        CalcOMMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
-        VerifyObsMeanFC{{dt}}hr => CleanupCalcOMMeanFC{{dt}}hr
+        HofXMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
+        VerifyObsMeanFC{{dt}}hr => CleanHofXMeanFC{{dt}}hr
   {% endfor %}
       '''
 {% endif %}
@@ -177,11 +181,11 @@ cat >! suite.rc << EOF
 ## Ensemble BG verification
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => CalcOMBG
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
   {% for mem in VerifyMembers %}
-        CalcOMBG{{mem}} => VerifyObsBG{{mem}}
-        VerifyObsBG{{mem}} => CleanupCalcOMBG{{mem}}
+        HofXBG{{mem}} => VerifyObsBG{{mem}}
+        VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
   {% endfor %}
       '''
 {% endif %}
@@ -190,14 +194,14 @@ cat >! suite.rc << EOF
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => MeanBackground
-        MeanBackground => CalcOMEnsMeanBG
+        MeanBackground => HofXEnsMeanBG
         MeanBackground => VerifyModelEnsMeanBG
-        CalcOMEnsMeanBG => VerifyObsEnsMeanBG
-        VerifyObsEnsMeanBG => CleanupCalcOMEnsMeanBG
+        HofXEnsMeanBG => VerifyObsEnsMeanBG
+        VerifyObsEnsMeanBG => CleanHofXEnsMeanBG
   {% if DiagnoseEnsSpreadBG %}
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => CalcOMBG
-        CalcOMBG:succeed-all => VerifyObsEnsMeanBG
-        VerifyObsEnsMeanBG => CleanupCalcOMBG
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
+        HofXBG:succeed-all => VerifyObsEnsMeanBG
+        VerifyObsEnsMeanBG => CleanHofXBG
   {% endif %}
       '''
 {% endif %}
@@ -207,9 +211,9 @@ cat >! suite.rc << EOF
       graph = '''
   {% for mem in VerifyMembers %}
         CyclingDAFinished => VerifyModelAN{{mem}}
-        CyclingDAFinished => CalcOMAN{{mem}}
-        CalcOMAN{{mem}} => VerifyObsAN{{mem}}
-        VerifyObsAN{{mem}} => CleanupCalcOMAN{{mem}}
+        CyclingDAFinished => HofXAN{{mem}}
+        HofXAN{{mem}} => VerifyObsAN{{mem}}
+        VerifyObsAN{{mem}} => CleanHofXAN{{mem}}
   {% endfor %}
       '''
 {% endif %}
@@ -219,11 +223,11 @@ cat >! suite.rc << EOF
       graph = '''
         CyclingDAFinished => ExtendedEnsFC
   {% for mem in VerifyMembers %}
+        ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}
+        ExtendedFC{{mem}} => HofXEnsFC{{mem}}
     {% for dt in ExtendedFCLengths %}
-        ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}-{{dt}}hr
-        ExtendedFC{{mem}} => CalcOMEnsFC{{mem}}-{{dt}}hr
-        CalcOMEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
-        VerifyObsEnsFC{{mem}}-{{dt}}hr => CleanupCalcOMEnsFC{{mem}}-{{dt}}hr
+        HofXEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
+        VerifyObsEnsFC{{mem}}-{{dt}}hr => CleanHofXEnsFC{{mem}}-{{dt}}hr
     {% endfor %}
   {% endfor %}
       '''
@@ -255,13 +259,13 @@ cat >! suite.rc << EOF
 #      --ntasks = 1
 #      --cpus-per-task = 36
 #      --partition = dav
-  [[OMMBase]]
+  [[HofXBase]]
     [[[job]]]
-      execution time limit = PT${CalcOMMJobMinutes}M
+      execution time limit = PT${HofXJobMinutes}M
     [[[directives]]]
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
-      -l = select=${CalcOMMNodes}:ncpus=${CalcOMMPEPerNode}:mpiprocs=${CalcOMMPEPerNode}:mem=${CalcOMMMemory}GB
+      -l = select=${HofXNodes}:ncpus=${HofXPEPerNode}:mpiprocs=${HofXPEPerNode}:mem=${HofXMemory}GB
   [[VerifyModelBase]]
     [[[job]]]
       execution time limit = PT5M
@@ -276,7 +280,7 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
       -l = select=${VerifyObsNodes}:ncpus=${VerifyObsPEPerNode}:mpiprocs=${VerifyObsPEPerNode}
-  [[CleanupBase]]
+  [[CleanBase]]
     [[[job]]]
       batch system = background
 #Cycling components
@@ -311,9 +315,9 @@ cat >! suite.rc << EOF
   [[VerifyObsDA]]
     inherit = VerifyObsBase
     script = \$origin/VerifyObsDA.csh "1" "0" "DA" "0"
-  [[CleanupCyclingDA]]
-    inherit = CleanupBase
-    script = \$origin/CleanupCyclingDA.csh
+  [[CleanCyclingDA]]
+    inherit = CleanBase
+    script = \$origin/CleanCyclingDA.csh
   [[CyclingFC]]
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
@@ -348,18 +352,22 @@ cat >! suite.rc << EOF
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
     script = \$origin/ExtendedMeanFC.csh "1"
+  [[HofXMeanFC]]
+    inherit = HofXBase
+  [[VerifyModelMeanFC]]
+    inherit = VerifyModelBase
 {% for dt in ExtendedFCLengths %}
-  [[CalcOMMeanFC{{dt}}hr]]
-    inherit = OMMBase
-    env-script = cd ${mainScriptDir}; ./jediPrepCalcOMMeanFC.csh "1" "{{dt}}" "FC"
-    script = \$origin/CalcOMMeanFC.csh "1" "{{dt}}" "FC"
+  [[HofXMeanFC{{dt}}hr]]
+    inherit = HofXMeanFC
+    env-script = cd ${mainScriptDir}; ./jediPrepHofXMeanFC.csh "1" "{{dt}}" "FC"
+    script = \$origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = 4*PT30S
-  [[CleanupCalcOMMeanFC{{dt}}hr]]
-    inherit = CleanupBase
-    script = \$origin/CleanupCalcOMMeanFC.csh "1" "{{dt}}" "FC"
+  [[CleanHofXMeanFC{{dt}}hr]]
+    inherit = CleanBase
+    script = \$origin/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
   [[VerifyObsMeanFC{{dt}}hr]]
-    inherit = VerifyObsBase
+    inherit = VerifyModelMeanFC
     script = \$origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0"
   [[VerifyModelMeanFC{{dt}}hr]]
     inherit = VerifyModelBase
@@ -368,22 +376,22 @@ cat >! suite.rc << EOF
   [[ExtendedEnsFC]]
     inherit = ExtendedFCBase
 {% for state in ['BG', 'AN']%}
-  [[CalcOM{{state}}]]
-    inherit = OMMBase
+  [[HofX{{state}}]]
+    inherit = HofXBase
   [[VerifyModel{{state}}]]
     inherit = VerifyModelBase
   [[VerifyObs{{state}}]]
     inherit = VerifyObsBase
-  [[CleanupCalcOM{{state}}]]
-    inherit = CleanupBase
+  [[CleanHofX{{state}}]]
+    inherit = CleanBase
 {% endfor %}
 {% for mem in VerifyMembers %}
 ## Ensemble BG/AN verification
   {% for state in ['BG', 'AN']%}
-  [[CalcOM{{state}}{{mem}}]]
-    inherit = CalcOM{{state}}
-    env-script = cd ${mainScriptDir}; ./jediPrepCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
-    script = \$origin/CalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
+  [[HofX{{state}}{{mem}}]]
+    inherit = HofX{{state}}
+    env-script = cd ${mainScriptDir}; ./jediPrepHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+    script = \$origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[job]]]
       execution retry delays = 4*PT30S
   [[VerifyModel{{state}}{{mem}}]]
@@ -392,30 +400,34 @@ cat >! suite.rc << EOF
   [[VerifyObs{{state}}{{mem}}]]
     inherit = VerifyObs{{state}}
     script = \$origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
-  [[CleanupCalcOM{{state}}{{mem}}]]
-    inherit = CleanupCalcOM{{state}}
-    script = \$origin/CleanupCalcOM{{state}}.csh "{{mem}}" "0" "{{state}}"
+  [[CleanHofX{{state}}{{mem}}]]
+    inherit = CleanHofX{{state}}
+    script = \$origin/CleanHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
   {% endfor %}
 ## Extended ensemble forecasts and verification
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
     script = \$origin/ExtendedEnsFC.csh "{{mem}}"
+  [[HofXEnsFC{{mem}}]]
+    inherit = HofXBase
+  [[VerifyModelEnsFC{{mem}}]]
+    inherit = VerifyModelBase
   {% for dt in ExtendedFCLengths %}
-  [[CalcOMEnsFC{{mem}}-{{dt}}hr]]
-    inherit = OMMBase
-    env-script = cd ${mainScriptDir}; ./jediPrepCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-    script = \$origin/CalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+  [[HofXEnsFC{{mem}}-{{dt}}hr]]
+    inherit = HofXEnsFC{{mem}}
+    env-script = cd ${mainScriptDir}; ./jediPrepHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    script = \$origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = 4*PT30S
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
-    inherit = VerifyModelBase
+    inherit = VerifyModelEnsFC{{mem}}
     script = \$origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyObsBase
     script = \$origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
-  [[CleanupCalcOMEnsFC{{mem}}-{{dt}}hr]]
-    inherit = CleanupBase
-    script = \$origin/CleanupCalcOMEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+  [[CleanHofXEnsFC{{mem}}-{{dt}}hr]]
+    inherit = CleanBase
+    script = \$origin/CleanHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   {% endfor %}
 {% endfor %}
 ## Mean/ensemble background verification
@@ -426,10 +438,10 @@ cat >! suite.rc << EOF
     [[[directives]]]
       -m = ae
       -q = ${VFQueueName}
-  [[CalcOMEnsMeanBG]]
-    inherit = OMMBase
-    env-script = cd ${mainScriptDir}; ./jediPrepCalcOMEnsMeanBG.csh "1" "0" "BG"
-    script = \$origin/CalcOMEnsMeanBG.csh "1" "0" "BG"
+  [[HofXEnsMeanBG]]
+    inherit = HofXBase
+    env-script = cd ${mainScriptDir}; ./jediPrepHofXEnsMeanBG.csh "1" "0" "BG"
+    script = \$origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = ${EnsMeanBGQueueName}
       -A = ${EnsMeanBGAccountNumber}
@@ -445,9 +457,9 @@ cat >! suite.rc << EOF
 {% else %}
     script = \$origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "0"
 {% endif %}
-  [[CleanupCalcOMEnsMeanBG]]
-    inherit = CleanupBase
-    script = \$origin/CleanupCalcOMEnsMeanBG.csh "1" "0" "BG"
+  [[CleanHofXEnsMeanBG]]
+    inherit = CleanBase
+    script = \$origin/CleanHofXEnsMeanBG.csh "1" "0" "BG"
 [visualization]
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
@@ -455,8 +467,8 @@ cat >! suite.rc << EOF
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
 
-cylc register ${WholeExpName} ${mainScriptDir}
-cylc validate ${WholeExpName}
-cylc run ${WholeExpName}
+cylc register ${ExperimentName} ${mainScriptDir}
+cylc validate ${ExperimentName}
+cylc run ${ExperimentName}
 
 exit

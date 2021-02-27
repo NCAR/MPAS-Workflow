@@ -34,7 +34,10 @@ endif
 #
 # Setup environment:
 # =============================================
-source ./control.csh
+source config/experiment.csh
+source config/data.csh
+source config/mpas/variables.csh
+source config/build.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -67,7 +70,7 @@ set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$fileDate.nc
 set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
 rm ${bgFile}
-ln -fsv ${bgFileOther} ${bgFile}
+ln -sfv ${bgFileOther} ${bgFile}
 
 # Remove existing analysis file, then link to bg file
 # ===================================================
@@ -82,7 +85,7 @@ foreach var ({$MPASDiagVariables})
   endif 
 end
 if ( $copyDiags > 0 ) then
-  echo "Copy diagnostic variables used in OMM to bg"
+  echo "Copy diagnostic variables used in HofX to bg"
   # ===============================================
   set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
   rm ${bgFile}${OrigFileSuffix}
@@ -92,13 +95,13 @@ if ( $copyDiags > 0 ) then
 endif
 
 # use the background as the localTemplateFieldsFile
-ln -sf ${bgFile} ${localTemplateFieldsFile}## copy static fieldsset staticMemDir = `${memberDir} ens $ArgMember "${staticMemFmt}"`
+ln -sfv ${bgFile} ${localTemplateFieldsFile}## copy static fieldsset staticMemDir = `${memberDir} ens $ArgMember "${staticMemFmt}"`
 
 ## copy static fields:
 set staticMemDir = `${memberDir} ens $ArgMember "${staticMemFmt}"`
 set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
 rm ${localStaticFieldsFile}
-ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 # ===================
@@ -106,8 +109,8 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 # Run the executable:
 # ===================
 # ===================
-ln -sf ${OMMBuildDir}/${OMMEXE} ./
-mpiexec ./${OMMEXE} $appyaml ./jedi.log >& jedi.log.all
+ln -sfv ${HofXBuildDir}/${HofXEXE} ./
+mpiexec ./${HofXEXE} $appyaml ./jedi.log >& jedi.log.all
 
 #
 # Check status:
@@ -123,7 +126,7 @@ endif
 ## change static fields to a link:
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
-ln -sf ${memberStaticFieldsFile} ${localStaticFieldsFile}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 date
 
