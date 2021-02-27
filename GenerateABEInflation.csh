@@ -24,7 +24,7 @@ set self_AppType = hofx
 
 # ================================================================================================
 
-## copy static fields:
+## copy static fields
 set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
 set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
 rm ${localStaticFieldsFile}
@@ -43,6 +43,8 @@ set gridTemplateFile = ${self_WorkDir}/${localStaticFieldsFile}
 set dbPath = ${VerifyEnsMeanBGDirs}/${OutDBDir}
 
 set self_ObsList = (abi_g16)
+# TODO: enable AHI
+#set self_ObsList = (abi_g16 ahi_himawari8)
 set nInstAvailable = 0
 #set instrumentArg = ''
 foreach inst ($self_ObsList)
@@ -72,11 +74,9 @@ if ($nInstAvailable == 0) then
   exit 0
 endif
 
-module load python/3.7.5
 
-#
-# generate ABE Inflation Factors:
-# ======================================================
+# generate ABE Inflation Factors
+# ==============================
 set mainScript="GenerateABEIFactors"
 ln -fs ${pyObsDir}/*.py ./
 ln -fs ${pyObsDir}/${mainScript}.py ./
@@ -85,6 +85,7 @@ set success = 1
 while ( $success != 0 )
   mv log.${mainScript} log.${mainScript}_LAST
   setenv baseCommand "python ${mainScript}.py ${thisValidDate} -p ${dbPath} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} -m ${gridTemplateFile} -app hofx"
+#  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -p ${dbPath} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} -i ${instrumentArg} -m ${gridTemplateFile} -app hofx"
 
   echo "${baseCommand}"
   ${baseCommand} >& log.${mainScript}
