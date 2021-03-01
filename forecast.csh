@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/csh -f
 
 date
 
@@ -23,7 +23,9 @@ endif
 # Setup environment
 # =================
 source config/experiment.csh
-source config/data.csh
+source config/filestructure.csh
+source config/tools.csh
+source config/modeldata.csh
 source config/mpas/variables.csh
 source config/mpas/${MPASGridDescriptor}-mesh.csh
 source config/build.csh
@@ -120,7 +122,7 @@ else
   end
 
   ## copy static fields
-  set staticMemDir = `${memberDir} ens $ArgMember "${staticMemFmt}"`
+  set staticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
   set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
   rm ${localStaticFieldsFile}
   ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}

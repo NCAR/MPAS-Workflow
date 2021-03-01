@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/csh -f
 
 #TODO: move this script functionality and relevent control's to python + maybe yaml
 
@@ -38,7 +38,10 @@ endif
 # Setup environment
 # =================
 source config/experiment.csh
-source config/data.csh
+source config/filestructure.csh
+source config/tools.csh
+source config/modeldata.csh
+source config/obsdata.csh
 source config/mpas/variables.csh
 source config/mpas/${MPASGridDescriptor}-mesh.csh
 source config/appindex.csh
@@ -163,16 +166,16 @@ end
 
 # Link conventional data
 # ======================
-ln -sfv $CONVObsDir/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
-ln -sfv $CONVObsDir/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
-ln -sfv $CONVObsDir/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
-ln -sfv $CONVObsDir/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
-ln -sfv $CONVObsDir/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
 
 # Link AMSUA+MHS data
 # ==============
-ln -sfv $MWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
-ln -sfv $MWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.nc4 ${InDBDir}/
+ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
+ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.nc4 ${InDBDir}/
 
 # Link ABI data
 # ============
@@ -382,10 +385,10 @@ set enspbmemsed = EnsemblePbMembers
 if ( "$self_AppName" =~ *"eda"* ) then
   echo "files:" > $appyaml
 
-  set ensPbDir = ${dynamicEnsBDir}
-  set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
-  set ensPbMemFmt = "${dynamicEnsBMemFmt}"
-  set ensPbNMembers = ${dynamicEnsBNMembers}
+#  set ensPbDir = ${dynamicEnsBDir}
+#  set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
+#  set ensPbMemFmt = "${dynamicEnsBMemFmt}"
+#  set ensPbNMembers = ${dynamicEnsBNMembers}
 
   set member = 1
   while ( $member <= ${ensPbNMembers} )
@@ -398,6 +401,10 @@ if ( "$self_AppName" =~ *"eda"* ) then
     cp $prevYAML $memberyaml
 
     ## ensemble Jb members
+cat >! ${enspbmemsed}SEDF.yaml << EOF
+/${enspbmemsed}/c\
+EOF
+
     # TODO(JJG): how does ensemble B config generation need to be
     #            modified for 4DEnVar?
     set indent = "`${nSpaces} $nEnsPbIndent`"
@@ -406,16 +413,13 @@ if ( "$self_AppName" =~ *"eda"* ) then
     if ( $LeaveOneOutEDA == True ) then
       @ bremain--
     endif
-cat >! ${enspbmemsed}SEDF.yaml << EOF
-/${enspbmemsed}/c\
-EOF
 
     while ( $bmember < ${ensPbNMembers} )
       @ bmember++
       if ( $bmember == $member && $LeaveOneOutEDA == True ) then
         continue
       endif
-      set memDir = `${memberDir} ens $bmember "${ensPbMemFmt}"`
+      set memDir = `${memberDir} ensemble $bmember "${ensPbMemFmt}"`
       set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
       if ( $bremain > 1 ) then
         set filename = ${filename}\\
@@ -435,7 +439,7 @@ EOF
     cp $thisYAML $memberyaml
 
     ## Jo term
-    set memDir = `${memberDir} eda $member`
+    set memDir = `${memberDir} $self_AppName $member`
     sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
     if ($member == 1) then
       sed -i 's@ObsPerturbations@false@g' $memberyaml
@@ -452,10 +456,10 @@ else
   cp $prevYAML $memberyaml
 
   ## ensemble Jb members
-  set ensPbDir = ${fixedEnsBDir}
-  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
-  set ensPbMemFmt = "${fixedEnsBMemFmt}"
-  set ensPbNMembers = ${fixedEnsBNMembers}
+#  set ensPbDir = ${fixedEnsBDir}
+#  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
+#  set ensPbMemFmt = "${fixedEnsBMemFmt}"
+#  set ensPbNMembers = ${fixedEnsBNMembers}
 
 cat >! ${enspbmemsed}SEDF.yaml << EOF
 /${enspbmemsed}/c\
@@ -467,7 +471,7 @@ EOF
   set bmember = 0
   while ( $bmember < ${ensPbNMembers} )
     @ bmember++
-    set memDir = `${memberDir} ens $bmember "${ensPbMemFmt}"`
+    set memDir = `${memberDir} ensemble $bmember "${ensPbMemFmt}"`
     set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
     if ( $bmember < ${ensPbNMembers} ) then
       set filename = ${filename}\\

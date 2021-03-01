@@ -1,5 +1,6 @@
 #!/bin/csh -f
-source config/experiment.csh
+source config/filestructure.csh
+
 set AppAndVerify = AppAndVerify
 
 echo ""
@@ -23,7 +24,9 @@ foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
 end
 
-source config/data.csh
+source config/tools.csh
+source config/modeldata.csh
+source config/obsdata.csh
 source config/mpas/variables.csh
 
 ## First cycle "forecast" established offline
@@ -33,23 +36,17 @@ set thisValidDate = $thisCycleDate
 source getCycleVars.csh
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  if ( "$DAType" =~ *"eda"* ) then
-    set InitialFC = "$firstEnsFCDir"`${memberDir} ens $member "${firstEnsFCMemFmt}"`
-    set FirstCycleFilePrefix = ${FCFilePrefix}
-  else
-    set InitialFC = $firstDetermFCDir
-    set FirstCycleFilePrefix = ${RSTFilePrefix}
-  endif
   rm -r $prevCyclingFCDirs[$member]
   mkdir -p $prevCyclingFCDirs[$member]
-
   set fcFile = $prevCyclingFCDirs[$member]/${FCFilePrefix}.${fileDate}.nc
-  ln -sfv ${InitialFC}/${FirstCycleFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
+
+  set InitialMemberFC = "$firstFCDir"`${memberDir} ens $member "${firstFCMemFmt}"`
+  ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
   # rm ${fcFile}
   cp -v ${fcFile}${OrigFileSuffix} ${fcFile}
 
   set diagFile = $prevCyclingFCDirs[$member]/${DIAGFilePrefix}.${fileDate}.nc
-  ln -sfv ${InitialFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
+  ln -sfv ${InitialMemberFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
 
   ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
   set copyDiags = 0
@@ -70,7 +67,7 @@ end
 setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
 
 #TODO: enable VARBC updating between cycles
-#  setenv VARBC_TABLE ${prevCyclingDADir}/${VARBC_ANA}
+#  setenv VARBC_TABLE ${prevCyclingDADir}/${VarBCAnalysis}
 
 
 ## jediPrepCyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA

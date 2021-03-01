@@ -1,10 +1,10 @@
-#!/bin/csh
+#!/bin/csh -f
 
 ## Top-level workflow configuration
 
 # Cycle bounds
 set initialCyclePoint = 20180415T00
-set finalCyclePoint   = 20180514T18
+set finalCyclePoint   = 20180415T12
 
 # CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
@@ -19,7 +19,7 @@ set VerifyDeterministicDA = True
 # VerifyExtendedMeanFC: whether to run verification scripts across
 #    extended forecast states, first intialized at mean analysis
 # options: True/False
-set VerifyExtendedMeanFC = False
+set VerifyExtendedMeanFC = True
 
 # VerifyMemberBG: whether to run verification scripts for CyclingWindowHR
 #    forecast length. Utilizes critical path forecast states from
@@ -56,6 +56,9 @@ date
 ## load experiment configuration
 source config/experiment.csh
 
+## load the file structure
+source config/filestructure.csh
+
 ## load job submission environment
 source config/job.csh
 source config/mpas/${MPASGridDescriptor}-job.csh
@@ -71,7 +74,7 @@ endif
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
 
-echo "Initializing ${PKGBASE}"
+echo "Initializing ${PackageBaseName}"
 module purge
 module load cylc
 module load graphviz
@@ -98,7 +101,7 @@ cat >! suite.rc << EOF
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
 [meta]
-  title = "${PKGBASE}--${ExperimentName}"
+  title = "${PackageBaseName}--${ExperimentName}"
 # critical path cycle dependencies
   {% set PrimaryCPGraph = "" %}
   {% set SecondaryCPGraph = "" %}

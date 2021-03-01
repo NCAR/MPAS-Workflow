@@ -34,38 +34,35 @@ module load python/3.7.5
 #############################
 ## build directory structures
 #############################
-set BuildUser = guerrett
-set TopBuildDir = /glade/work/${BuildUser}/pandac
 
 # MPAS-JEDI
 # ---------
-set BundleFeatureName = ''
-set BundleFeatureName = '_19FEB2021'
-
+## Variational
 if ( "$DAType" =~ *"eda"* ) then
   setenv VariationalEXE mpasjedi_eda.x
 else
   setenv VariationalEXE mpasjedi_variational.x
 endif
-set VariationalBuild = mpas-bundle${CUSTOMPIO}_${BuildCompiler}${BundleFeatureName}
-setenv VariationalBuildDir ${TopBuildDir}/build/${VariationalBuild}/bin
+setenv VariationalBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_19FEB2021/bin
 
+## HofX
 setenv HofXEXE mpasjedi_hofx_nomodel.x
-set HofXBuild = mpas-bundle${CUSTOMPIO}_${BuildCompiler}${BundleFeatureName}
-setenv HofXBuildDir ${TopBuildDir}/build/${HofXBuild}/bin
+setenv HofXBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_19FEB2021/bin
 
+## RTPP
 setenv RTPPEXE mpasjedi_rtpp.x
-set RTPPBuild = mpas-bundle${CUSTOMPIO}_${BuildCompiler}_feature--rtpp_app
-setenv RTPPBuildDir ${TopBuildDir}/build/${RTPPBuild}/bin
+setenv RTPPBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--rtpp_app/bin
 
 # MPAS-Model
 # ----------
 setenv MPASCore atmosphere
 setenv ForecastEXE mpas_${MPASCore}
+setenv ForecastTopBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_19FEB2021
+
+setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
+
 set ForecastProject = MPAS
-set ForecastBuild = mpas-bundle${CUSTOMPIO}_${BuildCompiler}${BundleFeatureName}
-setenv ForecastBuildDir ${TopBuildDir}/build/${ForecastBuild}/bin
-setenv ForecastLookupDir ${TopBuildDir}/build/${ForecastBuild}/${ForecastProject}/core_${MPASCore}
+setenv ForecastLookupDir ${ForecastTopBuildDir}/${ForecastProject}/core_${MPASCore}
 set ForecastLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
 
 # Mean state calculator

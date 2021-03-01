@@ -1,5 +1,8 @@
 #!/bin/csh -f
 
+source config/filestructure.csh
+source config/tools.csh
+
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 #set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`
 setenv prevCycleDate ${prevCycleDate}
@@ -23,9 +26,8 @@ set VerifyEnsMeanBGDirs = (${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleD
 set VerifyMeanANDirs = (${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
 set VerifyMeanFCDirs = (${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
 
-set CyclingInflationDir = ${CyclingInflationWorkDir}/${thisCycleDate}
-set CyclingRTPPInflationDir = ${CyclingInflationDir}/RTPP
-set CyclingABEInflationDir = ${CyclingInflationDir}/ABE
+set CyclingRTPPInflationDir = ${RTPPInflationWorkDir}/${thisCycleDate}
+set CyclingABEInflationDir = ${ABEInflationWorkDir}/${thisCycleDate}
 
 set CyclingDAInDirs = ()
 set CyclingDAOutDirs = ()
