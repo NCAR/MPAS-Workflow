@@ -1,0 +1,62 @@
+<streams>
+<immutable_stream name="static"
+                  type="input"
+                  filename_template="localStaticFieldsFile"
+                  io_type="pnetcdf,cdf5"
+                  input_interval="initial_only" />
+
+<immutable_stream name="input"
+                  type="input"
+                  filename_template="ICFilePrefix.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
+                  input_interval="initial_only" />
+
+<immutable_stream name="da_state"
+                  type="output"
+                  clobber_mode="truncate"
+                  filename_template="FCFilePrefix.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
+                  output_interval="outputInterval" />
+
+<immutable_stream name="restart"
+                  type="input;output"
+                  filename_template="restart.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
+                  input_interval="initial_only"
+                  clobber_mode="overwrite"
+                  output_interval="none" />
+
+<stream name="output"
+        type="none"
+        filename_template="history.$Y-$M-$D_$h.$m.$s.nc"
+        io_type="pnetcdf,cdf5"
+        output_interval="1_00:00:00" >
+	<file name="stream_list.atmosphere.output"/>
+</stream>
+
+<stream name="diagnostics"
+        type="output"
+        filename_template="diag.$Y-$M-$D_$h.$m.$s.nc"
+        io_type="pnetcdf,cdf5"
+        clobber_mode="overwrite"
+        output_interval="outputInterval" >
+        <file name="stream_list.atmosphere.diagnostics"/>
+</stream>
+
+<stream name="surface"
+        type="input"
+        filename_template="x1.nCells.sfc_update.nc"
+        filename_interval="none"
+        input_interval="none" >
+
+	<file name="stream_list.atmosphere.surface"/>
+</stream>
+
+<immutable_stream name="iau"
+                  type="input"
+                  filename_template="x1.nCells.AmB.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_interval="none"
+                  packages="iau"
+                  input_interval="none" />
+
+</streams>

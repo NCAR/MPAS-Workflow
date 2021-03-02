@@ -1,28 +1,36 @@
-#!/bin/csh
+#!/bin/csh -f
 
 date
 
-#
-# Setup environment:
-# =============================================
-source ./control.csh
+# Setup environment
+# =================
+source config/experiment.csh
+source config/filestructure.csh
+source config/tools.csh
+source config/modeldata.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-set self_StatePrefix = ${FCFilePrefix}
-
+# static work directory
 set self_WorkDir = $CyclingABEInflationDir
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
-set self_AppType = ${omm}
+# other static variables
+set self_StatePrefix = ${FCFilePrefix}
+set self_AppType = hofx
 
-## link static fields:
-ln -sf ${staticFieldsFile} ${localStaticFieldsFile}
+# ================================================================================================
+
+## copy static fields
+set staticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
+set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
+rm ${localStaticFieldsFile}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 # gridTemplateFile must include latCell, lonCell, theta, and surface_pressure
 set gridTemplateFile = ${self_WorkDir}/${localStaticFieldsFile}
@@ -30,13 +38,15 @@ set gridTemplateFile = ${self_WorkDir}/${localStaticFieldsFile}
 # could use mean state, but not guaranteed to have all required fields
 #set meanStatePrefix = ${FCFilePrefix}
 #set meanName = ${meanStatePrefix}.$fileDate.nc
-#set gridTemplateFile = $MeanBackgroundDir/$meanName
+#set gridTemplateFile = $MeanBackgroundDirs[1]/$meanName
 
 
 # location of mean background obs-space hofx database
 set dbPath = ${VerifyEnsMeanBGDirs}/${OutDBDir}
 
 set self_ObsList = (abi_g16)
+# TODO: enable AHI
+#set self_ObsList = (abi_g16 ahi_himawari8)
 set nInstAvailable = 0
 #set instrumentArg = ''
 foreach inst ($self_ObsList)
@@ -66,11 +76,9 @@ if ($nInstAvailable == 0) then
   exit 0
 endif
 
-module load python/3.7.5
 
-#
-# generate ABE Inflation Factors:
-# ======================================================
+# generate ABE Inflation Factors
+# ==============================
 set mainScript="GenerateABEIFactors"
 ln -fs ${pyObsDir}/*.py ./
 ln -fs ${pyObsDir}/${mainScript}.py ./
@@ -79,6 +87,7 @@ set success = 1
 while ( $success != 0 )
   mv log.${mainScript} log.${mainScript}_LAST
   setenv baseCommand "python ${mainScript}.py ${thisValidDate} -p ${dbPath} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} -m ${gridTemplateFile} -app hofx"
+#  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -p ${dbPath} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} -i ${instrumentArg} -m ${gridTemplateFile} -app hofx"
 
   echo "${baseCommand}"
   ${baseCommand} >& log.${mainScript}

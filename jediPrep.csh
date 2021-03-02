@@ -1,54 +1,78 @@
-#!/bin/csh
+#!/bin/csh -f
 
 #TODO: move this script functionality and relevent control's to python + maybe yaml
 
 date
 
+# Process arguments
+# =================
+## args
+# ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
+
+# ArgDT: int, valid forecast length beyond CYLC_TASK_CYCLE_POINT in hours
 set ArgDT = "$2"
+
+# ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
 
-#
-# Setup environment:
-# =============================================
-source ./control.csh
+## arg checks
+set test = `echo $ArgMember | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
+  exit 1
+endif
+if ( $ArgMember < 1 ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
+  exit 1
+endif
+
+set test = `echo $ArgDT | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
+
+# Setup environment
+# =================
+source config/experiment.csh
+source config/filestructure.csh
+source config/tools.csh
+source config/modeldata.csh
+source config/obsdata.csh
+source config/mpas/variables.csh
+source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/appindex.csh
+source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isInt = (! $status)
-if ( $isInt && "$ArgMember" != "0") then
-  set self_WorkDir = $WorkDirsArg[$ArgMember]
-else
- set self_WorkDir = $WorkDirsArg
-endif
-set test = `echo $ArgDT | grep '^[0-9]*$'`
-set isInt = (! $status)
-if ( ! $isInt) then
-  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
-  exit 1
-endif
+# templated work directory
+set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
 if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
   set self_WorkDir = $self_WorkDir/${ArgDT}hr
 endif
-
 echo "WorkDir = ${self_WorkDir}"
-
-set self_WindowHR = WindowHRArg
-set self_ObsList = ("${ObsListArg}")
-set self_VARBCTable = VARBCTableArg
-set self_AppName = AppNameArg
-set self_AppType = AppTypeArg
-
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
-##
-## Previous time info for yaml entries:
-## ====================================
+# other templated variables
+set self_WindowHR = WindowHRTEMPLATE
+set self_ObsList = ("${AppTypeTEMPLATEObsList}")
+set self_VARBCTable = VARBCTableTEMPLATE
+set self_AppName = AppNameTEMPLATE
+set self_AppType = AppTypeTEMPLATE
+set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
+
+# ================================================================================================
+
+# Previous time info for yaml entries
+# ===================================
 set prevValidDate = `$advanceCYMDH ${thisValidDate} -${self_WindowHR}`
 set yy = `echo ${prevValidDate} | cut -c 1-4`
 set mm = `echo ${prevValidDate} | cut -c 5-6`
@@ -86,32 +110,33 @@ set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sf $GRAPHINFO_DIR/x1.${MPASnCells}.graph.info* .
+ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
-foreach fileGlob ($FCLookupFileGlobs)
-  ln -sf ${FCLookupDir}/*${fileGlob} .
+foreach fileGlob ($MPASLookupFileGlobs)
+  ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
 ## link static stream settings
 
 ## link/copy stream_list/streams configs
 foreach staticfile ( \
-stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
-  ln -sf $daModelConfigDir/$staticfile .
+  ln -sfv $self_ModelConfigDir/$staticfile .
 end
 set STREAMS = streams.${MPASCore}
 rm ${STREAMS}
-cp -v $daModelConfigDir/${STREAMS} .
+cp -v $self_ModelConfigDir/${STREAMS} .
 sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
+sed -i 's@TemplateFilePrefix@'${TemplateFilePrefix}'@' ${STREAMS}
+sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${STREAMS}
 
 ## copy/modify dynamic namelist
 set NL = namelist.${MPASCore}
 rm $NL
-cp -v ${daModelConfigDir}/${NL} .
+cp -v ${self_ModelConfigDir}/${NL} .
 sed -i 's@startTime@'${NMLDate}'@' $NL
 sed -i 's@nCells@'${MPASnCells}'@' $NL
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NL
@@ -132,6 +157,7 @@ end
 # setup directories
 rm -r ${InDBDir}
 mkdir -p ${InDBDir}
+rm -r ${OutDBDir}
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set memDir = `${memberDir} $self_AppName $member`
@@ -141,29 +167,29 @@ end
 
 # Link conventional data
 # ======================
-ln -fsv $CONVObsDir/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
-ln -fsv $CONVObsDir/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
-ln -fsv $CONVObsDir/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
-ln -fsv $CONVObsDir/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
-ln -fsv $CONVObsDir/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
 
 # Link AMSUA+MHS data
 # ==============
-ln -fsv $MWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
-ln -fsv $MWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.nc4 ${InDBDir}/
+ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
+ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.nc4 ${InDBDir}/
 
 # Link ABI data
 # ============
-ln -fsv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.nc4 ${InDBDir}/
+ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.nc4 ${InDBDir}/
 
 # Link AHI data
 # ============
-ln -fsv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.nc4 ${InDBDir}/
+ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.nc4 ${InDBDir}/
 
 
 # Link VarBC prior
 # ====================
-ln -fsv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
+ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 
 
 # =============
@@ -171,7 +197,7 @@ ln -fsv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 # =============
 ## Copy applicationBase yaml
 set thisYAML = orig.yaml
-cp -v ${CONFIGDIR}/applicationBase/${self_AppName}.yaml $thisYAML
+cp -v ${ConfigDir}/applicationBase/${self_AppName}.yaml $thisYAML
 
 ## indentation of observations array members
 set nIndent = $applicationObsIndent[$myAppIndex]
@@ -179,17 +205,21 @@ set obsIndent = "`${nSpaces} $nIndent`"
 
 ## Add selected observations (see control.csh)
 set checkForMissingObs = (sondes aircraft satwind gnssro sfc amsua mhs abi ahi)
+set found = 0
+set obsYAML = observations.yaml
+rm $obsYAML
+touch $obsYAML
 foreach obs ($self_ObsList)
   echo "Preparing YAML for ${obs} observations"
   set missing=0
-  set SUBYAML=${CONFIGDIR}/ObsPlugs/${self_AppType}/${obs}
+  set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${obs}
   if ( "$obs" =~ *"sondes"* ) then
     #KLUDGE to handle missing qv for sondes at single time
     if ( ${thisValidDate} == 2018043006 ) then
       set SUBYAML=${SUBYAML}-2018043006
     endif
   endif
-  # check for that obs string matches at least one non-broken observation file link
+  # check that obs string matches at least one non-broken observation file link
   foreach inst ($checkForMissingObs)
     if ( "$obs" =~ *"${inst}"* ) then
       find ${InDBDir}/${inst}*_obs_*.nc4 -mindepth 0 -maxdepth 0
@@ -206,19 +236,28 @@ foreach obs ($self_ObsList)
 
   if ($missing == 0) then
     echo "${obs} data is present and selected; adding ${obs} to the YAML"
-    sed 's/^/'"$obsIndent"'/' ${SUBYAML}.yaml >> $thisYAML
+    sed 's/^/'"$obsIndent"'/' ${SUBYAML}.yaml >> $obsYAML
+    @ found++
   else
     echo "${obs} data is selected, but missing; NOT adding ${obs} to the YAML"
   endif
 end
+if ($found == 0) then
+  echo "ERROR in $0 : no observation data is available for this date" > ./FAIL
+  exit 1
+endif
 
+cat $obsYAML >> $thisYAML
+
+#TODO: replace cat with sed substitution so that each application can decide what to do when there
+# are zero observations available
 
 ## QC characteristics
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
 
 # TODO(JJG): revise these date replacements to loop over
-#            all relevant dates to this application (e.g., 4DEnVar?)
+#            all dates relevant to this application (e.g., 4DEnVar?)
 ## previous date
 sed -i 's@2018-04-14_18.00.00@'${prevFileDate}'@g' $thisYAML
 sed -i 's@2018041418@'${prevValidDate}'@g' $thisYAML
@@ -289,7 +328,18 @@ end
 #sed -i 's@AnalysisVariables@'$VarSub'@' $prevYAML
 
 
-# TODO(JJG): move the J terms below to da.csh as not needed for OMM
+# TODO(JJG): J terms below not needed for hofx application; move to a new variationalPrep.csh.
+#  Can use an intermediate yaml (e.g., jediPrep.yaml) between jediPrep.csh and application-specific
+#  preparations. Could also have an hofxPrep.csh, starts off by just copying yaml.
+
+## ensemble Jb yaml indentation
+if ( "$self_AppName" =~ *"envar"* ) then
+  set nEnsPbIndent = 4
+else if ( "$self_AppName" =~ *"hybrid"* ) then
+  set nEnsPbIndent = 8
+else
+  set nEnsPbIndent = 0
+endif
 
 ## ensemble Jb localization
 sed -i 's@bumpLocDir@'${bumpLocDir}'@g' $prevYAML
@@ -307,7 +357,7 @@ if ( "$self_AppName" =~ *"eda"* && ${ABEInflation} == True ) then
     set removeInflation = 1
   else
     set thisYAML = insertInflation.yaml
-    set indent = "    "
+    set indent = "`${nSpaces} $nEnsPbIndent`"
 #NOTE: no_transf=1 allows for spechum and temperature inflation values to be read
 #      directly from inflationFields without a variable transform. Also requires spechum
 #      and temperature to be in stream_list.atmosphere.output.
@@ -336,10 +386,10 @@ set enspbmemsed = EnsemblePbMembers
 if ( "$self_AppName" =~ *"eda"* ) then
   echo "files:" > $appyaml
 
-  set ensPbDir = ${dynamicEnsBDir}
-  set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
-  set ensPbMemFmt = "${dynamicEnsBMemFmt}"
-  set ensPbNMembers = ${dynamicEnsBNMembers}
+#  set ensPbDir = ${dynamicEnsBDir}
+#  set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
+#  set ensPbMemFmt = "${dynamicEnsBMemFmt}"
+#  set ensPbNMembers = ${dynamicEnsBNMembers}
 
   set member = 1
   while ( $member <= ${ensPbNMembers} )
@@ -352,25 +402,25 @@ if ( "$self_AppName" =~ *"eda"* ) then
     cp $prevYAML $memberyaml
 
     ## ensemble Jb members
+cat >! ${enspbmemsed}SEDF.yaml << EOF
+/${enspbmemsed}/c\
+EOF
+
     # TODO(JJG): how does ensemble B config generation need to be
     #            modified for 4DEnVar?
-    # TODO: this indentation only works for pure EnVar, not Hybrid EnVar
-    set indent = "    "
+    set indent = "`${nSpaces} $nEnsPbIndent`"
     set bmember = 0
     set bremain = ${ensPbNMembers}
     if ( $LeaveOneOutEDA == True ) then
       @ bremain--
     endif
-cat >! ${enspbmemsed}SEDF.yaml << EOF
-/${enspbmemsed}/c\
-EOF
 
     while ( $bmember < ${ensPbNMembers} )
       @ bmember++
       if ( $bmember == $member && $LeaveOneOutEDA == True ) then
         continue
       endif
-      set memDir = `${memberDir} ens $bmember "${ensPbMemFmt}"`
+      set memDir = `${memberDir} ensemble $bmember "${ensPbMemFmt}"`
       set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
       if ( $bremain > 1 ) then
         set filename = ${filename}\\
@@ -390,7 +440,7 @@ EOF
     cp $thisYAML $memberyaml
 
     ## Jo term
-    set memDir = `${memberDir} eda $member`
+    set memDir = `${memberDir} $self_AppName $member`
     sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
     if ($member == 1) then
       sed -i 's@ObsPerturbations@false@g' $memberyaml
@@ -407,10 +457,10 @@ else
   cp $prevYAML $memberyaml
 
   ## ensemble Jb members
-  set ensPbDir = ${fixedEnsBDir}
-  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
-  set ensPbMemFmt = "${fixedEnsBMemFmt}"
-  set ensPbNMembers = ${fixedEnsBNMembers}
+#  set ensPbDir = ${fixedEnsBDir}
+#  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
+#  set ensPbMemFmt = "${fixedEnsBMemFmt}"
+#  set ensPbNMembers = ${fixedEnsBNMembers}
 
 cat >! ${enspbmemsed}SEDF.yaml << EOF
 /${enspbmemsed}/c\
@@ -418,12 +468,11 @@ EOF
 
   # TODO(JJG): how does ensemble B config generation need to be
   #            modified for 4DEnVar?
-  # TODO: this indentation only works for pure EnVar, not Hybrid EnVar
-  set indent = "    "
+  set indent = "`${nSpaces} $nEnsPbIndent`"
   set bmember = 0
   while ( $bmember < ${ensPbNMembers} )
     @ bmember++
-    set memDir = `${memberDir} ens $bmember "${ensPbMemFmt}"`
+    set memDir = `${memberDir} ensemble $bmember "${ensPbMemFmt}"`
     set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
     if ( $bmember < ${ensPbNMembers} ) then
       set filename = ${filename}\\
