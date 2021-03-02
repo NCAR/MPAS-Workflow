@@ -1,4 +1,4 @@
-#!/bin/csh -f
+#!/bin/csh
 
 ## Top-level workflow configuration
 
