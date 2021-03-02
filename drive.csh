@@ -2,59 +2,74 @@
 
 ## Top-level workflow configuration
 
-# Cycle bounds
+## load experiment configuration
+source config/experiment.csh
+
+######################
+# workflow date bounds
+######################
+# + ancillary model and/or observation data must be available between FirstCycleDate and finalCyclePoint
+# + CyclingDA and/or CyclingFC must have been completed between FirstCycleDate and initialCyclePoint if they differ
+
+## initialCyclePoint
+# OPTIONS: >= FirstCycleDate
+# Set > FirstCycleDate to automatically restart from previously completed cycle
 set initialCyclePoint = 20180415T00
+
+## finalCyclePoint
+# OPTIONS: >= initialCyclePoint
 set finalCyclePoint   = 20180514T18
 
-# CriticalPathType: controls dependencies between and chilrdren of
+
+#########################
+# workflow task selection
+#########################
+## CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
-# options: Normal, Bypass, Reanalysis, Reforecast
+# OPTIONS: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
 
-# VerifyDeterministicDA: whether to run verification scripts for
+## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
-# options: True/False
+# OPTIONS: True/False
 set VerifyDeterministicDA = True
 
-# VerifyExtendedMeanFC: whether to run verification scripts across
+## VerifyExtendedMeanFC: whether to run verification scripts across
 #    extended forecast states, first intialized at mean analysis
-# options: True/False
+# OPTIONS: True/False
 set VerifyExtendedMeanFC = False
 
-# VerifyMemberBG: whether to run verification scripts for CyclingWindowHR
+## VerifyMemberBG: whether to run verification scripts for CyclingWindowHR
 #    forecast length. Utilizes critical path forecast states from
 #    individual ensemble member analyses or deterministic analysis
-# options: True/False
+# OPTIONS: True/False
 set VerifyMemberBG = False
 
-# VerifyEnsMeanBG: whether to run verification scripts for ensemble
+## VerifyEnsMeanBG: whether to run verification scripts for ensemble
 #    mean background state.
-# options: True/False
+# OPTIONS: True/False
 set VerifyEnsMeanBG = True
 
-# DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
+## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
 #    space while VerifyEnsMeanBG is True.  Automatically triggers OMF calculation
 #    for all ensemble members. VerifyEnsMeanBG is nearly free when
 #    DiagnoseEnsSpreadBG is True.
 #    mean background state.
-# options: True/False
+# OPTIONS: True/False
 set DiagnoseEnsSpreadBG = False
 
-# VerifyEnsMeanAN: whether to run verification scripts for ensemble
+## VerifyEnsMeanAN: whether to run verification scripts for ensemble
 #    mean analysis state.
-# options: True/False
+# OPTIONS: True/False
 set VerifyMemberAN = False
 
-# VerifyExtendedEnsBG: whether to run verification scripts across
+## VerifyExtendedEnsBG: whether to run verification scripts across
 #    extended forecast states, first intialized at ensemble of analysis
 #    states.
-# options: True/False
+# OPTIONS: True/False
 set VerifyExtendedEnsFC = False
 
 date
-
-## load experiment configuration
-source config/experiment.csh
 
 ## load the file structure
 source config/filestructure.csh
