@@ -292,7 +292,7 @@ cat >! suite.rc << EOF
     script = \$origin/CyclingDA.csh
     [[[job]]]
       execution time limit = PT${CyclingDAJobMinutes}M
-      execution retry delays = 4*PT30S
+      execution retry delays = 2*PT30S
     [[[directives]]]
       -m = ae
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
