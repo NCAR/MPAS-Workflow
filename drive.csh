@@ -4,7 +4,7 @@
 
 # Cycle bounds
 set initialCyclePoint = 20180415T00
-set finalCyclePoint   = 20180415T12
+set finalCyclePoint   = 20180514T18
 
 # CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
@@ -19,7 +19,7 @@ set VerifyDeterministicDA = True
 # VerifyExtendedMeanFC: whether to run verification scripts across
 #    extended forecast states, first intialized at mean analysis
 # options: True/False
-set VerifyExtendedMeanFC = True
+set VerifyExtendedMeanFC = False
 
 # VerifyMemberBG: whether to run verification scripts for CyclingWindowHR
 #    forecast length. Utilizes critical path forecast states from
