@@ -1,14 +1,16 @@
 #!/bin/csh -f
 
+source config/experiment.csh
+
 ## job length and node/pe requirements
 
 # Uniform 120km mesh
 # ------------------
-setenv CyclingFCJobMinutes 5
+@ CyclingFCJobMinutes = 1 + ($CyclingWindowHR / 6)
 setenv CyclingFCNodes 4
 setenv CyclingFCPEPerNode 32
 
-setenv ExtendedFCJobMinutes 40
+@ ExtendedFCJobMinutes = 1 + ($ExtendedFCWindowHR / 12)
 setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
@@ -17,8 +19,11 @@ setenv HofXNodes 1
 setenv HofXPEPerNode 36
 setenv HofXMemory 109
 
+setenv VerifyObsJobMinutes 5
 setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 36
+
+setenv VerifyModelJobMinutes 2
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 

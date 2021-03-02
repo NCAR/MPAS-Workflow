@@ -25,7 +25,7 @@ set VerifyExtendedMeanFC = False
 #    forecast length. Utilizes critical path forecast states from
 #    individual ensemble member analyses or deterministic analysis
 # options: True/False
-set VerifyMemberBG = True
+set VerifyMemberBG = False
 
 # VerifyEnsMeanBG: whether to run verification scripts for ensemble
 #    mean background state.
@@ -38,7 +38,7 @@ set VerifyEnsMeanBG = True
 #    DiagnoseEnsSpreadBG is True.
 #    mean background state.
 # options: True/False
-set DiagnoseEnsSpreadBG = True
+set DiagnoseEnsSpreadBG = False
 
 # VerifyEnsMeanAN: whether to run verification scripts for ensemble
 #    mean analysis state.
@@ -271,14 +271,14 @@ cat >! suite.rc << EOF
       -l = select=${HofXNodes}:ncpus=${HofXPEPerNode}:mpiprocs=${HofXPEPerNode}:mem=${HofXMemory}GB
   [[VerifyModelBase]]
     [[[job]]]
-      execution time limit = PT5M
+      execution time limit = PT${VerifyModelJobMinutes}M
     [[[directives]]]
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
       -l = select=${VerifyModelNodes}:ncpus=${VerifyModelPEPerNode}:mpiprocs=${VerifyModelPEPerNode}
   [[VerifyObsBase]]
     [[[job]]]
-      execution time limit = PT10M
+      execution time limit = PT${VerifyObsJobMinutes}M
     [[[directives]]]
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
