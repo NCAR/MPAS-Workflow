@@ -29,3 +29,5 @@
   - filter: ROobserror
     variable: refractivity
     errmodel: NBAM
+  get values:
+    interpolation type: InterpolationType

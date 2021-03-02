@@ -21,3 +21,5 @@
 #    random_seed: 0
 #  - filter: Gaussian_Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
+  get values:
+    interpolation type: InterpolationType

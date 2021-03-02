@@ -251,6 +251,9 @@ cat $obsYAML >> $thisYAML
 #TODO: replace cat with sed substitution so that each application can decide what to do when there
 # are zero observations available
 
+## Horizontal interpolation type
+sed -i 's@InterpolationType@'${InterpolationType}'@g' $thisYAML
+
 ## QC characteristics
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML

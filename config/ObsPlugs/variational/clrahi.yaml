@@ -51,3 +51,5 @@
       channels: *clrahi_channels
     - name: brightness_temperature_jacobian_surface_temperature
       channels: *clrahi_channels
+  get values:
+    interpolation type: InterpolationType

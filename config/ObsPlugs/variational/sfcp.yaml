@@ -24,3 +24,5 @@
   - filter: Background Check
     threshold: 3.0
     apply at iterations: 0, 1
+  get values:
+    interpolation type: InterpolationType

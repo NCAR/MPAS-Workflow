@@ -148,3 +148,5 @@
     obs options:
       <<: *cldamsuacrtmopts
       Sensor_ID: amsua_aqua
+  get values:
+    interpolation type: InterpolationType

@@ -71,3 +71,5 @@
       channels: *ahi_channels
     - name: brightness_temperature_jacobian_surface_temperature
       channels: *ahi_channels
+  get values:
+    interpolation type: InterpolationType
