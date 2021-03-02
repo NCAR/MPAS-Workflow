@@ -55,6 +55,8 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   setenv firstFCMemFmt " "
   setenv firstFCDir ${firstDetermFCDir}
+
+  # TODO: re-generate GFS forecasts from 'da_state' stream with FCFilePrefix
   set firstFCFilePrefix = ${RSTFilePrefix}
 endif
 

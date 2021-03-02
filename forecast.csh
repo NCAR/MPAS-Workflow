@@ -28,7 +28,8 @@ source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
 source config/mpas/${MPASGridDescriptor}-mesh.csh
-source config/build.csh
+source config/builds.csh
+source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -64,9 +65,9 @@ rm ./x1.${MPASnCells}.graph.info*
 ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
-foreach fileGlob ($ForecastLookupFileGlobs)
+foreach fileGlob ($MPASLookupFileGlobs)
   rm ./*${fileGlob}
-  ln -sfv ${ForecastLookupDir}/*${fileGlob} .
+  ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
 ## link/copy stream_list/streams configs
@@ -83,6 +84,9 @@ rm ${STREAMS}
 cp -v $forecastModelConfigDir/${STREAMS} .
 sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
 sed -i 's@outputInterval@'${output_interval}'@' ${STREAMS}
+sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${STREAMS}
+sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${STREAMS}
+sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${STREAMS}
 
 ## copy/modify dynamic namelist
 set NL = namelist.atmosphere

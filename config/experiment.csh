@@ -74,7 +74,7 @@ setenv LeaveOneOutEDA True
 
 ## RTPPInflationFactor
 # Typical Values: 0.0 or 0.50 to 0.90
-setenv RTPPInflationFactor 0.80
+setenv RTPPInflationFactor 0.0
 
 ## ABEIInflation
 # OPTIONS: True/False
