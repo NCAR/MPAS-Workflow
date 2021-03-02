@@ -22,7 +22,10 @@ setenv VerifyObsPEPerNode 36
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
-setenv CyclingDAJobMinutes 25
+set DeterministicDAJobMinutes = 25
+set EnsembleDAMembersPerJobMinute = 2
+@ CyclingDAJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
+@ CyclingDAJobMinutes = ${CyclingDAJobMinutes} + ${DeterministicDAJobMinutes}
 setenv CyclingDAMemory 109
 if ( "$DAType" =~ *"eda"* ) then
   setenv CyclingDANodesPerMember 64
