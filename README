@@ -29,12 +29,14 @@ source env-setup/cheyenne
 
 appindex.csh: controls re-usable templating for variational and hofx applications
 
-build.csh: compiled code build directories and run-time environment
+builds.csh: compiled code build directories
 
 modeldata.csh: static model-space data file structure, including mesh-specific partition files,
 fixed ensemble forecast members for deterministic experiments, first guess files for the first cycle
 of an experiment, surface variable update files (sst and xice), and common static.nc file(s) to be
 used across all cycles.
+
+environment.csh: common executable run-time environment
 
 experiment.csh: controls for independent experiments
 

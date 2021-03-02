@@ -45,7 +45,7 @@ source config/obsdata.csh
 source config/mpas/variables.csh
 source config/mpas/${MPASGridDescriptor}-mesh.csh
 source config/appindex.csh
-source config/build.csh
+source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -113,15 +113,14 @@ set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
-foreach fileGlob ($ForecastLookupFileGlobs)
-  ln -sfv ${ForecastLookupDir}/*${fileGlob} .
+foreach fileGlob ($MPASLookupFileGlobs)
+  ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
 ## link static stream settings
 
 ## link/copy stream_list/streams configs
 foreach staticfile ( \
-#stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
@@ -131,6 +130,8 @@ set STREAMS = streams.${MPASCore}
 rm ${STREAMS}
 cp -v $self_ModelConfigDir/${STREAMS} .
 sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
+sed -i 's@TemplateFilePrefix@'${TemplateFilePrefix}'@' ${STREAMS}
+sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${STREAMS}
 
 ## copy/modify dynamic namelist
 set NL = namelist.${MPASCore}

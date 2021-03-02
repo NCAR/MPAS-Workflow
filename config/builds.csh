@@ -1,39 +1,19 @@
 #!/bin/csh -f
 
-############################
-# code build/run environment
-############################
-source /etc/profile.d/modules.csh
-setenv OPT /glade/work/miesch/modules
-module use $OPT/modulefiles/core
-
-setenv BuildCompiler "gnu-openmpi"
-#setenv BuildCompiler "intel-impi"
-set mainModule = ${BuildCompiler}
-
-module purge
-module load jedi/${mainModule}
-
-setenv CUSTOMPIO         ""
-if ( CUSTOMPIO != "" ) then
-  module unload pio
-endif
-
-module load nco
-limit stacksize unlimited
-setenv OOPS_TRACE 0
-setenv OOPS_DEBUG 0
-#setenv OOPS_TRAPFPE 1
-setenv GFORTRAN_CONVERT_UNIT 'big_endian:101-200'
-setenv F_UFMTENDIAN 'big:101-200'
-setenv OMP_NUM_THREADS 1
-
-module load python/3.7.5
-
+source config/experiment.csh
 
 #############################
 ## build directory structures
 #############################
+
+## BuildCompiler
+# {compiler}-{mpi-implementation} combination that selects the JEDI module to be loaded in
+# config/environment.csh
+# OPTIONS: gnu-openmpi, intel-impi
+setenv BuildCompiler 'gnu-openmpi'
+
+# Note: at this time, all executables should be built in the same environment, one that is
+# consistent with config/environment.csh
 
 # MPAS-JEDI
 # ---------
@@ -58,14 +38,12 @@ setenv RTPPBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_fe
 setenv MPASCore atmosphere
 setenv ForecastEXE mpas_${MPASCore}
 setenv ForecastTopBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_19FEB2021
-
 setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
 
-set ForecastProject = MPAS
-setenv ForecastLookupDir ${ForecastTopBuildDir}/${ForecastProject}/core_${MPASCore}
-set ForecastLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
+setenv MPASLookupDir ${ForecastTopBuildDir}/MPAS/core_${MPASCore}
+set MPASLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
 
 # Mean state calculator
 # ---------------------
-setenv meanStateExe      average_netcdf_files_parallel_mpas_${BuildCompiler}.x
+setenv meanStateExe      average_netcdf_files_parallel_mpas_gnu-openmpi.x
 setenv meanStateBuildDir /glade/work/guerrett/pandac/work/meanState
