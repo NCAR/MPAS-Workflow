@@ -8,17 +8,18 @@ source config/experiment.csh
 ######################
 # workflow date bounds
 ######################
-# + ancillary model and/or observation data must be available between FirstCycleDate and finalCyclePoint
-# + CyclingDA and/or CyclingFC must have been completed between FirstCycleDate and initialCyclePoint if they differ
-
 ## initialCyclePoint
-# OPTIONS: >= FirstCycleDate
-# Set > FirstCycleDate to automatically restart from previously completed cycle
+# OPTIONS: >= FirstCycleDate (see config/experiment.csh)
+# Either:
+# + initialCyclePoint must be equal to FirstCycleDate
+# OR:
+# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart#   from a previously completed cycle.
 set initialCyclePoint = 20180415T00
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
-set finalCyclePoint   = 20180514T18
+# + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
+set finalCyclePoint = 20180514T18
 
 
 #########################
