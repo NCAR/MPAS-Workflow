@@ -38,7 +38,7 @@ endif
 source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
-#source config/modeldata.csh --> should get GFSAnaDir from hear
+source config/modeldata.csh
 source config/verification.csh
 source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -71,19 +71,19 @@ ln -sf ${bgFileOther} ../restart.$fileDate.nc
 
 ln -fs ${pyModelDir}/*.py ./
 
-foreach mainScript (writediag_modelspace writediagstats_modelspace)
-  ln -fs ${pyModelDir}/${mainScript}.py ./
-
-  set success = 1
-  while ( $success != 0 )
-    mv log.$mainScript log.${mainScript}_LAST
-    python ${mainScript}.py "${thisValidDate}" >& log.$mainScript
-    set success = $?
-    if ( $success != 0 ) then
-      source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh
-      sleep 3
-    endif
-  end
+set mainScript = writediagstats_modelspace
+ln -fs ${pyModelDir}/${mainScript}.py ./
+set success = 1
+while ( $success != 0 )
+  mv log.$mainScript log.${mainScript}_LAST
+  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -r $GFSAnaDir/$InitFilePrefix"
+  echo ${baseCommand}
+  ${baseCommand} >& log.$mainScript
+  set success = $?
+  if ( $success != 0 ) then
+    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh
+    sleep 3
+  endif
 end
 
 cd -
