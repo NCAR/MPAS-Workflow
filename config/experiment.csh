@@ -62,7 +62,7 @@ set variationalObsList = ($benchmarkObsList)
 
 ## DAType
 # OPTIONS: 3denvar, eda_3denvar, 3dvarId
-setenv DAType eda_3denvar
+setenv DAType 3denvar
 
 if ( "$DAType" =~ *"eda"* ) then
   ## nEnsDAMembers

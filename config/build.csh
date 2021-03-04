@@ -34,8 +34,8 @@ module load python/3.7.5
 #############################
 ## build directory structures
 #############################
-set BuildUser = guerrett
-set TopBuildDir = /glade/work/${BuildUser}/pandac
+set BuildUser = vahl
+set TopBuildDir = /glade/scratch/${BuildUser}/mpasbundletest
 
 # MPAS-JEDI
 # ---------
@@ -47,16 +47,19 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   setenv VariationalEXE mpasjedi_variational.x
 endif
-set VariationalBuild = mpas-bundle${CUSTOMPIO}_${BuildCompiler}${BundleFeatureName}
-setenv VariationalBuildDir ${TopBuildDir}/build/${VariationalBuild}/bin
+#set VariationalBuild = mpas-bundle${CUSTOMPIO}_${BuildCompiler}${BundleFeatureName}
+#setenv VariationalBuildDir ${TopBuildDir}/build/${VariationalBuild}/bin
+setenv VariationalBuildDir ${TopBuildDir}/build/bin
 
 setenv HofXEXE mpasjedi_hofx_nomodel.x
 set HofXBuild = mpas-bundle${CUSTOMPIO}_${BuildCompiler}${BundleFeatureName}
-setenv HofXBuildDir ${TopBuildDir}/build/${HofXBuild}/bin
+#setenv HofXBuildDir ${TopBuildDir}/build/${HofXBuild}/bin
+setenv HofXBuildDir ${TopBuildDir}/build/bin
 
 setenv RTPPEXE mpasjedi_rtpp.x
 set RTPPBuild = mpas-bundle${CUSTOMPIO}_${BuildCompiler}_feature--rtpp_app
-setenv RTPPBuildDir ${TopBuildDir}/build/${RTPPBuild}/bin
+#setenv RTPPBuildDir ${TopBuildDir}/build/${RTPPBuild}/bin
+setenv RTPPBuildDir ${TopBuildDir}/build/bin
 
 # MPAS-Model
 # ----------
@@ -64,8 +67,10 @@ setenv MPASCore atmosphere
 setenv ForecastEXE mpas_${MPASCore}
 set ForecastProject = MPAS
 set ForecastBuild = mpas-bundle${CUSTOMPIO}_${BuildCompiler}${BundleFeatureName}
-setenv ForecastBuildDir ${TopBuildDir}/build/${ForecastBuild}/bin
-setenv ForecastLookupDir ${TopBuildDir}/build/${ForecastBuild}/${ForecastProject}/core_${MPASCore}
+#setenv ForecastBuildDir ${TopBuildDir}/build/${ForecastBuild}/bin
+setenv ForecastBuildDir ${TopBuildDir}/build/bin
+#setenv ForecastLookupDir ${TopBuildDir}/build/${ForecastBuild}/${ForecastProject}/core_${MPASCore}
+setenv ForecastLookupDir ${TopBuildDir}/build/${ForecastProject}/core_${MPASCore}
 set ForecastLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
 
 # Mean state calculator
