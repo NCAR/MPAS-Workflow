@@ -26,9 +26,13 @@ set self_AppType = hofx
 
 # ================================================================================================
 
+set localStaticFieldsFile = ${localStaticFieldsFileOuter}
+
 ## copy static fields
+rm static.nc
+
 set staticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
-set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
+set memberStaticFieldsFile = ${staticFieldsDirOuter}${staticMemDir}/${staticFieldsFileOuter}
 rm ${localStaticFieldsFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
@@ -99,7 +103,11 @@ while ( $success != 0 )
     sleep 3
   endif
 end
-cd -
+
+## change static fields to a link, keeping for transparency
+rm ${localStaticFieldsFile}
+rm ${localStaticFieldsFile}${OrigFileSuffix}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 date
 

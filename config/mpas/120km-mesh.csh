@@ -2,8 +2,12 @@
 
 # Uniform 120km mesh
 # ------------------
-setenv MPASEnsembleGridDescriptor $MPASGridDescriptor
-setenv MPASnCells 40962
+setenv MPASGridDescriptorOuter 120km
+setenv MPASGridDescriptorInner 120km
+setenv MPASGridDescriptorEnsemble ${MPASGridDescriptorInner}
+setenv MPASnCellsOuter 40962
+setenv MPASnCellsInner 40962
+setenv MPASnCellsEnsemble ${MPASnCellsInner}
 setenv MPASTimeStep 720.0
 setenv MPASDiffusionLengthScale 120000.0
 setenv RADTHINDISTANCE     "200.0"

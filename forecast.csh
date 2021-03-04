@@ -61,8 +61,8 @@ rm ./${icFile}
 ln -sfv ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
 
 ## link MPAS mesh graph info
-rm ./x1.${MPASnCells}.graph.info*
-ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+rm ./x1.${MPASnCellsOuter}.graph.info*
+ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -79,10 +79,13 @@ stream_list.${MPASCore}.output \
   rm ./$staticfile
   ln -sfv $forecastModelConfigDir/$staticfile .
 end
+
+set localStaticFieldsFile = ${localStaticFieldsFileOuter}
+
 set STREAMS = streams.${MPASCore}
 rm ${STREAMS}
 cp -v $forecastModelConfigDir/${STREAMS} .
-sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
+sed -i 's@nCells@'${MPASnCellsOuter}'@' ${STREAMS}
 sed -i 's@outputInterval@'${output_interval}'@' ${STREAMS}
 sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${STREAMS}
 sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${STREAMS}
@@ -94,7 +97,7 @@ rm ${NL}
 cp -v ${forecastModelConfigDir}/${NL} .
 sed -i 's@startTime@'${NMLDate}'@' $NL
 sed -i 's@fcLength@'${config_run_duration}'@' $NL
-sed -i 's@nCells@'${MPASnCells}'@' $NL
+sed -i 's@nCells@'${MPASnCellsOuter}'@' $NL
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NL
 sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NL
 
@@ -126,8 +129,10 @@ else
   end
 
   ## copy static fields
+  rm static.nc
+
   set staticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
-  set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
+  set memberStaticFieldsFile = ${staticFieldsDirOuter}${staticMemDir}/${staticFieldsFileOuter}
   rm ${localStaticFieldsFile}
   ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
   cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}

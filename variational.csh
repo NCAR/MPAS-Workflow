@@ -78,13 +78,25 @@ end
 ln -sfv ${bgFile} ${localTemplateFieldsFile}
 
 ## copy static fields
+rm static.nc
+
+# outer mesh
+set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 #TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
 set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
-set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
+set memberStaticFieldsFile = ${staticFieldsDirOuter}${staticMemDir}/${staticFieldsFileOuter}
 rm ${localStaticFieldsFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
+# inner mesh
+set localStaticFieldsFile = ${localStaticFieldsFileInner}
+#TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
+set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
+set memberStaticFieldsFile = ${staticFieldsDirInner}${staticMemDir}/${staticFieldsFileInner}
+rm ${localStaticFieldsFile}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 # Run the executable
 # ==================
@@ -108,8 +120,20 @@ if ( $status != 0 ) then
 endif
 
 ## change static fields to a link, keeping for transparency
+# outer mesh
+set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
 rm ${localStaticFieldsFile}${OrigFileSuffix}
+set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
+set memberStaticFieldsFile = ${staticFieldsDirOuter}${staticMemDir}/${staticFieldsFileOuter}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+
+# inner mesh
+set localStaticFieldsFile = ${localStaticFieldsFileInner}
+rm ${localStaticFieldsFile}
+rm ${localStaticFieldsFile}${OrigFileSuffix}
+set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
+set memberStaticFieldsFile = ${staticFieldsDirInner}${staticMemDir}/${staticFieldsFileInner}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 date

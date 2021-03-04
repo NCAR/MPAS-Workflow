@@ -65,7 +65,9 @@ setenv appyaml jedi.yaml
 #############################################
 setenv RSTFilePrefix restart
 setenv ICFilePrefix mpasin
-setenv InitFilePrefix x1.${MPASnCells}.init
+setenv InitFilePrefixOuter x1.${MPASnCellsOuter}.init
+setenv InitFilePrefixInner x1.${MPASnCellsInner}.init
+setenv InitFilePrefixEnsemble x1.${MPASnCellsEnsemble}.init
 
 setenv FCFilePrefix mpasout
 setenv fcDir fc
@@ -77,7 +79,9 @@ setenv BGFilePrefix bg
 setenv bgDir ${BGFilePrefix}
 
 setenv TemplateFilePrefix templateFields
-setenv localStaticFieldsFile static.nc
+setenv localStaticFieldsFileOuter static-${MPASnCellsOuter}.nc
+setenv localStaticFieldsFileInner static-${MPASnCellsInner}.nc
+setenv localStaticFieldsFileEnsemble static-${MPASnCellsEnsemble}.nc
 
 setenv OrigFileSuffix _orig
 

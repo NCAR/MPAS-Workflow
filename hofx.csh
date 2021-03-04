@@ -107,8 +107,11 @@ endif
 ln -sfv ${bgFile} ${localTemplateFieldsFile}
 
 ## copy static fields
+rm static.nc
+
+set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 set staticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
-set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
+set memberStaticFieldsFile = ${staticFieldsDirOuter}${staticMemDir}/${staticFieldsFileOuter}
 rm ${localStaticFieldsFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}

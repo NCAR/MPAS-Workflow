@@ -52,7 +52,7 @@ cp $anDirs[1]/${anPrefix}.$fileDate.nc ${meanDir}
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+ln -sfv $GraphInfoDir/x1.${MPASnCellsEnsemble}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -66,22 +66,24 @@ stream_list.${MPASCore}.output \
 )
   ln -sfv $self_ModelConfigDir/$staticfile .
 end
-set STREAMS = streams.${MPASCore}
-rm ${STREAMS}
-cp -v $self_ModelConfigDir/${STREAMS} .
-sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
-sed -i 's@TemplateFilePrefix@'${TemplateFilePrefix}'@' ${STREAMS}
-sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${STREAMS}
+
+set localStaticFieldsFile = ${localStaticFieldsFileEnsemble}
+
+set StreamsFile = streams.${MPASCore}
+rm ${StreamsFile}
+cp -v $self_ModelConfigDir/${StreamsFile} .
+sed -i 's@nCells@'${MPASnCellsEnsemble}'@' ${StreamsFile}
+sed -i 's@TemplateFilePrefix@'${TemplateFilePrefix}'@' ${StreamsFile}
+sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
-set NL = namelist.${MPASCore}
-rm $NL
-cp -v ${self_ModelConfigDir}/${NL} .
-sed -i 's@startTime@'${NMLDate}'@' $NL
-sed -i 's@nCells@'${MPASnCells}'@' $NL
-sed -i 's@modelDT@'${MPASTimeStep}'@' $NL
-sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NL
-
+set NamelistFile = namelist.${MPASCore}
+rm $NamelistFile
+cp -v ${self_ModelConfigDir}/${NamelistFile} .
+sed -i 's@startTime@'${NMLDate}'@' $NamelistFile
+sed -i 's@nCells@'${MPASnCellsEnsemble}'@' $NamelistFile
+sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
+sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
 
 # =============
 # Generate yaml
@@ -93,6 +95,12 @@ cp -v ${ConfigDir}/applicationBase/rtpp.yaml $thisYAML
 ## RTPP inflation factor
 sed -i 's@RTPPInflationFactor@'${RTPPInflationFactor}'@g' $thisYAML
 
+## streams
+sed -i 's@EnsembleStreamsFile@'${StreamsFile}'@' $thisYAML
+
+## namelist
+sed -i 's@EnsembleNamelistFile@'${NamelistFile}'@' $thisYAML
+
 ## revise current date
 #sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' $thisYAML
 #sed -i 's@2018041500@'${thisValidDate}'@g' $thisYAML
@@ -103,8 +111,10 @@ set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
 ln -sfv $meshFile ${localTemplateFieldsFile}
 
 ## copy static fields
+rm static.nc
+
 set staticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
-set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
+set memberStaticFieldsFile = ${staticFieldsDirEnsemble}${staticMemDir}/${staticFieldsFileEnsemble}
 rm ${localStaticFieldsFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
