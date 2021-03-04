@@ -134,3 +134,5 @@
   - filter: YDIAGsaver
     filename: OutDBDir/diagPrefix_AppType_mhs_metop-b.nc4
     filter variables: *allmhsydiag
+  get values:
+    interpolation type: InterpolationType

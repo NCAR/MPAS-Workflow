@@ -19,3 +19,5 @@
     reference: station_elevation@MetaData
     value: surface_altitude@GeoVaLs
     threshold: 200.0
+  get values:
+    interpolation type: InterpolationType

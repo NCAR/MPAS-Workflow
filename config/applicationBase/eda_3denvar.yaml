@@ -5,6 +5,8 @@ variational:
     algorithm: DRIPCG
   iterations:
   - geometry:
+      nml_file: namelist.atmosphere
+      streams_file: streams.atmosphere
       deallocate non-da fields: true
     ninner: '60'
     gradient norm reduction: 1e-10
@@ -13,6 +15,8 @@ variational:
       departures: depbg
     obs perturbations: ObsPerturbations
 #  - geometry:
+#      nml_file: namelist.atmosphere
+#      streams_file: streams.atmosphere
 #      deallocate non-da fields: true
 #    ninner: '60'
 #    gradient norm reduction: 1e-10
@@ -25,6 +29,8 @@ cost function:
   window begin: 'WindowBegin'
   window length: PT6H
   geometry:
+    nml_file: namelist.atmosphere
+    streams_file: streams.atmosphere
     deallocate non-da fields: true
   analysis variables: &incvars [AnalysisVariables]
   background:

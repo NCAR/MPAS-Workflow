@@ -12,3 +12,5 @@
   obs filters:
   - filter: PreQC
     maxvalue: 3
+  get values:
+    interpolation type: InterpolationType

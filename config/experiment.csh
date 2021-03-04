@@ -31,10 +31,6 @@ setenv FirstCycleDate 2018041500
 # base set of observation types assimilated in all experiments
 set benchmarkObsList = (sondes aircraft satwind gnssroref sfcp clramsua)
 
-## benchmarkDAType
-# base data assimilation type to which others are compared
-set benchmarkDAType = 3denvar
-
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
 set ExpSuffix = ''
@@ -66,7 +62,7 @@ setenv DAType 3denvar
 
 if ( "$DAType" =~ *"eda"* ) then
   ## nEnsDAMembers
-  # OPTIONS: 2 to $firstEnsFCNMembers, depends on data source in config/data.csh
+  # OPTIONS: 2 to $firstEnsFCNMembers, depends on data source in config/modeldata.csh
   setenv nEnsDAMembers 20
 else
   setenv nEnsDAMembers 1
@@ -152,49 +148,4 @@ foreach obs ($variationalObsList)
   if ( $isBench == False ) then
     setenv ExpObsName ${ExpObsName}_${obs}
   endif
-end
-
-##########################
-## run directory structure
-##########################
-## absolute experiment directory
-setenv PKGBASE MPAS-Workflow
-setenv ExperimentUser ${USER}
-setenv TOP_EXP_DIR /glade/scratch/${ExperimentUser}/pandac
-setenv ExperimentName ${ExperimentUser}
-setenv ExperimentName ${ExperimentName}_${DAType}
-setenv ExperimentName ${ExperimentName}${ExpObsName}
-setenv ExperimentName ${ExperimentName}${EnsExpSuffix}
-setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
-setenv ExperimentName ${ExperimentName}${ExpSuffix}
-
-setenv EXPDIR ${TOP_EXP_DIR}/${ExperimentName}
-setenv TMPDIR /glade/scratch/${USER}/temp
-mkdir -p $TMPDIR
-
-## immediate subdirectories
-setenv CyclingDAWorkDir ${EXPDIR}/CyclingDA
-setenv CyclingFCWorkDir ${EXPDIR}/CyclingFC
-setenv CyclingInflationWorkDir ${EXPDIR}/CyclingInflation
-setenv ExtendedFCWorkDir ${EXPDIR}/ExtendedFC
-setenv VerificationWorkDir ${EXPDIR}/Verification
-
-## directories copied from PKGBASE
-setenv mainScriptDir ${EXPDIR}/${PKGBASE}
-setenv ConfigDir ${mainScriptDir}/config
-set ModelConfigDir = ${ConfigDir}/mpas
-setenv forecastModelConfigDir ${ModelConfigDir}/forecast
-setenv hofxModelConfigDir ${ModelConfigDir}/hofx
-if ($nEnsDAMembers > 1 && ${ABEInflation} == True) then
-  setenv variationalModelConfigDir ${ModelConfigDir}/variational-bginflate
-else
-  setenv variationalModelConfigDir ${ModelConfigDir}/variational
-endif
-setenv rtppModelConfigDir ${ModelConfigDir}/rtpp
-
-## workflow tools
-set pyDir = ${mainScriptDir}/tools
-set pyTools = (memberDir advanceCYMDH nSpaces)
-foreach tool ($pyTools)
-  setenv ${tool} "python ${pyDir}/${tool}.py"
 end

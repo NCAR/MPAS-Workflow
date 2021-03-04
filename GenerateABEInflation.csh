@@ -1,11 +1,13 @@
-#!/bin/csh
+#!/bin/csh -f
 
 date
 
 # Setup environment
 # =================
 source config/experiment.csh
-source config/data.csh
+source config/filestructure.csh
+source config/tools.csh
+source config/modeldata.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -25,7 +27,7 @@ set self_AppType = hofx
 # ================================================================================================
 
 ## copy static fields
-set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
+set staticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
 set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
 rm ${localStaticFieldsFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}

@@ -1,20 +1,20 @@
 <streams>
 <immutable_stream name="static"
                   type="input"
-                  filename_template="static.nc"
+                  filename_template="localStaticFieldsFile"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="input"
                   type="input"
-                  filename_template="mpasin.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_template="ICFilePrefix.$Y-$M-$D_$h.$m.$s.nc"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="da_state"
                   type="output"
                   clobber_mode="truncate"
-                  filename_template="mpasout.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_template="FCFilePrefix.$Y-$M-$D_$h.$m.$s.nc"
                   io_type="pnetcdf,cdf5"
                   output_interval="outputInterval" />
 

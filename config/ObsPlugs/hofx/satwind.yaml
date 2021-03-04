@@ -21,3 +21,5 @@
     - name: northward_wind@ObsErrorData
     minvalue: 0.0
     maxvalue: 200.0
+  get values:
+    interpolation type: InterpolationType

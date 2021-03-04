@@ -1,14 +1,16 @@
 #!/bin/csh -f
 
+source config/experiment.csh
+
 ## job length and node/pe requirements
 
 # Uniform 30km mesh
 # -----------------
-setenv CyclingFCJobMinutes 10
+@ CyclingFCJobMinutes = 5 + (5 * $CyclingWindowHR / 6)
 setenv CyclingFCNodes 8
 setenv CyclingFCPEPerNode 32
 
-setenv ExtendedFCJobMinutes 60
+@ ExtendedFCJobMinutes = 1 + ($ExtendedFCWindowHR / 4)
 setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
@@ -17,12 +19,18 @@ setenv HofXNodes 32
 setenv HofXPEPerNode 16
 setenv HofXMemory 109
 
+setenv VerifyObsJobMinutes 5
 setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 36
+
+setenv VerifyModelJobMinutes 2
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
-setenv CyclingDAJobMinutes 25
+set DeterministicDAJobMinutes = 25
+set EnsembleDAMembersPerJobMinute = 2
+@ CyclingDAJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
+@ CyclingDAJobMinutes = ${CyclingDAJobMinutes} + ${DeterministicDAJobMinutes}
 setenv CyclingDAMemory 109
 if ( "$DAType" =~ *"eda"* ) then
   setenv CyclingDANodesPerMember 64

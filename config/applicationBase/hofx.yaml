@@ -2,6 +2,8 @@ window begin: 'WindowBegin'
 window length: PT6H
 forecast length: PT6H
 geometry:
+  nml_file: namelist.atmosphere
+  streams_file: streams.atmosphere
   deallocate non-da fields: true
 forecasts:
   state variables: [ModelVariables]

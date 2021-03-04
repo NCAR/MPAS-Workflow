@@ -1,6 +1,8 @@
 output:
   filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
 geometry:
+  nml_file: namelist.atmosphere
+  streams_file: streams.atmosphere
   deallocate non-da fields: true
 analysis variables: [AnalysisVariables]
 background:

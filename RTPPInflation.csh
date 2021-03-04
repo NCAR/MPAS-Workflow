@@ -1,14 +1,17 @@
-#!/bin/csh
+#!/bin/csh -f
 
 date
 
 # Setup environment
 # =================
 source config/experiment.csh
-source config/data.csh
+source config/filestructure.csh
+source config/tools.csh
+source config/modeldata.csh
 source config/mpas/variables.csh
 source config/mpas/${MPASGridDescriptor}-mesh.csh
-source config/build.csh
+source config/builds.csh
+source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -32,14 +35,15 @@ set bgPrefix = $BGFilePrefix
 set bgDirs = ($CyclingDAInDirs)
 set anPrefix = $ANFilePrefix
 set anDirs = ($CyclingDAOutDirs)
+set self_ModelConfigDir = $rtppModelConfigDir
 
 # Remove old logs
 rm jedi.log*
 
 # ================================================================================================
 
-## create RTPP mean output file to be overwritten
-set memDir = `${memberDir} ens 0 "${flowMemFmt}"`
+## create RTPP mean output file to be overwritten by MPAS-JEDI RTPPEXE application
+set memDir = `${memberDir} ensemble 0 "${flowMemFmt}"`
 set meanDir = ${CyclingDAOutDir}${memDir}
 mkdir -p ${meanDir}
 cp $anDirs[1]/${anPrefix}.$fileDate.nc ${meanDir}
@@ -51,25 +55,33 @@ cp $anDirs[1]/${anPrefix}.$fileDate.nc ${meanDir}
 ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
-foreach fileGlob ($FCLookupFileGlobs)
-  ln -sfv ${FCLookupDir}/*${fileGlob} .
+foreach fileGlob ($MPASLookupFileGlobs)
+  ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
 ## link/copy stream_list/streams configs
 foreach staticfile ( \
-#stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
-  ln -sfv $rtppModelConfigDir/$staticfile .
+  ln -sfv $self_ModelConfigDir/$staticfile .
 end
 set STREAMS = streams.${MPASCore}
 rm ${STREAMS}
-cp -v $rtppModelConfigDir/${STREAMS} .
+cp -v $self_ModelConfigDir/${STREAMS} .
 sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
+sed -i 's@TemplateFilePrefix@'${TemplateFilePrefix}'@' ${STREAMS}
+sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${STREAMS}
 
-## link namelist.atmosphere already modifed for this cycle
-ln -sfv $CyclingDADirs[1]/namelist.atmosphere ./
+## copy/modify dynamic namelist
+set NL = namelist.${MPASCore}
+rm $NL
+cp -v ${self_ModelConfigDir}/${NL} .
+sed -i 's@startTime@'${NMLDate}'@' $NL
+sed -i 's@nCells@'${MPASnCells}'@' $NL
+sed -i 's@modelDT@'${MPASTimeStep}'@' $NL
+sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NL
+
 
 # =============
 # Generate yaml
@@ -91,7 +103,7 @@ set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
 ln -sfv $meshFile ${localTemplateFieldsFile}
 
 ## copy static fields
-set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
+set staticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
 set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
 rm ${localStaticFieldsFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
@@ -161,7 +173,7 @@ EOF
     set filename = $ensPDirs[$member]/${ensPFilePrefix}.${fileDate}.nc${ensPFileSuffix}
     ## copy original analysis files for diagnosing RTPP behavior (not necessary)
     if ($PMatrix == Pa) then
-      set memDir = "."`${memberDir} ens $member "${flowMemFmt}"`
+      set memDir = "."`${memberDir} ensemble $member "${flowMemFmt}"`
       set anmemberDir = ${anDir}0/${memDir}
       rm -r ${anmemberDir}
       mkdir -p ${anmemberDir}

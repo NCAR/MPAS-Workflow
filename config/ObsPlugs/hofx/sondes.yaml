@@ -19,3 +19,5 @@
     - name: specific_humidity@ObsErrorData
     minvalue: 0.0
     maxvalue: 1.0
+  get values:
+    interpolation type: InterpolationType

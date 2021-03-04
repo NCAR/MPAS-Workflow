@@ -34,3 +34,5 @@
     variable: refractivity
     errmodel: NBAM
     apply at iterations: 0, 1
+  get values:
+    interpolation type: InterpolationType

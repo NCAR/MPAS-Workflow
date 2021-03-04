@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/csh -f
 
 #TODO: move this script functionality and relevent control's to python + maybe yaml
 
@@ -38,11 +38,14 @@ endif
 # Setup environment
 # =================
 source config/experiment.csh
-source config/data.csh
+source config/filestructure.csh
+source config/tools.csh
+source config/modeldata.csh
+source config/obsdata.csh
 source config/mpas/variables.csh
 source config/mpas/${MPASGridDescriptor}-mesh.csh
 source config/appindex.csh
-source config/build.csh
+source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -110,15 +113,14 @@ set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 
 ## link lookup tables
-foreach fileGlob ($ForecastLookupFileGlobs)
-  ln -sfv ${ForecastLookupDir}/*${fileGlob} .
+foreach fileGlob ($MPASLookupFileGlobs)
+  ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
 ## link static stream settings
 
 ## link/copy stream_list/streams configs
 foreach staticfile ( \
-#stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
@@ -128,6 +130,8 @@ set STREAMS = streams.${MPASCore}
 rm ${STREAMS}
 cp -v $self_ModelConfigDir/${STREAMS} .
 sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
+sed -i 's@TemplateFilePrefix@'${TemplateFilePrefix}'@' ${STREAMS}
+sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${STREAMS}
 
 ## copy/modify dynamic namelist
 set NL = namelist.${MPASCore}
@@ -163,16 +167,16 @@ end
 
 # Link conventional data
 # ======================
-ln -sfv $CONVObsDir/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
-ln -sfv $CONVObsDir/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
-ln -sfv $CONVObsDir/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
-ln -sfv $CONVObsDir/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
-ln -sfv $CONVObsDir/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
 
 # Link AMSUA+MHS data
 # ==============
-ln -sfv $MWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
-ln -sfv $MWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.nc4 ${InDBDir}/
+ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
+ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.nc4 ${InDBDir}/
 
 # Link ABI data
 # ============
@@ -247,6 +251,9 @@ cat $obsYAML >> $thisYAML
 
 #TODO: replace cat with sed substitution so that each application can decide what to do when there
 # are zero observations available
+
+## Horizontal interpolation type
+sed -i 's@InterpolationType@'${InterpolationType}'@g' $thisYAML
 
 ## QC characteristics
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
@@ -382,10 +389,10 @@ set enspbmemsed = EnsemblePbMembers
 if ( "$self_AppName" =~ *"eda"* ) then
   echo "files:" > $appyaml
 
-  set ensPbDir = ${dynamicEnsBDir}
-  set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
-  set ensPbMemFmt = "${dynamicEnsBMemFmt}"
-  set ensPbNMembers = ${dynamicEnsBNMembers}
+#  set ensPbDir = ${dynamicEnsBDir}
+#  set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
+#  set ensPbMemFmt = "${dynamicEnsBMemFmt}"
+#  set ensPbNMembers = ${dynamicEnsBNMembers}
 
   set member = 1
   while ( $member <= ${ensPbNMembers} )
@@ -398,6 +405,10 @@ if ( "$self_AppName" =~ *"eda"* ) then
     cp $prevYAML $memberyaml
 
     ## ensemble Jb members
+cat >! ${enspbmemsed}SEDF.yaml << EOF
+/${enspbmemsed}/c\
+EOF
+
     # TODO(JJG): how does ensemble B config generation need to be
     #            modified for 4DEnVar?
     set indent = "`${nSpaces} $nEnsPbIndent`"
@@ -406,16 +417,13 @@ if ( "$self_AppName" =~ *"eda"* ) then
     if ( $LeaveOneOutEDA == True ) then
       @ bremain--
     endif
-cat >! ${enspbmemsed}SEDF.yaml << EOF
-/${enspbmemsed}/c\
-EOF
 
     while ( $bmember < ${ensPbNMembers} )
       @ bmember++
       if ( $bmember == $member && $LeaveOneOutEDA == True ) then
         continue
       endif
-      set memDir = `${memberDir} ens $bmember "${ensPbMemFmt}"`
+      set memDir = `${memberDir} ensemble $bmember "${ensPbMemFmt}"`
       set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
       if ( $bremain > 1 ) then
         set filename = ${filename}\\
@@ -435,7 +443,7 @@ EOF
     cp $thisYAML $memberyaml
 
     ## Jo term
-    set memDir = `${memberDir} eda $member`
+    set memDir = `${memberDir} $self_AppName $member`
     sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
     if ($member == 1) then
       sed -i 's@ObsPerturbations@false@g' $memberyaml
@@ -452,10 +460,10 @@ else
   cp $prevYAML $memberyaml
 
   ## ensemble Jb members
-  set ensPbDir = ${fixedEnsBDir}
-  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
-  set ensPbMemFmt = "${fixedEnsBMemFmt}"
-  set ensPbNMembers = ${fixedEnsBNMembers}
+#  set ensPbDir = ${fixedEnsBDir}
+#  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
+#  set ensPbMemFmt = "${fixedEnsBMemFmt}"
+#  set ensPbNMembers = ${fixedEnsBNMembers}
 
 cat >! ${enspbmemsed}SEDF.yaml << EOF
 /${enspbmemsed}/c\
@@ -467,7 +475,7 @@ EOF
   set bmember = 0
   while ( $bmember < ${ensPbNMembers} )
     @ bmember++
-    set memDir = `${memberDir} ens $bmember "${ensPbMemFmt}"`
+    set memDir = `${memberDir} ensemble $bmember "${ensPbMemFmt}"`
     set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
     if ( $bmember < ${ensPbNMembers} ) then
       set filename = ${filename}\\

@@ -2,37 +2,56 @@
 
 ## Top-level workflow configuration
 
-# Cycle bounds
-set initialCyclePoint = 20180415T00
-set finalCyclePoint   = 20180421T00
+## load experiment configuration
+source config/experiment.csh
 
-# CriticalPathType: controls dependencies between and chilrdren of
+######################
+# workflow date bounds
+######################
+## initialCyclePoint
+# OPTIONS: >= FirstCycleDate (see config/experiment.csh)
+# Either:
+# + initialCyclePoint must be equal to FirstCycleDate
+# OR:
+# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart#   from a previously completed cycle.
+set initialCyclePoint = 20180415T00
+
+## finalCyclePoint
+# OPTIONS: >= initialCyclePoint
+# + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
+set finalCyclePoint = 20180421T00
+
+
+#########################
+# workflow task selection
+#########################
+## CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
-# options: Normal, Bypass, Reanalysis, Reforecast
+# OPTIONS: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
 
-# VerifyDeterministicDA: whether to run verification scripts for
+## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
 # options: True/False
 set VerifyDeterministicDA = False
 
-# VerifyExtendedMeanFC: whether to run verification scripts across
+## VerifyExtendedMeanFC: whether to run verification scripts across
 #    extended forecast states, first intialized at mean analysis
-# options: True/False
+# OPTIONS: True/False
 set VerifyExtendedMeanFC = False
 
-# VerifyMemberBG: whether to run verification scripts for CyclingWindowHR
+## VerifyMemberBG: whether to run verification scripts for CyclingWindowHR
 #    forecast length. Utilizes critical path forecast states from
 #    individual ensemble member analyses or deterministic analysis
 # options: True/False
 set VerifyMemberBG = False
 
-# VerifyEnsMeanBG: whether to run verification scripts for ensemble
+## VerifyEnsMeanBG: whether to run verification scripts for ensemble
 #    mean background state.
 # options: True/False
 set VerifyEnsMeanBG = False
 
-# DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
+## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
 #    space while VerifyEnsMeanBG is True.  Automatically triggers OMF calculation
 #    for all ensemble members. VerifyEnsMeanBG is nearly free when
 #    DiagnoseEnsSpreadBG is True.
@@ -40,21 +59,21 @@ set VerifyEnsMeanBG = False
 # options: True/False
 set DiagnoseEnsSpreadBG = False
 
-# VerifyEnsMeanAN: whether to run verification scripts for ensemble
+## VerifyEnsMeanAN: whether to run verification scripts for ensemble
 #    mean analysis state.
-# options: True/False
+# OPTIONS: True/False
 set VerifyMemberAN = False
 
-# VerifyExtendedEnsBG: whether to run verification scripts across
+## VerifyExtendedEnsBG: whether to run verification scripts across
 #    extended forecast states, first intialized at ensemble of analysis
 #    states.
-# options: True/False
+# OPTIONS: True/False
 set VerifyExtendedEnsFC = False
 
 date
 
-## load experiment configuration
-source config/experiment.csh
+## load the file structure
+source config/filestructure.csh
 
 ## load job submission environment
 source config/job.csh
@@ -71,7 +90,7 @@ endif
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
 
-echo "Initializing ${PKGBASE}"
+echo "Initializing ${PackageBaseName}"
 module purge
 module load cylc
 module load graphviz
@@ -98,7 +117,7 @@ cat >! suite.rc << EOF
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
 [meta]
-  title = "${PKGBASE}--${ExperimentName}"
+  title = "${PackageBaseName}--${ExperimentName}"
 # critical path cycle dependencies
   {% set PrimaryCPGraph = "" %}
   {% set SecondaryCPGraph = "" %}
@@ -268,14 +287,14 @@ cat >! suite.rc << EOF
       -l = select=${HofXNodes}:ncpus=${HofXPEPerNode}:mpiprocs=${HofXPEPerNode}:mem=${HofXMemory}GB
   [[VerifyModelBase]]
     [[[job]]]
-      execution time limit = PT5M
+      execution time limit = PT${VerifyModelJobMinutes}M
     [[[directives]]]
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
       -l = select=${VerifyModelNodes}:ncpus=${VerifyModelPEPerNode}:mpiprocs=${VerifyModelPEPerNode}
   [[VerifyObsBase]]
     [[[job]]]
-      execution time limit = PT10M
+      execution time limit = PT${VerifyObsJobMinutes}M
     [[[directives]]]
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
@@ -289,7 +308,7 @@ cat >! suite.rc << EOF
     script = \$origin/CyclingDA.csh
     [[[job]]]
       execution time limit = PT${CyclingDAJobMinutes}M
-      execution retry delays = 4*PT30S
+      execution retry delays = 2*PT30S
     [[[directives]]]
       -m = ae
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB

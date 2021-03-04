@@ -1,12 +1,15 @@
-#!/bin/csh
+#!/bin/csh -f
 
 date
 
 # Setup environment
 # =================
 source config/experiment.csh
-source config/data.csh
-source config/build.csh
+source config/filestructure.csh
+source config/tools.csh
+source config/modeldata.csh
+source config/builds.csh
+source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -31,7 +34,7 @@ set varianceName = ${self_StatePrefix}.$fileDate.variance.nc
 ## link background members
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set appMember = `${memberDir} ens $member "{:03d}"`
+  set appMember = `${memberDir} ensemble $member "{:03d}"`
 # set appMember = printf "%03d" $member`
   ln -sfv $self_StateDirs[$member]/${meanName} ./${memberPrefix}${appMember}
   @ member++
