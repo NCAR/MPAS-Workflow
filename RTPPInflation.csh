@@ -9,7 +9,7 @@ source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -42,6 +42,16 @@ rm jedi.log*
 
 # ================================================================================================
 
+## copy static fields
+rm ${localStaticFieldsPrefix}*.nc
+rm ${localStaticFieldsPrefix}*.nc-lock
+set localStaticFieldsFile = ${localStaticFieldsFileEnsemble}
+rm ${localStaticFieldsFile}
+set StaticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
+set memberStaticFieldsFile = ${StaticFieldsDirEnsemble}${StaticMemDir}/${StaticFieldsFileEnsemble}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+
 ## create RTPP mean output file to be overwritten by MPAS-JEDI RTPPEXE application
 set memDir = `${memberDir} ensemble 0 "${flowMemFmt}"`
 set meanDir = ${CyclingDAOutDir}${memDir}
@@ -67,17 +77,13 @@ stream_list.${MPASCore}.output \
   ln -sfv $self_ModelConfigDir/$staticfile .
 end
 
-set localStaticFieldsFile = ${localStaticFieldsFileEnsemble}
-
-set StreamsFile = streams.${MPASCore}
 rm ${StreamsFile}
 cp -v $self_ModelConfigDir/${StreamsFile} .
 sed -i 's@nCells@'${MPASnCellsEnsemble}'@' ${StreamsFile}
-sed -i 's@TemplateFilePrefix@'${TemplateFilePrefix}'@' ${StreamsFile}
-sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${StreamsFile}
+sed -i 's@TemplateFieldsPrefix@'${TemplateFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
-set NamelistFile = namelist.${MPASCore}
 rm $NamelistFile
 cp -v ${self_ModelConfigDir}/${NamelistFile} .
 sed -i 's@startTime@'${NMLDate}'@' $NamelistFile
@@ -106,18 +112,9 @@ sed -i 's@EnsembleNamelistFile@'${NamelistFile}'@' $thisYAML
 #sed -i 's@2018041500@'${thisValidDate}'@g' $thisYAML
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 
-# use one of the analyses as the localTemplateFieldsFile
+# use one of the analyses as the TemplateFieldsFileOuter
 set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
-ln -sfv $meshFile ${localTemplateFieldsFile}
-
-## copy static fields
-rm static.nc
-
-set staticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
-set memberStaticFieldsFile = ${staticFieldsDirEnsemble}${staticMemDir}/${staticFieldsFileEnsemble}
-rm ${localStaticFieldsFile}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+ln -sfv $meshFile ${TemplateFieldsFileOuter}
 
 ## file naming
 sed -i 's@OOPSMemberDir@/mem%{member}%@g' $thisYAML

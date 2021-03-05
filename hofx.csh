@@ -65,6 +65,16 @@ rm jedi.log*
 
 # ================================================================================================
 
+## copy static fields
+rm ${localStaticFieldsPrefix}*.nc
+rm ${localStaticFieldsPrefix}*.nc-lock
+set localStaticFieldsFile = ${localStaticFieldsFileOuter}
+rm ${localStaticFieldsFile}
+set StaticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
+set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+
 # Link/copy bg from other directory + ensure that MPASJEDIDiagVariables are present
 # =================================================================================
 set bg = ./${bgDir}
@@ -103,19 +113,8 @@ if ( $copyDiags > 0 ) then
   ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
 endif
 
-# use the background as the localTemplateFieldsFile
-ln -sfv ${bgFile} ${localTemplateFieldsFile}
-
-## copy static fields
-rm static.nc
-
-set localStaticFieldsFile = ${localStaticFieldsFileOuter}
-set staticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
-set memberStaticFieldsFile = ${staticFieldsDirOuter}${staticMemDir}/${staticFieldsFileOuter}
-rm ${localStaticFieldsFile}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
-
+# use the background as the TemplateFieldsFileOuter
+ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
 
 # Run the executable
 # ==================

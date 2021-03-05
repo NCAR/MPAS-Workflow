@@ -1,7 +1,7 @@
 <streams>
 <immutable_stream name="static"
                   type="input"
-                  filename_template="localStaticFieldsFile"
+                  filename_template="StaticFieldsPrefix.nCells.nc"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 

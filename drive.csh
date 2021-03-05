@@ -77,7 +77,7 @@ source config/filestructure.csh
 
 ## load job submission environment
 source config/job.csh
-source config/mpas/${MPASGridDescriptor}-job.csh
+source config/mpas/${MPASGridDescriptor}/job.csh
 
 ## Initialize cycling directory if this is the first cycle point
 set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`

@@ -31,6 +31,23 @@ rm jedi.log*
 
 # ================================================================================================
 
+## copy static fields
+rm ${localStaticFieldsPrefix}*.nc
+rm ${localStaticFieldsPrefix}*.nc-lock
+set StaticFieldsDirList = ($StaticFieldsDirOuter $StaticFieldsDirInner)
+set StaticFieldsFileList = ($StaticFieldsFileOuter $StaticFieldsFileInner)
+set iMesh = 0
+foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
+  @ iMesh++
+  rm ${localStaticFieldsFile}
+
+  #TODO: StaticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
+  set StaticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
+  set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
+  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+  cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+end
+
 # Link/copy bg from StateDirs + ensure that MPASJEDIDiagVariables are present
 # ===========================================================================
 set member = 1
@@ -74,29 +91,15 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-# use one of the backgrounds as the localTemplateFieldsFile
-ln -sfv ${bgFile} ${localTemplateFieldsFile}
+# use one of the backgrounds as the TemplateFieldsFileOuter
+rm ${TemplateFieldsFileOuter}
+ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
 
-## copy static fields
-rm static.nc
-
-# outer mesh
-set localStaticFieldsFile = ${localStaticFieldsFileOuter}
-#TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
-set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
-set memberStaticFieldsFile = ${staticFieldsDirOuter}${staticMemDir}/${staticFieldsFileOuter}
-rm ${localStaticFieldsFile}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
-
-# inner mesh
-set localStaticFieldsFile = ${localStaticFieldsFileInner}
-#TODO: staticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
-set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
-set memberStaticFieldsFile = ${staticFieldsDirInner}${staticMemDir}/${staticFieldsFileInner}
-rm ${localStaticFieldsFile}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+# use localStaticFieldsFileInner as the TemplateFieldsFileInner
+if ($MPASnCellsOuter != $MPASnCellsInner) then
+  rm ${TemplateFieldsFileInner}
+  ln -sfv ${localStaticFieldsFileInner} ${TemplateFieldsFileInner}
+endif
 
 # Run the executable
 # ==================
@@ -120,21 +123,15 @@ if ( $status != 0 ) then
 endif
 
 ## change static fields to a link, keeping for transparency
-# outer mesh
-set localStaticFieldsFile = ${localStaticFieldsFileOuter}
-rm ${localStaticFieldsFile}
-rm ${localStaticFieldsFile}${OrigFileSuffix}
-set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
-set memberStaticFieldsFile = ${staticFieldsDirOuter}${staticMemDir}/${staticFieldsFileOuter}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
-
-# inner mesh
-set localStaticFieldsFile = ${localStaticFieldsFileInner}
-rm ${localStaticFieldsFile}
-rm ${localStaticFieldsFile}${OrigFileSuffix}
-set staticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
-set memberStaticFieldsFile = ${staticFieldsDirInner}${staticMemDir}/${staticFieldsFileInner}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+set iMesh = 0
+foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
+  @ iMesh++
+  rm ${localStaticFieldsFile}
+  rm ${localStaticFieldsFile}${OrigFileSuffix}
+  set StaticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
+  set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
+  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+end
 
 date
 

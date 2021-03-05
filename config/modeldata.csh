@@ -3,7 +3,7 @@
 source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
-source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 
 
 ####################
@@ -28,8 +28,7 @@ set prevFirstFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 # externally sourced model states
 # -------------------------------
 ## deterministic - GFS
-#setenv GFS6hfcFORFirstCycle  /glade/work/liuz/pandac/fix_input/${MPASGridDescriptor}_1stCycle_background/${prevFirstCycleDate} --> deprecate soon 25-Feb-2021
-setenv GFS6hfcFORFirstCycle ${PANDACCommonData}/${MPASGridDescriptor}_1stCycle_background/${prevFirstCycleDate}
+setenv GFS6hfcFORFirstCycle ${PANDACCommonData}/${MPASGridDescriptorOuter}_1stCycle_background/${prevFirstCycleDate}
 
 # first cycle background state
 setenv firstDetermFCDir ${GFS6hfcFORFirstCycle}
@@ -110,21 +109,20 @@ setenv updateSea 1
   setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
 #endif
 
-## static.nc source data
+## static stream data
 if ( "$DAType" =~ *"eda"* ) then
   # stochastic
-  setenv staticFieldsDirOuter ${GEFSAnaDir}/${MPASGridDescriptorOuter}/GEFS/init/000hr/${prevFirstCycleDate}
-  setenv staticFieldsDirInner ${GEFSAnaDir}/${MPASGridDescriptorInner}/GEFS/init/000hr/${prevFirstCycleDate}
-  setenv staticFieldsDirEnsemble ${GEFSAnaDir}/${MPASGridDescriptorEnsemble}/GEFS/init/000hr/${prevFirstCycleDate}
-
+  setenv StaticFieldsDirOuter ${GEFSAnaDir}/${MPASGridDescriptorOuter}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv StaticFieldsDirInner ${GEFSAnaDir}/${MPASGridDescriptorInner}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv StaticFieldsDirEnsemble ${GEFSAnaDir}/${MPASGridDescriptorEnsemble}/GEFS/init/000hr/${prevFirstCycleDate}
   setenv staticMemFmt "${gefsMemFmt}"
 else
   # deterministic
-  setenv staticFieldsDirOuter ${GFSAnaDirOuter}/${prevFirstCycleDate}
-  setenv staticFieldsDirInner ${GFSAnaDirInner}/${prevFirstCycleDate}
-  setenv staticFieldsDirEnsemble ${GFSAnaDirEnsemble}/${prevFirstCycleDate}
+  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${prevFirstCycleDate}
+  setenv StaticFieldsDirInner ${GFSAnaDirInner}/${prevFirstCycleDate}
+  setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}/${prevFirstCycleDate}
   setenv staticMemFmt " "
 endif
-setenv staticFieldsFileOuter ${InitFilePrefixOuter}.${prevFirstFileDate}.nc
-setenv staticFieldsFileInner ${InitFilePrefixInner}.${prevFirstFileDate}.nc
-setenv staticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${prevFirstFileDate}.nc
+setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${prevFirstFileDate}.nc
+setenv StaticFieldsFileInner ${InitFilePrefixInner}.${prevFirstFileDate}.nc
+setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${prevFirstFileDate}.nc

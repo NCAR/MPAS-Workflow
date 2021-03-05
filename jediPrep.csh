@@ -43,7 +43,7 @@ source config/tools.csh
 source config/modeldata.csh
 source config/obsdata.csh
 source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/appindex.csh
 source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -63,11 +63,16 @@ cd ${self_WorkDir}
 
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
-set self_ObsList = ("${AppTypeTEMPLATEObsList}")
+set self_ObsList = (${AppTypeTEMPLATEObsList})
 set self_VARBCTable = VARBCTableTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
 set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
+set MeshList = (${AppTypeTEMPLATEMeshList})
+set MPASnCellsList = (${AppTypeTEMPLATEMPASnCellsList})
+set StreamsFileList = (${AppTypeTEMPLATEStreamsFileList})
+set NamelistFileList = (${AppTypeTEMPLATENamelistFileList})
+
 
 # ================================================================================================
 
@@ -110,64 +115,43 @@ set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sfv $GraphInfoDir/x1.${MPASnCellsInner}.graph.info* .
-ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .
+foreach MPASnCells ($MPASnCellsList)
+  ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+end
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
-## link static stream settings
-
-## link/copy stream_list/streams configs
+## link stream_list configs
 foreach staticfile ( \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
+  rm ./$staticfile
   ln -sfv $self_ModelConfigDir/$staticfile .
 end
 
-set MPASnCellsHofX = $MPASnCellsOuter
-set localStaticFieldsFileHofX = $localStaticFieldsFileOuter
-
-set MPASnCellsList = ( \
-$MPASnCellsInner \
-$MPASnCellsOuter \
-$MPASnCellsHofX \
-)
-set localStaticFieldsFileList = ( \
-$localStaticFieldsFileInner \
-$localStaticFieldsFileOuter \
-$localStaticFieldsFileHofX \
-)
-
-set StreamsFile = streams.${MPASCore}
-set InnerStreamsFile = ${StreamsFile}_${MPASGridDescriptorInner}
-set OuterStreamsFile = ${StreamsFile}_${MPASGridDescriptorOuter}
-set HofXStreamsFile = ${StreamsFile}
-set iList = 0
-foreach StreamsFile_ ($InnerStreamsFile $OuterStreamsFile $HofXStreamsFile)
-  @ iList++
+## copy/modify dynamic streams file
+set iMesh = 0
+foreach StreamsFile_ ($StreamsFileList)
+  @ iMesh++
   rm ${StreamsFile_}
   cp -v $self_ModelConfigDir/${StreamsFile} ./${StreamsFile_}
-  sed -i 's@nCells@'$MPASnCellsList[$iList]'@' ${StreamsFile_}
-  sed -i 's@TemplateFilePrefix@'${TemplateFilePrefix}'@' ${StreamsFile_}
-  sed -i 's@localStaticFieldsFile@'$localStaticFieldsFileList[$iList]'@' ${StreamsFile_}
+  sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${StreamsFile_}
+  sed -i 's@TemplateFieldsPrefix@'${TemplateFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile_}
 end
 
-## copy/modify dynamic namelist
-set NamelistFile = namelist.${MPASCore}
-set InnerNamelistFile = ${NamelistFile}_${MPASGridDescriptorInner}
-set OuterNamelistFile = ${NamelistFile}_${MPASGridDescriptorOuter}
-set HofXNamelistFile = ${NamelistFile}
-set iList = 0
-foreach NamelistFile_ ($InnerNamelistFile $OuterNamelistFile $HofXNamelistFile)
-  @ iList++
+## copy/modify dynamic namelist file
+set iMesh = 0
+foreach NamelistFile_ ($NamelistFileList)
+  @ iMesh++
   rm ${NamelistFile_}
   cp -v ${self_ModelConfigDir}/${NamelistFile} ./${NamelistFile_}
   sed -i 's@startTime@'${NMLDate}'@' ${NamelistFile_}
-  sed -i 's@nCells@'$MPASnCellsList[$iList]'@' ${NamelistFile_}
+  sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'${MPASTimeStep}'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' ${NamelistFile_}
 end
@@ -322,15 +306,13 @@ sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' $thisYAML
 sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' $thisYAML
 set prevYAML = $thisYAML
 
-## streams
-sed -i 's@InnerStreamsFile@'${InnerStreamsFile}'@' $thisYAML
-sed -i 's@OuterStreamsFile@'${OuterStreamsFile}'@' $thisYAML
-sed -i 's@HofXStreamsFile@'${HofXStreamsFile}'@' $thisYAML
-
-## namelist(s)
-sed -i 's@InnerNamelistFile@'${InnerNamelistFile}'@' $thisYAML
-sed -i 's@OuterNamelistFile@'${OuterNamelistFile}'@' $thisYAML
-sed -i 's@HofXNamelistFile@'${HofXNamelistFile}'@' $thisYAML
+# streams+namelist
+set iMesh = 0
+foreach mesh ($MeshList)
+  @ iMesh++
+  sed -i 's@'$mesh'StreamsFile@'$StreamsFileList[$iMesh]'@' $thisYAML
+  sed -i 's@'$mesh'NamelistFile@'$NamelistFileList[$iMesh]'@' $thisYAML
+end
 
 ## model and analysis variables
 set AnalysisVariables = ($StandardAnalysisVariables)
