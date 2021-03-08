@@ -113,12 +113,23 @@ setenv VarBCAnalysis ${OutDBDir}/satbias_crtm_ana
 set ModelConfigDir = ${ConfigDir}/mpas
 
 set OuterStreamsFile = ${StreamsFile}_${MPASGridDescriptorOuter}
-set InnerStreamsFile = ${StreamsFile}_${MPASGridDescriptorInner}
 set OuterNamelistFile = ${NamelistFile}_${MPASGridDescriptorOuter}
+
+set InnerStreamsFile = ${StreamsFile}_${MPASGridDescriptorInner}
 set InnerNamelistFile = ${NamelistFile}_${MPASGridDescriptorInner}
+
+#set EnsembleStreamsFile = ${StreamsFile}_${MPASGridDescriptorEnsemble}
+#set EnsembleNamelistFile = ${NamelistFile}_${MPASGridDescriptorEnsemble}
 
 # forecast
 setenv forecastModelConfigDir ${ModelConfigDir}/forecast
+##set forecastMeshList = (Forecast)
+#set forecastMPASnCellsList = ($MPASnCellsOuter)
+#set forecastlocalStaticFieldsFileList = ( \
+#$localStaticFieldsFileOuter \
+#)
+#set forecastStreamsFileList = ($OuterStreamsFile)
+#set forecastNamelistFileList = ($OuterNamelistFile)
 
 # variational
 if ($nEnsDAMembers > 1 && ${ABEInflation} == True) then
@@ -147,7 +158,7 @@ set hofxNamelistFileList = ($OuterNamelistFile)
 
 # rtpp
 setenv rtppModelConfigDir ${ModelConfigDir}/rtpp
-#set rtppMeshList = (RTPP)
+#set rtppMeshList = (Ensemble)
 #set rtppMPASnCellsList = ($MPASnCellsEnsemble)
 #set rtpplocalStaticFieldsFileList = ( \
 #$localStaticFieldsFileEnsemble \

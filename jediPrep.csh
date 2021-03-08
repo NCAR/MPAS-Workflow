@@ -410,13 +410,8 @@ set enspbmemsed = EnsemblePbMembers
 if ( "$self_AppName" =~ *"eda"* ) then
   echo "files:" > $appyaml
 
-#  set ensPbDir = ${dynamicEnsBDir}
-#  set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
-#  set ensPbMemFmt = "${dynamicEnsBMemFmt}"
-#  set ensPbNMembers = ${dynamicEnsBNMembers}
-
   set member = 1
-  while ( $member <= ${ensPbNMembers} )
+  while ( $member <= ${nEnsDAMembers} )
     set memberyaml = member_$member.yaml
 
     # add eda-member yaml name to list of member yamls
@@ -481,11 +476,6 @@ else
   cp $prevYAML $memberyaml
 
   ## ensemble Jb members
-#  set ensPbDir = ${fixedEnsBDir}
-#  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
-#  set ensPbMemFmt = "${fixedEnsBMemFmt}"
-#  set ensPbNMembers = ${fixedEnsBNMembers}
-
 cat >! ${enspbmemsed}SEDF.yaml << EOF
 /${enspbmemsed}/c\
 EOF
