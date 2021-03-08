@@ -14,6 +14,5 @@ setenv RADTHINDISTANCE    "60.0"
 setenv RADTHINAMOUNT      "0.75"
 
 ## Background Error
-#TODO: add localization files for 30km domain
-#setenv bumpLocDir /glade/scratch/bjung/x_bumploc_20210208
-#setenv bumpLocPrefix bumploc_2000_5
+setenv bumpLocDir /glade/p/mmm/parc/liuz/pandac_common/30km_bumploc_2000km_512p_20210208code
+setenv bumpLocPrefix bumploc_2000_5
