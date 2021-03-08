@@ -73,5 +73,3 @@ set hh = `echo ${thisValidDate} | cut -c 9-10`
 set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set NMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set ConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
-
-set localTemplateFieldsFile = ${TemplateFilePrefix}.$fileDate.nc

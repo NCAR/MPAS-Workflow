@@ -7,15 +7,18 @@ source config/appindex.csh
 ##################################
 ## MPASGridDescriptor
 # used to distinguish betwen MPAS meshes across experiments
+# O = variational Outer loop, forecast, HofX
+# I = variational Inner loop
+# E = variational Ensemble
 # OPTIONS:
-#   + 120km 3denvar
-#   + 120km eda_3denvar
-#   + TODO: "30km" 3denvar
-#   + TODO: "30km-120km" dual-resolution 3denvar
-#   + TODO: "30km-120km" dual-resolution eda_3denvar
-#   + TODO: "120km" 4denvar
-#   + TODO: "30km-120km" dual-resolution 4denvar
-setenv MPASGridDescriptor 120km
+#   + OIE120km 3denvar
+#   + OIE120km eda_3denvar
+#   + TODO: "OIE30km" 3denvar
+#   + TODO: "O30kmIE120km" dual-resolution 3denvar
+#   + TODO: "O30kmIE120km" dual-resolution eda_3denvar
+#   + TODO: "OIE120km" 4denvar
+#   + TODO: "O30kmIE120km" dual-resolution 4denvar
+setenv MPASGridDescriptor OIE120km
 
 ## FirstCycleDate
 # initial date of this experiment

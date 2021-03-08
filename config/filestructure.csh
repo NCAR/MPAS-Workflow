@@ -1,7 +1,8 @@
 #!/bin/csh -f
 
 source config/experiment.csh
-source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
+source config/builds.csh
 
 ## controls the workflow file structure of all experiments
 
@@ -42,15 +43,6 @@ setenv VerificationWorkDir ${ExpDir}/Verification
 ## directories copied from PackageBaseName
 setenv mainScriptDir ${ExpDir}/${PackageBaseName}
 setenv ConfigDir ${mainScriptDir}/config
-set ModelConfigDir = ${ConfigDir}/mpas
-setenv forecastModelConfigDir ${ModelConfigDir}/forecast
-setenv hofxModelConfigDir ${ModelConfigDir}/hofx
-if ($nEnsDAMembers > 1 && ${ABEInflation} == True) then
-  setenv variationalModelConfigDir ${ModelConfigDir}/variational-bginflate
-else
-  setenv variationalModelConfigDir ${ModelConfigDir}/variational
-endif
-setenv rtppModelConfigDir ${ModelConfigDir}/rtpp
 
 ## directory string formatter for EDA members
 # third argument to memberDir.py
@@ -65,7 +57,9 @@ setenv appyaml jedi.yaml
 #############################################
 setenv RSTFilePrefix restart
 setenv ICFilePrefix mpasin
-setenv InitFilePrefix x1.${MPASnCells}.init
+setenv InitFilePrefixOuter x1.${MPASnCellsOuter}.init
+setenv InitFilePrefixInner x1.${MPASnCellsInner}.init
+setenv InitFilePrefixEnsemble x1.${MPASnCellsEnsemble}.init
 
 setenv FCFilePrefix mpasout
 setenv fcDir fc
@@ -76,8 +70,18 @@ setenv anDir ${ANFilePrefix}
 setenv BGFilePrefix bg
 setenv bgDir ${BGFilePrefix}
 
-setenv TemplateFilePrefix templateFields
-setenv localStaticFieldsFile static.nc
+setenv StreamsFile streams.${MPASCore}
+setenv NamelistFile namelist.${MPASCore}
+
+setenv TemplateFieldsPrefix templateFields
+setenv TemplateFieldsFileOuter ${TemplateFieldsPrefix}.${MPASnCellsOuter}.nc
+setenv TemplateFieldsFileInner ${TemplateFieldsPrefix}.${MPASnCellsInner}.nc
+setenv TemplateFieldsFileEnsemble ${TemplateFieldsPrefix}.${MPASnCellsEnsemble}.nc
+
+setenv localStaticFieldsPrefix static
+setenv localStaticFieldsFileOuter ${localStaticFieldsPrefix}.${MPASnCellsOuter}.nc
+setenv localStaticFieldsFileInner ${localStaticFieldsPrefix}.${MPASnCellsInner}.nc
+setenv localStaticFieldsFileEnsemble ${localStaticFieldsPrefix}.${MPASnCellsEnsemble}.nc
 
 setenv OrigFileSuffix _orig
 
@@ -102,3 +106,63 @@ setenv OutDBDir dbOut
 # TODO: enable VarBC updating
 # -----
 setenv VarBCAnalysis ${OutDBDir}/satbias_crtm_ana
+
+##################################
+## application-specific templating
+##################################
+set ModelConfigDir = ${ConfigDir}/mpas
+
+set OuterStreamsFile = ${StreamsFile}_${MPASGridDescriptorOuter}
+set OuterNamelistFile = ${NamelistFile}_${MPASGridDescriptorOuter}
+
+set InnerStreamsFile = ${StreamsFile}_${MPASGridDescriptorInner}
+set InnerNamelistFile = ${NamelistFile}_${MPASGridDescriptorInner}
+
+#set EnsembleStreamsFile = ${StreamsFile}_${MPASGridDescriptorEnsemble}
+#set EnsembleNamelistFile = ${NamelistFile}_${MPASGridDescriptorEnsemble}
+
+# forecast
+setenv forecastModelConfigDir ${ModelConfigDir}/forecast
+##set forecastMeshList = (Forecast)
+#set forecastMPASnCellsList = ($MPASnCellsOuter)
+#set forecastlocalStaticFieldsFileList = ( \
+#$localStaticFieldsFileOuter \
+#)
+#set forecastStreamsFileList = ($OuterStreamsFile)
+#set forecastNamelistFileList = ($OuterNamelistFile)
+
+# variational
+if ($nEnsDAMembers > 1 && ${ABEInflation} == True) then
+  setenv variationalModelConfigDir ${ModelConfigDir}/variational-bginflate
+else
+  setenv variationalModelConfigDir ${ModelConfigDir}/variational
+endif
+set variationalMeshList = (Outer Inner)
+set variationalMPASnCellsList = ($MPASnCellsOuter $MPASnCellsInner)
+set variationallocalStaticFieldsFileList = ( \
+$localStaticFieldsFileOuter \
+$localStaticFieldsFileInner \
+)
+set variationalStreamsFileList = ($OuterStreamsFile $InnerStreamsFile)
+set variationalNamelistFileList = ($OuterNamelistFile $InnerNamelistFile)
+
+# hofx
+setenv hofxModelConfigDir ${ModelConfigDir}/hofx
+set hofxMeshList = (HofX)
+set hofxMPASnCellsList = ($MPASnCellsOuter)
+#set hofxlocalStaticFieldsFileList = ( \
+#$localStaticFieldsFileOuter \
+#)
+set hofxStreamsFileList = ($OuterStreamsFile)
+set hofxNamelistFileList = ($OuterNamelistFile)
+
+# rtpp
+setenv rtppModelConfigDir ${ModelConfigDir}/rtpp
+#set rtppMeshList = (Ensemble)
+#set rtppMPASnCellsList = ($MPASnCellsEnsemble)
+#set rtpplocalStaticFieldsFileList = ( \
+#$localStaticFieldsFileEnsemble \
+#)
+#set rtppStreamsFileList = ($EnsembleStreamsFile)
+#set rtppNamelistFileList = ($EnsembleNamelistFile)
+

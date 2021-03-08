@@ -51,13 +51,13 @@ tools.csh: initializes python tools for workflow task management
 verification.csh: post-processing and verification tool settings
 
 
-## MPAS-specific configuration (config/mpas/*.csh)
---------------------------------------------------
-120km-mesh.csh, 30km-mesh.csh, etc.: mesh-specific configuration relevant to the workflow
-
-120km-job.csh, 30km-job.csh, etc.: mesh-specific job durations and processor usages
-
+## MPAS-specific configuration
+------------------------------
 variables.csh: model/analysis variables relevant to the workflow
+
+$MPASGridDescriptor/mesh.csh: workflow-relevant mesh-related options
+
+$MPASGridDescriptor/job.csh: job durations and processor usages
 
 
 ## main driver: drive.csh
