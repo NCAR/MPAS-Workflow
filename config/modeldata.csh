@@ -17,6 +17,13 @@ set GFSAnaDirEnsemble = ${PANDACCommonData}/${MPASGridDescriptorEnsemble}_GFSANA
 
 set GEFSAnaDir = /glade/p/mmm/parc/guerrett/pandac/fixed_input
 
+## file date for first background
+set yy = `echo ${FirstCycleDate} | cut -c 1-4`
+set mm = `echo ${FirstCycleDate} | cut -c 5-6`
+set dd = `echo ${FirstCycleDate} | cut -c 7-8`
+set hh = `echo ${FirstCycleDate} | cut -c 9-10`
+setenv FirstFileDate ${yy}-${mm}-${dd}_${hh}.00.00
+
 ## date from which first background is initialized
 set prevFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} -${CyclingWindowHR}`
 set yy = `echo ${prevFirstCycleDate} | cut -c 1-4`
@@ -28,10 +35,12 @@ set prevFirstFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 # externally sourced model states
 # -------------------------------
 ## deterministic - GFS
-setenv GFS6hfcFORFirstCycle ${PANDACCommonData}/${MPASGridDescriptorOuter}_1stCycle_background/${prevFirstCycleDate}
+setenv GFS6hfcFORFirstCycleOuter ${PANDACCommonData}/${MPASGridDescriptorOuter}_1stCycle_background/${prevFirstCycleDate}
+setenv GFS6hfcFORFirstCycleInner ${PANDACCommonData}/${MPASGridDescriptorInner}_1stCycle_background/${prevFirstCycleDate}
 
 # first cycle background state
-setenv firstDetermFCDir ${GFS6hfcFORFirstCycle}
+setenv firstDetermFCDirOuter ${GFS6hfcFORFirstCycleOuter}
+setenv firstDetermFCDirInner ${GFS6hfcFORFirstCycleInner}
 
 ## stochastic - GEFS
 set gefsMemFmt = "/{:02d}"
@@ -51,14 +60,16 @@ endif
 
 if ( "$DAType" =~ *"eda"* ) then
   setenv firstFCMemFmt "${gefsMemFmt}"
-  setenv firstFCDir ${firstEnsFCDir}
-  set firstFCFilePrefix = ${FCFilePrefix}
+  setenv firstFCDirOuter ${firstEnsFCDir}
+  setenv firstFCDirInner ${firstEnsFCDir}
+  setenv firstFCFilePrefix ${FCFilePrefix}
 else
   setenv firstFCMemFmt " "
-  setenv firstFCDir ${firstDetermFCDir}
+  setenv firstFCDirOuter ${firstDetermFCDirOuter}
+  setenv firstFCDirInner ${firstDetermFCDirInner}
 
   # TODO: re-generate GFS forecasts from 'da_state' stream with FCFilePrefix
-  set firstFCFilePrefix = ${RSTFilePrefix}
+  setenv firstFCFilePrefix ${RSTFilePrefix}
 endif
 
 # background covariance
@@ -112,15 +123,21 @@ setenv updateSea 1
 ## static stream data
 if ( "$DAType" =~ *"eda"* ) then
   # stochastic
+  # only 120km
   setenv StaticFieldsDirOuter ${GEFSAnaDir}/${MPASGridDescriptorOuter}/GEFS/init/000hr/${prevFirstCycleDate}
   setenv StaticFieldsDirInner ${GEFSAnaDir}/${MPASGridDescriptorInner}/GEFS/init/000hr/${prevFirstCycleDate}
   setenv StaticFieldsDirEnsemble ${GEFSAnaDir}/${MPASGridDescriptorEnsemble}/GEFS/init/000hr/${prevFirstCycleDate}
   setenv staticMemFmt "${gefsMemFmt}"
 else
   # deterministic
-  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${prevFirstCycleDate}
-  setenv StaticFieldsDirInner ${GFSAnaDirInner}/${prevFirstCycleDate}
-  setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}/${prevFirstCycleDate}
+  # only 120km
+#  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${prevFirstCycleDate}
+#  setenv StaticFieldsDirInner ${GFSAnaDirInner}/${prevFirstCycleDate}
+#  setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}/${prevFirstCycleDate}
+  # 120km and 30km
+  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
+  setenv StaticFieldsDirInner ${GFSAnaDirInner}
+  setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
   setenv staticMemFmt " "
 endif
 setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${prevFirstFileDate}.nc

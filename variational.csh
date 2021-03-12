@@ -82,10 +82,10 @@ while ( $member <= ${nEnsDAMembers} )
     endif 
   end
   if ( $copyDiags > 0 ) then
-    set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
-    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
     rm ${bgFile}${OrigFileSuffix}
     cp ${bgFile} ${bgFile}${OrigFileSuffix}
+    set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
+    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
   endif
 
   @ member++
@@ -98,13 +98,28 @@ ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
 # use localStaticFieldsFileInner as the TemplateFieldsFileInner
 if ($MPASnCellsOuter != $MPASnCellsInner) then
   rm ${TemplateFieldsFileInner}
-  ln -sfv ${localStaticFieldsFileInner} ${TemplateFieldsFileInner}
+
+#  #use static fields directly (wrong date)
+#  ln -sfv ${localStaticFieldsFileInner} ${TemplateFieldsFileInner}
+
+#  #modify static fields (missing some variables needed in inner loop?)
+#  cp ${localStaticFieldsFileInner} ${TemplateFieldsFileInner}
+
+  #modify "Inner" initial forecast file
+  set memDir = `${memberDir} $DAType 1`
+  set FirstCyclingFCDir = ${CyclingFCWorkDir}/${prevFirstCycleDate}${memDir}/Inner
+  cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${FirstFileDate}.nc ${TemplateFieldsFileInner}
+
+  # modify xtime
+  ${updateXTIME} ${TemplateFieldsFileInner} ${thisCycleDate}
 endif
 
 # Run the executable
 # ==================
 ln -sfv ${VariationalBuildDir}/${VariationalEXE} ./
 mpiexec ./${VariationalEXE} $appyaml ./jedi.log >& jedi.log.all
+
+#rm ${TemplateFieldsFileInner}
 
 #WITH DEBUGGER
 #module load arm-forge/19.1
@@ -127,10 +142,7 @@ set iMesh = 0
 foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
   @ iMesh++
   rm ${localStaticFieldsFile}
-  rm ${localStaticFieldsFile}${OrigFileSuffix}
-  set StaticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
-  set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
-  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+  mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 end
 
 date

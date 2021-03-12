@@ -85,12 +85,9 @@ mkdir -p ${an}
 set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$fileDate.nc
 set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
-rm ${bgFile}
-ln -sfv ${bgFileOther} ${bgFile}
-
-# keep a link in place for transparency
-rm ${bgFile}${OrigFileSuffix}
+rm ${bgFile}${OrigFileSuffix} ${bgFile}
 ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
+ln -sfv ${bgFileOther} ${bgFile}
 
 # Remove existing analysis file, then link to bg file
 # ===================================================
@@ -107,9 +104,9 @@ end
 if ( $copyDiags > 0 ) then
   echo "Copy diagnostic variables used in HofX to bg"
   # ===============================================
-  set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
   rm ${bgFile}
   cp -v ${bgFile}${OrigFileSuffix} ${bgFile}
+  set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
   ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
 endif
 
@@ -134,8 +131,7 @@ endif
 
 ## change static fields to a link, keeping for transparency
 rm ${localStaticFieldsFile}
-rm ${localStaticFieldsFile}${OrigFileSuffix}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 
 date
 

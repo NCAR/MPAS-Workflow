@@ -19,7 +19,7 @@ set initialCyclePoint = 20180415T00
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180514T18
+set finalCyclePoint = 20180415T00
 
 
 #########################
@@ -33,7 +33,7 @@ set CriticalPathType = Normal
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
 # OPTIONS: True/False
-set VerifyDeterministicDA = True
+set VerifyDeterministicDA = False
 
 ## VerifyExtendedMeanFC: whether to run verification scripts across
 #    extended forecast states, first intialized at mean analysis
@@ -44,12 +44,12 @@ set VerifyExtendedMeanFC = False
 #    forecast length. Utilizes critical path forecast states from
 #    individual ensemble member analyses or deterministic analysis
 # OPTIONS: True/False
-set VerifyMemberBG = True
+set VerifyMemberBG = False
 
 ## VerifyEnsMeanBG: whether to run verification scripts for ensemble
 #    mean background state.
 # OPTIONS: True/False
-set VerifyEnsMeanBG = True
+set VerifyEnsMeanBG = False
 
 ## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
 #    space while VerifyEnsMeanBG is True.  Automatically triggers OMF calculation
@@ -57,7 +57,7 @@ set VerifyEnsMeanBG = True
 #    DiagnoseEnsSpreadBG is True.
 #    mean background state.
 # OPTIONS: True/False
-set DiagnoseEnsSpreadBG = True
+set DiagnoseEnsSpreadBG = False
 
 ## VerifyEnsMeanAN: whether to run verification scripts for ensemble
 #    mean analysis state.

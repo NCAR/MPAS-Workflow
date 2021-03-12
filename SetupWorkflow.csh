@@ -38,9 +38,11 @@ set member = 1
 while ( $member <= ${nEnsDAMembers} )
   rm -r $prevCyclingFCDirs[$member]
   mkdir -p $prevCyclingFCDirs[$member]
+
+  # Outer loop mesh
   set fcFile = $prevCyclingFCDirs[$member]/${FCFilePrefix}.${fileDate}.nc
 
-  set InitialMemberFC = "$firstFCDir"`${memberDir} ens $member "${firstFCMemFmt}"`
+  set InitialMemberFC = "$firstFCDirOuter"`${memberDir} ens $member "${firstFCMemFmt}"`
   ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
   # rm ${fcFile}
   cp -v ${fcFile}${OrigFileSuffix} ${fcFile}
@@ -61,6 +63,28 @@ while ( $member <= ${nEnsDAMembers} )
 #    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${fcFile}
 #  endif
 #  rm ${diagFile}
+
+  # Inner loop mesh
+  set innerFCDir = $prevCyclingFCDirs[$member]/Inner
+  mkdir -p ${innerFCDir}
+  set fcFile = $innerFCDir/${FCFilePrefix}.${fileDate}.nc
+
+  set InitialMemberFC = "$firstFCDirInner"`${memberDir} ens $member "${firstFCMemFmt}"`
+  ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
+  # rm ${fcFile}
+  cp -v ${fcFile}${OrigFileSuffix} ${fcFile}
+
+  set diagFile = $innerFCDir/${DIAGFilePrefix}.${fileDate}.nc
+  ln -sfv ${InitialMemberFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
+
+  ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
+  set copyDiags = 0
+  foreach var ({$MPASJEDIDiagVariables})
+    ncdump -h ${fcFile} | grep $var
+    if ( $status != 0 ) then
+      @ copyDiags++
+    endif
+  end
 
   @ member++
 end
