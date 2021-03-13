@@ -3,6 +3,7 @@
 source config/experiment.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
+source config/benchmark.csh
 
 ## controls the workflow file structure of all experiments
 
@@ -39,6 +40,10 @@ setenv ABEInflationWorkDir ${CyclingInflationWorkDir}/ABEI
 
 setenv ExtendedFCWorkDir ${ExpDir}/ExtendedFC
 setenv VerificationWorkDir ${ExpDir}/Verification
+
+## benchmark experiment archive
+setenv BenchmarkCyclingDAWorkDir ${BenchmarkExpDir}/CyclingDA
+setenv BenchmarkVerificationWorkDir ${BenchmarkExpDir}/Verification
 
 ## directories copied from PackageBaseName
 setenv mainScriptDir ${ExpDir}/${PackageBaseName}
