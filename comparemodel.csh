@@ -54,37 +54,37 @@ if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
 endif
 echo "WorkDir = ${self_WorkDir}"
 
-# other templated variables
-setenv self_StatePrefix inStatePrefixTEMPLATE
-set self_StateDir = $inStateDirsTEMPLATE[$ArgMember]
+set benchmark_WorkDir = $WorkDirsBenchmarkTEMPLATE[$ArgMember]
 
 # ================================================================================================
 
 # collect model-space diagnostic statistics into DB files
 # =======================================================
-mkdir -p ${self_WorkDir}/${ModelDiagnosticsDir}
-cd ${self_WorkDir}/${ModelDiagnosticsDir}
+mkdir -p ${self_WorkDir}/${ModelCompareDir}
+cd ${self_WorkDir}/${ModelCompareDir}
 
-set other = $self_StateDir
-set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
-ln -sf ${bgFileOther} ../restart.$fileDate.nc
+set self_bgFile = ${self_WorkDir}/${ModelDiagnosticsDir}/../restart.$fileDate.nc
+set benchmark_bgFile = ${benchmark_WorkDir}/${ModelDiagnosticsDir}/../restart.$fileDate.nc
 
-ln -fs ${pyModelDir}/*.py ./
+rm test.txt
 
-set mainScript = writediagstats_modelspace
-ln -fs ${pyModelDir}/${mainScript}.py ./
-set success = 1
-while ( $success != 0 )
-  mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -r $GFSAnaDirOuter/$InitFilePrefixOuter"
-  echo ${baseCommand}
-  ${baseCommand} >& log.$mainScript
-  set success = $?
-  if ( $success != 0 ) then
-    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh
-    sleep 3
-  endif
-end
+#(1) Compare self_bgFile to benchmark_bgFile
+
+echo "$self_bgFile" >> test.txt
+echo "$benchmark_bgFile" >> test.txt
+
+#Add comparison of netcdf files here, maybe all 1D and 2D double-precision variables?
+
+
+#(2) Statistics names fit this format:
+set self_StatisticsFile = "${self_WorkDir}/${ModelDiagnosticsDir}/stats_mpas.nc4"
+set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ModelDiagnosticsDir}/stats_mpas.nc4"
+
+echo "$self_StatisticsFile" >> test.txt
+echo "$benchmark_StatisticsFile" >> test.txt
+
+#Add comparison of netcdf files here
+#Probably should compare these three variables: RMS, Mean, STD
 
 cd -
 

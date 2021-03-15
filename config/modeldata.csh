@@ -3,7 +3,7 @@
 source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
-source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 
 
 ####################
@@ -11,8 +11,11 @@ source config/mpas/${MPASGridDescriptor}-mesh.csh
 ####################
 ## common directories
 set PANDACCommonData = /glade/p/mmm/parc/liuz/pandac_common
-set GFSAnaDir = ${PANDACCommonData}/${MPASGridDescriptor}_GFSANA
-set GEFSAnaDir = /glade/p/mmm/parc/guerrett/pandac/fixed_input/${MPASEnsembleGridDescriptor}
+set GFSAnaDirOuter = ${PANDACCommonData}/${MPASGridDescriptorOuter}_GFSANA
+set GFSAnaDirInner = ${PANDACCommonData}/${MPASGridDescriptorInner}_GFSANA
+set GFSAnaDirEnsemble = ${PANDACCommonData}/${MPASGridDescriptorEnsemble}_GFSANA
+
+set GEFSAnaDir = /glade/p/mmm/parc/guerrett/pandac/fixed_input
 
 ## date from which first background is initialized
 set prevFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} -${CyclingWindowHR}`
@@ -25,8 +28,7 @@ set prevFirstFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 # externally sourced model states
 # -------------------------------
 ## deterministic - GFS
-#setenv GFS6hfcFORFirstCycle  /glade/work/liuz/pandac/fix_input/${MPASGridDescriptor}_1stCycle_background/${prevFirstCycleDate} --> deprecate soon 25-Feb-2021
-setenv GFS6hfcFORFirstCycle ${PANDACCommonData}/${MPASGridDescriptor}_1stCycle_background/${prevFirstCycleDate}
+setenv GFS6hfcFORFirstCycle ${PANDACCommonData}/${MPASGridDescriptorOuter}_1stCycle_background/${prevFirstCycleDate}
 
 # first cycle background state
 setenv firstDetermFCDir ${GFS6hfcFORFirstCycle}
@@ -34,9 +36,9 @@ setenv firstDetermFCDir ${GFS6hfcFORFirstCycle}
 ## stochastic - GEFS
 set gefsMemFmt = "/{:02d}"
 set nGEFSMembers = 20
-set GEFS6hfcFOREnsBDir = ${PANDACCommonData}/${MPASEnsembleGridDescriptor}_EnsFC
+set GEFS6hfcFOREnsBDir = ${PANDACCommonData}/${MPASGridDescriptorEnsemble}_EnsFC
 set GEFS6hfcFOREnsBFilePrefix = EnsForCov
-set GEFS6hfcFORFirstCycle = ${GEFSAnaDir}/${MPASEnsembleGridDescriptor}EnsFCFirstCycle/${prevFirstCycleDate}
+set GEFS6hfcFORFirstCycle = ${GEFSAnaDir}/${MPASGridDescriptorEnsemble}/${MPASGridDescriptorEnsemble}EnsFCFirstCycle/${prevFirstCycleDate}
 
 # first cycle background states
 setenv firstEnsFCNMembers 80
@@ -97,25 +99,30 @@ setenv updateSea 1
 #if ( "$DAType" =~ *"eda"* ) then
 # TODO: process sst/xice data for all GEFS members at all cycle/forecast dates
 #  # stochastic
-#  setenv SeaAnaDir ${GEFSAnaDir}/GEFS/init/000hr
+#  setenv SeaAnaDir ${GEFSAnaDir}/${MPASGridDescriptorOuter}/GEFS/init/000hr
 #  setenv seaMemFmt "${gefsMemFmt}"
 #  setenv SeaFilePrefix ${InitFilePrefix}
 #else
   # deterministic
-  setenv SeaAnaDir ${GFSAnaDir}
+  setenv SeaAnaDir ${GFSAnaDirOuter}
   setenv seaMemFmt " "
-  setenv SeaFilePrefix x1.${MPASnCells}.sfc_update
+  setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
 #endif
 
-## static.nc source data
+## static stream data
 if ( "$DAType" =~ *"eda"* ) then
   # stochastic
-  setenv staticFieldsDir ${GEFSAnaDir}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv StaticFieldsDirOuter ${GEFSAnaDir}/${MPASGridDescriptorOuter}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv StaticFieldsDirInner ${GEFSAnaDir}/${MPASGridDescriptorInner}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv StaticFieldsDirEnsemble ${GEFSAnaDir}/${MPASGridDescriptorEnsemble}/GEFS/init/000hr/${prevFirstCycleDate}
   setenv staticMemFmt "${gefsMemFmt}"
-  setenv staticFieldsFile ${InitFilePrefix}.${prevFirstFileDate}.nc
 else
   # deterministic
-  setenv staticFieldsDir ${GFSAnaDir}/${prevFirstCycleDate}
+  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${prevFirstCycleDate}
+  setenv StaticFieldsDirInner ${GFSAnaDirInner}/${prevFirstCycleDate}
+  setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}/${prevFirstCycleDate}
   setenv staticMemFmt " "
-  setenv staticFieldsFile ${InitFilePrefix}.${prevFirstFileDate}.nc
 endif
+setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${prevFirstFileDate}.nc
+setenv StaticFieldsFileInner ${InitFilePrefixInner}.${prevFirstFileDate}.nc
+setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${prevFirstFileDate}.nc

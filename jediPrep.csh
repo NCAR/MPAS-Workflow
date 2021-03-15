@@ -43,7 +43,7 @@ source config/tools.csh
 source config/modeldata.csh
 source config/obsdata.csh
 source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/appindex.csh
 source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -63,11 +63,16 @@ cd ${self_WorkDir}
 
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
-set self_ObsList = ("${AppTypeTEMPLATEObsList}")
+set self_ObsList = (${AppTypeTEMPLATEObsList})
 set self_VARBCTable = VARBCTableTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
 set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
+set MeshList = (${AppTypeTEMPLATEMeshList})
+set MPASnCellsList = (${AppTypeTEMPLATEMPASnCellsList})
+set StreamsFileList = (${AppTypeTEMPLATEStreamsFileList})
+set NamelistFileList = (${AppTypeTEMPLATENamelistFileList})
+
 
 # ================================================================================================
 
@@ -110,37 +115,46 @@ set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+foreach MPASnCells ($MPASnCellsList)
+  ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+end
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
-## link static stream settings
-
-## link/copy stream_list/streams configs
+## link stream_list configs
 foreach staticfile ( \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
+  rm ./$staticfile
   ln -sfv $self_ModelConfigDir/$staticfile .
 end
-set STREAMS = streams.${MPASCore}
-rm ${STREAMS}
-cp -v $self_ModelConfigDir/${STREAMS} .
-sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
-sed -i 's@TemplateFilePrefix@'${TemplateFilePrefix}'@' ${STREAMS}
-sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${STREAMS}
 
-## copy/modify dynamic namelist
-set NL = namelist.${MPASCore}
-rm $NL
-cp -v ${self_ModelConfigDir}/${NL} .
-sed -i 's@startTime@'${NMLDate}'@' $NL
-sed -i 's@nCells@'${MPASnCells}'@' $NL
-sed -i 's@modelDT@'${MPASTimeStep}'@' $NL
-sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NL
+## copy/modify dynamic streams file
+set iMesh = 0
+foreach StreamsFile_ ($StreamsFileList)
+  @ iMesh++
+  rm ${StreamsFile_}
+  cp -v $self_ModelConfigDir/${StreamsFile} ./${StreamsFile_}
+  sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${StreamsFile_}
+  sed -i 's@TemplateFieldsPrefix@'${TemplateFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile_}
+end
+
+## copy/modify dynamic namelist file
+set iMesh = 0
+foreach NamelistFile_ ($NamelistFileList)
+  @ iMesh++
+  rm ${NamelistFile_}
+  cp -v ${self_ModelConfigDir}/${NamelistFile} ./${NamelistFile_}
+  sed -i 's@startTime@'${NMLDate}'@' ${NamelistFile_}
+  sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@modelDT@'${MPASTimeStep}'@' ${NamelistFile_}
+  sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' ${NamelistFile_}
+end
 
 # =============
 # OBSERVATIONS
@@ -292,6 +306,13 @@ sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' $thisYAML
 sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' $thisYAML
 set prevYAML = $thisYAML
 
+# streams+namelist
+set iMesh = 0
+foreach mesh ($MeshList)
+  @ iMesh++
+  sed -i 's@'$mesh'StreamsFile@'$StreamsFileList[$iMesh]'@' $thisYAML
+  sed -i 's@'$mesh'NamelistFile@'$NamelistFileList[$iMesh]'@' $thisYAML
+end
 
 ## model and analysis variables
 set AnalysisVariables = ($StandardAnalysisVariables)
@@ -389,13 +410,8 @@ set enspbmemsed = EnsemblePbMembers
 if ( "$self_AppName" =~ *"eda"* ) then
   echo "files:" > $appyaml
 
-#  set ensPbDir = ${dynamicEnsBDir}
-#  set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
-#  set ensPbMemFmt = "${dynamicEnsBMemFmt}"
-#  set ensPbNMembers = ${dynamicEnsBNMembers}
-
   set member = 1
-  while ( $member <= ${ensPbNMembers} )
+  while ( $member <= ${nEnsDAMembers} )
     set memberyaml = member_$member.yaml
 
     # add eda-member yaml name to list of member yamls
@@ -460,11 +476,6 @@ else
   cp $prevYAML $memberyaml
 
   ## ensemble Jb members
-#  set ensPbDir = ${fixedEnsBDir}
-#  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
-#  set ensPbMemFmt = "${fixedEnsBMemFmt}"
-#  set ensPbNMembers = ${fixedEnsBNMembers}
-
 cat >! ${enspbmemsed}SEDF.yaml << EOF
 /${enspbmemsed}/c\
 EOF

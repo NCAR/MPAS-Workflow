@@ -27,7 +27,7 @@ source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -51,8 +51,19 @@ set output_interval = 0_${self_fcIntervalHR}:00:00
 
 # static variables
 set self_icStatePrefix = ${ANFilePrefix}
+set self_ModelConfigDir = $forecastModelConfigDir
 
 # ================================================================================================
+
+## copy static fields
+rm ${localStaticFieldsPrefix}*.nc
+rm ${localStaticFieldsPrefix}*.nc-lock
+set localStaticFieldsFile = ${localStaticFieldsFileOuter}
+rm ${localStaticFieldsFile}
+set StaticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
+set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 ## link initial forecast state
 set icFileExt = ${fileDate}.nc
@@ -61,8 +72,8 @@ rm ./${icFile}
 ln -sfv ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
 
 ## link MPAS mesh graph info
-rm ./x1.${MPASnCells}.graph.info*
-ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+rm ./x1.${MPASnCellsOuter}.graph.info*
+ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -70,33 +81,33 @@ foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
-## link/copy stream_list/streams configs
+## link stream_list configs
 foreach staticfile ( \
 stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 stream_list.${MPASCore}.output \
 )
   rm ./$staticfile
-  ln -sfv $forecastModelConfigDir/$staticfile .
+  ln -sfv $self_ModelConfigDir/$staticfile .
 end
-set STREAMS = streams.${MPASCore}
-rm ${STREAMS}
-cp -v $forecastModelConfigDir/${STREAMS} .
-sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
-sed -i 's@outputInterval@'${output_interval}'@' ${STREAMS}
-sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${STREAMS}
-sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${STREAMS}
-sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${STREAMS}
+
+## copy/modify dynamic streams file
+rm ${StreamsFile}
+cp -v $self_ModelConfigDir/${StreamsFile} .
+sed -i 's@nCells@'${MPASnCellsOuter}'@' ${StreamsFile}
+sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
+sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${StreamsFile}
+sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
-set NL = namelist.atmosphere
-rm ${NL}
-cp -v ${forecastModelConfigDir}/${NL} .
-sed -i 's@startTime@'${NMLDate}'@' $NL
-sed -i 's@fcLength@'${config_run_duration}'@' $NL
-sed -i 's@nCells@'${MPASnCells}'@' $NL
-sed -i 's@modelDT@'${MPASTimeStep}'@' $NL
-sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NL
+rm ${NamelistFile}
+cp -v ${self_ModelConfigDir}/${NamelistFile} .
+sed -i 's@startTime@'${NMLDate}'@' $NamelistFile
+sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
+sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFile
+sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
+sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
 
 if ( ${self_fcLengthHR} == 0 ) then
   ## zero-length forecast case (NOT CURRENTLY USED)
@@ -124,14 +135,6 @@ else
     set fcDate = `$advanceCYMDH ${fcDate} ${self_fcIntervalHR}`
     setenv fcDate ${fcDate}
   end
-
-  ## copy static fields
-  set staticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
-  set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
-  rm ${localStaticFieldsFile}
-  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-  cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
-
   
   # Run the executable
   # ==================

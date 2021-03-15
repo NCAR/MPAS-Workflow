@@ -9,7 +9,7 @@ source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}-mesh.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -42,6 +42,16 @@ rm jedi.log*
 
 # ================================================================================================
 
+## copy static fields
+rm ${localStaticFieldsPrefix}*.nc
+rm ${localStaticFieldsPrefix}*.nc-lock
+set localStaticFieldsFile = ${localStaticFieldsFileEnsemble}
+rm ${localStaticFieldsFile}
+set StaticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
+set memberStaticFieldsFile = ${StaticFieldsDirEnsemble}${StaticMemDir}/${StaticFieldsFileEnsemble}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+
 ## create RTPP mean output file to be overwritten by MPAS-JEDI RTPPEXE application
 set memDir = `${memberDir} ensemble 0 "${flowMemFmt}"`
 set meanDir = ${CyclingDAOutDir}${memDir}
@@ -52,7 +62,7 @@ cp $anDirs[1]/${anPrefix}.$fileDate.nc ${meanDir}
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+ln -sfv $GraphInfoDir/x1.${MPASnCellsEnsemble}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -66,22 +76,20 @@ stream_list.${MPASCore}.output \
 )
   ln -sfv $self_ModelConfigDir/$staticfile .
 end
-set STREAMS = streams.${MPASCore}
-rm ${STREAMS}
-cp -v $self_ModelConfigDir/${STREAMS} .
-sed -i 's@nCells@'${MPASnCells}'@' ${STREAMS}
-sed -i 's@TemplateFilePrefix@'${TemplateFilePrefix}'@' ${STREAMS}
-sed -i 's@localStaticFieldsFile@'${localStaticFieldsFile}'@' ${STREAMS}
+
+rm ${StreamsFile}
+cp -v $self_ModelConfigDir/${StreamsFile} .
+sed -i 's@nCells@'${MPASnCellsEnsemble}'@' ${StreamsFile}
+sed -i 's@TemplateFieldsPrefix@'${TemplateFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
-set NL = namelist.${MPASCore}
-rm $NL
-cp -v ${self_ModelConfigDir}/${NL} .
-sed -i 's@startTime@'${NMLDate}'@' $NL
-sed -i 's@nCells@'${MPASnCells}'@' $NL
-sed -i 's@modelDT@'${MPASTimeStep}'@' $NL
-sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NL
-
+rm $NamelistFile
+cp -v ${self_ModelConfigDir}/${NamelistFile} .
+sed -i 's@startTime@'${NMLDate}'@' $NamelistFile
+sed -i 's@nCells@'${MPASnCellsEnsemble}'@' $NamelistFile
+sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
+sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
 
 # =============
 # Generate yaml
@@ -93,21 +101,20 @@ cp -v ${ConfigDir}/applicationBase/rtpp.yaml $thisYAML
 ## RTPP inflation factor
 sed -i 's@RTPPInflationFactor@'${RTPPInflationFactor}'@g' $thisYAML
 
+## streams
+sed -i 's@EnsembleStreamsFile@'${StreamsFile}'@' $thisYAML
+
+## namelist
+sed -i 's@EnsembleNamelistFile@'${NamelistFile}'@' $thisYAML
+
 ## revise current date
 #sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' $thisYAML
 #sed -i 's@2018041500@'${thisValidDate}'@g' $thisYAML
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 
-# use one of the analyses as the localTemplateFieldsFile
+# use one of the analyses as the TemplateFieldsFileOuter
 set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
-ln -sfv $meshFile ${localTemplateFieldsFile}
-
-## copy static fields
-set staticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
-set memberStaticFieldsFile = ${staticFieldsDir}${staticMemDir}/${staticFieldsFile}
-rm ${localStaticFieldsFile}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+ln -sfv $meshFile ${TemplateFieldsFileOuter}
 
 ## file naming
 sed -i 's@OOPSMemberDir@/mem%{member}%@g' $thisYAML
