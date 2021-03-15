@@ -308,7 +308,7 @@ cat >! suite.rc << EOF
     script = \$origin/CyclingDA.csh
     [[[job]]]
       execution time limit = PT${CyclingDAJobMinutes}M
-      execution retry delays = 2*PT30S
+      execution retry delays = ${CyclingDARetry}
     [[[directives]]]
       -m = ae
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
@@ -316,7 +316,7 @@ cat >! suite.rc << EOF
     script = \$origin/RTPPInflation.csh
     [[[job]]]
       execution time limit = PT${CyclingInflationJobMinutes}M
-      execution retry delays = 4*PT30S
+      execution retry delays = ${RTPPInflationRetry}
     [[[directives]]]
       -m = ae
       -l = select=${CyclingInflationNodesPerMember}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
@@ -348,7 +348,7 @@ cat >! suite.rc << EOF
     inherit = CyclingFC
     script = \$origin/CyclingFC.csh "{{mem}}"
     [[[job]]]
-      execution retry delays = 4*PT30S
+      execution retry delays = ${CyclingFCRetry}
 {% endfor %}
   [[CyclingFCFinished]]
     [[[job]]]
@@ -381,7 +381,7 @@ cat >! suite.rc << EOF
     env-script = cd ${mainScriptDir}; ./jediPrepHofXMeanFC.csh "1" "{{dt}}" "FC"
     script = \$origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
     [[[job]]]
-      execution retry delays = 4*PT30S
+      execution retry delays = ${HofXRetry}
   [[CleanHofXMeanFC{{dt}}hr]]
     inherit = CleanBase
     script = \$origin/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
@@ -412,7 +412,7 @@ cat >! suite.rc << EOF
     env-script = cd ${mainScriptDir}; ./jediPrepHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     script = \$origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[job]]]
-      execution retry delays = 4*PT30S
+      execution retry delays = ${HofXRetry}
   [[VerifyModel{{state}}{{mem}}]]
     inherit = VerifyModel{{state}}
     script = \$origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
@@ -437,7 +437,7 @@ cat >! suite.rc << EOF
     env-script = cd ${mainScriptDir}; ./jediPrepHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     script = \$origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[job]]]
-      execution retry delays = 4*PT30S
+      execution retry delays = ${HofXRetry}
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyModelEnsFC{{mem}}
     script = \$origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
@@ -465,7 +465,7 @@ cat >! suite.rc << EOF
       -q = ${EnsMeanBGQueueName}
       -A = ${EnsMeanBGAccountNumber}
     [[[job]]]
-      execution retry delays = 4*PT30S
+      execution retry delays = ${HofXRetry}
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
     script = \$origin/VerifyModelEnsMeanBG.csh "1" "0" "BG"
