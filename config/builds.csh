@@ -27,7 +27,7 @@ setenv VariationalBuildDir /glade/scratch/vahl/mpasbundletest/build/bin
 
 ## HofX
 setenv HofXEXE mpasjedi_hofx_nomodel.x
-setenv HofXBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_19FEB2021/bin
+setenv HofXBuildDir /glade/scratch/vahl/mpasbundletest/build/bin
 
 ## RTPP
 setenv RTPPEXE mpasjedi_rtpp.x
@@ -37,7 +37,7 @@ setenv RTPPBuildDir /glade/scratch/vahl/mpasbundletest/build/bin
 # ----------
 setenv MPASCore atmosphere
 setenv ForecastEXE mpas_${MPASCore}
-setenv ForecastTopBuildDir /glade/scratch/vahl/mpasbundletest/build/bin
+setenv ForecastTopBuildDir /glade/scratch/vahl/mpasbundletest/build
 setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
 
 setenv MPASLookupDir ${ForecastTopBuildDir}/MPAS/core_${MPASCore}

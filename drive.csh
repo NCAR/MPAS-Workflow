@@ -44,7 +44,7 @@ set VerifyExtendedMeanFC = False
 #    forecast length. Utilizes critical path forecast states from
 #    individual ensemble member analyses or deterministic analysis
 # options: True/False
-set VerifyMemberBG = False
+set VerifyMemberBG = True
 
 ## VerifyEnsMeanBG: whether to run verification scripts for ensemble
 #    mean background state.

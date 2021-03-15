@@ -33,7 +33,7 @@ set benchmarkObsList = (sondes aircraft satwind gnssroref sfcp clramsua)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = ''
+set ExpSuffix = '_this_week'
 
 ##############
 ## DA settings
