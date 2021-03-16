@@ -19,7 +19,7 @@ set StandardStateVariables = ( \
   theta \
   rho \
   u \
-  index_qv \
+  qv \
   pressure \
   landmask \
   xice \
@@ -36,3 +36,4 @@ set StandardStateVariables = ( \
   tslb \
   pressure_p \
 )
+#  index_qv \

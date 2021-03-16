@@ -321,8 +321,8 @@ set StateVariables = ($StandardStateVariables)
 grep '^\ \+Clouds' $prevYAML
 if ( $status == 0 ) then
   foreach hydro ($MPASHydroVariables)
-    set AnalysisVariables = ($AnalysisVariables index_$hydro)
-    set StateVariables = ($StateVariables index_$hydro)
+    set AnalysisVariables = ($AnalysisVariables $hydro)
+    set StateVariables = ($StateVariables $hydro)
   end
 endif
 foreach VarGroup (Analysis Model State)
