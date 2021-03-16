@@ -36,7 +36,11 @@ set thisValidDate = $thisCycleDate
 source getCycleVars.csh
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  rm -r $prevCyclingFCDirs[$member]
+  echo ""
+  find $prevCyclingFCDirs[$member] -mindepth 0 -maxdepth 0 > /dev/null
+  if ($? == 0) then
+    rm -r $prevCyclingFCDirs[$member]
+  endif
   mkdir -p $prevCyclingFCDirs[$member]
 
   # Outer loop mesh
@@ -53,9 +57,10 @@ while ( $member <= ${nEnsDAMembers} )
   ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
   set copyDiags = 0
   foreach var ({$MPASJEDIDiagVariables})
-    ncdump -h ${fcFile} | grep $var
+    ncdump -h ${fcFile} | grep -q $var
     if ( $status != 0 ) then
       @ copyDiags++
+      echo "Copying MPASJEDIDiagVariables to background state"
     endif
   end
 # Takes too long on command-line.  Make it part of a job (R1).

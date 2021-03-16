@@ -24,3 +24,10 @@ else
   setenv EnsMeanBGQueueName ${VFQueueName}
   setenv EnsMeanBGAccountNumber ${VFAccountNumber}
 endif
+
+setenv CyclingDARetry '1*PT30S'
+setenv CyclingFCRetry '2*PT30S'
+setenv RTPPInflationRetry '2*PT30S'
+setenv HofXRetry '2*PT30S'
+#setenv VerifyObsRetry '1*PT30S'
+#setenv VerifyModelRetry '1*PT30S'

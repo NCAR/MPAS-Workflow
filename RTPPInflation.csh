@@ -132,10 +132,10 @@ set AnalysisVariables = ( \
   rho \
   theta \
   u \
-  index_qv \
+  qv \
 )
 foreach hydro ($MPASHydroVariables)
-  set AnalysisVariables = ($AnalysisVariables index_$hydro)
+  set AnalysisVariables = ($AnalysisVariables $hydro)
 end
 set StateVariables = ( \
   $AnalysisVariables \
