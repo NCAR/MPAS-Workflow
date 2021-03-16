@@ -76,9 +76,10 @@ while ( $member <= ${nEnsDAMembers} )
   # ======================================================
   set copyDiags = 0
   foreach var ({$MPASJEDIDiagVariables})
-    ncdump -h ${bgFileOther} | grep $var
+    ncdump -h ${bgFileOther} | grep -q $var
     if ( $status != 0 ) then
       @ copyDiags++
+      echo "Copying MPASJEDIDiagVariables to background state"
     endif 
   end
   if ( $copyDiags > 0 ) then
