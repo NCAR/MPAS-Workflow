@@ -7,24 +7,24 @@ source config/experiment.csh
 # Uniform 30km mesh -- forecast, hofx, variational outer loop
 # Uniform 120km mesh -- variational inner loop
 
-@ CyclingFCJobMinutes = 5 + (5 * $CyclingWindowHR / 6)
-setenv CyclingFCNodes 8
+@ CyclingFCJobMinutes = 2 + (5 * $CyclingWindowHR / 6)
+setenv CyclingFCNodes 16
 setenv CyclingFCPEPerNode 32
 
 @ ExtendedFCJobMinutes = 1 + ($ExtendedFCWindowHR / 4)
 setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
-setenv HofXJobMinutes 10
-setenv HofXNodes 32
-setenv HofXPEPerNode 16
+setenv HofXJobMinutes 20
+setenv HofXNodes 4
+setenv HofXPEPerNode 36
 setenv HofXMemory 109
 
 setenv VerifyObsJobMinutes 5
 setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 36
 
-setenv VerifyModelJobMinutes 2
+setenv VerifyModelJobMinutes 20
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
@@ -39,8 +39,8 @@ if ( "$DAType" =~ *"eda"* ) then
   setenv CyclingDANodesPerMember 2
   setenv CyclingDAPEPerNode      18
 else
-  setenv CyclingDANodesPerMember 8
-  setenv CyclingDAPEPerNode      16
+  setenv CyclingDANodesPerMember 4
+  setenv CyclingDAPEPerNode      32
 endif
 
 setenv CyclingInflationJobMinutes 25
