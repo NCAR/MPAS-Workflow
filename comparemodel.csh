@@ -69,20 +69,34 @@ set benchmark_bgFile = ${benchmark_WorkDir}/${ModelDiagnosticsDir}/../restart.$f
 rm test.txt
 
 #(1) Compare self_bgFile to benchmark_bgFile
+echo "nccmp -d ${self_bgFile} ${benchmark_bgFile}"
+nccmp -d ${self_bgFile} ${benchmark_bgFile}
+#echo "${self_bgFile} - nccmp returned $status"
+# nccmp returns 0 if the files are identical. Log non-zero returns in a file for human review.
+if ($status != 0) then
+  echo "$self_bgFile" >> ${ExpDir}/verify_differences_found.txt
+endif
 
-echo "$self_bgFile" >> test.txt
-echo "$benchmark_bgFile" >> test.txt
+# echo "$self_bgFile" >> test.txt
+# echo "$benchmark_bgFile" >> test.txt
 
 #Add comparison of netcdf files here, maybe all 1D and 2D double-precision variables?
 
 
 #(2) Statistics names fit this format:
-set self_StatisticsFile = "${self_WorkDir}/${ModelDiagnosticsDir}/stats_mpas.nc4"
-set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ModelDiagnosticsDir}/stats_mpas.nc4"
+set self_StatisticsFile = "${self_WorkDir}/${ModelDiagnosticsDir}/stats_mpas.nc"
+set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ModelDiagnosticsDir}/stats_mpas.nc"
 
-echo "$self_StatisticsFile" >> test.txt
-echo "$benchmark_StatisticsFile" >> test.txt
+echo "nccmp -d ${self_StatisticsFile} ${benchmark_StatisticsFile}"
+nccmp -d ${self_StatisticsFile} ${benchmark_StatisticsFile}
+#echo "${self_StatisticsFile} - nccmp returned $status"
+if ($status != 0) then
+  echo "$self_StatisticsFile" >> ${ExpDir}/verify_differences_found.txt
+endif
 
+# echo "$self_StatisticsFile" >> test.txt
+# echo "$benchmark_StatisticsFile" >> test.txt
+touch BENCHMARK_COMPARE_COMPLETE
 #Add comparison of netcdf files here
 #Probably should compare these three variables: RMS, Mean, STD
 

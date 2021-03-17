@@ -84,11 +84,19 @@ set ObsTypeList = ( \
 )
 
 foreach obstype ($ObsTypeList)
-  set self_StatisticsFile = "${self_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc4"
-  set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc4"
+  set self_StatisticsFile = "${self_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
+  set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
 
-  echo "$self_StatisticsFile" >> test.txt
-  echo "$benchmark_StatisticsFile" >> test.txt
+  echo "nccmp -d ${self_StatisticsFile} ${benchmark_StatisticsFile}"
+  nccmp -d ${self_StatisticsFile} ${benchmark_StatisticsFile}
+  #echo "${self_StatisticsFile} - nccmp returned $status"
+  # nccmp returns 0 if the files are identical. Log non-zero returns in a file for human review.
+  if ($status != 0) then
+    echo "$self_StatisticsFile" >> ${ExpDir}/verify_differences_found.txt
+  endif
+
+  # echo "$self_StatisticsFile" >> test.txt
+  # echo "$benchmark_StatisticsFile" >> test.txt
 
   #Add comparison of netcdf files here
   #Probably should compare these three variables: RMS, Mean, STD
