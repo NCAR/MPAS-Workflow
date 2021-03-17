@@ -130,11 +130,9 @@ mpiexec ./${VariationalEXE} $appyaml ./jedi.log >& jedi.log.all
 
 # Check status
 # ============
-#grep "Finished running the atmosphere core" log.atmosphere.0000.out
 grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
-  touch ./FAIL
-  echo "ERROR in $0 : jedi application failed" >> ./FAIL
+  echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
 endif
 

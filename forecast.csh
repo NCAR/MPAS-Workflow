@@ -147,8 +147,7 @@ else
   # ============
   grep "Finished running the ${MPASCore} core" log.${MPASCore}.0000.out
   if ( $status != 0 ) then
-    touch ./FAIL
-    echo "ERROR in $0 : MPAS-Model forecast failed" >> ./FAIL
+    echo "ERROR in $0 : MPAS-Model forecast failed" > ./FAIL
     exit 1
   endif
 
@@ -181,8 +180,7 @@ while ( ${fcDate} <= ${finalFCDate} )
     ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}
 
     if ( $status != 0 ) then
-      touch ./FAIL
-      echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $fcFile" >> ./FAIL
+      echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $fcFile" > ./FAIL
       exit 1
     endif
   endif
