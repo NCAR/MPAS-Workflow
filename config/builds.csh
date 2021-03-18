@@ -27,7 +27,7 @@ setenv VariationalBuildDir /glade/scratch/vahl/mpasbundletest/build/bin
 #setenv VariationalBuildDir /glade/work/vahl/dev/project1/build-release/bin
 
 ## HofX
-setenv HofXEXE mpasjedi_hofx_nomodel.x
+setenv HofXEXE mpasjedi_hofx3d.x
 setenv HofXBuildDir /glade/scratch/vahl/mpasbundletest/build/bin
 #setenv HofXBuildDir /glade/work/vahl/dev/project1/build-release/bin
 
