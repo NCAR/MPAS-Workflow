@@ -68,8 +68,6 @@ set self_jediAppName = jediAppNameTEMPLATE
 mkdir -p ${self_WorkDir}/${ObsCompareDir}
 cd ${self_WorkDir}/${ObsCompareDir}
 
-rm test.txt
-
 set ObsTypeList = ( \
   aircraft \
   amsua_aqua \
@@ -89,17 +87,11 @@ foreach obstype ($ObsTypeList)
 
   echo "nccmp -d ${self_StatisticsFile} ${benchmark_StatisticsFile}"
   nccmp -d ${self_StatisticsFile} ${benchmark_StatisticsFile}
-  #echo "${self_StatisticsFile} - nccmp returned $status"
+
   # nccmp returns 0 if the files are identical. Log non-zero returns in a file for human review.
   if ($status != 0) then
     echo "$self_StatisticsFile" >> ${ExpDir}/verify_differences_found.txt
   endif
-
-  # echo "$self_StatisticsFile" >> test.txt
-  # echo "$benchmark_StatisticsFile" >> test.txt
-
-  #Add comparison of netcdf files here
-  #Probably should compare these three variables: RMS, Mean, STD
 
 end
 
