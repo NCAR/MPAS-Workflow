@@ -85,8 +85,8 @@ foreach obstype ($ObsTypeList)
   set self_StatisticsFile = "${self_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
   set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
 
-  echo "nccmp -d ${self_StatisticsFile} ${benchmark_StatisticsFile}"
-  nccmp -d ${self_StatisticsFile} ${benchmark_StatisticsFile}
+  echo "nccmp -d -N ${self_StatisticsFile} ${benchmark_StatisticsFile}"
+  nccmp -d -N ${self_StatisticsFile} ${benchmark_StatisticsFile}
 
   # nccmp returns 0 if the files are identical. Log non-zero returns in a file for human review.
   if ($status != 0) then
