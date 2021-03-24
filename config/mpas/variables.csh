@@ -36,4 +36,5 @@ set StandardStateVariables = ( \
   tslb \
   pressure_p \
 )
-#  index_qv \
+
+set MPASJEDIVariablesFiles = (geovars.yaml)

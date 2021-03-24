@@ -156,6 +156,11 @@ foreach NamelistFile_ ($NamelistFileList)
   sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' ${NamelistFile_}
 end
 
+## MPASJEDI variable configs
+foreach file ($MPASJEDIVariablesFiles)
+  ln -sfv ${ModelConfigDir}/${file} .
+end
+
 # =============
 # OBSERVATIONS
 # =============
