@@ -23,25 +23,21 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   setenv VariationalEXE mpasjedi_variational.x
 endif
-setenv VariationalBuildDir /glade/scratch/vahl/mpasbundletest/build/bin
-#setenv VariationalBuildDir /glade/work/vahl/dev/project1/build-release/bin
+setenv VariationalBuildDir /glade/scratch/${USER}/mpasbundletest/build/bin
 
 ## HofX
 setenv HofXEXE mpasjedi_hofx3d.x
-setenv HofXBuildDir /glade/scratch/vahl/mpasbundletest/build/bin
-#setenv HofXBuildDir /glade/work/vahl/dev/project1/build-release/bin
+setenv HofXBuildDir /glade/scratch/${USER}/mpasbundletest/build/bin
 
 ## RTPP
 setenv RTPPEXE mpasjedi_rtpp.x
-setenv RTPPBuildDir /glade/scratch/vahl/mpasbundletest/build/bin
-#setenv RTPPBuildDir /glade/work/vahl/dev/project1/build-release/bin
+setenv RTPPBuildDir /glade/scratch/${USER}/mpasbundletest/build/bin
 
 # MPAS-Model
 # ----------
 setenv MPASCore atmosphere
 setenv ForecastEXE mpas_${MPASCore}
-setenv ForecastTopBuildDir /glade/scratch/vahl/mpasbundletest/build
-#setenv ForecastTopBuildDir /glade/work/vahl/dev/project1/build-release
+setenv ForecastTopBuildDir /glade/scratch/${USER}/mpasbundletest/build
 setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
 
 setenv MPASLookupDir ${ForecastTopBuildDir}/MPAS/core_${MPASCore}
