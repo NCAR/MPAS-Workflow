@@ -5,7 +5,7 @@ source config/appindex.csh
 ## InterpolationType
 # controls the horizontal interpolation used in variational and hofx applications
 # OPTIONS: bump, unstructured
-setenv InterpolationType unstructured
+setenv InterpolationType bump
 
 ##############
 # Fixed tables

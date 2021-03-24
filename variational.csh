@@ -112,6 +112,7 @@ if ($MPASnCellsOuter != $MPASnCellsInner) then
   cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${FirstFileDate}.nc ${TemplateFieldsFileInner}
 
   # modify xtime
+  echo "${updateXTIME} ${TemplateFieldsFileInner} ${thisCycleDate}"
   ${updateXTIME} ${TemplateFieldsFileInner} ${thisCycleDate}
 endif
 
