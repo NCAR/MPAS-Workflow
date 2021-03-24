@@ -1,0 +1,175 @@
+#
+# (C) Copyright 2020 UCAR
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+
+# Field definitions for the UFO observation operators
+# *** Do not add different FieldIONames or LongName, ufo only uses one name ***
+
+fields:
+  - field name: air_pressure
+    mpas template field: theta
+
+  - field name: air_pressure_levels
+    mpas template field: w
+
+  - field name: geopotential_height
+    mpas template field: theta
+
+  - field name: surface_geopotential_height
+    mpas template field: u10
+
+  - field name: height
+    mpas template field: theta
+
+  - field name: virtual_temperature
+    mpas template field: theta
+
+  - field name: air_temperature
+    mpas template field: theta
+
+  - field name: temperature
+    mpas template field: theta
+
+  - field name: eastward_wind
+    mpas template field: theta
+
+  - field name: northward_wind
+    mpas template field: theta
+
+  - field name: humidity_mixing_ratio
+    mpas template field: theta
+
+  - field name: specific_humidity
+    mpas template field: theta
+
+  - field name: surface_altitude
+    mpas template field: u10
+
+  - field name: surface_pressure
+    mpas template field: u10
+
+  - field name: surface_temperature
+    mpas template field: u10
+
+  - field name: specific_humidity_at_two_meters_above_surface
+    mpas template field: u10
+
+  - field name: uwind_at_10m
+    mpas template field: u10
+
+  - field name: vwind_at_10m
+    mpas template field: u10
+
+  - field name: skin_temperature
+    mpas template field: u10
+
+  - field name: landmask
+    mpas template field: ivgtyp
+
+  - field name: seaice_fraction
+    mpas template field: u10
+
+  - field name: mole_fraction_of_ozone_in_air
+    mpas template field: theta
+
+  - field name: mole_fraction_of_carbon_dioxide_in_air
+    mpas template field: theta
+
+  - field name: mass_content_of_cloud_liquid_water_in_atmosphere_layer
+    mpas template field: theta
+
+  - field name: mass_content_of_cloud_ice_in_atmosphere_layer
+    mpas template field: theta
+
+  - field name: mass_content_of_rain_in_atmosphere_layer
+    mpas template field: theta
+
+  - field name: mass_content_of_snow_in_atmosphere_layer
+    mpas template field: theta
+
+  - field name: mass_content_of_graupel_in_atmosphere_layer
+    mpas template field: theta
+
+  - field name: mass_content_of_hail_in_atmosphere_layer
+    mpas template field: theta
+
+  - field name: effective_radius_of_cloud_liquid_water_particle
+    mpas template field: theta
+
+  - field name: effective_radius_of_cloud_ice_particle
+    mpas template field: theta
+
+  - field name: effective_radius_of_rain_particle
+    mpas template field: theta
+
+  - field name: effective_radius_of_snow_particle
+    mpas template field: theta
+
+  - field name: effective_radius_of_graupel_particle
+    mpas template field: theta
+
+  - field name: effective_radius_of_hail_particle
+    mpas template field: theta
+
+  - field name: cloud_area_fraction_in_atmosphere_layer
+    mpas template field: theta
+
+  - field name: average_surface_temperature_within_field_of_view
+    mpas template field: u10
+
+  - field name: surface_temperature_where_sea
+    mpas template field: u10
+
+  - field name: surface_temperature_where_land
+    mpas template field: u10
+
+  - field name: surface_temperature_where_ice
+    mpas template field: u10
+
+  - field name: surface_temperature_where_snow
+    mpas template field: u10
+
+  - field name: surface_snow_thickness
+    mpas template field: u10
+
+  - field name: vegetation_area_fraction
+    mpas template field: u10
+
+  - field name: leaf_area_index
+    mpas template field: u10
+
+  - field name: volume_fraction_of_condensed_water_in_soil
+    mpas template field: u10
+
+  - field name: soil_temperature
+    mpas template field: u10
+
+  - field name: water_area_fraction
+    mpas template field: u10
+
+  - field name: land_area_fraction
+    mpas template field: u10
+
+  - field name: ice_area_fraction
+    mpas template field: u10
+
+  - field name: surface_snow_area_fraction
+    mpas template field: u10
+
+  - field name: surface_wind_speed
+    mpas template field: u10
+
+  - field name: surface_wind_from_direction
+    mpas template field: u10
+
+  - field name: land_type_index
+    mpas template field: ivgtyp
+
+  - field name: vegetation_type_index
+    mpas template field: ivgtyp
+
+  - field name: soil_type
+    mpas template field: isltyp

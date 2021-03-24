@@ -23,21 +23,21 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   setenv VariationalEXE mpasjedi_variational.x
 endif
-setenv VariationalBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_16MAR2021/bin
+setenv VariationalBuildDir /glade/scratch/guerrett/mpasbundletest/mpas-bundle_gnu-openmpi_24MAR2021/bin
 
 ## HofX
 setenv HofXEXE mpasjedi_hofx3d.x
-setenv HofXBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_16MAR2021/bin
+setenv HofXBuildDir /glade/scratch/guerrett/mpasbundletest/mpas-bundle_gnu-openmpi_24MAR2021/bin
 
 ## RTPP
 setenv RTPPEXE mpasjedi_rtpp.x
-setenv RTPPBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--rtpp_app/bin
+setenv RTPPBuildDir /glade/scratch/guerrett/mpasbundletest/mpas-bundle_gnu-openmpi_24MAR2021/bin
 
 # MPAS-Model
 # ----------
 setenv MPASCore atmosphere
 setenv ForecastEXE mpas_${MPASCore}
-setenv ForecastTopBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_16MAR2021
+setenv ForecastTopBuildDir /glade/scratch/guerrett/mpasbundletest/mpas-bundle_gnu-openmpi_24MAR2021
 setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
 
 setenv MPASLookupDir ${ForecastTopBuildDir}/MPAS/core_${MPASCore}
