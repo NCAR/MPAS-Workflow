@@ -27,6 +27,7 @@ setenv ExperimentName ${ExperimentName}_${DAType}
 setenv ExperimentName ${ExperimentName}${ExpObsName}
 setenv ExperimentName ${ExperimentName}${EnsExpSuffix}
 setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
+setenv ExperimentNameWithoutSuffix ${ExperimentName}
 setenv ExperimentName ${ExperimentName}${ExpSuffix}
 
 set ExpDir = ${TopExpDir}/${ExperimentName}
