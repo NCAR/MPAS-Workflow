@@ -65,8 +65,9 @@ set self_jediAppName = jediAppNameTEMPLATE
 
 # collect obs-space diagnostic statistics into DB files
 # =====================================================
-mkdir -p ${self_WorkDir}/${ObsCompareDir}
-cd ${self_WorkDir}/${ObsCompareDir}
+set CompareDir = ${self_WorkDir}/${ObsCompareDir}
+mkdir -p ${CompareDir}
+cd ${CompareDir}
 
 set ObsTypeList = ( \
   aircraft \
