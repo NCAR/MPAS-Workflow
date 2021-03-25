@@ -82,24 +82,21 @@ set ObsTypeList = ( \
   sondes \
 )
 
-#TODO: Statistics files need to be in consistent order for this to work
-#      The problem appears to be that diagnostics ordering is not consistent between experiments,
-#      which is likely caused by the usage of python dictionaries that are order-agnostic
-#rm compare.txt
-#foreach obstype ($ObsTypeList)
-#  set self_StatisticsFile = "${self_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
-#  set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
-#
-#  echo "nccmp -d -S -N -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile}" | tee -a compare.txt
-#  nccmp -d -N -S -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} | tee -a compare.txt
-#
-#  # nccmp returns 0 if the files are identical. Log non-zero returns in a file for human review.
-#  if ($status != 0) then
-#    echo "$self_StatisticsFile" >> ${ExpDir}/verifyobs_differences_found.txt
-#    echo "${CompareDir}/diffStatistics.nc" >> ${ExpDir}/verifyobs_differences_found.txt
-#    ncdiff -O -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} diffStatistics_${obstype}.nc
-#  endif
-#end
+rm compare.txt
+foreach obstype ($ObsTypeList)
+  set self_StatisticsFile = "${self_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
+  set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
+
+  echo "nccmp -d -S -N -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile}" | tee -a compare.txt
+  nccmp -d -N -S -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} | tee -a compare.txt
+
+  # nccmp returns 0 if the files are identical. Log non-zero returns in a file for human review.
+  if ($status != 0) then
+    echo "$self_StatisticsFile" >> ${ExpDir}/verifyobs_differences_found.txt
+    echo "${CompareDir}/diffStatistics.nc" >> ${ExpDir}/verifyobs_differences_found.txt
+    ncdiff -O -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} diffStatistics_${obstype}.nc
+  endif
+end
 
 touch BENCHMARK_COMPARE_COMPLETE
 
