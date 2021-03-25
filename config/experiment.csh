@@ -36,7 +36,7 @@ set benchmarkObsList = (sondes aircraft satwind gnssroref sfcp clramsua)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = '_this_week'
+set ExpSuffix = ''
 
 ##############
 ## DA settings
@@ -61,7 +61,7 @@ set variationalObsList = ($benchmarkObsList)
 
 ## DAType
 # OPTIONS: 3denvar, eda_3denvar, 3dvarId
-setenv DAType 3denvar
+setenv DAType eda_3denvar
 
 if ( "$DAType" =~ *"eda"* ) then
   ## nEnsDAMembers
