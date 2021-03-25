@@ -110,7 +110,7 @@ setenv VarBCAnalysis ${OutDBDir}/satbias_crtm_ana
 ##################################
 ## application-specific templating
 ##################################
-set ModelConfigDir = ${ConfigDir}/mpas
+setenv ModelConfigDir ${ConfigDir}/mpas
 
 set OuterStreamsFile = ${StreamsFile}_${MPASGridDescriptorOuter}
 set OuterNamelistFile = ${NamelistFile}_${MPASGridDescriptorOuter}
