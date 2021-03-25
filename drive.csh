@@ -54,7 +54,7 @@ set VerifyMemberBG = True
 ## CompareBG2Benchmark: compare verification nc files between two experiments
 #    after the MemberBG verification completes
 # OPTIONS: True/False
-set CompareDA2Benchmark = False
+set CompareBG2Benchmark = False
 
 ## VerifyEnsMeanBG: whether to run verification scripts for ensemble
 #    mean background state.
