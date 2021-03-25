@@ -60,30 +60,35 @@ set benchmark_WorkDir = $WorkDirsBenchmarkTEMPLATE[$ArgMember]
 
 # collect model-space diagnostic statistics into DB files
 # =======================================================
-mkdir -p ${self_WorkDir}/${ModelCompareDir}
-cd ${self_WorkDir}/${ModelCompareDir}
+set CompareDir = ${self_WorkDir}/${ModelCompareDir}
+mkdir -p ${CompareDir}
+cd ${CompareDir}
 
 set self_bgFile = ${self_WorkDir}/${ModelDiagnosticsDir}/../restart.$fileDate.nc
 set benchmark_bgFile = ${benchmark_WorkDir}/${ModelDiagnosticsDir}/../restart.$fileDate.nc
 
 #(1) Compare self_bgFile to benchmark_bgFile
-echo "nccmp -d ${self_bgFile} ${benchmark_bgFile}"
+echo "nccmp -d ${self_bgFile} ${benchmark_bgFile}" | tee compare.txt
 nccmp -d ${self_bgFile} ${benchmark_bgFile}
 
 # nccmp returns 0 if the files are identical. Log non-zero returns in a file for human review.
 if ($status != 0) then
-  echo "$self_bgFile" >> ${ExpDir}/verify_differences_found.txt
+  echo "$self_bgFile" >> ${ExpDir}/verifymodel_differences_found.txt
+  echo "${CompareDir}/diffState.nc" >> ${ExpDir}/verifymodel_differences_found.txt
+  ncdiff -O ${self_bgFile} ${benchmark_bgFile} diffState.nc
 endif
 
 #(2) Statistics names fit this format:
 set self_StatisticsFile = "${self_WorkDir}/${ModelDiagnosticsDir}/stats_mpas.nc"
 set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ModelDiagnosticsDir}/stats_mpas.nc"
 
-echo "nccmp -d ${self_StatisticsFile} ${benchmark_StatisticsFile}"
-nccmp -d ${self_StatisticsFile} ${benchmark_StatisticsFile}
+echo "nccmp -d -N ${self_StatisticsFile} ${benchmark_StatisticsFile}" | tee -a compare.txt
+nccmp -d -N ${self_StatisticsFile} ${benchmark_StatisticsFile}
 #echo "${self_StatisticsFile} - nccmp returned $status"
 if ($status != 0) then
-  echo "$self_StatisticsFile" >> ${ExpDir}/verify_differences_found.txt
+  echo "$self_StatisticsFile" >> ${ExpDir}/verifymodel_differences_found.txt
+  echo "${CompareDir}/diffStatistics.nc" >> ${ExpDir}/verifymodel_differences_found.txt
+  ncdiff -O -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} diffStatistics.nc
 endif
 
 touch BENCHMARK_COMPARE_COMPLETE
