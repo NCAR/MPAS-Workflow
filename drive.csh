@@ -33,12 +33,12 @@ set CriticalPathType = Normal
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
 # options: True/False
-set VerifyDeterministicDA = False
+set VerifyDeterministicDA = True
 
 ## CompareDA2Benchmark: compare verification nc files between two experiments
 #    after the DA verification completes
 # OPTIONS: True/False
-set CompareDA2Benchmark = True
+set CompareDA2Benchmark = False
 
 ## VerifyExtendedMeanFC: whether to run verification scripts across
 #    extended forecast states, first intialized at mean analysis
@@ -54,12 +54,12 @@ set VerifyMemberBG = True
 ## CompareBG2Benchmark: compare verification nc files between two experiments
 #    after the MemberBG verification completes
 # OPTIONS: True/False
-set CompareBG2Benchmark = True
+set CompareDA2Benchmark = False
 
 ## VerifyEnsMeanBG: whether to run verification scripts for ensemble
 #    mean background state.
 # options: True/False
-set VerifyEnsMeanBG = False
+set VerifyEnsMeanBG = True
 
 ## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
 #    space while VerifyEnsMeanBG is True.  Automatically triggers OMF calculation
@@ -67,7 +67,7 @@ set VerifyEnsMeanBG = False
 #    DiagnoseEnsSpreadBG is True.
 #    mean background state.
 # options: True/False
-set DiagnoseEnsSpreadBG = False
+set DiagnoseEnsSpreadBG = True
 
 ## VerifyEnsMeanAN: whether to run verification scripts for ensemble
 #    mean analysis state.
