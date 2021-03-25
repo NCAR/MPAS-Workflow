@@ -19,7 +19,7 @@ set initialCyclePoint = 20180415T00
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180421T00
+set finalCyclePoint = 20180514T18
 
 
 #########################
@@ -32,7 +32,7 @@ set CriticalPathType = Normal
 
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
-# options: True/False
+# OPTIONS: True/False
 set VerifyDeterministicDA = True
 
 ## CompareDA2Benchmark: compare verification nc files between two experiments
@@ -48,7 +48,7 @@ set VerifyExtendedMeanFC = False
 ## VerifyMemberBG: whether to run verification scripts for CyclingWindowHR
 #    forecast length. Utilizes critical path forecast states from
 #    individual ensemble member analyses or deterministic analysis
-# options: True/False
+# OPTIONS: True/False
 set VerifyMemberBG = True
 
 ## CompareBG2Benchmark: compare verification nc files between two experiments
@@ -58,7 +58,7 @@ set CompareDA2Benchmark = False
 
 ## VerifyEnsMeanBG: whether to run verification scripts for ensemble
 #    mean background state.
-# options: True/False
+# OPTIONS: True/False
 set VerifyEnsMeanBG = True
 
 ## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
@@ -66,7 +66,7 @@ set VerifyEnsMeanBG = True
 #    for all ensemble members. VerifyEnsMeanBG is nearly free when
 #    DiagnoseEnsSpreadBG is True.
 #    mean background state.
-# options: True/False
+# OPTIONS: True/False
 set DiagnoseEnsSpreadBG = True
 
 ## VerifyEnsMeanAN: whether to run verification scripts for ensemble
