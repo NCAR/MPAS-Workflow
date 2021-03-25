@@ -18,10 +18,13 @@ mkdir -p $TMPDIR
 ##########################
 ## run directory structure
 ##########################
-## absolute experiment directory
-setenv PackageBaseName MPAS-Workflow
+# TopExpDir, where all experiments are located
+# TODO: move to a higher level config file so that benchmark.csh can use it too
 set ExperimentUser = ${USER}
 set TopExpDir = /glade/scratch/${ExperimentUser}/pandac
+
+## absolute experiment directory
+setenv PackageBaseName MPAS-Workflow
 setenv ExperimentName ${ExperimentUser}
 setenv ExperimentName ${ExperimentName}_${DAType}
 setenv ExperimentName ${ExperimentName}${ExpObsName}
