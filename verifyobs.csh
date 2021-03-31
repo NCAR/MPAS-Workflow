@@ -74,6 +74,12 @@ set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 
 set success = 1
 while ( $success != 0 )
+
+  if ( $success != 0 ) then
+    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh
+    sleep 3
+  endif
+
   mv log.${mainScript} log.${mainScript}_LAST
   setenv baseCommand "python ${mainScript}.py -n ${NUMPROC} -p ${self_WorkDir}/${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} -app $self_jediAppName -nout $self_nOuter"
 
@@ -87,10 +93,6 @@ while ( $success != 0 )
 
   set success = $?
 
-  if ( $success != 0 ) then
-    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh
-    sleep 3
-  endif
 end
 cd -
 
