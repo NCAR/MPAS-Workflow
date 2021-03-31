@@ -68,7 +68,7 @@ set self_bgFile = ${self_WorkDir}/${ModelDiagnosticsDir}/../restart.$fileDate.nc
 set benchmark_bgFile = ${benchmark_WorkDir}/${ModelDiagnosticsDir}/../restart.$fileDate.nc
 
 #(1) Compare self_bgFile to benchmark_bgFile
-echo "nccmp -d -S ${self_bgFile} ${benchmark_bgFile}" | tee compare.txt
+echo "nccmp -dfFmqS ${self_bgFile} ${benchmark_bgFile}" | tee compare.txt
 nccmp -d -S ${self_bgFile} ${benchmark_bgFile} | tee -a compare.txt
 
 # nccmp returns 0 if the files are identical. Log non-zero returns in a file for human review.
@@ -82,7 +82,7 @@ endif
 set self_StatisticsFile = "${self_WorkDir}/${ModelDiagnosticsDir}/stats_mpas.nc"
 set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ModelDiagnosticsDir}/stats_mpas.nc"
 
-echo "nccmp -d -N -S -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile}" | tee -a compare.txt
+echo "nccmp -dfFmSN -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile}" | tee -a compare.txt
 nccmp -d -N -S -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} | tee -a compare.txt
 #echo "${self_StatisticsFile} - nccmp returned $status"
 if ($status != 0) then
