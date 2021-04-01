@@ -47,6 +47,8 @@
       channels: *allmhs_channels
     - name: pressure_level_at_peak_of_weightingfunction
       channels: *allmhs_channels
+  get values:
+    interpolation type: InterpolationType
 - obs space:
     name: mhs_n18
     obsdatain:
@@ -76,6 +78,8 @@
   - filter: YDIAGsaver 
     filename: OutDBDir/diagPrefix_AppType_mhs_n18.nc4
     filter variables: *allmhsydiag
+  get values:
+    interpolation type: InterpolationType
 - obs space:
     name: mhs_metop-a
     obsdatain:
@@ -105,6 +109,8 @@
   - filter: YDIAGsaver
     filename: OutDBDir/diagPrefix_AppType_mhs_metop-a.nc4
     filter variables: *allmhsydiag
+  get values:
+    interpolation type: InterpolationType
 - obs space:
     name: mhs_metop-b
     obsdatain:
