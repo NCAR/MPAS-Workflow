@@ -23,6 +23,16 @@ source env-setup/cheyenne
 
 ./drive.csh
 
+# It is required to set the work/run directories in ~/.cylc/global.rc as follows:
+[hosts]
+    [[localhost]]
+        work directory = /glade/scratch/USERNAME/cylc-run
+        run directory = /glade/scratch/USERNAME/cylc-run
+        [[[batch systems]]]
+            [[[[pbs]]]]
+                job name length maximum = 236
+
+# It is recommended to also set 'job name length maximum'
 
 ## top-level configuration (config/*.csh)
 -----------------------------------------
