@@ -159,10 +159,10 @@ fields:
   - field name: surface_snow_area_fraction
     mpas template field: u10
 
-  - field name: surface_wind_speed
+  - field name: surface_eastward_wind
     mpas template field: u10
 
-  - field name: surface_wind_from_direction
+  - field name: surface_northward_wind
     mpas template field: u10
 
   - field name: land_type_index

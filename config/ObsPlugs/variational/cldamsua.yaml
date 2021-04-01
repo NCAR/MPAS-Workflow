@@ -21,6 +21,7 @@
     name: CRTM
     Absorbers: [H2O,O3,CO2]
     Clouds: [Water, Ice, Rain, Snow, Graupel]
+    SurfaceWindGeoVars: uv
     linear obs operator:
       Absorbers: [H2O]
       Clouds: [Water, Ice, Rain, Snow, Graupel]

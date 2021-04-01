@@ -10,6 +10,7 @@
   obs operator:
     name: CRTM
     Absorbers: [H2O,O3,CO2]
+    SurfaceWindGeoVars: uv
     linear obs operator:
       Absorbers: [H2O]
     obs options:
