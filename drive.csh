@@ -95,7 +95,8 @@ module purge
 module load cylc
 module load graphviz
 
-rm -fr ${HOME}/cylc-run/${ExperimentName}
+set cylcWorkDir = /glade/scratch/${USER}/cylc-run
+rm -fr ${cylcWorkDir}/${ExperimentName}
 echo "creating suite.rc"
 cat >! suite.rc << EOF
 #!Jinja2
