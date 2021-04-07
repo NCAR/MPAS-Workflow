@@ -40,11 +40,11 @@ set VerifyDeterministicDA = True
 # OPTIONS: True/False
 set VerifyExtendedMeanFC = False
 
-## VerifyMemberBG: whether to run verification scripts for CyclingWindowHR
+## VerifyBGMembers: whether to run verification scripts for CyclingWindowHR
 #    forecast length. Utilizes critical path forecast states from
 #    individual ensemble member analyses or deterministic analysis
 # OPTIONS: True/False
-set VerifyMemberBG = True
+set VerifyBGMembers = True
 
 ## VerifyEnsMeanBG: whether to run verification scripts for ensemble
 #    mean background state.
@@ -62,7 +62,7 @@ set DiagnoseEnsSpreadBG = True
 ## VerifyEnsMeanAN: whether to run verification scripts for ensemble
 #    mean analysis state.
 # OPTIONS: True/False
-set VerifyMemberAN = False
+set VerifyANMembers = False
 
 ## VerifyExtendedEnsBG: whether to run verification scripts across
 #    extended forecast states, first intialized at ensemble of analysis
@@ -109,10 +109,10 @@ cat >! suite.rc << EOF
 {% set CriticalPathType = "${CriticalPathType}" %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
-{% set VerifyMemberBG = ${VerifyMemberBG} %}
+{% set VerifyBGMembers = ${VerifyBGMembers} %}
 {% set VerifyEnsMeanBG = ${VerifyEnsMeanBG} %}
 {% set DiagnoseEnsSpreadBG = ${DiagnoseEnsSpreadBG} %}
-{% set VerifyMemberAN = ${VerifyMemberAN} %}
+{% set VerifyANMembers = ${VerifyANMembers} %}
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
@@ -152,8 +152,8 @@ cat >! suite.rc << EOF
 {% endif %}
 # verification and extended forecast controls
 {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
-{% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
-{% set VerifyMembers = range(1, nEnsDAMembers+1, 1) %}
+{% set EnsFCMembers = range(1, nEnsDAMembers+1, 1) %}
+{% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 [cylc]
   UTC mode = False
   [[environment]]
@@ -197,13 +197,13 @@ cat >! suite.rc << EOF
   {% endfor %}
       '''
 {% endif %}
-{% if VerifyMemberBG %}
+{% if VerifyBGMembers %}
 ## Ensemble BG verification
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
-  {% for mem in VerifyMembers %}
+  {% for mem in EnsVerifyMembers %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
         VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
   {% endfor %}
@@ -225,11 +225,11 @@ cat >! suite.rc << EOF
   {% endif %}
       '''
 {% endif %}
-{% if VerifyMemberAN %}
+{% if VerifyANMembers %}
 ## Ensemble AN verification
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
-  {% for mem in VerifyMembers %}
+  {% for mem in EnsVerifyMembers %}
         CyclingDAFinished => VerifyModelAN{{mem}}
         CyclingDAFinished => HofXAN{{mem}}
         HofXAN{{mem}} => VerifyObsAN{{mem}}
@@ -242,7 +242,7 @@ cat >! suite.rc << EOF
     [[[${ExtendedEnsFCTimes}]]]
       graph = '''
         CyclingDAFinished => ExtendedEnsFC
-  {% for mem in VerifyMembers %}
+  {% for mem in EnsVerifyMembers %}
         ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}
         ExtendedFC{{mem}} => HofXEnsFC{{mem}}
     {% for dt in ExtendedFCLengths %}
@@ -344,8 +344,8 @@ cat >! suite.rc << EOF
     [[[directives]]]
       -m = ae
       -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
-{% for mem in EnsDAMembers %}
-  [[CyclingMemberFC{{mem}}]]
+{% for mem in EnsFCMembers %}
+  [[CyclingFCMember{{mem}}]]
     inherit = CyclingFC
     script = \$origin/CyclingFC.csh "{{mem}}"
     [[[job]]]
@@ -405,7 +405,7 @@ cat >! suite.rc << EOF
   [[CleanHofX{{state}}]]
     inherit = CleanBase
 {% endfor %}
-{% for mem in VerifyMembers %}
+{% for mem in EnsVerifyMembers %}
 ## Ensemble BG/AN verification
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
