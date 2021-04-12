@@ -63,17 +63,28 @@ endif
 
 # background covariance
 # ---------------------
-## deterministic (static)
-setenv fixedEnsBMemFmt "${gefsMemFmt}"
-setenv fixedEnsBNMembers ${nGEFSMembers}
-setenv fixedEnsBDir ${GEFS6hfcFOREnsBDir}
-setenv fixedEnsBFilePrefix ${GEFS6hfcFOREnsBFilePrefix}
-
-## stochastic (dynamic)
+## stochastic analysis (dynamic directory structure)
 setenv dynamicEnsBMemFmt "${flowMemFmt}"
 setenv dynamicEnsBNMembers ${nEnsDAMembers}
 setenv dynamicEnsBDir ${CyclingFCWorkDir}
 setenv dynamicEnsBFilePrefix ${FCFilePrefix}
+
+## deterministic analysis (static directory structure)
+# parse selections
+if ("$fixedEnsBType" == "GEFS") then
+  setenv fixedEnsBMemFmt "${gefsMemFmt}"
+  setenv fixedEnsBNMembers ${nGEFSMembers}
+  setenv fixedEnsBDir ${GEFS6hfcFOREnsBDir}
+  setenv fixedEnsBFilePrefix ${GEFS6hfcFOREnsBFilePrefix}
+else if ("$fixedEnsBType" == "PreviousEDA") then
+  setenv fixedEnsBMemFmt "${dynamicEnsBMemFmt}"
+  setenv fixedEnsBNMembers ${nPreviousEnsDAMembers}
+  setenv fixedEnsBDir ${PreviousEDAForecastDir}
+  setenv fixedEnsBFilePrefix ${dynamicEnsBFilePrefix}
+else
+  echo "ERROR in $0 : unrecognized value for fixedEnsBType --> ${fixedEnsBType}" >> ./FAIL
+  exit 1
+endif
 
 ## select the ensPb settings based on DAType
 if ( "$DAType" =~ *"eda"* ) then
