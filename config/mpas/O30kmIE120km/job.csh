@@ -7,7 +7,7 @@ source config/experiment.csh
 # Uniform 30km mesh -- forecast, hofx, variational outer loop
 # Uniform 120km mesh -- variational inner loop
 
-@ CyclingFCJobMinutes = 2 + (5 * $CyclingWindowHR / 6)
+@ CyclingFCJobMinutes = 2 + (7 * $CyclingWindowHR / 6)
 setenv CyclingFCNodes 16
 setenv CyclingFCPEPerNode 32
 
