@@ -6,7 +6,7 @@ variational:
   iterations:
   - geometry:
       nml_file: InnerNamelistFile
-      streams_file: InnerStreamsFile
+      streams_file: InnerStreamsFileStreamsFileMember
       deallocate non-da fields: true
     ninner: '60'
     gradient norm reduction: 1e-10
@@ -16,7 +16,7 @@ variational:
     obs perturbations: ObsPerturbations
 #  - geometry:
 #      nml_file: InnerNamelistFile
-#      streams_file: InnerStreamsFile
+#      streams_file: InnerStreamsFileStreamsFileMember
 #      deallocate non-da fields: true
 #    ninner: '60'
 #    gradient norm reduction: 1e-10
@@ -30,7 +30,7 @@ cost function:
   window length: PT6H
   geometry:
     nml_file: OuterNamelistFile
-    streams_file: OuterStreamsFile
+    streams_file: OuterStreamsFileStreamsFileMember
     deallocate non-da fields: true
   analysis variables: &incvars [AnalysisVariables]
   background:
