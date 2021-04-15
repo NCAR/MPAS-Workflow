@@ -81,7 +81,7 @@ while ( $member <= ${nEnsDAMembers} )
     if ( $status != 0 ) then
       @ copyDiags++
       echo "Copying MPASJEDIDiagVariables to background state"
-    endif 
+    endif
   end
   if ( $copyDiags > 0 ) then
     set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
@@ -94,27 +94,31 @@ while ( $member <= ${nEnsDAMembers} )
   set memSuffix = `${memberDir} $DAType $member "${flowMemFileFmt}"`
   rm ${TemplateFieldsFileOuter}${memSuffix}
   ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
+
+  # use localStaticFieldsFileInner as the TemplateFieldsFileInner
+  # NOTE: not perfect for EDA if static fields differ between members,
+  #       but dual-res EDA not working yet anyway
+  if ($MPASnCellsOuter != $MPASnCellsInner) then
+    rm ${TemplateFieldsFileInner}
+    ln -sfv ${localStaticFieldsFileInner} ${TemplateFieldsFileInner}${memSuffix}
+  endif
+
   if (${memSuffix} == "") then
     foreach StreamsFile_ ($StreamsFileList)
       sed -i 's@TemplateFieldsMember@@' ${StreamsFile_}
     end
     sed -i 's@StreamsFileMember@@' $appyaml
   else
-    # NOTE: only works for single-mesh, i.e., same between inner/outer loops
-    cp $OuterStreamsFile $OuterStreamsFile${memSuffix}
-    sed -i 's@TemplateFieldsMember@'${memSuffix}'@' $OuterStreamsFile${memSuffix}
+    foreach StreamsFile_ ($StreamsFileList)
+      cp ${StreamsFile_} ${StreamsFile_}${memSuffix}
+      sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
+    end
     sed -i 's@StreamsFileMember@'${memSuffix}'@' member_${member}.yaml
   endif
 
   @ member++
 end
 
-# use localStaticFieldsFileInner as the TemplateFieldsFileInner
-# NOTE: does not work for EDA
-if ($MPASnCellsOuter != $MPASnCellsInner) then
-  rm ${TemplateFieldsFileInner}
-  ln -sfv ${localStaticFieldsFileInner} ${TemplateFieldsFileInner}
-endif
 
 # Run the executable
 # ==================
