@@ -59,7 +59,6 @@ cd ${self_WorkDir}
 # other templated variables
 set self_StateDir = $inStateDirsTEMPLATE[$ArgMember]
 set self_StatePrefix = inStatePrefixTEMPLATE
-set StreamsFileList = (${hofxStreamsFileList})
 
 # Remove old logs
 rm jedi.log*
@@ -117,9 +116,6 @@ endif
 
 # use the background as the TemplateFieldsFileOuter
 ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
-foreach StreamsFile_ ($StreamsFileList)
-  sed -i 's@TemplateFieldsMember@@' ${StreamsFile_}
-end
 
 # Run the executable
 # ==================
