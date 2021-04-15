@@ -84,10 +84,10 @@ while ( $member <= ${nEnsDAMembers} )
     endif
   end
   if ( $copyDiags > 0 ) then
-    set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
-    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
     rm ${bgFile}${OrigFileSuffix}
     cp ${bgFile} ${bgFile}${OrigFileSuffix}
+    set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
+    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
   endif
 
   # use this background as the TemplateFieldsFileOuter for this member
@@ -99,8 +99,18 @@ while ( $member <= ${nEnsDAMembers} )
   # NOTE: not perfect for EDA if static fields differ between members,
   #       but dual-res EDA not working yet anyway
   if ($MPASnCellsOuter != $MPASnCellsInner) then
-    rm ${TemplateFieldsFileInner}
-    ln -sfv ${localStaticFieldsFileInner} ${TemplateFieldsFileInner}${memSuffix}
+    set tFile = ${TemplateFieldsFileInner}${memSuffix}
+    rm $tFile
+    ln -sfv ${localStaticFieldsFileInner} $tFile
+
+    #modify "Inner" initial forecast file
+    set memDir = `${memberDir} $DAType 1`
+    set FirstCyclingFCDir = ${CyclingFCWorkDir}/${prevFirstCycleDate}${memDir}/Inner
+    cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${FirstFileDate}.nc $tFile
+
+    # modify xtime
+    echo "${updateXTIME} $tFile ${thisCycleDate}"
+    ${updateXTIME} $tFile ${thisCycleDate}
   endif
 
   if (${memSuffix} == "") then
@@ -125,6 +135,8 @@ end
 ln -sfv ${VariationalBuildDir}/${VariationalEXE} ./
 mpiexec ./${VariationalEXE} $appyaml ./jedi.log >& jedi.log.all
 
+#rm ${TemplateFieldsFileInner}
+
 #WITH DEBUGGER
 #module load arm-forge/19.1
 #setenv MPI_SHEPHERD true
@@ -133,11 +145,9 @@ mpiexec ./${VariationalEXE} $appyaml ./jedi.log >& jedi.log.all
 
 # Check status
 # ============
-#grep "Finished running the atmosphere core" log.atmosphere.0000.out
 grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
-  touch ./FAIL
-  echo "ERROR in $0 : jedi application failed" >> ./FAIL
+  echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
 endif
 
@@ -146,10 +156,7 @@ set iMesh = 0
 foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
   @ iMesh++
   rm ${localStaticFieldsFile}
-  rm ${localStaticFieldsFile}${OrigFileSuffix}
-  set StaticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
-  set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
-  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+  mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 end
 
 date

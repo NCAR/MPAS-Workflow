@@ -11,14 +11,14 @@ source config/appindex.csh
 # I = variational Inner loop
 # E = variational Ensemble
 # OPTIONS:
-#   + OIE120km 3denvar
-#   + OIE120km eda_3denvar
+#   + OIE120km -- 3denvar, eda_3denvar
+#   + O30kmIE120km -- dual-resolution 3denvar
 #   + TODO: "OIE30km" 3denvar
-#   + TODO: "O30kmIE120km" dual-resolution 3denvar
-#   + TODO: "O30kmIE120km" dual-resolution eda_3denvar
+#   + TODO: "O30kmIE120km" dual-resolution eda_3denvar with 120km ensemble, 30km deterministic
+#   + TODO: "OE30kmI120km" dual-resolution eda_3denvar with 30km ensemble, no deterministic?
 #   + TODO: "OIE120km" 4denvar
 #   + TODO: "O30kmIE120km" dual-resolution 4denvar
-setenv MPASGridDescriptor OIE120km
+setenv MPASGridDescriptor O30kmIE120km
 
 ## FirstCycleDate
 # initial date of this experiment
@@ -61,7 +61,7 @@ set variationalObsList = ($benchmarkObsList)
 
 ## DAType
 # OPTIONS: 3denvar, eda_3denvar, 3dvarId
-setenv DAType eda_3denvar
+setenv DAType 3denvar
 
 if ( "$DAType" =~ *"eda"* ) then
   ## nEnsDAMembers

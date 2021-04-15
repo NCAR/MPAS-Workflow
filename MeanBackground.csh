@@ -67,8 +67,7 @@ else
   # ============
   grep 'All done' log
   if ( $status != 0 ) then
-    touch ./FAIL
-    echo "ERROR in $0 : mean state application failed" >> ./FAIL
+    echo "ERROR in $0 : mean state application failed" > ./FAIL
     exit 1
   endif
 endif
