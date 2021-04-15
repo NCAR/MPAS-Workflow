@@ -69,9 +69,10 @@ if ( "$DAType" =~ *"eda"* ) then
   setenv nEnsDAMembers 20
 else
   setenv nEnsDAMembers 1
+
   ## fixedEnsBType
   # selection of data source for fixed ensemble background covariance members
-  # OPTIONS: GEFS(default), PreviousEDA
+  # OPTIONS: GEFS (default), PreviousEDA
   set fixedEnsBType = GEFS
 
   # tertiary settings for when fixedEnsBType is set to PreviousEDA
