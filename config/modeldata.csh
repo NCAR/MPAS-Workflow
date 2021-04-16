@@ -63,29 +63,41 @@ endif
 
 # background covariance
 # ---------------------
-## deterministic (static)
-setenv fixedEnsBMemFmt "${gefsMemFmt}"
-setenv fixedEnsBNMembers ${nGEFSMembers}
-setenv fixedEnsBDir ${GEFS6hfcFOREnsBDir}
-setenv fixedEnsBFilePrefix ${GEFS6hfcFOREnsBFilePrefix}
-
-## stochastic (dynamic)
-setenv dynamicEnsBMemFmt "${flowMemFmt}"
-setenv dynamicEnsBNMembers ${nEnsDAMembers}
-setenv dynamicEnsBDir ${CyclingFCWorkDir}
-setenv dynamicEnsBFilePrefix ${FCFilePrefix}
+## stochastic analysis (dynamic directory structure)
+set dynamicEnsBMemFmt = "${flowMemFmt}"
+set dynamicEnsBFilePrefix = ${FCFilePrefix}
 
 ## select the ensPb settings based on DAType
 if ( "$DAType" =~ *"eda"* ) then
-  set ensPbDir = ${dynamicEnsBDir}
-  set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
-  set ensPbMemFmt = "${dynamicEnsBMemFmt}"
-  set ensPbNMembers = ${dynamicEnsBNMembers}
+  set dynamicEnsBNMembers = ${nEnsDAMembers}
+  set dynamicEnsBDir = ${CyclingFCWorkDir}
+
+  setenv ensPbDir ${dynamicEnsBDir}
+  setenv ensPbFilePrefix ${dynamicEnsBFilePrefix}
+  setenv ensPbMemFmt "${dynamicEnsBMemFmt}"
+  setenv ensPbNMembers ${dynamicEnsBNMembers}
 else
-  set ensPbDir = ${fixedEnsBDir}
-  set ensPbFilePrefix = ${fixedEnsBFilePrefix}
-  set ensPbMemFmt = "${fixedEnsBMemFmt}"
-  set ensPbNMembers = ${fixedEnsBNMembers}
+  ## deterministic analysis (static directory structure)
+  # parse selections
+  if ("$fixedEnsBType" == "GEFS") then
+    set fixedEnsBMemFmt = "${gefsMemFmt}"
+    set fixedEnsBNMembers = ${nGEFSMembers}
+    set fixedEnsBDir = ${GEFS6hfcFOREnsBDir}
+    set fixedEnsBFilePrefix = ${GEFS6hfcFOREnsBFilePrefix}
+  else if ("$fixedEnsBType" == "PreviousEDA") then
+    set fixedEnsBMemFmt = "${dynamicEnsBMemFmt}"
+    set fixedEnsBNMembers = ${nPreviousEnsDAMembers}
+    set fixedEnsBDir = ${PreviousEDAForecastDir}
+    set fixedEnsBFilePrefix = ${dynamicEnsBFilePrefix}
+  else
+    echo "ERROR in $0 : unrecognized value for fixedEnsBType --> ${fixedEnsBType}" >> ./FAIL
+    exit 1
+  endif
+
+  setenv ensPbDir ${fixedEnsBDir}
+  setenv ensPbFilePrefix ${fixedEnsBFilePrefix}
+  setenv ensPbMemFmt "${fixedEnsBMemFmt}"
+  setenv ensPbNMembers ${fixedEnsBNMembers}
 endif
 
 
