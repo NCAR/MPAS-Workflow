@@ -3,6 +3,7 @@
 source config/experiment.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
+source config/benchmark.csh
 
 ## controls the workflow file structure of all experiments
 
@@ -17,15 +18,19 @@ mkdir -p $TMPDIR
 ##########################
 ## run directory structure
 ##########################
-## absolute experiment directory
-setenv PackageBaseName MPAS-Workflow
+# TopExpDir, where all experiments are located
+# TODO: move to a higher level config file so that benchmark.csh can use it too
 set ExperimentUser = ${USER}
 set TopExpDir = /glade/scratch/${ExperimentUser}/pandac
+
+## absolute experiment directory
+setenv PackageBaseName MPAS-Workflow
 setenv ExperimentName ${ExperimentUser}
 setenv ExperimentName ${ExperimentName}_${DAType}
 setenv ExperimentName ${ExperimentName}${ExpObsName}
 setenv ExperimentName ${ExperimentName}${EnsExpSuffix}
 setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
+setenv ExperimentNameWithoutSuffix ${ExperimentName}
 setenv ExperimentName ${ExperimentName}${ExpSuffix}
 
 set ExpDir = ${TopExpDir}/${ExperimentName}
@@ -39,6 +44,10 @@ setenv ABEInflationWorkDir ${CyclingInflationWorkDir}/ABEI
 
 setenv ExtendedFCWorkDir ${ExpDir}/ExtendedFC
 setenv VerificationWorkDir ${ExpDir}/Verification
+
+## benchmark experiment archive
+setenv BenchmarkCyclingDAWorkDir ${BenchmarkExpDir}/CyclingDA
+setenv BenchmarkVerificationWorkDir ${BenchmarkExpDir}/Verification
 
 ## directories copied from PackageBaseName
 setenv mainScriptDir ${ExpDir}/${PackageBaseName}
