@@ -1,6 +1,7 @@
 #!/bin/csh -f
 
 set self_WorkDirs = wrapWorkDirsTEMPLATE
+set benchmark_WorkDirs = wrapWorkDirsBenchmarkTEMPLATE
 set self_cylcTaskType = cylcTaskTypeTEMPLATE
 set self_inStateDirs = wrapStateDirsTEMPLATE
 set self_inStatePrefix = wrapStatePrefixTEMPLATE
@@ -13,7 +14,9 @@ foreach name ( \
   ${preparationName}${self_cylcTaskType} \
   ${self_cylcTaskType} \
   VerifyObs${self_StateType} \
+  CompareObs${self_StateType} \
   VerifyModel${self_StateType} \
+  CompareModel${self_StateType} \
   Clean${self_cylcTaskType} \
 )
   echo "Making $name job script for ${self_StateType} state"
@@ -50,12 +53,25 @@ else
       verifyobs.csh > ${VFObsScript}
   chmod 744 ${VFObsScript}
 
+  set CompareObsScript=${mainScriptDir}/CompareObs${self_StateType}.csh
+  sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
+      -e 's@jediAppNameTEMPLATE@wrapjediAppNameTEMPLATE@' \
+      -e 's@WorkDirsBenchmarkTEMPLATE@'${benchmark_WorkDirs}'@' \
+      compareobs.csh > ${CompareObsScript}
+  chmod 744 ${CompareObsScript}
+
   set VFModelScript=${mainScriptDir}/VerifyModel${self_StateType}.csh
   sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
       -e 's@inStateDirsTEMPLATE@'${self_inStateDirs}'@' \
       -e 's@inStatePrefixTEMPLATE@'${self_inStatePrefix}'@' \
       verifymodel.csh > ${VFModelScript}
   chmod 744 ${VFModelScript}
+
+  set CompareModelScript=${mainScriptDir}/CompareModel${self_StateType}.csh
+  sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
+      -e 's@WorkDirsBenchmarkTEMPLATE@'${benchmark_WorkDirs}'@' \
+      comparemodel.csh > ${CompareModelScript}
+  chmod 744 ${CompareModelScript}
 endif
 
 #Application cleanup
