@@ -34,6 +34,5 @@ setenv OMP_NUM_THREADS 1
 module load python/3.7.5
 
 module load nccmp
-module load nco
 
 module list
