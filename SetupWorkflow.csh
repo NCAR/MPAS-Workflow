@@ -82,6 +82,7 @@ set WorkDir = $CyclingDADirs[1]
 set cylcTaskType = CyclingDA
 set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
 sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
+    -e 's@wrapWorkDirsBenchmarkTEMPLATE@BenchmarkCyclingDADirs@' \
     -e 's@AppScriptNameTEMPLATE@variational@' \
     -e 's@cylcTaskTypeTEMPLATE@'${cylcTaskType}'@' \
     -e 's@wrapStateDirsTEMPLATE@prevCyclingFCDirs@' \
@@ -132,7 +133,9 @@ sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
 chmod 744 ${JobScript}
 
 
-## jediPrepHofX{{state}}, HofX{{state}}, VerifyObs{{state}}, VerifyModel{{state}}, CleanHofX{{state}}
+## jediPrepHofX{{state}}, HofX{{state}}, CleanHofX{{state}}
+## VerifyObs{{state}}, CompareObs{{state}},
+## VerifyModel{{state}}, CompareModel{{state}}
 foreach state (AN BG EnsMeanBG MeanFC EnsFC)
   if (${state} == AN) then
     set TemplateVariables = (CyclingDAOutDirs ${ANFilePrefix} ${DAVFWindowHR})
@@ -148,6 +151,7 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
   set cylcTaskType = HofX${state}
   set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh
   sed -e 's@wrapWorkDirsTEMPLATE@Verify'${state}'Dirs@' \
+      -e 's@wrapWorkDirsBenchmarkTEMPLATE@BenchmarkVerify'${state}'Dirs@' \
       -e 's@AppScriptNameTEMPLATE@hofx@' \
       -e 's@cylcTaskTypeTEMPLATE@'${cylcTaskType}'@' \
       -e 's@wrapStateDirsTEMPLATE@'$TemplateVariables[1]'@' \
