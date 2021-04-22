@@ -416,10 +416,10 @@ cat >! suite.rc << EOF
     inherit = CleanBase
     script = \$origin/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
   [[VerifyObsMeanFC{{dt}}hr]]
-    inherit = VerifyModelMeanFC
+    inherit = VerifyObsBase
     script = \$origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0"
   [[VerifyModelMeanFC{{dt}}hr]]
-    inherit = VerifyModelBase
+    inherit = VerifyModelMeanFC
     script = \$origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC"
 {% endfor %}
   [[ExtendedEnsFC]]
