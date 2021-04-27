@@ -26,7 +26,6 @@
     name: CRTM
     SurfaceWindGeoVars: uv
     Absorbers: [H2O,O3]
-    SurfaceWindGeoVars: uv
     linear obs operator:
       Absorbers: [H2O]
     obs options: &clramsuacrtmopts
