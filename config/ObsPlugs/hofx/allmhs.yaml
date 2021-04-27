@@ -10,6 +10,7 @@
     covariance model: diagonal
   obs operator: &allmhscrtm
     name: CRTM
+    SurfaceWindGeoVars: uv
     Absorbers: [H2O,O3,CO2]
     Clouds: [Water, Ice, Rain, Snow, Graupel]
     linear obs operator:
