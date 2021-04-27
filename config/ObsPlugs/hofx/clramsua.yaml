@@ -23,6 +23,7 @@
     filename: OutDBDir/geoPrefix_AppType_amsua_n19.nc4
   obs operator: &clramsuacrtm
     name: CRTM
+    SurfaceWindGeoVars: uv
     Absorbers: [H2O,O3]
     SurfaceWindGeoVars: uv
     linear obs operator:

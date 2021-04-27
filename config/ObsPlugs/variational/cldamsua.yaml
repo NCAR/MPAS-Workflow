@@ -19,6 +19,7 @@
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n19_cld.nc4
   obs operator: &cldamsuacrtm
     name: CRTM
+    SurfaceWindGeoVars: uv
     Absorbers: [H2O,O3,CO2]
     Clouds: [Water, Ice, Rain, Snow, Graupel]
     SurfaceWindGeoVars: uv

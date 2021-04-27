@@ -8,6 +8,7 @@
     channels: &abi_channels 8-10
   obs operator:
     name: CRTM
+    SurfaceWindGeoVars: uv
     Absorbers: [H2O,O3,CO2]
     Clouds: [Water, Ice, Rain, Snow, Graupel]
     SurfaceWindGeoVars: uv
