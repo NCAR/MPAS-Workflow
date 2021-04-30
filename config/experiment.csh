@@ -36,7 +36,7 @@ set benchmarkObsList = (sondes aircraft satwind gnssroref sfcp clramsua)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = '_model2geovars'
+set ExpSuffix = ''
 
 ##############
 ## DA settings
