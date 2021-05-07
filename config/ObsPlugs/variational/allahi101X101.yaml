@@ -1,9 +1,9 @@
 - obs space:
     name: ahi_himawari8
     obsdatain:
-      obsfile: InDBDir/ahi_himawari8_obs_2018041500.nc4
+      obsfile: InDBDir/ahi_himawari8_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_ahi_himawari8.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_ahi_himawari8.h5
     simulated variables: [brightness_temperature]
     channels: &ahi_channels 8-10
     obs perturbations seed: MemberSeed
@@ -65,9 +65,9 @@
     threshold: 3.0
     apply at iterations: 0, 1
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_ahi_himawari8.nc4
+    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_ahi_himawari8.h5
   - filter: YDIAGsaver
-    filename: OutDBDirOOPSMemberDir/diagPrefix_AppType_ahi_himawari8.nc4
+    filename: OutDBDirOOPSMemberDir/diagPrefix_AppType_ahi_himawari8.h5
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *ahi_channels
