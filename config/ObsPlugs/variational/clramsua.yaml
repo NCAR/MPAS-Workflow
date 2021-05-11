@@ -21,7 +21,7 @@
 #  - filter: Gaussian_Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n19.h5
+    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n19.nc4
   obs operator: &clramsuacrtm
     name: CRTM
     SurfaceWindGeoVars: uv
@@ -57,7 +57,7 @@
 #  - filter: Gaussian_Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n15.h5
+    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n15.nc4
   obs operator:
     <<: *clramsuacrtm
     obs options:
@@ -88,7 +88,7 @@
 #  - filter: Gaussian_Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n18.h5
+    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n18.nc4
   obs operator:
     <<: *clramsuacrtm
     obs options:
@@ -119,7 +119,7 @@
 #  - filter: Gaussian_Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-a.h5
+    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-a.nc4
   obs operator:
     <<: *clramsuacrtm
     obs options:
@@ -150,7 +150,7 @@
 #  - filter: Gaussian_Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
 #  - filter: GOMsaver
-#    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-b.h5
+#    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-b.nc4
 #  obs operator:
 #    <<: *clramsuacrtm
 #    obs options:
@@ -181,7 +181,7 @@
 #  - filter: Gaussian_Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_aqua.h5
+    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_aqua.nc4
   obs operator:
     <<: *clramsuacrtm
     obs options:

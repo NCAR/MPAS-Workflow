@@ -54,9 +54,9 @@
           err0: [3.28, 1.87, 1.85, 2.17, 3.53, 4.76, 4.19, 4.44, 2.79, 1.79]
           err1: [17.73, 12.72, 14.65, 15.36, 24.62, 16.82, 23.8, 25.14, 22.66, 19.3]
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_ahi_himawari8.h5
+    filename: OutDBDir/geoPrefix_AppType_ahi_himawari8.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_AppType_ahi_himawari8.h5
+    filename: OutDBDir/diagPrefix_AppType_ahi_himawari8.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *ahi_channels

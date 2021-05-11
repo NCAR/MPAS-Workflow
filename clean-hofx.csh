@@ -61,8 +61,8 @@ rm ${self_WorkDir}/${anDir}/${ANFilePrefix}.$fileDate.nc
 # Remove obs-database output files
 # ================================
 rm ${self_WorkDir}/${OutDBDir}/${obsPrefix}*.h5
-rm ${self_WorkDir}/${OutDBDir}/${geoPrefix}*.h5
-rm ${self_WorkDir}/${OutDBDir}/${diagPrefix}*.h5
+rm ${self_WorkDir}/${OutDBDir}/${geoPrefix}*.nc4
+rm ${self_WorkDir}/${OutDBDir}/${diagPrefix}*.nc4
 
 date
 

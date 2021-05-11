@@ -26,9 +26,9 @@
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_ahi-clr_himawari8.h5
+    filename: OutDBDir/geoPrefix_AppType_ahi-clr_himawari8.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_AppType_ahi-clr_himawari8.h5
+    filename: OutDBDir/diagPrefix_AppType_ahi-clr_himawari8.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *clrahi_channels

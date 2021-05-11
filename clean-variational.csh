@@ -29,8 +29,8 @@ if (${nEnsDAMembers} > 1) then
   while ( $member <= ${nEnsDAMembers} )
     set memDir = `${memberDir} $DAType $member`
     rm ${self_WorkDir}/${OutDBDir}${memDir}/${obsPrefix}*.h5
-    rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.h5
-    rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.h5
+    rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.nc4
+    rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.nc4
     @ member++
   end
 endif

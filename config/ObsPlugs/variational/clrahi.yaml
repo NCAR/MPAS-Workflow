@@ -34,9 +34,9 @@
     threshold: 3.0
     apply at iterations: 0, 1
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_ahi_himawari8.h5
+    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_ahi_himawari8.nc4
   - filter: YDIAGsaver
-    filename: OutDBDirOOPSMemberDir/diagPrefix_AppType_ahi_himawari8.h5
+    filename: OutDBDirOOPSMemberDir/diagPrefix_AppType_ahi_himawari8.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *clrahi_channels
