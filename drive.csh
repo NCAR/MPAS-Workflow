@@ -32,6 +32,7 @@ set CriticalPathType = Normal
 
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
+#    Only works when CriticalPathType == Normal.
 # OPTIONS: True/False
 set VerifyDeterministicDA = True
 
@@ -145,7 +146,7 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
-{% else %}
+{% elif CriticalPathType == "Normal" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
@@ -161,6 +162,8 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
   {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
+{# else #}
+#TODO: indicate invalid CriticalPathType
 {% endif %}
 # verification and extended forecast controls
 {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
@@ -186,7 +189,7 @@ cat >! suite.rc << EOF
       graph = '''{{PrimaryCPGraph}}{{SecondaryCPGraph}}
       '''
 ## Many kinds of verification
-{% if VerifyDeterministicDA and nEnsDAMembers < 2 %}
+{% if CriticalPathType == "Normal" and VerifyDeterministicDA and nEnsDAMembers < 2 %}
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
 ## Verification of deterministic DA with observations (BG+AN together)
