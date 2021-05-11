@@ -14,12 +14,17 @@ setenv CyclingFCPEPerNode 32
 setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
-setenv HofXJobMinutes 10
-setenv HofXNodes 1
-setenv HofXPEPerNode 36
+setenv HofXJobMinutes 20
+
+#IODA-v2 crashes/times out on 1 node, not memory limited
+#try again after timing bug fix in ioda?
+#setenv HofXNodes 1
+#setenv HofXPEPerNode 36
+setenv HofXNodes 2
+setenv HofXPEPerNode 18
 setenv HofXMemory 109
 
-setenv VerifyObsJobMinutes 5
+setenv VerifyObsJobMinutes 7
 setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 36
 
@@ -28,12 +33,12 @@ setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
 
-set DeterministicDAJobMinutes = 5
+set DeterministicDAJobMinutes = 10
 set EnsembleDAMembersPerJobMinute = 5
 @ CyclingDAJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
 @ CyclingDAJobMinutes = ${CyclingDAJobMinutes} + ${DeterministicDAJobMinutes}
 setenv CyclingDAMemory 45
-#setenv CyclingDAMemory 109
+setenv CyclingDAMemory 109
 if ( "$DAType" =~ *"eda"* ) then
   setenv CyclingDANodesPerMember 2
   setenv CyclingDAPEPerNode      18
