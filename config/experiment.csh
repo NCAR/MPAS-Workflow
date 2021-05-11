@@ -36,7 +36,7 @@ set benchmarkObsList = (sondes aircraft satwind gnssroref sfcp clramsua)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = ''
+set ExpSuffix = '_ioda-v2'
 
 ##############
 ## DA settings
@@ -109,7 +109,9 @@ set ahi = ahi$AHISuperOb[$hofxIndex]
 # OPTIONS: $benchmarkObsList, cldamsua, allmhs, clr$abi, all$abi, clr$ahi, all$ahi
 #TODO: separate amsua and mhs config for each instrument_satellite combo
 
-set hofxObsList = ($benchmarkObsList cldamsua allmhs all$abi all$ahi)
+#TODO: upgrade abi and ahi data
+#set hofxObsList = ($benchmarkObsList cldamsua allmhs all$abi all$ahi)
+set hofxObsList = ($benchmarkObsList cldamsua allmhs)
 
 
 #GEFS reference case (override above settings)

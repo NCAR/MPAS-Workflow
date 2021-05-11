@@ -23,11 +23,8 @@ setenv INITIAL_VARBC_TABLE ${FixedInput}/satbias/satbias_crtm_in
 # Cycle-dependent Datasets
 ##########################
 
-set ObsUser = guerrett
-set TopObsDir = /glade/work/${ObsUser}/pandac/obs
-
 ## Conventional instruments
-setenv ConventionalObsDir ${TopObsDir}/conv
+setenv ConventionalObsDir /glade/scratch/jban/pandac/newobs_2018/conv_obs
 
 ## Polar MW (amsua, mhs)
 # bias correction
@@ -36,7 +33,7 @@ set PolarMWGSIBC = bias_corr
 setenv PolarMWBiasCorrect $PolarMWGSIBC
 
 # directories
-set basePolarMWObsDir = /glade/p/mmm/parc/vahl/gsi_ioda/
+set basePolarMWObsDir = /glade/scratch/jban/pandac/newobs_2018/
 set PolarMWObsDir = ()
 foreach application (${applicationIndex})
   set PolarMWObsDir = ($PolarMWObsDir \
@@ -68,7 +65,8 @@ foreach obs ($variationalObsList)
 end
 
 # abi directories
-set baseABIObsDir = ${TopObsDir}/ABIASR/IODANC_THIN15KM_SUPEROB
+set ABITopObsDir = /glade/work/guerrett/pandac/obs/ABIASR
+set baseABIObsDir = ${ABITopObsDir}/IODANC_THIN15KM_SUPEROB
 set ABIObsDir = ()
 foreach SuperOb ($ABISuperOb)
   set ABIObsDir = ($ABIObsDir \
@@ -81,7 +79,8 @@ set ABIObsDir[$variationalIndex] = $ABIObsDir[$variationalIndex]$ABIBiasCorrect
 set ABIObsDir[$hofxIndex] = $ABIObsDir[$hofxIndex]$GEOIRNoBias
 
 # ahi directories
-set baseAHIObsDir = ${TopObsDir}/AHIASR/IODANC_SUPEROB
+set AHITopObsDir = /glade/work/guerrett/pandac/obs/AHIASR
+set baseAHIObsDir = ${AHITopObsDir}/IODANC_SUPEROB
 #Note: AHI is linked from /glade/work/wuyl/pandac/work/fix_input/AHI_OBS
 set AHIObsDir = ()
 foreach SuperOb ($AHISuperOb)
