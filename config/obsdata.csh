@@ -24,7 +24,7 @@ setenv INITIAL_VARBC_TABLE ${FixedInput}/satbias/satbias_crtm_in
 ##########################
 
 ## Conventional instruments
-setenv ConventionalObsDir /glade/scratch/jban/pandac/newobs_2018/conv_obs
+setenv ConventionalObsDir /glade/p/mmm/parc/liuz/pandac_common/ioda_obs_v2/2018/conv_obs
 
 ## Polar MW (amsua, mhs)
 # bias correction
@@ -33,7 +33,7 @@ set PolarMWGSIBC = bias_corr
 setenv PolarMWBiasCorrect $PolarMWGSIBC
 
 # directories
-set basePolarMWObsDir = /glade/scratch/jban/pandac/newobs_2018/
+set basePolarMWObsDir = /glade/p/mmm/parc/liuz/pandac_common/ioda_obs_v2/2018
 set PolarMWObsDir = ()
 foreach application (${applicationIndex})
   set PolarMWObsDir = ($PolarMWObsDir \
