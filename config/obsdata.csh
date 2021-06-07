@@ -40,10 +40,10 @@ foreach application (${applicationIndex})
     ${basePolarMWObsDir} \
   )
 end
-set PolarMWObsDir[$variationalIndex] = $PolarMWObsDir[$variationalIndex]$PolarMWBiasCorrect
+set PolarMWObsDir[$variationalIndex] = $PolarMWObsDir[$variationalIndex]/$PolarMWBiasCorrect
 
 # no bias correction for hofx
-set PolarMWObsDir[$hofxIndex] = $PolarMWObsDir[$hofxIndex]$PolarMWNoBias
+set PolarMWObsDir[$hofxIndex] = $PolarMWObsDir[$hofxIndex]/$PolarMWNoBias
 
 ## Geostationary IR (abi, ahi)
 # bias correction
