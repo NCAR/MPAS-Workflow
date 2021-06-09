@@ -65,7 +65,7 @@ foreach obs ($variationalObsList)
 end
 
 # abi directories
-set ABITopObsDir = /glade/work/guerrett/pandac/obs/ABIASR
+set ABITopObsDir = /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2
 set baseABIObsDir = ${ABITopObsDir}/IODANC_THIN15KM_SUPEROB
 set ABIObsDir = ()
 foreach SuperOb ($ABISuperOb)
@@ -79,7 +79,7 @@ set ABIObsDir[$variationalIndex] = $ABIObsDir[$variationalIndex]$ABIBiasCorrect
 set ABIObsDir[$hofxIndex] = $ABIObsDir[$hofxIndex]$GEOIRNoBias
 
 # ahi directories
-set AHITopObsDir = /glade/work/guerrett/pandac/obs/AHIASR
+set AHITopObsDir = /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2
 set baseAHIObsDir = ${AHITopObsDir}/IODANC_SUPEROB
 #Note: AHI is linked from /glade/work/wuyl/pandac/work/fix_input/AHI_OBS
 set AHIObsDir = ()
