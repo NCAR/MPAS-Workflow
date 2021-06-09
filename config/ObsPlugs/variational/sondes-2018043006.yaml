@@ -16,13 +16,5 @@
   - filter: Background Check
     threshold: 3.0
     apply at iterations: 0, 1
-# avoids large ObsError values polluting plots of ObsError
-  - filter: Bounds Check
-    filter variables:
-    - name: specific_humidity
-    test variables:
-    - name: specific_humidity@ObsErrorData
-    minvalue: 0.0
-    maxvalue: 1.0
   get values:
     interpolation type: InterpolationType
