@@ -12,6 +12,7 @@
   obs filters:
   - filter: PreQC
     maxvalue: 3
+# avoids large ObsError values polluting plots of ObsError
   - filter: Bounds Check
     filter variables:
     - name: specific_humidity
