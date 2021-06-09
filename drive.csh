@@ -516,6 +516,8 @@ cat >! suite.rc << EOF
     inherit = VerifyObsBase
 {% if DiagnoseEnsSpreadBG %}
     script = \$origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsDAMembers}}"
+    [[[job]]]
+      execution time limit = PT${VerifyObsEnsMeanJobMinutes}M
 {% else %}
     script = \$origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "0"
 {% endif %}
