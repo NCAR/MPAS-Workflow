@@ -56,7 +56,7 @@ set nInstAvailable = 0
 foreach inst ($self_ObsList)
   set missing = 0
   # TODO: define obsoutGlob construction in a different place
-  set obsoutGlob = "${dbPath}/obsout_${self_AppType}_${inst}_*.nc4"
+  set obsoutGlob = "${dbPath}/obsout_${self_AppType}_${inst}_*.h5"
   echo "Searching for ${obsoutGlob}"
   find ${obsoutGlob} -mindepth 0 -maxdepth 0
   if ($? > 0) then

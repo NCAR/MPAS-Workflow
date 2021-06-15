@@ -1,9 +1,9 @@
 - obs space:
     name: ahi-clr_himawari8
     obsdatain:
-      obsfile: InDBDir/ahi_himawari8_obs_2018041500.nc4
+      obsfile: InDBDir/ahi_himawari8_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_ahi_himawari8.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_ahi_himawari8.h5
     simulated variables: [brightness_temperature]
     channels: &clrahi_channels 7-16
     obs perturbations seed: MemberSeed
