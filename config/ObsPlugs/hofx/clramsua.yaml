@@ -1,9 +1,9 @@
 - obs space:
     name: amsua_n19
     obsdatain:
-      obsfile: InDBDir/amsua_n19_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_n19_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua_n19.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_amsua_n19.h5
     simulated variables: [brightness_temperature]
     channels: &clramsua_channels 5-14
   obs error:
@@ -23,6 +23,7 @@
     filename: OutDBDir/geoPrefix_AppType_amsua_n19.nc4
   obs operator: &clramsuacrtm
     name: CRTM
+    SurfaceWindGeoVars: uv
     Absorbers: [H2O,O3]
     linear obs operator:
       Absorbers: [H2O]
@@ -35,9 +36,9 @@
 - obs space:
     name: amsua_n15
     obsdatain:
-      obsfile: InDBDir/amsua_n15_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_n15_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua_n15.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_amsua_n15.h5
     simulated variables: [brightness_temperature]
     channels: *clramsua_channels
   obs error:
@@ -65,9 +66,9 @@
 - obs space:
     name: amsua_n18
     obsdatain:
-      obsfile: InDBDir/amsua_n18_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_n18_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua_n18.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_amsua_n18.h5
     simulated variables: [brightness_temperature]
     channels: *clramsua_channels
   obs error:
@@ -95,9 +96,9 @@
 - obs space:
     name: amsua_metop-a
     obsdatain:
-      obsfile: InDBDir/amsua_metop-a_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_metop-a_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua_metop-a.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_amsua_metop-a.h5
     simulated variables: [brightness_temperature]
     channels: *clramsua_channels
   obs error:
@@ -125,9 +126,9 @@
 - obs space:
     name: amsua_metop-b
     obsdatain:
-      obsfile: InDBDir/amsua_metop-b_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_metop-b_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua_metop-b.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_amsua_metop-b.h5
     simulated variables: [brightness_temperature]
     channels: *clramsua_channels
   obs error:
@@ -155,9 +156,9 @@
 - obs space:
     name: amsua_aqua
     obsdatain:
-      obsfile: InDBDir/amsua_aqua_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_aqua_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua_aqua.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_amsua_aqua.h5
     simulated variables: [brightness_temperature]
     channels: *clramsua_channels
   obs error:

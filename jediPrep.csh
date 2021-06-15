@@ -186,24 +186,24 @@ end
 
 # Link conventional data
 # ======================
-ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs*.nc4 ${InDBDir}/
-ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs*.nc4 ${InDBDir}/
-ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs*.nc4 ${InDBDir}/
-ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs*.nc4 ${InDBDir}/
-ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs*.nc4 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs*.h5 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs*.h5 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs*.h5 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs*.h5 ${InDBDir}/
+ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs*.h5 ${InDBDir}/
 
 # Link AMSUA+MHS data
 # ==============
-ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.nc4 ${InDBDir}/
-ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.nc4 ${InDBDir}/
+ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.h5 ${InDBDir}/
+ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.h5 ${InDBDir}/
 
 # Link ABI data
 # ============
-ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.nc4 ${InDBDir}/
+ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
 
 # Link AHI data
 # ============
-ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.nc4 ${InDBDir}/
+ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
 
 
 # Link VarBC prior
@@ -241,11 +241,11 @@ foreach obs ($self_ObsList)
   # check that obs string matches at least one non-broken observation file link
   foreach inst ($checkForMissingObs)
     if ( "$obs" =~ *"${inst}"* ) then
-      find ${InDBDir}/${inst}*_obs_*.nc4 -mindepth 0 -maxdepth 0
+      find ${InDBDir}/${inst}*_obs_*.h5 -mindepth 0 -maxdepth 0
       if ($? > 0) then
         @ missing++
       else
-        set brokenLinks=( `find ${InDBDir}/${inst}*_obs_*.nc4 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
+        set brokenLinks=( `find ${InDBDir}/${inst}*_obs_*.h5 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
         foreach link ($brokenLinks)
           @ missing++
         end

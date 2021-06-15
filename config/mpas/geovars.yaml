@@ -11,6 +11,7 @@
 fields:
   - field name: air_pressure
     mpas template field: theta
+    mpas identity field: pressure
 
   - field name: air_pressure_levels
     mpas template field: w
@@ -29,48 +30,61 @@ fields:
 
   - field name: air_temperature
     mpas template field: theta
+    mpas identity field: temperature
 
   - field name: temperature
     mpas template field: theta
+    mpas identity field: temperature
 
   - field name: eastward_wind
     mpas template field: theta
+    mpas identity field: uReconstructZonal
 
   - field name: northward_wind
     mpas template field: theta
+    mpas identity field: uReconstructMeridional
 
   - field name: humidity_mixing_ratio
     mpas template field: theta
 
   - field name: specific_humidity
     mpas template field: theta
+    mpas identity field: spechum
 
   - field name: surface_altitude
     mpas template field: u10
 
   - field name: surface_pressure
     mpas template field: u10
+    mpas identity field: surface_pressure
 
   - field name: surface_temperature
     mpas template field: u10
+    mpas identity field: t2m
 
   - field name: specific_humidity_at_two_meters_above_surface
     mpas template field: u10
+    mpas identity field: q2
 
   - field name: uwind_at_10m
     mpas template field: u10
+    mpas identity field: u10
 
   - field name: vwind_at_10m
     mpas template field: u10
+    mpas identity field: v10
 
   - field name: skin_temperature
     mpas template field: u10
+    mpas identity field: skintemp
 
   - field name: landmask
     mpas template field: ivgtyp
+    mpas identity field: landmask
 
   - field name: seaice_fraction
     mpas template field: u10
+    mpas identity field: xice
 
   - field name: mole_fraction_of_ozone_in_air
     mpas template field: theta
@@ -119,18 +133,23 @@ fields:
 
   - field name: average_surface_temperature_within_field_of_view
     mpas template field: u10
+    mpas identity field: skintemp
 
   - field name: surface_temperature_where_sea
     mpas template field: u10
+    mpas identity field: skintemp
 
   - field name: surface_temperature_where_land
     mpas template field: u10
+    mpas identity field: skintemp
 
   - field name: surface_temperature_where_ice
     mpas template field: u10
+    mpas identity field: skintemp
 
   - field name: surface_temperature_where_snow
     mpas template field: u10
+    mpas identity field: skintemp
 
   - field name: surface_snow_thickness
     mpas template field: u10
@@ -140,6 +159,7 @@ fields:
 
   - field name: leaf_area_index
     mpas template field: u10
+    mpas identity field: lai
 
   - field name: volume_fraction_of_condensed_water_in_soil
     mpas template field: u10
@@ -159,11 +179,13 @@ fields:
   - field name: surface_snow_area_fraction
     mpas template field: u10
 
-  - field name: surface_wind_speed
+  - field name: surface_eastward_wind
     mpas template field: u10
+    mpas identity field: u10
 
-  - field name: surface_wind_from_direction
+  - field name: surface_northward_wind
     mpas template field: u10
+    mpas identity field: v10
 
   - field name: land_type_index
     mpas template field: ivgtyp

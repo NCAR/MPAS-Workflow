@@ -1,9 +1,11 @@
 - obs space:
     name: Satwind
     obsdatain:
-      obsfile: InDBDir/satwind_obs_2018041500.nc4
+      obsfile: InDBDir/satwind_obs_2018041500.h5
+      max frame size: 80000
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_satwind.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_satwind.h5
+      max frame size: 80000
     simulated variables: [eastward_wind, northward_wind]
     obs perturbations seed: MemberSeed
   obs operator:
@@ -16,6 +18,15 @@
   - filter: Background Check
     threshold: 3.0
     apply at iterations: 0, 1
+  - filter: Bounds Check
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    test variables:
+    - name: eastward_wind@ObsErrorData
+    - name: northward_wind@ObsErrorData
+    minvalue: 0.0
+    maxvalue: 200.0
 #  - filter: Thinning
 #    amount: RADTHINAMOUNT
 #    random_seed: 0

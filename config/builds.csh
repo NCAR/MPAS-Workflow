@@ -15,6 +15,8 @@ setenv BuildCompiler 'gnu-openmpi'
 # Note: at this time, all executables should be built in the same environment, one that is
 # consistent with config/environment.csh
 
+set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_bugfix--out-nchans
+
 # MPAS-JEDI
 # ---------
 ## Variational
@@ -23,21 +25,21 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   setenv VariationalEXE mpasjedi_variational.x
 endif
-setenv VariationalBuildDir /glade/scratch/guerrett/mpasbundletest/mpas-bundle_gnu-openmpi_24MAR2021/bin
+setenv VariationalBuildDir ${commonBuild}/bin
 
 ## HofX
 setenv HofXEXE mpasjedi_hofx3d.x
-setenv HofXBuildDir /glade/scratch/guerrett/mpasbundletest/mpas-bundle_gnu-openmpi_24MAR2021/bin
+setenv HofXBuildDir ${commonBuild}/bin
 
 ## RTPP
 setenv RTPPEXE mpasjedi_rtpp.x
-setenv RTPPBuildDir /glade/scratch/guerrett/mpasbundletest/mpas-bundle_gnu-openmpi_24MAR2021/bin
+setenv RTPPBuildDir ${commonBuild}/bin
 
 # MPAS-Model
 # ----------
 setenv MPASCore atmosphere
 setenv ForecastEXE mpas_${MPASCore}
-setenv ForecastTopBuildDir /glade/scratch/guerrett/mpasbundletest/mpas-bundle_gnu-openmpi_24MAR2021
+setenv ForecastTopBuildDir ${commonBuild}
 setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
 
 setenv MPASLookupDir ${ForecastTopBuildDir}/MPAS/core_${MPASCore}
