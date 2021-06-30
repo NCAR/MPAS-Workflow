@@ -1,0 +1,35 @@
+#!/bin/bash
+
+name_jedi_dir="mpasbundletest"
+[[ $# -ge 1 ]] && echo $1 && name_jedi_dir=$1   # override dirname, optional
+
+# Customize variables
+AUTOTEST_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+user=${USER}
+email=$user@ucar.edu
+REL_DIR=/glade/scratch/$user/$name_jedi_dir
+CODE_DIR=code    # Changing this will require changes to the automated cycling scripts.
+BUILD_DIR=build  # Changing this will require changes to the automated cycling scripts.
+echo "src_build_run_dir =$REL_DIR"
+
+# Default email subject and body variables
+status=FAILURE
+body='Unexpected failure of mpas-bundle autotest script.'
+
+
+# rm -rf  $REL_DIR/$CODE_DIR
+# mkdir -p $REL_DIR/$CODE_DIR
+  cd $REL_DIR/$CODE_DIR
+# git clone git@github.com:JCSDA-internal/mpas-bundle.git
+# sed -i_HTTP 's/https:\/\/github.com\//git@github.com:/' mpas-bundle/CMakeLists.txt
+
+source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/gnu-openmpi-cheyenne.sh
+
+# rm -rf  $REL_DIR/$BUILD_DIR
+mkdir -p $REL_DIR/$BUILD_DIR
+cd $REL_DIR/$BUILD_DIR
+ecbuild --build=RelWithDebInfo \
+  -DBUNDLE_SKIP_ECKIT=OFF  -DBUNDLE_SKIP_FCKIT=OFF  -DBUNDLE_SKIP_ATLAS=OFF \
+   $REL_DIR/$CODE_DIR/mpas-bundle
+
+# end before make -j8; ctest
