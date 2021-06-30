@@ -9,8 +9,8 @@ cycle_outdir="br_$b" # br=build_run
 # keep as is
 WorkflowRepo=MPAS-Workflow
 WorkflowGit=NCAR
-#WorkflowBranch=feature/autotest
-WorkflowBranch=develop
+WorkflowBranch=feature/autotest
+#WorkflowBranch=develop
 #
 TopDirectory=`pwd`
 TestDir="${TopDirectory}/${TestDir_name}"
