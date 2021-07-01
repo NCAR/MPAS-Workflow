@@ -1,0 +1,82 @@
+
+<< under construction >>
+
+# mpas-jedi-autotest
+
+This README covers "dir=autotest-setup".
+
+<Description>
+The autotest scipts from 
+https://github.com/svahl991/mpas-jedi-autotest/tree/feature/switch2jjguerrette
+is merged here with mofications.
+
+<Problems encountered>
+1. ctest use 
+  multi_pe_480 = 2
+  NPE =3 at 4denvar_ID and 4denvar_bumploc  
+  NPE=4 at eda_3dhybrid  
+  cron job run batch script for ctest fails because of MPI allcoation. 
+  the correct way is through PBS job submission
+  https://jointcenterforsatellitedataassimilation-jedi-docs.readthedocs-hosted.com/en/latest/using/jedi_environment[…]l?highlight=ctest%20%20MPI%20run   
+  I have to use "ctest -E get_" with the PBS jobs submission script. 
+
+2. I have to split mpas-bundle_autotest.sh into two scripts
+   bundle_p1.sh  for git checkout and ecbuit 
+   bundle_p2.sh  for cmake and ctest
+   This is needed by cron
+
+3. 
+
+
+<Change>
+File addition: 
+1. 
+
+
+Major files:
+1. 
+2. 
+3.
+
+
+
+<FAQ>
+1. Q: crontab command not found
+   A: module add ncarenv
+2. Q: how to use crontab
+   A: ref https://linux.die.net/man/5/crontab
+3. Q: crontab still now working
+   A: use full path for every file and every command, e.g., /opt/pbs/bin/qsub
+
+
+<How to understand the auto-setup>
+
+1. Notes from JJ on mpas-bundle_autotest.sh
+
+# This script pulls, builds, and runs the mpas-jedi ctests for mpas-bundle without user
+  intervention.
+
+# This script requires that ssh is set up for $user with github so no password needs to be
+  entered.
+# See:
+  https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh 
+
+# This script is designed to be run via a cron job for $user on Cheyenne.
+# When invoking in crontab, you may wish to direct the stdout and stderr for this script to
+# a log file.
+# Here is an example of a possible crontab line to execute this script:
+# 53      23      *       *       0,1,2,3,4       <SCRIPT_PATH>/mpas-bundle_autotest.sh &>
+# <SCRIPT_PATH>/mpas-bundle_autotest.log
+
+2. cron example
+   crontab -e  --> enter manually by copy and paste
+   crontab /glade/scratch/yonggangyu/is575/mpas-jedi-autotest/crontab.txt -->ful path
+
+
+
+2. 
+# previous README.md
+# Files to support automated testing of the MPAS-JEDI repository
+# See https://docs.google.com/document/d/1gsjbkNUkbc3LYmGgdmTuIBahjDgji5AiIFxaXHzV_rk/edit?usp=sharing
+# for more documentation.
+# A quick start can be achieved by following the directions in SetupAutomatedTestingHere.csh
