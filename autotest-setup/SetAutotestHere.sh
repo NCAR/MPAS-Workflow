@@ -50,7 +50,7 @@ cat > job_make_ctest.scr << EOF
 #PBS -o p2.log 
 #PBS -e p2.err
 #
-${TestDir}/bundle_p2.sh ${cycle_outdir} 2>&1 | tee >> ${TestDir}/log.makectest
+${TestDir}/bundle_p2.sh ${cycle_outdir} 2>&1 | tee > ${TestDir}/log.makectest
 EOF
 
 
