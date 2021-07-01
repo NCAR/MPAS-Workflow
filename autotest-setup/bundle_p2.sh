@@ -12,6 +12,7 @@ CODE_DIR=code    # Changing this will require changes to the automated cycling s
 BUILD_DIR=build  # Changing this will require changes to the automated cycling scripts.
 echo "src_build_run_dir =$REL_DIR"
 
+
 # Default email subject and body variables
 status=FAILURE
 body='Unexpected failure of mpas-bundle autotest script.'
