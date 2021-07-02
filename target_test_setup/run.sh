@@ -21,7 +21,7 @@ if [ $case -eq 1 ]; then
   echo "git + ecbuild (cmake)"
   if [ $run -eq 0 ]; then
     echo "head -n 40 bundle_p1.sh"  
-    head -n 34 bundle_p1.sh
+    head -n 40 bundle_p1.sh
     echo
     echo "dry: ./bundle_p1.sh br_$name_jedi_dir &>  log.b"
     echo 
