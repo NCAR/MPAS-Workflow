@@ -1,15 +1,13 @@
 #!/bin/bash
-#
-# usage:   sh run.sh  1/2/3/-1  0/1 
-#                      case     dry-run / real
-#
+# usage:
+# sh run.sh  1/2/3        0/1 
+#            step(case)  dry-run / real
+
 
 [[ $# -ne 2 ]] && echo "\$# -ne 2, stop" && exit -1
-
-## name_jedi_dir="mpasbundletest"
 name_jedi_dir=`pwd | awk -F/ '{print $(NF-1)}'`
 sd="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )" # script dir
-echo "name_jedi_dir = $name_jedi_dir" 
+echo "name_jedi_dir = $name_jedi_dir"
 echo "sd = $sd"
 
 case=$1
@@ -23,7 +21,7 @@ if [ $case -eq 1 ]; then
   echo "git + ecbuild (cmake)"
   if [ $run -eq 0 ]; then
     echo "head -n 40 bundle_p1.sh"  
-    head -n 40 bundle_p1.sh
+    head -n 34 bundle_p1.sh
     echo
     echo "dry: ./bundle_p1.sh br_$name_jedi_dir &>  log.b"
     echo 
