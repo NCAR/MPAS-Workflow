@@ -26,7 +26,7 @@ else
  mkdir -p ${TestDir}
 fi
 cd ${TestDir}
-git clone --branch ${WorkflowBranch} https://github.com/${WorkflowGit}/${WorkflowRepo}
+git clone -b  ${WorkflowBranch} https://github.com/${WorkflowGit}/${WorkflowRepo}
 cd $exedir && mv -f gen_autotest.sh bundle_p*.sh run.sh ${TestDir}/. && cd - 
 
 
