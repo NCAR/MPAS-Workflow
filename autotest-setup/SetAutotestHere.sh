@@ -6,6 +6,7 @@ sd="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 b=$( basename $sd )    # sd: script dir
 cycle_outdir="br_$b" # br=build_run
 
+
 # keep as is
 WorkflowRepo=MPAS-Workflow
 WorkflowGit=NCAR
@@ -15,6 +16,7 @@ WorkflowBranch=feature/autotest
 TopDirectory=`pwd`
 TestDir="${TopDirectory}/${TestDir_name}"
 exedir="${TopDirectory}/${TestDir_name}/MPAS-Workflow/autotest-setup"
+
 
 #(I) ck out repo
 if [ -d $TestDir ]; then
@@ -26,7 +28,7 @@ else
 fi
 cd ${TestDir}
 git clone --branch ${WorkflowBranch} https://github.com/${WorkflowGit}/${WorkflowRepo}
-cd $exedir && mv -f gen_autotest.sh bundle_p*.sh run.sh ${TestDir}/. && cd - 
+cd $exedir && mv -f gen_autotest.sh bundle_p*.sh  ${TestDir}/.  && cd -
 
 
 #(II) Generate crontab file
@@ -39,8 +41,9 @@ EOF
 cat > job_make_ctest.scr << EOF
 #!/bin/bash
 #PBS -A NMMM0015
-#PBS -l walltime=00:49:00
-#PBS -l select=1:ncpus=1:mpiprocs=1
+#PBS -l walltime=00:39:00
+###PBS -l select=1:ncpus=1:mpiprocs=1
+#PBS -l select=1:ncpus=8
 #PBS -N make_ctest
 #PBS -j oe
 #PBS -q premium
