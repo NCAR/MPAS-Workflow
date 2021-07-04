@@ -18,15 +18,15 @@ end_init=2018041506         # Should be one less cycle than DA/FC
 #--
 #
 if_ckbuild=1        # 1(def) /0 : check   / No  [build]
-if_rundafc=0        # 1(def) /0 : run     / No 
-if_pp=0             # 1(def) /0 : pp plot / No
+if_rundafc=1        # 1(def) /0 : run     / No 
+if_pp=1             # 1(def) /0 : pp plot / No
 #
 #   fixed by now
 #--
 gridres=OIE120km    # grid resolution
 DAType=3denvar      #
-tmax=2            # max min to wait for DA+FC completion
-tppmax=2           # 
+tmax=200            # max min to wait for DA+FC completion
+tppmax=20           # 
 #
 name_jedi_dir="mpasbundletest"
 [[ $# -ge 1 ]] && echo $1 && name_jedi_dir=$1            # change option
