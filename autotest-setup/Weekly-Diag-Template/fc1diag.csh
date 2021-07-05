@@ -60,8 +60,8 @@ if ($writediag_fc1 == True ) then
 endif
 
 if ($DATE == $end_init) then 
-   echo "Sleeping 30s for similar jobs to run..."
-   sleep 30s
+   echo "Sleeping 4m for similar jobs to run..."
+   sleep 4m
 
    #fc1: plot 2d time serial
    if ( $TwoD_Plot == True) then 
