@@ -9,16 +9,21 @@ initialCycleDate=2018041500
 finalCycleDate=2018042100
 end_init=2018042018         # Should be one less cycle than DA/FC
 #
-#-- 12 hr run
+#-- 6 hr run
 initialCycleDate=2018041500
-finalCycleDate=2018041512
-end_init=2018041506         # Should be one less cycle than DA/FC
+finalCycleDate=2018041506
+end_init=2018041500         # Should be one less cycle than DA/FC
+#
+#-- 0 hr run
+initialCycleDate=2018041500
+finalCycleDate=2018041500
+end_init=2018041418         # Should be one less cycle than DA/FC
 #
 #   debug options
 #--
 #
-if_ckbuild=1        # 1(def) /0 : check   / No  [build]
-if_rundafc=0        # 1(def) /0 : run     / No 
+if_ckbuild=0        # 1(def) /0 : check   / No  [build]
+if_rundafc=1        # 1(def) /0 : run     / No 
 if_pp=0             # 1(def) /0 : pp plot / No
 #
 #   fixed by now

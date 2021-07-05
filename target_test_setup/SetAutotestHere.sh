@@ -45,6 +45,21 @@ ${TestDir}/bundle_p2.sh ${cycle_outdir} 2>&1 | tee > ${TestDir}/log.makectest
 EOF
 
 
+cat > job_make_ctest.scr << EOF
+#!/bin/bash
+#PBS -A NMMM0015
+#PBS -l walltime=00:15:00
+#PBS -l select=1:ncpus=6:mpiprocs=6
+#PBS -N make_ctest
+#PBS -j oe
+#PBS -q premium
+#PBS -o p2.1.log 
+#PBS -e p2.1.err
+#
+${TestDir}/bundle_p2.1.sh ${cycle_outdir} 2>&1 | tee > ${TestDir}/log.make
+EOF
+
+
 #(II) Modify default cylc settings
 cat > global.rc << EOF
 [hosts]

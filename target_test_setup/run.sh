@@ -47,11 +47,26 @@ elif [ $case -eq 3 ]; then
   echo "run DA"
   if [ $run -eq 0 ]; then
     echo "head -n 80 gen_autotest.sh"
-    head -n 80 gen_autotest.sh
+    head -n 50 gen_autotest.sh
     echo
     echo "dry: ./gen_autotest.sh br_$name_jedi_dir &>  log.t"
     echo 
   elif [ $run -eq 1 ]; then
     ./gen_autotest.sh  br_$name_jedi_dir &>  log.t
   fi
+else
+  echo
+#elif [ $case == "2.1" ]; then
+## case-1
+## make -j 8;  schedule cron job for it
+#  echo "make; ctest"
+#  if [ $run -eq 0 ]; then
+#    echo "head -n 60 bundle_p2.1.sh ; only make  "  
+#    head -n 60 bundle_p2.1.sh
+#    echo
+#    echo "dry: qsub job_make_ctest.scr"
+#    echo 
+#  elif [ $run -eq 1 ]; then
+#    qsub job_make_ctest.scr
+#  fi
 fi
