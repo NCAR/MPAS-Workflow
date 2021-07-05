@@ -26,7 +26,7 @@ if_pp=1             # 1(def) /0 : pp plot / No
 gridres=OIE120km    # grid resolution
 DAType=3denvar      #
 tmax=200            # max min to wait for DA+FC completion
-tppmax=25           # 
+tppmax=60           # 
 #
 name_jedi_dir="mpasbundletest"
 [[ $# -ge 1 ]] && echo $1 && name_jedi_dir=$1            # change option
@@ -287,7 +287,7 @@ cp -rp ${expdir_curr}/FC1DIAG ${archive_dir}
 cp -rp ${expdir_curr}/Verification ${archive_dir}
 # rsync the plots to koa for display on a web page
 # (TODO: Need to figure out how to get rsync working through cron.)
-#rsync -e 'ssh -vi /glade/u/home/${USER}/.ssh/koa-sync' -navz --exclude 'FC1DIAG' --exclude 'Verification'  ${startdir}/${ARCHIVE_TOP_DIR}/*  ${USER}@koa.mmm.ucar.edu:/exports/htdocs2/projects/DA_images/
+/usr/bin/rsync -e '/usr/bin/ssh -vi /glade/u/home/${USER}/.ssh/koa-sync' -avz --exclude 'FC1DIAG' --exclude 'Verification'  ${startdir}/${ARCHIVE_TOP_DIR}/*  ${USER}@koa.mmm.ucar.edu:/exports/htdocs2/projects/DA_images/.
 
 
 if [ $a -lt $tppmax ]; then
