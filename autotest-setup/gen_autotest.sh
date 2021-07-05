@@ -4,20 +4,20 @@
 #   swap
 #
 #
+##-- 12 hr run
+#initialCycleDate=2018041500
+#finalCycleDate=2018041512
+#end_init=2018041506         # Should be one less cycle than DA/FC
+#
 #-- 6 d run
 initialCycleDate=2018041500
 finalCycleDate=2018042100
 end_init=2018042018         # Should be one less cycle than DA/FC
 #
-#-- 12 hr run
-initialCycleDate=2018041500
-finalCycleDate=2018041512
-end_init=2018041506         # Should be one less cycle than DA/FC
-#
 #   debug options
 #--
 #
-if_ckbuild=1        # 1(def) /0 : check   / No  [build]
+if_ckbuild=0        # 1(def) /0 : check   / No  [build]
 if_rundafc=1        # 1(def) /0 : run     / No 
 if_pp=1             # 1(def) /0 : pp plot / No
 #
@@ -26,7 +26,7 @@ if_pp=1             # 1(def) /0 : pp plot / No
 gridres=OIE120km    # grid resolution
 DAType=3denvar      #
 tmax=200            # max min to wait for DA+FC completion
-tppmax=20           # 
+tppmax=25           # 
 #
 name_jedi_dir="mpasbundletest"
 [[ $# -ge 1 ]] && echo $1 && name_jedi_dir=$1            # change option

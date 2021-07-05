@@ -29,8 +29,6 @@ make -j8
 if [[ -f "$REL_DIR/$BUILD_DIR/bin/mpasjedi_variational.x" ]]; then
    # Build successful. Run ctests.
    cd $REL_DIR/$BUILD_DIR/mpasjedi
-   # ctest
-#   ctest -E get_
    ctest
    # Check if all ctests pass by checking for presence of LastTestsFailed.log
    if [[ -f ./Testing/Temporary/LastTestsFailed.log ]]; then
