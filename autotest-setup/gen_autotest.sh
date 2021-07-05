@@ -3,12 +3,6 @@
 #   gen_autotest.sh should be run above the checked-out MPAS-Workflow
 #   swap
 #
-#
-##-- 12 hr run
-#initialCycleDate=2018041500
-#finalCycleDate=2018041512
-#end_init=2018041506         # Should be one less cycle than DA/FC
-#
 #-- 6 d run
 initialCycleDate=2018041500
 finalCycleDate=2018042100
@@ -287,7 +281,7 @@ cp -rp ${expdir_curr}/FC1DIAG ${archive_dir}
 cp -rp ${expdir_curr}/Verification ${archive_dir}
 # rsync the plots to koa for display on a web page
 # (TODO: Need to figure out how to get rsync working through cron.)
-/usr/bin/rsync -e '/usr/bin/ssh -vi /glade/u/home/${USER}/.ssh/koa-sync' -avz --exclude 'FC1DIAG' --exclude 'Verification'  ${startdir}/${ARCHIVE_TOP_DIR}/*  ${USER}@koa.mmm.ucar.edu:/exports/htdocs2/projects/DA_images/.
+#/usr/bin/rsync -e '/usr/bin/ssh -vi /glade/u/home/${USER}/.ssh/koa-sync' -avz --exclude 'FC1DIAG' --exclude 'Verification'  ${startdir}/${ARCHIVE_TOP_DIR}/*  ${USER}@koa.mmm.ucar.edu:/exports/htdocs2/projects/DA_images/.
 
 
 if [ $a -lt $tppmax ]; then
