@@ -1,7 +1,7 @@
 #!/bin/csh -f
 #PBS -N DATAtimediag 
 #PBS -l select=1:ncpus=1:mpiprocs=1
-#PBS -l walltime=0:19:00
+#PBS -l walltime=0:25:00
 #PBS -q premium
 #PBS -A NMMM0015
 #PBS -j oe
@@ -60,8 +60,8 @@ if ($writediag_fc1 == True ) then
 endif
 
 if ($DATE == $end_init) then 
-   echo "Sleeping 30m for similar jobs to run..."
-   sleep 30m
+   echo "Sleeping 10m for similar jobs to run..."
+   sleep 10m
 
    #fc1: plot 2d time serial
    if ( $TwoD_Plot == True) then 
