@@ -3,6 +3,7 @@
 name_jedi_dir="mpasbundletest"
 [[ $# -ge 1 ]] && echo $1 && name_jedi_dir=$1   # override dirname, optional
 
+
 # Customize variables
 AUTOTEST_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 user=${USER}

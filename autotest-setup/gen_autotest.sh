@@ -1,27 +1,25 @@
 #!/bin/bash
+
 #
-#   gen_autotest.sh should be run above the checked-out MPAS-Workflow
-#   swap
+#-- debug options
+#
+if_ckbuild=0        # 1(def) /0 : check   / No  [build]
+if_rundafc=1        # 1(def) /0 : run     / No 
+if_pp=1             # 1(def) /0 : pp plot / No
+#   
+#-- fixed by now
+#
+gridres=OIE120km    # grid resolution
+DAType=3denvar      #
+tmax=200            # max minutes to wait for DA+FC completion
+tppmax=35           # ...                     plots
 #
 #-- 6 d run
 initialCycleDate=2018041500
 finalCycleDate=2018042100
 end_init=2018042018         # Should be one less cycle than DA/FC
-#
-#   debug options
-#--
-#
-if_ckbuild=0        # 1(def) /0 : check   / No  [build]
-if_rundafc=1        # 1(def) /0 : run     / No 
-if_pp=1             # 1(def) /0 : pp plot / No
-#
-#   fixed by now
-#--
-gridres=OIE120km    # grid resolution
-DAType=3denvar      #
-tmax=200            # max min to wait for DA+FC completion
-tppmax=25           # 
-#
+
+
 name_jedi_dir="mpasbundletest"
 [[ $# -ge 1 ]] && echo $1 && name_jedi_dir=$1            # change option
 rundir=/glade/scratch/${USER}/${name_jedi_dir}/cycling   # YGYU convention br=build_run
@@ -29,36 +27,6 @@ BUILD_DIR=/glade/scratch/${USER}/${name_jedi_dir}/build  # EXE from jedi
 startdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"  # should be above MPAS_FLOW
 
 
-#  This wrapper v.s.  mpas-jedi-autotest/cycling_autotest.sh
-#  1. this wrapper allows to decouple check build, runDAFC, and plot
-#  2. this wrapper can automatically detect finish-point for DAFC and plots, avoiding sleep 90m.
-#  3. it removes logic errors in post-processing plot section
-#  4. it corrects an error in handling setup.scr, 
-#       sed  -e "s#\${BUILD_DIR}#$BUILD_DIR#" setup.scr;  not exporting $BUILD_DIR VAR!
-#  5. encountered and solved the python error in basic_plot_functions.py
-#       norm = matplotlib.colors.TwoSlopeNorm(vmin=valuemin, vcenter=0, vmax=valuemax)
-#       raise ValueError('vmin, vcenter, and vmax must be in '
-#       ValueError: vmin, vcenter, and vmax must be in ascending order
-#     error when plotting 2D graphics for current-previous, which can be zero.
-#  
-#
-#  usage: 
-#--
-#  if_runda=0 : then we can manually link current and previous dir for comparison
-#  if_pp =0   : exit without plot
-#
-#  guideline  :
-#  expdir_stamp = topexpdir/basename + ymd_hms
-#  expdir_curr  = topexpdir/         + _current
-#  expdir_prev  = topexpdir/         + _previous
-#  curr_name    = basename +  _current
-#  bsname       = basename                       ! name wo time stamp
-#
-#------------------------------------------------------------#
-# S1. set dir name
-#------------------------------------------------------------#
-#  startdir= start dir above the checked-out MPAS_workflow, at crontab.txt Lev
-#
 email=${USER}@ucar.edu
 WKFL_DIR=${startdir}/MPAS-Workflow
 WKFL_DRIVER=${WKFL_DIR}/drive.csh
@@ -297,3 +265,38 @@ echo "Cycling cron script finished. Sending email."
 mail -s "cylc cycling cron autotest $status" $email <<< "$body"
 echo "nail 5:  end of wrap_autotest.sh"
 exit
+
+
+
+
+
+#  This wrapper v.s.  mpas-jedi-autotest/cycling_autotest.sh
+#  1. this wrapper allows to decouple check build, runDAFC, and plot
+#  2. this wrapper can automatically detect finish-point for DAFC and plots, avoiding sleep 90m.
+#  3. it removes logic errors in post-processing plot section
+#  4. it corrects an error in handling setup.scr, 
+#       sed  -e "s#\${BUILD_DIR}#$BUILD_DIR#" setup.scr;  not exporting $BUILD_DIR VAR!
+#  5. encountered and solved the python error in basic_plot_functions.py
+#       norm = matplotlib.colors.TwoSlopeNorm(vmin=valuemin, vcenter=0, vmax=valuemax)
+#       raise ValueError('vmin, vcenter, and vmax must be in '
+#       ValueError: vmin, vcenter, and vmax must be in ascending order
+#     error when plotting 2D graphics for current-previous, which can be zero.
+#  
+#
+#  usage: 
+#--
+#  if_runda=0 : then we can manually link current and previous dir for comparison
+#  if_pp =0   : exit without plot
+#
+#  guideline  :
+#  expdir_stamp = topexpdir/basename + ymd_hms
+#  expdir_curr  = topexpdir/         + _current
+#  expdir_prev  = topexpdir/         + _previous
+#  curr_name    = basename +  _current
+#  bsname       = basename                       ! name wo time stamp
+#
+#------------------------------------------------------------#
+# S1. set dir name
+#------------------------------------------------------------#
+#  startdir= start dir above the checked-out MPAS_workflow, at crontab.txt Lev
+#
