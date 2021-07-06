@@ -18,6 +18,7 @@ if [ $ix -eq 0 ]; then
  eval $c1
 elif [ $ix -eq 1 ]; then
  echo $c2
+ eval $c2
 else
  echo "ix (if_execute) = $ix ; "
 fi
