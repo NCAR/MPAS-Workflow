@@ -20,7 +20,7 @@ if_pp=1             # 1(def) /0 : pp plot / No
 gridres=OIE120km    # grid resolution
 DAType=3denvar      #
 tmax=200            # max min to wait for DA+FC completion
-tppmax=60           # 
+tppmax=25           # 
 #
 name_jedi_dir="mpasbundletest"
 [[ $# -ge 1 ]] && echo $1 && name_jedi_dir=$1            # change option
