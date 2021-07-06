@@ -1,9 +1,26 @@
+[Purpose]:
+  This directory contains scripts for nightly-build and weekly FC+DA (cycle) test using cron job.
 
-<< under construction >>
+[Usage]:
+  Copy the following lines to your terminal or new scripts. It is done.
 
-# mpas-jedi-autotest
+```
+mkdir testdir
+cd testdir
+git clone -b feature/autotest https://github.com/NCAR/MPAS-Workflow.git
+cp MPAS-Workflow/autotest-setup/SetAutotestHere.sh  .
+mv MPAS-Workflow  dir_TB_deleted
+sh SetAutotestHere.sh
+cd mpas-jedi-autotest
+module add ncarenv
+curdir=`pwd`
+crontab $curdir/crontab.txt
+```
 
-This README covers "dir=autotest-setup".
+check cron job by `crontab -l`
+
+
+<< Some detaied construction >>
 
 <Description>
 The autotest scipts from 
@@ -25,19 +42,7 @@ is merged here with mofications.
    bundle_p2.sh  for cmake and ctest
    This is needed by cron
 
-3. 
-
-
-<Change>
-File addition: 
-1. 
-
-
-Major files:
-1. 
-2. 
-3.
-
+3. For make -j8, I use 1 node, 12 core, 12 mpi for PBS job submission.
 
 
 <FAQ>
@@ -71,12 +76,3 @@ Major files:
 2. cron example
    crontab -e  --> enter manually by copy and paste
    crontab /glade/scratch/yonggangyu/is575/mpas-jedi-autotest/crontab.txt -->ful path
-
-
-
-2. 
-# previous README.md
-# Files to support automated testing of the MPAS-JEDI repository
-# See https://docs.google.com/document/d/1gsjbkNUkbc3LYmGgdmTuIBahjDgji5AiIFxaXHzV_rk/edit?usp=sharing
-# for more documentation.
-# A quick start can be achieved by following the directions in SetupAutomatedTestingHere.csh
