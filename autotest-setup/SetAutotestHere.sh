@@ -30,8 +30,9 @@ cd $exedir && mv -f gen_autotest.sh bundle_p*.sh  ${TestDir}/.  && cd -
 
 #(II) Generate crontab file
 cat > crontab.txt << EOF
-15 01 * * 1,2,3,4,5  ${TestDir}/bundle_p1.sh ${cycle_outdir} &> ${TestDir}/log.cmake && /opt/pbs/bin/qsub ${TestDir}/job_make_ctest.scr
-15 02 * * 4          ${TestDir}/gen_autotest.sh ${cycle_outdir}  &>  ${TestDir}/log.runda
+00 01 * * 1,2,3,4,5,6  ${TestDir}/bundle_p1.sh ${cycle_outdir} &> ${TestDir}/log.cmake
+10 01 * * 1,2,3,4,5,6  /opt/pbs/bin/qsub ${TestDir}/job_make_ctest.scr
+10 02 * * 4            ${TestDir}/gen_autotest.sh ${cycle_outdir}  &>  ${TestDir}/log.runda
 EOF
 
 
@@ -39,8 +40,8 @@ cat > job_make_ctest.scr << EOF
 #!/bin/bash
 #PBS -A NMMM0015
 #PBS -l walltime=00:39:00
-#PBS -l select=1:ncpus=12:mpiprocs=12  # works, ctest all pass
-###PBS -l select=1:ncpus=8             # ncpus=6:mpiprocs=6 also fail
+#PBS -l select=1:ncpus=4:mpiprocs=8
+###PBS -l select=1:ncpus=8  
 #PBS -N make_ctest
 #PBS -j oe
 #PBS -q premium
