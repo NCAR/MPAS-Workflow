@@ -35,8 +35,7 @@ cat > job_make_ctest.scr << EOF
 #!/bin/bash
 #PBS -A NMMM0015
 #PBS -l walltime=00:49:00
-####PBS -l select=1:ncpus=6:mpiprocs=6
-#PBS -l select=1:ncpus=6
+#PBS -l select=1:ncpus=32:mpiprocs=32
 #PBS -N make_ctest
 #PBS -j oe
 #PBS -q premium

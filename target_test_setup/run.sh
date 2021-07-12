@@ -40,6 +40,17 @@ elif [ $case -eq 2 ]; then
     echo 
   elif [ $run -eq 1 ]; then
     qsub job_make_ctest.scr
+#    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
+  fi
+elif [ $case -eq 12 ]; then
+    echo "dry:   both bundle_p1 and p2.sh"
+    echo "dry: ./bundle_p1.sh br_$name_jedi_dir &>  log.b"
+    echo "dry: ./bundle_p2.sh br_$name_jedi_dir &>  log.makectest "
+    echo 
+  elif [ $run -eq 1 ]; then
+    ./bundle_p1.sh  br_$name_jedi_dir &>  log.b
+    sleep 5m
+    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
   fi
 elif [ $case -eq 3 ]; then
 # case-3
