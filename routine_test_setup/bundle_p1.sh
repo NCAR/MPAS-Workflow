@@ -20,7 +20,7 @@ status=FAILURE
 body='Unexpected failure of mpas-bundle autotest script.'
 
 [[ -d $REL_DIR/$CODE_DIR  ]] && \
-   mv -f $REL_DIR/$CODE_DIR  $REL_DIR/${CODE_DIR}_$(date +"%Y%m%d%h%s")
+   mv -f $REL_DIR/$CODE_DIR  $REL_DIR/${CODE_DIR}_$(date +"%Y%m%d%H%M%S")
 mkdir -p $REL_DIR/$CODE_DIR
 cd $REL_DIR/$CODE_DIR
 git clone -b ${bunle_branch} git@github.com:JCSDA-internal/mpas-bundle.git
@@ -28,7 +28,7 @@ sed -i_HTTP 's/https:\/\/github.com\//git@github.com:/' mpas-bundle/CMakeLists.t
 source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/gnu-openmpi-cheyenne.sh
 
 [[ -d $REL_DIR/$BUILD_DIR ]] && \
-   mv -f $REL_DIR/$BUILD_DIR $REL_DIR/${BUILD_DIR}_$(date +"%Y%m%d%h%s")
+   mv -f $REL_DIR/$BUILD_DIR $REL_DIR/${BUILD_DIR}_$(date +"%Y%m%d%H%M%S")
 mkdir -p $REL_DIR/$BUILD_DIR
 cd $REL_DIR/$BUILD_DIR
 ecbuild  $ecbuild_option  $REL_DIR/$CODE_DIR/mpas-bundle
