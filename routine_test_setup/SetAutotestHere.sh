@@ -30,21 +30,21 @@ git clone --branch ${WorkflowBranch} https://github.com/${WorkflowGit}/${Workflo
 cd $exedir && mv -f gen_autotest.sh bundle_p*.sh run.sh ${TestDir}/. && cd - 
 
 
-
-cat > job_make_ctest.scr << EOF
-#!/bin/bash
-#PBS -A NMMM0015
-#PBS -l walltime=00:49:00
-#PBS -l select=1:ncpus=6:mpiprocs=6
-#PBS -N make_ctest
-#PBS -j oe
-#PBS -q premium
-#PBS -o p2.log 
-#PBS -e p2.err
 #
-${TestDir}/bundle_p2.sh ${cycle_outdir} 2>&1 | tee > ${TestDir}/log.makectest
-EOF
-
+#cat > job_make_ctest.scr << EOF
+##!/bin/bash
+##PBS -A NMMM0015
+##PBS -l walltime=00:49:00
+##PBS -l select=1:ncpus=4:mpiprocs=4
+##PBS -N make_ctest
+##PBS -j oe
+##PBS -q premium
+##PBS -o p2.log 
+##PBS -e p2.err
+##
+#${TestDir}/bundle_p2.sh ${cycle_outdir} 2>&1 | tee > ${TestDir}/log.makectest
+#EOF
+#
 
 #(III) Modify default cylc settings
 cat > global.rc << EOF

@@ -15,6 +15,7 @@ run=$2
 module add ncarenv
 echo "case=$1 ; run=$2"
 
+
 if [ $case -eq 1 ]; then
 # case-1
 # checkout mpasbunle, ecbuild --> CMakelists.txt
@@ -36,11 +37,8 @@ elif [ $case -eq 2 ]; then
     echo "head -n 60 bundle_p2.sh"  
     head -n 60 bundle_p2.sh
     echo
-    echo "dry: qsub job_make_ctest.scr"
-    echo 
   elif [ $run -eq 1 ]; then
-    qsub job_make_ctest.scr
-#    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
+    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
   fi
 elif [ $case -eq 12 ]; then
   echo "cmake;  make, ctest"
@@ -48,13 +46,12 @@ elif [ $case -eq 12 ]; then
     echo "dry:   both bundle_p1 and p2.sh"
     echo "dry: ./bundle_p1.sh br_$name_jedi_dir &>  log.b"
     echo "dry: ./bundle_p2.sh br_$name_jedi_dir &>  log.makectest "
-    echo "dry: qsub job_make_ctest.scr"
+#    echo "dry: qsub job_make_ctest.scr"
     echo 
   elif [ $run -eq 1 ]; then
     ./bundle_p1.sh  br_$name_jedi_dir &>  log.b
-    sleep 5m
-    qsub job_make_ctest.scr
-#    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
+    sleep 7m
+    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
   fi
 elif [ $case -eq 3 ]; then
 # case-3
@@ -73,3 +70,10 @@ else
   echo "wrong option, stop"
   exit
 fi
+
+
+
+#--- donot use now
+#
+#    qsub job_make_ctest.scr
+#
