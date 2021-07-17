@@ -29,6 +29,7 @@ make -j8
 
 
 # Check if build was successful by checking for presence of final built executable
+is=0     # success
 if [[ -f "$REL_DIR/$BUILD_DIR/bin/mpasjedi_variational.x" ]]; then
    # Build successful. Run ctests.
    cd $REL_DIR/$BUILD_DIR/mpasjedi
@@ -39,6 +40,7 @@ if [[ -f "$REL_DIR/$BUILD_DIR/bin/mpasjedi_variational.x" ]]; then
    elif [[ ! -f ./Testing/Temporary/LastTest.log ]]; then
       body="Build was successful, but no LastTest.log file found. ctests probably did not run for some reason."
    else
+      is=1
       body="mpas-bundle successfully built and all mpas-jedi ctests passed. All is right in the world."
       status=success
       cd $REL_DIR
@@ -50,3 +52,19 @@ else
 fi
 # Notify $email about what happened.
 mail -s "mpas-bundle cron autotest $status" $email <<< "$body" 
+
+
+# check hash number for git tag
+f="CMakeLists.txt"
+if [ $is -eq 1 ];then
+  s="success"
+else
+  s="fail"
+fi
+cd $REL_DIR/$CODE_DIR/mpas-bundle
+cp -rp $f $f.org
+source .github/stable_mark.sh
+mv $f  $REL_DIR/${f}_$(date '+%Y-%m-%d_%H.%M.%S')_$s
+cp -rp $f.org $f
+
+  

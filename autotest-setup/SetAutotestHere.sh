@@ -32,7 +32,7 @@ cd $exedir && mv -f gen_autotest.sh bundle_p*.sh  ${TestDir}/.  && cd -
 cat > crontab.txt << EOF
 00 01 * * 1,2,3,4,5,6  ${TestDir}/bundle_p1.sh ${cycle_outdir} &> ${TestDir}/log.cmake
 10 01 * * 1,2,3,4,5,6  /opt/pbs/bin/qsub ${TestDir}/job_make_ctest.scr
-10 02 * * 4            ${TestDir}/gen_autotest.sh ${cycle_outdir}  &>  ${TestDir}/log.runda
+10 05 * * 4            ${TestDir}/gen_autotest.sh ${cycle_outdir}  &>  ${TestDir}/log.runda
 EOF
 
 

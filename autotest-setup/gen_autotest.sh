@@ -3,7 +3,7 @@
 #
 #-- debug options
 #
-if_ckbuild=0        # 1(def) /0 : check   / No  [build]
+if_ckbuild=1        # 1(def) /0 : check   / No  [build]
 if_rundafc=1        # 1(def) /0 : run     / No 
 if_pp=1             # 1(def) /0 : pp plot / No
 #   
@@ -11,7 +11,7 @@ if_pp=1             # 1(def) /0 : pp plot / No
 #
 gridres=OIE120km    # grid resolution
 DAType=3denvar      #
-tmax=200            # max minutes to wait for DA+FC completion
+tmax=300            # max minutes to wait for DA+FC completion
 tppmax=35           # ...                     plots
 #
 #-- 6 d run
