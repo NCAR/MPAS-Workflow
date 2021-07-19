@@ -43,14 +43,18 @@ elif [ $case -eq 2 ]; then
 #    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
   fi
 elif [ $case -eq 12 ]; then
+  echo "cmake;  make, ctest"
+  if [ $run -eq 0 ]; then
     echo "dry:   both bundle_p1 and p2.sh"
     echo "dry: ./bundle_p1.sh br_$name_jedi_dir &>  log.b"
     echo "dry: ./bundle_p2.sh br_$name_jedi_dir &>  log.makectest "
+    echo "dry: qsub job_make_ctest.scr"
     echo 
   elif [ $run -eq 1 ]; then
     ./bundle_p1.sh  br_$name_jedi_dir &>  log.b
     sleep 5m
-    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
+    qsub job_make_ctest.scr
+#    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
   fi
 elif [ $case -eq 3 ]; then
 # case-3
@@ -66,18 +70,6 @@ elif [ $case -eq 3 ]; then
     ./gen_autotest.sh  br_$name_jedi_dir &>  log.t
   fi
 else
-  echo
-#elif [ $case == "2.1" ]; then
-## case-1
-## make -j 8;  schedule cron job for it
-#  echo "make; ctest"
-#  if [ $run -eq 0 ]; then
-#    echo "head -n 60 bundle_p2.1.sh ; only make  "  
-#    head -n 60 bundle_p2.1.sh
-#    echo
-#    echo "dry: qsub job_make_ctest.scr"
-#    echo 
-#  elif [ $run -eq 1 ]; then
-#    qsub job_make_ctest.scr
-#  fi
+  echo "wrong option, stop"
+  exit
 fi
