@@ -1,15 +1,16 @@
 - obs space:
     name: mhs_n19
     obsdatain:
-      obsfile: InDBDir/mhs_n19_obs_2018041500.nc4
+      obsfile: InDBDir/mhs_n19_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_mhs_n19.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_mhs_n19.h5
     simulated variables: [brightness_temperature]
     channels: &allmhs_channels 1-5
   obs error:
     covariance model: diagonal
   obs operator: &allmhscrtm
     name: CRTM
+    SurfaceWindGeoVars: uv
     Absorbers: [H2O,O3,CO2]
     Clouds: [Water, Ice, Rain, Snow, Graupel]
     linear obs operator:
@@ -52,9 +53,9 @@
 - obs space:
     name: mhs_n18
     obsdatain:
-      obsfile: InDBDir/mhs_n18_obs_2018041500.nc4
+      obsfile: InDBDir/mhs_n18_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_mhs_n18.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_mhs_n18.h5
     simulated variables: [brightness_temperature]
     channels: *allmhs_channels
   obs error:
@@ -83,9 +84,9 @@
 - obs space:
     name: mhs_metop-a
     obsdatain:
-      obsfile: InDBDir/mhs_metop-a_obs_2018041500.nc4
+      obsfile: InDBDir/mhs_metop-a_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_mhs_metop-a.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_mhs_metop-a.h5
     simulated variables: [brightness_temperature]
     channels: *allmhs_channels
   obs error:
@@ -114,9 +115,9 @@
 - obs space:
     name: mhs_metop-b
     obsdatain:
-      obsfile: InDBDir/mhs_metop-b_obs_2018041500.nc4
+      obsfile: InDBDir/mhs_metop-b_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_mhs_metop-b.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_mhs_metop-b.h5
     simulated variables: [brightness_temperature]
     channels: *allmhs_channels
   obs error:

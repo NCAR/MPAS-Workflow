@@ -1,9 +1,9 @@
 - obs space:
     name: amsua_n19
     obsdatain:
-      obsfile: InDBDir/amsua_n19_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_n19_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n19_cld.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n19_cld.h5
     simulated variables: [brightness_temperature]
     channels: 1-5,15
     obs perturbations seed: MemberSeed
@@ -19,6 +19,7 @@
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n19_cld.nc4
   obs operator: &cldamsuacrtm
     name: CRTM
+    SurfaceWindGeoVars: uv
     Absorbers: [H2O,O3,CO2]
     Clouds: [Water, Ice, Rain, Snow, Graupel]
     linear obs operator:
@@ -33,9 +34,9 @@
 - obs space:
     name: amsua_n15
     obsdatain:
-      obsfile: InDBDir/amsua_n15_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_n15_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n15_cld.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n15_cld.h5
     simulated variables: [brightness_temperature]
     channels: 1-5,15
     obs perturbations seed: MemberSeed
@@ -59,9 +60,9 @@
 - obs space:
     name: amsua_n18
     obsdatain:
-      obsfile: InDBDir/amsua_n18_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_n18_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n18_cld.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n18_cld.h5
     simulated variables: [brightness_temperature]
     channels: 1-5,15
     obs perturbations seed: MemberSeed
@@ -85,9 +86,9 @@
 - obs space:
     name: amsua_metop-a
     obsdatain:
-      obsfile: InDBDir/amsua_metop-a_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_metop-a_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_metop-a_cld.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_metop-a_cld.h5
     simulated variables: [brightness_temperature]
     channels: 1-5,15
     obs perturbations seed: MemberSeed
@@ -111,9 +112,9 @@
 - obs space:
     name: amsua_metop-b
     obsdatain:
-      obsfile: InDBDir/amsua_metop-b_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_metop-b_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_metop-b_cld.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_metop-b_cld.h5
     simulated variables: [brightness_temperature]
     channels: 1-5,15
     obs perturbations seed: MemberSeed
@@ -137,9 +138,9 @@
 - obs space:
     name: amsua_aqua
     obsdatain:
-      obsfile: InDBDir/amsua_aqua_obs_2018041500.nc4
+      obsfile: InDBDir/amsua_aqua_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_aqua_cld.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_aqua_cld.h5
     simulated variables: [brightness_temperature]
     channels: 1-5,15
     obs perturbations seed: MemberSeed

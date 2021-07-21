@@ -1,9 +1,9 @@
 - obs space:
     name: Radiosonde
     obsdatain:
-      obsfile: InDBDir/sondes_obs_2018041500.nc4
+      obsfile: InDBDir/sondes_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_sondes.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_sondes.h5
     simulated variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind]
     obs perturbations seed: MemberSeed
   obs operator:

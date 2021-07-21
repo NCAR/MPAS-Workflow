@@ -1,9 +1,11 @@
 - obs space:
     name: Aircraft
     obsdatain:
-      obsfile: InDBDir/aircraft_obs_2018041500.nc4
+      obsfile: InDBDir/aircraft_obs_2018041500.h5
+      max frame size: 40000
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_aircraft.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_aircraft.h5
+      max frame size: 40000
     simulated variables: [air_temperature, eastward_wind, northward_wind, specific_humidity]
   obs operator:
     name: VertInterp

@@ -109,6 +109,7 @@ set ahi = ahi$AHISuperOb[$hofxIndex]
 # OPTIONS: $benchmarkObsList, cldamsua, allmhs, clr$abi, all$abi, clr$ahi, all$ahi
 #TODO: separate amsua and mhs config for each instrument_satellite combo
 
+#TODO: upgrade abi and ahi data
 set hofxObsList = ($benchmarkObsList cldamsua allmhs all$abi all$ahi)
 
 

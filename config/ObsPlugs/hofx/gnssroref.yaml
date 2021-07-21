@@ -1,9 +1,9 @@
 - obs space:
     name: GnssroRef
     obsdatain:
-      obsfile: InDBDir/gnssro_obs_2018041500.nc4
+      obsfile: InDBDir/gnssro_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_gnssroref.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_gnssroref.h5
     simulated variables: [refractivity]
   obs operator:
     name: GnssroRef

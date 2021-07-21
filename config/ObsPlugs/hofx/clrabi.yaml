@@ -1,13 +1,14 @@
 - obs space:
     name: abi-clr_g16
     obsdatain:
-      obsfile: InDBDir/abi_g16_obs_2018041500.nc4
+      obsfile: InDBDir/abi_g16_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_abi-clr_g16.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_abi-clr_g16.h5
     simulated variables: [brightness_temperature]
     channels: &clrabi_channels 7-16
   obs operator:
     name: CRTM
+    SurfaceWindGeoVars: uv
     Absorbers: [H2O,O3,CO2]
     linear obs operator:
       Absorbers: [H2O]

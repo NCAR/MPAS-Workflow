@@ -1,9 +1,9 @@
 - obs space:
     name: Radiosonde
     obsdatain:
-      obsfile: InDBDir/sondes_obs_2018041500.nc4
+      obsfile: InDBDir/sondes_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_sondes.nc4
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_sondes.h5
     simulated variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind, specific_humidity]
     obs perturbations seed: MemberSeed
   obs operator:
@@ -16,5 +16,13 @@
   - filter: Background Check
     threshold: 3.0
     apply at iterations: 0, 1
+# avoids large ObsError values polluting plots of ObsError
+  - filter: Bounds Check
+    filter variables:
+    - name: specific_humidity
+    test variables:
+    - name: specific_humidity@ObsErrorData
+    minvalue: 0.0
+    maxvalue: 1.0
   get values:
     interpolation type: InterpolationType

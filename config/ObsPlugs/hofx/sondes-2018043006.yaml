@@ -1,9 +1,9 @@
 - obs space:
     name: Radiosonde
     obsdatain:
-      obsfile: InDBDir/sondes_obs_2018041500.nc4
+      obsfile: InDBDir/sondes_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_sondes.nc4
+      obsfile: OutDBDir/obsPrefix_AppType_sondes.h5
     simulated variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind]
   obs operator:
     name: VertInterp
