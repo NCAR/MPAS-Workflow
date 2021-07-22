@@ -23,7 +23,7 @@ body='Unexpected failure of mpas-bundle autotest script.'
 source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/gnu-openmpi-cheyenne.sh
 mkdir -p $REL_DIR/$BUILD_DIR
 cd $REL_DIR/$BUILD_DIR
-make -j18
+make -j16
 
 # Check if build was successful by checking for presence of final built executable
 if [[ -f "$REL_DIR/$BUILD_DIR/bin/mpasjedi_variational.x" ]]; then
