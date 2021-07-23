@@ -22,7 +22,7 @@ body='Unexpected failure of mpas-bundle autotest script.'
 
 
 [[ -d $REL_DIR/$CODE_DIR  ]] && \
-   mv -f $REL_DIR/$CODE_DIR  $REL_DIR/${CODE_DIR}$(date +"%Y%m%d%h%s")
+   mv -f $REL_DIR/$CODE_DIR  $REL_DIR/${CODE_DIR}_$(date '+%Y-%m-%d_%H.%M.%S')
 mkdir -p $REL_DIR/$CODE_DIR
 cd $REL_DIR/$CODE_DIR
 git clone -b ${bundle_branch} git@github.com:JCSDA-internal/mpas-bundle.git
@@ -31,7 +31,7 @@ source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/gnu-openmpi-cheyenne.sh
 
 
 [[ -d $REL_DIR/$BUILD_DIR ]] && \
-   mv -f $REL_DIR/$BUILD_DIR $REL_DIR/${BUILD_DIR}_$(date +"%Y%m%d%h%s")
+   mv -f $REL_DIR/$BUILD_DIR $REL_DIR/${BUILD_DIR}_$(date '+%Y-%m-%d_%H.%M.%S')
 mkdir -p $REL_DIR/$BUILD_DIR
 cd $REL_DIR/$BUILD_DIR
 ecbuild  $ecbuild_option  $REL_DIR/$CODE_DIR/mpas-bundle
