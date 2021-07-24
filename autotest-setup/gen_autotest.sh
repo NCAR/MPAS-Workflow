@@ -11,8 +11,8 @@ if_pp=1             # 1(def) /0 : pp plot / No
 #
 gridres=OIE120km    # grid resolution
 DAType=3denvar      #
-tmax=300            # max minutes to wait for DA+FC completion
-tppmax=35           # ...                     plots
+tmax=420            # max minutes  to wait for DA+FC completion
+tppmax=120          # ...                     plots
 #
 #-- 6 d run
 initialCycleDate=2018041500
