@@ -5,15 +5,16 @@ name_jedi_dir="mpasbundletest"
 
 # Customize variables
 AUTOTEST_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-user=${USER}
+user="yonggangyu"
 email=$user@ucar.edu
-REL_DIR=/glade/scratch/$user/$name_jedi_dir
+REL_DIR=$HOME/vagrant_data/scratch/$name_jedi_dir
 CODE_DIR=code    # Changing this will require changes to the automated cycling scripts.
 BUILD_DIR=build  # Changing this will require changes to the automated cycling scripts.
 echo "src_build_run_dir =$REL_DIR"
-bundle_branch="feature/fckit_log"
+bundle_branch="feature/mac_test"
 ecbuild_option="--build=RelWithDebInfo"
 # ecbuild_option="--build=RelWithDebInfo -DBUNDLE_SKIP_ECKIT=OFF  -DBUNDLE_SKIP_FCKIT=OFF  -DBUNDLE_SKIP_ATLAS=OFF"
+
 
 # Default email subject and body variables
 status=FAILURE

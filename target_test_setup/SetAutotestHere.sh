@@ -9,7 +9,7 @@ cycle_outdir="br_$b" # br=build_run
 # continue modify
 WorkflowRepo=MPAS-Workflow
 WorkflowGit=NCAR
-WorkflowBranch=feature/target_version_test
+WorkflowBranch=feature/mac_test
 #WorkflowBranch=develop
 #
 TopDirectory=`pwd`
