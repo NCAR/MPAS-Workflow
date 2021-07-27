@@ -12,7 +12,6 @@ echo "sd = $sd"
 
 case=$1
 run=$2
-module add ncarenv
 echo "case=$1 ; run=$2"
 
 if [ $case -eq 1 ]; then
