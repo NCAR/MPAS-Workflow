@@ -7,7 +7,7 @@ name_jedi_dir="mpasbundletest"
 AUTOTEST_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 user="yonggangyu"
 email=$user@ucar.edu
-REL_DIR=$HOME/vagrant_data/scratch/$name_jedi_dir
+REL_DIR=$HOME/$name_jedi_dir
 CODE_DIR=code    # Changing this will require changes to the automated cycling scripts.
 BUILD_DIR=build  # Changing this will require changes to the automated cycling scripts.
 echo "src_build_run_dir =$REL_DIR"
@@ -45,4 +45,4 @@ else
    body="mpas-bundle failed to build. See build logs in $REL_DIR or ${AUTOTEST_DIR}"
 fi
 # Notify $email about what happened.
-mail -s "mpas-bundle cron autotest $status" $email <<< "$body" 
+#mail -s "mpas-bundle cron autotest $status" $email <<< "$body" 
