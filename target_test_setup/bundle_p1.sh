@@ -12,7 +12,13 @@ CODE_DIR=code    # Changing this will require changes to the automated cycling s
 BUILD_DIR=build  # Changing this will require changes to the automated cycling scripts.
 echo "src_build_run_dir =$REL_DIR"
 bundle_branch="feature/mac_test"
-ecbuild_option="--build=RelWithDebInfo"
+ecbuild_option="--build=RelWithDebInfo       \
+ -DCMAKE_C_COMPILER=/usr/local/bin/gcc-11    \
+ -DCMAKE_CXX_COMPILER=/usr/local/bin/g++-11  \
+ -DCMAKE_FC_COMPILER=/usr/local/bin/gfortran-11
+"
+
+# ecbuild_option="--build=RelWithDebInfo"
 # ecbuild_option="--build=RelWithDebInfo -DBUNDLE_SKIP_ECKIT=OFF  -DBUNDLE_SKIP_FCKIT=OFF  -DBUNDLE_SKIP_ATLAS=OFF"
 
 
