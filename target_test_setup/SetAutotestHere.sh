@@ -30,37 +30,37 @@ git clone -b  ${WorkflowBranch} https://github.com/${WorkflowGit}/${WorkflowRepo
 cd $exedir && mv -f gen_autotest.sh bundle_p*.sh run.sh ${TestDir}/. && cd - 
 
 
-
-cat > job_make_ctest.scr << EOF
-#!/bin/bash
-#PBS -A NMMM0015
-#PBS -l walltime=00:49:00
-#PBS -l select=1:ncpus=4:mpiprocs=4
-#PBS -N make_ctest
-#PBS -j oe
-#PBS -q premium
-#PBS -o p2.log 
-#PBS -e p2.err
 #
-${TestDir}/bundle_p2.sh ${cycle_outdir} 2>&1 | tee > ${TestDir}/log.makectest
-EOF
-
-
-
-#(II) Modify default cylc settings
-cat > global.rc << EOF
-[hosts]
-    [[localhost]]
-        work directory = /glade/scratch/${USER}/cylc-run
-        run directory = /glade/scratch/${USER}/cylc-run
-        [[[batch systems]]]
-            [[[[pbs]]]]
-                job name length maximum = 236
-EOF
-## copy global.rc to your ~/.cylc/ directory
-mkdir -p ~/.cylc; cp -p global.rc  ~/.cylc/
-
-
+#cat > job_make_ctest.scr << EOF
+##!/bin/bash
+##PBS -A NMMM0015
+##PBS -l walltime=00:49:00
+##PBS -l select=1:ncpus=4:mpiprocs=4
+##PBS -N make_ctest
+##PBS -j oe
+##PBS -q premium
+##PBS -o p2.log 
+##PBS -e p2.err
+##
+#${TestDir}/bundle_p2.sh ${cycle_outdir} 2>&1 | tee > ${TestDir}/log.makectest
+#EOF
+#
+#
+#
+##(II) Modify default cylc settings
+#cat > global.rc << EOF
+#[hosts]
+#    [[localhost]]
+#        work directory = /glade/scratch/${USER}/cylc-run
+#        run directory = /glade/scratch/${USER}/cylc-run
+#        [[[batch systems]]]
+#            [[[[pbs]]]]
+#                job name length maximum = 236
+#EOF
+### copy global.rc to your ~/.cylc/ directory
+#mkdir -p ~/.cylc; cp -p global.rc  ~/.cylc/
+#
+#
 
 ##cat > job_make_ctest.scr << EOF
 ###!/bin/bash

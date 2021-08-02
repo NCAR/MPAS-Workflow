@@ -24,11 +24,9 @@ ecbuild_option="--build=RelWithDebInfo   \
 # ecbuild_option="--build=RelWithDebInfo"
 # ecbuild_option="--build=RelWithDebInfo -DBUNDLE_SKIP_ECKIT=OFF  -DBUNDLE_SKIP_FCKIT=OFF  -DBUNDLE_SKIP_ATLAS=OFF"
 
-
 # Default email subject and body variables
 status=FAILURE
 body='Unexpected failure of mpas-bundle autotest script.'
-
 
 [[ -d $REL_DIR/$CODE_DIR  ]] && \
    mv -f $REL_DIR/$CODE_DIR  $REL_DIR/${CODE_DIR}_$(date '+%Y-%m-%d_%H.%M.%S')
@@ -38,7 +36,6 @@ git clone -b ${bundle_branch} git@github.com:JCSDA-internal/mpas-bundle.git
 sed -i_HTTP 's/https:\/\/github.com\//git@github.com:/' mpas-bundle/CMakeLists.txt
 source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/gnu-openmpi-mac.sh
 
-
 [[ -d $REL_DIR/$BUILD_DIR ]] && \
    mv -f $REL_DIR/$BUILD_DIR $REL_DIR/${BUILD_DIR}_$(date '+%Y-%m-%d_%H.%M.%S')
 mkdir -p $REL_DIR/$BUILD_DIR
@@ -46,4 +43,4 @@ cd $REL_DIR/$BUILD_DIR
 ecbuild  $ecbuild_option  $REL_DIR/$CODE_DIR/mpas-bundle
 
 
-# end before make -j8; ctest
+# end before make -j16; ctest
