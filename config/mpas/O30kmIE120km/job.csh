@@ -20,7 +20,7 @@ setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 #setenv HofXNodes 4
 
 # unstructured interpolation
-setenv HofXJobMinutes 5
+setenv HofXJobMinutes 10
 setenv HofXNodes 2
 
 setenv HofXPEPerNode 36

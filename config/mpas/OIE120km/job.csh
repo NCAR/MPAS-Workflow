@@ -19,7 +19,7 @@ setenv HofXNodes 1
 setenv HofXPEPerNode 36
 setenv HofXMemory 109
 
-set DeterministicVerifyObsJobMinutes = 5
+set DeterministicVerifyObsJobMinutes = 15
 set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
 set EnsembleVerifyObsEnsMeanMembersPerJobMinute = 10
 @ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} / ${EnsembleVerifyObsEnsMeanMembersPerJobMinute}
