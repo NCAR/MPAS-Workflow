@@ -175,7 +175,7 @@ while ( ${fcDate} <= ${finalFCDate} )
 
   ## Update MPASSeaVariables from GFS/GEFS analyses
   if ( ${updateSea} ) then
-    set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}"`
+    set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
     set SeaFile = ${SeaAnaDir}/${fcDate}${seaMemDir}/${SeaFilePrefix}.${fcFileExt}
     ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}
 
