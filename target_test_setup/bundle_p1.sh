@@ -34,7 +34,8 @@ mkdir -p $REL_DIR/$CODE_DIR
 cd $REL_DIR/$CODE_DIR
 git clone -b ${bundle_branch} git@github.com:JCSDA-internal/mpas-bundle.git
 sed -i_HTTP 's/https:\/\/github.com\//git@github.com:/' mpas-bundle/CMakeLists.txt
-source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/gnu-openmpi-mac.sh
+#source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/gnu-openmpi-mac.sh
+source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/clang-mpich-mac.sh
 
 [[ -d $REL_DIR/$BUILD_DIR ]] && \
    mv -f $REL_DIR/$BUILD_DIR $REL_DIR/${BUILD_DIR}_$(date '+%Y-%m-%d_%H.%M.%S')

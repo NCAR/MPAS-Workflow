@@ -19,7 +19,8 @@ body='Unexpected failure of mpas-bundle autotest script.'
 # git and ecbuild were done in bundle_p1.sh
 
 # cmake and ctest
-source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/gnu-openmpi-mac.sh
+#source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/gnu-openmpi-mac.sh
+source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/clang-mpich-mac.sh
 mkdir -p $REL_DIR/$BUILD_DIR
 cd $REL_DIR/$BUILD_DIR
 make -j16
