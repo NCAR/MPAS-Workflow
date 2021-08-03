@@ -8,8 +8,8 @@ AUTOTEST_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 user="yonggangyu"
 email=$user@ucar.edu
 REL_DIR=$HOME/$name_jedi_dir
-CODE_DIR=code    # Changing this will require changes to the automated cycling scripts.
-BUILD_DIR=build  # Changing this will require changes to the automated cycling scripts.
+CODE_DIR=code    # permanent
+BUILD_DIR=build  # per..
 echo "src_build_run_dir =$REL_DIR"
 
 # Default email subject and body variables
