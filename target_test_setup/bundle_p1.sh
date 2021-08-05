@@ -11,7 +11,8 @@ REL_DIR=/glade/scratch/$user/$name_jedi_dir
 CODE_DIR=code    # Changing this will require changes to the automated cycling scripts.
 BUILD_DIR=build  # Changing this will require changes to the automated cycling scripts.
 echo "src_build_run_dir =$REL_DIR"
-bundle_branch="feature/fckit_log"
+#bundle_branch="feature/fckit_log"
+bundle_branch="feature/new_jedi_module"
 ecbuild_option="--build=RelWithDebInfo"
 # ecbuild_option="--build=RelWithDebInfo -DBUNDLE_SKIP_ECKIT=OFF  -DBUNDLE_SKIP_FCKIT=OFF  -DBUNDLE_SKIP_ATLAS=OFF"
 
