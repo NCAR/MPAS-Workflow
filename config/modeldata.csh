@@ -121,6 +121,7 @@ setenv GraphInfoDir /glade/work/duda/static_moved_to_campaign
 setenv updateSea 1
 setenv seaMaxMembers ${nGEFSMembers}
 setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
+setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
 if ( "$DAType" =~ *"eda"* ) then
   # using member-specific sst/xice data from GEFS
   # stochastic - only 120km
@@ -128,7 +129,7 @@ if ( "$DAType" =~ *"eda"* ) then
   setenv seaMemFmt "${gefsMemFmt}"
 else
   # deterministic
-  setenv SeaAnaDir ${GFSAnaDirOuter}
+  setenv SeaAnaDir ${deterministicSeaAnaDir}
   setenv seaMemFmt " "
 endif
 
