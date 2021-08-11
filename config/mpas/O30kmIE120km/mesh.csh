@@ -16,5 +16,5 @@ setenv RADTHINAMOUNT      "0.75"
 ## Background Error
 # Last updated 08 Feb 2021
 # works for 36pe/128pe and 120km domain
-setenv bumpLocDir /glade/scratch/bjung/x_bumploc_20210208
+setenv bumpLocDir /glade/scratch/bjung/x_bumploc_20210811
 setenv bumpLocPrefix bumploc_2000_5
