@@ -175,7 +175,10 @@ cat >! suite.rc << EOF
 [scheduling]
   # Maximum number of simultaneous active dates;
   # useful for constraining non-blocking flows
-  max active cycle points = 40
+  # and to avoid over-utilization of login nodes
+  # hint: execute 'ps aux | grep $USER' to check your login node overhead
+  # default: 3
+  max active cycle points = 4
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
   [[dependencies]]
