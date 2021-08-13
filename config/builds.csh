@@ -15,7 +15,7 @@ setenv BuildCompiler 'gnu-openmpi'
 # Note: at this time, all executables should be built in the same environment, one that is
 # consistent with config/environment.csh
 
-set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--static_b
+set commonBuild = /glade/scratch/guerrett/mpasbundletest/mpas-bundle_gnu-openmpi_13AUG2021
 
 # MPAS-JEDI
 # ---------
