@@ -91,6 +91,11 @@ sed -i 's@nCells@'${MPASnCellsEnsemble}'@' $NamelistFile
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
 
+## MPASJEDI variable configs
+foreach file ($MPASJEDIVariablesFiles)
+  ln -sfv ${ModelConfigDir}/${file} .
+end
+
 # =============
 # Generate yaml
 # =============
