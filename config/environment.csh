@@ -7,10 +7,9 @@ source config/builds.csh
 #######################
 
 source /etc/profile.d/modules.csh
-setenv OPT /glade/work/miesch/modules
-module use $OPT/modulefiles/core
-
+setenv OPT /glade/work/jedipara/cheyenne/opt/modules
 module purge
+module use $OPT/modulefiles/core
 module load jedi/${BuildCompiler}
 
 ## CustomPIO
