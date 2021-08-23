@@ -50,6 +50,7 @@ cost function:
         prefix: bumpLocPrefix
         strategy: common
         load_nicas_local: 1
+        verbosity: main
     variables: *incvars
     members:
 EnsemblePbMembers
