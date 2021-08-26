@@ -38,7 +38,8 @@ elif [ $case -eq 2 ]; then
     head -n 60 bundle_p2.sh
     echo
   elif [ $run -eq 1 ]; then
-    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
+#    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
+    qsub job_make_ctest.scr
   fi
 elif [ $case -eq 12 ]; then
   echo "cmake;  make, ctest"
@@ -50,8 +51,9 @@ elif [ $case -eq 12 ]; then
     echo 
   elif [ $run -eq 1 ]; then
     ./bundle_p1.sh  br_$name_jedi_dir &>  log.b
-    sleep 7m
-    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
+    sleep 9m
+#    ./bundle_p2.sh  br_$name_jedi_dir &>  log.makectest
+    qsub job_make_ctest.scr
   fi
 elif [ $case -eq 3 ]; then
 # case-3
