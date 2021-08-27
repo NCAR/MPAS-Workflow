@@ -23,7 +23,7 @@ body='Unexpected failure of mpas-bundle autotest script.'
 source $REL_DIR/$CODE_DIR/mpas-bundle/env-setup/clang-mpich-mac.sh
 mkdir -p $REL_DIR/$BUILD_DIR
 cd $REL_DIR/$BUILD_DIR
-make -j16
+make -j12
 
 # Check if build was successful by checking for presence of final built executable
 if [[ -f "$REL_DIR/$BUILD_DIR/bin/mpasjedi_variational.x" ]]; then

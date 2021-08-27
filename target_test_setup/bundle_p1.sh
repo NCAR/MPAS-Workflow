@@ -18,11 +18,11 @@ ecbuild_option="--build=RelWithDebInfo -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
 status=FAILURE
 body='Unexpected failure of mpas-bundle autotest script.'
 
-#[[ -d $REL_DIR/$CODE_DIR  ]] && \
-#   mv -f $REL_DIR/$CODE_DIR  $REL_DIR/${CODE_DIR}_$(date '+%Y-%m-%d_%H.%M.%S')
-#
-#[[ -d $REL_DIR/$BUILD_DIR ]] && \
-#   mv -f $REL_DIR/$BUILD_DIR $REL_DIR/${BUILD_DIR}_$(date '+%Y-%m-%d_%H.%M.%S')
+[[ -d $REL_DIR/$CODE_DIR  ]] && \
+   mv -f $REL_DIR/$CODE_DIR  $REL_DIR/${CODE_DIR}_$(date '+%Y-%m-%d_%H.%M.%S')
+
+[[ -d $REL_DIR/$BUILD_DIR ]] && \
+   mv -f $REL_DIR/$BUILD_DIR $REL_DIR/${BUILD_DIR}_$(date '+%Y-%m-%d_%H.%M.%S')
 
 
 mkdir -p $REL_DIR/$CODE_DIR
@@ -35,20 +35,4 @@ mkdir -p $REL_DIR/$BUILD_DIR
 cd $REL_DIR/$BUILD_DIR
 ecbuild  $ecbuild_option  $REL_DIR/$CODE_DIR/mpas-bundle
 
-
 # end before make -j16; ctest
-
-
-
-exit
-FLAG="
- -DCMAKE_C_COMPILER=/usr/local/bin/gcc-11  \
- -DCMAKE_CXX_COMPILER=/usr/local/bin/g++-11  \
- -DCMAKE_FC_COMPILER=/usr/local/bin/gfortran-11 \
- -DMPI_HOME=/usr/local/Cellar/open-mpi/4.1.1_2 \
- -DCMAKE_PREFIX_PATH=/Users/yonggang/local
-"
-#  -DCMAKE_LIBRARY_PATH=/Users/yonggang/local \  fail
-# ecbuild_option="--build=RelWithDebInfo"
-# ecbuild_option="--build=RelWithDebInfo -DBUNDLE_SKIP_ECKIT=OFF  -DBUNDLE_SKIP_FCKIT=OFF  -DBUNDLE_SKIP_ATLAS=OFF
-"
