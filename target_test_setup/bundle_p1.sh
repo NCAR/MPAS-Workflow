@@ -14,6 +14,11 @@ echo "src_build_run_dir =$REL_DIR"
 bundle_branch="feature/mac_test"
 ecbuild_option="--build=RelWithDebInfo -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl"
 
+bundle_branch="feature/interp_ctest"
+ecbuild_option=" -DBUNDLE_SKIP_ECKIT=OFF -DBUNDLE_SKIP_FCKIT=OFF -DBUNDLE_SKIP_ATLAS=OFF  -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl"
+
+
+
 # Default email subject and body variables
 status=FAILURE
 body='Unexpected failure of mpas-bundle autotest script.'
