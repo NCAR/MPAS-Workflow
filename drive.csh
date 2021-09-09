@@ -19,7 +19,7 @@ set initialCyclePoint = 20180415T00
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180514T18
+set finalCyclePoint = 20180421T00
 
 
 #########################
@@ -39,7 +39,7 @@ set VerifyDeterministicDA = True
 ## CompareDA2Benchmark: compare verification nc files between two experiments
 #    after the DA verification completes
 # OPTIONS: True/False
-set CompareDA2Benchmark = False
+set CompareDA2Benchmark = True
 
 ## VerifyExtendedMeanFC: whether to run verification scripts across
 #    extended forecast states, first intialized at mean analysis
@@ -55,7 +55,7 @@ set VerifyMemberBG = True
 ## CompareBG2Benchmark: compare verification nc files between two experiments
 #    after the MemberBG verification completes
 # OPTIONS: True/False
-set CompareBG2Benchmark = False
+set CompareBG2Benchmark = True
 
 ## VerifyEnsMeanBG: whether to run verification scripts for ensemble
 #    mean background state.
@@ -533,6 +533,10 @@ cat >! suite.rc << EOF
   number of cycle points = 200
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
+
+echo "nail x1"
+echo '\${ExperimentName}  \${mainScriptDir}'
+echo "${ExperimentName}   ${mainScriptDir}"
 
 cylc register ${ExperimentName} ${mainScriptDir}
 cylc validate ${ExperimentName}
