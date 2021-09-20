@@ -106,8 +106,15 @@ module purge
 module load cylc
 module load graphviz
 
+## SuiteName: name of the cylc suite, can be used to differentiate between two
+# suites running simultaneously in the same ${ExperimentName} directory
+#
+# default: ${ExperimentName}
+# example: ${ExperimentName}_verify for a simultaneous suite running only Verification
+set SuiteName = ${ExperimentName}
+
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
-rm -fr ${cylcWorkDir}/${ExperimentName}
+rm -fr ${cylcWorkDir}/${SuiteName}
 echo "creating suite.rc"
 cat >! suite.rc << EOF
 #!Jinja2
@@ -131,7 +138,7 @@ cat >! suite.rc << EOF
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
 [meta]
-  title = "${PackageBaseName}--${ExperimentName}"
+  title = "${PackageBaseName}--${SuiteName}"
 # critical path cycle dependencies
   {% set PrimaryCPGraph = "" %}
   {% set SecondaryCPGraph = "" %}
@@ -352,7 +359,7 @@ cat >! suite.rc << EOF
       execution retry delays = ${RTPPInflationRetry}
     [[[directives]]]
       -m = ae
-      -l = select=${CyclingInflationNodesPerMember}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
+      -l = select=${CyclingInflationNodes}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
   [[GenerateABEInflation]]
     script = \$origin/GenerateABEInflation.csh
     [[[job]]]
@@ -534,8 +541,8 @@ cat >! suite.rc << EOF
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
 
-cylc register ${ExperimentName} ${mainScriptDir}
-cylc validate ${ExperimentName}
-cylc run ${ExperimentName}
+cylc register ${SuiteName} ${mainScriptDir}
+cylc validate ${SuiteName}
+cylc run ${SuiteName}
 
 exit

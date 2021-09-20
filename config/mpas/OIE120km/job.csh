@@ -33,7 +33,7 @@ setenv VerifyModelPEPerNode 36
 
 
 set DeterministicDAJobMinutes = 5
-set EnsembleDAMembersPerJobMinute = 5
+set EnsembleDAMembersPerJobMinute = 3
 @ CyclingDAJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
 @ CyclingDAJobMinutes = ${CyclingDAJobMinutes} + ${DeterministicDAJobMinutes}
 setenv CyclingDAMemory 45
@@ -48,11 +48,18 @@ endif
 
 setenv CyclingInflationJobMinutes 25
 setenv CyclingInflationMemory 109
-setenv CyclingInflationNodesPerMember ${HofXNodes}
-setenv CyclingInflationPEPerNode      ${HofXPEPerNode}
+setenv CyclingInflationNodes ${HofXNodes}
+setenv CyclingInflationPEPerNode ${HofXPEPerNode}
 
-@ CyclingDAPEPerMember = ${CyclingDANodesPerMember} * ${CyclingDAPEPerNode}
-setenv CyclingDAPEPerMember ${CyclingDAPEPerMember}
-
-@ CyclingDANodes = ${CyclingDANodesPerMember} * ${nEnsDAMembers}
-setenv CyclingDANodes ${CyclingDANodes}
+if ( "$nEnsDAMembers" == 80 ) then
+  # special config that works for 80 members and reduces overhead
+  # ideally, there would be an estimate of memory useage per member,
+  # which could be used to calculate the optimal CyclingDANodes and
+  # CyclingDAPEPerNode that match the NPE used for localization and
+  # covariance generation (latter may become generic)
+  setenv CyclingDAPEPerNode 30
+  setenv CyclingDANodes 96
+else
+  @ CyclingDANodes = ${CyclingDANodesPerMember} * ${nEnsDAMembers}
+  setenv CyclingDANodes ${CyclingDANodes}
+endif
