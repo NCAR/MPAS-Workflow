@@ -78,9 +78,7 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 # Link/copy bg from other directory + ensure that MPASJEDIDiagVariables are present
 # =================================================================================
 set bg = ./${bgDir}
-set an = ./${anDir}
 mkdir -p ${bg}
-mkdir -p ${an}
 
 set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$fileDate.nc
 set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
@@ -89,21 +87,17 @@ rm ${bgFile}${OrigFileSuffix} ${bgFile}
 ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
 ln -sfv ${bgFileOther} ${bgFile}
 
-# Remove existing analysis file, then link to bg file
-# ===================================================
-set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
-rm ${anFile}
-
 set copyDiags = 0
 foreach var ({$MPASJEDIDiagVariables})
-  ncdump -h ${bgFileOther} | grep -q $var
+  echo "Checking for presence of variable ($var) in ${bgFileOther}"
+  ncdump -h ${bgFileOther} | grep $var
   if ( $status != 0 ) then
     @ copyDiags++
-    echo "Copying MPASJEDIDiagVariables to background state"
+    echo "variable ($var) not present"
   endif 
 end
 if ( $copyDiags > 0 ) then
-  echo "Copy diagnostic variables used in HofX to bg"
+  echo "Copy diagnostic variables used in HofX to bg: $MPASJEDIDiagVariables"
   # ===============================================
   rm ${bgFile}
   cp -v ${bgFile}${OrigFileSuffix} ${bgFile}
