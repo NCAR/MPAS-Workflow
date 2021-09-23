@@ -341,7 +341,11 @@ cat >! suite.rc << EOF
       -l = select=1:ncpus=36:mpiprocs=36
   [[CleanBase]]
     [[[job]]]
-      batch system = background
+      execution time limit = PT5M
+    [[[directives]]]
+      -q = share
+      -A = ${VFAccountNumber}
+      -l = select=1:ncpus=1
 #Cycling components
   [[CyclingDA]]
     env-script = cd ${mainScriptDir}; ./jediPrepCyclingDA.csh "1" "0" "DA"
