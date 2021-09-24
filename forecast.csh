@@ -48,6 +48,7 @@ set self_fcLengthHR = fcLengthHRTEMPLATE
 set self_fcIntervalHR = fcIntervalHRTEMPLATE
 set config_run_duration = 0_${self_fcLengthHR}:00:00
 set output_interval = 0_${self_fcIntervalHR}:00:00
+set deleteZerothForecast = deleteZerothForecastTEMPLATE
 
 # static variables
 set self_icStatePrefix = ${ANFilePrefix}
@@ -158,6 +159,19 @@ else
   ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
 endif
 
+if ( "$deleteZerothForecast" == "True" ) then
+  # Optionally remove initial forecast file
+  # =======================================
+  set fcDate = ${thisValidDate}
+  set yy = `echo ${fcDate} | cut -c 1-4`
+  set mm = `echo ${fcDate} | cut -c 5-6`
+  set dd = `echo ${fcDate} | cut -c 7-8`
+  set hh = `echo ${fcDate} | cut -c 9-10`
+  set fcFileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
+  set fcFileExt = ${fcFileDate}.nc
+  set fcFile = ${FCFilePrefix}.${fcFileExt}
+  rm ${fcFile}
+endif
 
 # Update/add fields to output for DA
 # ==================================
