@@ -99,7 +99,7 @@ rm ${anFile}
 
 set copyDiags = 0
 foreach var ({$MPASJEDIDiagVariables})
-  ncdump -h ${bgFileOther} | grep -q $var
+  ncdump -h ${bgFileOther} | grep $var
   if ( $status != 0 ) then
     @ copyDiags++
     echo "Copying MPASJEDIDiagVariables to background state"
