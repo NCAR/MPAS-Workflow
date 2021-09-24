@@ -171,6 +171,8 @@ if ( "$deleteZerothForecast" == "True" ) then
   set fcFileExt = ${fcFileDate}.nc
   set fcFile = ${FCFilePrefix}.${fcFileExt}
   rm ${fcFile}
+  set diagFile = ${DIAGFilePrefix}.${fcFileExt}
+  rm ${diagFile}
 endif
 
 # Update/add fields to output for DA
