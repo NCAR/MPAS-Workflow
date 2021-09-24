@@ -107,6 +107,7 @@ sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
     -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
     -e 's@fcLengthHRTEMPLATE@'${CyclingWindowHR}'@' \
     -e 's@fcIntervalHRTEMPLATE@'${CyclingWindowHR}'@' \
+    -e 's@deleteZerothForecastTEMPLATE@True@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
@@ -118,6 +119,7 @@ sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
     -e 's@StateDirsTEMPLATE@MeanAnalysisDirs@' \
     -e 's@fcLengthHRTEMPLATE@'${ExtendedFCWindowHR}'@' \
     -e 's@fcIntervalHRTEMPLATE@'${ExtendedFC_DT_HR}'@' \
+    -e 's@deleteZerothForecastTEMPLATE@False@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
@@ -129,6 +131,7 @@ sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
     -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
     -e 's@fcLengthHRTEMPLATE@'${ExtendedFCWindowHR}'@' \
     -e 's@fcIntervalHRTEMPLATE@'${ExtendedFC_DT_HR}'@' \
+    -e 's@deleteZerothForecastTEMPLATE@False@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
