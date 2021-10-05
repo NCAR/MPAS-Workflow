@@ -38,7 +38,7 @@
 #    amount: RADTHINAMOUNT
 #    random_seed: 0
 #    apply at iterations: 0
-  - filter: Gaussian_Thinning
+  - filter: Gaussian Thinning
     horizontal_mesh: RADTHINDISTANCE #km
   - filter: BlackList
     apply at iterations: 0, 1
