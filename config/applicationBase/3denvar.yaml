@@ -52,8 +52,8 @@ cost function:
         datadir: bumpLocDir
         prefix: bumpLocPrefix
         strategy: common
-        load_nicas: 1
-        mpicom: 2
+        load_nicas_local: 1
+        verbosity: main
     variables: *incvars
     members:
 EnsemblePbMembers
