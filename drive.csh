@@ -148,7 +148,7 @@ cat >! suite.rc << EOF
 {% elif CriticalPathType == "Reanalysis" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
-  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
+  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDA => CleanCyclingDA" %}
 {% elif CriticalPathType == "Reforecast" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
@@ -168,7 +168,7 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + " => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
-  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
+  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDA => CleanCyclingDA" %}
 {# else #}
 #TODO: indicate invalid CriticalPathType
 {% endif %}
