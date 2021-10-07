@@ -74,7 +74,7 @@ endif
 
 # background covariance
 # ---------------------
-## stochastic analysis (dynamic directory structure)
+## stochastic analysis (dynamic directory structure, depends on $nEnsDAMembers)
 set dynamicEnsBMemFmt = "${flowMemFmt}"
 set dynamicEnsBFilePrefix = ${FCFilePrefix}
 
