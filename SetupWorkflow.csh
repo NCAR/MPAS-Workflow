@@ -5,7 +5,9 @@ set AppAndVerify = AppAndVerify
 
 echo ""
 echo "======================================================================"
-echo "Setting up a new workflow for ${ExperimentName}"
+echo "Setting up a new workflow"
+echo "  ExperimentName: ${ExperimentName}"
+echo "  mainScriptDir: ${mainScriptDir}"
 echo "======================================================================"
 echo ""
 
