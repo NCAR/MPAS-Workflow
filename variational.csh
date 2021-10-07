@@ -25,6 +25,7 @@ cd ${self_WorkDir}
 # templated variables
 set self_StateDirs = ($inStateDirsTEMPLATE)
 set self_StatePrefix = inStatePrefixTEMPLATE
+set StreamsFileList = (${variationalStreamsFileList})
 
 # Remove old logs
 rm jedi.log*
@@ -76,11 +77,12 @@ while ( $member <= ${nEnsDAMembers} )
   # ======================================================
   set copyDiags = 0
   foreach var ({$MPASJEDIDiagVariables})
+    echo "Checking for presence of variable ($var) in ${bgFileOther}"
     ncdump -h ${bgFileOther} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
-      echo "Copying MPASJEDIDiagVariables to background state"
-    endif 
+      echo "variable ($var) not present"
+    endif
   end
   if ( $copyDiags > 0 ) then
     rm ${bgFile}${OrigFileSuffix}
@@ -89,32 +91,44 @@ while ( $member <= ${nEnsDAMembers} )
     ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
   endif
 
+  # use this background as the TemplateFieldsFileOuter for this member
+  set memSuffix = `${memberDir} $DAType $member "${flowMemFileFmt}"`
+  rm ${TemplateFieldsFileOuter}${memSuffix}
+  ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
+
+  # use localStaticFieldsFileInner as the TemplateFieldsFileInner
+  # NOTE: not perfect for EDA if static fields differ between members,
+  #       but dual-res EDA not working yet anyway
+  if ($MPASnCellsOuter != $MPASnCellsInner) then
+    set tFile = ${TemplateFieldsFileInner}${memSuffix}
+    rm $tFile
+
+    #modify "Inner" initial forecast file
+    set memDir = `${memberDir} $DAType 1`
+    set FirstCyclingFCDir = ${CyclingFCWorkDir}/${prevFirstCycleDate}${memDir}/Inner
+    cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${FirstFileDate}.nc $tFile
+
+    # modify xtime
+    echo "${updateXTIME} $tFile ${thisCycleDate}"
+    ${updateXTIME} $tFile ${thisCycleDate}
+  endif
+
+  if (${memSuffix} == "") then
+    foreach StreamsFile_ ($StreamsFileList)
+      sed -i 's@TemplateFieldsMember@@' ${StreamsFile_}
+    end
+    sed -i 's@StreamsFileMember@@' $appyaml
+  else
+    foreach StreamsFile_ ($StreamsFileList)
+      cp ${StreamsFile_} ${StreamsFile_}${memSuffix}
+      sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
+    end
+    sed -i 's@StreamsFileMember@'${memSuffix}'@' member_${member}.yaml
+  endif
+
   @ member++
 end
 
-# use one of the backgrounds as the TemplateFieldsFileOuter
-rm ${TemplateFieldsFileOuter}
-ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
-
-# use localStaticFieldsFileInner as the TemplateFieldsFileInner
-if ($MPASnCellsOuter != $MPASnCellsInner) then
-  rm ${TemplateFieldsFileInner}
-
-#  #use static fields directly (wrong date)
-#  ln -sfv ${localStaticFieldsFileInner} ${TemplateFieldsFileInner}
-
-#  #modify static fields (missing some variables needed in inner loop?)
-#  cp ${localStaticFieldsFileInner} ${TemplateFieldsFileInner}
-
-  #modify "Inner" initial forecast file
-  set memDir = `${memberDir} $DAType 1`
-  set FirstCyclingFCDir = ${CyclingFCWorkDir}/${prevFirstCycleDate}${memDir}/Inner
-  cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${FirstFileDate}.nc ${TemplateFieldsFileInner}
-
-  # modify xtime
-  echo "${updateXTIME} ${TemplateFieldsFileInner} ${thisCycleDate}"
-  ${updateXTIME} ${TemplateFieldsFileInner} ${thisCycleDate}
-endif
 
 # Run the executable
 # ==================

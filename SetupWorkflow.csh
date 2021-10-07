@@ -5,7 +5,9 @@ set AppAndVerify = AppAndVerify
 
 echo ""
 echo "======================================================================"
-echo "Setting up a new workflow for ${ExperimentName}"
+echo "Setting up a new workflow"
+echo "  ExperimentName: ${ExperimentName}"
+echo "  mainScriptDir: ${mainScriptDir}"
 echo "======================================================================"
 echo ""
 
@@ -58,7 +60,7 @@ while ( $member <= ${nEnsDAMembers} )
 #  ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
 #  set copyDiags = 0
 #  foreach var ({$MPASJEDIDiagVariables})
-#    ncdump -h ${fcFile} | grep -q $var
+#    ncdump -h ${fcFile} | grep $var
 #    if ( $status != 0 ) then
 #      @ copyDiags++
 #      echo "Copying MPASJEDIDiagVariables to Outer background state"
@@ -87,7 +89,7 @@ while ( $member <= ${nEnsDAMembers} )
 #  ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
 #  set copyDiags = 0
 #  foreach var ({$MPASJEDIDiagVariables})
-#    ncdump -h ${fcFile} | grep -q $var
+#    ncdump -h ${fcFile} | grep $var
 #    if ( $status != 0 ) then
 #      @ copyDiags++
 #      echo "Copying MPASJEDIDiagVariables to Inner background state"

@@ -7,7 +7,7 @@
 
 <immutable_stream name="input"
                   type="input"
-                  filename_template="TemplateFieldsPrefix.nCells.nc"
+                  filename_template="TemplateFieldsPrefix.nCells.ncTemplateFieldsMember"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 

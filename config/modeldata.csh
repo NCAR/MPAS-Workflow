@@ -74,7 +74,7 @@ endif
 
 # background covariance
 # ---------------------
-## stochastic analysis (dynamic directory structure)
+## stochastic analysis (dynamic directory structure, depends on $nEnsDAMembers)
 set dynamicEnsBMemFmt = "${flowMemFmt}"
 set dynamicEnsBFilePrefix = ${FCFilePrefix}
 
@@ -119,18 +119,19 @@ setenv GraphInfoDir /glade/work/duda/static_moved_to_campaign
 
 ## sea/ocean surface files
 setenv updateSea 1
-#if ( "$DAType" =~ *"eda"* ) then
-# TODO: process sst/xice data for all GEFS members at all cycle/forecast dates
-#  # stochastic
-#  setenv SeaAnaDir ${GEFSAnaDir}/${MPASGridDescriptorOuter}/GEFS/init/000hr
-#  setenv seaMemFmt "${gefsMemFmt}"
-#  setenv SeaFilePrefix ${InitFilePrefix}
-#else
+setenv seaMaxMembers ${nGEFSMembers}
+setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
+setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
+if ( "$DAType" =~ *"eda"* ) then
+  # using member-specific sst/xice data from GEFS
+  # stochastic - only 120km
+  setenv SeaAnaDir ${GEFSAnaDir}/${MPASGridDescriptorOuter}/GEFS/surface/000hr
+  setenv seaMemFmt "${gefsMemFmt}"
+else
   # deterministic
-  setenv SeaAnaDir ${GFSAnaDirOuter}
+  setenv SeaAnaDir ${deterministicSeaAnaDir}
   setenv seaMemFmt " "
-  setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
-#endif
+endif
 
 ## static stream data
 if ( "$DAType" =~ *"eda"* ) then

@@ -46,11 +46,8 @@ endif
 
 setenv CyclingInflationJobMinutes 25
 setenv CyclingInflationMemory 109
-setenv CyclingInflationNodesPerMember ${HofXNodes}
-setenv CyclingInflationPEPerNode      ${HofXPEPerNode}
-
-@ CyclingDAPEPerMember = ${CyclingDANodesPerMember} * ${CyclingDAPEPerNode}
-setenv CyclingDAPEPerMember ${CyclingDAPEPerMember}
+setenv CyclingInflationNodes ${HofXNodes}
+setenv CyclingInflationPEPerNode ${HofXPEPerNode}
 
 @ CyclingDANodes = ${CyclingDANodesPerMember} * ${nEnsDAMembers}
 setenv CyclingDANodes ${CyclingDANodes}

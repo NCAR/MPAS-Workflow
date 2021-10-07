@@ -18,7 +18,7 @@ source config/appindex.csh
 #   + TODO: "OE30kmI120km" dual-resolution eda_3denvar with 30km ensemble, no deterministic?
 #   + TODO: "OIE120km" 4denvar
 #   + TODO: "O30kmIE120km" dual-resolution 4denvar
-setenv MPASGridDescriptor O30kmIE120km
+setenv MPASGridDescriptor OIE120km
 
 ## FirstCycleDate
 # initial date of this experiment
@@ -61,7 +61,7 @@ set variationalObsList = ($benchmarkObsList)
 
 ## DAType
 # OPTIONS: 3denvar, eda_3denvar, 3dvarId
-setenv DAType 3denvar
+setenv DAType eda_3denvar
 
 if ( "$DAType" =~ *"eda"* ) then
   ## nEnsDAMembers

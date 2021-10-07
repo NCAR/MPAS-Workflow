@@ -18,7 +18,7 @@
 #  - filter: Thinning
 #    amount: RADTHINAMOUNT
 #    random_seed: 0
-#  - filter: Gaussian_Thinning
+#  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n19.nc4
@@ -54,7 +54,7 @@
 #  - filter: Thinning
 #    amount: RADTHINAMOUNT
 #    random_seed: 0
-#  - filter: Gaussian_Thinning
+#  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n15.nc4
@@ -85,7 +85,7 @@
 #  - filter: Thinning
 #    amount: RADTHINAMOUNT
 #    random_seed: 0
-#  - filter: Gaussian_Thinning
+#  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n18.nc4
@@ -116,7 +116,7 @@
 #  - filter: Thinning
 #    amount: RADTHINAMOUNT
 #    random_seed: 0
-#  - filter: Gaussian_Thinning
+#  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-a.nc4
@@ -147,8 +147,8 @@
 #  - filter: Thinning
 #    amount: RADTHINAMOUNT
 #    random_seed: 0
-#  - filter: Gaussian_Thinning
-#    horizontal_mesh: RADTHINDISTANCE #km
+##  - filter: Gaussian Thinning
+##    horizontal_mesh: RADTHINDISTANCE #km
 #  - filter: GOMsaver
 #    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-b.nc4
 #  obs operator:
@@ -178,7 +178,7 @@
 #  - filter: Thinning
 #    amount: RADTHINAMOUNT
 #    random_seed: 0
-#  - filter: Gaussian_Thinning
+#  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_aqua.nc4

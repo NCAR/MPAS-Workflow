@@ -136,7 +136,7 @@ else
     set fcDate = `$advanceCYMDH ${fcDate} ${self_fcIntervalHR}`
     setenv fcDate ${fcDate}
   end
-  
+
   # Run the executable
   # ==================
   rm ./${ForecastEXE}
@@ -191,13 +191,22 @@ while ( ${fcDate} <= ${finalFCDate} )
 
   ## Update MPASSeaVariables from GFS/GEFS analyses
   if ( ${updateSea} ) then
-    set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}"`
+    # first try member-specific state file (central GFS state when ArgMember==0)
+    set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
     set SeaFile = ${SeaAnaDir}/${fcDate}${seaMemDir}/${SeaFilePrefix}.${fcFileExt}
     ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}
-
     if ( $status != 0 ) then
-      echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $fcFile" > ./FAIL
-      exit 1
+      echo "WARNING in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}" > ./WARNING
+      echo "WARNING in $0 : ncks could not add (${MPASSeaVariables}) to $fcFile" >> ./WARNING
+
+      # otherwise try central GFS state file
+      set SeaFile = ${deterministicSeaAnaDir}/${fcDate}/${SeaFilePrefix}.${fcFileExt}
+      ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}
+      if ( $status != 0 ) then
+        echo "ERROR in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}" > ./FAIL
+        echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $fcFile" >> ./FAIL
+        exit 1
+      endif
     endif
   endif
 
@@ -207,7 +216,7 @@ while ( ${fcDate} <= ${finalFCDate} )
     ncdump -h ${fcFile} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
-    endif 
+    endif
   end
   set diagFile = ${DIAGFilePrefix}.${fcFileExt}
   if ( $copyDiags > 0 ) then

@@ -30,7 +30,7 @@
 #  - filter: Thinning
 #    amount: RADTHINAMOUNT
 #    random_seed: 0
-#  - filter: Gaussian_Thinning
+#  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   get values:
     interpolation type: InterpolationType

@@ -1,6 +1,7 @@
 #!/bin/csh -f
 
 source config/experiment.csh
+source config/modeldata.csh
 
 ## job length and node/pe requirements
 
@@ -19,9 +20,9 @@ setenv HofXNodes 1
 setenv HofXPEPerNode 36
 setenv HofXMemory 109
 
-set DeterministicVerifyObsJobMinutes = 15
+set DeterministicVerifyObsJobMinutes = 6
 set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
-set EnsembleVerifyObsEnsMeanMembersPerJobMinute = 10
+set EnsembleVerifyObsEnsMeanMembersPerJobMinute = 6
 @ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} / ${EnsembleVerifyObsEnsMeanMembersPerJobMinute}
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
 setenv VerifyObsNodes 1
@@ -32,10 +33,13 @@ setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
 
-set DeterministicDAJobMinutes = 5
-set EnsembleDAMembersPerJobMinute = 5
+set DeterministicDABaseMinutes = 4
+set ThreeDEnVarMembersPerJobMinute = 12
+@ ThreeDEnVarJobMinutes = ${ensPbNMembers} / ${ThreeDEnVarMembersPerJobMinute}
+@ ThreeDEnVarJobMinutes = ${ThreeDEnVarJobMinutes} + ${DeterministicDABaseMinutes}
+set EnsembleDAMembersPerJobMinute = 6
 @ CyclingDAJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
-@ CyclingDAJobMinutes = ${CyclingDAJobMinutes} + ${DeterministicDAJobMinutes}
+@ CyclingDAJobMinutes = ${CyclingDAJobMinutes} + ${ThreeDEnVarJobMinutes}
 setenv CyclingDAMemory 45
 #setenv CyclingDAMemory 109
 if ( "$DAType" =~ *"eda"* ) then
@@ -48,11 +52,44 @@ endif
 
 setenv CyclingInflationJobMinutes 25
 setenv CyclingInflationMemory 109
-setenv CyclingInflationNodesPerMember ${HofXNodes}
-setenv CyclingInflationPEPerNode      ${HofXPEPerNode}
+setenv CyclingInflationNodes ${HofXNodes}
+setenv CyclingInflationPEPerNode ${HofXPEPerNode}
 
-@ CyclingDAPEPerMember = ${CyclingDANodesPerMember} * ${CyclingDAPEPerNode}
-setenv CyclingDAPEPerMember ${CyclingDAPEPerMember}
-
-@ CyclingDANodes = ${CyclingDANodesPerMember} * ${nEnsDAMembers}
-setenv CyclingDANodes ${CyclingDANodes}
+# special config that works when nEnsDAMembers is divisible by 5
+# reduces overhead
+# TODO: ideally, we would have an estimate of memory useage per member,
+# then use it to calculate the optimal CyclingDANodes and
+# CyclingDAPEPerNode, and also match the total NPE that was used for localization
+# and/or covariance generation.  It is possible that NPE used for SABER applications
+# no longer needs to be the same as NPE used in Variational applications.
+if ( "$nEnsDAMembers" == 80 ) then
+  setenv CyclingDAPEPerNode 30
+  setenv CyclingDANodes 96
+else if ( "$nEnsDAMembers" == 70 ) then
+  setenv CyclingDAPEPerNode 30
+  setenv CyclingDANodes 84
+else if ( "$nEnsDAMembers" == 60 ) then
+  setenv CyclingDAPEPerNode 30
+  setenv CyclingDANodes 72
+else if ( "$nEnsDAMembers" == 50 ) then
+  setenv CyclingDAPEPerNode 30
+  setenv CyclingDANodes 60
+else if ( "$nEnsDAMembers" == 40 ) then
+  setenv CyclingDAPEPerNode 30
+  setenv CyclingDANodes 48
+else if ( "$nEnsDAMembers" == 30 ) then
+  setenv CyclingDAPEPerNode 30
+  setenv CyclingDANodes 36
+else if ( "$nEnsDAMembers" == 20 ) then
+  setenv CyclingDAPEPerNode 30
+  setenv CyclingDANodes 24
+else if ( "$nEnsDAMembers" == 10 ) then
+  setenv CyclingDAPEPerNode 30
+  setenv CyclingDANodes 12
+else if ( "$nEnsDAMembers" == 5 ) then
+  setenv CyclingDAPEPerNode 30
+  setenv CyclingDANodes 6
+else
+  @ CyclingDANodes = ${CyclingDANodesPerMember} * ${nEnsDAMembers}
+  setenv CyclingDANodes ${CyclingDANodes}
+endif
