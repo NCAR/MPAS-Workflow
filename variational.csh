@@ -102,7 +102,6 @@ while ( $member <= ${nEnsDAMembers} )
   if ($MPASnCellsOuter != $MPASnCellsInner) then
     set tFile = ${TemplateFieldsFileInner}${memSuffix}
     rm $tFile
-    ln -sfv ${localStaticFieldsFileInner} $tFile
 
     #modify "Inner" initial forecast file
     set memDir = `${memberDir} $DAType 1`
