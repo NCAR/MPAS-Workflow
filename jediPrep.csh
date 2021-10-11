@@ -400,7 +400,7 @@ end
 
 set thisYAML = insertIterations.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
-#rm ${thisSEDF}
+rm ${thisSEDF}
 set prevYAML = $thisYAML
 
 
