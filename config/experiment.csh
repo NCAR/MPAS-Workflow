@@ -85,17 +85,22 @@ else
     /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_LeaveOneOut_OIE120km/CyclingFC
 endif
 
-## LeaveOneOutEDA
+## LeaveOneOutEDA, whether to use self-exclusion in the EnVar ensemble B during EDA cycling
 # OPTIONS: True/False
 setenv LeaveOneOutEDA True
 
-## RTPPInflationFactor
+## RTPPInflationFactor, relaxation parameter for the relaxation to prior perturbation (RTPP) inflation mechanism
 # Typical Values: 0.0 or 0.50 to 0.90
-setenv RTPPInflationFactor 0.0
+setenv RTPPInflationFactor 0.80
 
-## ABEIInflation
+## storeOriginalRTPPAnalyses, whether to store the analyses taken as inputs to RTPP for diagnostic purposes
 # OPTIONS: True/False
-setenv ABEInflation False
+setenv storeOriginalRTPPAnalyses False
+
+## ABEIInflation, whether to utilize adaptive background error inflation (ABEI) in cloud-affected scenes
+#  as measured by ABI and AHI observations
+# OPTIONS: True/False
+setenv ABEInflation True
 
 ## ABEIChannel
 # OPTIONS: 8, 9, 10

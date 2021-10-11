@@ -73,6 +73,8 @@ end
 foreach staticfile ( \
 stream_list.${MPASCore}.background \
 stream_list.${MPASCore}.analysis \
+stream_list.${MPASCore}.ensemble \
+stream_list.${MPASCore}.control \
 )
   ln -sfv $self_ModelConfigDir/$staticfile .
 end
@@ -184,7 +186,7 @@ EOF
   while ( $member <= ${nEnsDAMembers} )
     set filename = $ensPDirs[$member]/${ensPFilePrefix}.${fileDate}.nc${ensPFileSuffix}
     ## copy original analysis files for diagnosing RTPP behavior (not necessary)
-    if ($PMatrix == Pa) then
+    if ($PMatrix == Pa && ${storeOriginalRTPPAnalyses} == True) then
       set memDir = "."`${memberDir} ensemble $member "${flowMemFmt}"`
       set anmemberDir = ${anDir}0/${memDir}
       rm -r ${anmemberDir}
@@ -195,7 +197,7 @@ EOF
       set filename = ${filename}\\
     endif
 cat >>! ${enspsed}SEDF.yaml << EOF
-${indent}- <<: *state${PMatrix}Config\
+${indent}- <<: *stateReadConfig\
 ${indent}  filename: ${filename}
 EOF
 
