@@ -141,6 +141,11 @@ if ( "$DAType" =~ *"eda"* ) then
   setenv StaticFieldsDirInner ${GEFSAnaDir}/${MPASGridDescriptorInner}/GEFS/init/000hr/${prevFirstCycleDate}
   setenv StaticFieldsDirEnsemble ${GEFSAnaDir}/${MPASGridDescriptorEnsemble}/GEFS/init/000hr/${prevFirstCycleDate}
   setenv staticMemFmt "${gefsMemFmt}"
+
+  #TODO: switch to using FirstFileDate static files for GEFS
+  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${prevFirstFileDate}.nc
+  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${prevFirstFileDate}.nc
+  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${prevFirstFileDate}.nc
 else
   # deterministic
   # only 120km
@@ -152,7 +157,7 @@ else
   setenv StaticFieldsDirInner ${GFSAnaDirInner}
   setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
   setenv staticMemFmt " "
+  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
+  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
+  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
 endif
-setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${prevFirstFileDate}.nc
-setenv StaticFieldsFileInner ${InitFilePrefixInner}.${prevFirstFileDate}.nc
-setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${prevFirstFileDate}.nc
