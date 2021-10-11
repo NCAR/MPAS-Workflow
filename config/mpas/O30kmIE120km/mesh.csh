@@ -9,7 +9,7 @@ setenv MPASnCellsOuter 655362
 setenv MPASnCellsInner 40962
 setenv MPASnCellsEnsemble ${MPASnCellsInner}
 setenv MPASTimeStep 180.0
-setenv MPASDiffusionLengthScale 15000.0
+setenv MPASDiffusionLengthScale 30000.0
 setenv RADTHINDISTANCE    "60.0"
 setenv RADTHINAMOUNT      "0.75"
 
