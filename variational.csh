@@ -25,6 +25,7 @@ cd ${self_WorkDir}
 # templated variables
 set self_StateDirs = ($inStateDirsTEMPLATE)
 set self_StatePrefix = inStatePrefixTEMPLATE
+set StreamsFileList = (${variationalStreamsFileList})
 
 # Remove old logs
 rm jedi.log*
@@ -76,36 +77,65 @@ while ( $member <= ${nEnsDAMembers} )
   # ======================================================
   set copyDiags = 0
   foreach var ({$MPASJEDIDiagVariables})
+    echo "Checking for presence of variable ($var) in ${bgFileOther}"
     ncdump -h ${bgFileOther} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
-      echo "Copying MPASJEDIDiagVariables to background state"
-    endif 
+      echo "variable ($var) not present"
+    endif
   end
   if ( $copyDiags > 0 ) then
-    set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
-    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
     rm ${bgFile}${OrigFileSuffix}
     cp ${bgFile} ${bgFile}${OrigFileSuffix}
+    set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
+    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
+  endif
+
+  # use this background as the TemplateFieldsFileOuter for this member
+  set memSuffix = `${memberDir} $DAType $member "${flowMemFileFmt}"`
+  rm ${TemplateFieldsFileOuter}${memSuffix}
+  ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
+
+  # use localStaticFieldsFileInner as the TemplateFieldsFileInner
+  # NOTE: not perfect for EDA if static fields differ between members,
+  #       but dual-res EDA not working yet anyway
+  if ($MPASnCellsOuter != $MPASnCellsInner) then
+    set tFile = ${TemplateFieldsFileInner}${memSuffix}
+    rm $tFile
+
+    #modify "Inner" initial forecast file
+    set memDir = `${memberDir} $DAType 1`
+    set FirstCyclingFCDir = ${CyclingFCWorkDir}/${prevFirstCycleDate}${memDir}/Inner
+    cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${FirstFileDate}.nc $tFile
+
+    # modify xtime
+    echo "${updateXTIME} $tFile ${thisCycleDate}"
+    ${updateXTIME} $tFile ${thisCycleDate}
+  endif
+
+  if (${memSuffix} == "") then
+    foreach StreamsFile_ ($StreamsFileList)
+      sed -i 's@TemplateFieldsMember@@' ${StreamsFile_}
+    end
+    sed -i 's@StreamsFileMember@@' $appyaml
+  else
+    foreach StreamsFile_ ($StreamsFileList)
+      cp ${StreamsFile_} ${StreamsFile_}${memSuffix}
+      sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
+    end
+    sed -i 's@StreamsFileMember@'${memSuffix}'@' member_${member}.yaml
   endif
 
   @ member++
 end
 
-# use one of the backgrounds as the TemplateFieldsFileOuter
-rm ${TemplateFieldsFileOuter}
-ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
-
-# use localStaticFieldsFileInner as the TemplateFieldsFileInner
-if ($MPASnCellsOuter != $MPASnCellsInner) then
-  rm ${TemplateFieldsFileInner}
-  ln -sfv ${localStaticFieldsFileInner} ${TemplateFieldsFileInner}
-endif
 
 # Run the executable
 # ==================
 ln -sfv ${VariationalBuildDir}/${VariationalEXE} ./
 mpiexec ./${VariationalEXE} $appyaml ./jedi.log >& jedi.log.all
+
+#rm ${TemplateFieldsFileInner}
 
 #WITH DEBUGGER
 #module load arm-forge/19.1
@@ -115,11 +145,9 @@ mpiexec ./${VariationalEXE} $appyaml ./jedi.log >& jedi.log.all
 
 # Check status
 # ============
-#grep "Finished running the atmosphere core" log.atmosphere.0000.out
 grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
-  touch ./FAIL
-  echo "ERROR in $0 : jedi application failed" >> ./FAIL
+  echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
 endif
 
@@ -128,10 +156,7 @@ set iMesh = 0
 foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
   @ iMesh++
   rm ${localStaticFieldsFile}
-  rm ${localStaticFieldsFile}${OrigFileSuffix}
-  set StaticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
-  set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
-  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+  mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 end
 
 date

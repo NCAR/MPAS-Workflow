@@ -78,39 +78,30 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 # Link/copy bg from other directory + ensure that MPASJEDIDiagVariables are present
 # =================================================================================
 set bg = ./${bgDir}
-set an = ./${anDir}
 mkdir -p ${bg}
-mkdir -p ${an}
 
 set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$fileDate.nc
 set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
-rm ${bgFile}
-ln -sfv ${bgFileOther} ${bgFile}
-
-# keep a link in place for transparency
-rm ${bgFile}${OrigFileSuffix}
+rm ${bgFile}${OrigFileSuffix} ${bgFile}
 ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
-
-# Remove existing analysis file, then link to bg file
-# ===================================================
-set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
-rm ${anFile}
+ln -sfv ${bgFileOther} ${bgFile}
 
 set copyDiags = 0
 foreach var ({$MPASJEDIDiagVariables})
+  echo "Checking for presence of variable ($var) in ${bgFileOther}"
   ncdump -h ${bgFileOther} | grep $var
   if ( $status != 0 ) then
     @ copyDiags++
-    echo "Copying MPASJEDIDiagVariables to background state"
+    echo "variable ($var) not present"
   endif 
 end
 if ( $copyDiags > 0 ) then
-  echo "Copy diagnostic variables used in HofX to bg"
+  echo "Copy diagnostic variables used in HofX to bg: $MPASJEDIDiagVariables"
   # ===============================================
-  set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
   rm ${bgFile}
   cp -v ${bgFile}${OrigFileSuffix} ${bgFile}
+  set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
   ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
 endif
 
@@ -125,18 +116,15 @@ mpiexec ./${HofXEXE} $appyaml ./jedi.log >& jedi.log.all
 
 # Check status
 # ============
-#grep "Finished running the atmosphere core" log.atmosphere.0000.out
 grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
-  touch ./FAIL
-  echo "ERROR in $0 : jedi application failed" >> ./FAIL
+  echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
 endif
 
 ## change static fields to a link, keeping for transparency
 rm ${localStaticFieldsFile}
-rm ${localStaticFieldsFile}${OrigFileSuffix}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 
 date
 

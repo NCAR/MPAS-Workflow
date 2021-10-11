@@ -106,8 +106,7 @@ end
 
 ## change static fields to a link, keeping for transparency
 rm ${localStaticFieldsFile}
-rm ${localStaticFieldsFile}${OrigFileSuffix}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 
 date
 

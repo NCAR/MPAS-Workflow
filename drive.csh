@@ -46,14 +46,14 @@ set CompareDA2Benchmark = False
 # OPTIONS: True/False
 set VerifyExtendedMeanFC = False
 
-## VerifyMemberBG: whether to run verification scripts for CyclingWindowHR
+## VerifyBGMembers: whether to run verification scripts for CyclingWindowHR
 #    forecast length. Utilizes critical path forecast states from
 #    individual ensemble member analyses or deterministic analysis
 # OPTIONS: True/False
-set VerifyMemberBG = True
+set VerifyBGMembers = True
 
 ## CompareBG2Benchmark: compare verification nc files between two experiments
-#    after the MemberBG verification completes
+#    after the BGMembers verification completes
 # OPTIONS: True/False
 set CompareBG2Benchmark = False
 
@@ -73,7 +73,7 @@ set DiagnoseEnsSpreadBG = True
 ## VerifyEnsMeanAN: whether to run verification scripts for ensemble
 #    mean analysis state.
 # OPTIONS: True/False
-set VerifyMemberAN = False
+set VerifyANMembers = False
 
 ## VerifyExtendedEnsBG: whether to run verification scripts across
 #    extended forecast states, first intialized at ensemble of analysis
@@ -83,13 +83,6 @@ set VerifyExtendedEnsFC = False
 
 date
 
-## load the file structure
-source config/filestructure.csh
-
-## load job submission environment
-source config/job.csh
-source config/mpas/${MPASGridDescriptor}/job.csh
-
 ## Initialize cycling directory if this is the first cycle point
 set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
 set hh = `echo ${FirstCycleDate} | cut -c 9-10`
@@ -98,16 +91,30 @@ if ($initialCyclePoint == $firstCyclePoint) then
   ./SetupWorkflow.csh
 endif
 
+## load the file structure
+source config/filestructure.csh
+
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
+
+## load job submission environment
+source config/job.csh
+source config/mpas/${MPASGridDescriptor}/job.csh
 
 echo "Initializing ${PackageBaseName}"
 module purge
 module load cylc
 module load graphviz
 
+## SuiteName: name of the cylc suite, can be used to differentiate between two
+# suites running simultaneously in the same ${ExperimentName} directory
+#
+# default: ${ExperimentName}
+# example: ${ExperimentName}_verify for a simultaneous suite running only Verification
+set SuiteName = ${ExperimentName}
+
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
-rm -fr ${cylcWorkDir}/${ExperimentName}
+rm -fr ${cylcWorkDir}/${SuiteName}
 echo "creating suite.rc"
 cat >! suite.rc << EOF
 #!Jinja2
@@ -121,17 +128,17 @@ cat >! suite.rc << EOF
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
-{% set VerifyMemberBG = ${VerifyMemberBG} %}
+{% set VerifyBGMembers = ${VerifyBGMembers} %}
 {% set CompareBG2Benchmark = ${CompareBG2Benchmark} %}
 {% set VerifyEnsMeanBG = ${VerifyEnsMeanBG} %}
 {% set DiagnoseEnsSpreadBG = ${DiagnoseEnsSpreadBG} %}
-{% set VerifyMemberAN = ${VerifyMemberAN} %}
+{% set VerifyANMembers = ${VerifyANMembers} %}
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
 [meta]
-  title = "${PackageBaseName}--${ExperimentName}"
+  title = "${PackageBaseName}--${SuiteName}"
 # critical path cycle dependencies
   {% set PrimaryCPGraph = "" %}
   {% set SecondaryCPGraph = "" %}
@@ -167,8 +174,8 @@ cat >! suite.rc << EOF
 {% endif %}
 # verification and extended forecast controls
 {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
-{% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
-{% set VerifyMembers = range(1, nEnsDAMembers+1, 1) %}
+{% set EnsFCMembers = range(1, nEnsDAMembers+1, 1) %}
+{% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 [cylc]
   UTC mode = False
   [[environment]]
@@ -218,13 +225,13 @@ cat >! suite.rc << EOF
   {% endfor %}
       '''
 {% endif %}
-{% if VerifyMemberBG %}
+{% if VerifyBGMembers %}
 ## Ensemble BG verification
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
-  {% for mem in VerifyMembers %}
+  {% for mem in EnsVerifyMembers %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
         VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
     {% if CompareBG2Benchmark %}
@@ -250,11 +257,11 @@ cat >! suite.rc << EOF
   {% endif %}
       '''
 {% endif %}
-{% if VerifyMemberAN %}
+{% if VerifyANMembers %}
 ## Ensemble AN verification
     [[[PT${CyclingWindowHR}H]]]
       graph = '''
-  {% for mem in VerifyMembers %}
+  {% for mem in EnsVerifyMembers %}
         CyclingDAFinished => VerifyModelAN{{mem}}
         CyclingDAFinished => HofXAN{{mem}}
         HofXAN{{mem}} => VerifyObsAN{{mem}}
@@ -267,7 +274,7 @@ cat >! suite.rc << EOF
     [[[${ExtendedEnsFCTimes}]]]
       graph = '''
         CyclingDAFinished => ExtendedEnsFC
-  {% for mem in VerifyMembers %}
+  {% for mem in EnsVerifyMembers %}
         ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}
         ExtendedFC{{mem}} => HofXEnsFC{{mem}}
     {% for dt in ExtendedFCLengths %}
@@ -356,7 +363,7 @@ cat >! suite.rc << EOF
       execution retry delays = ${RTPPInflationRetry}
     [[[directives]]]
       -m = ae
-      -l = select=${CyclingInflationNodesPerMember}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
+      -l = select=${CyclingInflationNodes}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
   [[GenerateABEInflation]]
     script = \$origin/GenerateABEInflation.csh
     [[[job]]]
@@ -383,8 +390,8 @@ cat >! suite.rc << EOF
     [[[directives]]]
       -m = ae
       -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
-{% for mem in EnsDAMembers %}
-  [[CyclingMemberFC{{mem}}]]
+{% for mem in EnsFCMembers %}
+  [[CyclingFCMember{{mem}}]]
     inherit = CyclingFC
     script = \$origin/CyclingFC.csh "{{mem}}"
     [[[job]]]
@@ -448,7 +455,7 @@ cat >! suite.rc << EOF
   [[CleanHofX{{state}}]]
     inherit = CleanBase
 {% endfor %}
-{% for mem in VerifyMembers %}
+{% for mem in EnsVerifyMembers %}
 ## Ensemble BG/AN verification
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
@@ -538,8 +545,8 @@ cat >! suite.rc << EOF
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
 
-cylc register ${ExperimentName} ${mainScriptDir}
-cylc validate ${ExperimentName}
-cylc run ${ExperimentName}
+cylc register ${SuiteName} ${mainScriptDir}
+cylc validate ${SuiteName}
+cylc run ${SuiteName}
 
 exit
