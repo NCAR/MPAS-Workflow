@@ -1,3 +1,10 @@
+- state Pb: &statePbConfig
+    date: 2018-04-15T00:00:00Z
+    state variables: [StateVariables]
+    stream name: background
+- state Pa: &statePaConfig
+    <<: *statePbConfig
+    stream name: analysis
 output:
   filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
 geometry:
@@ -6,9 +13,6 @@ geometry:
   deallocate non-da fields: true
 analysis variables: [AnalysisVariables]
 background:
-  _: &state
-    date: 2018-04-15T00:00:00Z
-    state variables: [StateVariables]
   members:
 EnsemblePbMembers
 analysis:

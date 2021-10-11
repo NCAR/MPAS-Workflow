@@ -86,7 +86,6 @@ end
 foreach staticfile ( \
 stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
-stream_list.${MPASCore}.output \
 )
   rm ./$staticfile
   ln -sfv $self_ModelConfigDir/$staticfile .

@@ -63,6 +63,10 @@ set variationalObsList = ($benchmarkObsList)
 # OPTIONS: 3denvar, eda_3denvar, 3dvarId
 setenv DAType eda_3denvar
 
+## nInnerIterations
+# list of inner iteration counts across all outer iterations
+set nInnerIterations = (60)
+
 if ( "$DAType" =~ *"eda"* ) then
   ## nEnsDAMembers
   # OPTIONS: 2 to $firstEnsFCNMembers, depends on data source in config/modeldata.csh
@@ -121,7 +125,11 @@ set hofxObsList = ($benchmarkObsList cldamsua allmhs all$abi all$ahi)
 #setenv RTPPInflationFactor 0.0
 #setenv LeaveOneOutEDA False
 #set variationalObsList = ($benchmarkObsList)
+#set nInnerIterations = ()
 #====================================================
+
+## nOuterIterations, automatically determined from length of nInnerIterations
+setenv nOuterIterations ${#nInnerIterations}
 
 ##################################
 ## analysis and forecast intervals
@@ -141,17 +149,17 @@ setenv FCVFWindowHR 6                   # window of observations included in for
 
 ## derive experiment title parts from above settings
 
-#(1) populate ensemble-related suffix components
-set EnsExpSuffix = ''
+#(1) ensemble-related settings
+set ExpEnsSuffix = ''
 if ($nEnsDAMembers > 1) then
-  set EnsExpSuffix = '_NMEM'${nEnsDAMembers}
-  if (${RTPPInflationFactor} != "0.0") set EnsExpSuffix = ${EnsExpSuffix}_RTPP${RTPPInflationFactor}
-  if (${LeaveOneOutEDA} == True) set EnsExpSuffix = ${EnsExpSuffix}_LeaveOneOut
-  if (${ABEInflation} == True) set EnsExpSuffix = ${EnsExpSuffix}_ABEI_BT${ABEIChannel}
+  set ExpEnsSuffix = '_NMEM'${nEnsDAMembers}
+  if (${RTPPInflationFactor} != "0.0") set ExpEnsSuffix = ${ExpEnsSuffix}_RTPP${RTPPInflationFactor}
+  if (${LeaveOneOutEDA} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_LeaveOneOut
+  if (${ABEInflation} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_ABEI_BT${ABEIChannel}
 endif
 
-#(2) add observation selection info
-setenv ExpObsName ''
+#(2) observation selection
+setenv ExpObsSuffix ''
 foreach obs ($variationalObsList)
   set isBench = False
   foreach benchObs ($benchmarkObsList)
@@ -160,6 +168,15 @@ foreach obs ($variationalObsList)
     endif
   end
   if ( $isBench == False ) then
-    setenv ExpObsName ${ExpObsName}_${obs}
+    setenv ExpObsSuffix ${ExpObsSuffix}_${obs}
   endif
 end
+
+#(3) inner iteration counts
+set ExpIterSuffix = ''
+foreach nInner ($nInnerIterations)
+  set ExpIterSuffix = ${ExpIterSuffix}-${nInner}
+end
+if ( $nOuterIterations > 0 ) then
+  set ExpIterSuffix = ${ExpIterSuffix}-iter
+endif

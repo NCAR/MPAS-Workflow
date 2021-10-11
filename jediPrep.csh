@@ -126,8 +126,10 @@ end
 
 ## link stream_list configs
 foreach staticfile ( \
-stream_list.${MPASCore}.diagnostics \
-stream_list.${MPASCore}.output \
+stream_list.${MPASCore}.background \
+stream_list.${MPASCore}.analysis \
+stream_list.${MPASCore}.ensemble \
+stream_list.${MPASCore}.control \
 )
   rm ./$staticfile
   ln -sfv $self_ModelConfigDir/$staticfile .
@@ -222,7 +224,7 @@ cp -v ${ConfigDir}/applicationBase/${self_AppName}.yaml $thisYAML
 set nIndent = $applicationObsIndent[$myAppIndex]
 set obsIndent = "`${nSpaces} $nIndent`"
 
-## Add selected observations (see control.csh)
+## Add selected observations (see experiment.csh)
 set checkForMissingObs = (sondes aircraft satwind gnssro sfc amsua mhs abi ahi)
 set found = 0
 set obsYAML = observations.yaml
@@ -309,7 +311,6 @@ sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' $thisYAML
 sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
 sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' $thisYAML
 sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' $thisYAML
-set prevYAML = $thisYAML
 
 # streams+namelist
 set iMesh = 0
@@ -323,7 +324,7 @@ end
 set AnalysisVariables = ($StandardAnalysisVariables)
 set StateVariables = ($StandardStateVariables)
 # if any CRTM yaml section includes Clouds, then analyze hydrometeors
-grep '^\ \+Clouds' $prevYAML
+grep '^\ \+Clouds' $thisYAML
 if ( $status == 0 ) then
   foreach hydro ($MPASHydroVariables)
     set AnalysisVariables = ($AnalysisVariables $hydro)
@@ -344,7 +345,7 @@ foreach VarGroup (Analysis Model State)
   end
   # remove trailing comma
   set VarSub = `echo "$VarSub" | sed 's/.$//'`
-  sed -i 's@'$VarGroup'Variables@'$VarSub'@' $prevYAML
+  sed -i 's@'$VarGroup'Variables@'$VarSub'@' $thisYAML
 end
 
 #set VarSub = ""
@@ -353,13 +354,55 @@ end
 #end
 ## remove trailing comma
 #set VarSub = `echo "$VarSub" | sed 's/.$//'`
-#sed -i 's@ModelVariables@'$VarSub'@' $prevYAML
-#sed -i 's@AnalysisVariables@'$VarSub'@' $prevYAML
+#sed -i 's@ModelVariables@'$VarSub'@' $thisYAML
+#sed -i 's@AnalysisVariables@'$VarSub'@' $thisYAML
 
+set prevYAML = $thisYAML
 
-# TODO(JJG): J terms below not needed for hofx application; move to a new variationalPrep.csh.
-#  Can use an intermediate yaml (e.g., jediPrep.yaml) between jediPrep.csh and application-specific
-#  preparations. Could also have an hofxPrep.csh, starts off by just copying yaml.
+# TODO(JJG): iterations and J terms below are specific to variational, not needed for hofx
+# application; move to a new variationalPrep.csh. Can use an intermediate yaml (e.g., jediPrep.yaml)
+# between jediPrep.csh and application-specific preparations. Could also have an hofxPrep.csh,
+# starts off by just copying jediPrep.yaml generated above.
+
+# Add outer iteration configurations for variational
+# performs sed substitution for VariationalIterations
+set iterationssed = VariationalIterations
+set thisSEDF = ${iterationssed}SEDF.yaml
+cat >! ${thisSEDF} << EOF
+/${iterationssed}/c\
+EOF
+
+set nIterationsIndent = 2
+set indent = "`${nSpaces} $nIterationsIndent`"
+set iOuter = 0
+foreach nInner ($nInnerIterations)
+  @ iOuter++
+  set nn = ${nInner}
+cat >>! ${thisSEDF} << EOF
+${indent}- <<: *iterationConfig\
+EOF
+
+  if ( $iOuter == 1 ) then
+cat >>! ${thisSEDF} << EOF
+${indent}  diagnostics:\
+${indent}    departures: depbg\
+EOF
+
+  endif
+  if ( $iOuter < $nOuterIterations ) then
+    set nn = $nn\\
+  endif
+cat >>! ${thisSEDF} << EOF
+${indent}  ninner: ${nn}
+EOF
+
+end
+
+set thisYAML = insertIterations.yaml
+sed -f ${thisSEDF} $prevYAML >! $thisYAML
+#rm ${thisSEDF}
+set prevYAML = $thisYAML
+
 
 ## ensemble Jb yaml indentation
 if ( "$self_AppName" =~ *"envar"* ) then
@@ -375,7 +418,9 @@ sed -i 's@bumpLocDir@'${bumpLocDir}'@g' $prevYAML
 sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' $prevYAML
 
 ## ensemble Jb inflation
+# performs sed substitution for EnsemblePbInflation
 set enspbinfsed = EnsemblePbInflation
+set thisSEDF = ${enspbinfsed}SEDF.yaml
 set removeInflation = 0
 if ( "$self_AppName" =~ *"eda"* && ${ABEInflation} == True ) then
   set inflationFields = ${CyclingABEInflationDir}/BT${ABEIChannel}_ABEIlambda.nc
@@ -387,19 +432,19 @@ if ( "$self_AppName" =~ *"eda"* && ${ABEInflation} == True ) then
   else
     set thisYAML = insertInflation.yaml
     set indent = "`${nSpaces} $nEnsPbIndent`"
-#NOTE: no_transf=1 allows for spechum and temperature inflation values to be read
-#      directly from inflationFields without a variable transform. Also requires spechum
-#      and temperature to be in stream_list.atmosphere.output.
+#NOTE: 'stream name: control' allows for spechum and temperature inflation values to be read
+#      read directly from inflationFields without a variable transform. Also requires spechum and
+#      temperature to be in stream_list.atmosphere.control.
 
-cat >! ${enspbinfsed}SEDF.yaml << EOF
+cat >! ${thisSEDF} << EOF
 /${enspbinfsed}/c\
 ${indent}inflation field:\
-${indent}  date: *adate\
+${indent}  date: *analysisDate\
 ${indent}  filename: ${inflationFields}\
-${indent}  no_transf: 1
+${indent}  stream name: control
 EOF
 
-    sed -f ${enspbinfsed}SEDF.yaml $prevYAML >! $thisYAML
+    sed -f ${thisSEDF} $prevYAML >! $thisYAML
     set prevYAML = $thisYAML
   endif
 else
@@ -410,9 +455,12 @@ if ($removeInflation > 0) then
   sed -i '/^'${enspbinfsed}'/d' $prevYAML
 endif
 
-
+## ensemble Jb members
+# performs sed substitution for EnsemblePbMembers
 set enspbmemsed = EnsemblePbMembers
+set thisSEDF = ${enspbmemsed}SEDF.yaml
 if ( "$self_AppName" =~ *"eda"* ) then
+  # for ensemble of variational applications (EDA)
   echo "files:" > $appyaml
 
   set member = 1
@@ -426,7 +474,7 @@ if ( "$self_AppName" =~ *"eda"* ) then
     cp $prevYAML $memberyaml
 
     ## ensemble Jb members
-cat >! ${enspbmemsed}SEDF.yaml << EOF
+cat >! ${thisSEDF} << EOF
 /${enspbmemsed}/c\
 EOF
 
@@ -450,17 +498,16 @@ EOF
         set filename = ${filename}\\
       endif
 
-cat >>! ${enspbmemsed}SEDF.yaml << EOF
-${indent}- date: *adate\
-${indent}  state variables: *incvars\
+cat >>! ${thisSEDF} << EOF
+${indent}- <<: *memberConfig\
 ${indent}  filename: ${filename}
 EOF
 
       @ bremain--
     end
     set thisYAML = last.yaml
-    sed -f ${enspbmemsed}SEDF.yaml $memberyaml >! $thisYAML
-    rm ${enspbmemsed}SEDF.yaml
+    sed -f ${thisSEDF} $memberyaml >! $thisYAML
+    rm ${thisSEDF}
     cp $thisYAML $memberyaml
 
     ## Jo term
@@ -476,12 +523,13 @@ EOF
     @ member++
   end
 else
+  # for single-background variational application (not EDA)
   # create deterministic "member" yaml
   set memberyaml = $appyaml
   cp $prevYAML $memberyaml
 
   ## ensemble Jb members
-cat >! ${enspbmemsed}SEDF.yaml << EOF
+cat >! ${thisSEDF} << EOF
 /${enspbmemsed}/c\
 EOF
 
@@ -497,16 +545,15 @@ EOF
       set filename = ${filename}\\
     endif
 
-cat >>! ${enspbmemsed}SEDF.yaml << EOF
-${indent}- date: *adate\
-${indent}  state variables: *incvars\
+cat >>! ${thisSEDF} << EOF
+${indent}- <<: *memberConfig\
 ${indent}  filename: ${filename}
 EOF
 
   end
   set thisYAML = last.yaml
-  sed -f ${enspbmemsed}SEDF.yaml $memberyaml >! $thisYAML
-  rm ${enspbmemsed}SEDF.yaml
+  sed -f ${thisSEDF} $memberyaml >! $thisYAML
+  rm ${thisSEDF}
   cp $thisYAML $memberyaml
 
   ## Jo term
@@ -514,6 +561,5 @@ EOF
   sed -i 's@ObsPerturbations@false@g' $memberyaml
   sed -i 's@MemberSeed@1@g' $memberyaml
 endif
-
 
 exit 0

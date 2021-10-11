@@ -71,8 +71,8 @@ end
 
 ## link/copy stream_list/streams configs
 foreach staticfile ( \
-stream_list.${MPASCore}.diagnostics \
-stream_list.${MPASCore}.output \
+stream_list.${MPASCore}.background \
+stream_list.${MPASCore}.analysis \
 )
   ln -sfv $self_ModelConfigDir/$staticfile .
 end
@@ -195,7 +195,7 @@ EOF
       set filename = ${filename}\\
     endif
 cat >>! ${enspsed}SEDF.yaml << EOF
-${indent}- <<: *state\
+${indent}- <<: *state${PMatrix}Config\
 ${indent}  filename: ${filename}
 EOF
 

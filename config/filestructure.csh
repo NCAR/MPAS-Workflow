@@ -27,8 +27,9 @@ set TopExpDir = /glade/scratch/${ExperimentUser}/pandac
 setenv PackageBaseName MPAS-Workflow
 setenv ExperimentName ${ExperimentUser}
 setenv ExperimentName ${ExperimentName}_${DAType}
-setenv ExperimentName ${ExperimentName}${ExpObsName}
-setenv ExperimentName ${ExperimentName}${EnsExpSuffix}
+setenv ExperimentName ${ExperimentName}${ExpIterSuffix}
+setenv ExperimentName ${ExperimentName}${ExpObsSuffix}
+setenv ExperimentName ${ExperimentName}${ExpEnsSuffix}
 setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
 setenv ExperimentNameWithoutSuffix ${ExperimentName}
 setenv ExperimentName ${ExperimentName}${ExpSuffix}
@@ -141,12 +142,7 @@ setenv forecastModelConfigDir ${ModelConfigDir}/forecast
 #set forecastStreamsFileList = ($OuterStreamsFile)
 #set forecastNamelistFileList = ($OuterNamelistFile)
 
-# variational
-if ($nEnsDAMembers > 1 && ${ABEInflation} == True) then
-  setenv variationalModelConfigDir ${ModelConfigDir}/variational-bginflate
-else
-  setenv variationalModelConfigDir ${ModelConfigDir}/variational
-endif
+setenv variationalModelConfigDir ${ModelConfigDir}/variational
 set variationalMeshList = (Outer Inner)
 set variationalMPASnCellsList = ($MPASnCellsOuter $MPASnCellsInner)
 set variationallocalStaticFieldsFileList = ( \
