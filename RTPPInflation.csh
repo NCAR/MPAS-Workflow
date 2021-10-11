@@ -185,7 +185,7 @@ EOF
   set member = 1
   while ( $member <= ${nEnsDAMembers} )
     set filename = $ensPDirs[$member]/${ensPFilePrefix}.${fileDate}.nc${ensPFileSuffix}
-    ## copy original analysis files for diagnosing RTPP behavior (not necessary)
+    ## optionally copy original analysis files for diagnosing RTPP behavior
     if ($PMatrix == Pa && ${storeOriginalRTPPAnalyses} == True) then
       set memDir = "."`${memberDir} ensemble $member "${flowMemFmt}"`
       set anmemberDir = ${anDir}0/${memDir}
