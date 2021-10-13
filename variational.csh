@@ -151,11 +151,16 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-## change static fields to a link, keeping for transparency
+## remove hard static fields file(s)
 set iMesh = 0
 foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
   @ iMesh++
   rm ${localStaticFieldsFile}
+end
+## mv linked static fields file to previously deleted hard file location
+# note: must be in separate loop from above to avoid deletion in single-mesh DA
+foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
+  @ iMesh++
   mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 end
 
