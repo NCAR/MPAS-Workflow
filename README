@@ -5,8 +5,8 @@ MPAS-Workflow
 A tool for cycling forecast and data assimilation experiments with the MPAS-Atmosphere model and the
 MPAS-JEDI data assimilation package.
 
-## starting a cycling experiment on the Cheyenne HPC
-----------------------------------------------------
+# starting a cycling experiment on the Cheyenne HPC
+---------------------------------------------------
 login to Cheyenne
 
 mkdir -p /fresh/path/for/submitting/experiments
@@ -41,7 +41,7 @@ source env-setup/cheyenne.sh
 -------------------------------
 
 The files in this directory describe the configuration for the entire workflow.  Some files are
-designed to be modified by users, and others only by developers.
+designed to be modified by users, and others mostly by developers.
 
 ## top-level configuration (config/*.csh)
 -----------------------------------------
@@ -117,7 +117,7 @@ forecast.csh: used to generate all forecast scripts, e.g., CyclingFC.csh and Ext
 which perform mpas_atmosphere forecasts across a templated time range with state output at a
 templated interval. Presently only takes analyses as initial conditions, which have the
 ANFilePrefix and are produced by either CyclingDA or RTPPInflation.  self_icStatePrefix could be
-templated in order enable forecasts from other kinds of states, like cold-start files.
+templated in order to enable forecasts from other kinds of states, like cold-start files.
 
 hofx.csh: used to generate all HofX* scripts, e.g., HofXBG.csh, HofXMeanFC.csh, HofXEnsMeanBG.csh,
 which run the mpasjedi_hofx3d application. Templated w.r.t. the input state directory and prefix,
@@ -144,7 +144,7 @@ MeanAnalysis.csh: calculates the mean of ensemble analysis states
 RTPPInflation.csh: performs Relaxation To Prior Perturbation (RTPP) inflation, taking as input two
 ensembles, one each of background states and analysis states.
 
-GenerateABEInflation.csh: generates Adaptiave Background Error Inflation (ABEI) factors based on
+GenerateABEInflation.csh: generates Adaptive Background Error Inflation (ABEI) factors based on
 all-sky IR brightness temperature H(x_mean) and H_clear(x_mean) from GOES-16 ABI and Himawari-8 AHI.
 
 
