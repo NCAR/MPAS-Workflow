@@ -32,7 +32,7 @@ make -j8
 is=0     # success
 if [[ -f "$REL_DIR/$BUILD_DIR/bin/mpasjedi_variational.x" ]]; then
    # Build successful. Run ctests.
-   cd $REL_DIR/$BUILD_DIR/mpasjedi
+   cd $REL_DIR/$BUILD_DIR/mpas-jedi
    ctest
    # Check if all ctests pass by checking for presence of LastTestsFailed.log
    if [[ -f ./Testing/Temporary/LastTestsFailed.log ]]; then
@@ -66,5 +66,3 @@ cp -rp $f $f.org
 source .github/stable_mark.sh
 mv $f  $REL_DIR/${f}_$(date '+%Y-%m-%d_%H.%M.%S')_$s
 cp -rp $f.org $f
-
-  
