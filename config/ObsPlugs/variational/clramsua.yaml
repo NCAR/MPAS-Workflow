@@ -3,7 +3,7 @@
     obsdatain:
       obsfile: InDBDir/amsua_n19_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n19.h5
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_amsua_n19.h5
     simulated variables: [brightness_temperature]
     channels: 5-7,9
     obs perturbations seed: MemberSeed
@@ -21,7 +21,7 @@
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n19.nc4
+    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_n19.nc4
   obs operator: &clramsuacrtm
     name: CRTM
     SurfaceWindGeoVars: uv
@@ -39,7 +39,7 @@
     obsdatain:
       obsfile: InDBDir/amsua_n15_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n15.h5
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_amsua_n15.h5
     simulated variables: [brightness_temperature]
     channels: 5-9
     obs perturbations seed: MemberSeed
@@ -57,7 +57,7 @@
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n15.nc4
+    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_n15.nc4
   obs operator:
     <<: *clramsuacrtm
     obs options:
@@ -70,7 +70,7 @@
     obsdatain:
       obsfile: InDBDir/amsua_n18_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_n18.h5
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_amsua_n18.h5
     simulated variables: [brightness_temperature]
     channels: 5-9
     obs perturbations seed: MemberSeed
@@ -88,7 +88,7 @@
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_n18.nc4
+    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_n18.nc4
   obs operator:
     <<: *clramsuacrtm
     obs options:
@@ -101,7 +101,7 @@
     obsdatain:
       obsfile: InDBDir/amsua_metop-a_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_metop-a.h5
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_amsua_metop-a.h5
     simulated variables: [brightness_temperature]
     channels: 5,6,9
     obs perturbations seed: MemberSeed
@@ -119,7 +119,7 @@
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-a.nc4
+    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_metop-a.nc4
   obs operator:
     <<: *clramsuacrtm
     obs options:
@@ -132,7 +132,7 @@
 #    obsdatain:
 #      obsfile: InDBDir/amsua_metop-b_obs_2018041500.h5
 #    obsdataout:
-#      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_metop-b.h5
+#      obsfile: OutDBDirOOPSMemberDir/obsPrefix_amsua_metop-b.h5
 #    simulated variables: [brightness_temperature]
 #    channels: 8,9
 #    obs perturbations seed: MemberSeed
@@ -150,7 +150,7 @@
 ##  - filter: Gaussian Thinning
 ##    horizontal_mesh: RADTHINDISTANCE #km
 #  - filter: GOMsaver
-#    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_metop-b.nc4
+#    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_metop-b.nc4
 #  obs operator:
 #    <<: *clramsuacrtm
 #    obs options:
@@ -163,7 +163,7 @@
     obsdatain:
       obsfile: InDBDir/amsua_aqua_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_amsua_aqua.h5
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_amsua_aqua.h5
     simulated variables: [brightness_temperature]
     channels: 8,9
     obs perturbations seed: MemberSeed
@@ -181,7 +181,7 @@
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_amsua_aqua.nc4
+    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_aqua.nc4
   obs operator:
     <<: *clramsuacrtm
     obs options:

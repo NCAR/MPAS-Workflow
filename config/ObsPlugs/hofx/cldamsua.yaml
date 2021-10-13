@@ -3,7 +3,7 @@
     obsdatain:
       obsfile: InDBDir/amsua_n19_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua-cld_n19.h5
+      obsfile: OutDBDir/obsPrefix_amsua-cld_n19.h5
     simulated variables: [brightness_temperature]
     channels: &cldamsua_channels 1-4,15
 #    channels: &cldamsua_channels 1-15
@@ -25,9 +25,9 @@
 #    minvalue: 170.0
 #    maxvalue: 300.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_amsua-cld_n19.nc4
+    filename: OutDBDir/geoPrefix_amsua-cld_n19.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_AppType_amsua-cld_n19.nc4
+    filename: OutDBDir/diagPrefix_amsua-cld_n19.nc4
     filter variables: &cldamsuaydiag
     - name: brightness_temperature_assuming_clear_sky
       channels: *cldamsua_channels
@@ -50,7 +50,7 @@
     obsdatain:
       obsfile: InDBDir/amsua_n15_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua-cld_n15.h5
+      obsfile: OutDBDir/obsPrefix_amsua-cld_n15.h5
     simulated variables: [brightness_temperature]
     channels: &cldamsuan15_channels 1-4,15
 #CHECK FPE ERRORS IN CRTM
@@ -73,9 +73,9 @@
 #    minvalue: 170.0
 #    maxvalue: 300.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_amsua-cld_n15.nc4
+    filename: OutDBDir/geoPrefix_amsua-cld_n15.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_AppType_amsua-cld_n15.nc4
+    filename: OutDBDir/diagPrefix_amsua-cld_n15.nc4
     filter variables: 
     - name: brightness_temperature_assuming_clear_sky
       channels: *cldamsuan15_channels
@@ -92,7 +92,7 @@
     obsdatain:
       obsfile: InDBDir/amsua_n18_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua-cld_n18.h5
+      obsfile: OutDBDir/obsPrefix_amsua-cld_n18.h5
     simulated variables: [brightness_temperature]
     channels: &cldamsuan18_channels 1-4,15
 #CHECK FPE ERRORS IN CRTM
@@ -115,9 +115,9 @@
 #    minvalue: 170.0
 #    maxvalue: 300.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_amsua-cld_n18.nc4
+    filename: OutDBDir/geoPrefix_amsua-cld_n18.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_AppType_amsua-cld_n18.nc4
+    filename: OutDBDir/diagPrefix_amsua-cld_n18.nc4
     filter variables: 
     - name: brightness_temperature_assuming_clear_sky
       channels: *cldamsuan18_channels
@@ -134,7 +134,7 @@
     obsdatain:
       obsfile: InDBDir/amsua_metop-a_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua-cld_metop-a.h5
+      obsfile: OutDBDir/obsPrefix_amsua-cld_metop-a.h5
     simulated variables: [brightness_temperature]
     channels: &cldamsuama_channels 1-4,15
 #CHECK FPE ERRORS IN CRTM
@@ -157,9 +157,9 @@
 #    minvalue: 170.0
 #    maxvalue: 300.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_amsua-cld_metop-a.nc4
+    filename: OutDBDir/geoPrefix_amsua-cld_metop-a.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_AppType_amsua-cld_metop-a.nc4
+    filename: OutDBDir/diagPrefix_amsua-cld_metop-a.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *cldamsuama_channels
@@ -176,7 +176,7 @@
     obsdatain:
       obsfile: InDBDir/amsua_metop-b_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua-cld_metop-b.h5
+      obsfile: OutDBDir/obsPrefix_amsua-cld_metop-b.h5
     simulated variables: [brightness_temperature]
     channels: *cldamsua_channels
   obs error:
@@ -197,9 +197,9 @@
 #    minvalue: 170.0
 #    maxvalue: 300.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_amsua-cld_metop-b.nc4
+    filename: OutDBDir/geoPrefix_amsua-cld_metop-b.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_AppType_amsua-cld_metop-b.nc4
+    filename: OutDBDir/diagPrefix_amsua-cld_metop-b.nc4
     filter variables: *cldamsuaydiag
   obs operator:
     <<: *cldamsuacrtm
@@ -214,7 +214,7 @@
     obsdatain:
       obsfile: InDBDir/amsua_aqua_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_amsua-cld_aqua.h5
+      obsfile: OutDBDir/obsPrefix_amsua-cld_aqua.h5
     simulated variables: [brightness_temperature]
     channels: *cldamsua_channels
   obs error:
@@ -235,9 +235,9 @@
 #    minvalue: 170.0
 #    maxvalue: 300.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_amsua-cld_aqua.nc4
+    filename: OutDBDir/geoPrefix_amsua-cld_aqua.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_AppType_amsua-cld_aqua.nc4
+    filename: OutDBDir/diagPrefix_amsua-cld_aqua.nc4
     filter variables: *cldamsuaydiag
   obs operator:
     <<: *cldamsuacrtm

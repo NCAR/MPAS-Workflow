@@ -3,7 +3,7 @@
     obsdatain:
       obsfile: InDBDir/mhs_n19_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_mhs_n19.h5
+      obsfile: OutDBDir/obsPrefix_mhs_n19.h5
     simulated variables: [brightness_temperature]
     channels: &allmhs_channels 1-5
   obs error:
@@ -30,9 +30,9 @@
         name: water_area_fraction@GeoVaLs
       minvalue: 1.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_mhs_n19.nc4
+    filename: OutDBDir/geoPrefix_mhs_n19.nc4
   - filter: YDIAGsaver 
-    filename: OutDBDir/diagPrefix_AppType_mhs_n19.nc4
+    filename: OutDBDir/diagPrefix_mhs_n19.nc4
     filter variables: &allmhsydiag
     - name: brightness_temperature_assuming_clear_sky
       channels: *allmhs_channels
@@ -55,7 +55,7 @@
     obsdatain:
       obsfile: InDBDir/mhs_n18_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_mhs_n18.h5
+      obsfile: OutDBDir/obsPrefix_mhs_n18.h5
     simulated variables: [brightness_temperature]
     channels: *allmhs_channels
   obs error:
@@ -75,9 +75,9 @@
         name: water_area_fraction@GeoVaLs
       minvalue: 1.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_mhs_n18.nc4
+    filename: OutDBDir/geoPrefix_mhs_n18.nc4
   - filter: YDIAGsaver 
-    filename: OutDBDir/diagPrefix_AppType_mhs_n18.nc4
+    filename: OutDBDir/diagPrefix_mhs_n18.nc4
     filter variables: *allmhsydiag
   get values:
     interpolation type: InterpolationType
@@ -86,7 +86,7 @@
     obsdatain:
       obsfile: InDBDir/mhs_metop-a_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_mhs_metop-a.h5
+      obsfile: OutDBDir/obsPrefix_mhs_metop-a.h5
     simulated variables: [brightness_temperature]
     channels: *allmhs_channels
   obs error:
@@ -106,9 +106,9 @@
         name: water_area_fraction@GeoVaLs
       minvalue: 1.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_mhs_metop-a.nc4
+    filename: OutDBDir/geoPrefix_mhs_metop-a.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_AppType_mhs_metop-a.nc4
+    filename: OutDBDir/diagPrefix_mhs_metop-a.nc4
     filter variables: *allmhsydiag
   get values:
     interpolation type: InterpolationType
@@ -117,7 +117,7 @@
     obsdatain:
       obsfile: InDBDir/mhs_metop-b_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_AppType_mhs_metop-b.h5
+      obsfile: OutDBDir/obsPrefix_mhs_metop-b.h5
     simulated variables: [brightness_temperature]
     channels: *allmhs_channels
   obs error:
@@ -137,9 +137,9 @@
         name: water_area_fraction@GeoVaLs
       minvalue: 1.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_AppType_mhs_metop-b.nc4
+    filename: OutDBDir/geoPrefix_mhs_metop-b.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_AppType_mhs_metop-b.nc4
+    filename: OutDBDir/diagPrefix_mhs_metop-b.nc4
     filter variables: *allmhsydiag
   get values:
     interpolation type: InterpolationType
