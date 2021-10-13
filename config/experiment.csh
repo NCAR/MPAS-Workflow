@@ -100,7 +100,7 @@ setenv storeOriginalRTPPAnalyses False
 ## ABEIInflation, whether to utilize adaptive background error inflation (ABEI) in cloud-affected scenes
 #  as measured by ABI and AHI observations
 # OPTIONS: True/False
-setenv ABEInflation True
+setenv ABEInflation False
 
 ## ABEIChannel
 # OPTIONS: 8, 9, 10
