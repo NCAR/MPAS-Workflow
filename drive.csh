@@ -146,9 +146,9 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
 {% elif CriticalPathType == "Reanalysis" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA => CyclingDAFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        InitCyclingDA => CyclingDA => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
-  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDA => CleanCyclingDA" %}
+  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
 {% elif CriticalPathType == "Reforecast" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
@@ -161,14 +161,14 @@ cat >! suite.rc << EOF
     {% set PrimaryCPGraph = PrimaryCPGraph + " => GenerateABEInflation" %}
     {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        GenerateABEInflation => CleanHofXEnsMeanBG" %}
   {% endif %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + " => CyclingDA" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + " => InitCyclingDA => CyclingDA" %}
   {% if (RTPPInflationFactor > 0.0 and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph+" => RTPPInflation" %}
   {% endif %}
   {% set PrimaryCPGraph = PrimaryCPGraph + " => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
-  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDA => CleanCyclingDA" %}
+  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
 {# else #}
 #TODO: indicate invalid CriticalPathType
 {% endif %}
@@ -192,7 +192,7 @@ cat >! suite.rc << EOF
 #TODO: put warm-start file copying in InitEnsFC/firstfc script
 #{# if initialCyclePoint == firstCyclePoint #}
 #    [[[R1]]]
-#      graph = InitEnsFC => CyclingDA
+#      graph = InitEnsFC => InitCyclingDA => CyclingDA
 #{# endif #}
 ## Critical path for cycling
     [[[PT${CyclingWindowHR}H]]]
@@ -347,8 +347,15 @@ cat >! suite.rc << EOF
       -A = ${VFAccountNumber}
       -l = select=1:ncpus=1
 #Cycling components
+  [[InitCyclingDA]]
+    script = \$origin/jediPrepCyclingDA.csh "1" "0" "DA"
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = ${CyclingDARetry}
+    [[[directives]]]
+      -q = share
+      -l = select=1:ncpus=1
   [[CyclingDA]]
-    env-script = cd ${mainScriptDir}; ./jediPrepCyclingDA.csh "1" "0" "DA"
     script = \$origin/CyclingDA.csh
     [[[job]]]
       execution time limit = PT${CyclingDAJobMinutes}M
