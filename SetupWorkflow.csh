@@ -126,7 +126,7 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
     -e 's@wrapAppNameTEMPLATE@'${DAType}'@g' \
     -e 's@wrapjediAppNameTEMPLATE@variational@g' \
-    -e 's@wrapnOuterTEMPLATE@1@g' \
+    -e 's@wrapnOuterTEMPLATE@'${nOuterIterations}'@g' \
     -e 's@wrapAppTypeTEMPLATE@variational@g' \
     ${AppAndVerify}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}

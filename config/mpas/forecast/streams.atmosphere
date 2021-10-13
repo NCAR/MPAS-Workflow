@@ -1,37 +1,38 @@
 <streams>
 <immutable_stream name="static"
                   type="input"
+                  precision="double"
                   filename_template="StaticFieldsPrefix.nCells.nc"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="input"
                   type="input"
+                  precision="double"
                   filename_template="ICFilePrefix.$Y-$M-$D_$h.$m.$s.nc"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="da_state"
                   type="output"
+                  precision="double"
                   clobber_mode="truncate"
                   filename_template="FCFilePrefix.$Y-$M-$D_$h.$m.$s.nc"
                   io_type="pnetcdf,cdf5"
                   output_interval="outputInterval" />
 
-<immutable_stream name="restart"
-                  type="input;output"
-                  filename_template="restart.$Y-$M-$D_$h.$m.$s.nc"
-                  io_type="pnetcdf,cdf5"
-                  input_interval="initial_only"
-                  clobber_mode="overwrite"
-                  output_interval="none" />
+<immutable_stream name="iau"
+                  type="input"
+                  precision="double"
+                  filename_template="x1.nCells.AmB.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_interval="none"
+                  packages="iau"
+                  input_interval="none" />
 
 <stream name="output"
         type="none"
         filename_template="history.$Y-$M-$D_$h.$m.$s.nc"
-        io_type="pnetcdf,cdf5"
-        output_interval="1_00:00:00" >
-	<file name="stream_list.atmosphere.output"/>
+        output_interval="none" >
 </stream>
 
 <stream name="diagnostics"
@@ -48,15 +49,7 @@
         filename_template="x1.nCells.sfc_update.nc"
         filename_interval="none"
         input_interval="none" >
-
 	<file name="stream_list.atmosphere.surface"/>
 </stream>
-
-<immutable_stream name="iau"
-                  type="input"
-                  filename_template="x1.nCells.AmB.$Y-$M-$D_$h.$m.$s.nc"
-                  filename_interval="none"
-                  packages="iau"
-                  input_interval="none" />
 
 </streams>

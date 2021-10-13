@@ -20,11 +20,11 @@ setenv HofXNodes 1
 setenv HofXPEPerNode 36
 setenv HofXMemory 109
 
-# ~8-12 min. for VerifyObsDA, ~5 min. for VerifyObsBG
+# ~8-12 min. for VerifyObsDA, ~5 min. for VerifyObsBG; 08OCT2021
 set DeterministicVerifyObsJobMinutes = 15
 set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
 
-# 3 min. premium per 20 members for VerifyObsEnsMean
+# 3 min. premium per 20 members for VerifyObsEnsMean; 08OCT2021
 set EnsembleVerifyObsEnsMeanMembersPerJobMinute = 7
 @ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} / ${EnsembleVerifyObsEnsMeanMembersPerJobMinute}
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
@@ -35,8 +35,9 @@ setenv VerifyModelJobMinutes 2
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
-
-set DeterministicDABaseMinutes = 4
+# ~5 min. for ThreeDEnVar, 60 inner x 1 outer, 20 member EnsB, CONV obs; 08OCT2021
+# ~6 min. for ThreeDEnVar, 30 inner x 2 outer, 20 member EnsB, CONV obs + ABI + AHI; 08OCT2021
+set DeterministicDABaseMinutes = 6
 set ThreeDEnVarMembersPerJobMinute = 12
 @ ThreeDEnVarJobMinutes = ${ensPbNMembers} / ${ThreeDEnVarMembersPerJobMinute}
 @ ThreeDEnVarJobMinutes = ${ThreeDEnVarJobMinutes} + ${DeterministicDABaseMinutes}

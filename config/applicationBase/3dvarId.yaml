@@ -1,19 +1,19 @@
+iteration: &iterationConfig
+  geometry:
+    nml_file: InnerNamelistFile
+    streams_file: InnerStreamsFile
+    deallocate non-da fields: true
+    interpolation type: unstructured
+  gradient norm reduction: 1e-3
+  obs perturbations: ObsPerturbations
 output:
   filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis
 variational:
   minimizer:
     algorithm: DRIPCG
   iterations:
-  - geometry:
-      nml_file: InnerNamelistFile
-      streams_file: InnerStreamsFile
-      deallocate non-da fields: true
-      interpolation type: unstructured
-    ninner: '60'
-    gradient norm reduction: 1e-10
-    test: 'on'
-    diagnostics:
-      departures: depbg
+VariationalIterations
 final:
   diagnostics:
     # no need to write out analysis departures
@@ -31,8 +31,8 @@ cost function:
   background:
     state variables: *incvars
     filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
-    date: &adate '2018-04-15T00:00:00Z'
+    date: &analysisDate '2018-04-15T00:00:00Z'
   background error:
     covariance model: MPASstatic
-    date: *adate
+    date: *analysisDate
   observations:

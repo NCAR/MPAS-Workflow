@@ -1,28 +1,23 @@
+iteration: &iterationConfig
+  geometry:
+    nml_file: InnerNamelistFile
+    streams_file: InnerStreamsFile
+    deallocate non-da fields: true
+    interpolation type: unstructured
+  gradient norm reduction: 1e-3
+  obs perturbations: ObsPerturbations
+member: &memberConfig
+  date: &analysisDate '2018-04-15T00:00:00Z'
+  state variables: &incvars [AnalysisVariables]
+  stream name: ensemble
 output:
   filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis
 variational:
   minimizer:
     algorithm: DRIPCG
   iterations:
-  - geometry:
-      nml_file: InnerNamelistFile
-      streams_file: InnerStreamsFile
-      deallocate non-da fields: true
-      interpolation type: unstructured
-    ninner: '60'
-    gradient norm reduction: 1e-10
-    test: 'on'
-    diagnostics:
-      departures: depbg
-    obs perturbations: ObsPerturbations
-#  - geometry:
-#      nml_file: InnerNamelistFile
-#      streams_file: InnerStreamsFile
-#      deallocate non-da fields: true
-#      interpolation type: unstructured
-#    ninner: '60'
-#    gradient norm reduction: 1e-10
-#    test: 'on'
+VariationalIterations
 final:
   diagnostics:
     departures: depan
@@ -35,18 +30,16 @@ cost function:
     streams_file: OuterStreamsFile
     deallocate non-da fields: true
     interpolation type: unstructured
-  analysis variables: &incvars [AnalysisVariables]
+  analysis variables: *incvars
   background:
     state variables: [StateVariables]
     filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
-    date: &adate '2018-04-15T00:00:00Z'
+    date: *analysisDate
   background error:
     covariance model: ensemble
-    date: *adate
+    date: *analysisDate
     localization:
       localization method: BUMP
-      timeslots:
-      - *adate
       localization variables: *incvars
       bump:
         datadir: bumpLocDir
