@@ -63,11 +63,15 @@ set self_StatePrefix = inStatePrefixTEMPLATE
 # Remove old logs
 rm jedi.log*
 
-# ================================================================================================
+# Remove old netcdf lock files
+rm *.nc*.lock
+
+# Remove old static fields in case this directory was used previously
+rm ${localStaticFieldsPrefix}*.nc*
+
+# ==================================================================================================
 
 ## copy static fields
-rm ${localStaticFieldsPrefix}*.nc
-rm ${localStaticFieldsPrefix}*.nc-lock
 set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
 set StaticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
@@ -98,7 +102,6 @@ foreach var ({$MPASJEDIDiagVariables})
 end
 if ( $copyDiags > 0 ) then
   echo "Copy diagnostic variables used in HofX to bg: $MPASJEDIDiagVariables"
-  # ===============================================
   rm ${bgFile}
   cp -v ${bgFile}${OrigFileSuffix} ${bgFile}
   set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
@@ -125,6 +128,9 @@ endif
 ## change static fields to a link, keeping for transparency
 rm ${localStaticFieldsFile}
 mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
+
+# Remove netcdf lock files
+rm *.nc*.lock
 
 date
 

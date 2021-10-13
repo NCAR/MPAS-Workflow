@@ -2,7 +2,7 @@
 <immutable_stream name="static"
                   type="input"
                   precision="double"
-                  filename_template="StaticFieldsPrefix.nCells.nc"
+                  filename_template="StaticFieldsPrefix.nCells.ncTemplateFieldsMember"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
