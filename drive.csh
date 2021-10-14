@@ -135,6 +135,7 @@ cat >! suite.rc << EOF
 {% set VerifyANMembers = ${VerifyANMembers} %}
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
+{% set useEnsembleVariational = ${useEnsembleVariational} %}
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
 [meta]
@@ -353,24 +354,34 @@ cat >! suite.rc << EOF
     script = \$origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = ${CyclingDARetry}
+      execution retry delays = ${VariationalRetry}
     [[[directives]]]
       -q = share
       -l = select=1:ncpus=1
   [[CyclingDA]]
+{% if useEnsembleVariational and nEnsDAMembers > 1 %}
+  [[CyclingEDA]]
+    inherit = CyclingDA
+    script = \$origin/EnsembleVariational.csh
     [[[job]]]
-      execution time limit = PT${CyclingDAJobMinutes}M
+      execution time limit = PT${EnsVariationalJobMinutes}M
+      execution retry delays = ${EnsVariationalRetry}
     [[[directives]]]
       -m = ae
-      -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
-{# for mem in EnsDAMembers #}
-{% for mem in [1] %}
+      -l = select=${EnsVariationalNodes}:ncpus=${EnsVariationalPEPerNode}:mpiprocs=${EnsVariationalPEPerNode}:mem=${EnsVariationalMemory}GB
+{% else %}
+  {% for mem in EnsDAMembers %}
   [[CyclingDAMember{{mem}}]]
     inherit = CyclingDA
     script = \$origin/Variational.csh "{{mem}}"
     [[[job]]]
-      execution retry delays = ${CyclingDARetry}
-{% endfor %}
+      execution time limit = PT${VariationalJobMinutes}M
+      execution retry delays = ${VariationalRetry}
+    [[[directives]]]
+      -m = ae
+      -l = select=${VariationalNodes}:ncpus=${VariationalPEPerNode}:mpiprocs=${VariationalPEPerNode}:mem=${VariationalMemory}GB
+  {% endfor %}
+{% endif %}
   [[RTPPInflation]]
     script = \$origin/RTPPInflation.csh
     [[[job]]]

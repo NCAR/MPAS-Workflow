@@ -20,12 +20,12 @@ set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_05OC
 # MPAS-JEDI
 # ---------
 ## Variational
-if ( "$DAType" =~ *"eda"* ) then
-  setenv VariationalEXE mpasjedi_eda.x
-else
-  setenv VariationalEXE mpasjedi_variational.x
-endif
+setenv VariationalEXE mpasjedi_variational.x
 setenv VariationalBuildDir ${commonBuild}/bin
+
+## EnsembleVariational
+setenv EnsembleVariationalEXE mpasjedi_eda.x
+setenv EnsembleVariationalBuildDir ${commonBuild}/bin
 
 ## HofX
 setenv HofXEXE mpasjedi_hofx3d.x

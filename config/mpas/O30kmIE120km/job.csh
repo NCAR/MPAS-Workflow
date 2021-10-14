@@ -3,10 +3,8 @@
 source config/experiment.csh
 source config/modeldata.csh
 
-## job length and node/pe requirements
-
-# Uniform 30km mesh -- forecast, hofx, variational outer loop
-# Uniform 120km mesh -- variational inner loop
+# job length and node/pe requirements
+# ===================================
 
 @ CyclingFCJobMinutes = 2 + (7 * $CyclingWindowHR / 6)
 setenv CyclingFCNodes 16
@@ -16,6 +14,7 @@ setenv CyclingFCPEPerNode 32
 setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
+## HofX
 # bump interpolation
 #setenv HofXJobMinutes 20
 #setenv HofXNodes 4
@@ -46,23 +45,27 @@ set DeterministicDABaseMinutes = 20
 set ThreeDEnVarMembersPerJobMinute = 12
 @ ThreeDEnVarJobMinutes = ${ensPbNMembers} / ${ThreeDEnVarMembersPerJobMinute}
 @ ThreeDEnVarJobMinutes = ${ThreeDEnVarJobMinutes} + ${DeterministicDABaseMinutes}
-set EnsembleDAMembersPerJobMinute = 5
-@ CyclingDAJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
-@ CyclingDAJobMinutes = ${CyclingDAJobMinutes} + ${ThreeDEnVarJobMinutes}
-#setenv CyclingDAMemory 45
-setenv CyclingDAMemory 109
-if ( "$DAType" =~ *"eda"* ) then
-  setenv CyclingDANodesPerMember 2
-  setenv CyclingDAPEPerNode      18
-else
-  setenv CyclingDANodesPerMember 4
-  setenv CyclingDAPEPerNode      32
-endif
 
+# Variational
+setenv VariationalJobMinutes ${ThreeDEnVarJobMinutes}
+setenv VariationalMemory 109
+setenv VariationalNodesPerMember 4
+setenv VariationalPEPerNode 32
+setenv VariationalNodes ${VariationalNodesPerMember}
+
+# EnsembleVariational
+# not tested, likely infeasible
+set EnsembleDAMembersPerJobMinute = 6
+@ EnsVariationalJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
+@ EnsVariationalJobMinutes = ${EnsVariationalJobMinutes} + ${ThreeDEnVarJobMinutes}
+setenv EnsVariationalMemory 109
+setenv EnsVariationalNodesPerMember 3
+setenv EnsVariationalPEPerNode      12
+@ EnsVariationalNodes = ${EnsVariationalNodesPerMember} * ${nEnsDAMembers}
+setenv EnsVariationalNodes ${EnsVariationalNodes}
+
+# inflation, e.g., RTPP
 setenv CyclingInflationJobMinutes 25
 setenv CyclingInflationMemory 109
 setenv CyclingInflationNodes ${HofXNodes}
 setenv CyclingInflationPEPerNode ${HofXPEPerNode}
-
-@ CyclingDANodes = ${CyclingDANodesPerMember} * ${nEnsDAMembers}
-setenv CyclingDANodes ${CyclingDANodes}

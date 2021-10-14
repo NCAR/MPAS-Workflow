@@ -1,35 +1,15 @@
 #!/bin/csh -f
 
-# Carry out variational minimization for
-# single first guess state
+# Carry out variational minimization for either
+# multiple first guess states (EDA)
 
 date
-
-# Process arguments
-# =================
-## args
-# ArgMember: int, ensemble member [>= 1]
-# note: not currently used, but will be for independent EDA members
-set ArgMember = "$1"
-
-## arg checks
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isNotInt = ($status)
-if ( $isNotInt ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
-  exit 1
-endif
-if ( $ArgMember < 1 ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
-  exit 1
-endif
 
 # Setup environment
 # =================
 source config/builds.csh
 source config/environment.csh
 source config/mpas/variables.csh
-source config/tools.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -42,15 +22,24 @@ echo "WorkDir = ${self_WorkDir}"
 cd ${self_WorkDir}
 
 # build, executable, yaml
-set myBuildDir = ${VariationalBuildDir}
-set myEXE = ${VariationalEXE}
-set myYAML = ${self_WorkDir}/variational_${ArgMember}.yaml
+set myBuildDir = ${EnsembleVariationalBuildDir}
+set myEXE = ${EnsembleVariationalEXE}
+set myYAML = ${self_WorkDir}/$appyaml
 
 # ================================================================================================
 
-## create then move to member-specific run directory
-set memDir = `${memberDir} ens ${ArgMember} "${flowMemFmt}"`
-set runDir = run${memDir}
+# The EnsembleVariational application requires a top-level yaml listing all member yamls
+echo "files:" > $myYAML
+set member = 1
+while ( $member <= ${nEnsDAMembers} )
+  # add eda-member yaml name to list of member yamls
+  set memberyaml = variational_${member}.yaml
+  echo "  - ${self_WorkDir}/$memberyaml" >> $myYAML
+  @ member++
+end
+
+## create then move to single run directory
+set runDir = run
 rm -r ${runDir}
 mkdir -p ${runDir}
 cd ${runDir}

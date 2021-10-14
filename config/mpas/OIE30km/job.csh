@@ -2,10 +2,9 @@
 
 source config/experiment.csh
 
-## job length and node/pe requirements
+# job length and node/pe requirements
+# ===================================
 
-# Uniform 30km mesh
-# -----------------
 @ CyclingFCJobMinutes = 5 + (5 * $CyclingWindowHR / 6)
 setenv CyclingFCNodes 8
 setenv CyclingFCPEPerNode 32
@@ -14,6 +13,7 @@ setenv CyclingFCPEPerNode 32
 setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
+# HofX
 setenv HofXJobMinutes 10
 setenv HofXNodes 32
 setenv HofXPEPerNode 16
@@ -31,23 +31,26 @@ setenv VerifyModelJobMinutes 2
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
-set DeterministicDAJobMinutes = 25
-set EnsembleDAMembersPerJobMinute = 2
-@ CyclingDAJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
-@ CyclingDAJobMinutes = ${CyclingDAJobMinutes} + ${DeterministicDAJobMinutes}
-setenv CyclingDAMemory 109
-if ( "$DAType" =~ *"eda"* ) then
-  setenv CyclingDANodesPerMember 64
-  setenv CyclingDAPEPerNode 8
-else
-  setenv CyclingDANodesPerMember 64
-  setenv CyclingDAPEPerNode 8
-endif
+set DeterministicDABaseMinutes = 25
+set ThreeDEnVarMembersPerJobMinute = 12
+@ ThreeDEnVarJobMinutes = ${ensPbNMembers} / ${ThreeDEnVarMembersPerJobMinute}
+@ ThreeDEnVarJobMinutes = ${ThreeDEnVarJobMinutes} + ${DeterministicDABaseMinutes}
+
+# Variational
+setenv VariationalJobMinutes ${ThreeDEnVarJobMinutes}
+setenv VariationalMemory 109
+setenv VariationalNodesPerMember 64
+setenv VariationalPEPerNode 8
+setenv VariationalNodes ${VariationalNodesPerMember}
+
+# EnsembleVariational
+# not tested, too expensive
+setenv EnsVariationalJobMinutes 1
+setenv EnsVariationalMemory 45
+setenv EnsVariationalPEPerNode 36
+setenv EnsVariationalDANodes 1
 
 setenv CyclingInflationJobMinutes 25
 setenv CyclingInflationMemory 109
 setenv CyclingInflationNodes ${HofXNodes}
 setenv CyclingInflationPEPerNode ${HofXPEPerNode}
-
-@ CyclingDANodes = ${CyclingDANodesPerMember} * ${nEnsDAMembers}
-setenv CyclingDANodes ${CyclingDANodes}
