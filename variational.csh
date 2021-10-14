@@ -60,8 +60,7 @@ while ( $member <= ${nEnsDAMembers} )
 
     set StaticMemDir = `${memberDir} ens $member "${staticMemFmt}"`
     set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
-    ln -sfv ${memberStaticFieldsFile} ${StaticFieldsFile}${OrigFileSuffix}
-    cp -v ${memberStaticFieldsFile} ${StaticFieldsFile}
+    ln -sfv ${memberStaticFieldsFile} ${StaticFieldsFile}
   end
 
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
@@ -161,29 +160,6 @@ if ( $status != 0 ) then
   echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
 endif
-
-set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memSuffix = `${memberDir} $DAType $member "${flowMemFileFmt}"`
-
-  ## remove hard static fields file(s)
-  set iMesh = 0
-  foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
-    @ iMesh++
-    set StaticFieldsFile = ${localStaticFieldsFile}${memSuffix}
-    rm ${StaticFieldsFile}
-  end
-
-  ## mv linked static fields file to previously deleted hard file location
-  # note: must be in separate loop from above to avoid deletion in single-mesh DA
-  foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
-    @ iMesh++
-    set StaticFieldsFile = ${localStaticFieldsFile}${memSuffix}
-    mv ${StaticFieldsFile}${OrigFileSuffix} ${StaticFieldsFile}
-  end
-
-  @ member++
-end
 
 # Remove netcdf lock files
 rm *.nc*.lock
