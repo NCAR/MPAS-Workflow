@@ -146,7 +146,8 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
 {% elif CriticalPathType == "Reanalysis" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        InitCyclingDA => CyclingDA => CyclingDAFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        InitCyclingDA => CyclingDA" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
   {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
 {% elif CriticalPathType == "Reforecast" %}
@@ -162,10 +163,10 @@ cat >! suite.rc << EOF
     {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        GenerateABEInflation => CleanHofXEnsMeanBG" %}
   {% endif %}
   {% set PrimaryCPGraph = PrimaryCPGraph + " => InitCyclingDA => CyclingDA" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => CyclingDAFinished" %}
   {% if (RTPPInflationFactor > 0.0 and nEnsDAMembers > 1) %}
-    {% set PrimaryCPGraph = PrimaryCPGraph+" => RTPPInflation" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => RTPPInflation => CyclingDAFinished" %}
   {% endif %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + " => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
   {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
@@ -174,7 +175,7 @@ cat >! suite.rc << EOF
 {% endif %}
 # verification and extended forecast controls
 {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
-{% set EnsFCMembers = range(1, nEnsDAMembers+1, 1) %}
+{% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
 {% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 [cylc]
   UTC mode = False
@@ -357,13 +358,19 @@ cat >! suite.rc << EOF
       -q = share
       -l = select=1:ncpus=1
   [[CyclingDA]]
-    script = \$origin/CyclingDA.csh
     [[[job]]]
       execution time limit = PT${CyclingDAJobMinutes}M
-      execution retry delays = ${CyclingDARetry}
     [[[directives]]]
       -m = ae
       -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
+{# for mem in EnsDAMembers #}
+{% for mem in [1] %}
+  [[CyclingDAMember{{mem}}]]
+    inherit = CyclingDA
+    script = \$origin/CyclingDA.csh "{{mem}}"
+    [[[job]]]
+      execution retry delays = ${CyclingDARetry}
+{% endfor %}
   [[RTPPInflation]]
     script = \$origin/RTPPInflation.csh
     [[[job]]]
@@ -398,7 +405,7 @@ cat >! suite.rc << EOF
     [[[directives]]]
       -m = ae
       -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
-{% for mem in EnsFCMembers %}
+{% for mem in EnsDAMembers %}
   [[CyclingFCMember{{mem}}]]
     inherit = CyclingFC
     script = \$origin/CyclingFC.csh "{{mem}}"

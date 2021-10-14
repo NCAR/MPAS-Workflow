@@ -1,6 +1,29 @@
 #!/bin/csh -f
 
+# Carry out variational minimization for either
+# + single first guess state (mpasjedi_variational.x)
+# + multiple first guess states (mpasjedi_eda.x)
+
 date
+
+# Process arguments
+# =================
+## args
+# ArgMember: int, ensemble member [>= 1]
+# note: not currently used, but will be for independent EDA members
+set ArgMember = "$1"
+
+## arg checks
+set test = `echo $ArgMember | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
+  exit 1
+endif
+if ( $ArgMember < 1 ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
+  exit 1
+endif
 
 # Setup environment
 # =================
