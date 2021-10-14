@@ -21,7 +21,7 @@ set workflowParts = ( \
   MeanBackground.csh \
   RTPPInflation.csh \
   GenerateABEInflation.csh \
-  variationalPrep.csh \
+  PrepVariational.csh \
 )
 foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
@@ -110,16 +110,16 @@ setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
 #  setenv VARBC_TABLE ${prevCyclingDADir}/${VarBCAnalysis}
 
 
-## jediPrepCyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA
+## PrepJEDICyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA
 # *VerifyModelDA is non-functional and unused
 #TODO: enable VerifyObsDA for ensemble DA; only works for deterministic DA
 set WorkDir = $CyclingDADirs[1]
-set cylcTaskType = CyclingDA
+set taskBaseScript = Variational
 set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
 sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapWorkDirsBenchmarkTEMPLATE@BenchmarkCyclingDADirs@' \
-    -e 's@AppScriptNameTEMPLATE@variational@' \
-    -e 's@cylcTaskTypeTEMPLATE@'${cylcTaskType}'@' \
+    -e 's@AppScriptNameTEMPLATE@Variational@' \
+    -e 's@taskBaseScriptTEMPLATE@'${taskBaseScript}'@' \
     -e 's@wrapStateDirsTEMPLATE@prevCyclingFCDirs@' \
     -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeTEMPLATE@DA@' \
@@ -171,7 +171,7 @@ sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
 chmod 744 ${JobScript}
 
 
-## jediPrepHofX{{state}}, HofX{{state}}, CleanHofX{{state}}
+## PrepJEDIHofX{{state}}, HofX{{state}}, CleanHofX{{state}}
 ## VerifyObs{{state}}, CompareObs{{state}},
 ## VerifyModel{{state}}, CompareModel{{state}}
 foreach state (AN BG EnsMeanBG MeanFC EnsFC)
@@ -186,12 +186,12 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
   else if (${state} == EnsFC) then
     set TemplateVariables = (ExtendedEnsFCDirs ${FCFilePrefix} ${FCVFWindowHR})
   endif
-  set cylcTaskType = HofX${state}
+  set taskBaseScript = HofX${state}
   set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh
   sed -e 's@wrapWorkDirsTEMPLATE@Verify'${state}'Dirs@' \
       -e 's@wrapWorkDirsBenchmarkTEMPLATE@BenchmarkVerify'${state}'Dirs@' \
-      -e 's@AppScriptNameTEMPLATE@hofx@' \
-      -e 's@cylcTaskTypeTEMPLATE@'${cylcTaskType}'@' \
+      -e 's@AppScriptNameTEMPLATE@HofX@' \
+      -e 's@taskBaseScriptTEMPLATE@'${taskBaseScript}'@' \
       -e 's@wrapStateDirsTEMPLATE@'$TemplateVariables[1]'@' \
       -e 's@wrapStatePrefixTEMPLATE@'$TemplateVariables[2]'@' \
       -e 's@wrapStateTypeTEMPLATE@'${state}'@' \

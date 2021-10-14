@@ -349,8 +349,8 @@ cat >! suite.rc << EOF
       -l = select=1:ncpus=1
 #Cycling components
   [[InitCyclingDA]]
-    env-script = cd ${mainScriptDir}; ./jediPrepCyclingDA.csh "1" "0" "DA"
-    script = \$origin/variationalPrep.csh "1"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
+    script = \$origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = ${CyclingDARetry}
@@ -367,7 +367,7 @@ cat >! suite.rc << EOF
 {% for mem in [1] %}
   [[CyclingDAMember{{mem}}]]
     inherit = CyclingDA
-    script = \$origin/CyclingDA.csh "{{mem}}"
+    script = \$origin/Variational.csh "{{mem}}"
     [[[job]]]
       execution retry delays = ${CyclingDARetry}
 {% endfor %}
@@ -398,7 +398,7 @@ cat >! suite.rc << EOF
     script = \$origin/CompareObsDA.csh "1" "0" "DA" "0"
   [[CleanCyclingDA]]
     inherit = CleanBase
-    script = \$origin/CleanCyclingDA.csh
+    script = \$origin/CleanVariational.csh
   [[CyclingFC]]
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
@@ -440,7 +440,7 @@ cat >! suite.rc << EOF
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
-    env-script = cd ${mainScriptDir}; ./jediPrepHofXMeanFC.csh "1" "{{dt}}" "FC"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
     script = \$origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -475,7 +475,7 @@ cat >! suite.rc << EOF
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
     inherit = HofX{{state}}
-    env-script = cd ${mainScriptDir}; ./jediPrepHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     script = \$origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -506,7 +506,7 @@ cat >! suite.rc << EOF
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC{{mem}}
-    env-script = cd ${mainScriptDir}; ./jediPrepHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     script = \$origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -531,7 +531,7 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[HofXEnsMeanBG]]
     inherit = HofXBase
-    env-script = cd ${mainScriptDir}; ./jediPrepHofXEnsMeanBG.csh "1" "0" "BG"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG"
     script = \$origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = ${EnsMeanBGQueueName}

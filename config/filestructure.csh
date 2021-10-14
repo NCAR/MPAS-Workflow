@@ -11,7 +11,7 @@ source config/benchmark.csh
 # executed experiments
 
 # TODO: move TMPDIR creation to individul jobs or common cylc environment setup script, similar
-# to how jediPrep.csh is used
+# to how PrepJEDI.csh is used
 setenv TMPDIR /glade/scratch/${USER}/temp
 mkdir -p $TMPDIR
 
