@@ -128,7 +128,7 @@ foreach MPASnCells ($MPASnCellsList)
   ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 end
 
-## link lookup tables
+## link MPAS-Atmosphere lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
