@@ -56,6 +56,11 @@ endif
 echo "WorkDir = ${self_WorkDir}"
 cd ${self_WorkDir}
 
+# build, executable, yaml
+set myBuildDir = ${HofXBuildDir}
+set myEXE = ${HofXEXE}
+set myYAML = ${self_WorkDir}/$appyaml
+
 # other templated variables
 set self_StateDir = $inStateDirsTEMPLATE[$ArgMember]
 set self_StatePrefix = inStatePrefixTEMPLATE
@@ -113,8 +118,8 @@ ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
 
 # Run the executable
 # ==================
-ln -sfv ${HofXBuildDir}/${HofXEXE} ./
-mpiexec ./${HofXEXE} $appyaml ./jedi.log >& jedi.log.all
+ln -sfv ${myBuildDir}/${myEXE} ./
+mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
 
 
 # Check status

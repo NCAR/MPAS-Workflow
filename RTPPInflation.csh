@@ -28,6 +28,11 @@ echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
+# build, executable, yaml
+set myBuildDir = ${RTPPBuildDir}
+set myEXE = ${RTPPEXE}
+set myYAML = ${self_WorkDir}/$appyaml
+
 # other static variables
 #set bgPrefix = $FCFilePrefix
 #set bgDirs = ($prevCyclingFCDirs)
@@ -213,8 +218,8 @@ mv $prevYAML $appyaml
 
 # Run the executable
 # ==================
-ln -sfv ${RTPPBuildDir}/${RTPPEXE} ./
-mpiexec ./${RTPPEXE} $appyaml >& jedi.log
+ln -sfv ${myBuildDir}/${myEXE} ./
+mpiexec ./${myEXE} $myYAML >& jedi.log
 
 
 # Check status
