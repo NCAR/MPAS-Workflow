@@ -34,6 +34,8 @@ source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
+source config/mpas/variables.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -48,8 +50,26 @@ cd ${self_WorkDir}
 # other static variables
 set self_WindowHR = ${CyclingWindowHR}
 set self_AppName = ${DAType}
+set self_StateDirs = ($prevCyclingFCDirs)
+set self_StatePrefix = ${FCFilePrefix}
+set StreamsFileList = (${variationalStreamsFileList})
+
+# Remove old logs
+rm jedi.log*
+
+# Remove old netcdf lock files
+rm *.nc*.lock
+
+# Remove old static fields in case this directory was used previously
+rm ${localStaticFieldsPrefix}*.nc*
 
 # ==================================================================================================
+
+# ============================
+# Variational YAML preparation
+# ============================
+
+echo "Starting YAML preparation stage"
 
 # Previous time info for yaml entries
 # ===================================
@@ -261,5 +281,125 @@ EOF
   sed -i 's@ObsPerturbations@false@g' $memberyaml
   sed -i 's@MemberSeed@1@g' $memberyaml
 endif
+
+echo "Completed YAML preparation stage"
+
+date
+
+echo "Starting model state preparation stage"
+
+# ====================================
+# Input/Output model state preparation
+# ====================================
+
+# get source static fields files (config/modeldata.csh)
+set StaticFieldsDirList = ($StaticFieldsDirOuter $StaticFieldsDirInner)
+set StaticFieldsFileList = ($StaticFieldsFileOuter $StaticFieldsFileInner)
+
+set member = 1
+while ( $member <= ${nEnsDAMembers} )
+  set memSuffix = `${memberDir} $DAType $member "${flowMemFileFmt}"`
+
+  ## copy static fields
+  # unique StaticFieldsDir and StaticFieldsFile for each ensemble member
+  # + ensures independent ivgtyp, isltyp, etc...
+  # + avoids concurrent reading of StaticFieldsFile by all members
+  set iMesh = 0
+  foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
+    @ iMesh++
+
+    set StaticFieldsFile = ${localStaticFieldsFile}${memSuffix}
+    rm ${StaticFieldsFile}
+
+    set StaticMemDir = `${memberDir} ens $member "${staticMemFmt}"`
+    set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
+    ln -sfv ${memberStaticFieldsFile} ${StaticFieldsFile}
+  end
+
+  # TODO(JJG): centralize this directory name construction (cycle.csh?)
+  set other = $self_StateDirs[$member]
+  set bg = $CyclingDAInDirs[$member]
+  set an = $CyclingDAOutDirs[$member]
+  mkdir -p ${bg}
+  mkdir -p ${an}
+
+  # Link/copy bg from StateDirs, ensuring that MPASJEDIDiagVariables are present
+  # ============================================================================
+  set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
+  set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
+
+  rm ${bgFile}${OrigFileSuffix} ${bgFile}
+
+  # link original file for tracing purposes
+  ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
+
+  # create copy, will be overwritten as the analysis during Variational
+  cp -v ${bgFileOther} ${bgFile}
+
+  # Remove existing analysis file, then link to bg file
+  # ===================================================
+  set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
+  rm ${anFile}
+  ln -sfv ${bgFile} ${anFile}
+
+  # Copy diagnostic variables used in DA to bg (if needed)
+  # ======================================================
+  set copyDiags = 0
+  foreach var ({$MPASJEDIDiagVariables})
+    echo "Checking for presence of variable ($var) in ${bgFileOther}"
+    ncdump -h ${bgFileOther} | grep $var
+    if ( $status != 0 ) then
+      @ copyDiags++
+      echo "variable ($var) not present"
+    endif
+  end
+  if ( $copyDiags > 0 ) then
+    rm ${bgFile}${OrigFileSuffix}
+    cp ${bgFile} ${bgFile}${OrigFileSuffix}
+    set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
+    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
+  endif
+
+  # use the member-specific background as the TemplateFieldsFileOuter for this member
+  rm ${TemplateFieldsFileOuter}${memSuffix}
+  ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
+
+  # use localStaticFieldsFileInner as the TemplateFieldsFileInner
+  # NOTE: not perfect for EDA if static fields differ between members,
+  #       but dual-res EDA not working yet anyway
+  if ($MPASnCellsOuter != $MPASnCellsInner) then
+    set tFile = ${TemplateFieldsFileInner}${memSuffix}
+    rm $tFile
+
+    #modify "Inner" initial forecast file
+    # TODO: capture the naming convention for FirstCyclingFCDir somewhere else
+    set memDir = `${memberDir} $DAType 1`
+    set FirstCyclingFCDir = ${CyclingFCWorkDir}/${prevFirstCycleDate}${memDir}/Inner
+    cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${FirstFileDate}.nc $tFile
+
+    # modify xtime
+    echo "${updateXTIME} $tFile ${thisCycleDate}"
+    ${updateXTIME} $tFile ${thisCycleDate}
+  endif
+
+  if (${memSuffix} == "") then
+    foreach StreamsFile_ ($StreamsFileList)
+      sed -i 's@TemplateFieldsMember@@' ${StreamsFile_}
+    end
+    sed -i 's@StreamsFileMember@@' $appyaml
+  else
+    foreach StreamsFile_ ($StreamsFileList)
+      cp ${StreamsFile_} ${StreamsFile_}${memSuffix}
+      sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
+    end
+    sed -i 's@StreamsFileMember@'${memSuffix}'@' member_${member}.yaml
+  endif
+
+  @ member++
+end
+
+echo "Completed model state preparation stage"
+
+date
 
 exit 0
