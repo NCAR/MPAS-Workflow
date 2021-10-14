@@ -22,13 +22,13 @@ echo "WorkDir = ${self_WorkDir}"
 cd ${self_WorkDir}
 
 # build, executable, yaml
-set myBuildDir = ${EnsembleVariationalBuildDir}
-set myEXE = ${EnsembleVariationalEXE}
+set myBuildDir = ${EnsembleOfVariationalBuildDir}
+set myEXE = ${EnsembleOfVariationalEXE}
 set myYAML = ${self_WorkDir}/$appyaml
 
 # ================================================================================================
 
-# The EnsembleVariational application requires a top-level yaml listing all member yamls
+# The EnsembleOfVariational application requires a top-level yaml listing all member yamls
 echo "files:" > $myYAML
 set member = 1
 while ( $member <= ${nEnsDAMembers} )

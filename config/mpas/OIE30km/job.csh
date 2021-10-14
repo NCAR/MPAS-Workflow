@@ -43,12 +43,12 @@ setenv VariationalNodesPerMember 64
 setenv VariationalPEPerNode 8
 setenv VariationalNodes ${VariationalNodesPerMember}
 
-# EnsembleVariational
+# EnsembleOfVariational
 # not tested, too expensive
-setenv EnsVariationalJobMinutes 1
-setenv EnsVariationalMemory 45
-setenv EnsVariationalPEPerNode 36
-setenv EnsVariationalDANodes 1
+setenv EnsOfVariationalJobMinutes 1
+setenv EnsOfVariationalMemory 45
+setenv EnsOfVariationalPEPerNode 36
+setenv EnsOfVariationalDANodes 1
 
 setenv CyclingInflationJobMinutes 25
 setenv CyclingInflationMemory 109

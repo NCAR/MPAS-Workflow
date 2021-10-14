@@ -53,16 +53,16 @@ setenv VariationalNodesPerMember 4
 setenv VariationalPEPerNode 32
 setenv VariationalNodes ${VariationalNodesPerMember}
 
-# EnsembleVariational
+# EnsembleOfVariational
 # not tested, likely infeasible
 set EnsembleDAMembersPerJobMinute = 6
-@ EnsVariationalJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
-@ EnsVariationalJobMinutes = ${EnsVariationalJobMinutes} + ${ThreeDEnVarJobMinutes}
-setenv EnsVariationalMemory 109
-setenv EnsVariationalNodesPerMember 3
-setenv EnsVariationalPEPerNode      12
-@ EnsVariationalNodes = ${EnsVariationalNodesPerMember} * ${nEnsDAMembers}
-setenv EnsVariationalNodes ${EnsVariationalNodes}
+@ EnsOfVariationalJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
+@ EnsOfVariationalJobMinutes = ${EnsOfVariationalJobMinutes} + ${ThreeDEnVarJobMinutes}
+setenv EnsOfVariationalMemory 109
+setenv EnsOfVariationalNodesPerMember 3
+setenv EnsOfVariationalPEPerNode      12
+@ EnsOfVariationalNodes = ${EnsOfVariationalNodesPerMember} * ${nEnsDAMembers}
+setenv EnsOfVariationalNodes ${EnsOfVariationalNodes}
 
 # inflation, e.g., RTPP
 setenv CyclingInflationJobMinutes 25

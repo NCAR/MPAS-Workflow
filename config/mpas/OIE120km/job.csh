@@ -56,51 +56,51 @@ else
 endif
 setenv VariationalNodes ${VariationalNodesPerMember}
 
-# EnsembleVariational
+# EnsembleOfVariational
 set EnsembleDAMembersPerJobMinute = 6
-@ EnsVariationalJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
-@ EnsVariationalJobMinutes = ${EnsVariationalJobMinutes} + ${ThreeDEnVarJobMinutes}
-setenv EnsVariationalMemory 45
+@ EnsOfVariationalJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
+@ EnsOfVariationalJobMinutes = ${EnsOfVariationalJobMinutes} + ${ThreeDEnVarJobMinutes}
+setenv EnsOfVariationalMemory 45
 
 # special configs that work when nEnsDAMembers is divisible by 5
 # + reduces total cost and queue time, but might increase EDA member imbalance
 # TODO: ideally, we would have an estimate of memory useage per member,
-# then use it to calculate the optimal EnsVariationalNodes and
-# EnsVariationalPEPerNode, and also match the total NPE that was used for localization
+# then use it to calculate the optimal EnsOfVariationalNodes and
+# EnsOfVariationalPEPerNode, and also match the total NPE that was used for localization
 # and/or covariance generation.  It is possible that NPE used for SABER applications
 # no longer needs to be the same as NPE used in Variational applications.
 if ( "$nEnsDAMembers" == 80 ) then
-  setenv EnsVariationalPEPerNode 30
-  setenv EnsVariationalNodes 96
+  setenv EnsOfVariationalPEPerNode 30
+  setenv EnsOfVariationalNodes 96
 else if ( "$nEnsDAMembers" == 70 ) then
-  setenv EnsVariationalPEPerNode 30
-  setenv EnsVariationalNodes 84
+  setenv EnsOfVariationalPEPerNode 30
+  setenv EnsOfVariationalNodes 84
 else if ( "$nEnsDAMembers" == 60 ) then
-  setenv EnsVariationalPEPerNode 30
-  setenv EnsVariationalNodes 72
+  setenv EnsOfVariationalPEPerNode 30
+  setenv EnsOfVariationalNodes 72
 else if ( "$nEnsDAMembers" == 50 ) then
-  setenv EnsVariationalPEPerNode 30
-  setenv EnsVariationalNodes 60
+  setenv EnsOfVariationalPEPerNode 30
+  setenv EnsOfVariationalNodes 60
 else if ( "$nEnsDAMembers" == 40 ) then
-  setenv EnsVariationalPEPerNode 30
-  setenv EnsVariationalNodes 48
+  setenv EnsOfVariationalPEPerNode 30
+  setenv EnsOfVariationalNodes 48
 else if ( "$nEnsDAMembers" == 30 ) then
-  setenv EnsVariationalPEPerNode 30
-  setenv EnsVariationalNodes 36
+  setenv EnsOfVariationalPEPerNode 30
+  setenv EnsOfVariationalNodes 36
 else if ( "$nEnsDAMembers" == 20 ) then
-  setenv EnsVariationalPEPerNode 30
-  setenv EnsVariationalNodes 24
+  setenv EnsOfVariationalPEPerNode 30
+  setenv EnsOfVariationalNodes 24
 else if ( "$nEnsDAMembers" == 10 ) then
-  setenv EnsVariationalPEPerNode 30
-  setenv EnsVariationalNodes 12
+  setenv EnsOfVariationalPEPerNode 30
+  setenv EnsOfVariationalNodes 12
 else if ( "$nEnsDAMembers" == 5 ) then
-  setenv EnsVariationalPEPerNode 30
-  setenv EnsVariationalNodes 6
+  setenv EnsOfVariationalPEPerNode 30
+  setenv EnsOfVariationalNodes 6
 else
-  setenv EnsVariationalPEPerNode 18
-  setenv EnsVariationalNodesPerMember 2
-  @ EnsVariationalNodes = ${EnsVariationalNodesPerMember} * ${nEnsDAMembers}
-  setenv EnsVariationalNodes ${EnsVariationalNodes}
+  setenv EnsOfVariationalPEPerNode 18
+  setenv EnsOfVariationalNodesPerMember 2
+  @ EnsOfVariationalNodes = ${EnsOfVariationalNodesPerMember} * ${nEnsDAMembers}
+  setenv EnsOfVariationalNodes ${EnsOfVariationalNodes}
 endif
 
 # inflation, e.g., RTPP

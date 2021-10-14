@@ -23,9 +23,9 @@ set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_05OC
 setenv VariationalEXE mpasjedi_variational.x
 setenv VariationalBuildDir ${commonBuild}/bin
 
-## EnsembleVariational
-setenv EnsembleVariationalEXE mpasjedi_eda.x
-setenv EnsembleVariationalBuildDir ${commonBuild}/bin
+## EnsembleOfVariational
+setenv EnsembleOfVariationalEXE mpasjedi_eda.x
+setenv EnsembleOfVariationalBuildDir ${commonBuild}/bin
 
 ## HofX
 setenv HofXEXE mpasjedi_hofx3d.x
