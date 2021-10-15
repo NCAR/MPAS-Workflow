@@ -3,7 +3,7 @@
     obsdatain:
       obsfile: InDBDir/gnssro_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_gnssroref.h5
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_gnssroref.h5
     simulated variables: [refractivity]
     obs perturbations seed: MemberSeed
   obs operator:

@@ -21,6 +21,7 @@ set workflowParts = ( \
   MeanBackground.csh \
   RTPPInflation.csh \
   GenerateABEInflation.csh \
+  variationalPrep.csh \
 )
 foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/

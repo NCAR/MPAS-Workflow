@@ -4,7 +4,7 @@
       obsfile: InDBDir/satwind_obs_2018041500.h5
       max frame size: 80000
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_satwind.h5
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_satwind.h5
       max frame size: 80000
     simulated variables: [eastward_wind, northward_wind]
     obs perturbations seed: MemberSeed

@@ -30,29 +30,39 @@ set StreamsFileList = (${variationalStreamsFileList})
 # Remove old logs
 rm jedi.log*
 
+# Remove old netcdf lock files
+rm *.nc*.lock
+
+# Remove old static fields in case this directory was used previously
+rm ${localStaticFieldsPrefix}*.nc*
+
 # ================================================================================================
 
-## copy static fields
-rm ${localStaticFieldsPrefix}*.nc
-rm ${localStaticFieldsPrefix}*.nc-lock
 set StaticFieldsDirList = ($StaticFieldsDirOuter $StaticFieldsDirInner)
 set StaticFieldsFileList = ($StaticFieldsFileOuter $StaticFieldsFileInner)
-set iMesh = 0
-foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
-  @ iMesh++
-  rm ${localStaticFieldsFile}
-
-  #TODO: StaticFieldsDir needs to be unique for each ensemble member (ivgtyp, isltyp, etc...)
-  set StaticMemDir = `${memberDir} ens 1 "${staticMemFmt}"`
-  set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
-  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-  cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
-end
 
 # Link/copy bg from StateDirs + ensure that MPASJEDIDiagVariables are present
 # ===========================================================================
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
+  set memSuffix = `${memberDir} $DAType $member "${flowMemFileFmt}"`
+
+  ## copy static fields
+  # unique StaticFieldsDir and StaticFieldsFile for each ensemble member
+  # + ensures independent ivgtyp, isltyp, etc...
+  # + avoids concurrent reading of StaticFieldsFile by all members
+  set iMesh = 0
+  foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
+    @ iMesh++
+
+    set StaticFieldsFile = ${localStaticFieldsFile}${memSuffix}
+    rm ${StaticFieldsFile}
+
+    set StaticMemDir = `${memberDir} ens $member "${staticMemFmt}"`
+    set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
+    ln -sfv ${memberStaticFieldsFile} ${StaticFieldsFile}
+  end
+
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
   set other = $self_StateDirs[$member]
   set bg = $CyclingDAInDirs[$member]
@@ -92,7 +102,6 @@ while ( $member <= ${nEnsDAMembers} )
   endif
 
   # use this background as the TemplateFieldsFileOuter for this member
-  set memSuffix = `${memberDir} $DAType $member "${flowMemFileFmt}"`
   rm ${TemplateFieldsFileOuter}${memSuffix}
   ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
 
@@ -104,6 +113,7 @@ while ( $member <= ${nEnsDAMembers} )
     rm $tFile
 
     #modify "Inner" initial forecast file
+    # TODO: capture the naming convention for FirstCyclingFCDir somewhere else
     set memDir = `${memberDir} $DAType 1`
     set FirstCyclingFCDir = ${CyclingFCWorkDir}/${prevFirstCycleDate}${memDir}/Inner
     cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${FirstFileDate}.nc $tFile
@@ -151,18 +161,8 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-## remove hard static fields file(s)
-set iMesh = 0
-foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
-  @ iMesh++
-  rm ${localStaticFieldsFile}
-end
-## mv linked static fields file to previously deleted hard file location
-# note: must be in separate loop from above to avoid deletion in single-mesh DA
-foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
-  @ iMesh++
-  mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
-end
+# Remove netcdf lock files
+rm *.nc*.lock
 
 date
 

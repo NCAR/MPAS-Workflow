@@ -3,7 +3,7 @@
     obsdatain:
       obsfile: InDBDir/sfc_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_sfc.h5
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_sfc.h5
     simulated variables: [surface_pressure]
     obs perturbations seed: MemberSeed
   obs operator:

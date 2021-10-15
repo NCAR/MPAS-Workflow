@@ -3,7 +3,7 @@
     obsdatain:
       obsfile: InDBDir/abi_g16_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_AppType_abi_g16.h5
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_abi_g16.h5
     simulated variables: [brightness_temperature]
     channels: &abi_channels 8-10
 #    channels: &abi_channels 8-10,13-16
@@ -81,9 +81,9 @@
     threshold: 3.0
     apply at iterations: 0, 1
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_AppType_abi_g16.nc4
+    filename: OutDBDirOOPSMemberDir/geoPrefix_abi_g16.nc4
   - filter: YDIAGsaver
-    filename: OutDBDirOOPSMemberDir/diagPrefix_AppType_abi_g16.nc4
+    filename: OutDBDirOOPSMemberDir/diagPrefix_abi_g16.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *abi_channels

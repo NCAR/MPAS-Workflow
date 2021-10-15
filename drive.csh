@@ -348,7 +348,8 @@ cat >! suite.rc << EOF
       -l = select=1:ncpus=1
 #Cycling components
   [[InitCyclingDA]]
-    script = \$origin/jediPrepCyclingDA.csh "1" "0" "DA"
+    env-script = cd ${mainScriptDir}; ./jediPrepCyclingDA.csh "1" "0" "DA"
+    script = \$origin/variationalPrep.csh "1"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = ${CyclingDARetry}

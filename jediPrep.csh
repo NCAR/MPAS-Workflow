@@ -2,6 +2,14 @@
 
 #TODO: move this script functionality and relevent control's to python + maybe yaml
 
+# Prepares a directory for mpas-jedi hofx and variational applications
+# + namelist.atmosphere, streams.atmosphere, stream_list.atmosphere.*
+# + links observation data
+# + copy and pre-populate appyaml
+#   - observations
+#   - state directories and state prefixes
+#   - model variables of interest
+
 date
 
 # Process arguments
@@ -105,15 +113,16 @@ set dd = `echo ${halfprevValidDate} | cut -c 7-8`
 set hh = `echo ${halfprevValidDate} | cut -c 9-10`
 set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 
-# ============================================================
-# ============================================================
-# Copy/link files: BUMP B matrix, namelist, yaml, bg, obs data
-# ============================================================
-# ============================================================
+# =========================================
+# =========================================
+# Copy/link files: namelist, obs data, yaml
+# =========================================
+# =========================================
 
 # ====================
 # Model-specific files
 # ====================
+
 ## link MPAS mesh graph info
 foreach MPASnCells ($MPASnCellsList)
   ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
@@ -163,10 +172,12 @@ foreach file ($MPASJEDIVariablesFiles)
   ln -sfv ${ModelConfigDir}/${file} .
 end
 
-# =============
-# OBSERVATIONS
-# =============
+# ================
+# Observation data
+# ================
+
 # get application index
+# =====================
 set index = 0
 foreach application (${applicationIndex})
   @ index++
@@ -176,6 +187,7 @@ foreach application (${applicationIndex})
 end
 
 # setup directories
+# =================
 rm -r ${InDBDir}
 mkdir -p ${InDBDir}
 rm -r ${OutDBDir}
@@ -186,39 +198,44 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-# Link conventional data
-# ======================
+# conventional
+# ============
 ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs*.h5 ${InDBDir}/
 ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs*.h5 ${InDBDir}/
 ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs*.h5 ${InDBDir}/
 ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs*.h5 ${InDBDir}/
 ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs*.h5 ${InDBDir}/
 
-# Link AMSUA+MHS data
-# ==============
+# AMSUA+MHS
+# =========
 ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.h5 ${InDBDir}/
 ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.h5 ${InDBDir}/
 
-# Link ABI data
-# ============
+# ABI
+# ===
 ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
 
-# Link AHI data
-# ============
+# AHI
+# ===
 ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
 
-
-# Link VarBC prior
-# ====================
+# VarBC prior
+# ===========
 ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 
 
 # =============
 # Generate yaml
 # =============
-## Copy applicationBase yaml
+
+# (1) copy applicationBase yaml
+# =============================
+
 set thisYAML = orig.yaml
 cp -v ${ConfigDir}/applicationBase/${self_AppName}.yaml $thisYAML
+
+# (2) obs-related substitutions
+# =============================
 
 ## indentation of observations array members
 set nIndent = $applicationObsIndent[$myAppIndex]
@@ -298,15 +315,24 @@ sed -i 's@PT6H@PT'${self_WindowHR}'H@g' $thisYAML
 ## window beginning
 sed -i 's@WindowBegin@'${halfprevConfDate}'@' $thisYAML
 
-## file naming
+## obs-related file naming
+# crtm tables
 sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' $thisYAML
+
+# input and output IODA DB directories
 sed -i 's@InDBDir@'${InDBDir}'@g' $thisYAML
 sed -i 's@OutDBDir@'${OutDBDir}'@g' $thisYAML
-sed -i 's@obsPrefix@'${obsPrefix}'@g' $thisYAML
-sed -i 's@geoPrefix@'${geoPrefix}'@g' $thisYAML
-sed -i 's@diagPrefix@'${diagPrefix}'@g' $thisYAML
-sed -i 's@AppType@'${self_AppType}'@g' $thisYAML
-sed -i 's@nEnsDAMembers@'${nEnsDAMembers}'@g' $thisYAML
+
+# obs, geo, and diag files with self_AppType suffixes
+sed -i 's@obsPrefix@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
+sed -i 's@geoPrefix@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
+sed -i 's@diagPrefix@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
+
+
+# (3) model-related substitutions
+# ===============================
+
+# bg and an files
 sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' $thisYAML
 sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
 sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' $thisYAML
@@ -323,7 +349,9 @@ end
 ## model and analysis variables
 set AnalysisVariables = ($StandardAnalysisVariables)
 set StateVariables = ($StandardStateVariables)
-# if any CRTM yaml section includes Clouds, then analyze hydrometeors
+
+# if any CRTM yaml section includes Clouds, then include hydrometeors
+# in both the analysis and state variables
 grep '^\ \+Clouds' $thisYAML
 if ( $status == 0 ) then
   foreach hydro ($MPASHydroVariables)
@@ -331,6 +359,8 @@ if ( $status == 0 ) then
     set StateVariables = ($StateVariables $hydro)
   end
 endif
+
+# substitute into yaml
 foreach VarGroup (Analysis Model State)
   if (${VarGroup} == Analysis) then
     set Variables = ($AnalysisVariables)
@@ -348,218 +378,6 @@ foreach VarGroup (Analysis Model State)
   sed -i 's@'$VarGroup'Variables@'$VarSub'@' $thisYAML
 end
 
-#set VarSub = ""
-#foreach var ($AnalysisVariables)
-#  set VarSub = "$VarSub$var,"
-#end
-## remove trailing comma
-#set VarSub = `echo "$VarSub" | sed 's/.$//'`
-#sed -i 's@ModelVariables@'$VarSub'@' $thisYAML
-#sed -i 's@AnalysisVariables@'$VarSub'@' $thisYAML
-
-set prevYAML = $thisYAML
-
-# TODO(JJG): iterations and J terms below are specific to variational, not needed for hofx
-# application; move to a new variationalPrep.csh. Can use an intermediate yaml (e.g., jediPrep.yaml)
-# between jediPrep.csh and application-specific preparations. Could also have an hofxPrep.csh,
-# starts off by just copying jediPrep.yaml generated above.
-
-# Add outer iteration configurations for variational
-# performs sed substitution for VariationalIterations
-set iterationssed = VariationalIterations
-set thisSEDF = ${iterationssed}SEDF.yaml
-cat >! ${thisSEDF} << EOF
-/${iterationssed}/c\
-EOF
-
-set nIterationsIndent = 2
-set indent = "`${nSpaces} $nIterationsIndent`"
-set iOuter = 0
-foreach nInner ($nInnerIterations)
-  @ iOuter++
-  set nn = ${nInner}
-cat >>! ${thisSEDF} << EOF
-${indent}- <<: *iterationConfig\
-EOF
-
-  if ( $iOuter == 1 ) then
-cat >>! ${thisSEDF} << EOF
-${indent}  diagnostics:\
-${indent}    departures: depbg\
-EOF
-
-  endif
-  if ( $iOuter < $nOuterIterations ) then
-    set nn = $nn\\
-  endif
-cat >>! ${thisSEDF} << EOF
-${indent}  ninner: ${nn}
-EOF
-
-end
-
-set thisYAML = insertIterations.yaml
-sed -f ${thisSEDF} $prevYAML >! $thisYAML
-rm ${thisSEDF}
-set prevYAML = $thisYAML
-
-
-## ensemble Jb yaml indentation
-if ( "$self_AppName" =~ *"envar"* ) then
-  set nEnsPbIndent = 4
-else if ( "$self_AppName" =~ *"hybrid"* ) then
-  set nEnsPbIndent = 8
-else
-  set nEnsPbIndent = 0
-endif
-
-## ensemble Jb localization
-sed -i 's@bumpLocDir@'${bumpLocDir}'@g' $prevYAML
-sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' $prevYAML
-
-## ensemble Jb inflation
-# performs sed substitution for EnsemblePbInflation
-set enspbinfsed = EnsemblePbInflation
-set thisSEDF = ${enspbinfsed}SEDF.yaml
-set removeInflation = 0
-if ( "$self_AppName" =~ *"eda"* && ${ABEInflation} == True ) then
-  set inflationFields = ${CyclingABEInflationDir}/BT${ABEIChannel}_ABEIlambda.nc
-  find ${inflationFields} -mindepth 0 -maxdepth 0
-  if ($? > 0) then
-    ## inflation file not generated because all instruments (abi, ahi?) missing at this cylce date
-    #TODO: use last valid inflation factors?
-    set removeInflation = 1
-  else
-    set thisYAML = insertInflation.yaml
-    set indent = "`${nSpaces} $nEnsPbIndent`"
-#NOTE: 'stream name: control' allows for spechum and temperature inflation values to be read
-#      read directly from inflationFields without a variable transform. Also requires spechum and
-#      temperature to be in stream_list.atmosphere.control.
-
-cat >! ${thisSEDF} << EOF
-/${enspbinfsed}/c\
-${indent}inflation field:\
-${indent}  date: *analysisDate\
-${indent}  filename: ${inflationFields}\
-${indent}  stream name: control
-EOF
-
-    sed -f ${thisSEDF} $prevYAML >! $thisYAML
-    set prevYAML = $thisYAML
-  endif
-else
-  set removeInflation = 1
-endif
-if ($removeInflation > 0) then
-  # delete the line containing $enspbinfsed
-  sed -i '/^'${enspbinfsed}'/d' $prevYAML
-endif
-
-## ensemble Jb members
-# performs sed substitution for EnsemblePbMembers
-set enspbmemsed = EnsemblePbMembers
-set thisSEDF = ${enspbmemsed}SEDF.yaml
-if ( "$self_AppName" =~ *"eda"* ) then
-  # for ensemble of variational applications (EDA)
-  echo "files:" > $appyaml
-
-  set member = 1
-  while ( $member <= ${nEnsDAMembers} )
-    set memberyaml = member_$member.yaml
-
-    # add eda-member yaml name to list of member yamls
-    echo "  - $memberyaml" >> $appyaml
-
-    # create eda-member-specific yaml
-    cp $prevYAML $memberyaml
-
-    ## ensemble Jb members
-cat >! ${thisSEDF} << EOF
-/${enspbmemsed}/c\
-EOF
-
-    # TODO(JJG): how does ensemble B config generation need to be
-    #            modified for 4DEnVar?
-    set indent = "`${nSpaces} $nEnsPbIndent`"
-    set bmember = 0
-    set bremain = ${ensPbNMembers}
-    if ( $LeaveOneOutEDA == True ) then
-      @ bremain--
-    endif
-
-    while ( $bmember < ${ensPbNMembers} )
-      @ bmember++
-      if ( $bmember == $member && $LeaveOneOutEDA == True ) then
-        continue
-      endif
-      set memDir = `${memberDir} ensemble $bmember "${ensPbMemFmt}"`
-      set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
-      if ( $bremain > 1 ) then
-        set filename = ${filename}\\
-      endif
-
-cat >>! ${thisSEDF} << EOF
-${indent}- <<: *memberConfig\
-${indent}  filename: ${filename}
-EOF
-
-      @ bremain--
-    end
-    set thisYAML = last.yaml
-    sed -f ${thisSEDF} $memberyaml >! $thisYAML
-    rm ${thisSEDF}
-    cp $thisYAML $memberyaml
-
-    ## Jo term
-    set memDir = `${memberDir} $self_AppName $member`
-    sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
-    if ($member == 1) then
-      sed -i 's@ObsPerturbations@false@g' $memberyaml
-    else
-      sed -i 's@ObsPerturbations@true@g' $memberyaml
-    endif
-    sed -i 's@MemberSeed@'$member'@g' $memberyaml
-
-    @ member++
-  end
-else
-  # for single-background variational application (not EDA)
-  # create deterministic "member" yaml
-  set memberyaml = $appyaml
-  cp $prevYAML $memberyaml
-
-  ## ensemble Jb members
-cat >! ${thisSEDF} << EOF
-/${enspbmemsed}/c\
-EOF
-
-  # TODO(JJG): how does ensemble B config generation need to be
-  #            modified for 4DEnVar?
-  set indent = "`${nSpaces} $nEnsPbIndent`"
-  set bmember = 0
-  while ( $bmember < ${ensPbNMembers} )
-    @ bmember++
-    set memDir = `${memberDir} ensemble $bmember "${ensPbMemFmt}"`
-    set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
-    if ( $bmember < ${ensPbNMembers} ) then
-      set filename = ${filename}\\
-    endif
-
-cat >>! ${thisSEDF} << EOF
-${indent}- <<: *memberConfig\
-${indent}  filename: ${filename}
-EOF
-
-  end
-  set thisYAML = last.yaml
-  sed -f ${thisSEDF} $memberyaml >! $thisYAML
-  rm ${thisSEDF}
-  cp $thisYAML $memberyaml
-
-  ## Jo term
-  sed -i 's@OOPSMemberDir@@g' $memberyaml
-  sed -i 's@ObsPerturbations@false@g' $memberyaml
-  sed -i 's@MemberSeed@1@g' $memberyaml
-endif
+cp $thisYAML $appyaml
 
 exit 0
