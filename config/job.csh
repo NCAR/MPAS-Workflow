@@ -26,7 +26,7 @@ else
 endif
 
 setenv VariationalRetry '2*PT30S'
-setenv EnsVariationalRetry '1*PT30S'
+setenv EnsOfVariationalRetry '1*PT30S'
 setenv CyclingFCRetry '2*PT30S'
 setenv RTPPInflationRetry '2*PT30S'
 setenv HofXRetry '2*PT30S'
