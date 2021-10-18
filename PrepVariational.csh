@@ -121,8 +121,8 @@ set prevYAML = $thisYAML
 
 # Minimization algorithm configuration element
 # ================================================
-# performs sed substitution for MinimizerAlgorithm
-set algorithmsed = MinimizerAlgorithm
+# performs sed substitution for VariationalMinimizer
+set algorithmsed = VariationalMinimizer
 set thisSEDF = ${algorithmsed}SEDF.yaml
 cat >! ${thisSEDF} << EOF
 /${algorithmsed}/c\

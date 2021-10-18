@@ -22,7 +22,7 @@ output:
   stream name: analysis
 variational:
   minimizer:
-MinimizerAlgorithm
+VariationalMinimizer
   iterations:
 VariationalIterations
 final:
