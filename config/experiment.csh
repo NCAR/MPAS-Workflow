@@ -67,22 +67,34 @@ setenv DAType eda_3denvar
 # list of inner iteration counts across all outer iterations
 set nInnerIterations = (60)
 
-## useEnsembleOfVariational
-# whether to use one EnsembleOfVariational application (single job) in place of an ensemble of
-# independent Variational applications (nEnsDAMembers jobs)
-# Notes:
-# + may require large numbers of nodes per job
-# + only applicable when DAType has the prefix "eda_" and nEnsDAMembers > 1
-# OPTIONS: True/False
-setenv useEnsembleOfVariational False
+## MinimizerAlgorithm
+# OPTIONS: DRIPCG, DRPLanczos, DRPBlockLanczos
+# see classes derived from oops/src/oops/assimilation/Minimizer.h for all options
+# Notes about DRPBlockLanczos:
+# + still experimental, and not reliable for this experiment
+# + only available when EDASize > 1
+setenv BlockEDA DRPBlockLanczos
+setenv MinimizerAlgorithm DRIPCG
 
 if ( "$DAType" =~ *"eda"* ) then
-  ## nEnsDAMembers
-  # OPTIONS: 2 to $firstEnsFCNMembers, depends on data source in config/modeldata.csh
-  setenv nEnsDAMembers 20
-else
-  setenv nEnsDAMembers 1
+  ## EDASize
+  # ensemble size of each DA instance
+  # OPTIONS:
+  #   1: ensemble of nDAInstances independent Variational applications (nEnsDAMembers jobs), each
+  #      with 1 background state member per DA job
+  # > 1: ensemble of nDAInstances independent EnsembleOfVariational applications, each with EDASize
+  #      background state members per DA job
+  # In both cases, nEnsDAMembers forecasts are used for the flow-dependent background error
+  setenv EDASize 1
 
+  ## nDAInstances
+  setenv nDAInstances 20
+
+  ## nEnsDAMembers
+  # total number of ensemble DA members, product of EDASize and nDAInstances
+  # Should be between 2 and $firstEnsFCNMembers, depends on data source in config/modeldata.csh
+  @ nEnsDAMembers = $EDASize * $nDAInstances
+else
   ## fixedEnsBType
   # selection of data source for fixed ensemble background covariance members
   # OPTIONS: GEFS (default), PreviousEDA
@@ -92,6 +104,18 @@ else
   set nPreviousEnsDAMembers = 20
   set PreviousEDAForecastDir = \
     /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_LeaveOneOut_OIE120km/CyclingFC
+
+  # override settings for EDASize, nDAInstances, and nEnsDAMembers for non-eda setups
+  # TODO: make DAType setting agnostic of eda_3denvar vs. 3denvar
+  #       and use EDASize and nDAInstances instead
+  setenv EDASize 1
+  setenv nDAInstances 1
+  @ nEnsDAMembers = $EDASize * $nDAInstances
+endif
+
+if ($EDASize == 1 && $MinimizerAlgorithm == $BlockEDA) then
+  echo "WARNING: MinimizerAlgorithm cannot be $BlockEDA when EDASize is 1, re-setting to DRPLanczos"
+  setenv MinimizerAlgorithm DRPLanczos
 endif
 
 ## LeaveOneOutEDA, whether to use self-exclusion in the EnVar ensemble B during EDA cycling
@@ -135,6 +159,8 @@ set hofxObsList = ($benchmarkObsList cldamsua allmhs all$abi all$ahi)
 #====================================================
 #set ExpSuffix = _GEFSVerify
 #setenv DAType eda_3denvar
+#setenv EDASize 1
+#setenv nDAInstances 20
 #setenv nEnsDAMembers 20
 #setenv RTPPInflationFactor 0.0
 #setenv LeaveOneOutEDA False
@@ -166,7 +192,14 @@ setenv FCVFWindowHR 6                   # window of observations included in for
 #(1) ensemble-related settings
 set ExpEnsSuffix = ''
 if ($nEnsDAMembers > 1) then
-  set ExpEnsSuffix = '_NMEM'${nEnsDAMembers}
+  if ($EDASize > 1) then
+    set ExpEnsSuffix = '_NMEM'${nDAInstances}x${EDASize}
+    if ($MinimizerAlgorithm == $BlockEDA) then
+      set ExpEnsSuffix = ${ExpEnsSuffix}Block
+    endif
+  else
+    set ExpEnsSuffix = '_NMEM'${nEnsDAMembers}
+  endif
   if (${RTPPInflationFactor} != "0.0") set ExpEnsSuffix = ${ExpEnsSuffix}_RTPP${RTPPInflationFactor}
   if (${LeaveOneOutEDA} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_LeaveOneOut
   if (${ABEInflation} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_ABEI_BT${ABEIChannel}

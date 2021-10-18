@@ -61,7 +61,7 @@ set EnsembleDAMembersPerJobMinute = 6
 setenv EnsOfVariationalMemory 109
 setenv EnsOfVariationalNodesPerMember 3
 setenv EnsOfVariationalPEPerNode      12
-@ EnsOfVariationalNodes = ${EnsOfVariationalNodesPerMember} * ${nEnsDAMembers}
+@ EnsOfVariationalNodes = ${EnsOfVariationalNodesPerMember} * ${EDASize}
 setenv EnsOfVariationalNodes ${EnsOfVariationalNodes}
 
 # inflation, e.g., RTPP
