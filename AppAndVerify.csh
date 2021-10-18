@@ -2,28 +2,28 @@
 
 set self_WorkDirs = wrapWorkDirsTEMPLATE
 set benchmark_WorkDirs = wrapWorkDirsBenchmarkTEMPLATE
-set self_cylcTaskType = cylcTaskTypeTEMPLATE
+set self_taskBaseScript = taskBaseScriptTEMPLATE
 set self_inStateDirs = wrapStateDirsTEMPLATE
 set self_inStatePrefix = wrapStatePrefixTEMPLATE
 set self_StateType = wrapStateTypeTEMPLATE
 set self_AppName = wrapAppNameTEMPLATE
 set self_nOuter = wrapnOuterTEMPLATE
 
-set preparationName = jediPrep
+set preparationName = PrepJEDI
 foreach name ( \
-  ${preparationName}${self_cylcTaskType} \
-  ${self_cylcTaskType} \
+  ${preparationName}${self_taskBaseScript} \
+  ${self_taskBaseScript} \
   VerifyObs${self_StateType} \
   CompareObs${self_StateType} \
   VerifyModel${self_StateType} \
   CompareModel${self_StateType} \
-  Clean${self_cylcTaskType} \
+  Clean${self_taskBaseScript} \
 )
   echo "Making $name job script for ${self_StateType} state"
 end
 
 #Application preparation
-set PreparationScript=${mainScriptDir}/${preparationName}${self_cylcTaskType}.csh
+set PreparationScript=${mainScriptDir}/${preparationName}${self_taskBaseScript}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
     -e 's@WindowHRTEMPLATE@wrapWindowHRTEMPLATE@' \
     -e 's@VARBCTableTEMPLATE@wrapVARBCTableTEMPLATE@' \
@@ -33,7 +33,7 @@ sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
 chmod 744 ${PreparationScript}
 
 #Application
-set JobScript=${mainScriptDir}/${self_cylcTaskType}.csh
+set JobScript=${mainScriptDir}/${self_taskBaseScript}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
     -e 's@inStateDirsTEMPLATE@'${self_inStateDirs}'@' \
     -e 's@inStatePrefixTEMPLATE@'${self_inStatePrefix}'@' \
@@ -75,7 +75,7 @@ else
 endif
 
 #Application cleanup
-set JobScript=${mainScriptDir}/Clean${self_cylcTaskType}.csh
+set JobScript=${mainScriptDir}/Clean${self_taskBaseScript}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
-    clean-AppScriptNameTEMPLATE.csh > ${JobScript}
+    CleanAppScriptNameTEMPLATE.csh > ${JobScript}
 chmod 744 ${JobScript}

@@ -135,6 +135,7 @@ cat >! suite.rc << EOF
 {% set VerifyANMembers = ${VerifyANMembers} %}
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
+{% set useEnsembleOfVariational = ${useEnsembleOfVariational} %}
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
 [meta]
@@ -146,7 +147,8 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
 {% elif CriticalPathType == "Reanalysis" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        InitCyclingDA => CyclingDA => CyclingDAFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        InitCyclingDA => CyclingDA" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
   {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
 {% elif CriticalPathType == "Reforecast" %}
@@ -162,10 +164,10 @@ cat >! suite.rc << EOF
     {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        GenerateABEInflation => CleanHofXEnsMeanBG" %}
   {% endif %}
   {% set PrimaryCPGraph = PrimaryCPGraph + " => InitCyclingDA => CyclingDA" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => CyclingDAFinished" %}
   {% if (RTPPInflationFactor > 0.0 and nEnsDAMembers > 1) %}
-    {% set PrimaryCPGraph = PrimaryCPGraph+" => RTPPInflation" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => RTPPInflation => CyclingDAFinished" %}
   {% endif %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + " => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
   {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
@@ -174,7 +176,7 @@ cat >! suite.rc << EOF
 {% endif %}
 # verification and extended forecast controls
 {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
-{% set EnsFCMembers = range(1, nEnsDAMembers+1, 1) %}
+{% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
 {% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 [cylc]
   UTC mode = False
@@ -348,22 +350,38 @@ cat >! suite.rc << EOF
       -l = select=1:ncpus=1
 #Cycling components
   [[InitCyclingDA]]
-    env-script = cd ${mainScriptDir}; ./jediPrepCyclingDA.csh "1" "0" "DA"
-    script = \$origin/variationalPrep.csh "1"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
+    script = \$origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = ${CyclingDARetry}
+      execution retry delays = ${VariationalRetry}
     [[[directives]]]
       -q = share
       -l = select=1:ncpus=1
   [[CyclingDA]]
-    script = \$origin/CyclingDA.csh
+{% if useEnsembleOfVariational and nEnsDAMembers > 1 %}
+  [[CyclingEDA]]
+    inherit = CyclingDA
+    script = \$origin/EnsembleOfVariational.csh
     [[[job]]]
-      execution time limit = PT${CyclingDAJobMinutes}M
-      execution retry delays = ${CyclingDARetry}
+      execution time limit = PT${EnsOfVariationalJobMinutes}M
+      execution retry delays = ${EnsOfVariationalRetry}
     [[[directives]]]
       -m = ae
-      -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
+      -l = select=${EnsOfVariationalNodes}:ncpus=${EnsOfVariationalPEPerNode}:mpiprocs=${EnsOfVariationalPEPerNode}:mem=${EnsOfVariationalMemory}GB
+{% else %}
+  {% for mem in EnsDAMembers %}
+  [[CyclingDAMember{{mem}}]]
+    inherit = CyclingDA
+    script = \$origin/Variational.csh "{{mem}}"
+    [[[job]]]
+      execution time limit = PT${VariationalJobMinutes}M
+      execution retry delays = ${VariationalRetry}
+    [[[directives]]]
+      -m = ae
+      -l = select=${VariationalNodes}:ncpus=${VariationalPEPerNode}:mpiprocs=${VariationalPEPerNode}:mem=${VariationalMemory}GB
+  {% endfor %}
+{% endif %}
   [[RTPPInflation]]
     script = \$origin/RTPPInflation.csh
     [[[job]]]
@@ -391,14 +409,14 @@ cat >! suite.rc << EOF
     script = \$origin/CompareObsDA.csh "1" "0" "DA" "0"
   [[CleanCyclingDA]]
     inherit = CleanBase
-    script = \$origin/CleanCyclingDA.csh
+    script = \$origin/CleanVariational.csh
   [[CyclingFC]]
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
     [[[directives]]]
       -m = ae
       -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
-{% for mem in EnsFCMembers %}
+{% for mem in EnsDAMembers %}
   [[CyclingFCMember{{mem}}]]
     inherit = CyclingFC
     script = \$origin/CyclingFC.csh "{{mem}}"
@@ -433,7 +451,7 @@ cat >! suite.rc << EOF
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
-    env-script = cd ${mainScriptDir}; ./jediPrepHofXMeanFC.csh "1" "{{dt}}" "FC"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
     script = \$origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -468,7 +486,7 @@ cat >! suite.rc << EOF
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
     inherit = HofX{{state}}
-    env-script = cd ${mainScriptDir}; ./jediPrepHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     script = \$origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -499,7 +517,7 @@ cat >! suite.rc << EOF
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC{{mem}}
-    env-script = cd ${mainScriptDir}; ./jediPrepHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     script = \$origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -524,7 +542,7 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[HofXEnsMeanBG]]
     inherit = HofXBase
-    env-script = cd ${mainScriptDir}; ./jediPrepHofXEnsMeanBG.csh "1" "0" "BG"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG"
     script = \$origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = ${EnsMeanBGQueueName}

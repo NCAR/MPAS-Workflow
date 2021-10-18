@@ -28,6 +28,11 @@ echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
+# build, executable, yaml
+set myBuildDir = ${RTPPBuildDir}
+set myEXE = ${RTPPEXE}
+set myYAML = ${self_WorkDir}/$appyaml
+
 # other static variables
 #set bgPrefix = $FCFilePrefix
 #set bgDirs = ($prevCyclingFCDirs)
@@ -82,14 +87,14 @@ end
 rm ${StreamsFile}
 cp -v $self_ModelConfigDir/${StreamsFile} .
 sed -i 's@nCells@'${MPASnCellsEnsemble}'@' ${StreamsFile}
-sed -i 's@TemplateFieldsPrefix@'${TemplateFieldsPrefix}'@' ${StreamsFile}
-sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
 rm $NamelistFile
 cp -v ${self_ModelConfigDir}/${NamelistFile} .
 sed -i 's@startTime@'${NMLDate}'@' $NamelistFile
-sed -i 's@nCells@'${MPASnCellsEnsemble}'@' $NamelistFile
+sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${MPASnCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
 
@@ -109,10 +114,10 @@ cp -v ${ConfigDir}/applicationBase/rtpp.yaml $thisYAML
 sed -i 's@RTPPInflationFactor@'${RTPPInflationFactor}'@g' $thisYAML
 
 ## streams
-sed -i 's@EnsembleStreamsFile@'${StreamsFile}'@' $thisYAML
+sed -i 's@EnsembleStreamsFile@'${self_WorkDir}'/'${StreamsFile}'@' $thisYAML
 
 ## namelist
-sed -i 's@EnsembleNamelistFile@'${NamelistFile}'@' $thisYAML
+sed -i 's@EnsembleNamelistFile@'${self_WorkDir}'/'${NamelistFile}'@' $thisYAML
 
 ## revise current date
 #sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' $thisYAML
@@ -213,8 +218,8 @@ mv $prevYAML $appyaml
 
 # Run the executable
 # ==================
-ln -sfv ${RTPPBuildDir}/${RTPPEXE} ./
-mpiexec ./${RTPPEXE} $appyaml >& jedi.log
+ln -sfv ${myBuildDir}/${myEXE} ./
+mpiexec ./${myEXE} $myYAML >& jedi.log
 
 
 # Check status

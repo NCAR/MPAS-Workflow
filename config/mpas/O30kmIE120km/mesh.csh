@@ -1,7 +1,8 @@
 #!/bin/csh -f
 
-# Uniform 120km mesh
-# ------------------
+# Uniform 30km mesh -- forecast, hofx, variational outer loop
+# Uniform 120km mesh -- variational inner loop
+
 setenv MPASGridDescriptorOuter 30km
 setenv MPASGridDescriptorInner 120km
 setenv MPASGridDescriptorEnsemble ${MPASGridDescriptorInner}

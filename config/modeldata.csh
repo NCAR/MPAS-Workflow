@@ -50,11 +50,12 @@ set GEFS6hfcFOREnsBFilePrefix = EnsForCov
 set GEFS6hfcFORFirstCycle = ${GEFSAnaDir}/${MPASGridDescriptorEnsemble}/${MPASGridDescriptorEnsemble}EnsFCFirstCycle/${prevFirstCycleDate}
 
 # first cycle background states
+# TODO: determine firstEnsFCNMembers from source data
 setenv firstEnsFCNMembers 80
 setenv firstEnsFCDir ${GEFS6hfcFORFirstCycle}
 if ( $nEnsDAMembers > $firstEnsFCNMembers ) then
-  echo "WARNING: nEnsDAMembers must be <= nFixedMembers, changing ensemble size"
-  setenv nEnsDAMembers ${nFixedMembers}
+  echo "WARNING: nEnsDAMembers must be <= firstEnsFCNMembers, changing ensemble size"
+  setenv nEnsDAMembers ${firstEnsFCNMembers}
 endif
 
 

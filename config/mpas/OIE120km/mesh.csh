@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
-# Uniform 120km mesh
-# ------------------
+# Uniform 120km mesh - all applications
+
 setenv MPASGridDescriptorOuter 120km
 setenv MPASGridDescriptorInner 120km
 setenv MPASGridDescriptorEnsemble ${MPASGridDescriptorInner}

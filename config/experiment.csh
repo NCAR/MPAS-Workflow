@@ -67,6 +67,15 @@ setenv DAType eda_3denvar
 # list of inner iteration counts across all outer iterations
 set nInnerIterations = (60)
 
+## useEnsembleOfVariational
+# whether to use one EnsembleOfVariational application (single job) in place of an ensemble of
+# independent Variational applications (nEnsDAMembers jobs)
+# Notes:
+# + may require large numbers of nodes per job
+# + only applicable when DAType has the prefix "eda_" and nEnsDAMembers > 1
+# OPTIONS: True/False
+setenv useEnsembleOfVariational False
+
 if ( "$DAType" =~ *"eda"* ) then
   ## nEnsDAMembers
   # OPTIONS: 2 to $firstEnsFCNMembers, depends on data source in config/modeldata.csh

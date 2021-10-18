@@ -128,7 +128,7 @@ foreach MPASnCells ($MPASnCellsList)
   ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
 end
 
-## link lookup tables
+## link MPAS-Atmosphere lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
@@ -151,8 +151,8 @@ foreach StreamsFile_ ($StreamsFileList)
   rm ${StreamsFile_}
   cp -v $self_ModelConfigDir/${StreamsFile} ./${StreamsFile_}
   sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${StreamsFile_}
-  sed -i 's@TemplateFieldsPrefix@'${TemplateFieldsPrefix}'@' ${StreamsFile_}
-  sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
 end
 
 ## copy/modify dynamic namelist file
@@ -163,6 +163,7 @@ foreach NamelistFile_ ($NamelistFileList)
   cp -v ${self_ModelConfigDir}/${NamelistFile} ./${NamelistFile_}
   sed -i 's@startTime@'${NMLDate}'@' ${NamelistFile_}
   sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'${MPASTimeStep}'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' ${NamelistFile_}
 end
@@ -320,8 +321,8 @@ sed -i 's@WindowBegin@'${halfprevConfDate}'@' $thisYAML
 sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' $thisYAML
 
 # input and output IODA DB directories
-sed -i 's@InDBDir@'${InDBDir}'@g' $thisYAML
-sed -i 's@OutDBDir@'${OutDBDir}'@g' $thisYAML
+sed -i 's@InDBDir@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
+sed -i 's@OutDBDir@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
 
 # obs, geo, and diag files with self_AppType suffixes
 sed -i 's@obsPrefix@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
@@ -342,8 +343,8 @@ sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' $thisYAML
 set iMesh = 0
 foreach mesh ($MeshList)
   @ iMesh++
-  sed -i 's@'$mesh'StreamsFile@'$StreamsFileList[$iMesh]'@' $thisYAML
-  sed -i 's@'$mesh'NamelistFile@'$NamelistFileList[$iMesh]'@' $thisYAML
+  sed -i 's@'$mesh'StreamsFile@'${self_WorkDir}'/'$StreamsFileList[$iMesh]'@' $thisYAML
+  sed -i 's@'$mesh'NamelistFile@'${self_WorkDir}'/'$NamelistFileList[$iMesh]'@' $thisYAML
 end
 
 ## model and analysis variables
