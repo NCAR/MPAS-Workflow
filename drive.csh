@@ -134,8 +134,9 @@ cat >! suite.rc << EOF
 {% set DiagnoseEnsSpreadBG = ${DiagnoseEnsSpreadBG} %}
 {% set VerifyANMembers = ${VerifyANMembers} %}
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
+{% set EDASize = ${EDASize} %}
+{% set nDAInstances = ${nDAInstances} %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
-{% set useEnsembleOfVariational = ${useEnsembleOfVariational} %}
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
 [meta]
@@ -177,6 +178,7 @@ cat >! suite.rc << EOF
 # verification and extended forecast controls
 {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
 {% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
+{% set DAInstances = range(1, nDAInstances+1, 1) %}
 {% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 [cylc]
   UTC mode = False
@@ -359,19 +361,21 @@ cat >! suite.rc << EOF
       -q = share
       -l = select=1:ncpus=1
   [[CyclingDA]]
-{% if useEnsembleOfVariational and nEnsDAMembers > 1 %}
-  [[CyclingEDA]]
+{% if EDASize > 1 %}
+  {% for inst in DAInstances %}
+  [[EDAInstance{{inst}}]]
     inherit = CyclingDA
-    script = \$origin/EnsembleOfVariational.csh
+    script = \$origin/EnsembleOfVariational.csh "{{inst}}"
     [[[job]]]
       execution time limit = PT${EnsOfVariationalJobMinutes}M
       execution retry delays = ${EnsOfVariationalRetry}
     [[[directives]]]
       -m = ae
       -l = select=${EnsOfVariationalNodes}:ncpus=${EnsOfVariationalPEPerNode}:mpiprocs=${EnsOfVariationalPEPerNode}:mem=${EnsOfVariationalMemory}GB
+  {% endfor %}
 {% else %}
   {% for mem in EnsDAMembers %}
-  [[CyclingDAMember{{mem}}]]
+  [[DAMember{{mem}}]]
     inherit = CyclingDA
     script = \$origin/Variational.csh "{{mem}}"
     [[[job]]]

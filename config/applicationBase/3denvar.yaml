@@ -6,6 +6,13 @@ iteration: &iterationConfig
     interpolation type: unstructured
   gradient norm reduction: 1e-3
   obs perturbations: ObsPerturbations
+  #Several 'online diagnostics' are useful for checking the H correctness and Hessian symmetry
+#  online diagnostics:
+#    tlm taylor test: true
+#    tlm approx test: true
+#    adj tlm test: true
+#    adj obs test: true
+#    online adj test: true
 member: &memberConfig
   date: &analysisDate '2018-04-15T00:00:00Z'
   state variables: &incvars [AnalysisVariables]
@@ -15,7 +22,7 @@ output:
   stream name: analysis
 variational:
   minimizer:
-    algorithm: DRIPCG
+VariationalMinimizer
   iterations:
 VariationalIterations
 final:

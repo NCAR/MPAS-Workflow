@@ -1,12 +1,33 @@
 #!/bin/csh -f
 
-# Carry out variational minimization for either
-# multiple first guess states (EDA)
+# Carry out variational minimization for multiple first guess states (EDA)
+# ARGUMENTS:
+# ArgInstance - EDA instance among nDAInstances, each handling an (EDAsize)-member ensemble of
+#               Variational minimizations in a single EnsembleOfVariational executable
 
 date
 
+# Process arguments
+# =================
+## args
+# ArgInstance: int, EDA instance [>= 1]
+set ArgInstance = "$1"
+
+## arg checks
+set test = `echo $ArgInstance | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgInstance ($ArgInstance) must be an integer" > ./FAIL
+  exit 1
+endif
+if ( $ArgInstance < 1 ) then
+  echo "ERROR in $0 : ArgInstance ($ArgInstance) must be > 0" > ./FAIL
+  exit 1
+endif
+
 # Setup environment
 # =================
+source config/experiment.csh
 source config/builds.csh
 source config/environment.csh
 source config/mpas/variables.csh
@@ -24,22 +45,38 @@ cd ${self_WorkDir}
 # build, executable, yaml
 set myBuildDir = ${EnsembleOfVariationalBuildDir}
 set myEXE = ${EnsembleOfVariationalEXE}
-set myYAML = ${self_WorkDir}/$appyaml
+set myYAML = ${self_WorkDir}/eda_${ArgInstance}.yaml
+
+if ( $ArgInstance > $nDAInstances ) then
+  echo "ERROR in $0 : ArgInstance ($ArgInstance) must be <= nDAInstances ($nDAInstances)" > ./FAIL
+  exit 1
+endif
 
 # ================================================================================================
 
 # The EnsembleOfVariational application requires a top-level yaml listing all member yamls
 echo "files:" > $myYAML
+set instance = 1
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  # add eda-member yaml name to list of member yamls
-  set memberyaml = variational_${member}.yaml
-  echo "  - ${self_WorkDir}/$memberyaml" >> $myYAML
-  @ member++
+while ( $instance <= ${nDAInstances} )
+  set myMember = 1
+  while ( $myMember <= ${EDASize} )
+    if ( $instance == ${ArgInstance} ) then
+      # add eda-member yaml name to list of member yamls
+      set memberyaml = variational_${member}.yaml
+      echo "  - ${self_WorkDir}/$memberyaml" >> $myYAML
+    endif
+
+    @ myMember++
+    @ member++
+  end
+  @ instance++
 end
 
+
 ## create then move to single run directory
-set runDir = run
+set instDir = `${memberDir} ens ${ArgInstance} "${flowInstFmt}"`
+set runDir = run${instDir}
 rm -r ${runDir}
 mkdir -p ${runDir}
 cd ${runDir}

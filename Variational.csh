@@ -1,7 +1,8 @@
 #!/bin/csh -f
 
-# Carry out variational minimization for
-# single first guess state
+# Carry out variational minimization for single first guess state
+# ARGUMENTS:
+# ArgMember - member index among nEnsDAMembers
 
 date
 
@@ -9,7 +10,6 @@ date
 # =================
 ## args
 # ArgMember: int, ensemble member [>= 1]
-# note: not currently used, but will be for independent EDA members
 set ArgMember = "$1"
 
 ## arg checks
@@ -26,6 +26,7 @@ endif
 
 # Setup environment
 # =================
+source config/experiment.csh
 source config/builds.csh
 source config/environment.csh
 source config/mpas/variables.csh
@@ -45,6 +46,11 @@ cd ${self_WorkDir}
 set myBuildDir = ${VariationalBuildDir}
 set myEXE = ${VariationalEXE}
 set myYAML = ${self_WorkDir}/variational_${ArgMember}.yaml
+
+if ( $ArgMember > $nEnsDAMembers ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be <= nEnsDAMembers ($nEnsDAMembers)" > ./FAIL
+  exit 1
+endif
 
 # ================================================================================================
 

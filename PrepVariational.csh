@@ -78,7 +78,7 @@ rm prevPrep.yaml
 mv $appyaml prevPrep.yaml
 set prevYAML = prevPrep.yaml
 
-# Add outer iterations configuration elements
+# Outer iterations configuration elements
 # ===========================================
 # performs sed substitution for VariationalIterations
 set iterationssed = VariationalIterations
@@ -118,6 +118,35 @@ sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
 
+
+# Minimization algorithm configuration element
+# ================================================
+# performs sed substitution for VariationalMinimizer
+set algorithmsed = VariationalMinimizer
+set thisSEDF = ${algorithmsed}SEDF.yaml
+cat >! ${thisSEDF} << EOF
+/${algorithmsed}/c\
+EOF
+
+set nAlgorithmIndent = 4
+set indent = "`${nSpaces} $nAlgorithmIndent`"
+if ($MinimizerAlgorithm == $BlockEDA) then
+cat >>! ${thisSEDF} << EOF
+${indent}algorithm: $MinimizerAlgorithm\
+${indent}members: $EDASize
+EOF
+
+else
+cat >>! ${thisSEDF} << EOF
+${indent}algorithm: $MinimizerAlgorithm
+EOF
+
+endif
+
+set thisYAML = insertAlgorithm.yaml
+sed -f ${thisSEDF} $prevYAML >! $thisYAML
+rm ${thisSEDF}
+set prevYAML = $thisYAML
 
 
 # Ensemble Jb components

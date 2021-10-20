@@ -11,7 +11,7 @@ output:
   stream name: analysis
 variational:
   minimizer:
-    algorithm: DRIPCG
+VariationalMinimizer
   iterations:
 VariationalIterations
 final:

@@ -62,46 +62,50 @@ set EnsembleDAMembersPerJobMinute = 6
 @ EnsOfVariationalJobMinutes = ${EnsOfVariationalJobMinutes} + ${ThreeDEnVarJobMinutes}
 setenv EnsOfVariationalMemory 45
 
-# special configs that work when nEnsDAMembers is divisible by 5
+# special configs that work when EDASize is divisible by 5, 3, or 2 and each
+# member uses 36 PE's total
 # + reduces total cost and queue time, but might increase EDA member imbalance
 # TODO: ideally, we would have an estimate of memory useage per member,
 # then use it to calculate the optimal EnsOfVariationalNodes and
 # EnsOfVariationalPEPerNode, and also match the total NPE that was used for localization
 # and/or covariance generation.  It is possible that NPE used for SABER applications
 # no longer needs to be the same as NPE used in Variational applications.
-if ( "$nEnsDAMembers" == 80 ) then
-  setenv EnsOfVariationalPEPerNode 30
-  setenv EnsOfVariationalNodes 96
-else if ( "$nEnsDAMembers" == 70 ) then
-  setenv EnsOfVariationalPEPerNode 30
-  setenv EnsOfVariationalNodes 84
-else if ( "$nEnsDAMembers" == 60 ) then
-  setenv EnsOfVariationalPEPerNode 30
-  setenv EnsOfVariationalNodes 72
-else if ( "$nEnsDAMembers" == 50 ) then
-  setenv EnsOfVariationalPEPerNode 30
-  setenv EnsOfVariationalNodes 60
-else if ( "$nEnsDAMembers" == 40 ) then
-  setenv EnsOfVariationalPEPerNode 30
-  setenv EnsOfVariationalNodes 48
-else if ( "$nEnsDAMembers" == 30 ) then
-  setenv EnsOfVariationalPEPerNode 30
-  setenv EnsOfVariationalNodes 36
-else if ( "$nEnsDAMembers" == 20 ) then
-  setenv EnsOfVariationalPEPerNode 30
-  setenv EnsOfVariationalNodes 24
-else if ( "$nEnsDAMembers" == 10 ) then
-  setenv EnsOfVariationalPEPerNode 30
-  setenv EnsOfVariationalNodes 12
-else if ( "$nEnsDAMembers" == 5 ) then
-  setenv EnsOfVariationalPEPerNode 30
-  setenv EnsOfVariationalNodes 6
-else
-  setenv EnsOfVariationalPEPerNode 18
-  setenv EnsOfVariationalNodesPerMember 2
-  @ EnsOfVariationalNodes = ${EnsOfVariationalNodesPerMember} * ${nEnsDAMembers}
-  setenv EnsOfVariationalNodes ${EnsOfVariationalNodes}
+
+set divisibleBy5 = False
+@ FIVERemainder = ${EDASize} % 5
+if ( $FIVERemainder == 0 ) then
+  set divisibleBy5 = True
 endif
+set divisibleBy3 = False
+@ THREERemainder = ${EDASize} % 3
+if ( $THREERemainder == 0 ) then
+  set divisibleBy3 = True
+endif
+set divisibleBy2 = False
+@ TWORemainder = ${EDASize} % 2
+if ( $TWORemainder == 0 ) then
+  set divisibleBy2 = True
+endif
+
+if ( $divisibleBy5 == True ) then
+  @ nGroups = ${EDASize} / 5
+  setenv EnsOfVariationalPEPerNode 30
+  set nNodesPerGroup = 6
+else if ( $divisibleBy3 == True ) then
+  @ nGroups = ${EDASize} / 3
+  setenv EnsOfVariationalPEPerNode 27
+  set nNodesPerGroup = 4
+else if ( $divisibleBy2 == True ) then
+  @ nGroups = ${EDASize} / 2
+  setenv EnsOfVariationalPEPerNode 24
+  set nNodesPerGroup = 3
+else
+  set nGroups = ${EDASize}
+  setenv EnsOfVariationalPEPerNode 18
+  set nNodesPerGroup = 2
+endif
+@ EnsOfVariationalNodes = $nNodesPerGroup * $nGroups
+setenv EnsOfVariationalNodes $EnsOfVariationalNodes
 
 # inflation, e.g., RTPP
 setenv CyclingInflationJobMinutes 25
