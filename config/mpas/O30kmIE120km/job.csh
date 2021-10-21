@@ -31,8 +31,8 @@ set DeterministicVerifyObsJobMinutes = 15
 set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
 
 # 3 min. premium per 20 members for VerifyObsEnsMean
-set EnsembleVerifyObsEnsMeanMembersPerJobMinute = 7
-@ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} / ${EnsembleVerifyObsEnsMeanMembersPerJobMinute}
+set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 9
+@ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} * ${EnsembleVerifyObsEnsMeanJobSecondsPerMember} / 60
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
 setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 36
@@ -42,8 +42,8 @@ setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
 set DeterministicDABaseMinutes = 20
-set ThreeDEnVarMembersPerJobMinute = 12
-@ ThreeDEnVarJobMinutes = ${ensPbNMembers} / ${ThreeDEnVarMembersPerJobMinute}
+set ThreeDEnVarJobSecondsPerMember = 5
+@ ThreeDEnVarJobMinutes = ${ensPbNMembers} * ${ThreeDEnVarJobSecondsPerMember} / 60
 @ ThreeDEnVarJobMinutes = ${ThreeDEnVarJobMinutes} + ${DeterministicDABaseMinutes}
 
 # Variational
@@ -55,8 +55,8 @@ setenv VariationalNodes ${VariationalNodesPerMember}
 
 # EnsembleOfVariational
 # not tested, likely infeasible
-set EnsembleDAMembersPerJobMinute = 6
-@ EnsOfVariationalJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
+set EnsembleDAJobSecondsPerMember = 10
+@ EnsOfVariationalJobMinutes = ${nEnsDAMembers} * ${EnsembleDAJobSecondsPerMember} / 60
 @ EnsOfVariationalJobMinutes = ${EnsOfVariationalJobMinutes} + ${ThreeDEnVarJobMinutes}
 setenv EnsOfVariationalMemory 109
 setenv EnsOfVariationalNodesPerMember 3

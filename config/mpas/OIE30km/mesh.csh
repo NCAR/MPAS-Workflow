@@ -16,3 +16,6 @@ setenv RADTHINAMOUNT      "0.75"
 ## Background Error
 setenv bumpLocDir /glade/p/mmm/parc/liuz/pandac_common/30km_bumploc_2000km_512p_20210208code
 setenv bumpLocPrefix bumploc_2000_5
+
+## GFS analyses for model-space verification
+setenv GFSAnaDirVerify /glade/p/mmm/parc/liuz/pandac_common/${MPASGridDescriptorOuter}_GFSANA

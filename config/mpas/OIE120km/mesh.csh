@@ -18,3 +18,6 @@ setenv RADTHINAMOUNT       "0.98"
 # works for 36pe/128pe and 120km domain
 setenv bumpLocDir /glade/p/mmm/parc/bjung/pandac_common/bumploc/20210811
 setenv bumpLocPrefix bumploc_2000_5
+
+## GFS analyses for model-space verification
+setenv GFSAnaDirVerify /glade/p/mmm/parc/liuz/pandac_common/${MPASGridDescriptorOuter}_GFSANA
