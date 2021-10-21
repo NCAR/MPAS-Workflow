@@ -13,8 +13,9 @@ source config/appindex.csh
 # OPTIONS:
 #   + OIE120km -- 3denvar, eda_3denvar
 #   + O30kmIE120km -- dual-resolution 3denvar
-#   + OIE60km -- eda_3denvar only, TODO: 3denvar
-#   + TODO: O30kmIE60km -- dual-resolution 3denvar
+#   + OIE60km -- eda_3denvar only
+#   + TODO: OIE60km -- 3denvar, requires generating MPASSeaVariables update files from GFS analyses
+#   + O30kmIE60km -- dual-resolution 3denvar
 #   + TODO: "OIE30km" 3denvar
 #   + TODO: "O30kmIE60km" dual-resolution eda_3denvar with 60km ensemble, 30km deterministic
 #   + TODO: "OE30kmI60km" dual-resolution eda_3denvar with 30km ensemble, no deterministic?
