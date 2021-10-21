@@ -14,7 +14,7 @@ setenv VFAccountNumber ${StandardAccountNumber}
 
 ## *QueueName
 # OPTIONS: economy, regular, premium
-setenv CYQueueName premium
+setenv CYQueueName regular
 setenv VFQueueName economy
 
 if ($ABEInflation == True) then
