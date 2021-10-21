@@ -58,24 +58,6 @@ while ( $member <= ${nEnsDAMembers} )
   # rm ${fcFile}
   cp ${fcFile}${OrigFileSuffix} ${fcFile}
 
-  set diagFile = $prevCyclingFCDirs[$member]/${DIAGFilePrefix}.${fileDate}.nc
-  ln -sf ${InitialMemberFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
-
-#  ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
-#  set copyDiags = 0
-#  foreach var ({$MPASJEDIDiagVariables})
-#    ncdump -h ${fcFile} | grep $var
-#    if ( $status != 0 ) then
-#      @ copyDiags++
-#      echo "Copying MPASJEDIDiagVariables to Outer background state"
-#    endif
-#  end
-#  ## Takes too long on command-line.  Make it part of a job (R1).
-#  if ( $copyDiags > 0 ) then
-#    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${fcFile}
-#  endif
-#  rm ${diagFile}
-
   # Inner loop mesh
   if ($MPASnCellsOuter != $MPASnCellsInner) then
 
@@ -88,24 +70,6 @@ while ( $member <= ${nEnsDAMembers} )
     ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
     # rm ${fcFile}
     cp ${fcFile}${OrigFileSuffix} ${fcFile}
-
-    set diagFile = $innerFCDir/${DIAGFilePrefix}.${fileDate}.nc
-    ln -sf ${InitialMemberFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
-
-#    ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
-#    set copyDiags = 0
-#    foreach var ({$MPASJEDIDiagVariables})
-#      ncdump -h ${fcFile} | grep $var
-#      if ( $status != 0 ) then
-#        @ copyDiags++
-#        echo "Copying MPASJEDIDiagVariables to Inner background state"
-#      endif
-#    end
-#    ## Takes too long on command-line.  Make it part of a job (R1).
-#    if ( $copyDiags > 0 ) then
-#      ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${fcFile}
-#    endif
-#    rm ${diagFile}
   endif
 
   @ member++

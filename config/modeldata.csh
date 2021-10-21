@@ -10,12 +10,17 @@ source config/mpas/${MPASGridDescriptor}/mesh.csh
 ## static data files
 ####################
 ## common directories
-set PANDACCommonData = /glade/p/mmm/parc/liuz/pandac_common
-set GFSAnaDirOuter = ${PANDACCommonData}/${MPASGridDescriptorOuter}_GFSANA
-set GFSAnaDirInner = ${PANDACCommonData}/${MPASGridDescriptorInner}_GFSANA
-set GFSAnaDirEnsemble = ${PANDACCommonData}/${MPASGridDescriptorEnsemble}_GFSANA
+set ModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input
+set OuterModelData = ${ModelData}/${MPASGridDescriptorOuter}
+set InnerModelData = ${ModelData}/${MPASGridDescriptorInner}
+set EnsembleModelData = ${ModelData}/${MPASGridDescriptorEnsemble}
 
-set GEFSAnaDir = /glade/p/mmm/parc/guerrett/pandac/fixed_input
+set GFSAnaDirOuter = ${OuterModelData}/GFSAna
+set GFSAnaDirInner = ${InnerModelData}/GFSAna
+set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
+
+## GFS analyses for model-space verification
+setenv GFSAnaDirVerify ${GFSAnaDirOuter}
 
 ## file date for first background
 set yy = `echo ${FirstCycleDate} | cut -c 1-4`
@@ -35,8 +40,8 @@ set prevFirstFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 # externally sourced model states
 # -------------------------------
 ## deterministic - GFS
-setenv GFS6hfcFORFirstCycleOuter ${PANDACCommonData}/${MPASGridDescriptorOuter}_1stCycle_background/${prevFirstCycleDate}
-setenv GFS6hfcFORFirstCycleInner ${PANDACCommonData}/${MPASGridDescriptorInner}_1stCycle_background/${prevFirstCycleDate}
+setenv GFS6hfcFORFirstCycleOuter ${OuterModelData}/SingleFCFirstCycle/${prevFirstCycleDate}
+setenv GFS6hfcFORFirstCycleInner ${InnerModelData}/SingleFCFirstCycle/${prevFirstCycleDate}
 
 # first cycle background state
 setenv firstDetermFCDirOuter ${GFS6hfcFORFirstCycleOuter}
@@ -45,9 +50,9 @@ setenv firstDetermFCDirInner ${GFS6hfcFORFirstCycleInner}
 ## stochastic - GEFS
 set gefsMemFmt = "/{:02d}"
 set nGEFSMembers = 20
-set GEFS6hfcFOREnsBDir = ${PANDACCommonData}/${MPASGridDescriptorEnsemble}_EnsFC
+set GEFS6hfcFOREnsBDir = ${EnsembleModelData}/EnsForCov
 set GEFS6hfcFOREnsBFilePrefix = EnsForCov
-set GEFS6hfcFORFirstCycle = ${GEFSAnaDir}/${MPASGridDescriptorEnsemble}/${MPASGridDescriptorEnsemble}EnsFCFirstCycle/${prevFirstCycleDate}
+set GEFS6hfcFORFirstCycle = ${EnsembleModelData}/EnsFCFirstCycle/${prevFirstCycleDate}
 
 # first cycle background states
 # TODO: determine firstEnsFCNMembers from source data
@@ -68,9 +73,7 @@ else
   setenv firstFCMemFmt " "
   setenv firstFCDirOuter ${firstDetermFCDirOuter}
   setenv firstFCDirInner ${firstDetermFCDirInner}
-
-  # TODO: re-generate GFS forecasts from 'da_state' stream with FCFilePrefix
-  setenv firstFCFilePrefix ${RSTFilePrefix}
+  setenv firstFCFilePrefix ${FCFilePrefix}
 endif
 
 # background covariance
@@ -125,10 +128,12 @@ setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
 setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
 if ( "$DAType" =~ *"eda"* ) then
   # using member-specific sst/xice data from GEFS
-  setenv SeaAnaDir ${GEFSAnaDir}/GEFS/surface/000hr
+  # 60km and 120km
+  setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr
   setenv seaMemFmt "${gefsMemFmt}"
 else
   # deterministic
+  # 60km and 120km
   setenv SeaAnaDir ${deterministicSeaAnaDir}
   setenv seaMemFmt " "
 endif
@@ -137,9 +142,9 @@ endif
 if ( "$DAType" =~ *"eda"* ) then
   # stochastic
   # 60km and 120km
-  setenv StaticFieldsDirOuter ${GEFSAnaDir}/GEFS/init/000hr/${prevFirstCycleDate}
-  setenv StaticFieldsDirInner ${GEFSAnaDir}/GEFS/init/000hr/${prevFirstCycleDate}
-  setenv StaticFieldsDirEnsemble ${GEFSAnaDir}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv StaticFieldsDirOuter ${ModelData}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv StaticFieldsDirInner ${ModelData}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv StaticFieldsDirEnsemble ${ModelData}/GEFS/init/000hr/${prevFirstCycleDate}
   setenv staticMemFmt "${gefsMemFmt}"
 
   #TODO: switch to using FirstFileDate static files for GEFS
@@ -148,11 +153,7 @@ if ( "$DAType" =~ *"eda"* ) then
   setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${prevFirstFileDate}.nc
 else
   # deterministic
-  # only 120km
-#  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${prevFirstCycleDate}
-#  setenv StaticFieldsDirInner ${GFSAnaDirInner}/${prevFirstCycleDate}
-#  setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}/${prevFirstCycleDate}
-  # 120km and 30km
+  # 30km, 60km, and 120km
   setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
   setenv StaticFieldsDirInner ${GFSAnaDirInner}
   setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}

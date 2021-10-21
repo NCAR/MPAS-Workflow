@@ -34,9 +34,3 @@ setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1
 #setenv bumpLocPrefix bumploc_2000_5
 ###### 384pe
 #setenv bumpLocDir /glade/p/mmm/parc/liuz/pandac_common/60km_bumploc_2000km_384p_20210903code
-
-
-## GFS analyses for model-space verification
-#setenv GFSAnaDirVerify /glade/p/mmm/parc/liuz/pandac_common/${MPASGridDescriptorOuter}_GFSANA
-#setenv GFSAnaDirVerify /glade/scratch/jban/pandac/case2018_60km_GFSANA
-setenv GFSAnaDirVerify /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/60km_GFSANA

@@ -30,6 +30,7 @@ endif
 
 # Setup environment
 # =================
+source config/environment.csh
 source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
@@ -367,16 +368,14 @@ while ( $member <= ${nEnsDAMembers} )
   # ======================================================
   set copyDiags = 0
   foreach var ({$MPASJEDIDiagVariables})
-    echo "Checking for presence of variable ($var) in ${bgFileOther}"
-    ncdump -h ${bgFileOther} | grep $var
+    echo "Checking for presence of variable ($var) in ${bgFile}"
+    ncdump -h ${bgFile} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
       echo "variable ($var) not present"
     endif
   end
   if ( $copyDiags > 0 ) then
-    rm ${bgFile}${OrigFileSuffix}
-    cp ${bgFile} ${bgFile}${OrigFileSuffix}
     set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
     ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
   endif
