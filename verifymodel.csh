@@ -41,6 +41,7 @@ source config/tools.csh
 source config/modeldata.csh
 source config/verification.csh
 source config/environment.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -76,7 +77,7 @@ ln -fs ${pyModelDir}/${mainScript}.py ./
 set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -r $GFSAnaDirOuter/$InitFilePrefixOuter"
+  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -r $GFSAnaDirVerify/$InitFilePrefixOuter"
   echo ${baseCommand}
   ${baseCommand} >& log.$mainScript
   set success = $?

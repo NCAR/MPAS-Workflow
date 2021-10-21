@@ -13,11 +13,14 @@ source config/appindex.csh
 # OPTIONS:
 #   + OIE120km -- 3denvar, eda_3denvar
 #   + O30kmIE120km -- dual-resolution 3denvar
+#   + OIE60km -- eda_3denvar only, TODO: 3denvar
+#   + TODO: O30kmIE60km -- dual-resolution 3denvar
 #   + TODO: "OIE30km" 3denvar
-#   + TODO: "O30kmIE120km" dual-resolution eda_3denvar with 120km ensemble, 30km deterministic
-#   + TODO: "OE30kmI120km" dual-resolution eda_3denvar with 30km ensemble, no deterministic?
+#   + TODO: "O30kmIE60km" dual-resolution eda_3denvar with 60km ensemble, 30km deterministic
+#   + TODO: "OE30kmI60km" dual-resolution eda_3denvar with 30km ensemble, no deterministic?
 #   + TODO: "OIE120km" 4denvar
-#   + TODO: "O30kmIE120km" dual-resolution 4denvar
+#   + TODO: "OIE60km" 4denvar
+#   + TODO: "O30kmIE60km" dual-resolution 4denvar
 setenv MPASGridDescriptor OIE120km
 
 ## FirstCycleDate

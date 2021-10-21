@@ -125,8 +125,7 @@ setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
 setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
 if ( "$DAType" =~ *"eda"* ) then
   # using member-specific sst/xice data from GEFS
-  # stochastic - only 120km
-  setenv SeaAnaDir ${GEFSAnaDir}/${MPASGridDescriptorOuter}/GEFS/surface/000hr
+  setenv SeaAnaDir ${GEFSAnaDir}/GEFS/surface/000hr
   setenv seaMemFmt "${gefsMemFmt}"
 else
   # deterministic
@@ -137,10 +136,10 @@ endif
 ## static stream data
 if ( "$DAType" =~ *"eda"* ) then
   # stochastic
-  # only 120km
-  setenv StaticFieldsDirOuter ${GEFSAnaDir}/${MPASGridDescriptorOuter}/GEFS/init/000hr/${prevFirstCycleDate}
-  setenv StaticFieldsDirInner ${GEFSAnaDir}/${MPASGridDescriptorInner}/GEFS/init/000hr/${prevFirstCycleDate}
-  setenv StaticFieldsDirEnsemble ${GEFSAnaDir}/${MPASGridDescriptorEnsemble}/GEFS/init/000hr/${prevFirstCycleDate}
+  # 60km and 120km
+  setenv StaticFieldsDirOuter ${GEFSAnaDir}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv StaticFieldsDirInner ${GEFSAnaDir}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv StaticFieldsDirEnsemble ${GEFSAnaDir}/GEFS/init/000hr/${prevFirstCycleDate}
   setenv staticMemFmt "${gefsMemFmt}"
 
   #TODO: switch to using FirstFileDate static files for GEFS
