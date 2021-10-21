@@ -14,12 +14,11 @@ setenv RADTHINDISTANCE     "100.0"
 setenv RADTHINAMOUNT       "0.95"
 
 ## Background Error
-
-
-#### 6km height vert loc
+#### 1200km horizontal loc
+#### 6km height vertical loc
 setenv bumpLocPrefix bumploc_1200km_6km
 ###### 384pe
-#setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200km_v=6km_192pe_05OCT2021code
+#setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200km_v=6km_384pe_05OCT2021code
 ###### 192pe - preferred for 80-member EnVar based on wall-time and memory benchmarking
 setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200km_v=6km_192pe_05OCT2021code
 ###### 144pe
