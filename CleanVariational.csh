@@ -23,18 +23,14 @@ cd ${self_WorkDir}
 
 # Remove obs-database output files
 # ================================
-# only need to do this for ensemble applications
-# for which storage gets very expensive
-if (${nEnsDAMembers} > 1) then
-  set member = 1
-  while ( $member <= ${nEnsDAMembers} )
-    set memDir = `${memberDir} $DAType $member`
-    rm ${self_WorkDir}/${OutDBDir}${memDir}/${obsPrefix}*.h5
-    rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.nc4
-    rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.nc4
-    @ member++
-  end
-endif
+set member = 1
+while ( $member <= ${nEnsDAMembers} )
+  set memDir = `${memberDir} $DAType $member`
+  rm ${self_WorkDir}/${OutDBDir}${memDir}/${obsPrefix}*.h5
+  rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.nc4
+  rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.nc4
+  @ member++
+end
 
 # Remove netcdf lock files
 rm *.nc*.lock
