@@ -1,4 +1,4 @@
-iteration: &iterationConfig
+_iteration: &iterationConfig
   geometry:
     nml_file: InnerNamelistFile
     streams_file: InnerStreamsFile
