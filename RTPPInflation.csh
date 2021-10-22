@@ -61,7 +61,8 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 set memDir = `${memberDir} ensemble 0 "${flowMemFmt}"`
 set meanDir = ${CyclingDAOutDir}${memDir}
 mkdir -p ${meanDir}
-cp $anDirs[1]/${anPrefix}.$fileDate.nc ${meanDir}
+set firstANFile = $anDirs[1]/${anPrefix}.$fileDate.nc
+cp ${firstANFile} ${meanDir}
 
 # ====================
 # Model-specific files
@@ -89,6 +90,21 @@ cp -v $self_ModelConfigDir/${StreamsFile} .
 sed -i 's@nCells@'${MPASnCellsEnsemble}'@' ${StreamsFile}
 sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
+
+# determine analysis output precision
+ncdump -h ${firstANFile} | grep uReconstruct | grep double
+if ($status == 0) then
+  set analysisPrecision=double
+else
+  ncdump -h ${bgFile} | grep uReconstruct | grep float
+  if ($status == 0) then
+    set analysisPrecision=single
+  else
+    echo "ERROR in $0 : cannot determine analysis precision" > ./FAIL
+    exit 1
+  endif
+endif
+sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
 rm $NamelistFile
@@ -125,7 +141,7 @@ sed -i 's@EnsembleNamelistFile@'${self_WorkDir}'/'${NamelistFile}'@' $thisYAML
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 
 # use one of the analyses as the TemplateFieldsFileOuter
-set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
+set meshFile = ${firstANFile}
 ln -sfv $meshFile ${TemplateFieldsFileOuter}
 
 ## file naming
@@ -174,12 +190,10 @@ foreach PMatrix (Pb Pa)
   if ($PMatrix == Pb) then
     set ensPDirs = ($bgDirs)
     set ensPFilePrefix = ${bgPrefix}
-    set ensPFileSuffix = ${OrigFileSuffix}
   endif
   if ($PMatrix == Pa) then
     set ensPDirs = ($anDirs)
     set ensPFilePrefix = ${anPrefix}
-    set ensPFileSuffix = ""
   endif
 
   set enspsed = Ensemble${PMatrix}Members
@@ -189,7 +203,7 @@ EOF
 
   set member = 1
   while ( $member <= ${nEnsDAMembers} )
-    set filename = $ensPDirs[$member]/${ensPFilePrefix}.${fileDate}.nc${ensPFileSuffix}
+    set filename = $ensPDirs[$member]/${ensPFilePrefix}.${fileDate}.nc
     ## optionally copy original analysis files for diagnosing RTPP behavior
     if ($PMatrix == Pa && ${storeOriginalRTPPAnalyses} == True) then
       set memDir = "."`${memberDir} ensemble $member "${flowMemFmt}"`

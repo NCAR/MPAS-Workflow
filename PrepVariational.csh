@@ -36,6 +36,7 @@ source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
+source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -340,43 +341,50 @@ while ( $member <= ${nEnsDAMembers} )
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
   set other = $self_StateDirs[$member]
   set bg = $CyclingDAInDirs[$member]
-  set an = $CyclingDAOutDirs[$member]
   mkdir -p ${bg}
-  mkdir -p ${an}
 
-  # Link/copy bg from StateDirs, ensuring that MPASJEDIDiagVariables are present
+  # Link bg from StateDirs, ensuring that MPASJEDIDiagVariables are present
   # ============================================================================
   set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
   set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
 
   rm ${bgFile}${OrigFileSuffix} ${bgFile}
-
-  # link original file for tracing purposes
   ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
+  ln -sfv ${bgFileOther} ${bgFile}
 
-  # create copy, will be overwritten as the analysis during Variational
-  cp -v ${bgFileOther} ${bgFile}
-
-  # Remove existing analysis file, then link to bg file
-  # ===================================================
-  set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
-  rm ${anFile}
-  ln -sfv ${bgFile} ${anFile}
+  # determine analysis output precision
+  ncdump -h ${bgFile} | grep uReconstruct | grep double
+  if ($status == 0) then
+    set analysisPrecision=double
+  else
+    ncdump -h ${bgFile} | grep uReconstruct | grep float
+    if ($status == 0) then
+      set analysisPrecision=single
+    else
+      echo "ERROR in $0 : cannot determine analysis precision" > ./FAIL
+      exit 1
+    endif
+  endif
 
   # Copy diagnostic variables used in DA to bg (if needed)
   # ======================================================
   set copyDiags = 0
   foreach var ({$MPASJEDIDiagVariables})
-    echo "Checking for presence of variable ($var) in ${bgFileOther}"
-    ncdump -h ${bgFileOther} | grep $var
+    echo "Checking for presence of variable ($var) in ${bgFile}"
+    ncdump -h ${bgFile} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
       echo "variable ($var) not present"
     endif
   end
   if ( $copyDiags > 0 ) then
-    rm ${bgFile}${OrigFileSuffix}
-    cp ${bgFile} ${bgFile}${OrigFileSuffix}
+    # remove link
+    rm ${bgFile}
+
+    # create copy instead
+    cp -v ${bgFileOther} ${bgFile}
+
+    # add diagnostic variables
     set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
     ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
   endif
@@ -408,8 +416,17 @@ while ( $member <= ${nEnsDAMembers} )
       cp ${StreamsFile_} ${StreamsFile_}${memSuffix}
     endif
     sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
+    sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
   end
   sed -i 's@StreamsFileMember@'${memSuffix}'@' variational_${member}.yaml
+
+  # Remove existing analysis file, make full copy from bg file
+  # ==========================================================
+  set an = $CyclingDAOutDirs[$member]
+  mkdir -p ${an}
+  set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
+  rm ${anFile}
+  cp -v ${bgFile} ${anFile}
 
   @ member++
 end
