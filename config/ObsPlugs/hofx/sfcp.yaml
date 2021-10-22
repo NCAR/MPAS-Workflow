@@ -8,8 +8,6 @@
   obs operator:
     name: SfcPCorrected
     da_psfc_scheme: UKMO   # or WRFDA
-  linear obs operator:
-    name: Identity
   obs error:
     covariance model: diagonal
   obs filters:
