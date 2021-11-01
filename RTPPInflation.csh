@@ -90,13 +90,14 @@ cp -v $self_ModelConfigDir/${StreamsFile} .
 sed -i 's@nCells@'${MPASnCellsEnsemble}'@' ${StreamsFile}
 sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile}
 
 # determine analysis output precision
 ncdump -h ${firstANFile} | grep uReconstruct | grep double
 if ($status == 0) then
   set analysisPrecision=double
 else
-  ncdump -h ${bgFile} | grep uReconstruct | grep float
+  ncdump -h ${firstANFile} | grep uReconstruct | grep float
   if ($status == 0) then
     set analysisPrecision=single
   else

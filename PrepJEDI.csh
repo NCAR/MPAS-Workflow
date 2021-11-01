@@ -154,6 +154,7 @@ foreach StreamsFile_ ($StreamsFileList)
   sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${StreamsFile_}
   sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile_}
 end
 
 ## copy/modify dynamic namelist file
