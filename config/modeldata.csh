@@ -126,10 +126,11 @@ setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
 if ( "$DAType" =~ *"eda"* ) then
   # using member-specific sst/xice data from GEFS
   # stochastic - only 120km
-  setenv SeaAnaDir ${GEFSAnaDir}/${MPASGridDescriptorOuter}/GEFS/surface/000hr
+  setenv SeaAnaDir ${GEFSAnaDir}/${MPASGridDescriptorOuter}/GEFS/surface/000hr/${forecastPrecision}
   setenv seaMemFmt "${gefsMemFmt}"
 else
   # deterministic
+  # TODO: enable precision-specific Sea updates for deterministic experiments
   setenv SeaAnaDir ${deterministicSeaAnaDir}
   setenv seaMemFmt " "
 endif
