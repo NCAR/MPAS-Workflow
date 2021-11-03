@@ -81,7 +81,7 @@ while ( $success != 0 )
   ${baseCommand} >& log.$mainScript
   set success = $?
   if ( $success != 0 ) then
-    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh
+    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh default
     sleep 3
   endif
 end
