@@ -31,7 +31,7 @@ setenv F_UFMTENDIAN 'big:101-200'
 setenv OMP_NUM_THREADS 1
 
 module load python
-source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh
+source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh default
 
 module load nccmp
 
