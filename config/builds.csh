@@ -1,7 +1,5 @@
 #!/bin/csh -f
 
-source config/experiment.csh
-
 #############################
 ## build directory structures
 #############################
