@@ -245,13 +245,13 @@ set nIndent = $applicationObsIndent[$myAppIndex]
 set obsIndent = "`${nSpaces} $nIndent`"
 
 ## Add selected observations (see experiment.csh)
+# (i) combine the observation YAML stubs into single file
+set observationsYAML = observations.yaml
+rm $observationsYAML
+touch $observationsYAML
+
 set checkForMissingObs = (sondes aircraft satwind gnssro sfc amsua mhs abi ahi)
 set found = 0
-set obsYAML = observations.yaml
-rm $obsYAML
-touch $obsYAML
-
-# (1) add the observations
 foreach obs ($self_ObsList)
   echo "Preparing YAML for ${obs} observations"
   set missing=0
@@ -279,7 +279,7 @@ foreach obs ($self_ObsList)
 
   if ($missing == 0) then
     echo "${obs} data is present and selected; adding ${obs} to the YAML"
-    sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $obsYAML
+    sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsYAML
     @ found++
   else
     echo "${obs} data is selected, but missing; NOT adding ${obs} to the YAML"
@@ -290,9 +290,10 @@ if ($found == 0) then
   exit 1
 endif
 
-cat $obsYAML >> $thisYAML
+# (ii) concatenate all observations to thisYAML
+cat $observationsYAML >> $thisYAML
 
-# (2) add re-usable anchors
+# (iii) add re-usable YAML anchors
 set obsanchorssed = ObsAnchors
 set thisSEDF = ${obsanchorssed}SEDF.yaml
 cat >! ${thisSEDF} << EOF
@@ -310,33 +311,35 @@ sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
 
-#TODO: replace cat with sed substitution so that each application can decide what to do when there
-# are zero observations available
 
 ## Horizontal interpolation type
 sed -i 's@InterpolationType@'${InterpolationType}'@g' $thisYAML
+
 
 ## QC characteristics
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
 
+
+## date-time information
 # TODO(JJG): revise these date replacements to loop over
 #            all dates relevant to this application (e.g., 4DEnVar?)
-## previous date
+# previous date
 sed -i 's@2018-04-14_18.00.00@'${prevFileDate}'@g' $thisYAML
 sed -i 's@2018041418@'${prevValidDate}'@g' $thisYAML
 sed -i 's@2018-04-14T18:00:00Z@'${prevConfDate}'@g'  $thisYAML
 
-## current date
+# current date
 sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' $thisYAML
 sed -i 's@2018041500@'${thisValidDate}'@g' $thisYAML
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 
-## window length
+# window length
 sed -i 's@PT6H@PT'${self_WindowHR}'H@g' $thisYAML
 
-## window beginning
+# window beginning
 sed -i 's@WindowBegin@'${halfprevConfDate}'@' $thisYAML
+
 
 ## obs-related file naming
 # crtm tables
