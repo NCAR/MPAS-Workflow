@@ -68,8 +68,8 @@ set l = ($l $benchmarkObsList)
 #set l = ($l all$abi)
 #set l = ($l all$ahi)
 #set l = ($l amsua_metop-b)
-#set l = ($l clr$abi)
-#set l = ($l clr$ahi)
+#set l = ($l abi-clr_g16)
+#set l = ($l ahi-clr_himawari8)
 # TODO: add scene-dependent ObsErrors to amsua-cld_* ObsSpaces
 # TODO: combine amsua_* and amsua-cld_* similar to jedi-gdas
 #set l = ($l amsua-cld_n19)
@@ -198,8 +198,8 @@ set l = ($l mhs_metop-a)
 set l = ($l mhs_metop-b)
 set l = ($l all$abi)
 set l = ($l all$ahi)
-#set l = ($l clr$abi)
-#set l = ($l clr$ahi)
+#set l = ($l abi-clr_g16)
+#set l = ($l ahi-clr_himawari8)
 set hofxObsList = ($l)
 
 

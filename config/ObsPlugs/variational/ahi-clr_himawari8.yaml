@@ -1,18 +1,18 @@
 - obs space:
     <<: *ObsSpace
-    name: abi-clr_g16
+    name: ahi-clr_himawari8
     obsdatain:
-      obsfile: InDBDir/abi_g16_obs_2018041500.h5
+      obsfile: InDBDir/ahi_himawari8_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_abi_g16.h5
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_ahi-clr_himawari8.h5
     simulated variables: [brightness_temperature]
-    channels: &clrabi_channels 8-10
+    channels: &clrahi_channels 7-16
   obs error: *ObsErrorDiagonal
   obs operator:
     <<: *clearCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
-      Sensor_ID: abi_g16
+      Sensor_ID: ahi_himawari8
       IRVISlandCoeff: USGS
   get values: *GetValues
   obs filters:
@@ -24,35 +24,26 @@
     - variable:
         name: cloud_area_fraction@MetaData
       maxvalue: 0.05
-#    - variable:
-#        name: water_area_fraction@GeoVaLs
-#      minvalue: 1.0
     apply at iterations: 0, 1
-#  - filter: Thinning
-#    amount: RADTHINAMOUNT
-#    random_seed: 0
-#    apply at iterations: 0
-  - filter: Gaussian Thinning
-    horizontal_mesh: RADTHINDISTANCE #km
   - filter: Background Check
     threshold: 3.0
     apply at iterations: 0, 1
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_abi_g16.nc4
+    filename: OutDBDirOOPSMemberDir/geoPrefix_ahi-clr_himawari8.nc4
   - filter: YDIAGsaver
-    filename: OutDBDirOOPSMemberDir/diagPrefix_abi_g16.nc4
+    filename: OutDBDirOOPSMemberDir/diagPrefix_ahi-clr_himawari8.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
-      channels: *clrabi_channels
+      channels: *clrahi_channels
     - name: weightingfunction_of_atmosphere_layer
-      channels: *clrabi_channels
+      channels: *clrahi_channels
     - name: pressure_level_at_peak_of_weightingfunction
-      channels: *clrabi_channels
+      channels: *clrahi_channels
     - name: brightness_temperature_jacobian_air_temperature
-      channels: *clrabi_channels
+      channels: *clrahi_channels
     - name: brightness_temperature_jacobian_humidity_mixing_ratio
-      channels: *clrabi_channels
+      channels: *clrahi_channels
     - name: brightness_temperature_jacobian_surface_emissivity
-      channels: *clrabi_channels
+      channels: *clrahi_channels
     - name: brightness_temperature_jacobian_surface_temperature
-      channels: *clrabi_channels
+      channels: *clrahi_channels
