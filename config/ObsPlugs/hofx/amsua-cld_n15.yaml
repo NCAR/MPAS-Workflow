@@ -1,0 +1,38 @@
+- obs space:
+    <<: *ObsSpace
+    name: amsua-cld_n15
+    obsdatain:
+      obsfile: InDBDir/amsua_n15_obs_2018041500.h5
+    obsdataout:
+      obsfile: OutDBDir/obsPrefix_amsua-cld_n15.h5
+    simulated variables: [brightness_temperature]
+    channels: &amsua-cld_n15_channels 1-4,15
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: amsua_n15
+  get values: *GetValues
+  obs filters:
+  - filter: Domain Check
+    filter variables:
+    - name: brightness_temperature
+      channels: *amsua-cld_n15_channels
+    where:
+    - variable:
+        name: water_area_fraction@GeoVaLs
+      minvalue: 1.0
+#  - filter: Bounds Check
+#    filter variables:
+#    - name: brightness_temperature
+#      channels: *amsua-cld_n15_channels
+#    minvalue: 170.0
+#    maxvalue: 300.0
+  - filter: GOMsaver
+    filename: OutDBDir/geoPrefix_amsua-cld_n15.nc4
+  - filter: YDIAGsaver
+    filename: OutDBDir/diagPrefix_amsua-cld_n15.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *amsua-cld_n15_channels

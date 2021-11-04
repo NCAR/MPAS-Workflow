@@ -6,6 +6,7 @@ _iteration: &iterationConfig
     interpolation type: unstructured
   gradient norm reduction: 1e-3
   obs perturbations: ObsPerturbations
+ObsAnchors
 output:
   filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis

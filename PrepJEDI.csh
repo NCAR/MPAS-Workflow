@@ -233,6 +233,8 @@ ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 # =============================
 
 set thisYAML = orig.yaml
+set prevYAML = ${thisYAML}
+
 cp -v ${ConfigDir}/applicationBase/${self_AppName}.yaml $thisYAML
 
 # (2) obs-related substitutions
@@ -248,6 +250,8 @@ set found = 0
 set obsYAML = observations.yaml
 rm $obsYAML
 touch $obsYAML
+
+# (1) add the observations
 foreach obs ($self_ObsList)
   echo "Preparing YAML for ${obs} observations"
   set missing=0
@@ -275,7 +279,7 @@ foreach obs ($self_ObsList)
 
   if ($missing == 0) then
     echo "${obs} data is present and selected; adding ${obs} to the YAML"
-    sed 's/^/'"$obsIndent"'/' ${SUBYAML}.yaml >> $obsYAML
+    sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $obsYAML
     @ found++
   else
     echo "${obs} data is selected, but missing; NOT adding ${obs} to the YAML"
@@ -287,6 +291,24 @@ if ($found == 0) then
 endif
 
 cat $obsYAML >> $thisYAML
+
+# (2) add re-usable anchors
+set obsanchorssed = ObsAnchors
+set thisSEDF = ${obsanchorssed}SEDF.yaml
+cat >! ${thisSEDF} << EOF
+/${obsanchorssed}/c\
+EOF
+
+# substitute with line breaks
+set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${obsanchorssed}.yaml
+sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+echo '_blank: null' >> ${thisSEDF}
+
+# insert into prevYAML
+set thisYAML = insertObsAnchors.yaml
+sed -f ${thisSEDF} $prevYAML >! $thisYAML
+rm ${thisSEDF}
+set prevYAML = $thisYAML
 
 #TODO: replace cat with sed substitution so that each application can decide what to do when there
 # are zero observations available
@@ -351,9 +373,12 @@ end
 set AnalysisVariables = ($StandardAnalysisVariables)
 set StateVariables = ($StandardStateVariables)
 
-# if any CRTM yaml section includes Clouds, then include hydrometeors
-# in both the analysis and state variables
-grep '^\ \+Clouds' $thisYAML
+# if any CRTM yaml section includes the *cloudyCRTMObsOperator alias, then hydrometeors
+# must be included in both the Analysis and State variables
+#grep '^\ \+Clouds' $thisYAML
+#TODO: propagate clearCRTMObsOperator and cloudyCRTMObsOperator to all other CRTM operators
+#      then remove above line
+grep '*cloudyCRTMObsOperator' $thisYAML
 if ( $status == 0 ) then
   foreach hydro ($MPASHydroVariables)
     set AnalysisVariables = ($AnalysisVariables $hydro)
