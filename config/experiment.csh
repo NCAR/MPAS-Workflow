@@ -52,21 +52,16 @@ set ExpSuffix = ''
 ##############
 ## DA settings
 ##############
-# add IR super-obbing resolution suffixes for variational
-set abi = abi$ABISuperOb[$variationalIndex]
-set ahi = ahi$AHISuperOb[$variationalIndex]
-
 ## variationalObsList
 # observation types assimilated in variational application instances
 # OPTIONS: see list below
 # Abbreviations:
 #   clr == clear-sky
 #   cld == cloudy-sky
-#   all == all-sky
 set l = ()
 set l = ($l $benchmarkObsList)
-#set l = ($l all$abi)
-#set l = ($l all$ahi)
+#set l = ($l abi_g16)
+#set l = ($l ahi_himawari8)
 #set l = ($l amsua_metop-b)
 #set l = ($l abi-clr_g16)
 #set l = ($l ahi-clr_himawari8)
@@ -163,17 +158,12 @@ setenv ABEIChannel 8
 ################
 ## HofX settings
 ################
-# add IR super-obbing resolution suffixes for hofx
-set abi = abi$ABISuperOb[$hofxIndex]
-set ahi = ahi$AHISuperOb[$hofxIndex]
-
 ## hofxObsList
 # observation types simulated in hofx application instances for verification
 # OPTIONS: see list below
 # Abbreviations:
 #   clr == clear-sky
 #   cld == cloudy-sky
-#   all == all-sky
 set l = ()
 set l = ($l sondes)
 set l = ($l aircraft)
@@ -196,8 +186,8 @@ set l = ($l mhs_n19)
 set l = ($l mhs_n18)
 set l = ($l mhs_metop-a)
 set l = ($l mhs_metop-b)
-set l = ($l all$abi)
-set l = ($l all$ahi)
+set l = ($l abi_g16)
+set l = ($l ahi_himawari8)
 #set l = ($l abi-clr_g16)
 #set l = ($l ahi-clr_himawari8)
 set hofxObsList = ($l)

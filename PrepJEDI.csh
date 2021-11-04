@@ -215,10 +215,12 @@ ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.h5 ${InDBDir}/
 # ABI
 # ===
 ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
+set ABISUPEROBGRID = $ABISuperOb[$myAppIndex]
 
 # AHI
 # ===
 ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
+set AHISUPEROBGRID = $AHISuperOb[$myAppIndex]
 
 # VarBC prior
 # ===========
@@ -319,6 +321,8 @@ sed -i 's@InterpolationType@'${InterpolationType}'@g' $thisYAML
 ## QC characteristics
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
+sed -i 's@ABISUPEROBGRID@'${ABISUPEROBGRID}'@g' $thisYAML
+sed -i 's@AHISUPEROBGRID@'${AHISUPEROBGRID}'@g' $thisYAML
 
 
 ## date-time information

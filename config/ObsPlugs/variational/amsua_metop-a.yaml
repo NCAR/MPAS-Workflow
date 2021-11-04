@@ -7,7 +7,6 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_amsua_metop-a.h5
     simulated variables: [brightness_temperature]
     channels: &amsua_metop-a_channels 5,6,9
-    obs perturbations seed: MemberSeed
   obs error: *ObsErrorDiagonal
   obs operator:
     <<: *clearCRTMObsOperator
