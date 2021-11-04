@@ -1,18 +1,18 @@
 - obs space:
+    <<: *ObsSpace
     name: SfcPCorrected
     obsdatain:
       obsfile: InDBDir/sfc_obs_2018041500.h5
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_sfc.h5
     simulated variables: [surface_pressure]
-    obs perturbations seed: MemberSeed
+  obs error: *ObsErrorDiagonal
   obs operator:
     name: SfcPCorrected
     da_psfc_scheme: UKMO   # or WRFDA
   linear obs operator:
     name: Identity
-  obs error:
-    covariance model: diagonal
+  get values: *GetValues
   obs filters:
   - filter: PreQC
     maxvalue: 3
@@ -24,5 +24,3 @@
   - filter: Background Check
     threshold: 3.0
     apply at iterations: 0, 1
-  get values:
-    interpolation type: InterpolationType

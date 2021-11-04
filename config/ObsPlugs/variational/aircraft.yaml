@@ -1,4 +1,5 @@
 - obs space:
+    <<: *ObsSpace
     name: Aircraft
     obsdatain:
       obsfile: InDBDir/aircraft_obs_2018041500.h5
@@ -7,16 +8,13 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_aircraft.h5
       max frame size: 40000
     simulated variables: [air_temperature, eastward_wind, northward_wind, specific_humidity]
-    obs perturbations seed: MemberSeed
+  obs error: *ObsErrorDiagonal
   obs operator:
     name: VertInterp
-  obs error:
-    covariance model: diagonal
+  get values: *GetValues
   obs filters:
   - filter: PreQC
     maxvalue: 3
   - filter: Background Check
     threshold: 3.0
     apply at iterations: 0, 1
-  get values:
-    interpolation type: InterpolationType

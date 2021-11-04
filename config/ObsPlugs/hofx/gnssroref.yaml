@@ -1,16 +1,17 @@
 - obs space:
+    <<: *ObsSpace
     name: GnssroRef
     obsdatain:
       obsfile: InDBDir/gnssro_obs_2018041500.h5
     obsdataout:
       obsfile: OutDBDir/obsPrefix_gnssroref.h5
     simulated variables: [refractivity]
+  obs error: *ObsErrorDiagonal
   obs operator:
     name: GnssroRef
     obs options:
       use_compress: 0
-  obs error:
-    covariance model: diagonal
+  get values: *GetValues
   obs filters:
   - filter: Domain Check
     where:
@@ -29,5 +30,3 @@
   - filter: ROobserror
     variable: refractivity
     errmodel: NBAM
-  get values:
-    interpolation type: InterpolationType

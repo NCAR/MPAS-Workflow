@@ -1,4 +1,5 @@
 - obs space:
+    <<: *ObsSpace
     name: ahi-clr_himawari8
     obsdatain:
       obsfile: InDBDir/ahi_himawari8_obs_2018041500.h5
@@ -6,20 +7,14 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_ahi_himawari8.h5
     simulated variables: [brightness_temperature]
     channels: &clrahi_channels 7-16
-    obs perturbations seed: MemberSeed
+  obs error: *ObsErrorDiagonal
   obs operator:
-    name: CRTM
-    SurfaceWindGeoVars: uv
-    Absorbers: [H2O,O3,CO2]
-    linear obs operator:
-      Absorbers: [H2O]
+    <<: *clearCRTMObsOperator
     obs options:
+      <<: *CRTMObsOptions
       Sensor_ID: ahi_himawari8
-      EndianType: little_endian
-      CoefficientPath: CRTMTABLES
       IRVISlandCoeff: USGS
-  obs error:
-    covariance model: diagonal
+  get values: *GetValues
   obs filters:
   - filter: Domain Check
     where:
@@ -52,5 +47,3 @@
       channels: *clrahi_channels
     - name: brightness_temperature_jacobian_surface_temperature
       channels: *clrahi_channels
-  get values:
-    interpolation type: InterpolationType

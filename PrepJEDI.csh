@@ -378,9 +378,6 @@ set StateVariables = ($StandardStateVariables)
 
 # if any CRTM yaml section includes the *cloudyCRTMObsOperator alias, then hydrometeors
 # must be included in both the Analysis and State variables
-#grep '^\ \+Clouds' $thisYAML
-#TODO: propagate clearCRTMObsOperator and cloudyCRTMObsOperator to all other CRTM operators
-#      then remove above line
 grep '*cloudyCRTMObsOperator' $thisYAML
 if ( $status == 0 ) then
   foreach hydro ($MPASHydroVariables)
