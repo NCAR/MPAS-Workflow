@@ -54,6 +54,7 @@ source config/mpas/variables.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/appindex.csh
 source config/builds.csh
+source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -153,6 +154,7 @@ foreach StreamsFile_ ($StreamsFileList)
   sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${StreamsFile_}
   sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile_}
 end
 
 ## copy/modify dynamic namelist file
