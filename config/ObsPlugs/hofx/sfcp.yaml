@@ -10,7 +10,8 @@
   obs operator:
     name: SfcPCorrected
     da_psfc_scheme: UKMO   # or WRFDA
-  get values: *GetValues
+  get values:
+    <<: *GetValues
   obs filters:
   - filter: PreQC
     maxvalue: 3

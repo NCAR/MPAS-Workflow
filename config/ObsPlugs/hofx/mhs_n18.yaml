@@ -13,7 +13,8 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: mhs_n18
-  get values: *GetValues
+  get values:
+    <<: *GetValues
   obs filters:
   - filter: Domain Check
     filter variables:

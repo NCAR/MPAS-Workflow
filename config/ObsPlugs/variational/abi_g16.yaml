@@ -15,7 +15,8 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: abi_g16
-  get values: *GetValues
+  get values:
+    <<: *GetValues
   obs filters:
   - filter: Domain Check
     where:
