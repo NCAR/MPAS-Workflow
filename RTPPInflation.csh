@@ -163,7 +163,7 @@ set AnalysisVariables = ( \
   u \
   qv \
 )
-foreach hydro ($MPASHydroVariables)
+foreach hydro ($MPASHydroStateVariables)
   set AnalysisVariables = ($AnalysisVariables $hydro)
 end
 set StateVariables = ( \

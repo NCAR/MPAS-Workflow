@@ -388,9 +388,11 @@ set StateVariables = ($StandardStateVariables)
 # must be included in both the Analysis and State variables
 grep '*cloudyCRTMObsOperator' $thisYAML
 if ( $status == 0 ) then
-  foreach hydro ($MPASHydroVariables)
-    set AnalysisVariables = ($AnalysisVariables $hydro)
+  foreach hydro ($MPASHydroStateVariables)
     set StateVariables = ($StateVariables $hydro)
+  end
+  foreach hydro ($MPASHydroIncrementVariables)
+    set AnalysisVariables = ($AnalysisVariables $hydro)
   end
 endif
 
