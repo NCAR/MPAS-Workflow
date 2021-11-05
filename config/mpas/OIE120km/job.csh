@@ -15,7 +15,7 @@ setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
 # HofX
-setenv HofXJobMinutes 10
+setenv HofXJobMinutes 5
 setenv HofXNodes 1
 setenv HofXPEPerNode 36
 setenv HofXMemory 109
@@ -24,9 +24,9 @@ setenv HofXMemory 109
 set DeterministicVerifyObsJobMinutes = 15
 set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
 
-# 3 min. premium per 20 members for VerifyObsEnsMean; 08OCT2021
-set EnsembleVerifyObsEnsMeanMembersPerJobMinute = 7
-@ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} / ${EnsembleVerifyObsEnsMeanMembersPerJobMinute}
+# ~180 sec. premium per 20 members for VerifyObsEnsMean; 08OCT2021
+set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 9
+@ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} * ${EnsembleVerifyObsEnsMeanJobSecondsPerMember} / 60
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
 setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 36
@@ -35,30 +35,43 @@ setenv VerifyModelJobMinutes 2
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
-# ~5 min. for ThreeDEnVar, 60 inner x 1 outer, 20 member EnsB, CONV obs; 08OCT2021
-# ~6 min. for ThreeDEnVar, 30 inner x 2 outer, 20 member EnsB, CONV obs + ABI + AHI; 08OCT2021
-set DeterministicDABaseMinutes = 6
-set ThreeDEnVarMembersPerJobMinute = 12
-@ ThreeDEnVarJobMinutes = ${ensPbNMembers} / ${ThreeDEnVarMembersPerJobMinute}
-@ ThreeDEnVarJobMinutes = ${ThreeDEnVarJobMinutes} + ${DeterministicDABaseMinutes}
+## Variational+EnsOfVariational
+set DeterministicDABaseMinutes = 3
 
 # Variational
-setenv VariationalJobMinutes ${ThreeDEnVarJobMinutes}
 if ( $nEnsDAMembers > 10 ) then
-  # save some resources in large EDA jobs
+  # user fewer resources in large EDA jobs
+  # nodes
   setenv VariationalMemory 109
   setenv VariationalNodesPerMember 1
   setenv VariationalPEPerNode 36
+
+  # time per member (mostly localization multiplication, some IO)
+  set ThreeDEnVarJobSecondsPerMember = 10
 else
+  # nodes
   setenv VariationalMemory 45
   setenv VariationalNodesPerMember 4
   setenv VariationalPEPerNode 32
+
+  # time per member (mostly localization multiplication, some IO)
+  # 60 inner x 1 outer, CONV+AMSUA obs; 20OCT2021
+  # XX-members: 2018041506 (short) - (2018041518 (long) on 128pe
+  # 20-members: 185-215 sec.
+  # 40-members: 247-279 sec.
+  # 80-members: 342-391 sec.
+  # 50-60 sec. premium per 20 members
+  set ThreeDEnVarJobSecondsPerMember = 5
 endif
 setenv VariationalNodes ${VariationalNodesPerMember}
+@ ThreeDEnVarJobMinutes = ${ensPbNMembers} * ${ThreeDEnVarJobSecondsPerMember} / 60
+@ ThreeDEnVarJobMinutes = ${ThreeDEnVarJobMinutes} + ${DeterministicDABaseMinutes}
+setenv VariationalJobMinutes ${ThreeDEnVarJobMinutes}
+
 
 # EnsembleOfVariational
-set EnsembleDAMembersPerJobMinute = 6
-@ EnsOfVariationalJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
+set EnsembleDAJobSecondsPerMember = 10
+@ EnsOfVariationalJobMinutes = ${nEnsDAMembers} * ${EnsembleDAJobSecondsPerMember} / 60
 @ EnsOfVariationalJobMinutes = ${EnsOfVariationalJobMinutes} + ${ThreeDEnVarJobMinutes}
 setenv EnsOfVariationalMemory 45
 
@@ -88,23 +101,31 @@ if ( $TWORemainder == 0 ) then
 endif
 
 if ( $divisibleBy5 == True ) then
-  @ nGroups = ${EDASize} / 5
+  @ nEDASubGroups = ${EDASize} / 5
   setenv EnsOfVariationalPEPerNode 30
+
+  # each group of size 5 gets 6 nodes
   set nNodesPerGroup = 6
 else if ( $divisibleBy3 == True ) then
-  @ nGroups = ${EDASize} / 3
+  @ nEDASubGroups = ${EDASize} / 3
   setenv EnsOfVariationalPEPerNode 27
+
+  # each group of size 3 gets 4 nodes
   set nNodesPerGroup = 4
 else if ( $divisibleBy2 == True ) then
-  @ nGroups = ${EDASize} / 2
+  @ nEDASubGroups = ${EDASize} / 2
   setenv EnsOfVariationalPEPerNode 24
+
+  # each group of size 2 gets 3 nodes
   set nNodesPerGroup = 3
 else
-  set nGroups = ${EDASize}
+  set nEDASubGroups = ${EDASize}
   setenv EnsOfVariationalPEPerNode 18
+
+  # each group of size 1 gets 2 nodes
   set nNodesPerGroup = 2
 endif
-@ EnsOfVariationalNodes = $nNodesPerGroup * $nGroups
+@ EnsOfVariationalNodes = $nNodesPerGroup * $nEDASubGroups
 setenv EnsOfVariationalNodes $EnsOfVariationalNodes
 
 # inflation, e.g., RTPP
