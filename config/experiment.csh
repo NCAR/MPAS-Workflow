@@ -185,6 +185,7 @@ setenv ExtendedMeanFCTimes T00,T12      # times of the day to run extended forec
 setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of extended forecasts
 setenv DAVFWindowHR ${CyclingWindowHR}  # window of observations included in AN/BG verification
 setenv FCVFWindowHR 6                   # window of observations included in forecast verification
+setenv forecastPrecision single         # floating-point precision of forecast output; options: [single, double]
 
 
 ########################

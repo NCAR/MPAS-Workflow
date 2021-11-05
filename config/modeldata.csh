@@ -129,7 +129,7 @@ setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
 if ( "$DAType" =~ *"eda"* ) then
   # using member-specific sst/xice data from GEFS
   # 60km and 120km
-  setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr
+  setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr/${forecastPrecision}
   setenv seaMemFmt "${gefsMemFmt}"
 else
   # deterministic

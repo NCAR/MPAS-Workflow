@@ -99,6 +99,7 @@ sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${StreamsFile}
 sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${StreamsFile}
+sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFile}
