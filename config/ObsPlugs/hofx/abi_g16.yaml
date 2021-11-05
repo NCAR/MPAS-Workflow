@@ -13,7 +13,6 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: abi_g16
-      IRVISlandCoeff: USGS
   get values: *GetValues
   obs filters:
   - filter: Domain Check
