@@ -47,26 +47,24 @@ set CompareDA2Benchmark = False
 set VerifyExtendedMeanFC = False
 
 ## VerifyBGMembers: whether to run verification scripts for CyclingWindowHR
-#    forecast length. Utilizes critical path forecast states from
-#    individual ensemble member analyses or deterministic analysis
+#    forecast length. Runs HofXBG, VerifyObsBG, and VerifyModelBG on critical
+#    path forecasts that are initialized from ensemble member analyses.
 # OPTIONS: True/False
-set VerifyBGMembers = True
+set VerifyBGMembers = False
 
 ## CompareBG2Benchmark: compare verification nc files between two experiments
 #    after the BGMembers verification completes
 # OPTIONS: True/False
 set CompareBG2Benchmark = False
 
-## VerifyEnsMeanBG: whether to run verification scripts for ensemble
-#    mean background state.
+## VerifyEnsMeanBG: whether to run verification scripts for ensemble mean
+#    background (nEnsDAMembers > 1) or deterministic background (nEnsDAMembers == 1)
 # OPTIONS: True/False
 set VerifyEnsMeanBG = True
 
 ## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
-#    space while VerifyEnsMeanBG is True.  Automatically triggers OMF calculation
-#    for all ensemble members. VerifyEnsMeanBG is nearly free when
-#    DiagnoseEnsSpreadBG is True.
-#    mean background state.
+#    space while VerifyEnsMeanBG is True.  Automatically triggers HofXBG
+#    for all ensemble members.
 # OPTIONS: True/False
 set DiagnoseEnsSpreadBG = True
 
@@ -236,6 +234,20 @@ cat >! suite.rc << EOF
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
   {% for mem in EnsVerifyMembers %}
+        HofXBG{{mem}} => VerifyObsBG{{mem}}
+        VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
+    {% if CompareBG2Benchmark %}
+        VerifyModelBG{{mem}} => CompareModelBG{{mem}}
+        VerifyObsBG{{mem}} => CompareObsBG{{mem}}
+    {% endif %}
+  {% endfor %}
+      '''
+{% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
+    [[[PT${CyclingWindowHR}H]]]
+      graph = '''
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
+  {% for mem in [1] %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
         VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
     {% if CompareBG2Benchmark %}

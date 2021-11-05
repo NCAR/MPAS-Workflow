@@ -14,7 +14,6 @@ setenv RADTHINDISTANCE     "200.0"
 setenv RADTHINAMOUNT       "0.98"
 
 ## Background Error
-# Last updated 08 Feb 2021
 # works for 36pe/128pe and 120km domain
 setenv bumpLocDir /glade/p/mmm/parc/bjung/pandac_common/bumploc/20210811
 setenv bumpLocPrefix bumploc_2000_5

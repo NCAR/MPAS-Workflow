@@ -32,6 +32,8 @@ source config/tools.csh
 source config/modeldata.csh
 source config/obsdata.csh
 source config/mpas/variables.csh
+source config/experiment.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 
 ## First cycle "forecast" established offline
 # TODO: Setup FirstCycleDate using a new fcinit job type and put in R1 cylc position
@@ -54,54 +56,21 @@ while ( $member <= ${nEnsDAMembers} )
   set InitialMemberFC = "$firstFCDirOuter"`${memberDir} ens $member "${firstFCMemFmt}"`
   ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
   # rm ${fcFile}
-  cp -v ${fcFile}${OrigFileSuffix} ${fcFile}
-
-  set diagFile = $prevCyclingFCDirs[$member]/${DIAGFilePrefix}.${fileDate}.nc
-  ln -sfv ${InitialMemberFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
-
-#  ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
-#  set copyDiags = 0
-#  foreach var ({$MPASJEDIDiagVariables})
-#    ncdump -h ${fcFile} | grep $var
-#    if ( $status != 0 ) then
-#      @ copyDiags++
-#      echo "Copying MPASJEDIDiagVariables to Outer background state"
-#    endif
-#  end
-#  ## Takes too long on command-line.  Make it part of a job (R1).
-#  if ( $copyDiags > 0 ) then
-#    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${fcFile}
-#  endif
-#  rm ${diagFile}
+  cp ${fcFile}${OrigFileSuffix} ${fcFile}
 
   # Inner loop mesh
-  echo ""
-  set innerFCDir = $prevCyclingFCDirs[$member]/Inner
-  mkdir -p ${innerFCDir}
-  set fcFile = $innerFCDir/${FCFilePrefix}.${fileDate}.nc
+  if ($MPASnCellsOuter != $MPASnCellsInner) then
 
-  set InitialMemberFC = "$firstFCDirInner"`${memberDir} ens $member "${firstFCMemFmt}"`
-  ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
-  # rm ${fcFile}
-  cp -v ${fcFile}${OrigFileSuffix} ${fcFile}
+    echo ""
+    set innerFCDir = $prevCyclingFCDirs[$member]/Inner
+    mkdir -p ${innerFCDir}
+    set fcFile = $innerFCDir/${FCFilePrefix}.${fileDate}.nc
 
-  set diagFile = $innerFCDir/${DIAGFilePrefix}.${fileDate}.nc
-  ln -sfv ${InitialMemberFC}/${DIAGFilePrefix}.${fileDate}.nc ${diagFile}
-
-#  ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
-#  set copyDiags = 0
-#  foreach var ({$MPASJEDIDiagVariables})
-#    ncdump -h ${fcFile} | grep $var
-#    if ( $status != 0 ) then
-#      @ copyDiags++
-#      echo "Copying MPASJEDIDiagVariables to Inner background state"
-#    endif
-#  end
-#  ## Takes too long on command-line.  Make it part of a job (R1).
-#  if ( $copyDiags > 0 ) then
-#    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${fcFile}
-#  endif
-#  rm ${diagFile}
+    set InitialMemberFC = "$firstFCDirInner"`${memberDir} ens $member "${firstFCMemFmt}"`
+    ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
+    # rm ${fcFile}
+    cp ${fcFile}${OrigFileSuffix} ${fcFile}
+  endif
 
   @ member++
 end
