@@ -44,7 +44,9 @@ setenv VerifyModelPEPerNode 36
 # 144pe: 8 min., 152 GB memory
 # 192pe: 8-8.5 min., 178 GB memory
 # 384pe: 8-8.5 min., 234 GB memory
-set DeterministicDABaseMinutes = 9
+# benchmark: < 9 minutes
+# longer duration with more observations
+set DeterministicDABaseMinutes = 13
 
 # Variational
 setenv VariationalMemory 45
