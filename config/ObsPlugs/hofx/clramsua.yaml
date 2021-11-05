@@ -25,8 +25,6 @@
     name: CRTM
     SurfaceWindGeoVars: uv
     Absorbers: [H2O,O3]
-    linear obs operator:
-      Absorbers: [H2O]
     obs options: &clramsuacrtmopts
       Sensor_ID: amsua_n19
       EndianType: little_endian

@@ -1,4 +1,4 @@
-iteration: &iterationConfig
+_iteration: &iterationConfig
   geometry:
     nml_file: InnerNamelistFile
     streams_file: InnerStreamsFileStreamsFileMember
@@ -13,7 +13,7 @@ iteration: &iterationConfig
 #    adj tlm test: true
 #    adj obs test: true
 #    online adj test: true
-member: &memberConfig
+_member: &memberConfig
   date: &analysisDate '2018-04-15T00:00:00Z'
   state variables: &incvars [AnalysisVariables]
   stream name: ensemble

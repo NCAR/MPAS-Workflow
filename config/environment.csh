@@ -11,6 +11,8 @@ setenv OPT /glade/work/jedipara/cheyenne/opt/modules
 module purge
 module use $OPT/modulefiles/core
 module load jedi/${BuildCompiler}
+module load json
+module load json-schema-validator
 
 ## CustomPIO
 # whether to unload the JEDI module PIO module
