@@ -76,7 +76,7 @@ ln -fs ${pyModelDir}/${mainScript}.py ./
 set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -r $GFSAnaDirOuter/$InitFilePrefixOuter"
+  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -r $GFSAnaDirVerify/$InitFilePrefixOuter"
   echo ${baseCommand}
   ${baseCommand} >& log.$mainScript
   set success = $?

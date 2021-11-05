@@ -98,8 +98,8 @@ ln -sfv ${bgFileOther} ${bgFile}
 
 set copyDiags = 0
 foreach var ({$MPASJEDIDiagVariables})
-  echo "Checking for presence of variable ($var) in ${bgFileOther}"
-  ncdump -h ${bgFileOther} | grep $var
+  echo "Checking for presence of variable ($var) in ${bgFile}"
+  ncdump -h ${bgFile} | grep $var
   if ( $status != 0 ) then
     @ copyDiags++
     echo "variable ($var) not present"
@@ -108,7 +108,7 @@ end
 if ( $copyDiags > 0 ) then
   echo "Copy diagnostic variables used in HofX to bg: $MPASJEDIDiagVariables"
   rm ${bgFile}
-  cp -v ${bgFile}${OrigFileSuffix} ${bgFile}
+  cp -v ${bgFileOther} ${bgFile}
   set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
   ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
 endif
