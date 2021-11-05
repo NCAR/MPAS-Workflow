@@ -326,6 +326,7 @@ sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
 sed -i 's@ABISUPEROBGRID@'${ABISUPEROBGRID}'@g' $thisYAML
 sed -i 's@AHISUPEROBGRID@'${AHISUPEROBGRID}'@g' $thisYAML
+sed -i 's@HofXMeshDescriptor@'${HofXMeshDescriptor}'@' $thisYAML
 
 
 ## date-time information

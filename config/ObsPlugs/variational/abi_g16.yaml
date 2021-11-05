@@ -45,7 +45,7 @@
 #      minvalue: 0.05
     action:
       name: assign error
-      _symmetric cld fits 59X59: &abi_g16_SymmCldFits59X59
+      _symmetric cld fits 59X59-120km: &abi_g16_SymmCldFits59X59-120km
 ## 120 km, w/ bias correction
 #        x0: []
 #        x1: []
@@ -56,27 +56,31 @@
         x1: [14.28, 17.89, 20.3]
         err0: [1.86, 1.84, 2.24]
         err1: [16.95, 19.67, 18.51]
-      _symmetric cld fits 15X15: &abi_g16_SymmCldFits15X15
+      _symmetric cld fits 15X15-120km: &abi_g16_SymmCldFits15X15-120km
 ## 120 km, w/ bias correction
-        x0: [1.0, 1.0, 1.0]
-        x1: [12.54, 15.15, 17.18]
-        err0: [1.98, 2.05, 2.07]
-        err1: [16.04, 18.2, 19.14]
+#        x0: [1.0, 1.0, 1.0]
+#        x1: [12.54, 15.15, 17.18]
+#        err0: [1.98, 2.05, 2.07]
+#        err1: [16.04, 18.2, 19.14]
 ## 120 km, no bias correction
-#        x0: [1.0, 1.0, 1.0]
-#        x1: [13.38, 16.33, 19.78]
-#        err0: [1.89, 1.8, 2.33]
-#        err1: [17.23, 20.12, 19.42]
+        x0: [1.0, 1.0, 1.0]
+        x1: [13.38, 16.33, 19.78]
+        err0: [1.89, 1.8, 2.33]
+        err1: [17.23, 20.12, 19.42]
+      _symmetric cld fits 15X15-60km: &abi_g16_SymmCldFits15X15-60km
+## 60 km, no bias correction - copy of 120km
+        <<: *abi_g16_SymmCldFits15X15-120km
+      _symmetric cld fits 15X15-30km: &abi_g16_SymmCldFits15X15-30km
 ## 30 km, no bias correction
-#        x0: [1.0, 1.0, 1.0]
-#        x1: [29.09, 24.19, 32.35]
-#        err0: [2.06, 1.35, 3.10]
-#        err1: [27.64, 22.93, 21.59]
+        x0: [1.0, 1.0, 1.0]
+        x1: [29.09, 24.19, 32.35]
+        err0: [2.06, 1.35, 3.10]
+        err1: [27.64, 22.93, 21.59]
       error function:
         name: ObsErrorModelRamp@ObsFunction
         channels: *abi_channels
         options:
-          <<: *abi_g16_SymmCldFitsABISUPEROBGRID
+          <<: *abi_g16_SymmCldFitsABISUPEROBGRID-HofXMeshDescriptor
           channels: *abi_channels
           xvar:
             name: SymmCldImpactIR@ObsFunction
