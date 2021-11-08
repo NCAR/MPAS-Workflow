@@ -1,7 +1,5 @@
 #!/bin/csh -f
 
-source config/appindex.csh
-
 ##################################
 ## Fundamental experiment settings
 ##################################
