@@ -242,6 +242,8 @@ setenv myCommand "${substituteEnsembleB} $ensPbFiles $yamlFiles ${enspbmemsed} $
 echo "$myCommand"
 ${myCommand}
 
+rm $ensPbFiles $yamlFiles
+
 
 # Jo term
 # =======
