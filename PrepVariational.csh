@@ -50,7 +50,6 @@ cd ${self_WorkDir}
 
 # other static variables
 set self_WindowHR = ${CyclingWindowHR}
-set self_AppName = ${DAType}
 set self_StateDirs = ($prevCyclingFCDirs)
 set self_StatePrefix = ${FCFilePrefix}
 set StreamsFileList = (${variationalStreamsFileList})
@@ -150,13 +149,13 @@ rm ${thisSEDF}
 set prevYAML = $thisYAML
 
 
-# Ensemble Jb components
-# ======================
+# Ensemble Jb term
+# ================
 
 ## ensemble Jb yaml indentation
-if ( "$self_AppName" =~ *"envar"* ) then
+if ( "$DAType" =~ *"envar"* ) then
   set nEnsPbIndent = 4
-else if ( "$self_AppName" =~ *"hybrid"* ) then
+else if ( "$DAType" =~ *"hybrid"* ) then
   set nEnsPbIndent = 8
 else
   set nEnsPbIndent = 0
@@ -172,7 +171,7 @@ sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' $prevYAML
 set enspbinfsed = EnsemblePbInflation
 set thisSEDF = ${enspbinfsed}SEDF.yaml
 set removeInflation = 0
-if ( "$self_AppName" =~ *"eda"* && ${ABEInflation} == True ) then
+if ( "$DAType" =~ *"eda"* && ${ABEInflation} == True ) then
   set inflationFields = ${CyclingABEInflationDir}/BT${ABEIChannel}_ABEIlambda.nc
   find ${inflationFields} -mindepth 0 -maxdepth 0
   if ($? > 0) then
@@ -205,104 +204,66 @@ if ($removeInflation > 0) then
 endif
 
 ## ensemble Jb members
+# + pure envar: background error.members
+# + hybrid envar: background error.components[iEnsemble].covariance.members
+#   where iEnsemble is the ensemble component index of the hybrid B
+
 # performs sed substitution for EnsemblePbMembers
 set enspbmemsed = EnsemblePbMembers
-set thisSEDF = ${enspbmemsed}SEDF.yaml
-if ( "$self_AppName" =~ *"eda"* ) then
-  set member = 1
-  while ( $member <= ${nEnsDAMembers} )
-    set memberyaml = variational_${member}.yaml
 
-    # create eda-member-specific yaml
-    cp $prevYAML $memberyaml
+# established file lists
+set ensPbFiles = ${enspbmemsed}.txt
+rm $ensPbFiles
+set yamlFiles = variationals.txt
+rm $yamlFiles
 
-    ## ensemble Jb members
-cat >! ${thisSEDF} << EOF
-/${enspbmemsed}/c\
-EOF
+# establish ensemble Pb member states
+set member = 1
+while ( $member <= ${ensPbNMembers} )
+  set memDir = `${memberDir} ensemble $member "${ensPbMemFmt}"`
 
-    # TODO(JJG): how does ensemble B config generation need to be
-    #            modified for 4DEnVar?
-    set bmember = 0
-    set bremain = ${ensPbNMembers}
-    if ( $LeaveOneOutEDA == True ) then
-      @ bremain--
-    endif
+  set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
+  echo $filename >> $ensPbFiles
+  @ member++
+end
 
-    while ( $bmember < ${ensPbNMembers} )
-      @ bmember++
-      if ( $bmember == $member && $LeaveOneOutEDA == True ) then
-        continue
-      endif
-      set memDir = `${memberDir} ensemble $bmember "${ensPbMemFmt}"`
-      set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
-      if ( $bremain > 1 ) then
-        set filename = ${filename}\\
-      endif
-
-cat >>! ${thisSEDF} << EOF
-${indentPb}- <<: *memberConfig\
-${indentPb}  filename: ${filename}
-EOF
-
-      @ bremain--
-    end
-    set thisYAML = last.yaml
-    sed -f ${thisSEDF} $memberyaml >! $thisYAML
-    rm ${thisSEDF}
-    cp $thisYAML $memberyaml
-
-    ## Jo term
-    set memDir = `${memberDir} $self_AppName $member`
-    sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
-    if ($member == 1) then
-      sed -i 's@ObsPerturbations@false@g' $memberyaml
-    else
-      sed -i 's@ObsPerturbations@true@g' $memberyaml
-    endif
-    sed -i 's@MemberSeed@'$member'@g' $memberyaml
-
-    @ member++
-  end
-else
-  # TODO: merge below behavior with other branch of if-then clause, remove clause
-  # for single-background variational application (not EDA)
-  # create deterministic "member" yaml
-  set memberyaml = variational_1.yaml
+# initialize variational member yamls
+set member = 1
+while ( $member <= ${nEnsDAMembers} )
+  set memberyaml = variational_${member}.yaml
+  echo $memberyaml >> $yamlFiles
   cp $prevYAML $memberyaml
 
-  ## ensemble Jb members
-cat >! ${thisSEDF} << EOF
-/${enspbmemsed}/c\
-EOF
+  @ member++
+end
 
-  # TODO(JJG): how does ensemble B config generation need to be
-  #            modified for 4DEnVar?
-  set bmember = 0
-  while ( $bmember < ${ensPbNMembers} )
-    @ bmember++
-    set memDir = `${memberDir} ensemble $bmember "${ensPbMemFmt}"`
-    set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
-    if ( $bmember < ${ensPbNMembers} ) then
-      set filename = ${filename}\\
-    endif
+# substitute Jb members
+setenv myCommand "${substituteEnsembleB} $ensPbFiles $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
+echo "$myCommand"
+${myCommand}
 
-cat >>! ${thisSEDF} << EOF
-${indentPb}- <<: *memberConfig\
-${indentPb}  filename: ${filename}
-EOF
 
-  end
-  set thisYAML = last.yaml
-  sed -f ${thisSEDF} $memberyaml >! $thisYAML
-  rm ${thisSEDF}
-  cp $thisYAML $memberyaml
+# Jo term
+# =======
 
-  ## Jo term
-  sed -i 's@OOPSMemberDir@@g' $memberyaml
-  sed -i 's@ObsPerturbations@false@g' $memberyaml
-  sed -i 's@MemberSeed@1@g' $memberyaml
-endif
+set member = 1
+while ( $member <= ${nEnsDAMembers} )
+  set memberyaml = variational_${member}.yaml
+
+  # member-specific observation file output directory
+  set memDir = `${memberDir} $DAType $member`
+  sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
+
+  # first EDA member and deterministic EnVar do not perturb observations
+  if ($member == 1) then
+    sed -i 's@ObsPerturbations@false@g' $memberyaml
+  else
+    sed -i 's@ObsPerturbations@true@g' $memberyaml
+  endif
+  sed -i 's@MemberSeed@'$member'@g' $memberyaml
+
+  @ member++
+end
 
 echo "Completed YAML preparation stage"
 
