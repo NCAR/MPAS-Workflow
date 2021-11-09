@@ -252,7 +252,7 @@ set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set memberyaml = variational_${member}.yaml
 
-  # member-specific observation file output directory
+  # member-specific state I/O and observation file output directory
   set memDir = `${memberDir} $DAType $member`
   sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
 
