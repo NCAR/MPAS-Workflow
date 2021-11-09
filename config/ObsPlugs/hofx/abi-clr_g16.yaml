@@ -21,6 +21,9 @@
     - variable:
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
+    - variable:
+        name: cloud_area_fraction@MetaData
+      maxvalue: 0.05
   - filter: GOMsaver
     filename: OutDBDir/geoPrefix_abi-clr_g16.nc4
   - filter: YDIAGsaver
