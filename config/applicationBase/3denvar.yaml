@@ -33,6 +33,7 @@ cost function:
   cost type: 3D-Var
   window begin: 'WindowBegin'
   window length: PT6H
+  jb evaluation: false
   geometry:
     nml_file: OuterNamelistFile
     streams_file: OuterStreamsFileStreamsFileMember
