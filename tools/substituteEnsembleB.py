@@ -2,7 +2,7 @@
 
 import argparse
 from collections import OrderedDict
-#import os
+from distutils.util import strtobool
 import random
 import re
 import textwrap
@@ -40,8 +40,8 @@ def substituteEnsembleB():
   )
   ap.add_argument(
     'SelfExclusion',
-    type=bool,
-    default=False,
+    type=str,
+    default="False",
     help='Whether to use self-exclusion, excluding own member (index in yamlFiles) from yaml'
   )
   ap.add_argument(
@@ -59,7 +59,7 @@ def substituteEnsembleB():
 
   substitutionString = args.substitutionString
   indent = ''.join([' ']*args.nIndent)
-  SelfExclusion = args.SelfExclusion
+  SelfExclusion = bool(strtobool(args.SelfExclusion))
   shuffle = args.shuffle
 
   # create ensemble member state yaml stubs
