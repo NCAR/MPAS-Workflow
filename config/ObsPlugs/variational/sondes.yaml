@@ -16,7 +16,7 @@
     maxvalue: 3
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1
+    apply at iterations: 0, 1, 2, 3, 4, 5
 # avoids large ObsError values polluting plots of ObsError
   - filter: Bounds Check
     filter variables:
