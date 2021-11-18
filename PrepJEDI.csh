@@ -239,6 +239,10 @@ set thisYAML = orig.yaml
 set prevYAML = ${thisYAML}
 
 cp -v ${ConfigDir}/applicationBase/${self_AppName}.yaml $thisYAML
+if ( $status != 0 ) then
+  echo "ERROR in $0 : application YAML not available --> ${self_AppName}.yaml" > ./FAIL
+  exit 1
+endif
 
 # (2) obs-related substitutions
 # =============================
