@@ -163,6 +163,8 @@ set hofxMPASnCellsList = ($MPASnCellsOuter)
 set hofxStreamsFileList = ($OuterStreamsFile)
 set hofxNamelistFileList = ($OuterNamelistFile)
 
+set HofXMeshDescriptor = ${MPASGridDescriptorOuter}
+
 # rtpp
 setenv rtppModelConfigDir ${ModelConfigDir}/rtpp
 #set rtppMeshList = (Ensemble)

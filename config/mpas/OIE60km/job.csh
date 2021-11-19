@@ -44,7 +44,9 @@ setenv VerifyModelPEPerNode 36
 # 144pe: 8 min., 152 GB memory
 # 192pe: 8-8.5 min., 178 GB memory
 # 384pe: 8-8.5 min., 234 GB memory
-set DeterministicDABaseMinutes = 9
+# benchmark: < 9 minutes
+# longer duration with more observations
+set DeterministicDABaseMinutes = 13
 
 # Variational
 setenv VariationalMemory 45
@@ -106,6 +108,11 @@ setenv VariationalPEPerNode 32
 # 40-members: 576-583 sec., 191-200 GB memory, ~62 sec. for Localization::multiply
 # 80-members: 819-890 sec., 218-221 GB memory, ~132-145 sec. for Localization::multiply
 # 110 sec. premium per 20 members
+
+# note: more memory needed for all-sky experiments due to hydrometeor increment variables,
+# ~290GB for 20-member 3DEnVar.  Either increase memory or change Nodes and PE.
+#setenv VariationalMemory 109
+
 set ThreeDEnVarJobSecondsPerMember = 7
 
 # 384pe

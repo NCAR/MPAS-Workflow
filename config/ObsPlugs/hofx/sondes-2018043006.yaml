@@ -1,16 +1,16 @@
 - obs space:
+    <<: *ObsSpace
     name: Radiosonde
     obsdatain:
       obsfile: InDBDir/sondes_obs_2018041500.h5
     obsdataout:
       obsfile: OutDBDir/obsPrefix_sondes.h5
     simulated variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind]
+  obs error: *ObsErrorDiagonal
   obs operator:
     name: VertInterp
-  obs error:
-    covariance model: diagonal
+  get values:
+    <<: *GetValues
   obs filters:
   - filter: PreQC
     maxvalue: 3
-  get values:
-    interpolation type: InterpolationType

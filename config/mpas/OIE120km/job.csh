@@ -36,7 +36,9 @@ setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
 ## Variational+EnsOfVariational
-set DeterministicDABaseMinutes = 3
+# benchmark: < 3 minutes
+# longer duration with more observations
+set DeterministicDABaseMinutes = 6
 
 # Variational
 if ( $nEnsDAMembers > 10 ) then

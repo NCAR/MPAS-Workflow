@@ -1,4 +1,5 @@
 - obs space:
+    <<: *ObsSpace
     name: Satwind
     obsdatain:
       obsfile: InDBDir/satwind_obs_2018041500.h5
@@ -7,11 +8,11 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_satwind.h5
       max frame size: 80000
     simulated variables: [eastward_wind, northward_wind]
-    obs perturbations seed: MemberSeed
+  obs error: *ObsErrorDiagonal
   obs operator:
     name: VertInterp
-  obs error:
-    covariance model: diagonal
+  get values:
+    <<: *GetValues
   obs filters:
   - filter: PreQC
     maxvalue: 3
@@ -32,5 +33,3 @@
 #    random_seed: 0
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
-  get values:
-    interpolation type: InterpolationType

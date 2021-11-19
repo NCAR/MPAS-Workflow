@@ -46,8 +46,6 @@ designed to be modified by users, and others mostly by developers.
 ## top-level configuration (config/*.csh)
 -----------------------------------------
 
-appindex.csh: controls re-usable templating for Variational and HofX applications
-
 builds.csh: describes the build directories for critical applications
 
 modeldata.csh: static model-space data file structure, including mesh-specific partition files,

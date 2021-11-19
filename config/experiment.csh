@@ -1,7 +1,5 @@
 #!/bin/csh -f
 
-source config/appindex.csh
-
 ##################################
 ## Fundamental experiment settings
 ##################################
@@ -36,7 +34,18 @@ setenv FirstCycleDate 2018041500
 
 ## benchmarkObsList
 # base set of observation types assimilated in all experiments
-set benchmarkObsList = (sondes aircraft satwind gnssroref sfcp clramsua)
+set l = ()
+set l = ($l sondes)
+set l = ($l aircraft)
+set l = ($l satwind)
+set l = ($l gnssroref)
+set l = ($l sfcp)
+set l = ($l amsua_n19)
+set l = ($l amsua_n18)
+set l = ($l amsua_n15)
+set l = ($l amsua_aqua)
+set l = ($l amsua_metop-a)
+set benchmarkObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
@@ -45,23 +54,28 @@ set ExpSuffix = ''
 ##############
 ## DA settings
 ##############
-# add IR super-obbing resolution suffixes for variational
-set abi = abi$ABISuperOb[$variationalIndex]
-set ahi = ahi$AHISuperOb[$variationalIndex]
-
 ## variationalObsList
-# observation types assimilated in all variational application instances
-# OPTIONS: $benchmarkObsList, cldamsua, clr$abi, all$abi, clr$ahi, all$ahi
-# clr == clear-sky
-# cld == cloudy-sky
-# all == all-sky
-#TODO: separate amsua and mhs config for each instrument_satellite combo
-
-set variationalObsList = ($benchmarkObsList)
-#set variationalObsList = ($benchmarkObsList cldamsua)
-#set variationalObsList = ($benchmarkObsList all$abi)
-#set variationalObsList = ($benchmarkObsList all$ahi)
-#set variationalObsList = ($benchmarkObsList all$abi all$ahi)
+# observation types assimilated in variational application instances
+# OPTIONS: see list below
+# Abbreviations:
+#   clr == clear-sky
+#   cld == cloudy-sky
+set l = ()
+set l = ($l $benchmarkObsList)
+#set l = ($l abi_g16)
+#set l = ($l ahi_himawari8)
+#set l = ($l amsua_metop-b)
+#set l = ($l abi-clr_g16)
+#set l = ($l ahi-clr_himawari8)
+# TODO: add scene-dependent ObsErrors to amsua-cld_* ObsSpaces
+# TODO: combine amsua_* and amsua-cld_* similar to jedi-gdas
+#set l = ($l amsua-cld_n19)
+#set l = ($l amsua-cld_n18)
+#set l = ($l amsua-cld_n15)
+#set l = ($l amsua-cld_aqua)
+#set l = ($l amsua-cld_metop-a)
+#set l = ($l amsua-cld_metop-b)
+set variationalObsList = ($l)
 
 ## DAType
 # OPTIONS: 3denvar, eda_3denvar, 3dvarId
@@ -146,17 +160,39 @@ setenv ABEIChannel 8
 ################
 ## HofX settings
 ################
-# add IR super-obbing resolution suffixes for hofx
-set abi = abi$ABISuperOb[$hofxIndex]
-set ahi = ahi$AHISuperOb[$hofxIndex]
-
 ## hofxObsList
-# observation types simulated in all hofx application instances
-# OPTIONS: $benchmarkObsList, cldamsua, allmhs, clr$abi, all$abi, clr$ahi, all$ahi
-#TODO: separate amsua and mhs config for each instrument_satellite combo
-
-#TODO: upgrade abi and ahi data
-set hofxObsList = ($benchmarkObsList cldamsua allmhs all$abi all$ahi)
+# observation types simulated in hofx application instances for verification
+# OPTIONS: see list below
+# Abbreviations:
+#   clr == clear-sky
+#   cld == cloudy-sky
+set l = ()
+set l = ($l sondes)
+set l = ($l aircraft)
+set l = ($l satwind)
+set l = ($l gnssroref)
+set l = ($l sfcp)
+set l = ($l amsua_n19)
+set l = ($l amsua_n18)
+set l = ($l amsua_n15)
+set l = ($l amsua_aqua)
+set l = ($l amsua_metop-a)
+set l = ($l amsua_metop-b)
+set l = ($l amsua-cld_n19)
+set l = ($l amsua-cld_n18)
+set l = ($l amsua-cld_n15)
+set l = ($l amsua-cld_aqua)
+set l = ($l amsua-cld_metop-a)
+set l = ($l amsua-cld_metop-b)
+set l = ($l mhs_n19)
+set l = ($l mhs_n18)
+set l = ($l mhs_metop-a)
+set l = ($l mhs_metop-b)
+set l = ($l abi_g16)
+set l = ($l ahi_himawari8)
+#set l = ($l abi-clr_g16)
+#set l = ($l ahi-clr_himawari8)
+set hofxObsList = ($l)
 
 
 #GEFS reference case (override above settings)

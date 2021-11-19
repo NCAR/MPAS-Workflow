@@ -1,32 +1,46 @@
 - obs space:
+    <<: *ObsSpace
     name: abi-clr_g16
     obsdatain:
       obsfile: InDBDir/abi_g16_obs_2018041500.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_abi-clr_g16.h5
+      obsfile: OutDBDirOOPSMemberDir/obsPrefix_abi-clr_g16.h5
     simulated variables: [brightness_temperature]
-    channels: &clrabi_channels 7-16
+    channels: &clrabi_channels 8-10
+  obs error: *ObsErrorDiagonal
   obs operator:
-    name: CRTM
-    SurfaceWindGeoVars: uv
-    Absorbers: [H2O,O3,CO2]
+    <<: *clearCRTMObsOperator
     obs options:
+      <<: *CRTMObsOptions
       Sensor_ID: abi_g16
-      EndianType: little_endian
-      CoefficientPath: CRTMTABLES
-      IRVISlandCoeff: USGS
-  obs error:
-    covariance model: diagonal
+  get values:
+    <<: *GetValues
   obs filters:
   - filter: Domain Check
     where:
     - variable:
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
+    - variable:
+        name: cloud_area_fraction@MetaData
+      maxvalue: 0.05
+#    - variable:
+#        name: water_area_fraction@GeoVaLs
+#      minvalue: 1.0
+    apply at iterations: 0, 1
+#  - filter: Thinning
+#    amount: RADTHINAMOUNT
+#    random_seed: 0
+#    apply at iterations: 0
+  - filter: Gaussian Thinning
+    horizontal_mesh: RADTHINDISTANCE #km
+  - filter: Background Check
+    threshold: 3.0
+    apply at iterations: 0, 1
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_abi-clr_g16.nc4
+    filename: OutDBDirOOPSMemberDir/geoPrefix_abi-clr_g16.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_abi-clr_g16.nc4
+    filename: OutDBDirOOPSMemberDir/diagPrefix_abi-clr_g16.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *clrabi_channels
@@ -42,5 +56,3 @@
       channels: *clrabi_channels
     - name: brightness_temperature_jacobian_surface_temperature
       channels: *clrabi_channels
-  get values:
-    interpolation type: InterpolationType

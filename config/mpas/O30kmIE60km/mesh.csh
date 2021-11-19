@@ -11,8 +11,20 @@ setenv MPASnCellsInner 163842
 setenv MPASnCellsEnsemble ${MPASnCellsInner}
 setenv MPASTimeStep 180.0
 setenv MPASDiffusionLengthScale 30000.0
-setenv RADTHINDISTANCE    "60.0"
+setenv RADTHINDISTANCE    "100.0"
 setenv RADTHINAMOUNT      "0.75"
+
+## ABI super-obbing footprint, set independently
+#  for variational and hofx
+#OPTIONS: 15X15, 59X59
+set variationalABISuperOb = 15X15
+set hofxABISuperOb = 15X15
+
+## AHI super-obbing footprint set independently
+#  for variational and hofx
+#OPTIONS: 15X15, 101X101
+set variationalAHISuperOb = 15X15
+set hofxAHISuperOb = 15X15
 
 ## Background Error
 #### 1200km horizontal loc

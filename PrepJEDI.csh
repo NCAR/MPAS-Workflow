@@ -49,13 +49,11 @@ source config/environment.csh
 source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/modeldata.csh
 source config/obsdata.csh
 source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
-source config/appindex.csh
 source config/builds.csh
-source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -218,10 +216,12 @@ ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.h5 ${InDBDir}/
 # ABI
 # ===
 ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
+set ABISUPEROBGRID = $ABISuperOb[$myAppIndex]
 
 # AHI
 # ===
 ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
+set AHISUPEROBGRID = $AHISuperOb[$myAppIndex]
 
 # VarBC prior
 # ===========
@@ -236,6 +236,8 @@ ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 # =============================
 
 set thisYAML = orig.yaml
+set prevYAML = ${thisYAML}
+
 cp -v ${ConfigDir}/applicationBase/${self_AppName}.yaml $thisYAML
 
 # (2) obs-related substitutions
@@ -246,11 +248,13 @@ set nIndent = $applicationObsIndent[$myAppIndex]
 set obsIndent = "`${nSpaces} $nIndent`"
 
 ## Add selected observations (see experiment.csh)
+# (i) combine the observation YAML stubs into single file
+set observationsYAML = observations.yaml
+rm $observationsYAML
+touch $observationsYAML
+
 set checkForMissingObs = (sondes aircraft satwind gnssro sfc amsua mhs abi ahi)
 set found = 0
-set obsYAML = observations.yaml
-rm $obsYAML
-touch $obsYAML
 foreach obs ($self_ObsList)
   echo "Preparing YAML for ${obs} observations"
   set missing=0
@@ -278,7 +282,7 @@ foreach obs ($self_ObsList)
 
   if ($missing == 0) then
     echo "${obs} data is present and selected; adding ${obs} to the YAML"
-    sed 's/^/'"$obsIndent"'/' ${SUBYAML}.yaml >> $obsYAML
+    sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsYAML
     @ found++
   else
     echo "${obs} data is selected, but missing; NOT adding ${obs} to the YAML"
@@ -289,35 +293,59 @@ if ($found == 0) then
   exit 1
 endif
 
-cat $obsYAML >> $thisYAML
+# (ii) concatenate all observations to thisYAML
+cat $observationsYAML >> $thisYAML
 
-#TODO: replace cat with sed substitution so that each application can decide what to do when there
-# are zero observations available
+# (iii) add re-usable YAML anchors
+set obsanchorssed = ObsAnchors
+set thisSEDF = ${obsanchorssed}SEDF.yaml
+cat >! ${thisSEDF} << EOF
+/${obsanchorssed}/c\
+EOF
+
+# substitute with line breaks
+set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${obsanchorssed}.yaml
+sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+echo '_blank: null' >> ${thisSEDF}
+
+# insert into prevYAML
+set thisYAML = insertObsAnchors.yaml
+sed -f ${thisSEDF} $prevYAML >! $thisYAML
+rm ${thisSEDF}
+set prevYAML = $thisYAML
+
 
 ## Horizontal interpolation type
 sed -i 's@InterpolationType@'${InterpolationType}'@g' $thisYAML
 
+
 ## QC characteristics
 sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
+sed -i 's@ABISUPEROBGRID@'${ABISUPEROBGRID}'@g' $thisYAML
+sed -i 's@AHISUPEROBGRID@'${AHISUPEROBGRID}'@g' $thisYAML
+sed -i 's@HofXMeshDescriptor@'${HofXMeshDescriptor}'@' $thisYAML
 
+
+## date-time information
 # TODO(JJG): revise these date replacements to loop over
 #            all dates relevant to this application (e.g., 4DEnVar?)
-## previous date
+# previous date
 sed -i 's@2018-04-14_18.00.00@'${prevFileDate}'@g' $thisYAML
 sed -i 's@2018041418@'${prevValidDate}'@g' $thisYAML
 sed -i 's@2018-04-14T18:00:00Z@'${prevConfDate}'@g'  $thisYAML
 
-## current date
+# current date
 sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' $thisYAML
 sed -i 's@2018041500@'${thisValidDate}'@g' $thisYAML
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 
-## window length
+# window length
 sed -i 's@PT6H@PT'${self_WindowHR}'H@g' $thisYAML
 
-## window beginning
+# window beginning
 sed -i 's@WindowBegin@'${halfprevConfDate}'@' $thisYAML
+
 
 ## obs-related file naming
 # crtm tables
@@ -354,13 +382,15 @@ end
 set AnalysisVariables = ($StandardAnalysisVariables)
 set StateVariables = ($StandardStateVariables)
 
-# if any CRTM yaml section includes Clouds, then include hydrometeors
-# in both the analysis and state variables
-grep '^\ \+Clouds' $thisYAML
+# if any CRTM yaml section includes the *cloudyCRTMObsOperator alias, then hydrometeors
+# must be included in both the Analysis and State variables
+grep '*cloudyCRTMObsOperator' $thisYAML
 if ( $status == 0 ) then
-  foreach hydro ($MPASHydroVariables)
-    set AnalysisVariables = ($AnalysisVariables $hydro)
+  foreach hydro ($MPASHydroStateVariables)
     set StateVariables = ($StateVariables $hydro)
+  end
+  foreach hydro ($MPASHydroIncrementVariables)
+    set AnalysisVariables = ($AnalysisVariables $hydro)
   end
 endif
 
