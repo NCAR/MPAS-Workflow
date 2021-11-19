@@ -45,6 +45,7 @@ set l = ($l amsua_n18)
 set l = ($l amsua_n15)
 set l = ($l amsua_aqua)
 set l = ($l amsua_metop-a)
+set l = ($l amsua_metop-b)
 set benchmarkObsList = ($l)
 
 ## ExpSuffix
@@ -64,7 +65,6 @@ set l = ()
 set l = ($l $benchmarkObsList)
 #set l = ($l abi_g16)
 #set l = ($l ahi_himawari8)
-#set l = ($l amsua_metop-b)
 #set l = ($l abi-clr_g16)
 #set l = ($l ahi-clr_himawari8)
 # TODO: add scene-dependent ObsErrors to amsua-cld_* ObsSpaces
@@ -78,7 +78,7 @@ set l = ($l $benchmarkObsList)
 set variationalObsList = ($l)
 
 ## DAType
-# OPTIONS: 3denvar, eda_3denvar, 3dvarId
+# OPTIONS: 3denvar, eda_3denvar, 3dvarId, 3denvar-specific_multivariate
 setenv DAType eda_3denvar
 
 ## nInnerIterations
@@ -121,7 +121,8 @@ else
   # tertiary settings for when fixedEnsBType is set to PreviousEDA
   set nPreviousEnsDAMembers = 20
   set PreviousEDAForecastDir = \
-    /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_LeaveOneOut_OIE120km/CyclingFC
+    /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_RTPP0.80_LeaveOneOut_OIE120km_memberSpecificTemplate_GEFSSeaUpdate/CyclingFC
+#    /glade/scratch/guerrett/pandac/guerrett_eda_3denvar-60-iter_NMEM80_RTPP0.80_LeaveOneOut_OIE60km/CyclingFC
 
   # override settings for EDASize, nDAInstances, and nEnsDAMembers for non-eda setups
   # TODO: make DAType setting agnostic of eda_3denvar vs. 3denvar
