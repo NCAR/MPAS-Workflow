@@ -19,7 +19,7 @@ set initialCyclePoint = 20180415T00
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180514T18
+set finalCyclePoint = 20180415T00
 
 
 #########################
@@ -27,14 +27,14 @@ set finalCyclePoint = 20180514T18
 #########################
 ## CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
-# OPTIONS: Normal, Bypass, Reanalysis, Reforecast
-set CriticalPathType = Normal
+# OPTIONS: Normal, Bypass, Reanalysis, Reforecast, NearRealTime
+set CriticalPathType = NearRealTime
 
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
 #    Only works when CriticalPathType == Normal.
 # OPTIONS: True/False
-set VerifyDeterministicDA = True
+set VerifyDeterministicDA = False
 
 ## CompareDA2Benchmark: compare verification nc files between two experiments
 #    after the DA verification completes
@@ -60,13 +60,13 @@ set CompareBG2Benchmark = False
 ## VerifyEnsMeanBG: whether to run verification scripts for ensemble mean
 #    background (nEnsDAMembers > 1) or deterministic background (nEnsDAMembers == 1)
 # OPTIONS: True/False
-set VerifyEnsMeanBG = True
+set VerifyEnsMeanBG = False
 
 ## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
 #    space while VerifyEnsMeanBG is True.  Automatically triggers HofXBG
 #    for all ensemble members.
 # OPTIONS: True/False
-set DiagnoseEnsSpreadBG = True
+set DiagnoseEnsSpreadBG = False
 
 ## VerifyEnsMeanAN: whether to run verification scripts for ensemble
 #    mean analysis state.
@@ -170,6 +170,8 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
   {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
+{% elif CriticalPathType == "NearRealTime" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n InitFC" %}
 {# else #}
 #TODO: indicate invalid CriticalPathType
 {% endif %}
@@ -362,6 +364,15 @@ cat >! suite.rc << EOF
       -q = share
       -A = ${VFAccountNumber}
       -l = select=1:ncpus=1
+#Initial Forecast
+  [[InitFC]]
+    env-script = cd ${mainScriptDir}; ./InitFC.csh "1"
+    script = \$origin/InitFC.csh "1"
+    [[[job]]]
+      execution time limit = PT05M
+    [[[directives]]]
+      -m = ae
+      -l = select=1:ncpus=36:mpiprocs=36
 #Cycling components
   [[InitCyclingDA]]
     env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"

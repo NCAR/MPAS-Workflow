@@ -31,11 +31,13 @@ setenv FirstFileDate ${yy}-${mm}-${dd}_${hh}.00.00
 
 ## date from which first background is initialized
 set prevFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} -${CyclingWindowHR}`
+setenv prevFirstCycleDate ${prevFirstCycleDate}
 set yy = `echo ${prevFirstCycleDate} | cut -c 1-4`
 set mm = `echo ${prevFirstCycleDate} | cut -c 5-6`
 set dd = `echo ${prevFirstCycleDate} | cut -c 7-8`
 set hh = `echo ${prevFirstCycleDate} | cut -c 9-10`
 set prevFirstFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
+setenv NMLFirstFileDate ${yy}-${mm}-${dd}_${hh}:00:00
 
 # externally sourced model states
 # -------------------------------
@@ -161,4 +163,5 @@ else
   setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
   setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
   setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
+  setenv InitialStaticFieldsFileOuter ${InitFilePrefixOuter}.${prevFirstFileDate}.nc  
 endif

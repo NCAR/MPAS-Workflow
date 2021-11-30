@@ -78,8 +78,8 @@ set l = ($l $benchmarkObsList)
 set variationalObsList = ($l)
 
 ## DAType
-# OPTIONS: 3denvar, eda_3denvar, 3dvarId
-setenv DAType eda_3denvar
+# OPTIONS: 3denvar, eda_3denvar, 3dvarId, 3dvar
+setenv DAType 3dvar
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
@@ -138,7 +138,7 @@ endif
 
 ## LeaveOneOutEDA, whether to use self-exclusion in the EnVar ensemble B during EDA cycling
 # OPTIONS: True/False
-setenv LeaveOneOutEDA True
+setenv LeaveOneOutEDA False
 
 ## RTPPInflationFactor, relaxation parameter for the relaxation to prior perturbation (RTPP) inflation mechanism
 # Typical Values: 0.0 or 0.50 to 0.90
