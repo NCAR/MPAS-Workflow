@@ -58,6 +58,9 @@ echo "WorkDir = ${self_WorkDir}"
 setenv self_StatePrefix inStatePrefixTEMPLATE
 set self_StateDir = $inStateDirsTEMPLATE[$ArgMember]
 
+setenv HDF5_DISABLE_VERSION_CHECK 1
+setenv NUMEXPR_MAX_THREADS 1
+
 # ================================================================================================
 
 # collect model-space diagnostic statistics into DB files
@@ -77,7 +80,7 @@ set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
   setenv baseCommand "python ${mainScript}.py ${thisValidDate} -r $GFSAnaDirVerify/$InitFilePrefixOuter"
-  echo ${baseCommand}
+  echo "${baseCommand}" | tee ./myCommand
   ${baseCommand} >& log.$mainScript
   set success = $?
   if ( $success != 0 ) then
