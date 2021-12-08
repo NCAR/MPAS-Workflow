@@ -30,7 +30,16 @@ setenv MPASGridDescriptor OIE120km
 #     - TODO: standardize GFS and observation source data
 #     - TODO: enable QC
 #     - TODO: enable VarBC
-setenv FirstCycleDate 2018041500
+setenv FirstCycleDate 2018041418
+
+#########################
+# InitializationType 
+#########################
+# Indicates the type of initialization at the initial cycle: cold or warm start
+#       cold start: generate first forecast online from an external GFS analysis
+#       warm start: copy a pre-generated forecast
+# OPTIONS: ColdStart/WarmStart/ReStart
+set InitializationType = ColdStart
 
 ## benchmarkObsList
 # base set of observation types assimilated in all experiments
@@ -79,7 +88,7 @@ set variationalObsList = ($l)
 
 ## DAType
 # OPTIONS: 3denvar, eda_3denvar, 3dvarId, 3dvar
-setenv DAType 3dvar
+setenv DAType 3denvar
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
@@ -222,7 +231,6 @@ setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of ex
 setenv DAVFWindowHR ${CyclingWindowHR}  # window of observations included in AN/BG verification
 setenv FCVFWindowHR 6                   # window of observations included in forecast verification
 setenv forecastPrecision single         # floating-point precision of forecast output; options: [single, double]
-
 
 ########################
 ## experiment name parts

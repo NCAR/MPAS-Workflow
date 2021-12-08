@@ -40,60 +40,31 @@ source config/mpas/${MPASGridDescriptor}/mesh.csh
 # TODO: Setup FirstCycleDate using a new fcinit job type and put in R1 cylc position
 set thisCycleDate = $FirstCycleDate
 set thisValidDate = $thisCycleDate
-
 source getCycleVars.csh
-set prevCyclingFCDirs = $prevCyclingFCDirs
 
-set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  echo ""
-  echo ""
-  if ($prevCycleDate == $prevFirstCycleDate) then
-      ## First FC
-      echo "Making First FC job script"
-      set JobScript=${mainScriptDir}/InitFC.csh
-      sed -e 's@fcLengthHRTEMPLATE@'${CyclingWindowHR}'@' \
-          -e 's@fcIntervalHRTEMPLATE@'${CyclingWindowHR}'@' \
-          -e 's@deleteZerothForecastTEMPLATE@True@' \
-          forecast_Init.csh > ${JobScript}
-      chmod 744 ${JobScript}
-  
-  else  
-  
-      find $prevCyclingFCDirs[$member] -mindepth 0 -maxdepth 0 > /dev/null
-      if ($? == 0) then
-        rm -r $prevCyclingFCDirs[$member]
-      endif
-      mkdir -p $prevCyclingFCDirs[$member]
-
-      # Outer loop mesh
-      set fcFile = $prevCyclingFCDirs[$member]/${FCFilePrefix}.${fileDate}.nc
-
-      set InitialMemberFC = "$firstFCDirOuter"`${memberDir} ens $member "${firstFCMemFmt}"`
-      ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
-      # rm ${fcFile}
-      cp ${fcFile}${OrigFileSuffix} ${fcFile}
-      # Inner loop mesh
-      if ($MPASnCellsOuter != $MPASnCellsInner) then
-
-        echo ""
-        set innerFCDir = $prevCyclingFCDirs[$member]/Inner
-        mkdir -p ${innerFCDir}
-        set fcFile = $innerFCDir/${FCFilePrefix}.${fileDate}.nc
-
-        set InitialMemberFC = "$firstFCDirInner"`${memberDir} ens $member "${firstFCMemFmt}"`
-        ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
-        # rm ${fcFile}
-        cp ${fcFile}${OrigFileSuffix} ${fcFile}  
-      endif
-  endif
-  
-  @ member++
-end
 setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
 
 #TODO: enable VARBC updating between cycles
 #  setenv VARBC_TABLE ${prevCyclingDADir}/${VarBCAnalysis}
+
+
+## Generate First FC
+echo "Making First forecast (cold start) job script"
+set JobScript=${mainScriptDir}/CStart.csh
+sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
+    -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
+    -e 's@fcLengthHRTEMPLATE@'${CyclingWindowHR}'@' \
+    -e 's@fcIntervalHRTEMPLATE@'${CyclingWindowHR}'@' \
+    -e 's@deleteZerothForecastTEMPLATE@True@' \
+    forecast.csh > ${JobScript}
+chmod 744 ${JobScript}
+
+
+## Copy/link pre-generated first FC 
+echo "Making First forecast (warm start) job script"
+set JobScript=${mainScriptDir}/WStart.csh
+cp warmStart.csh ${JobScript}
+chmod 744 ${JobScript}
 
 
 ## PrepJEDICyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA

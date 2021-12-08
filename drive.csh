@@ -14,27 +14,27 @@ source config/experiment.csh
 # + initialCyclePoint must be equal to FirstCycleDate
 # OR:
 # + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart#   from a previously completed cycle.
-set initialCyclePoint = 20180415T00
+set initialCyclePoint = 20180414T18
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180415T00
-
+set finalCyclePoint = 20180415T18
 
 #########################
 # workflow task selection
 #########################
 ## CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
-# OPTIONS: Normal, Bypass, Reanalysis, Reforecast, NearRealTime
-set CriticalPathType = NearRealTime
+# OPTIONS: Normal, Bypass, Reanalysis, Reforecast
+set CriticalPathType = Normal
+#### another setting for the intialization type
 
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
 #    Only works when CriticalPathType == Normal.
 # OPTIONS: True/False
-set VerifyDeterministicDA = False
+set VerifyDeterministicDA = True
 
 ## CompareDA2Benchmark: compare verification nc files between two experiments
 #    after the DA verification completes
@@ -81,12 +81,13 @@ set VerifyExtendedEnsFC = False
 
 date
 
-## Initialize cycling directory if this is the first cycle point
-set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
-set hh = `echo ${FirstCycleDate} | cut -c 9-10`
-set firstCyclePoint = ${yymmdd}T${hh}
-if ($initialCyclePoint == $firstCyclePoint) then
-  ./SetupWorkflow.csh
+source SetupWorkflow.csh
+
+## Set the cycles hours
+if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart") then
+  set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
+else if ( ${InitializationType} == "ReStart" ) then
+  set cyclingCycles = PT${CyclingWindowHR}H
 endif
 
 ## load the file structure
@@ -118,9 +119,7 @@ cat >! suite.rc << EOF
 #!Jinja2
 # cycle dates
 {% set initialCyclePoint = "${initialCyclePoint}" %}
-{% set finalCyclePoint = "${finalCyclePoint}" %}
-#TODO: put warm-start file copying in InitEnsFC/firstfc script for R1 cycle point
-{# set firstCyclePoint = "${firstCyclePoint}" #}
+{% set finalCyclePoint   = "${finalCyclePoint}" %}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
@@ -137,6 +136,7 @@ cat >! suite.rc << EOF
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
+{% set InitializationType = "${InitializationType}" %}
 [meta]
   title = "${PackageBaseName}--${SuiteName}"
 # critical path cycle dependencies
@@ -169,9 +169,7 @@ cat >! suite.rc << EOF
   {% endif %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
-  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
-{% elif CriticalPathType == "NearRealTime" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n InitFC" %}
+  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}  
 {# else #}
 #TODO: indicate invalid CriticalPathType
 {% endif %}
@@ -193,13 +191,19 @@ cat >! suite.rc << EOF
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
   [[dependencies]]
-#TODO: put warm-start file copying in InitEnsFC/firstfc script
-#{# if initialCyclePoint == firstCyclePoint #}
-#    [[[R1]]]
-#      graph = InitEnsFC => InitCyclingDA => CyclingDA
-#{# endif #}
+{% if InitializationType == "ColdStart" %}
+    [[[R1]]]
+      graph = CStart => CyclingFCFinished
+{% elif InitializationType == "WarmStart" %}
+    [[[R1]]]
+      graph = WStart => CyclingFCFinished 
+{% elif InitializationType == "ReStart" %}
+    [[[R1]]]
+      graph = '''
+      '''
+{% endif %}      
 ## Critical path for cycling
-    [[[PT${CyclingWindowHR}H]]]
+    [[[${cyclingCycles}]]]
       graph = '''{{PrimaryCPGraph}}{{SecondaryCPGraph}}
       '''
 ## Many kinds of verification
@@ -207,7 +211,7 @@ cat >! suite.rc << EOF
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
 ## Verification of deterministic DA with observations (BG+AN together)
-    [[[PT${CyclingWindowHR}H]]]
+    [[[${cyclingCycles}]]]
       graph = '''
         CyclingDAFinished => VerifyObsDA
         VerifyObsDA => CleanCyclingDA
@@ -231,7 +235,7 @@ cat >! suite.rc << EOF
 {% endif %}
 {% if VerifyBGMembers %}
 ## Ensemble BG verification
-    [[[PT${CyclingWindowHR}H]]]
+    [[[${cyclingCycles}]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
@@ -245,7 +249,7 @@ cat >! suite.rc << EOF
   {% endfor %}
       '''
 {% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
-    [[[PT${CyclingWindowHR}H]]]
+    [[[${cyclingCycles}]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
@@ -261,7 +265,7 @@ cat >! suite.rc << EOF
 {% endif %}
 {% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
 ## Ensemble Mean BG verification
-    [[[PT${CyclingWindowHR}H]]]
+    [[[${cyclingCycles}]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => MeanBackground
         MeanBackground => HofXEnsMeanBG
@@ -277,7 +281,7 @@ cat >! suite.rc << EOF
 {% endif %}
 {% if VerifyANMembers %}
 ## Ensemble AN verification
-    [[[PT${CyclingWindowHR}H]]]
+    [[[${cyclingCycles}]]]
       graph = '''
   {% for mem in EnsVerifyMembers %}
         CyclingDAFinished => VerifyModelAN{{mem}}
@@ -364,15 +368,26 @@ cat >! suite.rc << EOF
       -q = share
       -A = ${VFAccountNumber}
       -l = select=1:ncpus=1
-#Initial Forecast
-  [[InitFC]]
-    env-script = cd ${mainScriptDir}; ./InitFC.csh "1"
-    script = \$origin/InitFC.csh "1"
+#Cold Start Initial Forecast
+  [[CStart]]
+    env-script = cd ${mainScriptDir}; ./CStart.csh "1" "clStart"
+    script = \$origin/CStart.csh "1" "clStart"
     [[[job]]]
-      execution time limit = PT05M
+      execution time limit = PT4M
+      execution retry delays = ${StartRetry}
     [[[directives]]]
       -m = ae
       -l = select=1:ncpus=36:mpiprocs=36
+#Warm Start Initial Forecast
+  [[WStart]]
+    env-script = cd ${mainScriptDir}; ./WStart.csh
+    script = \$origin/WStart.csh
+    [[[job]]]
+      execution time limit = PT1M
+      execution retry delays = ${StartRetry}
+    [[[directives]]]
+      -m = ae
+      -l = select=1:ncpus=1:mpiprocs=1     
 #Cycling components
   [[InitCyclingDA]]
     env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
@@ -446,7 +461,7 @@ cat >! suite.rc << EOF
 {% for mem in EnsDAMembers %}
   [[CyclingFCMember{{mem}}]]
     inherit = CyclingFC
-    script = \$origin/CyclingFC.csh "{{mem}}"
+    script = \$origin/CyclingFC.csh "{{mem}}" "wmStart"
     [[[job]]]
       execution retry delays = ${CyclingFCRetry}
 {% endfor %}
@@ -470,7 +485,7 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
-    script = \$origin/ExtendedMeanFC.csh "1"
+    script = \$origin/ExtendedMeanFC.csh "1" "wmStart"
   [[HofXMeanFC]]
     inherit = HofXBase
   [[VerifyModelMeanFC]]
@@ -536,7 +551,7 @@ cat >! suite.rc << EOF
 ## Extended ensemble forecasts and verification
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
-    script = \$origin/ExtendedEnsFC.csh "{{mem}}"
+    script = \$origin/ExtendedEnsFC.csh "{{mem}}" "wmStart"
   [[HofXEnsFC{{mem}}]]
     inherit = HofXBase
   [[VerifyModelEnsFC{{mem}}]]
