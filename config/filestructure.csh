@@ -37,6 +37,7 @@ setenv ExperimentName ${ExperimentName}${ExpSuffix}
 set ExpDir = ${TopExpDir}/${ExperimentName}
 
 ## immediate subdirectories
+setenv FirstICWorkDir ${ExpDir}/FirstIC
 setenv CyclingDAWorkDir ${ExpDir}/CyclingDA
 setenv CyclingFCWorkDir ${ExpDir}/CyclingFC
 setenv CyclingInflationWorkDir ${ExpDir}/CyclingInflation
@@ -85,6 +86,9 @@ setenv bgDir ${BGFilePrefix}
 setenv StreamsFile streams.${MPASCore}
 setenv NamelistFile namelist.${MPASCore}
 
+setenv StreamsFileIni streams.init_${MPASCore}
+setenv NamelistFileIniC namelist.init_${MPASCore}
+
 setenv TemplateFieldsPrefix templateFields
 setenv TemplateFieldsFileOuter ${TemplateFieldsPrefix}.${MPASnCellsOuter}.nc
 setenv TemplateFieldsFileInner ${TemplateFieldsPrefix}.${MPASnCellsInner}.nc
@@ -132,6 +136,9 @@ set InnerNamelistFile = ${NamelistFile}_${MPASGridDescriptorInner}
 
 #set EnsembleStreamsFile = ${StreamsFile}_${MPASGridDescriptorEnsemble}
 #set EnsembleNamelistFile = ${NamelistFile}_${MPASGridDescriptorEnsemble}
+
+# initial IC
+setenv initICModelConfigDir ${ModelConfigDir}/initIC
 
 # forecast
 setenv forecastModelConfigDir ${ModelConfigDir}/forecast

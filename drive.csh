@@ -81,6 +81,9 @@ set VerifyExtendedEnsFC = False
 
 date
 
+## load the file structure
+source config/filestructure.csh
+
 source SetupWorkflow.csh
 
 ## Set the cycles hours
@@ -89,9 +92,6 @@ if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart
 else if ( ${InitializationType} == "ReStart" ) then
   set cyclingCycles = PT${CyclingWindowHR}H
 endif
-
-## load the file structure
-source config/filestructure.csh
 
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
@@ -193,7 +193,7 @@ cat >! suite.rc << EOF
   [[dependencies]]
 {% if InitializationType == "ColdStart" %}
     [[[R1]]]
-      graph = CStart => CyclingFCFinished
+      graph = initIC => CStart => CyclingFCFinished
 {% elif InitializationType == "WarmStart" %}
     [[[R1]]]
       graph = WStart => CyclingFCFinished 
@@ -368,6 +368,16 @@ cat >! suite.rc << EOF
       -q = share
       -A = ${VFAccountNumber}
       -l = select=1:ncpus=1
+#Initial IC
+  [[initIC]]
+    env-script = cd ${mainScriptDir}; ./initIC.csh "1"
+    script = \$origin/initIC.csh "1"
+    [[[job]]]
+      execution time limit = PT4M
+      execution retry delays = ${StartRetry}
+    [[[directives]]]
+      -m = ae
+      -l = select=1:ncpus=36:mpiprocs=36      
 #Cold Start Initial Forecast
   [[CStart]]
     env-script = cd ${mainScriptDir}; ./CStart.csh "1" "clStart"

@@ -28,6 +28,7 @@ set mm = `echo ${FirstCycleDate} | cut -c 5-6`
 set dd = `echo ${FirstCycleDate} | cut -c 7-8`
 set hh = `echo ${FirstCycleDate} | cut -c 9-10`
 setenv FirstFileDate ${yy}-${mm}-${dd}_${hh}.00.00
+setenv FirstFileICDate ${yy}-${mm}-${dd}_${hh}
 
 ## previous date from which first background is initialized
 set prevFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} -${CyclingWindowHR}`
@@ -46,6 +47,10 @@ set Nmm = `echo ${nextFirstCycleDate} | cut -c 5-6`
 set Ndd = `echo ${nextFirstCycleDate} | cut -c 7-8`
 set Nhh = `echo ${nextFirstCycleDate} | cut -c 9-10`
 set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
+
+## Ungribbed initial conditions
+setenv ungribDir /glade/p/mmm/parc/liuz/pandac_common/ungrib_GFS_o3
+
 
 # externally sourced model states
 # -------------------------------

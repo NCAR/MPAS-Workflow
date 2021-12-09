@@ -74,7 +74,7 @@ set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
 if ( ${initType} == "clStart" ) then
-  set initialState = ${localStaticFieldsFile}
+  set initialState = ${FirstICDirs}/${InitFilePrefixOuter}.${icFileExt}
   set NamelistFileIni = ${NamelistFile}_Init
   #set do_DAcycling = "false"
 else if ( ${initType} == "wmStart" ) then
@@ -83,6 +83,9 @@ else if ( ${initType} == "wmStart" ) then
   #set do_DAcycling = "true"
 endif
 ln -sfv ${initialState} ./${icFile}
+
+echo '${initialState}==  ' ${initialState}
+echo '${icFile}==  ' ${icFile} 
 
 ## link MPAS mesh graph info
 rm ./x1.${MPASnCellsOuter}.graph.info*

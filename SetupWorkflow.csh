@@ -48,6 +48,14 @@ setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
 #  setenv VARBC_TABLE ${prevCyclingDADir}/${VarBCAnalysis}
 
 
+## Generate First IC
+echo "Making First initial condition job script"
+set JobScript=${mainScriptDir}/initIC.csh
+sed -e 's@WorkDirsTEMPLATE@FirstICDirs@' \
+    genInit.csh > ${JobScript}
+chmod 744 ${JobScript}
+
+
 ## Generate First FC
 echo "Making First forecast (cold start) job script"
 set JobScript=${mainScriptDir}/CStart.csh
@@ -58,7 +66,7 @@ sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
     -e 's@deleteZerothForecastTEMPLATE@True@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
-
+#   -e 's@initFCDirsTEMPLATE@FirstICDirs@' \
 
 ## Copy/link pre-generated first FC 
 echo "Making First forecast (warm start) job script"
