@@ -39,7 +39,7 @@ setenv FirstCycleDate 2018041418
 #       cold start: generate first forecast online from an external GFS analysis
 #       warm start: copy a pre-generated forecast
 # OPTIONS: ColdStart/WarmStart/ReStart
-set InitializationType = ColdStart
+set InitializationType = WarmStart
 
 ## benchmarkObsList
 # base set of observation types assimilated in all experiments
@@ -87,8 +87,8 @@ set l = ($l $benchmarkObsList)
 set variationalObsList = ($l)
 
 ## DAType
-# OPTIONS: 3denvar, eda_3denvar, 3dvarId, 3dvar
-setenv DAType 3denvar
+# OPTIONS: 3denvar, eda_3denvar, 3dvarId
+setenv DAType eda_3denvar
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
@@ -147,7 +147,7 @@ endif
 
 ## LeaveOneOutEDA, whether to use self-exclusion in the EnVar ensemble B during EDA cycling
 # OPTIONS: True/False
-setenv LeaveOneOutEDA False
+setenv LeaveOneOutEDA True
 
 ## RTPPInflationFactor, relaxation parameter for the relaxation to prior perturbation (RTPP) inflation mechanism
 # Typical Values: 0.0 or 0.50 to 0.90
@@ -231,6 +231,7 @@ setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of ex
 setenv DAVFWindowHR ${CyclingWindowHR}  # window of observations included in AN/BG verification
 setenv FCVFWindowHR 6                   # window of observations included in forecast verification
 setenv forecastPrecision single         # floating-point precision of forecast output; options: [single, double]
+
 
 ########################
 ## experiment name parts

@@ -13,8 +13,8 @@ echo ""
 
 rm -rf ${mainScriptDir}
 mkdir -p ${mainScriptDir}
-echo `pwd`
 set workflowParts = ( \
+  GetWarmStartIC.csh \
   getCycleVars.csh \
   tools \
   config \
@@ -46,25 +46,6 @@ setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
 
 #TODO: enable VARBC updating between cycles
 #  setenv VARBC_TABLE ${prevCyclingDADir}/${VarBCAnalysis}
-
-
-## Generate First FC
-echo "Making First forecast (cold start) job script"
-set JobScript=${mainScriptDir}/CStart.csh
-sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
-    -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
-    -e 's@fcLengthHRTEMPLATE@'${CyclingWindowHR}'@' \
-    -e 's@fcIntervalHRTEMPLATE@'${CyclingWindowHR}'@' \
-    -e 's@deleteZerothForecastTEMPLATE@True@' \
-    forecast.csh > ${JobScript}
-chmod 744 ${JobScript}
-
-
-## Copy/link pre-generated first FC 
-echo "Making First forecast (warm start) job script"
-set JobScript=${mainScriptDir}/WStart.csh
-cp warmStart.csh ${JobScript}
-chmod 744 ${JobScript}
 
 
 ## PrepJEDICyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA
