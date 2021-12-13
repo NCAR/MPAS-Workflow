@@ -35,9 +35,11 @@ setenv FirstCycleDate 2018041418
 #########################
 # InitializationType 
 #########################
-# Indicates the type of initialization at the initial cycle: cold or warm start
+# Indicates the type of initialization at the initial cycle: cold, warm, or re- start
 #       cold start: generate first forecast online from an external GFS analysis
 #       warm start: copy a pre-generated forecast
+#          restart: allow to restart the cycling/suite from any cycle 
+#                   (run after a warm start cycle that crashed or stopped for any reason)
 # OPTIONS: ColdStart/WarmStart/ReStart
 set InitializationType = WarmStart
 

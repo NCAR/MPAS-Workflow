@@ -21,6 +21,9 @@ if ( $ArgMember < 1 ) then
 endif
 
 ## arg to get the initialization type
+#       cold: same as InitializationType = ColdStart in config/experiment.csh
+#       warm: same as InitializationType = WarmStart in config/experiment.csh
+# OPTIONS: cold/warm
 set initType = "$2"
 
 # Setup environment

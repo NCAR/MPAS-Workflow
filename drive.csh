@@ -83,10 +83,14 @@ date
 
 ./SetupWorkflow.csh
 
-## Set the cycles hours
+## Set the cycles hours (cyclingCycles) according to the initialization type defined in config/experiment.csh
 if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart") then
+  # For cold or warm start, the cycling starts 6h after the first cycle date (same as the initial cycle point of the suite)
+  # The cycles will run every 6h, starting 6h after the initial cycle point 
   set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
 else if ( ${InitializationType} == "ReStart" ) then
+  # For a restart, the initial cycle point can be any cycle point after the first cycle date
+  # The cycles will run every 6h, starting at the initial cycle point
   set cyclingCycles = PT${CyclingWindowHR}H
 endif
 
