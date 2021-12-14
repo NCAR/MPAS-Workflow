@@ -32,15 +32,6 @@ setenv MPASGridDescriptor OIE120km
 #     - TODO: enable VarBC
 setenv FirstCycleDate 2018041418
 
-#########################
-# InitializationType 
-#########################
-# Indicates the type of initialization at the initial cycle: cold or warm start
-#       cold start: generate first forecast online from an external GFS analysis
-#       warm start: copy a pre-generated forecast
-# OPTIONS: ColdStart/WarmStart/ReStart
-set InitializationType = ColdStart
-
 ## benchmarkObsList
 # base set of observation types assimilated in all experiments
 set l = ()
@@ -87,7 +78,7 @@ set l = ($l $benchmarkObsList)
 set variationalObsList = ($l)
 
 ## DAType
-# OPTIONS: 3denvar, eda_3denvar, 3dvarId, 3dvar
+# OPTIONS: 3denvar, eda_3denvar, 3dvarId
 setenv DAType 3denvar
 
 ## nInnerIterations
@@ -147,7 +138,7 @@ endif
 
 ## LeaveOneOutEDA, whether to use self-exclusion in the EnVar ensemble B during EDA cycling
 # OPTIONS: True/False
-setenv LeaveOneOutEDA False
+setenv LeaveOneOutEDA True
 
 ## RTPPInflationFactor, relaxation parameter for the relaxation to prior perturbation (RTPP) inflation mechanism
 # Typical Values: 0.0 or 0.50 to 0.90
@@ -231,6 +222,7 @@ setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of ex
 setenv DAVFWindowHR ${CyclingWindowHR}  # window of observations included in AN/BG verification
 setenv FCVFWindowHR 6                   # window of observations included in forecast verification
 setenv forecastPrecision single         # floating-point precision of forecast output; options: [single, double]
+
 
 ########################
 ## experiment name parts

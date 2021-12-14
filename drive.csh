@@ -14,12 +14,24 @@ source config/experiment.csh
 # + initialCyclePoint must be equal to FirstCycleDate
 # OR:
 # + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart#   from a previously completed cycle.
-set initialCyclePoint = 20180414T18
+set initialCyclePoint = 20180415T00
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180415T18
+set finalCyclePoint = 20180514T18
+
+
+#########################
+# InitializationType 
+#########################
+# Indicates the type of initialization at the initial cycle: cold, warm, or re- start
+#       cold start: generate first forecast online from an external GFS analysis
+#       warm start: copy a pre-generated forecast
+#          restart: allow to restart the cycling/suite from any cycle 
+#                   (run after a warm start cycle that crashed or stopped for any reason)
+# OPTIONS: ColdStart/WarmStart/ReStart
+set InitializationType = ReStart
 
 #########################
 # workflow task selection
@@ -28,7 +40,6 @@ set finalCyclePoint = 20180415T18
 #                   DA and FC cycling components
 # OPTIONS: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
-#### another setting for the intialization type
 
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
@@ -60,13 +71,13 @@ set CompareBG2Benchmark = False
 ## VerifyEnsMeanBG: whether to run verification scripts for ensemble mean
 #    background (nEnsDAMembers > 1) or deterministic background (nEnsDAMembers == 1)
 # OPTIONS: True/False
-set VerifyEnsMeanBG = False
+set VerifyEnsMeanBG = True
 
 ## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
 #    space while VerifyEnsMeanBG is True.  Automatically triggers HofXBG
 #    for all ensemble members.
 # OPTIONS: True/False
-set DiagnoseEnsSpreadBG = False
+set DiagnoseEnsSpreadBG = True
 
 ## VerifyEnsMeanAN: whether to run verification scripts for ensemble
 #    mean analysis state.
@@ -84,12 +95,16 @@ date
 ## load the file structure
 source config/filestructure.csh
 
-source SetupWorkflow.csh
-
 ## Set the cycles hours
+## Set the cycles hours (cyclingCycles) according to the initialization type defined in config/experiment.csh
 if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart") then
+  # For cold or warm start, the cycling starts 6h after the first cycle date (same as the initial cycle point of the suite)
+  # The cycles will run every 6h, starting 6h after the initial cycle point 
   set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
+  ./SetupWorkflow.csh
 else if ( ${InitializationType} == "ReStart" ) then
+  # For a restart, the initial cycle point can be any cycle point after the first cycle date
+  # The cycles will run every 6h, starting at the initial cycle point
   set cyclingCycles = PT${CyclingWindowHR}H
 endif
 
@@ -196,11 +211,11 @@ cat >! suite.rc << EOF
       graph = initIC => CStart => CyclingFCFinished
 {% elif InitializationType == "WarmStart" %}
     [[[R1]]]
-      graph = WStart => CyclingFCFinished 
-{% elif InitializationType == "ReStart" %}
-    [[[R1]]]
-      graph = '''
-      '''
+      graph = GetWarmStartIC => CyclingFCFinished 
+{# elif InitializationType == "ReStart" #}
+#    [[[R1]]]
+#      graph = '''
+#      '''
 {% endif %}      
 ## Critical path for cycling
     [[[${cyclingCycles}]]]
@@ -379,9 +394,9 @@ cat >! suite.rc << EOF
       -m = ae
       -l = select=1:ncpus=36:mpiprocs=36      
 #Cold Start Initial Forecast
-  [[CStart]]
-    env-script = cd ${mainScriptDir}; ./CStart.csh "1" "clStart"
-    script = \$origin/CStart.csh "1" "clStart"
+  [[ColdStartFC]]
+    env-script = cd ${mainScriptDir}; ./CyclingFC.csh "1" "cold"
+    script = \$origin/CyclingFC.csh "1" "cold"
     [[[job]]]
       execution time limit = PT4M
       execution retry delays = ${StartRetry}
@@ -389,9 +404,9 @@ cat >! suite.rc << EOF
       -m = ae
       -l = select=1:ncpus=36:mpiprocs=36
 #Warm Start Initial Forecast
-  [[WStart]]
-    env-script = cd ${mainScriptDir}; ./WStart.csh
-    script = \$origin/WStart.csh
+  [[GetWarmStartIC]]
+    env-script = cd ${mainScriptDir}; ./GetWarmStartIC.csh
+    script = \$origin/GetWarmStartIC.csh
     [[[job]]]
       execution time limit = PT1M
       execution retry delays = ${StartRetry}
@@ -471,7 +486,7 @@ cat >! suite.rc << EOF
 {% for mem in EnsDAMembers %}
   [[CyclingFCMember{{mem}}]]
     inherit = CyclingFC
-    script = \$origin/CyclingFC.csh "{{mem}}" "wmStart"
+    script = \$origin/CyclingFC.csh "{{mem}}" "warm"
     [[[job]]]
       execution retry delays = ${CyclingFCRetry}
 {% endfor %}
@@ -495,7 +510,7 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
-    script = \$origin/ExtendedMeanFC.csh "1" "wmStart"
+    script = \$origin/ExtendedMeanFC.csh "1" "warm"
   [[HofXMeanFC]]
     inherit = HofXBase
   [[VerifyModelMeanFC]]
@@ -561,7 +576,7 @@ cat >! suite.rc << EOF
 ## Extended ensemble forecasts and verification
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
-    script = \$origin/ExtendedEnsFC.csh "{{mem}}" "wmStart"
+    script = \$origin/ExtendedEnsFC.csh "{{mem}}" "warm"
   [[HofXEnsFC{{mem}}]]
     inherit = HofXBase
   [[VerifyModelEnsFC{{mem}}]]

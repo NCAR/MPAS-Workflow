@@ -21,6 +21,9 @@ if ( $ArgMember < 1 ) then
 endif
 
 ## arg to get the initialization type
+#       cold: same as InitializationType = ColdStart in config/experiment.csh
+#       warm: same as InitializationType = WarmStart in config/experiment.csh
+# OPTIONS: cold/warm
 set initType = "$2"
 
 # Setup environment
@@ -73,14 +76,12 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
-if ( ${initType} == "clStart" ) then
+if ( ${initType} == "cold" ) then
   set initialState = ${FirstICDirs}/${InitFilePrefixOuter}.${icFileExt}
-  set NamelistFileIni = ${NamelistFile}_Init
-  #set do_DAcycling = "false"
-else if ( ${initType} == "wmStart" ) then
+  set do_DAcycling = "false"
+else if ( ${initType} == "warm" ) then
   set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
-  set NamelistFileIni = ${NamelistFile}
-  #set do_DAcycling = "true"
+  set do_DAcycling = "true"
 endif
 ln -sfv ${initialState} ./${icFile}
 
@@ -118,13 +119,13 @@ sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFile}
-cp -v ${self_ModelConfigDir}/${NamelistFileIni} ${NamelistFile}
+cp -v ${self_ModelConfigDir}/${NamelistFile} .
 sed -i 's@startTime@'${NMLDate}'@' $NamelistFile
 sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
 sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFile
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
-#sed -i 's@DAcycling@'${do_DAcycling}'@' $NamelistFile
+sed -i 's@configDODACycling@'${do_DAcycling}'@' $NamelistFile
 
 if ( ${self_fcLengthHR} == 0 ) then
   ## zero-length forecast case (NOT CURRENTLY USED)
