@@ -21,8 +21,8 @@ if ( $ArgMember < 1 ) then
 endif
 
 ## arg to get the initialization type
-#       cold: same as InitializationType = ColdStart in config/experiment.csh
-#       warm: same as InitializationType = WarmStart in config/experiment.csh
+#       cold: initial condition is produced from MPAS's init executable (i.e., core_init_atmosphere)
+#       warm: initial condition is an output state from a previous MPAS forecast (i.e., core_atmosphere)
 # OPTIONS: cold/warm
 set initType = "$2"
 

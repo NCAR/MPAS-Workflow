@@ -10,20 +10,20 @@ source ./getCycleVars.csh
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   echo ""
-  echo ""  
+  echo ""
       find $CyclingFCDirs[$member] -mindepth 0 -maxdepth 0 > /dev/null
       if ($? == 0) then
         rm -r $CyclingFCDirs[$member]
       endif
       mkdir -p $CyclingFCDirs[$member]
-      
+
        # Outer loop mesh
-      set fcFile = $CyclingFCDirs[$member]/${FCFilePrefix}.${nextFirstFileDate}.nc      
+      set fcFile = $CyclingFCDirs[$member]/${FCFilePrefix}.${nextFirstFileDate}.nc
       set InitialMemberFC = "$firstFCDirOuter"`${memberDir} ens $member "${firstFCMemFmt}"`
-      ln -sfv ${InitialMemberFC}/${FCFilePrefix}.${nextFirstFileDate}.nc ${fcFile}${OrigFileSuffix}  
+      ln -sfv ${InitialMemberFC}/${FCFilePrefix}.${nextFirstFileDate}.nc ${fcFile}${OrigFileSuffix}
       # rm ${fcFile}
       cp ${fcFile}${OrigFileSuffix} ${fcFile}
-      
+
       # Inner loop mesh
       if ($MPASnCellsOuter != $MPASnCellsInner) then
         echo ""
@@ -33,9 +33,9 @@ while ( $member <= ${nEnsDAMembers} )
         set InitialMemberFC = "$firstFCDirOuter"`${memberDir} ens $member "${firstFCMemFmt}"`
         ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${nextFirstFileDate}.nc ${fcFile}${OrigFileSuffix}
         # rm ${fcFile}
-        cp ${fcFile}${OrigFileSuffix} ${fcFile}  
+        cp ${fcFile}${OrigFileSuffix} ${fcFile}
       endif
-  
+
   @ member++
 end
 
