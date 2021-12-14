@@ -380,7 +380,7 @@ cat >! suite.rc << EOF
       -q = share
       -A = ${VFAccountNumber}
       -l = select=1:ncpus=1
-#Initial IC
+#Cold start Initial Conditions
   [[GenerateColdStartIC]]
     env-script = cd ${mainScriptDir}; ./GenerateColdStartIC.csh "1"
     script = \$origin/GenerateColdStartIC.csh "1"
@@ -389,7 +389,7 @@ cat >! suite.rc << EOF
       execution retry delays = ${StartRetry}
     [[[directives]]]
       -m = ae
-      -l = select=1:ncpus=36:mpiprocs=36      
+      -l = select=1:ncpus=36:mpiprocs=36
 #Cold Start Initial Forecast
   [[ColdStartFC]]
     env-script = cd ${mainScriptDir}; ./CyclingFC.csh "1" "cold"
