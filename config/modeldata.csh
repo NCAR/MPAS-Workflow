@@ -149,7 +149,7 @@ if ( "$DAType" =~ *"eda"* ) then
   # 60km and 120km
   setenv StaticFieldsDirOuter ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
   setenv StaticFieldsDirInner ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
-  setenv StaticFieldsDirEnsemble ${ModelData}/GEFS/init/000hr/${FirstCycleDate}  
+  setenv StaticFieldsDirEnsemble ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
   setenv staticMemFmt "${gefsMemFmt}"
 
   #TODO: switch to using FirstFileDate static files for GEFS
@@ -165,5 +165,5 @@ else
   setenv staticMemFmt " "
   setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
   setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc 
+  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
 endif

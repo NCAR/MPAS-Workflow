@@ -23,12 +23,12 @@ set finalCyclePoint = 20180514T18
 
 
 #########################
-# InitializationType 
+# InitializationType
 #########################
 # Indicates the type of initialization at the initial cycle: cold, warm, or re- start
 #       cold start: generate first forecast online from an external GFS analysis
 #       warm start: copy a pre-generated forecast
-#          restart: restart the cycling/suite from any cycle 
+#          restart: restart the cycling/suite from any cycle
 #                   run from a warm start forecast produced from an already existing workflow, which could
 #                   have been originally initiated from either a warm or cold start initial condition
 # OPTIONS: ColdStart/WarmStart/ReStart
@@ -184,7 +184,7 @@ cat >! suite.rc << EOF
   {% endif %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
-  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}  
+  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
 {# else #}
 #TODO: indicate invalid CriticalPathType
 {% endif %}
@@ -211,7 +211,7 @@ cat >! suite.rc << EOF
       graph = ColdStartFC => CyclingFCFinished
 {% elif InitializationType == "WarmStart" %}
     [[[R1]]]
-      graph = GetWarmStartIC => CyclingFCFinished 
+      graph = GetWarmStartIC => CyclingFCFinished
 {% endif %}
 ## Critical path for cycling
     [[[${cyclingCycles}]]]
@@ -398,7 +398,7 @@ cat >! suite.rc << EOF
       execution retry delays = ${StartRetry}
     [[[directives]]]
       -m = ae
-      -l = select=1:ncpus=1:mpiprocs=1     
+      -l = select=1:ncpus=1:mpiprocs=1
 #Cycling components
   [[InitCyclingDA]]
     env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
