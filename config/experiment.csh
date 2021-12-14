@@ -79,7 +79,7 @@ set variationalObsList = ($l)
 
 ## DAType
 # OPTIONS: 3denvar, eda_3denvar, 3dvarId
-setenv DAType 3denvar
+setenv DAType eda_3denvar
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations

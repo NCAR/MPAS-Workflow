@@ -14,7 +14,7 @@ source config/experiment.csh
 # + initialCyclePoint must be equal to FirstCycleDate
 # OR:
 # + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart#   from a previously completed cycle.
-set initialCyclePoint = 20180415T00
+set initialCyclePoint = 20180414T18
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
@@ -31,7 +31,7 @@ set finalCyclePoint = 20180514T18
 #          restart: allow to restart the cycling/suite from any cycle 
 #                   (run after a warm start cycle that crashed or stopped for any reason)
 # OPTIONS: ColdStart/WarmStart/ReStart
-set InitializationType = ReStart
+set InitializationType = WarmStart
 
 #########################
 # workflow task selection
@@ -98,13 +98,13 @@ source config/filestructure.csh
 ## Set the cycles hours
 ## Set the cycles hours (cyclingCycles) according to the initialization type defined in config/experiment.csh
 if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart") then
-  # For cold or warm start, the cycling starts 6h after the first cycle date (same as the initial cycle point of the suite)
-  # The cycles will run every 6h, starting 6h after the initial cycle point 
+  # For cold or warm start, the cycling starts CyclingWindowHR hours after the first cycle date (same as the initial cycle point of the suite)
+  # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the initial cycle point 
   set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
   ./SetupWorkflow.csh
 else if ( ${InitializationType} == "ReStart" ) then
   # For a restart, the initial cycle point can be any cycle point after the first cycle date
-  # The cycles will run every 6h, starting at the initial cycle point
+  # The cycles will run every CyclingWindowHR hours, starting at the initial cycle point
   set cyclingCycles = PT${CyclingWindowHR}H
 endif
 
@@ -212,11 +212,7 @@ cat >! suite.rc << EOF
 {% elif InitializationType == "WarmStart" %}
     [[[R1]]]
       graph = GetWarmStartIC => CyclingFCFinished 
-{# elif InitializationType == "ReStart" #}
-#    [[[R1]]]
-#      graph = '''
-#      '''
-{% endif %}      
+{% endif %}
 ## Critical path for cycling
     [[[${cyclingCycles}]]]
       graph = '''{{PrimaryCPGraph}}{{SecondaryCPGraph}}

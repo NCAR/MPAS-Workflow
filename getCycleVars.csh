@@ -68,6 +68,7 @@ while ( $member <= ${nEnsDAMembers} )
 
   set CyclingFCDirs = ($CyclingFCDirs ${CyclingFCDir}${memDir})
   set prevCyclingFCDirs = ($prevCyclingFCDirs ${prevCyclingFCDir}${memDir})
+  
   set ExtendedEnsFCDirs = ($ExtendedEnsFCDirs ${ExtendedFCDir}${memDir})
 
   set VerifyANDirs = ($VerifyANDirs ${VerifyANPrefix}${memDir}/${thisCycleDate})
