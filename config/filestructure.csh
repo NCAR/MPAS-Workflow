@@ -86,8 +86,8 @@ setenv bgDir ${BGFilePrefix}
 setenv StreamsFile streams.${MPASCore}
 setenv NamelistFile namelist.${MPASCore}
 
-setenv StreamsFileIni streams.init_${MPASCore}
-setenv NamelistFileIniC namelist.init_${MPASCore}
+setenv StreamsFileInit streams.init_${MPASCore}
+setenv NamelistFileInit namelist.init_${MPASCore}
 
 setenv TemplateFieldsPrefix templateFields
 setenv TemplateFieldsFileOuter ${TemplateFieldsPrefix}.${MPASnCellsOuter}.nc

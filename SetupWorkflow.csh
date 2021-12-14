@@ -14,6 +14,7 @@ echo ""
 rm -rf ${mainScriptDir}
 mkdir -p ${mainScriptDir}
 set workflowParts = ( \
+  GenerateColdStartIC.csh \
   GetWarmStartIC.csh \
   getCycleVars.csh \
   tools \
@@ -46,14 +47,6 @@ setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
 
 #TODO: enable VARBC updating between cycles
 #  setenv VARBC_TABLE ${prevCyclingDADir}/${VarBCAnalysis}
-
-
-## Generate First IC
-echo "Making First initial condition job script"
-set JobScript=${mainScriptDir}/initIC.csh
-sed -e 's@WorkDirsTEMPLATE@FirstICDirs@' \
-    genInit.csh > ${JobScript}
-chmod 744 ${JobScript}
 
 
 ## PrepJEDICyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA

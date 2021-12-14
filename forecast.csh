@@ -85,9 +85,6 @@ else if ( ${initType} == "warm" ) then
 endif
 ln -sfv ${initialState} ./${icFile}
 
-echo '${initialState}==  ' ${initialState}
-echo '${icFile}==  ' ${icFile} 
-
 ## link MPAS mesh graph info
 rm ./x1.${MPASnCellsOuter}.graph.info*
 ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .

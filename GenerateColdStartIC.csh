@@ -37,7 +37,7 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # templated work directory
-set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
+set self_WorkDir = $FirstICDirs[$ArgMember]
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
@@ -47,7 +47,7 @@ set self_InitICConfigDir = $initICModelConfigDir
 # ================================================================================================
 
 ## link ungribbed GFS
-ln -sfv ${ungribDir}/GFS:${FirstFileICDate} ./GFS:${FirstFileICDate}
+ln -sfv ${ungribDir}/GFS:${ICfileDate} ./GFS:${ICfileDate}
 
 ## link MPAS mesh graph info and static field
 rm ./x1.${MPASnCellsOuter}.graph.info*
@@ -61,16 +61,16 @@ foreach fileGlob ($MPASLookupFileGlobs)
 end
 
 ## copy/modify dynamic streams file
-rm ${StreamsFileIni}
-cp -v $self_InitICConfigDir/${StreamsFileIni} .
-sed -i 's@nCells@'${MPASnCellsOuter}'@' ${StreamsFileIni}
-sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFileIni}
+rm ${StreamsFileInit}
+cp -v $self_InitICConfigDir/${StreamsFileInit} .
+sed -i 's@nCells@'${MPASnCellsOuter}'@' ${StreamsFileInit}
+sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
-rm ${NamelistFileIniC}
-cp -v ${self_InitICConfigDir}/${NamelistFileIniC} ${NamelistFileIniC}
-sed -i 's@startTime@'${NMLDate}'@' $NamelistFileIniC
-sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFileIniC
+rm ${NamelistFileInit}
+cp -v ${self_InitICConfigDir}/${NamelistFileInit} ${NamelistFileInit}
+sed -i 's@startTime@'${NMLDate}'@' $NamelistFileInit
+sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFileInit
 
 # Run the executable
 # ==================
@@ -85,10 +85,6 @@ if ( $status != 0 ) then
   echo "ERROR in $0 : MPAS-init failed" > ./FAIL
   exit 1
 endif
-
-## change static fields to a link, keeping for transparency
-#rm ${localStaticFieldsFile}
-#mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 
 date
 

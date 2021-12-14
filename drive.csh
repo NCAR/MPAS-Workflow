@@ -208,7 +208,7 @@ cat >! suite.rc << EOF
   [[dependencies]]
 {% if InitializationType == "ColdStart" %}
     [[[R1]]]
-      graph = initIC => CStart => CyclingFCFinished
+      graph = GenerateColdStartIC => ColdStartFC => CyclingFCFinished
 {% elif InitializationType == "WarmStart" %}
     [[[R1]]]
       graph = GetWarmStartIC => CyclingFCFinished 
@@ -380,9 +380,9 @@ cat >! suite.rc << EOF
       -A = ${VFAccountNumber}
       -l = select=1:ncpus=1
 #Initial IC
-  [[initIC]]
-    env-script = cd ${mainScriptDir}; ./initIC.csh "1"
-    script = \$origin/initIC.csh "1"
+  [[GenerateColdStartIC]]
+    env-script = cd ${mainScriptDir}; ./GenerateColdStartIC.csh "1"
+    script = \$origin/GenerateColdStartIC.csh "1"
     [[[job]]]
       execution time limit = PT4M
       execution retry delays = ${StartRetry}
