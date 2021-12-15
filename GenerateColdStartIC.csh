@@ -6,9 +6,7 @@ date
 # =================
 source config/experiment.csh
 source config/filestructure.csh
-source config/tools.csh
 source config/modeldata.csh
-source config/mpas/variables.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/environment.csh
@@ -18,14 +16,11 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-# templated work directory
-set self_WorkDir = $InitICDir
-echo "WorkDir = ${self_WorkDir}"
-mkdir -p ${self_WorkDir}
-cd ${self_WorkDir}
+# static work directory
+echo "WorkDir = ${InitICDir}"
+mkdir -p ${InitICDir}
+cd ${InitICDir}
 
-# static variables
-set self_InitConfigDir = $initModelConfigDir
 # ================================================================================================
 
 ## link ungribbed GFS
@@ -44,13 +39,13 @@ end
 
 ## copy/modify dynamic streams file
 rm ${StreamsFileInit}
-cp -v $self_InitConfigDir/${StreamsFileInit} .
+cp -v ${initModelConfigDir}/${StreamsFileInit} .
 sed -i 's@nCells@'${MPASnCellsOuter}'@' ${StreamsFileInit}
 sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}
-cp -v ${self_InitConfigDir}/${NamelistFileInit} .
+cp -v ${initModelConfigDir}/${NamelistFileInit} .
 sed -i 's@startTime@'${NMLDate}'@' $NamelistFileInit
 sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFileInit
 
