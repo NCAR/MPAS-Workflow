@@ -16,7 +16,7 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-# templated work directory
+# static work directory
 echo "WorkDir = ${InitICDir}"
 mkdir -p ${InitICDir}
 cd ${InitICDir}
