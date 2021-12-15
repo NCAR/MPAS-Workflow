@@ -9,7 +9,7 @@ setenv prevCycleDate ${prevCycleDate}
 #setenv nextCycleDate ${nextCycleDate}
 
 ## setup cycle directory names
-set FirstICDir = (${FirstICWorkDir}/${thisCycleDate})
+set InitICDir = (${InitICWorkDir}/${thisCycleDate})
 set CyclingDADirs = (${CyclingDAWorkDir}/${thisCycleDate})
 set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})
 set CyclingDAInDir = $CyclingDADirs[1]/${bgDir}
@@ -35,8 +35,6 @@ set VerifyMeanFCDirs = (${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate
 set CyclingRTPPInflationDir = ${RTPPInflationWorkDir}/${thisCycleDate}
 set CyclingABEInflationDir = ${ABEInflationWorkDir}/${thisCycleDate}
 
-set FirstICDirs = ()
-
 set CyclingDAInDirs = ()
 set CyclingDAOutDirs = ()
 
@@ -60,8 +58,6 @@ set BenchmarkVerifyEnsFCDirs = ()
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set memDir = `${memberDir} $DAType $member`
-
-  set FirstICDirs = ($FirstICDirs ${FirstICDir}${memDir})
 
   set CyclingDAInDirs = ($CyclingDAInDirs ${CyclingDAInDir}${memDir})
   set CyclingDAOutDirs = ($CyclingDAOutDirs ${CyclingDAOutDir}${memDir})

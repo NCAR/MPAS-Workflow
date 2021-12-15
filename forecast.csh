@@ -77,7 +77,7 @@ set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
 if ( ${initType} == "cold" ) then
-  set initialState = ${FirstICDirs}/${InitFilePrefixOuter}.${icFileExt}
+  set initialState = ${InitICDir}/${InitFilePrefixOuter}.${icFileExt}
   set do_DAcycling = "false"
 else if ( ${initType} == "warm" ) then
   set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}

@@ -15,11 +15,6 @@ setenv BuildCompiler 'gnu-openmpi'
 
 set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22OCT2021
 
-# MPAS-Init
-setenv MPASCore atmosphere
-setenv InitEXE mpas_init_${MPASCore}
-setenv InitBuildDir ${commonBuild}/bin
-
 # MPAS-JEDI
 # ---------
 ## Variational
@@ -40,6 +35,9 @@ setenv RTPPBuildDir ${commonBuild}/bin
 
 # MPAS-Model
 # ----------
+setenv MPASCore atmosphere
+setenv InitEXE mpas_init_${MPASCore}
+setenv InitBuildDir ${commonBuild}/bin
 setenv ForecastEXE mpas_${MPASCore}
 setenv ForecastTopBuildDir ${commonBuild}
 setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
