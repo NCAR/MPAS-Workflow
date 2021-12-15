@@ -25,7 +25,7 @@ else
   setenv EnsMeanBGAccountNumber ${VFAccountNumber}
 endif
 
-setenv StartRetry '2*PT30S'
+setenv InitializationRetry '2*PT30S'
 setenv VariationalRetry '2*PT30S'
 setenv EnsOfVariationalRetry '1*PT30S'
 setenv CyclingFCRetry '2*PT30S'
