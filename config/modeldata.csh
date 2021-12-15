@@ -44,6 +44,9 @@ set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
 
 ## Ungribbed initial conditions
 setenv ungribDir /glade/p/mmm/parc/liuz/pandac_common/ungrib_GFS_o3
+setenv GFSgribdirRDA /gpfs/fs1/collections/rda/data/ds084.1
+setenv VtableDir /glade/u/home/schwartz/MPAS_scripts
+setenv linkWPSdir /glade/scratch/mpasrt/wps
 
 # externally sourced model states
 # -------------------------------

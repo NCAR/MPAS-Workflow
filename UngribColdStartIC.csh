@@ -22,15 +22,12 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
 source config/filestructure.csh
-source config/tools.csh
 source config/modeldata.csh
-source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
+set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
@@ -47,42 +44,30 @@ set self_InitICConfigDir = $initICModelConfigDir
 # ================================================================================================
 
 ## link ungribbed GFS
-#ln -sfv ${ungribDir}/GFS:${ICfileDate} ./GFS:${ICfileDate}
+rm -rf GRIBFILE.*
+set fhour = 000
+ln -sfv ${linkWPSdir}/${linkWPS} ${linkWPS} 
+./${linkWPS} ${GFSgribdirRDA}/${yy}/${yymmdd}/${GFSprefix}.${yymmdd}${hh}.f${fhour}.grib2
 
-## link MPAS mesh graph info and static field
-rm ./x1.${MPASnCellsOuter}.graph.info*
-ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .
-ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.static.nc .
-
-## link lookup tables
-foreach fileGlob ($MPASLookupFileGlobs)
-  rm ./*${fileGlob}
-  ln -sfv ${MPASLookupDir}/*${fileGlob} .
-end
-
-## copy/modify dynamic streams file
-rm ${StreamsFileInit}
-cp -v $self_InitICConfigDir/${StreamsFileInit} .
-sed -i 's@nCells@'${MPASnCellsOuter}'@' ${StreamsFileInit}
-sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFileInit}
+## copy Vtable
+ln -sfv ${VtableDir}/${Vtable} Vtable
 
 ## copy/modify dynamic namelist
-rm ${NamelistFileInit}
-cp -v ${self_InitICConfigDir}/${NamelistFileInit} ${NamelistFileInit}
-sed -i 's@startTime@'${NMLDate}'@' $NamelistFileInit
-sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFileInit
+rm ${NamelistFileWPS}
+cp -v ${self_InitICConfigDir}/${NamelistFileWPS} ${NamelistFileWPS}
+sed -i 's@startTime@'${NMLDate}'@' $NamelistFileWPS
 
 # Run the executable
 # ==================
-rm ./${InitEXE}
-ln -sfv ${InitBuildDir}/${InitEXE} ./
-mpiexec ./${InitEXE}
+rm ./${ungribEXE}
+ln -sfv ${ungribBuildDir}/${ungribEXE} ./
+./${ungribEXE}
 
 # Check status
 # ============
-grep "Finished running the init_${MPASCore} core" log.init_${MPASCore}.0000.out
+grep "Successful completion of program ${ungribEXE}" ungrib.log
 if ( $status != 0 ) then
-  echo "ERROR in $0 : MPAS-init failed" > ./FAIL
+  echo "ERROR in $0 : Ungrib failed" > ./FAIL
   exit 1
 endif
 

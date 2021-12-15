@@ -32,7 +32,7 @@ set finalCyclePoint = 20180514T18
 #                   run from a warm start forecast produced from an already existing workflow, which could
 #                   have been originally initiated from either a warm or cold start initial condition
 # OPTIONS: ColdStart/WarmStart/ReStart
-set InitializationType = WarmStart
+set InitializationType = ColdStart
 
 #########################
 # workflow task selection
@@ -209,7 +209,7 @@ cat >! suite.rc << EOF
   [[dependencies]]
 {% if InitializationType == "ColdStart" %}
     [[[R1]]]
-      graph = GenerateColdStartIC => ColdStartFC => CyclingFCFinished
+      graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
 {% elif InitializationType == "WarmStart" %}
     [[[R1]]]
       graph = GetWarmStartIC => CyclingFCFinished
@@ -380,6 +380,17 @@ cat >! suite.rc << EOF
       -q = share
       -A = ${VFAccountNumber}
       -l = select=1:ncpus=1
+#Ungrib cold start Initial Conditions
+  [[UngribColdStartIC]]
+    env-script = cd ${mainScriptDir}; ./UngribColdStartIC.csh "1"
+    script = \$origin/UngribColdStartIC.csh "1"
+    [[[job]]]
+      execution time limit = PT2M
+      execution retry delays = ${StartRetry}
+    [[[directives]]]
+      -m = ae
+      -q = share
+      -l = select=1:ncpus=1:mpiprocs=1
 #Cold start Initial Conditions
   [[GenerateColdStartIC]]
     env-script = cd ${mainScriptDir}; ./GenerateColdStartIC.csh "1"

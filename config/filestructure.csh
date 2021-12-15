@@ -88,6 +88,11 @@ setenv NamelistFile namelist.${MPASCore}
 
 setenv StreamsFileInit streams.init_${MPASCore}
 setenv NamelistFileInit namelist.init_${MPASCore}
+setenv NamelistFileWPS namelist.wps
+
+setenv Vtable Vtable.GFS_FV3
+setenv linkWPS link_grib.csh
+setenv GFSprefix gfs.0p25
 
 setenv TemplateFieldsPrefix templateFields
 setenv TemplateFieldsFileOuter ${TemplateFieldsPrefix}.${MPASnCellsOuter}.nc
