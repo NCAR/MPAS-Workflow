@@ -2,24 +2,6 @@
 
 date
 
-# Process arguments
-# =================
-## args
-# ArgMember: int, ensemble member [>= 1]
-set ArgMember = "$1"
-
-## arg checks
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isNotInt = ($status)
-if ( $isNotInt ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
-  exit 1
-endif
-if ( $ArgMember < 1 ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
-  exit 1
-endif
-
 # Setup environment
 # =================
 source config/experiment.csh
@@ -37,13 +19,13 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # templated work directory
-set self_WorkDir = $FirstICDirs[$ArgMember]
+set self_WorkDir = $InitICDir
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
 # static variables
-set self_InitICConfigDir = $initICModelConfigDir
+set self_InitConfigDir = $initModelConfigDir
 # ================================================================================================
 
 ## link ungribbed GFS
@@ -62,13 +44,13 @@ end
 
 ## copy/modify dynamic streams file
 rm ${StreamsFileInit}
-cp -v $self_InitICConfigDir/${StreamsFileInit} .
+cp -v $self_InitConfigDir/${StreamsFileInit} .
 sed -i 's@nCells@'${MPASnCellsOuter}'@' ${StreamsFileInit}
 sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}
-cp -v ${self_InitICConfigDir}/${NamelistFileInit} ${NamelistFileInit}
+cp -v ${self_InitConfigDir}/${NamelistFileInit} .
 sed -i 's@startTime@'${NMLDate}'@' $NamelistFileInit
 sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFileInit
 

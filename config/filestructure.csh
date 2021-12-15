@@ -37,7 +37,7 @@ setenv ExperimentName ${ExperimentName}${ExpSuffix}
 set ExpDir = ${TopExpDir}/${ExperimentName}
 
 ## immediate subdirectories
-setenv FirstICWorkDir ${ExpDir}/FirstIC
+setenv InitICWorkDir ${ExpDir}/InitIC
 setenv CyclingDAWorkDir ${ExpDir}/CyclingDA
 setenv CyclingFCWorkDir ${ExpDir}/CyclingFC
 setenv CyclingInflationWorkDir ${ExpDir}/CyclingInflation
@@ -143,7 +143,7 @@ set InnerNamelistFile = ${NamelistFile}_${MPASGridDescriptorInner}
 #set EnsembleNamelistFile = ${NamelistFile}_${MPASGridDescriptorEnsemble}
 
 # initial IC
-setenv initICModelConfigDir ${ModelConfigDir}/initIC
+setenv initModelConfigDir ${ModelConfigDir}/init
 
 # forecast
 setenv forecastModelConfigDir ${ModelConfigDir}/forecast

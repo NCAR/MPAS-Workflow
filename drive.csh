@@ -5,34 +5,49 @@
 ## load experiment configuration
 source config/experiment.csh
 
-######################
-# workflow date bounds
-######################
-## initialCyclePoint
-# OPTIONS: >= FirstCycleDate (see config/experiment.csh)
-# Either:
-# + initialCyclePoint must be equal to FirstCycleDate
-# OR:
-# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart#   from a previously completed cycle.
-set initialCyclePoint = 20180414T18
+#######################
+# workflow date control
+#######################
+## InitializationType
+# Indicates the type of initialization at the initial cycle: cold, warm, or re- start
+# OPTIONS:
+#   ColdStart - generate first forecast online from an external GFS analysis
+#   WarmStart - copy a pre-generated forecast
+#     ReStart - restart the cycling/suite from any cycle
+#               run from a warm start forecast produced within an already existing workflow, which
+#               was originally initiated from either a warm or cold start initial condition
+set InitializationType = WarmStart
+
+## Set the cycle hours (cyclingCycles) according to the initialization type defined in config/experiment.csh
+if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart") then
+  # Create the experiment directory and cylc task scripts
+  ./SetupWorkflow.csh
+
+  # The initialCyclePoint is the same as FirstCycleDate when starting a new experiment
+  set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
+  set hh = `echo ${FirstCycleDate} | cut -c 9-10`
+  set initialCyclePoint = ${yymmdd}T${hh}
+
+  # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
+  # initialCyclePoint
+  set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
+else if ( ${InitializationType} == "ReStart" ) then
+  ## initialCyclePoint
+  # OPTIONS: > FirstCycleDate (set in config/experiment.csh)
+  #   Set initialCyclePoint > FirstCycleDate to restart from a forecast produced in a
+  #   previously completed cycle. A CyclingFCBase or GetWarmStartIC task must have been completed
+  #   for the cycle before initialCyclePoint.
+  set initialCyclePoint = 20180415T00
+
+  # The cycles will run every CyclingWindowHR hours, starting at the initialCyclePoint
+  set cyclingCycles = PT${CyclingWindowHR}H
+endif
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
 set finalCyclePoint = 20180514T18
 
-
-#########################
-# InitializationType
-#########################
-# Indicates the type of initialization at the initial cycle: cold, warm, or re- start
-#       cold start: generate first forecast online from an external GFS analysis
-#       warm start: copy a pre-generated forecast
-#          restart: restart the cycling/suite from any cycle
-#                   run from a warm start forecast produced from an already existing workflow, which could
-#                   have been originally initiated from either a warm or cold start initial condition
-# OPTIONS: ColdStart/WarmStart/ReStart
-set InitializationType = ColdStart
 
 #########################
 # workflow task selection
@@ -95,19 +110,6 @@ date
 
 ## load the file structure
 source config/filestructure.csh
-
-## Set the cycles hours
-## Set the cycles hours (cyclingCycles) according to the initialization type defined in config/experiment.csh
-if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart") then
-  # For cold or warm start, the cycling starts CyclingWindowHR hours after the first cycle date (same as the initial cycle point of the suite)
-  # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the initial cycle point 
-  set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
-  ./SetupWorkflow.csh
-else if ( ${InitializationType} == "ReStart" ) then
-  # For a restart, the initial cycle point can be any cycle point after the first cycle date
-  # The cycles will run every CyclingWindowHR hours, starting at the initial cycle point
-  set cyclingCycles = PT${CyclingWindowHR}H
-endif
 
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
@@ -345,6 +347,19 @@ cat >! suite.rc << EOF
 #      --ntasks = 1
 #      --cpus-per-task = 36
 #      --partition = dav
+  [[CyclingFCBase]]
+    [[[job]]]
+      execution time limit = PT${CyclingFCJobMinutes}M
+    [[[directives]]]
+      -m = ae
+      -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
+  [[ExtendedFCBase]]
+    [[[job]]]
+      execution time limit = PT${ExtendedFCJobMinutes}M
+    [[[directives]]]
+      -m = ae
+      -q = ${VFQueueName}
+      -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
   [[HofXBase]]
     [[[job]]]
       execution time limit = PT${HofXJobMinutes}M
@@ -380,48 +395,18 @@ cat >! suite.rc << EOF
       -q = share
       -A = ${VFAccountNumber}
       -l = select=1:ncpus=1
-#Ungrib cold start Initial Conditions
-  [[UngribColdStartIC]]
-    env-script = cd ${mainScriptDir}; ./UngribColdStartIC.csh "1"
-    script = \$origin/UngribColdStartIC.csh "1"
-    [[[job]]]
-      execution time limit = PT2M
-      execution retry delays = ${StartRetry}
-    [[[directives]]]
-      -m = ae
-      -q = share
-      -l = select=1:ncpus=1:mpiprocs=1
-#Cold start Initial Conditions
-  [[GenerateColdStartIC]]
-    env-script = cd ${mainScriptDir}; ./GenerateColdStartIC.csh "1"
-    script = \$origin/GenerateColdStartIC.csh "1"
-    [[[job]]]
-      execution time limit = PT4M
-      execution retry delays = ${StartRetry}
-    [[[directives]]]
-      -m = ae
-      -l = select=1:ncpus=36:mpiprocs=36
-#Cold Start Initial Forecast
-  [[ColdStartFC]]
-    env-script = cd ${mainScriptDir}; ./CyclingFC.csh "1" "cold"
-    script = \$origin/CyclingFC.csh "1" "cold"
-    [[[job]]]
-      execution time limit = PT4M
-      execution retry delays = ${StartRetry}
-    [[[directives]]]
-      -m = ae
-      -l = select=1:ncpus=36:mpiprocs=36
-#Warm Start Initial Forecast
+#Cycling components
+  # initialization-related components
   [[GetWarmStartIC]]
-    env-script = cd ${mainScriptDir}; ./GetWarmStartIC.csh
     script = \$origin/GetWarmStartIC.csh
     [[[job]]]
-      execution time limit = PT1M
-      execution retry delays = ${StartRetry}
+      execution time limit = PT5M
+      execution retry delays = ${InitializationRetry}
     [[[directives]]]
+      -q = share
       -m = ae
       -l = select=1:ncpus=1:mpiprocs=1
-#Cycling components
+  # variational-related components
   [[InitCyclingDA]]
     env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
     script = \$origin/PrepVariational.csh "1"
@@ -485,12 +470,28 @@ cat >! suite.rc << EOF
   [[CleanCyclingDA]]
     inherit = CleanBase
     script = \$origin/CleanVariational.csh
-  [[CyclingFC]]
+  # forecast-related components
+  [[UngribColdStartIC]]
+    inherit = CyclingFCBase
+    script = \$origin/UngribColdStartIC.csh
     [[[job]]]
-      execution time limit = PT${CyclingFCJobMinutes}M
+      execution retry delays = ${CyclingFCRetry}   
     [[[directives]]]
       -m = ae
-      -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
+      -q = share
+      -l = select=1:ncpus=1:mpiprocs=1          
+  [[GenerateColdStartIC]]
+    inherit = CyclingFCBase
+    script = \$origin/GenerateColdStartIC.csh
+    [[[job]]]
+      execution retry delays = ${CyclingFCRetry}
+  [[ColdStartFC]]
+    inherit = CyclingFCBase
+    script = \$origin/CyclingFC.csh "1" "cold"
+    [[[job]]]
+      execution retry delays = ${CyclingFCRetry}
+  [[CyclingFC]]
+    inherit = CyclingFCBase
 {% for mem in EnsDAMembers %}
   [[CyclingFCMember{{mem}}]]
     inherit = CyclingFC
@@ -501,13 +502,6 @@ cat >! suite.rc << EOF
   [[CyclingFCFinished]]
     [[[job]]]
       batch system = background
-  [[ExtendedFCBase]]
-    [[[job]]]
-      execution time limit = PT${ExtendedFCJobMinutes}M
-    [[[directives]]]
-      -m = ae
-      -q = ${VFQueueName}
-      -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
 ## Extended mean analysis, forecast, and verification
   [[MeanAnalysis]]
     script = \$origin/MeanAnalysis.csh
