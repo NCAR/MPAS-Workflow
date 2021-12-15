@@ -20,6 +20,12 @@ if ( $ArgMember < 1 ) then
   exit 1
 endif
 
+## arg to get the initialization type
+#       cold: initial condition is produced from MPAS's init executable (i.e., core_init_atmosphere)
+#       warm: initial condition is an output state from a previous MPAS forecast (i.e., core_atmosphere)
+# OPTIONS: cold/warm
+set initType = "$2"
+
 # Setup environment
 # =================
 source config/experiment.csh
@@ -70,7 +76,14 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
-ln -sfv ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
+if ( ${initType} == "cold" ) then
+  set initialState = ${localStaticFieldsFile}
+  set do_DAcycling = "false"
+else if ( ${initType} == "warm" ) then
+  set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
+  set do_DAcycling = "true"
+endif
+ln -sfv ${initialState} ./${icFile}
 
 ## link MPAS mesh graph info
 rm ./x1.${MPASnCellsOuter}.graph.info*
@@ -109,6 +122,7 @@ sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
 sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFile
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
+sed -i 's@configDODACycling@'${do_DAcycling}'@' $NamelistFile
 
 if ( ${self_fcLengthHR} == 0 ) then
   ## zero-length forecast case (NOT CURRENTLY USED)

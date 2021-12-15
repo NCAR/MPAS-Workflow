@@ -14,6 +14,7 @@ echo ""
 rm -rf ${mainScriptDir}
 mkdir -p ${mainScriptDir}
 set workflowParts = ( \
+  GetWarmStartIC.csh \
   getCycleVars.csh \
   tools \
   config \
@@ -40,40 +41,7 @@ source config/mpas/${MPASGridDescriptor}/mesh.csh
 set thisCycleDate = $FirstCycleDate
 set thisValidDate = $thisCycleDate
 source getCycleVars.csh
-set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  echo ""
-  echo ""
-  find $prevCyclingFCDirs[$member] -mindepth 0 -maxdepth 0 > /dev/null
-  if ($? == 0) then
-    rm -r $prevCyclingFCDirs[$member]
-  endif
-  mkdir -p $prevCyclingFCDirs[$member]
 
-  # Outer loop mesh
-  set fcFile = $prevCyclingFCDirs[$member]/${FCFilePrefix}.${fileDate}.nc
-
-  set InitialMemberFC = "$firstFCDirOuter"`${memberDir} ens $member "${firstFCMemFmt}"`
-  ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
-  # rm ${fcFile}
-  cp ${fcFile}${OrigFileSuffix} ${fcFile}
-
-  # Inner loop mesh
-  if ($MPASnCellsOuter != $MPASnCellsInner) then
-
-    echo ""
-    set innerFCDir = $prevCyclingFCDirs[$member]/Inner
-    mkdir -p ${innerFCDir}
-    set fcFile = $innerFCDir/${FCFilePrefix}.${fileDate}.nc
-
-    set InitialMemberFC = "$firstFCDirInner"`${memberDir} ens $member "${firstFCMemFmt}"`
-    ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${fileDate}.nc ${fcFile}${OrigFileSuffix}
-    # rm ${fcFile}
-    cp ${fcFile}${OrigFileSuffix} ${fcFile}
-  endif
-
-  @ member++
-end
 setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
 
 #TODO: enable VARBC updating between cycles
