@@ -2,24 +2,6 @@
 
 date
 
-# Process arguments
-# =================
-## args
-# ArgMember: int, ensemble member [>= 1]
-set ArgMember = "$1"
-
-## arg checks
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isNotInt = ($status)
-if ( $isNotInt ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
-  exit 1
-endif
-if ( $ArgMember < 1 ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
-  exit 1
-endif
-
 # Setup environment
 # =================
 source config/filestructure.csh
@@ -33,20 +15,20 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-# templated work directory
-set self_WorkDir = $FirstICDirs[$ArgMember]
-echo "WorkDir = ${self_WorkDir}"
-mkdir -p ${self_WorkDir}
-cd ${self_WorkDir}
+# static work directory
+echo "WorkDir = ${InitICDir}"
+mkdir -p ${InitICDir}
+cd ${InitICDir}
 
-# static variables
-set self_InitICConfigDir = $initICModelConfigDir
 # ================================================================================================
 
 ## link ungribbed GFS
-rm -rf GRIBFILE.*
 set fhour = 000
-ln -sfv ${linkWPSdir}/${linkWPS} ${linkWPS} 
+set Vtable = Vtable.GFS_FV3
+set linkWPS = link_grib.csh
+set GFSprefix = gfs.0p25
+rm -rf GRIBFILE.*
+ln -sfv ${linkWPSdir}/${linkWPS} .
 ./${linkWPS} ${GFSgribdirRDA}/${yy}/${yymmdd}/${GFSprefix}.${yymmdd}${hh}.f${fhour}.grib2
 
 ## copy Vtable
@@ -54,7 +36,7 @@ ln -sfv ${VtableDir}/${Vtable} Vtable
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}
-cp -v ${self_InitICConfigDir}/${NamelistFileWPS} ${NamelistFileWPS}
+cp -v ${initModelConfigDir}/${NamelistFileWPS} .
 sed -i 's@startTime@'${NMLDate}'@' $NamelistFileWPS
 
 # Run the executable

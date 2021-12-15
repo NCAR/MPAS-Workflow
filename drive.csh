@@ -475,11 +475,11 @@ cat >! suite.rc << EOF
     inherit = CyclingFCBase
     script = \$origin/UngribColdStartIC.csh
     [[[job]]]
-      execution retry delays = ${CyclingFCRetry}   
+      execution retry delays = ${CyclingFCRetry}
     [[[directives]]]
       -m = ae
       -q = share
-      -l = select=1:ncpus=1:mpiprocs=1          
+      -l = select=1:ncpus=1:mpiprocs=1
   [[GenerateColdStartIC]]
     inherit = CyclingFCBase
     script = \$origin/GenerateColdStartIC.csh

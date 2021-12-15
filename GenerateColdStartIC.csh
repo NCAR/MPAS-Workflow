@@ -4,7 +4,6 @@ date
 
 # Setup environment
 # =================
-source config/experiment.csh
 source config/filestructure.csh
 source config/modeldata.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
@@ -22,9 +21,6 @@ mkdir -p ${InitICDir}
 cd ${InitICDir}
 
 # ================================================================================================
-
-## link ungribbed GFS
-#ln -sfv ${ungribDir}/GFS:${ICfileDate} ./GFS:${ICfileDate}
 
 ## link MPAS mesh graph info and static field
 rm ./x1.${MPASnCellsOuter}.graph.info*
