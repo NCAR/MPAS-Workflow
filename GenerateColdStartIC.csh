@@ -4,7 +4,6 @@ date
 
 # Setup environment
 # =================
-source config/experiment.csh
 source config/filestructure.csh
 source config/modeldata.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
