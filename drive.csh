@@ -16,7 +16,7 @@ source config/experiment.csh
 #     ReStart - restart the cycling/suite from any cycle
 #               run from a warm start forecast produced within an already existing workflow, which
 #               was originally initiated from either a warm or cold start initial condition
-set InitializationType = ColdStart
+set InitializationType = WarmStart
 
 ## Set the cycle hours (cyclingCycles) according to the initialization type defined in config/experiment.csh
 if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart") then
