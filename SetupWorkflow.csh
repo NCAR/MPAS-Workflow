@@ -14,6 +14,7 @@ echo ""
 rm -rf ${mainScriptDir}
 mkdir -p ${mainScriptDir}
 set workflowParts = ( \
+  GenerateColdStartIC.csh \
   GetWarmStartIC.csh \
   getCycleVars.csh \
   tools \

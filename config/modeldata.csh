@@ -42,6 +42,9 @@ set Ndd = `echo ${nextFirstCycleDate} | cut -c 7-8`
 set Nhh = `echo ${nextFirstCycleDate} | cut -c 9-10`
 set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
 
+## Ungribbed initial conditions
+setenv ungribDir /glade/p/mmm/parc/liuz/pandac_common/ungrib_GFS_o3
+
 # externally sourced model states
 # -------------------------------
 ## deterministic - GFS

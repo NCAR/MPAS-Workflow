@@ -24,7 +24,9 @@ if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart
   ./SetupWorkflow.csh
 
   # The initialCyclePoint is the same as FirstCycleDate when starting a new experiment
-  set initialCyclePoint = ${FirstCycleDate}
+  set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
+  set hh = `echo ${FirstCycleDate} | cut -c 9-10`
+  set initialCyclePoint = ${yymmdd}T${hh}
 
   # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
   # initialCyclePoint
@@ -209,7 +211,7 @@ cat >! suite.rc << EOF
   [[dependencies]]
 {% if InitializationType == "ColdStart" %}
     [[[R1]]]
-      graph = ColdStartFC => CyclingFCFinished
+      graph = GenerateColdStartIC => ColdStartFC => CyclingFCFinished
 {% elif InitializationType == "WarmStart" %}
     [[[R1]]]
       graph = GetWarmStartIC => CyclingFCFinished
@@ -469,6 +471,14 @@ cat >! suite.rc << EOF
     inherit = CleanBase
     script = \$origin/CleanVariational.csh
   # forecast-related components
+  [[GenerateColdStartIC]]
+    script = \$origin/GenerateColdStartIC.csh
+    [[[job]]]
+      execution time limit = PT${InitICJobMinutes}M
+      execution retry delays = ${InitializationRetry}
+    [[[directives]]]
+      -m = ae
+      -l = select=${InitICNodes}:ncpus=${InitICPEPerNode}:mpiprocs=${InitICPEPerNode}
   [[ColdStartFC]]
     inherit = CyclingFCBase
     script = \$origin/CyclingFC.csh "1" "cold"
