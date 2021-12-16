@@ -481,10 +481,13 @@ cat >! suite.rc << EOF
       -q = share
       -l = select=1:ncpus=1:mpiprocs=1
   [[GenerateColdStartIC]]
-    inherit = CyclingFCBase
     script = \$origin/GenerateColdStartIC.csh
     [[[job]]]
-      execution retry delays = ${CyclingFCRetry}
+      execution time limit = PT${InitICJobMinutes}M
+      execution retry delays = ${InitializationRetry}
+    [[[directives]]]
+      -m = ae
+      -l = select=${InitICNodes}:ncpus=${InitICPEPerNode}:mpiprocs=${InitICPEPerNode}
   [[ColdStartFC]]
     inherit = CyclingFCBase
     script = \$origin/CyclingFC.csh "1" "cold"
