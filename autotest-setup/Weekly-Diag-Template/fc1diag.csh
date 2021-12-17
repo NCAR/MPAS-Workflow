@@ -3,7 +3,7 @@
 #PBS -l select=1:ncpus=1:mpiprocs=1
 #PBS -l walltime=0:29:00
 #PBS -q premium
-#PBS -A NMMM0015
+#PBS -A NMMM0043
 #PBS -j oe
 #PBS -o fc1diag.DATAtime.out 
 #PBS -e fc1diag.DATAtime.err

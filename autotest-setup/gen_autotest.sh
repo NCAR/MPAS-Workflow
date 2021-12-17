@@ -100,7 +100,7 @@ sed -i "s#^set\ BenchmarkExpDir\ =.*#set\ BenchmarkExpDir\ =\ ${expdir_bench}#" 
 #
 #
 #-- Configure the HPC account
-HPCAccount=NMMM0015
+HPCAccount=NMMM0043
 HPCQueue=regular
 WKFL_JOB_CFG=${WKFL_DIR}/config/job.csh
 sed -i -e "s#^setenv\ StandardAccountNumber.*#setenv\ StandardAccountNumber\ ${HPCAccount}#" \
