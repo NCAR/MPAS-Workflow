@@ -1,7 +1,5 @@
 #!/bin/csh -f
 
-source config/experiment.csh
-
 #############################
 ## build directory structures
 #############################
@@ -15,17 +13,17 @@ setenv BuildCompiler 'gnu-openmpi'
 # Note: at this time, all executables should be built in the same environment, one that is
 # consistent with config/environment.csh
 
-set commonBuild = /glade/scratch/guerrett/mpasbundletest/mpas-bundle_gnu-openmpi_13AUG2021
+set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22OCT2021
 
 # MPAS-JEDI
 # ---------
 ## Variational
-if ( "$DAType" =~ *"eda"* ) then
-  setenv VariationalEXE mpasjedi_eda.x
-else
-  setenv VariationalEXE mpasjedi_variational.x
-endif
+setenv VariationalEXE mpasjedi_variational.x
 setenv VariationalBuildDir ${commonBuild}/bin
+
+## EnsembleOfVariational
+setenv EnsembleOfVariationalEXE mpasjedi_eda.x
+setenv EnsembleOfVariationalBuildDir ${commonBuild}/bin
 
 ## HofX
 setenv HofXEXE mpasjedi_hofx3d.x
@@ -38,6 +36,8 @@ setenv RTPPBuildDir ${commonBuild}/bin
 # MPAS-Model
 # ----------
 setenv MPASCore atmosphere
+setenv InitEXE mpas_init_${MPASCore}
+setenv InitBuildDir ${commonBuild}/bin
 setenv ForecastEXE mpas_${MPASCore}
 setenv ForecastTopBuildDir ${commonBuild}
 setenv ForecastBuildDir ${ForecastTopBuildDir}/bin

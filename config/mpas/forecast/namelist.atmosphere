@@ -42,7 +42,7 @@
 /
 &restart
     config_do_restart = false
-    config_do_DAcycling = true
+    config_do_DAcycling = configDODACycling
 /
 &printout
     config_print_global_minmax_vel = true

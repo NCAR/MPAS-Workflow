@@ -20,6 +20,12 @@ if ( $ArgMember < 1 ) then
   exit 1
 endif
 
+## arg to get the initialization type
+#       cold: initial condition is produced from MPAS's init executable (i.e., core_init_atmosphere)
+#       warm: initial condition is an output state from a previous MPAS forecast (i.e., core_atmosphere)
+# OPTIONS: cold/warm
+set initType = "$2"
+
 # Setup environment
 # =================
 source config/experiment.csh
@@ -48,6 +54,7 @@ set self_fcLengthHR = fcLengthHRTEMPLATE
 set self_fcIntervalHR = fcIntervalHRTEMPLATE
 set config_run_duration = 0_${self_fcLengthHR}:00:00
 set output_interval = 0_${self_fcIntervalHR}:00:00
+set deleteZerothForecast = deleteZerothForecastTEMPLATE
 
 # static variables
 set self_icStatePrefix = ${ANFilePrefix}
@@ -69,7 +76,14 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
-ln -sfv ${self_icStateDir}/${self_icStatePrefix}.${icFileExt} ./${icFile}
+if ( ${initType} == "cold" ) then
+  set initialState = ${InitICDir}/${InitFilePrefixOuter}.${icFileExt}
+  set do_DAcycling = "false"
+else if ( ${initType} == "warm" ) then
+  set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
+  set do_DAcycling = "true"
+endif
+ln -sfv ${initialState} ./${icFile}
 
 ## link MPAS mesh graph info
 rm ./x1.${MPASnCellsOuter}.graph.info*
@@ -85,7 +99,6 @@ end
 foreach staticfile ( \
 stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
-stream_list.${MPASCore}.output \
 )
   rm ./$staticfile
   ln -sfv $self_ModelConfigDir/$staticfile .
@@ -99,6 +112,7 @@ sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${StreamsFile}
 sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${StreamsFile}
+sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFile}
@@ -108,6 +122,7 @@ sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
 sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFile
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
+sed -i 's@configDODACycling@'${do_DAcycling}'@' $NamelistFile
 
 if ( ${self_fcLengthHR} == 0 ) then
   ## zero-length forecast case (NOT CURRENTLY USED)
@@ -135,7 +150,7 @@ else
     set fcDate = `$advanceCYMDH ${fcDate} ${self_fcIntervalHR}`
     setenv fcDate ${fcDate}
   end
-  
+
   # Run the executable
   # ==================
   rm ./${ForecastEXE}
@@ -147,17 +162,30 @@ else
   # ============
   grep "Finished running the ${MPASCore} core" log.${MPASCore}.0000.out
   if ( $status != 0 ) then
-    touch ./FAIL
-    echo "ERROR in $0 : MPAS-Model forecast failed" >> ./FAIL
+    echo "ERROR in $0 : MPAS-Model forecast failed" > ./FAIL
     exit 1
   endif
 
   ## change static fields to a link, keeping for transparency
   rm ${localStaticFieldsFile}
-  rm ${localStaticFieldsFile}${OrigFileSuffix}
-  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+  mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 endif
 
+if ( "$deleteZerothForecast" == "True" ) then
+  # Optionally remove initial forecast file
+  # =======================================
+  set fcDate = ${thisValidDate}
+  set yy = `echo ${fcDate} | cut -c 1-4`
+  set mm = `echo ${fcDate} | cut -c 5-6`
+  set dd = `echo ${fcDate} | cut -c 7-8`
+  set hh = `echo ${fcDate} | cut -c 9-10`
+  set fcFileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
+  set fcFileExt = ${fcFileDate}.nc
+  set fcFile = ${FCFilePrefix}.${fcFileExt}
+  rm ${fcFile}
+  set diagFile = ${DIAGFilePrefix}.${fcFileExt}
+  rm ${diagFile}
+endif
 
 # Update/add fields to output for DA
 # ==================================
@@ -177,14 +205,22 @@ while ( ${fcDate} <= ${finalFCDate} )
 
   ## Update MPASSeaVariables from GFS/GEFS analyses
   if ( ${updateSea} ) then
-    set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}"`
+    # first try member-specific state file (central GFS state when ArgMember==0)
+    set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
     set SeaFile = ${SeaAnaDir}/${fcDate}${seaMemDir}/${SeaFilePrefix}.${fcFileExt}
     ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}
-
     if ( $status != 0 ) then
-      touch ./FAIL
-      echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $fcFile" >> ./FAIL
-      exit 1
+      echo "WARNING in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}" > ./WARNING
+      echo "WARNING in $0 : ncks could not add (${MPASSeaVariables}) to $fcFile" >> ./WARNING
+
+      # otherwise try central GFS state file
+      set SeaFile = ${deterministicSeaAnaDir}/${fcDate}/${SeaFilePrefix}.${fcFileExt}
+      ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}
+      if ( $status != 0 ) then
+        echo "ERROR in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}" > ./FAIL
+        echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $fcFile" >> ./FAIL
+        exit 1
+      endif
     endif
   endif
 
@@ -194,7 +230,7 @@ while ( ${fcDate} <= ${finalFCDate} )
     ncdump -h ${fcFile} | grep $var
     if ( $status != 0 ) then
       @ copyDiags++
-    endif 
+    endif
   end
   set diagFile = ${DIAGFilePrefix}.${fcFileExt}
   if ( $copyDiags > 0 ) then

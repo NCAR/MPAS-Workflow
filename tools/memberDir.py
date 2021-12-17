@@ -14,11 +14,17 @@ def memberStr():
   ap.add_argument('fmt', default='/mem{:03d}', type=str, nargs = '?',
                   help='Member string format')
 
+  ap.add_argument('-m', '--maxMembers', default=-1, type=int,
+                  help='Maximum number of members')
+
   args = ap.parse_args()
   out = ''
   if ('eda' in args.datype or
       args.datype in ['ens','ensemble']):
-    out += str(args.fmt).format(args.member)
+    member = args.member
+    if args.maxMembers > 0:
+      member = (member-1)%(args.maxMembers)+1
+    out += str(args.fmt).format(member)
 
   print(out)
 

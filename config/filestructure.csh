@@ -11,7 +11,7 @@ source config/benchmark.csh
 # executed experiments
 
 # TODO: move TMPDIR creation to individul jobs or common cylc environment setup script, similar
-# to how jediPrep.csh is used
+# to how PrepJEDI.csh is used
 setenv TMPDIR /glade/scratch/${USER}/temp
 mkdir -p $TMPDIR
 
@@ -27,8 +27,9 @@ set TopExpDir = /glade/scratch/${ExperimentUser}/pandac
 setenv PackageBaseName MPAS-Workflow
 setenv ExperimentName ${ExperimentUser}
 setenv ExperimentName ${ExperimentName}_${DAType}
-setenv ExperimentName ${ExperimentName}${ExpObsName}
-setenv ExperimentName ${ExperimentName}${EnsExpSuffix}
+setenv ExperimentName ${ExperimentName}${ExpIterSuffix}
+setenv ExperimentName ${ExperimentName}${ExpObsSuffix}
+setenv ExperimentName ${ExperimentName}${ExpEnsSuffix}
 setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
 setenv ExperimentNameWithoutSuffix ${ExperimentName}
 setenv ExperimentName ${ExperimentName}${ExpSuffix}
@@ -36,6 +37,7 @@ setenv ExperimentName ${ExperimentName}${ExpSuffix}
 set ExpDir = ${TopExpDir}/${ExperimentName}
 
 ## immediate subdirectories
+setenv InitICWorkDir ${ExpDir}/InitIC
 setenv CyclingDAWorkDir ${ExpDir}/CyclingDA
 setenv CyclingFCWorkDir ${ExpDir}/CyclingFC
 setenv CyclingInflationWorkDir ${ExpDir}/CyclingInflation
@@ -56,6 +58,8 @@ setenv ConfigDir ${mainScriptDir}/config
 ## directory string formatter for EDA members
 # third argument to memberDir.py
 setenv flowMemFmt "/mem{:03d}"
+setenv flowInstFmt "/instance{:03d}"
+setenv flowMemFileFmt "_{:03d}"
 
 ## appyaml: universal yaml file name for all jedi applications
 setenv appyaml jedi.yaml
@@ -81,6 +85,9 @@ setenv bgDir ${BGFilePrefix}
 
 setenv StreamsFile streams.${MPASCore}
 setenv NamelistFile namelist.${MPASCore}
+
+setenv StreamsFileInit streams.init_${MPASCore}
+setenv NamelistFileInit namelist.init_${MPASCore}
 
 setenv TemplateFieldsPrefix templateFields
 setenv TemplateFieldsFileOuter ${TemplateFieldsPrefix}.${MPASnCellsOuter}.nc
@@ -130,6 +137,9 @@ set InnerNamelistFile = ${NamelistFile}_${MPASGridDescriptorInner}
 #set EnsembleStreamsFile = ${StreamsFile}_${MPASGridDescriptorEnsemble}
 #set EnsembleNamelistFile = ${NamelistFile}_${MPASGridDescriptorEnsemble}
 
+# initial IC
+setenv initModelConfigDir ${ModelConfigDir}/init
+
 # forecast
 setenv forecastModelConfigDir ${ModelConfigDir}/forecast
 ##set forecastMeshList = (Forecast)
@@ -140,12 +150,7 @@ setenv forecastModelConfigDir ${ModelConfigDir}/forecast
 #set forecastStreamsFileList = ($OuterStreamsFile)
 #set forecastNamelistFileList = ($OuterNamelistFile)
 
-# variational
-if ($nEnsDAMembers > 1 && ${ABEInflation} == True) then
-  setenv variationalModelConfigDir ${ModelConfigDir}/variational-bginflate
-else
-  setenv variationalModelConfigDir ${ModelConfigDir}/variational
-endif
+setenv variationalModelConfigDir ${ModelConfigDir}/variational
 set variationalMeshList = (Outer Inner)
 set variationalMPASnCellsList = ($MPASnCellsOuter $MPASnCellsInner)
 set variationallocalStaticFieldsFileList = ( \
@@ -164,6 +169,8 @@ set hofxMPASnCellsList = ($MPASnCellsOuter)
 #)
 set hofxStreamsFileList = ($OuterStreamsFile)
 set hofxNamelistFileList = ($OuterNamelistFile)
+
+set HofXMeshDescriptor = ${MPASGridDescriptorOuter}
 
 # rtpp
 setenv rtppModelConfigDir ${ModelConfigDir}/rtpp

@@ -8,6 +8,7 @@ source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
+source config/verification.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -99,15 +100,14 @@ while ( $success != 0 )
   set success = $?
 
   if ( $success != 0 ) then
-    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh
+    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh default
     sleep 3
   endif
 end
 
 ## change static fields to a link, keeping for transparency
 rm ${localStaticFieldsFile}
-rm ${localStaticFieldsFile}${OrigFileSuffix}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 
 date
 

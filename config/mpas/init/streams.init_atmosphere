@@ -1,0 +1,25 @@
+<streams>
+<immutable_stream name="input"
+                  type="input"
+                  precision="forecastPrecision"
+                  filename_template="x1.nCells.static.nc"
+                  io_type="pnetcdf,cdf5"
+                  input_interval="initial_only" />
+
+<immutable_stream name="output"
+                  type="output"
+                  precision="forecastPrecision"
+                  clobber_mode="truncate"
+                  filename_template="x1.nCells.init.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
+                  packages="initial_conds"
+                  output_interval="initial_only" />
+
+<immutable_stream name="surface"
+                  type="output"
+                  filename_template="x1.nCells.sfc_update.nc"
+                  io_type="pnetcdf,cdf5"
+                  filename_interval="none"
+                  packages="sfc_update"
+                  output_interval="86400" />
+</streams>

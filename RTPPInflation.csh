@@ -28,6 +28,11 @@ echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
+# build, executable, yaml
+set myBuildDir = ${RTPPBuildDir}
+set myEXE = ${RTPPEXE}
+set myYAML = ${self_WorkDir}/$appyaml
+
 # other static variables
 #set bgPrefix = $FCFilePrefix
 #set bgDirs = ($prevCyclingFCDirs)
@@ -56,7 +61,8 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 set memDir = `${memberDir} ensemble 0 "${flowMemFmt}"`
 set meanDir = ${CyclingDAOutDir}${memDir}
 mkdir -p ${meanDir}
-cp $anDirs[1]/${anPrefix}.$fileDate.nc ${meanDir}
+set firstANFile = $anDirs[1]/${anPrefix}.$fileDate.nc
+cp ${firstANFile} ${meanDir}
 
 # ====================
 # Model-specific files
@@ -71,8 +77,10 @@ end
 
 ## link/copy stream_list/streams configs
 foreach staticfile ( \
-stream_list.${MPASCore}.diagnostics \
-stream_list.${MPASCore}.output \
+stream_list.${MPASCore}.background \
+stream_list.${MPASCore}.analysis \
+stream_list.${MPASCore}.ensemble \
+stream_list.${MPASCore}.control \
 )
   ln -sfv $self_ModelConfigDir/$staticfile .
 end
@@ -80,14 +88,30 @@ end
 rm ${StreamsFile}
 cp -v $self_ModelConfigDir/${StreamsFile} .
 sed -i 's@nCells@'${MPASnCellsEnsemble}'@' ${StreamsFile}
-sed -i 's@TemplateFieldsPrefix@'${TemplateFieldsPrefix}'@' ${StreamsFile}
-sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile}
+
+# determine analysis output precision
+ncdump -h ${firstANFile} | grep uReconstruct | grep double
+if ($status == 0) then
+  set analysisPrecision=double
+else
+  ncdump -h ${firstANFile} | grep uReconstruct | grep float
+  if ($status == 0) then
+    set analysisPrecision=single
+  else
+    echo "ERROR in $0 : cannot determine analysis precision" > ./FAIL
+    exit 1
+  endif
+endif
+sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
 rm $NamelistFile
 cp -v ${self_ModelConfigDir}/${NamelistFile} .
 sed -i 's@startTime@'${NMLDate}'@' $NamelistFile
-sed -i 's@nCells@'${MPASnCellsEnsemble}'@' $NamelistFile
+sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${MPASnCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
 
@@ -107,10 +131,10 @@ cp -v ${ConfigDir}/applicationBase/rtpp.yaml $thisYAML
 sed -i 's@RTPPInflationFactor@'${RTPPInflationFactor}'@g' $thisYAML
 
 ## streams
-sed -i 's@EnsembleStreamsFile@'${StreamsFile}'@' $thisYAML
+sed -i 's@EnsembleStreamsFile@'${self_WorkDir}'/'${StreamsFile}'@' $thisYAML
 
 ## namelist
-sed -i 's@EnsembleNamelistFile@'${NamelistFile}'@' $thisYAML
+sed -i 's@EnsembleNamelistFile@'${self_WorkDir}'/'${NamelistFile}'@' $thisYAML
 
 ## revise current date
 #sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' $thisYAML
@@ -118,7 +142,7 @@ sed -i 's@EnsembleNamelistFile@'${NamelistFile}'@' $thisYAML
 sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
 
 # use one of the analyses as the TemplateFieldsFileOuter
-set meshFile = $anDirs[1]/${anPrefix}.$fileDate.nc
+set meshFile = ${firstANFile}
 ln -sfv $meshFile ${TemplateFieldsFileOuter}
 
 ## file naming
@@ -139,7 +163,7 @@ set AnalysisVariables = ( \
   u \
   qv \
 )
-foreach hydro ($MPASHydroVariables)
+foreach hydro ($MPASHydroStateVariables)
   set AnalysisVariables = ($AnalysisVariables $hydro)
 end
 set StateVariables = ( \
@@ -167,12 +191,10 @@ foreach PMatrix (Pb Pa)
   if ($PMatrix == Pb) then
     set ensPDirs = ($bgDirs)
     set ensPFilePrefix = ${bgPrefix}
-    set ensPFileSuffix = ${OrigFileSuffix}
   endif
   if ($PMatrix == Pa) then
     set ensPDirs = ($anDirs)
     set ensPFilePrefix = ${anPrefix}
-    set ensPFileSuffix = ""
   endif
 
   set enspsed = Ensemble${PMatrix}Members
@@ -182,9 +204,9 @@ EOF
 
   set member = 1
   while ( $member <= ${nEnsDAMembers} )
-    set filename = $ensPDirs[$member]/${ensPFilePrefix}.${fileDate}.nc${ensPFileSuffix}
-    ## copy original analysis files for diagnosing RTPP behavior (not necessary)
-    if ($PMatrix == Pa) then
+    set filename = $ensPDirs[$member]/${ensPFilePrefix}.${fileDate}.nc
+    ## optionally copy original analysis files for diagnosing RTPP behavior
+    if ($PMatrix == Pa && ${storeOriginalRTPPAnalyses} == True) then
       set memDir = "."`${memberDir} ensemble $member "${flowMemFmt}"`
       set anmemberDir = ${anDir}0/${memDir}
       rm -r ${anmemberDir}
@@ -195,7 +217,7 @@ EOF
       set filename = ${filename}\\
     endif
 cat >>! ${enspsed}SEDF.yaml << EOF
-${indent}- <<: *state\
+${indent}- <<: *stateReadConfig\
 ${indent}  filename: ${filename}
 EOF
 
@@ -211,23 +233,21 @@ mv $prevYAML $appyaml
 
 # Run the executable
 # ==================
-ln -sfv ${RTPPBuildDir}/${RTPPEXE} ./
-mpiexec ./${RTPPEXE} $appyaml >& jedi.log
+ln -sfv ${myBuildDir}/${myEXE} ./
+mpiexec ./${myEXE} $myYAML >& jedi.log
 
 
 # Check status
 # ============
 grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
-  touch ./FAIL
-  echo "ERROR in $0 : jedi application failed" >> ./FAIL
+  echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
 endif
 
 ## change static fields to a link, keeping for transparency
 rm ${localStaticFieldsFile}
-rm ${localStaticFieldsFile}${OrigFileSuffix}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 
 date
 

@@ -1,6 +1,6 @@
 #!/bin/csh -f
 
-source config/appindex.csh
+source config/mpas/${MPASGridDescriptor}/mesh.csh
 
 ## InterpolationType
 # controls the horizontal interpolation used in variational and hofx applications
@@ -17,6 +17,37 @@ setenv CRTMTABLES ${FixedInput}/crtm_bin/
 
 ## VARBC
 setenv INITIAL_VARBC_TABLE ${FixedInput}/satbias/satbias_crtm_in
+
+
+#####################
+# application indices
+#####################
+
+# NOTE: enables re-use of common components for similar applications
+
+set applicationIndex = ( variational hofx )
+set applicationObsIndent = ( 2 0 )
+
+set index = 0
+foreach application (${applicationIndex})
+  @ index++
+  if ( $application == variational ) then
+    set variationalIndex = $index
+  endif
+  if ( $application == hofx ) then
+    set hofxIndex = $index
+  endif
+end
+
+## ABI super-obbing footprint, set independently
+#  for variational and hofx using applicationIndex
+#OPTIONS: 15X15, 59X59
+set ABISuperOb = ($variationalABISuperOb $hofxABISuperOb)
+
+## AHI super-obbing footprint set independently
+#  for variational and hofx using applicationIndex
+#OPTIONS: 15X15, 101X101
+set AHISuperOb = ($variationalAHISuperOb $hofxAHISuperOb)
 
 
 ##########################
@@ -52,14 +83,14 @@ set GEOIRClearBC = _const-bias-correct
 
 setenv ABIBiasCorrect $GEOIRNoBias
 foreach obs ($variationalObsList)
-  if ( "$obs" =~ "clrabi"* ) then
+  if ( "$obs" =~ "abi-clr"* ) then
     setenv ABIBiasCorrect $GEOIRClearBC
   endif
 end
 
 setenv AHIBiasCorrect $GEOIRNoBias
 foreach obs ($variationalObsList)
-  if ( "$obs" =~ "clrahi"* ) then
+  if ( "$obs" =~ "ahi-clr"* ) then
     setenv AHIBiasCorrect $GEOIRClearBC
   endif
 end

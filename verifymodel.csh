@@ -76,12 +76,12 @@ ln -fs ${pyModelDir}/${mainScript}.py ./
 set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -r $GFSAnaDirOuter/$InitFilePrefixOuter"
+  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -r $GFSAnaDirVerify/$InitFilePrefixOuter"
   echo ${baseCommand}
   ${baseCommand} >& log.$mainScript
   set success = $?
   if ( $success != 0 ) then
-    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh
+    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh default
     sleep 3
   endif
 end

@@ -5,21 +5,48 @@
 ## load experiment configuration
 source config/experiment.csh
 
-######################
-# workflow date bounds
-######################
-## initialCyclePoint
-# OPTIONS: >= FirstCycleDate (see config/experiment.csh)
-# Either:
-# + initialCyclePoint must be equal to FirstCycleDate
-# OR:
-# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart#   from a previously completed cycle.
-set initialCyclePoint = 20180415T00
+#######################
+# workflow date control
+#######################
+## InitializationType
+# Indicates the type of initialization at the initial cycle: cold, warm, or re- start
+# OPTIONS:
+#   ColdStart - generate first forecast online from an external GFS analysis
+#   WarmStart - copy a pre-generated forecast
+#     ReStart - restart the cycling/suite from any cycle
+#               run from a warm start forecast produced within an already existing workflow, which
+#               was originally initiated from either a warm or cold start initial condition
+set InitializationType = WarmStart
+
+## Set the cycle hours (cyclingCycles) according to the initialization type defined in config/experiment.csh
+if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart") then
+  # Create the experiment directory and cylc task scripts
+  ./SetupWorkflow.csh
+
+  # The initialCyclePoint is the same as FirstCycleDate when starting a new experiment
+  set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
+  set hh = `echo ${FirstCycleDate} | cut -c 9-10`
+  set initialCyclePoint = ${yymmdd}T${hh}
+
+  # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
+  # initialCyclePoint
+  set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
+else if ( ${InitializationType} == "ReStart" ) then
+  ## initialCyclePoint
+  # OPTIONS: > FirstCycleDate (set in config/experiment.csh)
+  #   Set initialCyclePoint > FirstCycleDate to restart from a forecast produced in a
+  #   previously completed cycle. A CyclingFCBase or GetWarmStartIC task must have been completed
+  #   for the cycle before initialCyclePoint.
+  set initialCyclePoint = 20180415T00
+
+  # The cycles will run every CyclingWindowHR hours, starting at the initialCyclePoint
+  set cyclingCycles = PT${CyclingWindowHR}H
+endif
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180421T00
+set finalCyclePoint = 20180514T18
 
 
 #########################
@@ -39,41 +66,39 @@ set VerifyDeterministicDA = True
 ## CompareDA2Benchmark: compare verification nc files between two experiments
 #    after the DA verification completes
 # OPTIONS: True/False
-set CompareDA2Benchmark = True
+set CompareDA2Benchmark = False
 
 ## VerifyExtendedMeanFC: whether to run verification scripts across
 #    extended forecast states, first intialized at mean analysis
 # OPTIONS: True/False
 set VerifyExtendedMeanFC = False
 
-## VerifyMemberBG: whether to run verification scripts for CyclingWindowHR
-#    forecast length. Utilizes critical path forecast states from
-#    individual ensemble member analyses or deterministic analysis
+## VerifyBGMembers: whether to run verification scripts for CyclingWindowHR
+#    forecast length. Runs HofXBG, VerifyObsBG, and VerifyModelBG on critical
+#    path forecasts that are initialized from ensemble member analyses.
 # OPTIONS: True/False
-set VerifyMemberBG = True
+set VerifyBGMembers = False
 
 ## CompareBG2Benchmark: compare verification nc files between two experiments
-#    after the MemberBG verification completes
+#    after the BGMembers verification completes
 # OPTIONS: True/False
-set CompareBG2Benchmark = True
+set CompareBG2Benchmark = False
 
-## VerifyEnsMeanBG: whether to run verification scripts for ensemble
-#    mean background state.
+## VerifyEnsMeanBG: whether to run verification scripts for ensemble mean
+#    background (nEnsDAMembers > 1) or deterministic background (nEnsDAMembers == 1)
 # OPTIONS: True/False
 set VerifyEnsMeanBG = True
 
 ## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
-#    space while VerifyEnsMeanBG is True.  Automatically triggers OMF calculation
-#    for all ensemble members. VerifyEnsMeanBG is nearly free when
-#    DiagnoseEnsSpreadBG is True.
-#    mean background state.
+#    space while VerifyEnsMeanBG is True.  Automatically triggers HofXBG
+#    for all ensemble members.
 # OPTIONS: True/False
 set DiagnoseEnsSpreadBG = True
 
 ## VerifyEnsMeanAN: whether to run verification scripts for ensemble
 #    mean analysis state.
 # OPTIONS: True/False
-set VerifyMemberAN = False
+set VerifyANMembers = False
 
 ## VerifyExtendedEnsBG: whether to run verification scripts across
 #    extended forecast states, first intialized at ensemble of analysis
@@ -86,52 +111,52 @@ date
 ## load the file structure
 source config/filestructure.csh
 
+## Change to the cylc suite directory
+cd ${mainScriptDir}
+
 ## load job submission environment
 source config/job.csh
 source config/mpas/${MPASGridDescriptor}/job.csh
-
-## Initialize cycling directory if this is the first cycle point
-set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
-set hh = `echo ${FirstCycleDate} | cut -c 9-10`
-set firstCyclePoint = ${yymmdd}T${hh}
-if ($initialCyclePoint == $firstCyclePoint) then
-  ./SetupWorkflow.csh
-endif
-
-## Change to the cylc suite directory
-cd ${mainScriptDir}
 
 echo "Initializing ${PackageBaseName}"
 module purge
 module load cylc
 module load graphviz
 
+## SuiteName: name of the cylc suite, can be used to differentiate between two
+# suites running simultaneously in the same ${ExperimentName} directory
+#
+# default: ${ExperimentName}
+# example: ${ExperimentName}_verify for a simultaneous suite running only Verification
+set SuiteName = ${ExperimentName}
+
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
-rm -fr ${cylcWorkDir}/${ExperimentName}
+rm -fr ${cylcWorkDir}/${SuiteName}
 echo "creating suite.rc"
 cat >! suite.rc << EOF
 #!Jinja2
 # cycle dates
 {% set initialCyclePoint = "${initialCyclePoint}" %}
-{% set finalCyclePoint = "${finalCyclePoint}" %}
-#TODO: put warm-start file copying in InitEnsFC/firstfc script for R1 cycle point
-{# set firstCyclePoint = "${firstCyclePoint}" #}
+{% set finalCyclePoint   = "${finalCyclePoint}" %}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
-{% set VerifyMemberBG = ${VerifyMemberBG} %}
+{% set VerifyBGMembers = ${VerifyBGMembers} %}
 {% set CompareBG2Benchmark = ${CompareBG2Benchmark} %}
 {% set VerifyEnsMeanBG = ${VerifyEnsMeanBG} %}
 {% set DiagnoseEnsSpreadBG = ${DiagnoseEnsSpreadBG} %}
-{% set VerifyMemberAN = ${VerifyMemberAN} %}
+{% set VerifyANMembers = ${VerifyANMembers} %}
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
+{% set EDASize = ${EDASize} %}
+{% set nDAInstances = ${nDAInstances} %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
 {% set RTPPInflationFactor = ${RTPPInflationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
+{% set InitializationType = "${InitializationType}" %}
 [meta]
-  title = "${PackageBaseName}--${ExperimentName}"
+  title = "${PackageBaseName}--${SuiteName}"
 # critical path cycle dependencies
   {% set PrimaryCPGraph = "" %}
   {% set SecondaryCPGraph = "" %}
@@ -139,7 +164,8 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
 {% elif CriticalPathType == "Reanalysis" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA => CyclingDAFinished" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        InitCyclingDA => CyclingDA" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
   {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
 {% elif CriticalPathType == "Reforecast" %}
@@ -154,11 +180,11 @@ cat >! suite.rc << EOF
     {% set PrimaryCPGraph = PrimaryCPGraph + " => GenerateABEInflation" %}
     {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        GenerateABEInflation => CleanHofXEnsMeanBG" %}
   {% endif %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + " => CyclingDA" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + " => InitCyclingDA => CyclingDA" %}
+  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => CyclingDAFinished" %}
   {% if (RTPPInflationFactor > 0.0 and nEnsDAMembers > 1) %}
-    {% set PrimaryCPGraph = PrimaryCPGraph+" => RTPPInflation" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => RTPPInflation => CyclingDAFinished" %}
   {% endif %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + " => CyclingDAFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
   {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
@@ -168,7 +194,8 @@ cat >! suite.rc << EOF
 # verification and extended forecast controls
 {% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
 {% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
-{% set VerifyMembers = range(1, nEnsDAMembers+1, 1) %}
+{% set DAInstances = range(1, nDAInstances+1, 1) %}
+{% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 [cylc]
   UTC mode = False
   [[environment]]
@@ -182,13 +209,15 @@ cat >! suite.rc << EOF
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
   [[dependencies]]
-#TODO: put warm-start file copying in InitEnsFC/firstfc script
-#{# if initialCyclePoint == firstCyclePoint #}
-#    [[[R1]]]
-#      graph = InitEnsFC => CyclingDA
-#{# endif #}
+{% if InitializationType == "ColdStart" %}
+    [[[R1]]]
+      graph = GenerateColdStartIC => ColdStartFC => CyclingFCFinished
+{% elif InitializationType == "WarmStart" %}
+    [[[R1]]]
+      graph = GetWarmStartIC => CyclingFCFinished
+{% endif %}
 ## Critical path for cycling
-    [[[PT${CyclingWindowHR}H]]]
+    [[[${cyclingCycles}]]]
       graph = '''{{PrimaryCPGraph}}{{SecondaryCPGraph}}
       '''
 ## Many kinds of verification
@@ -196,7 +225,7 @@ cat >! suite.rc << EOF
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
 ## Verification of deterministic DA with observations (BG+AN together)
-    [[[PT${CyclingWindowHR}H]]]
+    [[[${cyclingCycles}]]]
       graph = '''
         CyclingDAFinished => VerifyObsDA
         VerifyObsDA => CleanCyclingDA
@@ -218,13 +247,27 @@ cat >! suite.rc << EOF
   {% endfor %}
       '''
 {% endif %}
-{% if VerifyMemberBG %}
+{% if VerifyBGMembers %}
 ## Ensemble BG verification
-    [[[PT${CyclingWindowHR}H]]]
+    [[[${cyclingCycles}]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
-  {% for mem in VerifyMembers %}
+  {% for mem in EnsVerifyMembers %}
+        HofXBG{{mem}} => VerifyObsBG{{mem}}
+        VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
+    {% if CompareBG2Benchmark %}
+        VerifyModelBG{{mem}} => CompareModelBG{{mem}}
+        VerifyObsBG{{mem}} => CompareObsBG{{mem}}
+    {% endif %}
+  {% endfor %}
+      '''
+{% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
+    [[[${cyclingCycles}]]]
+      graph = '''
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
+  {% for mem in [1] %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
         VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
     {% if CompareBG2Benchmark %}
@@ -236,7 +279,7 @@ cat >! suite.rc << EOF
 {% endif %}
 {% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
 ## Ensemble Mean BG verification
-    [[[PT${CyclingWindowHR}H]]]
+    [[[${cyclingCycles}]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => MeanBackground
         MeanBackground => HofXEnsMeanBG
@@ -250,11 +293,11 @@ cat >! suite.rc << EOF
   {% endif %}
       '''
 {% endif %}
-{% if VerifyMemberAN %}
+{% if VerifyANMembers %}
 ## Ensemble AN verification
-    [[[PT${CyclingWindowHR}H]]]
+    [[[${cyclingCycles}]]]
       graph = '''
-  {% for mem in VerifyMembers %}
+  {% for mem in EnsVerifyMembers %}
         CyclingDAFinished => VerifyModelAN{{mem}}
         CyclingDAFinished => HofXAN{{mem}}
         HofXAN{{mem}} => VerifyObsAN{{mem}}
@@ -267,7 +310,7 @@ cat >! suite.rc << EOF
     [[[${ExtendedEnsFCTimes}]]]
       graph = '''
         CyclingDAFinished => ExtendedEnsFC
-  {% for mem in VerifyMembers %}
+  {% for mem in EnsVerifyMembers %}
         ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}
         ExtendedFC{{mem}} => HofXEnsFC{{mem}}
     {% for dt in ExtendedFCLengths %}
@@ -304,6 +347,19 @@ cat >! suite.rc << EOF
 #      --ntasks = 1
 #      --cpus-per-task = 36
 #      --partition = dav
+  [[CyclingFCBase]]
+    [[[job]]]
+      execution time limit = PT${CyclingFCJobMinutes}M
+    [[[directives]]]
+      -m = ae
+      -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
+  [[ExtendedFCBase]]
+    [[[job]]]
+      execution time limit = PT${ExtendedFCJobMinutes}M
+    [[[directives]]]
+      -m = ae
+      -q = ${VFQueueName}
+      -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
   [[HofXBase]]
     [[[job]]]
       execution time limit = PT${HofXJobMinutes}M
@@ -334,17 +390,58 @@ cat >! suite.rc << EOF
       -l = select=1:ncpus=36:mpiprocs=36
   [[CleanBase]]
     [[[job]]]
-      batch system = background
+      execution time limit = PT5M
+    [[[directives]]]
+      -q = share
+      -A = ${VFAccountNumber}
+      -l = select=1:ncpus=1
 #Cycling components
-  [[CyclingDA]]
-    env-script = cd ${mainScriptDir}; ./jediPrepCyclingDA.csh "1" "0" "DA"
-    script = \$origin/CyclingDA.csh
+  # initialization-related components
+  [[GetWarmStartIC]]
+    script = \$origin/GetWarmStartIC.csh
     [[[job]]]
-      execution time limit = PT${CyclingDAJobMinutes}M
-      execution retry delays = ${CyclingDARetry}
+      execution time limit = PT5M
+      execution retry delays = ${InitializationRetry}
+    [[[directives]]]
+      -q = share
+      -m = ae
+      -l = select=1:ncpus=1:mpiprocs=1
+  # variational-related components
+  [[InitCyclingDA]]
+    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
+    script = \$origin/PrepVariational.csh "1"
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = ${VariationalRetry}
+    [[[directives]]]
+      -q = share
+      -l = select=1:ncpus=1
+  [[CyclingDA]]
+{% if EDASize > 1 %}
+  {% for inst in DAInstances %}
+  [[EDAInstance{{inst}}]]
+    inherit = CyclingDA
+    script = \$origin/EnsembleOfVariational.csh "{{inst}}"
+    [[[job]]]
+      execution time limit = PT${EnsOfVariationalJobMinutes}M
+      execution retry delays = ${EnsOfVariationalRetry}
     [[[directives]]]
       -m = ae
-      -l = select=${CyclingDANodes}:ncpus=${CyclingDAPEPerNode}:mpiprocs=${CyclingDAPEPerNode}:mem=${CyclingDAMemory}GB
+      -l = select=${EnsOfVariationalNodes}:ncpus=${EnsOfVariationalPEPerNode}:mpiprocs=${EnsOfVariationalPEPerNode}:mem=${EnsOfVariationalMemory}GB
+  {% endfor %}
+{% else %}
+  {% for mem in EnsDAMembers %}
+  [[DAMember{{mem}}]]
+    inherit = CyclingDA
+    script = \$origin/Variational.csh "{{mem}}"
+    [[[job]]]
+      execution time limit = PT${VariationalJobMinutes}M
+      execution retry delays = ${VariationalRetry}
+    [[[directives]]]
+      -m = ae
+      -l = select=${VariationalNodes}:ncpus=${VariationalPEPerNode}:mpiprocs=${VariationalPEPerNode}:mem=${VariationalMemory}GB
+  {% endfor %}
+{% endif %}
   [[RTPPInflation]]
     script = \$origin/RTPPInflation.csh
     [[[job]]]
@@ -352,7 +449,7 @@ cat >! suite.rc << EOF
       execution retry delays = ${RTPPInflationRetry}
     [[[directives]]]
       -m = ae
-      -l = select=${CyclingInflationNodesPerMember}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
+      -l = select=${CyclingInflationNodes}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
   [[GenerateABEInflation]]
     script = \$origin/GenerateABEInflation.csh
     [[[job]]]
@@ -372,30 +469,33 @@ cat >! suite.rc << EOF
     script = \$origin/CompareObsDA.csh "1" "0" "DA" "0"
   [[CleanCyclingDA]]
     inherit = CleanBase
-    script = \$origin/CleanCyclingDA.csh
-  [[CyclingFC]]
+    script = \$origin/CleanVariational.csh
+  # forecast-related components
+  [[GenerateColdStartIC]]
+    script = \$origin/GenerateColdStartIC.csh
     [[[job]]]
-      execution time limit = PT${CyclingFCJobMinutes}M
+      execution time limit = PT${InitICJobMinutes}M
+      execution retry delays = ${InitializationRetry}
     [[[directives]]]
       -m = ae
-      -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
+      -l = select=${InitICNodes}:ncpus=${InitICPEPerNode}:mpiprocs=${InitICPEPerNode}
+  [[ColdStartFC]]
+    inherit = CyclingFCBase
+    script = \$origin/CyclingFC.csh "1" "cold"
+    [[[job]]]
+      execution retry delays = ${CyclingFCRetry}
+  [[CyclingFC]]
+    inherit = CyclingFCBase
 {% for mem in EnsDAMembers %}
-  [[CyclingMemberFC{{mem}}]]
+  [[CyclingFCMember{{mem}}]]
     inherit = CyclingFC
-    script = \$origin/CyclingFC.csh "{{mem}}"
+    script = \$origin/CyclingFC.csh "{{mem}}" "warm"
     [[[job]]]
       execution retry delays = ${CyclingFCRetry}
 {% endfor %}
   [[CyclingFCFinished]]
     [[[job]]]
       batch system = background
-  [[ExtendedFCBase]]
-    [[[job]]]
-      execution time limit = PT${ExtendedFCJobMinutes}M
-    [[[directives]]]
-      -m = ae
-      -q = ${VFQueueName}
-      -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
 ## Extended mean analysis, forecast, and verification
   [[MeanAnalysis]]
     script = \$origin/MeanAnalysis.csh
@@ -406,7 +506,7 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
-    script = \$origin/ExtendedMeanFC.csh "1"
+    script = \$origin/ExtendedMeanFC.csh "1" "warm"
   [[HofXMeanFC]]
     inherit = HofXBase
   [[VerifyModelMeanFC]]
@@ -414,7 +514,7 @@ cat >! suite.rc << EOF
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
-    env-script = cd ${mainScriptDir}; ./jediPrepHofXMeanFC.csh "1" "{{dt}}" "FC"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
     script = \$origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -444,12 +544,12 @@ cat >! suite.rc << EOF
   [[CleanHofX{{state}}]]
     inherit = CleanBase
 {% endfor %}
-{% for mem in VerifyMembers %}
+{% for mem in EnsVerifyMembers %}
 ## Ensemble BG/AN verification
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
     inherit = HofX{{state}}
-    env-script = cd ${mainScriptDir}; ./jediPrepHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     script = \$origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -472,7 +572,7 @@ cat >! suite.rc << EOF
 ## Extended ensemble forecasts and verification
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
-    script = \$origin/ExtendedEnsFC.csh "{{mem}}"
+    script = \$origin/ExtendedEnsFC.csh "{{mem}}" "warm"
   [[HofXEnsFC{{mem}}]]
     inherit = HofXBase
   [[VerifyModelEnsFC{{mem}}]]
@@ -480,7 +580,7 @@ cat >! suite.rc << EOF
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC{{mem}}
-    env-script = cd ${mainScriptDir}; ./jediPrepHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     script = \$origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -505,7 +605,7 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[HofXEnsMeanBG]]
     inherit = HofXBase
-    env-script = cd ${mainScriptDir}; ./jediPrepHofXEnsMeanBG.csh "1" "0" "BG"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG"
     script = \$origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = ${EnsMeanBGQueueName}
@@ -534,12 +634,8 @@ cat >! suite.rc << EOF
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
 
-echo "nail x1"
-echo '\${ExperimentName}  \${mainScriptDir}'
-echo "${ExperimentName}   ${mainScriptDir}"
-
-cylc register ${ExperimentName} ${mainScriptDir}
-cylc validate ${ExperimentName}
-cylc run ${ExperimentName}
+cylc register ${SuiteName} ${mainScriptDir}
+cylc validate ${SuiteName}
+cylc run ${SuiteName}
 
 exit

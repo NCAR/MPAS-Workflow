@@ -5,7 +5,8 @@
 ####################################
 setenv MPASJEDIDiagVariables cldfrac
 setenv MPASSeaVariables sst,xice
-set MPASHydroVariables = (qc qi qg qr qs cldfrac)
+set MPASHydroIncrementVariables = (qc qi qg qr qs)
+set MPASHydroStateVariables = (${MPASHydroIncrementVariables} cldfrac)
 
 set StandardAnalysisVariables = ( \
   spechum \

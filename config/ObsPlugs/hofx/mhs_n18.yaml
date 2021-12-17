@@ -1,0 +1,45 @@
+- obs space:
+    <<: *ObsSpace
+    name: mhs_n18
+    obsdatain:
+      obsfile: InDBDir/mhs_n18_obs_2018041500.h5
+    obsdataout:
+      obsfile: OutDBDir/obsPrefix_mhs_n18.h5
+    simulated variables: [brightness_temperature]
+    channels: &mhs_n18_channels 1-5
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: mhs_n18
+  get values:
+    <<: *GetValues
+  obs filters:
+  - filter: Domain Check
+    filter variables:
+    - name: brightness_temperature
+      channels: *mhs_n18_channels
+    where:
+    - variable:
+        name: water_area_fraction@GeoVaLs
+      minvalue: 1.0
+  - filter: GOMsaver
+    filename: OutDBDir/geoPrefix_mhs_n18.nc4
+  - filter: YDIAGsaver 
+    filename: OutDBDir/diagPrefix_mhs_n18.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *mhs_n18_channels
+    - name: brightness_temperature_jacobian_air_temperature
+      channels: *mhs_n18_channels
+    - name: brightness_temperature_jacobian_humidity_mixing_ratio
+      channels: *mhs_n18_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *mhs_n18_channels
+    - name: brightness_temperature_jacobian_surface_temperature
+      channels: *mhs_n18_channels
+    - name: weightingfunction_of_atmosphere_layer
+      channels: *mhs_n18_channels
+    - name: pressure_level_at_peak_of_weightingfunction
+      channels: *mhs_n18_channels

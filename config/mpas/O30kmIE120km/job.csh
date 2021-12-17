@@ -1,59 +1,75 @@
 #!/bin/csh -f
 
 source config/experiment.csh
+source config/modeldata.csh
 
-## job length and node/pe requirements
+# job length and node/pe requirements
+# ===================================
 
-# Uniform 30km mesh -- forecast, hofx, variational outer loop
-# Uniform 120km mesh -- variational inner loop
+@ InitICJobMinutes = 1
+setenv InitICNodes 1
+setenv InitICPEPerNode 36
 
-@ CyclingFCJobMinutes = 5 + (5 * $CyclingWindowHR / 6)
-setenv CyclingFCNodes 8
+@ CyclingFCJobMinutes = 2 + (7 * $CyclingWindowHR / 6)
+setenv CyclingFCNodes 16
 setenv CyclingFCPEPerNode 32
 
 @ ExtendedFCJobMinutes = 1 + ($ExtendedFCWindowHR / 4)
 setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
+## HofX
+# bump interpolation
+#setenv HofXJobMinutes 20
+#setenv HofXNodes 4
+
+# unstructured interpolation
 setenv HofXJobMinutes 10
-setenv HofXNodes 32
-setenv HofXPEPerNode 16
+setenv HofXNodes 2
+
+setenv HofXPEPerNode 36
 setenv HofXMemory 109
 
-set DeterministicVerifyObsJobMinutes = 5
+# ~8-12 min. for VerifyObsDA, ~5 min. for VerifyObsBG
+set DeterministicVerifyObsJobMinutes = 15
 set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
-set EnsembleVerifyObsEnsMeanMembersPerJobMinute = 10
-@ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} / ${EnsembleVerifyObsEnsMeanMembersPerJobMinute}
+
+# 3 min. premium per 20 members for VerifyObsEnsMean
+set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 9
+@ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} * ${EnsembleVerifyObsEnsMeanJobSecondsPerMember} / 60
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
 setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 36
 
-setenv VerifyModelJobMinutes 2
+setenv VerifyModelJobMinutes 20
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
+set DeterministicDABaseMinutes = 20
+set ThreeDEnVarJobSecondsPerMember = 5
+@ ThreeDEnVarJobMinutes = ${ensPbNMembers} * ${ThreeDEnVarJobSecondsPerMember} / 60
+@ ThreeDEnVarJobMinutes = ${ThreeDEnVarJobMinutes} + ${DeterministicDABaseMinutes}
 
-set DeterministicDAJobMinutes = 10
-set EnsembleDAMembersPerJobMinute = 5
-@ CyclingDAJobMinutes = ${nEnsDAMembers} / ${EnsembleDAMembersPerJobMinute}
-@ CyclingDAJobMinutes = ${CyclingDAJobMinutes} + ${DeterministicDAJobMinutes}
-setenv CyclingDAMemory 45
-#setenv CyclingDAMemory 109
-if ( "$DAType" =~ *"eda"* ) then
-  setenv CyclingDANodesPerMember 2
-  setenv CyclingDAPEPerNode      18
-else
-  setenv CyclingDANodesPerMember 4
-  setenv CyclingDAPEPerNode      32
-endif
+# Variational
+setenv VariationalJobMinutes ${ThreeDEnVarJobMinutes}
+setenv VariationalMemory 109
+setenv VariationalNodesPerMember 4
+setenv VariationalPEPerNode 32
+setenv VariationalNodes ${VariationalNodesPerMember}
 
+# EnsembleOfVariational
+# not tested, likely infeasible
+set EnsembleDAJobSecondsPerMember = 10
+@ EnsOfVariationalJobMinutes = ${nEnsDAMembers} * ${EnsembleDAJobSecondsPerMember} / 60
+@ EnsOfVariationalJobMinutes = ${EnsOfVariationalJobMinutes} + ${ThreeDEnVarJobMinutes}
+setenv EnsOfVariationalMemory 109
+setenv EnsOfVariationalNodesPerMember 3
+setenv EnsOfVariationalPEPerNode      12
+@ EnsOfVariationalNodes = ${EnsOfVariationalNodesPerMember} * ${EDASize}
+setenv EnsOfVariationalNodes ${EnsOfVariationalNodes}
+
+# inflation, e.g., RTPP
 setenv CyclingInflationJobMinutes 25
 setenv CyclingInflationMemory 109
-setenv CyclingInflationNodesPerMember ${HofXNodes}
-setenv CyclingInflationPEPerNode      ${HofXPEPerNode}
-
-@ CyclingDAPEPerMember = ${CyclingDANodesPerMember} * ${CyclingDAPEPerNode}
-setenv CyclingDAPEPerMember ${CyclingDAPEPerMember}
-
-@ CyclingDANodes = ${CyclingDANodesPerMember} * ${nEnsDAMembers}
-setenv CyclingDANodes ${CyclingDANodes}
+setenv CyclingInflationNodes ${HofXNodes}
+setenv CyclingInflationPEPerNode ${HofXPEPerNode}
