@@ -29,19 +29,27 @@ set dd = `echo ${FirstCycleDate} | cut -c 7-8`
 set hh = `echo ${FirstCycleDate} | cut -c 9-10`
 setenv FirstFileDate ${yy}-${mm}-${dd}_${hh}.00.00
 
-## date from which first background is initialized
+## previous date from which first background is initialized
 set prevFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} -${CyclingWindowHR}`
-set yy = `echo ${prevFirstCycleDate} | cut -c 1-4`
-set mm = `echo ${prevFirstCycleDate} | cut -c 5-6`
-set dd = `echo ${prevFirstCycleDate} | cut -c 7-8`
-set hh = `echo ${prevFirstCycleDate} | cut -c 9-10`
-set prevFirstFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
+setenv prevFirstCycleDate ${prevFirstCycleDate}
+
+## next date from which first background is initialized
+set nextFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} +${CyclingWindowHR}`
+setenv nextFirstCycleDate ${nextFirstCycleDate}
+set Nyy = `echo ${nextFirstCycleDate} | cut -c 1-4`
+set Nmm = `echo ${nextFirstCycleDate} | cut -c 5-6`
+set Ndd = `echo ${nextFirstCycleDate} | cut -c 7-8`
+set Nhh = `echo ${nextFirstCycleDate} | cut -c 9-10`
+set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
+
+## Ungribbed initial conditions
+setenv ungribDir /glade/p/mmm/parc/liuz/pandac_common/ungrib_GFS_o3
 
 # externally sourced model states
 # -------------------------------
 ## deterministic - GFS
-setenv GFS6hfcFORFirstCycleOuter ${OuterModelData}/SingleFCFirstCycle/${prevFirstCycleDate}
-setenv GFS6hfcFORFirstCycleInner ${InnerModelData}/SingleFCFirstCycle/${prevFirstCycleDate}
+setenv GFS6hfcFORFirstCycleOuter ${OuterModelData}/SingleFCFirstCycle/${FirstCycleDate}
+setenv GFS6hfcFORFirstCycleInner ${InnerModelData}/SingleFCFirstCycle/${FirstCycleDate}
 
 # first cycle background state
 setenv firstDetermFCDirOuter ${GFS6hfcFORFirstCycleOuter}
@@ -52,7 +60,7 @@ set gefsMemFmt = "/{:02d}"
 set nGEFSMembers = 20
 set GEFS6hfcFOREnsBDir = ${EnsembleModelData}/EnsForCov
 set GEFS6hfcFOREnsBFilePrefix = EnsForCov
-set GEFS6hfcFORFirstCycle = ${EnsembleModelData}/EnsFCFirstCycle/${prevFirstCycleDate}
+set GEFS6hfcFORFirstCycle = ${EnsembleModelData}/EnsFCFirstCycle/${FirstCycleDate}
 
 # first cycle background states
 # TODO: determine firstEnsFCNMembers from source data
@@ -142,15 +150,15 @@ endif
 if ( "$DAType" =~ *"eda"* ) then
   # stochastic
   # 60km and 120km
-  setenv StaticFieldsDirOuter ${ModelData}/GEFS/init/000hr/${prevFirstCycleDate}
-  setenv StaticFieldsDirInner ${ModelData}/GEFS/init/000hr/${prevFirstCycleDate}
-  setenv StaticFieldsDirEnsemble ${ModelData}/GEFS/init/000hr/${prevFirstCycleDate}
+  setenv StaticFieldsDirOuter ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
+  setenv StaticFieldsDirInner ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
+  setenv StaticFieldsDirEnsemble ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
   setenv staticMemFmt "${gefsMemFmt}"
 
   #TODO: switch to using FirstFileDate static files for GEFS
-  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${prevFirstFileDate}.nc
-  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${prevFirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${prevFirstFileDate}.nc
+  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
+  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
+  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
 else
   # deterministic
   # 30km, 60km, and 120km

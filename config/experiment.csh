@@ -30,7 +30,7 @@ setenv MPASGridDescriptor OIE120km
 #     - TODO: standardize GFS and observation source data
 #     - TODO: enable QC
 #     - TODO: enable VarBC
-setenv FirstCycleDate 2018041500
+setenv FirstCycleDate 2018041418
 
 ## benchmarkObsList
 # base set of observation types assimilated in all experiments

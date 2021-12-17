@@ -5,6 +5,10 @@ source config/experiment.csh
 # job length and node/pe requirements
 # ===================================
 
+@ InitICJobMinutes = 1
+setenv InitICNodes 1
+setenv InitICPEPerNode 36
+
 @ CyclingFCJobMinutes = 5 + (5 * $CyclingWindowHR / 6)
 setenv CyclingFCNodes 8
 setenv CyclingFCPEPerNode 32

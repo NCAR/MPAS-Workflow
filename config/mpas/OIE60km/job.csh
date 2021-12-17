@@ -6,6 +6,10 @@ source config/modeldata.csh
 # job length and node/pe requirements
 # ===================================
 
+@ InitICJobMinutes = 1
+setenv InitICNodes 1
+setenv InitICPEPerNode 36
+
 @ CyclingFCJobMinutes = 1 + (3 * $CyclingWindowHR / 6)
 setenv CyclingFCNodes 4
 setenv CyclingFCPEPerNode 36
