@@ -20,12 +20,6 @@ if ( $ArgMember < 1 ) then
   exit 1
 endif
 
-## arg to get the initialization type
-#       cold: initial condition is produced from MPAS's init executable (i.e., core_init_atmosphere)
-#       warm: initial condition is an output state from a previous MPAS forecast (i.e., core_atmosphere)
-# OPTIONS: cold/warm
-set initType = "$2"
-
 # Setup environment
 # =================
 source config/experiment.csh
@@ -62,26 +56,25 @@ set self_ModelConfigDir = $forecastModelConfigDir
 
 # ================================================================================================
 
-## copy static fields
+## copy static fields and link initial forecast state
 rm ${localStaticFieldsPrefix}*.nc
 rm ${localStaticFieldsPrefix}*.nc-lock
 set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
-set StaticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
-set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
-
-## link initial forecast state
 set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
-if ( ${initType} == "cold" ) then
+if ( ${InitializationType} == "ColdStart" ) then
   set initialState = ${InitICDir}/${InitFilePrefixOuter}.${icFileExt}
   set do_DAcycling = "false"
-else if ( ${initType} == "warm" ) then
+  ln -sfv ${initialState} ${localStaticFieldsFile}
+else if ( ${InitializationType} == "WarmStart" ) then
   set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
   set do_DAcycling = "true"
+  set StaticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
+  set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
+  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+  cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 endif
 ln -sfv ${initialState} ./${icFile}
 
@@ -167,8 +160,10 @@ else
   endif
 
   ## change static fields to a link, keeping for transparency
-  rm ${localStaticFieldsFile}
-  mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
+  if ( ${InitializationType} == "WarmStart" ) then
+    rm ${localStaticFieldsFile}
+    mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
+  endid
 endif
 
 if ( "$deleteZerothForecast" == "True" ) then

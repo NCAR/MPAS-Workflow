@@ -5,24 +5,10 @@
 ## load experiment configuration
 source config/experiment.csh
 
-#######################
-# workflow date control
-#######################
-## InitializationType
-# Indicates the type of initialization at the initial cycle: cold, warm, or re- start
-# OPTIONS:
-#   ColdStart - generate first forecast online from an external GFS analysis
-#   WarmStart - copy a pre-generated forecast
-#     ReStart - restart the cycling/suite from any cycle
-#               run from a warm start forecast produced within an already existing workflow, which
-#               was originally initiated from either a warm or cold start initial condition
-set InitializationType = WarmStart
-
 ## Set the cycle hours (cyclingCycles) according to the initialization type defined in config/experiment.csh
 if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart") then
   # Create the experiment directory and cylc task scripts
   ./SetupWorkflow.csh
-
   # The initialCyclePoint is the same as FirstCycleDate when starting a new experiment
   set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
   set hh = `echo ${FirstCycleDate} | cut -c 9-10`
@@ -46,7 +32,7 @@ endif
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180514T18
+set finalCyclePoint = 20180614T18
 
 
 #########################
@@ -472,10 +458,10 @@ cat >! suite.rc << EOF
     script = \$origin/CleanVariational.csh
   # forecast-related components
   [[UngribColdStartIC]]
-    inherit = CyclingFCBase
     script = \$origin/UngribColdStartIC.csh
     [[[job]]]
-      execution retry delays = ${CyclingFCRetry}
+      execution time limit = PT5M
+      execution retry delays = ${InitializationRetry}
     [[[directives]]]
       -m = ae
       -q = share
@@ -490,7 +476,7 @@ cat >! suite.rc << EOF
       -l = select=${InitICNodes}:ncpus=${InitICPEPerNode}:mpiprocs=${InitICPEPerNode}
   [[ColdStartFC]]
     inherit = CyclingFCBase
-    script = \$origin/CyclingFC.csh "1" "cold"
+    script = \$origin/CyclingFC.csh "1"
     [[[job]]]
       execution retry delays = ${CyclingFCRetry}
   [[CyclingFC]]
@@ -498,7 +484,7 @@ cat >! suite.rc << EOF
 {% for mem in EnsDAMembers %}
   [[CyclingFCMember{{mem}}]]
     inherit = CyclingFC
-    script = \$origin/CyclingFC.csh "{{mem}}" "warm"
+    script = \$origin/CyclingFC.csh "{{mem}}"
     [[[job]]]
       execution retry delays = ${CyclingFCRetry}
 {% endfor %}
@@ -515,7 +501,7 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
-    script = \$origin/ExtendedMeanFC.csh "1" "warm"
+    script = \$origin/ExtendedMeanFC.csh "1"
   [[HofXMeanFC]]
     inherit = HofXBase
   [[VerifyModelMeanFC]]
@@ -581,7 +567,7 @@ cat >! suite.rc << EOF
 ## Extended ensemble forecasts and verification
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
-    script = \$origin/ExtendedEnsFC.csh "{{mem}}" "warm"
+    script = \$origin/ExtendedEnsFC.csh "{{mem}}"
   [[HofXEnsFC{{mem}}]]
     inherit = HofXBase
   [[VerifyModelEnsFC{{mem}}]]

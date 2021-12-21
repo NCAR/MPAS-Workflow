@@ -5,20 +5,13 @@ source config/filestructure.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 
+source config/${InitializationType}ModelData.csh
+echo 'InitICWorkDir== ' $InitICWorkDir
 
 ####################
 ## static data files
 ####################
 ## common directories
-set ModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input
-set OuterModelData = ${ModelData}/${MPASGridDescriptorOuter}
-set InnerModelData = ${ModelData}/${MPASGridDescriptorInner}
-set EnsembleModelData = ${ModelData}/${MPASGridDescriptorEnsemble}
-
-set GFSAnaDirOuter = ${OuterModelData}/GFSAna
-set GFSAnaDirInner = ${InnerModelData}/GFSAna
-set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
-
 ## GFS analyses for model-space verification
 setenv GFSAnaDirVerify ${GFSAnaDirOuter}
 

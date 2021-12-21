@@ -37,7 +37,7 @@ setenv ExperimentName ${ExperimentName}${ExpSuffix}
 set ExpDir = ${TopExpDir}/${ExperimentName}
 
 ## immediate subdirectories
-setenv InitICWorkDir ${ExpDir}/InitIC
+#setenv InitICWorkDir ${ExpDir}/InitIC
 setenv CyclingDAWorkDir ${ExpDir}/CyclingDA
 setenv CyclingFCWorkDir ${ExpDir}/CyclingFC
 setenv CyclingInflationWorkDir ${ExpDir}/CyclingInflation
