@@ -45,7 +45,6 @@ cost function:
     date: *analysisDate
   background error:
     covariance model: ensemble
-    date: *analysisDate
     localization:
       localization method: SABER
       saber block:
@@ -58,7 +57,6 @@ cost function:
           strategy: common
           load_nicas_local: true
           verbosity: main
-    variables: *incvars
     members:
 EnsemblePbMembers
 EnsemblePbInflation
