@@ -4,11 +4,18 @@ date
 
 # Setup environment
 # =================
+<<<<<<< HEAD
 source config/environment.csh
+=======
+>>>>>>> origin/develop
 source config/filestructure.csh
 source config/modeldata.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
+<<<<<<< HEAD
+=======
+source config/environment.csh
+>>>>>>> origin/develop
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -19,9 +26,18 @@ source ./getCycleVars.csh
 echo "WorkDir = ${InitICDir}"
 mkdir -p ${InitICDir}
 cd ${InitICDir}
+<<<<<<< HEAD
 module list
 # ================================================================================================
 
+=======
+
+# ================================================================================================
+
+## link ungribbed GFS
+ln -sfv ${ungribDir}/GFS:${ICfileDate} ./GFS:${ICfileDate}
+
+>>>>>>> origin/develop
 ## link MPAS mesh graph info and static field
 rm ./x1.${MPASnCellsOuter}.graph.info*
 ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .

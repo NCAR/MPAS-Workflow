@@ -37,7 +37,6 @@ setenv ExperimentName ${ExperimentName}${ExpSuffix}
 set ExpDir = ${TopExpDir}/${ExperimentName}
 
 ## immediate subdirectories
-#setenv InitICWorkDir ${ExpDir}/InitIC
 setenv CyclingDAWorkDir ${ExpDir}/CyclingDA
 setenv CyclingFCWorkDir ${ExpDir}/CyclingFC
 setenv CyclingInflationWorkDir ${ExpDir}/CyclingInflation
@@ -88,7 +87,10 @@ setenv NamelistFile namelist.${MPASCore}
 
 setenv StreamsFileInit streams.init_${MPASCore}
 setenv NamelistFileInit namelist.init_${MPASCore}
+<<<<<<< HEAD
 setenv NamelistFileWPS namelist.wps
+=======
+>>>>>>> origin/develop
 
 setenv TemplateFieldsPrefix templateFields
 setenv TemplateFieldsFileOuter ${TemplateFieldsPrefix}.${MPASnCellsOuter}.nc

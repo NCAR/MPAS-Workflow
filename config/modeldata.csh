@@ -9,10 +9,6 @@ source config/${InitializationType}ModelData.csh
 ####################
 ## static data files
 ####################
-## common directories
-## GFS analyses for model-space verification
-#setenv GFSAnaDirVerify ${GFSAnaDirOuter}
-
 ## file date for first background
 set yy = `echo ${FirstCycleDate} | cut -c 1-4`
 set mm = `echo ${FirstCycleDate} | cut -c 5-6`
@@ -128,7 +124,6 @@ endif
 setenv GraphInfoDir /glade/work/duda/static_moved_to_campaign
 
 ## sea/ocean surface files
-#setenv updateSea 1
 setenv seaMaxMembers ${nGEFSMembers}
 setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
 setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
