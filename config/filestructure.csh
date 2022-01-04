@@ -87,10 +87,7 @@ setenv NamelistFile namelist.${MPASCore}
 
 setenv StreamsFileInit streams.init_${MPASCore}
 setenv NamelistFileInit namelist.init_${MPASCore}
-<<<<<<< HEAD
 setenv NamelistFileWPS namelist.wps
-=======
->>>>>>> origin/develop
 
 setenv TemplateFieldsPrefix templateFields
 setenv TemplateFieldsFileOuter ${TemplateFieldsPrefix}.${MPASnCellsOuter}.nc
