@@ -94,3 +94,9 @@ set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set NMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set ConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
 set ICfileDate = ${yy}-${mm}-${dd}_${hh}
+
+if ( ${InitializationType} == "ColdStart" ) then
+  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${FirstCycleDate}
+  setenv StaticFieldsDirInner ${GFSAnaDirInner}/${FirstCycleDate}
+endif
+setenv GFSAnaDirVerify ${GFSAnaDirEnsemble}/${thisCycleDate}

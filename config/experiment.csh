@@ -44,7 +44,7 @@ setenv FirstCycleDate 2018041418
 #     ReStart - restart the cycling/suite from any cycle
 #               run from a warm start forecast produced within an already existing workflow, which
 #               was originally initiated from either a warm or cold start initial condition
-setenv InitializationType ColdStart
+setenv InitializationType WarmStart
 
 
 ## benchmarkObsList
@@ -94,7 +94,7 @@ set variationalObsList = ($l)
 
 ## DAType
 # OPTIONS: 3denvar, eda_3denvar, 3dvarId
-setenv DAType 3denvar
+setenv DAType eda_3denvar
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations

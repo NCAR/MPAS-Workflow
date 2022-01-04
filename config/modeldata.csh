@@ -4,16 +4,14 @@ source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
-
 source config/${InitializationType}ModelData.csh
-echo 'InitICWorkDir== ' $InitICWorkDir
 
 ####################
 ## static data files
 ####################
 ## common directories
 ## GFS analyses for model-space verification
-setenv GFSAnaDirVerify ${GFSAnaDirOuter}
+#setenv GFSAnaDirVerify ${GFSAnaDirOuter}
 
 ## file date for first background
 set yy = `echo ${FirstCycleDate} | cut -c 1-4`
@@ -130,7 +128,7 @@ endif
 setenv GraphInfoDir /glade/work/duda/static_moved_to_campaign
 
 ## sea/ocean surface files
-setenv updateSea 1
+#setenv updateSea 1
 setenv seaMaxMembers ${nGEFSMembers}
 setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
 setenv deterministicSeaAnaDir ${GFSAnaDirOuter}

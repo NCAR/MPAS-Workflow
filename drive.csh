@@ -32,7 +32,7 @@ endif
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180614T18
+set finalCyclePoint = 20180514T18
 
 
 #########################

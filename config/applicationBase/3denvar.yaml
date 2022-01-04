@@ -47,14 +47,17 @@ cost function:
     covariance model: ensemble
     date: *analysisDate
     localization:
-      localization method: BUMP
-      localization variables: *incvars
-      bump:
-        datadir: bumpLocDir
-        prefix: bumpLocPrefix
-        strategy: common
-        load_nicas_local: 1
-        verbosity: main
+      localization method: SABER
+      saber block:
+        saber block name: BUMP_NICAS
+        input variables: *incvars
+        output variables: *incvars
+        bump:
+          datadir: bumpLocDir
+          prefix: bumpLocPrefix
+          strategy: common
+          load_nicas_local: true
+          verbosity: main
     variables: *incvars
     members:
 EnsemblePbMembers
