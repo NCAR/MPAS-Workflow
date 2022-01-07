@@ -25,7 +25,7 @@
     horizontal_mesh: RADTHINDISTANCE #km
   - filter: Perform Action
     apply at iterations: 0, 1, 2, 3, 4, 5
-    filter variables:
+    filter variables: &errorAssignFilterVariables_abi_g16
     - name: brightness_temperature
       channels: *abi_g16_channels
 #  - filter: Domain Check
@@ -67,16 +67,27 @@
 ## 60 km, no bias correction - copy of 30km
         <<: *abi_g16_SymmCldFits15X15-30km
       error function:
-        name: ObsErrorModelRamp@ObsFunction
+        name: ObsFunction/Polynomial2D
         channels: *abi_g16_channels
         options:
-          <<: *abi_g16_SymmCldFitsABISUPEROBGRID-HofXMeshDescriptor
-          channels: *abi_g16_channels
+          <<: *abi_g16_fit2D_CldFrac2D_degreePOLYNOMIAL2DFITDEGREE
+          filter variables: *errorAssignFilterVariables_abi_g16
           xvar:
-            name: SymmCldImpactIR@ObsFunction
-            channels: *abi_g16_channels
+            name: MetaData/cloud_area_fraction
+          yvar:
+            name: ObsFunction/MaxColumnGeoVaLs
             options:
-              channels: *abi_g16_channels
+              geophysical variable: cloud_area_fraction_in_atmosphere_layer
+#        name: ObsErrorModelRamp@ObsFunction
+#        channels: *abi_g16_channels
+#        options:
+#          <<: *abi_g16_SymmCldFitsABISUPEROBGRID-HofXMeshDescriptor
+#          channels: *abi_g16_channels
+#          xvar:
+#            name: SymmCldImpactIR@ObsFunction
+#            channels: *abi_g16_channels
+#            options:
+#              channels: *abi_g16_channels
 #  ## damp impact of all-sky radiances in the first outer iteration
 #  - filter: Perform Action
 #    apply at iterations: 0
