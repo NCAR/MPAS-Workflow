@@ -6,7 +6,7 @@
     obsdataout:
       obsfile: OutDBDir/obsPrefix_abi_g16.h5
     simulated variables: [brightness_temperature]
-    channels: &abi_channels 7-16
+    channels: &abi_g16_channels 7-16
   obs error: *ObsErrorDiagonal
   obs operator:
     <<: *cloudyCRTMObsOperator
@@ -22,9 +22,9 @@
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
   - filter: Perform Action
-    filter variables:
+    filter variables: &errorAssignFilterVariables_abi_g16
     - name: brightness_temperature
-      channels: *abi_channels
+      channels: *abi_g16_channels
 #  - filter: Domain Check
 #    where:
 #    - variable:
@@ -59,32 +59,43 @@
         err0: [2.18, 2.06, 1.35, 3.10, 1.62, 4.11, 1.54, 1.33, 1.77, 1.94]
         err1: [28.22, 27.64, 22.93, 21.59, 14.68, 19.97, 17.25, 17.77, 25.72, 27.92]
       error function:
-        name: ObsErrorModelRamp@ObsFunction
-        channels: *abi_channels
+        name: ObsFunction/Polynomial2D
+        channels: *abi_g16_channels
         options:
-          <<: *abi_g16_SymmCldFitsABISUPEROBGRID-HofXMeshDescriptor
-          channels: *abi_channels
+          <<: *abi_g16_fit2D_CldFrac2D_degreePOLYNOMIAL2DFITDEGREE
+          filter variables: *errorAssignFilterVariables_abi_g16
           xvar:
-            name: SymmCldImpactIR@ObsFunction
-            channels: *abi_channels
+            name: MetaData/cloud_area_fraction
+          yvar:
+            name: ObsFunction/MaxColumnGeoVaLs
             options:
-              channels: *abi_channels
+              geophysical variable: cloud_area_fraction_in_atmosphere_layer
+#        name: ObsErrorModelRamp@ObsFunction
+#        channels: *abi_g16_channels
+#        options:
+#          <<: *abi_g16_SymmCldFitsABISUPEROBGRID-HofXMeshDescriptor
+#          channels: *abi_g16_channels
+#          xvar:
+#            name: SymmCldImpactIR@ObsFunction
+#            channels: *abi_g16_channels
+#            options:
+#              channels: *abi_g16_channels
   - filter: GOMsaver
     filename: OutDBDir/geoPrefix_abi_g16.nc4
   - filter: YDIAGsaver
     filename: OutDBDir/diagPrefix_abi_g16.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
-      channels: *abi_channels
+      channels: *abi_g16_channels
     - name: weightingfunction_of_atmosphere_layer
-      channels: *abi_channels
+      channels: *abi_g16_channels
     - name: pressure_level_at_peak_of_weightingfunction
-      channels: *abi_channels
+      channels: *abi_g16_channels
     - name: brightness_temperature_jacobian_air_temperature
-      channels: *abi_channels
+      channels: *abi_g16_channels
     - name: brightness_temperature_jacobian_humidity_mixing_ratio
-      channels: *abi_channels
+      channels: *abi_g16_channels
     - name: brightness_temperature_jacobian_surface_emissivity
-      channels: *abi_channels
+      channels: *abi_g16_channels
     - name: brightness_temperature_jacobian_surface_temperature
-      channels: *abi_channels
+      channels: *abi_g16_channels

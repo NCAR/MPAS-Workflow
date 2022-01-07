@@ -307,12 +307,24 @@ cat >! ${thisSEDF} << EOF
 /${obsanchorssed}/c\
 EOF
 
-# substitute with line breaks
-set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${obsanchorssed}.yaml
-sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+# add base anchors
+foreach SUBYAML (${ConfigDir}/ObsPlugs/${self_AppType}/${obsanchorssed}.yaml)
+  # concatenate with line breaks substituted
+  sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+end
+
+# add anchors for allSkyIR Polynomial2D fits
+set POLYNOMIAL2DFITDEGREE = 8
+foreach InfraredInstrument (abi_g16 ahi_himawari8)
+  set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
+  # concatenate with line breaks substituted
+  sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+end
+
+# add _blank key to account for extra line break above
 echo '_blank: null' >> ${thisSEDF}
 
-# insert into prevYAML
+# finally, insert into prevYAML
 set thisYAML = insertObsAnchors.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
@@ -329,6 +341,7 @@ sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
 sed -i 's@ABISUPEROBGRID@'${ABISUPEROBGRID}'@g' $thisYAML
 sed -i 's@AHISUPEROBGRID@'${AHISUPEROBGRID}'@g' $thisYAML
 sed -i 's@HofXMeshDescriptor@'${HofXMeshDescriptor}'@' $thisYAML
+sed -i 's@POLYNOMIAL2DFITDEGREE@'${POLYNOMIAL2DFITDEGREE}'@' $thisYAML
 
 
 ## date-time information

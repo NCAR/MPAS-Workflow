@@ -6,7 +6,7 @@
     obsdataout:
       obsfile: OutDBDir/obsPrefix_ahi_himawari8.h5
     simulated variables: [brightness_temperature]
-    channels: &ahi_channels 7-16
+    channels: &ahi_himawari8_channels 7-16
   obs error: *ObsErrorDiagonal
   obs operator:
     <<: *cloudyCRTMObsOperator
@@ -22,9 +22,9 @@
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
   - filter: Perform Action
-    filter variables:
+    filter variables: &errorAssignFilterVariables_ahi_himawari8
     - name: brightness_temperature
-      channels: *ahi_channels
+      channels: *ahi_himawari8_channels
 #  - filter: Domain Check
 #    where:
 #    - variable:
@@ -51,32 +51,43 @@
 ## 30 km, no bias correction - copy of 120km
         <<: *ahi_himawari8_SymmCldFits15X15-120km
       error function:
-        name: ObsErrorModelRamp@ObsFunction
-        channels: *ahi_channels
+        name: ObsFunction/Polynomial2D
+        channels: *ahi_himawari8_channels
         options:
-          <<: *ahi_himawari8_SymmCldFitsAHISUPEROBGRID-HofXMeshDescriptor
-          channels: *ahi_channels
+          <<: *ahi_himawari8_fit2D_CldFrac2D_degreePOLYNOMIAL2DFITDEGREE
+          filter variables: *errorAssignFilterVariables_ahi_himawari8
           xvar:
-            name: SymmCldImpactIR@ObsFunction
-            channels: *ahi_channels
+            name: MetaData/cloud_area_fraction
+          yvar:
+            name: ObsFunction/MaxColumnGeoVaLs
             options:
-              channels: *ahi_channels
+              geophysical variable: cloud_area_fraction_in_atmosphere_layer
+#        name: ObsErrorModelRamp@ObsFunction
+#        channels: *ahi_himawari8_channels
+#        options:
+#          <<: *ahi_himawari8_SymmCldFitsAHISUPEROBGRID-HofXMeshDescriptor
+#          channels: *ahi_himawari8_channels
+#          xvar:
+#            name: SymmCldImpactIR@ObsFunction
+#            channels: *ahi_himawari8_channels
+#            options:
+#              channels: *ahi_himawari8_channels
   - filter: GOMsaver
     filename: OutDBDir/geoPrefix_ahi_himawari8.nc4
   - filter: YDIAGsaver
     filename: OutDBDir/diagPrefix_ahi_himawari8.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
-      channels: *ahi_channels
+      channels: *ahi_himawari8_channels
     - name: weightingfunction_of_atmosphere_layer
-      channels: *ahi_channels
+      channels: *ahi_himawari8_channels
     - name: pressure_level_at_peak_of_weightingfunction
-      channels: *ahi_channels
+      channels: *ahi_himawari8_channels
     - name: brightness_temperature_jacobian_air_temperature
-      channels: *ahi_channels
+      channels: *ahi_himawari8_channels
     - name: brightness_temperature_jacobian_humidity_mixing_ratio
-      channels: *ahi_channels
+      channels: *ahi_himawari8_channels
     - name: brightness_temperature_jacobian_surface_emissivity
-      channels: *ahi_channels
+      channels: *ahi_himawari8_channels
     - name: brightness_temperature_jacobian_surface_temperature
-      channels: *ahi_channels
+      channels: *ahi_himawari8_channels
