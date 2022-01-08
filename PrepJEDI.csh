@@ -313,11 +313,30 @@ foreach SUBYAML (${ConfigDir}/ObsPlugs/${self_AppType}/${obsanchorssed}.yaml)
   sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 end
 
-# add anchors for allSkyIR Polynomial2D fits
+# add anchors for allSkyIR ObsError fits
+
+# allSkyIR ObsAnchors (channel selection)
+set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${self_AppType}/ObsAnchors.yaml
+sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+
+# ALLSKYERRORFUNCTIONNAME
+# TODO: move to experiment.csh? maybe keep it here as a lower level control knob
+# function used for the all-sky IR ObsError parameterization
+# Options: Polynomial2D, Okamoto
+set ALLSKYERRORFUNCTIONNAME = Polynomial2D
+
+#POLYNOMIAL2DFITDEGREE
+# 2d polynomial fit degree for CFxMax vs. CFy, only applies when ALLSKYERRORFUNCTIONNAME==Polynomial2D
+# Options: integer, 2 to 12
 set POLYNOMIAL2DFITDEGREE = 8
+
 foreach InfraredInstrument (abi_g16 ahi_himawari8)
+  # polynomial2d fit parameters
   set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
-  # concatenate with line breaks substituted
+  sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+
+  # assign error function anchor (Polynomial2D depends on fit parameters being added first above)
+  set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${self_AppType}/${ALLSKYERRORFUNCTIONNAME}AssignErrorFunction_${InfraredInstrument}.yaml
   sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 end
 
@@ -342,6 +361,7 @@ sed -i 's@ABISUPEROBGRID@'${ABISUPEROBGRID}'@g' $thisYAML
 sed -i 's@AHISUPEROBGRID@'${AHISUPEROBGRID}'@g' $thisYAML
 sed -i 's@HofXMeshDescriptor@'${HofXMeshDescriptor}'@' $thisYAML
 sed -i 's@POLYNOMIAL2DFITDEGREE@'${POLYNOMIAL2DFITDEGREE}'@' $thisYAML
+sed -i 's@ALLSKYERRORFUNCTIONNAME@'${ALLSKYERRORFUNCTIONNAME}'@' $thisYAML
 
 
 ## date-time information

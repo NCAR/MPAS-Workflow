@@ -1,0 +1,8 @@
+_abi_g16 channels: &abi_g16_channels 8-10
+_ahi_himawari8 channels: &ahi_himawari8_channels 8-10
+_error assign filter variables ahi_himawari8: &errorAssignFilterVariables_ahi_himawari8
+- name: brightness_temperature
+  channels: *ahi_himawari8_channels
+_error assign filter variables abi_g16: &errorAssignFilterVariables_abi_g16
+- name: brightness_temperature
+  channels: *abi_g16_channels
