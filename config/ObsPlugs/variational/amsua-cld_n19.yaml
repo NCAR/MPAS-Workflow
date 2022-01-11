@@ -20,7 +20,7 @@
     maxvalue: 0
   - filter: Background Check
     threshold: 3
-    apply at iterations: 0, 1
+    <<: *multiIterationFilter
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
