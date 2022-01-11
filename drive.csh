@@ -19,7 +19,8 @@ set initialCyclePoint = 20180415T00
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180421T00
+#set finalCyclePoint = 20180421T00
+set finalCyclePoint = 20180415T06
 
 
 #########################
