@@ -34,7 +34,9 @@ setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
 setenv ExperimentNameWithoutSuffix ${ExperimentName}
 setenv ExperimentName ${ExperimentName}${ExpSuffix}
 
-set ExpDir = ${TopExpDir}/${ExperimentName}
+#set ExpDir = ${TopExpDir}/${ExperimentName}
+set ExpDir = /glade/scratch/yonggangyu/br_autotest/cycling/d_2022-01-10_13.32.05
+
 
 ## immediate subdirectories
 setenv InitICWorkDir ${ExpDir}/InitIC
