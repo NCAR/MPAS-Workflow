@@ -35,6 +35,9 @@ setenv ExperimentNameWithoutSuffix ${ExperimentName}
 setenv ExperimentName ${ExperimentName}${ExpSuffix}
 
 set ExpDir = ${TopExpDir}/${ExperimentName}
+set ExpDir = /glade/scratch/yonggangyu/br_autotest/cycling/JJ_hx_only_30km
+
+
 
 ## immediate subdirectories
 setenv InitICWorkDir ${ExpDir}/InitIC
