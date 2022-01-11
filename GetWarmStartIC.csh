@@ -30,7 +30,8 @@ while ( $member <= ${nEnsDAMembers} )
         set innerFCDir = $CyclingFCDirs[$member]/Inner
         mkdir -p ${innerFCDir}
         set fcFile = $innerFCDir/${FCFilePrefix}.${nextFirstFileDate}.nc
-        set InitialMemberFC = "$firstFCDirOuter"`${memberDir} ens $member "${firstFCMemFmt}"`
+        #set InitialMemberFC = "$firstFCDirOuter"`${memberDir} ens $member "${firstFCMemFmt}"`
+        set InitialMemberFC = "$firstFCDirInner"`${memberDir} ens $member "${firstFCMemFmt}"`
         ln -sfv ${InitialMemberFC}/${firstFCFilePrefix}.${nextFirstFileDate}.nc ${fcFile}${OrigFileSuffix}
         # rm ${fcFile}
         cp ${fcFile}${OrigFileSuffix} ${fcFile}

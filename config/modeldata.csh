@@ -16,10 +16,6 @@ set dd = `echo ${FirstCycleDate} | cut -c 7-8`
 set hh = `echo ${FirstCycleDate} | cut -c 9-10`
 setenv FirstFileDate ${yy}-${mm}-${dd}_${hh}.00.00
 
-## previous date from which first background is initialized
-set prevFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} -${CyclingWindowHR}`
-setenv prevFirstCycleDate ${prevFirstCycleDate}
-
 ## next date from which first background is initialized
 set nextFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} +${CyclingWindowHR}`
 setenv nextFirstCycleDate ${nextFirstCycleDate}
