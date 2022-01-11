@@ -366,8 +366,8 @@ while ( $member <= ${nEnsDAMembers} )
     #modify "Inner" initial forecast file
     # TODO: capture the naming convention for FirstCyclingFCDir somewhere else
     set memDir = `${memberDir} $DAType 1`
-    set FirstCyclingFCDir = ${CyclingFCWorkDir}/${prevFirstCycleDate}${memDir}/Inner
-    cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${FirstFileDate}.nc $tFile
+    set FirstCyclingFCDir = ${CyclingFCWorkDir}/${FirstCycleDate}${memDir}/Inner
+    cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
 
     # modify xtime
     echo "${updateXTIME} $tFile ${thisCycleDate}"
