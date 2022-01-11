@@ -46,7 +46,7 @@ endif
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180514T18
+set finalCyclePoint = 20180415T00
 
 
 #########################
@@ -55,7 +55,7 @@ set finalCyclePoint = 20180514T18
 ## CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
 # OPTIONS: Normal, Bypass, Reanalysis, Reforecast
-set CriticalPathType = Normal
+set CriticalPathType = Bypass
 
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.

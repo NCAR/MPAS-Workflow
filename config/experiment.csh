@@ -20,7 +20,7 @@
 #   + TODO: "OIE120km" 4denvar
 #   + TODO: "OIE60km" 4denvar
 #   + TODO: "O30kmIE60km" dual-resolution 4denvar
-setenv MPASGridDescriptor OIE120km
+setenv MPASGridDescriptor O30kmIE60km
 
 ## FirstCycleDate
 # initial date of this experiment
@@ -49,7 +49,7 @@ set benchmarkObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = ''
+set ExpSuffix = '_HofXOnly'
 
 ##############
 ## DA settings
@@ -79,7 +79,7 @@ set variationalObsList = ($l)
 
 ## DAType
 # OPTIONS: 3denvar, eda_3denvar, 3dvarId
-setenv DAType eda_3denvar
+setenv DAType 3denvar
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
