@@ -193,6 +193,9 @@ end
 rm -r ${InDBDir}
 mkdir -p ${InDBDir}
 rm -r ${OutDBDir}
+
+#TODO: member-dependence is only needed for the Variationl task
+#      move this to PrepVariational.csh and HofX.csh
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set memDir = `${memberDir} $self_AppName $member`
@@ -319,35 +322,88 @@ end
 set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${self_AppType}/ObsAnchors.yaml
 sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 
-# ALLSKYERRORFUNCTIONNAME
+# allSkyIRErrorType
 # TODO: move to experiment.csh? maybe keep it here as a lower level control knob
 # function used for the all-sky IR ObsError parameterization
-# Options: Polynomial2D, Okamoto
-set ALLSKYERRORFUNCTIONNAME = Polynomial2D
+# Options: Okamoto, Polynomial2D, Polynomial2DByLatBand
+set allSkyIRErrorType = Polynomial2DByLatBand
 
 #POLYNOMIAL2DFITDEGREE
-# 2d polynomial fit degree for CFxMax vs. CFy, only applies when ALLSKYERRORFUNCTIONNAME==Polynomial2D
+# 2d polynomial fit degree for CFxMax vs. CFy, only applies when allSkyIRErrorType==Polynomial2D
 # Options: integer, 2 to 12
 set POLYNOMIAL2DFITDEGREE = 8
 
-foreach InfraredInstrument (abi_g16 ahi_himawari8)
-  # polynomial2d fit parameters
-  set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
-  sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+if ($allSkyIRErrorType == Okamoto) then
+  foreach InfraredInstrument (abi_g16 ahi_himawari8)
+    # assign error function anchor
+    set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${self_AppType}/${allSkyIRErrorType}AssignErrorFunction_${InfraredInstrument}.yaml
+    sed 's@HofXMeshDescriptor@'${HofXMeshDescriptor}'@g' ${SUBYAML} > tempYAML
+    sed 's@$@\\@' tempYAML >> ${thisSEDF}
+    rm tempYAML
+  end
+else
+  foreach InfraredInstrument (abi_g16 ahi_himawari8)
+    # polynomial2d fit parameters
+    if ($allSkyIRErrorType == Polynomial2D) then
+      set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
+      sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+    else if ($allSkyIRErrorType == Polynomial2DByLatBand) then
+      foreach LatBand (NXTro Tro SXTro)
+        set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_${LatBand}_0min_${InfraredInstrument}.yaml
+        sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+      end
+    else
+      echo "ERROR in $0 : invalid allSkyIRErrorType=${allSkyIRErrorType}" > ./FAIL
+      exit 1
+    endif
 
-  # assign error function anchor (Polynomial2D depends on fit parameters being added first above)
-  set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${self_AppType}/${ALLSKYERRORFUNCTIONNAME}AssignErrorFunction_${InfraredInstrument}.yaml
-  sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
-end
-
+    # assign error function anchor (Polynomial2D depends on fit parameters being added first above)
+    set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${allSkyIRErrorType}AssignErrorFunction_InfraredInstrument.yaml
+    sed 's@InfraredInstrument@'${InfraredInstrument}'@g' ${SUBYAML} > tempYAML
+    sed -i 's@POLYNOMIAL2DFITDEGREE@'${POLYNOMIAL2DFITDEGREE}'@g' tempYAML
+    sed 's@$@\\@' tempYAML >> ${thisSEDF}
+    rm tempYAML
+  end
+endif
 # add _blank key to account for extra line break above
-echo '_blank: null' >> ${thisSEDF}
+#echo '_blank: null' >> ${thisSEDF}
 
 # finally, insert into prevYAML
 set thisYAML = insertObsAnchors.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
+
+# (iv) substitute allsky IR PerformActionFilters
+set nIndent = $applicationObsIndent[$myAppIndex]
+@ nIndent = $nIndent + 2
+set filtersIndent = "`${nSpaces} $nIndent`"
+
+foreach InfraredInstrument (abi_g16 ahi_himawari8)
+  set performactionsed = PerformActionFilters_${InfraredInstrument}
+  set performactiontemplate = PerformActionFilters_InfraredInstrument
+  set thisSEDF = ${performactionsed}SEDF.yaml
+cat >! ${thisSEDF} << EOF
+/${performactionsed}/c\
+EOF
+
+  # add base anchors
+  foreach SUBYAML (${ConfigDir}/ObsPlugs/allSkyIR/${allSkyIRErrorType}${performactiontemplate}.yaml)
+    # concatenate with line breaks substituted
+    sed 's@$@\\@' ${SUBYAML} > tempYAML
+    sed -i 's@InfraredInstrument@'${InfraredInstrument}'@g' tempYAML
+    sed 's@^@'"$filtersIndent"'@' tempYAML >> ${thisSEDF}
+    rm tempYAML
+  end
+  # add _blank key to account for extra line break above
+  #echo ${filtersIndent}'      _blank: null' >> ${thisSEDF}
+
+  # finally, insert into prevYAML
+  set thisYAML = insert${allSkyIRErrorType}${performactionsed}.yaml
+  sed -f ${thisSEDF} $prevYAML >! $thisYAML
+  rm ${thisSEDF}
+  set prevYAML = $thisYAML
+end
 
 
 ## Horizontal interpolation type
@@ -359,9 +415,6 @@ sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
 sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
 sed -i 's@ABISUPEROBGRID@'${ABISUPEROBGRID}'@g' $thisYAML
 sed -i 's@AHISUPEROBGRID@'${AHISUPEROBGRID}'@g' $thisYAML
-sed -i 's@HofXMeshDescriptor@'${HofXMeshDescriptor}'@' $thisYAML
-sed -i 's@POLYNOMIAL2DFITDEGREE@'${POLYNOMIAL2DFITDEGREE}'@' $thisYAML
-sed -i 's@ALLSKYERRORFUNCTIONNAME@'${ALLSKYERRORFUNCTIONNAME}'@' $thisYAML
 
 
 ## date-time information

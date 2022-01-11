@@ -21,18 +21,7 @@
     - variable:
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
-  - filter: Perform Action
-    filter variables: *errorAssignFilterVariables_ahi_himawari8
-#  - filter: Domain Check
-#    where:
-#    - variable:
-#        name: cloud_area_fraction@MetaData
-#      minvalue: 0.05
-    action:
-      name: assign error
-      error function:
-        # see seprate allSkyIR stubs
-        <<: *ALLSKYERRORFUNCTIONNAMEAssignErrorFunction_ahi_himawari8
+PerformActionFilters_ahi_himawari8
   - filter: GOMsaver
     filename: OutDBDir/geoPrefix_ahi_himawari8.nc4
   - filter: YDIAGsaver

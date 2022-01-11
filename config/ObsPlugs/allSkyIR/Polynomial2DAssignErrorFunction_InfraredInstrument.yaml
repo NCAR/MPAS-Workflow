@@ -1,0 +1,12 @@
+_poly2d error function InfraredInstrument: &Polynomial2DAssignErrorFunction_InfraredInstrument
+  name: ObsFunction/Polynomial2D
+  channels: *InfraredInstrument_channels
+  options:
+    <<: *InfraredInstrument_fit2D_CldFrac2D_degreePOLYNOMIAL2DFITDEGREE
+    filter variables: *errorAssignFilterVariables_InfraredInstrument
+    xvar:
+      name: MetaData/cloud_area_fraction
+    yvar:
+      name: ObsFunction/MaxColumnGeoVaLs
+      options:
+        geophysical variable: cloud_area_fraction_in_atmosphere_layer
