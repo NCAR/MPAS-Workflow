@@ -16,6 +16,7 @@ if ( ${InitializationType} == "ColdStart" ) then
   set InnerModelData = ${ExpDir}/${MPASGridDescriptorInner}
   set GFSAnaDirOuter = ${OuterModelData}/GFSAna
   set GFSAnaDirInner = ${InnerModelData}/GFSAna
+  setenv InitICWorkDir ${GFSAnaDirOuter}
   # When ColdStart is fully functioning GFSAnaDirVerify will
   # be equal to GFSAnaDirOuter for both initialization types
   setenv GFSAnaDirVerify ${GFSAnaDirEnsemble}
@@ -26,7 +27,6 @@ else if ( ${InitializationType} == "WarmStart" ) then
   set GFSAnaDirInner = ${InnerModelData}/GFSAna
   setenv GFSAnaDirVerify ${GFSAnaDirOuter}
 endif
-setenv InitICWorkDir ${GFSAnaDirOuter}
 
 
 ## file date for first background
@@ -173,6 +173,7 @@ else
   if ( ${InitializationType} == "ColdStart" ) then
     setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${FirstCycleDate}
     setenv StaticFieldsDirInner ${GFSAnaDirInner}/${FirstCycleDate}
+    setenv InitICDir ${InitICWorkDir}/${FirstCycleDate}
   else if ( ${InitializationType} == "WarmStart" ) then
     setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
     setenv StaticFieldsDirInner ${GFSAnaDirInner}
