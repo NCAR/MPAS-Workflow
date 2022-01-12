@@ -10,11 +10,47 @@ _poly2d error function InfraredInstrument NXTro: &Polynomial2DByLatBandAssignErr
       name: ObsFunction/MaxColumnGeoVaLs
       options:
         geophysical variable: cloud_area_fraction_in_atmosphere_layer
+_poly2d error function InfraredInstrument NTro: &Polynomial2DByLatBandAssignErrorFunction_NTro_InfraredInstrument
+  name: ObsFunction/Polynomial2D
+  channels: *InfraredInstrument_channels
+  options:
+    <<: *InfraredInstrument_fit2D_CldFrac2D_NTro_degreePOLYNOMIAL2DFITDEGREE
+    filter variables: *errorAssignFilterVariables_InfraredInstrument
+    xvar:
+      name: MetaData/cloud_area_fraction
+    yvar:
+      name: ObsFunction/MaxColumnGeoVaLs
+      options:
+        geophysical variable: cloud_area_fraction_in_atmosphere_layer
+_poly2d error function InfraredInstrument ITCZ: &Polynomial2DByLatBandAssignErrorFunction_ITCZ_InfraredInstrument
+  name: ObsFunction/Polynomial2D
+  channels: *InfraredInstrument_channels
+  options:
+    <<: *InfraredInstrument_fit2D_CldFrac2D_ITCZ_degreePOLYNOMIAL2DFITDEGREE
+    filter variables: *errorAssignFilterVariables_InfraredInstrument
+    xvar:
+      name: MetaData/cloud_area_fraction
+    yvar:
+      name: ObsFunction/MaxColumnGeoVaLs
+      options:
+        geophysical variable: cloud_area_fraction_in_atmosphere_layer
 _poly2d error function InfraredInstrument Tro: &Polynomial2DByLatBandAssignErrorFunction_Tro_InfraredInstrument
   name: ObsFunction/Polynomial2D
   channels: *InfraredInstrument_channels
   options:
     <<: *InfraredInstrument_fit2D_CldFrac2D_Tro_degreePOLYNOMIAL2DFITDEGREE
+    filter variables: *errorAssignFilterVariables_InfraredInstrument
+    xvar:
+      name: MetaData/cloud_area_fraction
+    yvar:
+      name: ObsFunction/MaxColumnGeoVaLs
+      options:
+        geophysical variable: cloud_area_fraction_in_atmosphere_layer
+_poly2d error function InfraredInstrument STro: &Polynomial2DByLatBandAssignErrorFunction_STro_InfraredInstrument
+  name: ObsFunction/Polynomial2D
+  channels: *InfraredInstrument_channels
+  options:
+    <<: *InfraredInstrument_fit2D_CldFrac2D_STro_degreePOLYNOMIAL2DFITDEGREE
     filter variables: *errorAssignFilterVariables_InfraredInstrument
     xvar:
       name: MetaData/cloud_area_fraction

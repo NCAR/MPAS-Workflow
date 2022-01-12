@@ -16,12 +16,48 @@
   where:
   - variable:
       name: MetaData/latitude
-    minvalue: -30.0
+    minvalue: 5.0
     maxvalue: 30.0
   action:
     name: assign error
     error function:
-      <<: *Polynomial2DByLatBandAssignErrorFunction_Tro_InfraredInstrument
+      <<: *Polynomial2DByLatBandAssignErrorFunction_NTro_InfraredInstrument
+- filter: Perform Action
+  <<: *multiIterationFilter
+  filter variables: *errorAssignFilterVariables_InfraredInstrument
+  where:
+  - variable:
+      name: MetaData/latitude
+    minvalue: -5.0
+    maxvalue: 5.0
+  action:
+    name: assign error
+    error function:
+      <<: *Polynomial2DByLatBandAssignErrorFunction_ITCZ_InfraredInstrument
+#- filter: Perform Action
+#  <<: *multiIterationFilter
+#  filter variables: *errorAssignFilterVariables_InfraredInstrument
+#  where:
+#  - variable:
+#      name: MetaData/latitude
+#    minvalue: -30.0
+#    maxvalue: 30.0
+#  action:
+#    name: assign error
+#    error function:
+#      <<: *Polynomial2DByLatBandAssignErrorFunction_Tro_InfraredInstrument
+- filter: Perform Action
+  <<: *multiIterationFilter
+  filter variables: *errorAssignFilterVariables_InfraredInstrument
+  where:
+  - variable:
+      name: MetaData/latitude
+    minvalue: -30.0
+    maxvalue: -5.0
+  action:
+    name: assign error
+    error function:
+      <<: *Polynomial2DByLatBandAssignErrorFunction_STro_InfraredInstrument
 - filter: Perform Action
   <<: *multiIterationFilter
   filter variables: *errorAssignFilterVariables_InfraredInstrument

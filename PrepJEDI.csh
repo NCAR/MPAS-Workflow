@@ -325,15 +325,34 @@ sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 # allSkyIRErrorType
 # TODO: move to experiment.csh? maybe keep it here as a lower level control knob
 # function used for the all-sky IR ObsError parameterization
-# Options: Okamoto, Polynomial2D, Polynomial2DByLatBand
+# Options: Okamoto, Polynomial2D, Polynomial2DByLatBand, Constant
 set allSkyIRErrorType = Polynomial2DByLatBand
 
 #POLYNOMIAL2DFITDEGREE
 # 2d polynomial fit degree for CFxMax vs. CFy, only applies when allSkyIRErrorType==Polynomial2D
 # Options: integer, 2 to 12
-set POLYNOMIAL2DFITDEGREE = 8
+set POLYNOMIAL2DFITDEGREE = 12
 
-if ($allSkyIRErrorType == Okamoto) then
+#Polynomial2DLatBands
+# + latitude bands for which individual fits are available for
+#   allSkyIRErrorType==Polynomial2DByLatBand
+# + see config/ObsPlugs/allSkyIR/Polynomial2DByLatBandAssignErrorFunction_InfraredInstrument.yaml
+set Polynomial2DLatBands = (NXTro NTro ITCZ STro SXTro Tro)
+
+#ConstantErrorValueAllChannels
+# constant observation error value across all channels when allSkyIRErrorType==Constant
+set ConstantErrorValueAllChannels = "3.0"
+
+if ($allSkyIRErrorType == Constant) then
+  foreach InfraredInstrument (abi_g16 ahi_himawari8)
+    # assign error parameter anchor
+    set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${allSkyIRErrorType}AssignErrorParameter_InfraredInstrument.yaml
+    sed 's@InfraredInstrument@'${InfraredInstrument}'@g' ${SUBYAML} > tempYAML
+    sed -i 's@ConstantErrorValueAllChannels@'${ConstantErrorValueAllChannels}'@g' tempYAML
+    sed 's@$@\\@' tempYAML >> ${thisSEDF}
+    rm tempYAML
+  end
+else if ($allSkyIRErrorType == Okamoto) then
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # assign error function anchor
     set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${self_AppType}/${allSkyIRErrorType}AssignErrorFunction_${InfraredInstrument}.yaml
@@ -348,7 +367,7 @@ else
       set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
       sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
     else if ($allSkyIRErrorType == Polynomial2DByLatBand) then
-      foreach LatBand (NXTro Tro SXTro)
+      foreach LatBand ($Polynomial2DLatBands)
         set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_${LatBand}_0min_${InfraredInstrument}.yaml
         sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
       end

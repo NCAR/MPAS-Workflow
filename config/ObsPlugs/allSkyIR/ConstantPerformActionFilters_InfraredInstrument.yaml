@@ -1,0 +1,6 @@
+- filter: Perform Action
+  <<: *multiIterationFilter
+  filter variables: *errorAssignFilterVariables_InfraredInstrument
+  action:
+    name: assign error
+    error parameter: *ConstantAssignErrorParameter_InfraredInstrument
