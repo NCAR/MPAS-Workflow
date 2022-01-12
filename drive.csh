@@ -13,7 +13,8 @@ source config/experiment.csh
 # Either:
 # + initialCyclePoint must be equal to FirstCycleDate
 # OR:
-# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart#   from a previously completed cycle.
+# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart
+#   from a previously completed cycle.
 set initialCyclePoint = 20180414T18
 
 ## finalCyclePoint

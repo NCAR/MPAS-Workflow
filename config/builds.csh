@@ -17,7 +17,7 @@ set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_09JA
 
 # Ungrib
 setenv ungribEXE ungrib.exe
-setenv ungribBuildDir /glade/work/guerrett/pandac/data/GEFS
+setenv WPSBuildDir /glade/work/guerrett/pandac/data/GEFS
 
 # MPAS-JEDI
 # ---------

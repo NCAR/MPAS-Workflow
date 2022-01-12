@@ -28,7 +28,7 @@ set Vtable = Vtable.GFS_FV3
 set linkWPS = link_grib.csh
 set GFSprefix = gfs.0p25
 rm -rf GRIBFILE.*
-ln -sfv ${linkWPSdir}/${linkWPS} .
+ln -sfv ${WPSBuildDir}/${linkWPS} .
 ./${linkWPS} ${GFSgribdirRDA}/${yy}/${yymmdd}/${GFSprefix}.${yymmdd}${hh}.f${fhour}.grib2
 
 ## copy Vtable
@@ -42,7 +42,7 @@ sed -i 's@startTime@'${NMLDate}'@' $NamelistFileWPS
 # Run the executable
 # ==================
 rm ./${ungribEXE}
-ln -sfv ${ungribBuildDir}/${ungribEXE} ./
+ln -sfv ${WPSBuildDir}/${ungribEXE} ./
 ./${ungribEXE}
 
 # Check status

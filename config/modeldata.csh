@@ -19,7 +19,6 @@ if ( ${InitializationType} == "ColdStart" ) then
   # When ColdStart is fully functioning GFSAnaDirVerify will
   # be equal to GFSAnaDirOuter for both initialization types
   setenv GFSAnaDirVerify ${GFSAnaDirEnsemble}
-  setenv InitICDir ${GFSAnaDirOuter}
 else if ( ${InitializationType} == "WarmStart" ) then
   set OuterModelData = ${ModelData}/${MPASGridDescriptorOuter}
   set InnerModelData = ${ModelData}/${MPASGridDescriptorInner}
@@ -27,6 +26,7 @@ else if ( ${InitializationType} == "WarmStart" ) then
   set GFSAnaDirInner = ${InnerModelData}/GFSAna
   setenv GFSAnaDirVerify ${GFSAnaDirOuter}
 endif
+setenv InitICWorkDir ${GFSAnaDirOuter}
 
 
 ## file date for first background
@@ -53,7 +53,6 @@ setenv GFSgribdirRDA ${RDAdataDir}/ds084.1
 
 ## linkWPS and Vtable files paths
 setenv VtableDir /glade/u/home/schwartz/MPAS_scripts
-setenv linkWPSdir /glade/scratch/mpasrt/wps
 
 # externally sourced model states
 # -------------------------------

@@ -64,12 +64,12 @@ rm ${localStaticFieldsFile}
 set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
-if ( ${InitializationType} == "ColdStart" & ${thisValidDate} == ${FirstCycleDate}) then
+if ( ${InitializationType} == "ColdStart" && ${thisValidDate} == ${FirstCycleDate}) then
   set initialState = ${InitICDir}/${InitFilePrefixOuter}.${icFileExt}
   set do_DAcycling = "false"
   ln -sfv ${initialState} ${localStaticFieldsFile}
   set updateSea = 0
-else if ( ${InitializationType} == "ColdStart" & ${thisValidDate} != ${FirstCycleDate}) then
+else if ( ${InitializationType} == "ColdStart" && ${thisValidDate} != ${FirstCycleDate}) then
   set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
   set do_DAcycling = "true"
   set StaticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
