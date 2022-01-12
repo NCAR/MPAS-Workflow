@@ -76,6 +76,7 @@ else if ( ${InitializationType} == "ColdStart" & ${thisValidDate} != ${FirstCycl
   set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
   ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
   cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+  # TODO(IHB): enable sea surface updating for ColdStart and set updateSea to 1 below
   set updateSea = 0
 else if ( ${InitializationType} == "WarmStart" ) then
   set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}

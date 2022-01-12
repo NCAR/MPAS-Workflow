@@ -16,6 +16,8 @@ if ( ${InitializationType} == "ColdStart" ) then
   set InnerModelData = ${ExpDir}/${MPASGridDescriptorInner}
   set GFSAnaDirOuter = ${OuterModelData}/GFSAna
   set GFSAnaDirInner = ${InnerModelData}/GFSAna
+  # When ColdStart is fully functioning GFSAnaDirVerify will
+  # be equal to GFSAnaDirOuter for both initialization types
   setenv GFSAnaDirVerify ${GFSAnaDirEnsemble}
   setenv InitICDir ${GFSAnaDirOuter}
 else if ( ${InitializationType} == "WarmStart" ) then
