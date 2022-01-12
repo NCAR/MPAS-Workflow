@@ -5,29 +5,16 @@
 ## load experiment configuration
 source config/experiment.csh
 
-## Set the cycle hours (cyclingCycles) according to the initialization type defined in config/experiment.csh
-if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart") then
-  # Create the experiment directory and cylc task scripts
-  ./SetupWorkflow.csh
-  # The initialCyclePoint is the same as FirstCycleDate when starting a new experiment
-  set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
-  set hh = `echo ${FirstCycleDate} | cut -c 9-10`
-  set initialCyclePoint = ${yymmdd}T${hh}
-
-  # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
-  # initialCyclePoint
-  set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
-else if ( ${InitializationType} == "ReStart" ) then
-  ## initialCyclePoint
-  # OPTIONS: > FirstCycleDate (set in config/experiment.csh)
-  #   Set initialCyclePoint > FirstCycleDate to restart from a forecast produced in a
-  #   previously completed cycle. A CyclingFCBase or GetWarmStartIC task must have been completed
-  #   for the cycle before initialCyclePoint.
-  set initialCyclePoint = 20180415T00
-
-  # The cycles will run every CyclingWindowHR hours, starting at the initialCyclePoint
-  set cyclingCycles = PT${CyclingWindowHR}H
-endif
+######################
+# workflow date bounds
+######################
+## initialCyclePoint
+# OPTIONS: >= FirstCycleDate (see config/experiment.csh)
+# Either:
+# + initialCyclePoint must be equal to FirstCycleDate
+# OR:
+# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart#   from a previously completed cycle.
+set initialCyclePoint = 20180414T18
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
@@ -94,6 +81,23 @@ set VerifyExtendedEnsFC = False
 
 date
 
+## Set the FirstCycleDate in the right format for cylc
+set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
+set hh = `echo ${FirstCycleDate} | cut -c 9-10`
+set firstCyclePoint = ${yymmdd}T${hh}
+
+## Set the cycle hours (cyclingCycles) according to the dates
+if ($initialCyclePoint == $firstCyclePoint) then
+  # Create the experiment directory and cylc task script
+  ./SetupWorkflow.csh
+  # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
+  # initialCyclePoint
+  set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
+else
+  # The cycles will run every CyclingWindowHR hours, starting at the initialCyclePoint
+  set cyclingCycles = PT${CyclingWindowHR}H
+endif
+
 ## load the file structure
 source config/filestructure.csh
 
@@ -122,6 +126,7 @@ echo "creating suite.rc"
 cat >! suite.rc << EOF
 #!Jinja2
 # cycle dates
+{% set firstCyclePoint   = "${firstCyclePoint}" %}
 {% set initialCyclePoint = "${initialCyclePoint}" %}
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
 # cycling components
@@ -195,12 +200,14 @@ cat >! suite.rc << EOF
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
   [[dependencies]]
-{% if InitializationType == "ColdStart" %}
-    [[[R1]]]
-      graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
-{% elif InitializationType == "WarmStart" %}
-    [[[R1]]]
-      graph = GetWarmStartIC => CyclingFCFinished
+{% if initialCyclePoint == firstCyclePoint %}
+  {% if InitializationType == "ColdStart" %}
+      [[[R1]]]
+        graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
+  {% elif InitializationType == "WarmStart" %}
+      [[[R1]]]
+        graph = GetWarmStartIC => CyclingFCFinished
+  {% endif %}
 {% endif %}
 ## Critical path for cycling
     [[[${cyclingCycles}]]]

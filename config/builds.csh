@@ -15,10 +15,6 @@ setenv BuildCompiler 'gnu-openmpi'
 
 set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_09JAN2022
 
-# Ungrib
-setenv ungribEXE ungrib.exe
-setenv ungribBuildDir /glade/work/guerrett/pandac/data/GEFS
-
 # MPAS-JEDI
 # ---------
 ## Variational

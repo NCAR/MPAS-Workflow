@@ -4,11 +4,29 @@ source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
-source config/${InitializationType}ModelData.csh
 
 ####################
 ## static data files
 ####################
+set ModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input
+set EnsembleModelData = ${ModelData}/${MPASGridDescriptorEnsemble}
+set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
+if ( ${InitializationType} == "ColdStart" ) then
+  set OuterModelData = ${ExpDir}/${MPASGridDescriptorOuter}
+  set InnerModelData = ${ExpDir}/${MPASGridDescriptorInner}
+  set GFSAnaDirOuter = ${OuterModelData}/GFSAna
+  set GFSAnaDirInner = ${InnerModelData}/GFSAna
+  setenv GFSAnaDirVerify ${GFSAnaDirEnsemble}
+  setenv InitICDir ${GFSAnaDirOuter}
+else if ( ${InitializationType} == "WarmStart" ) then
+  set OuterModelData = ${ModelData}/${MPASGridDescriptorOuter}
+  set InnerModelData = ${ModelData}/${MPASGridDescriptorInner}
+  set GFSAnaDirOuter = ${OuterModelData}/GFSAna
+  set GFSAnaDirInner = ${InnerModelData}/GFSAna
+  setenv GFSAnaDirVerify ${GFSAnaDirOuter}
+endif
+
+
 ## file date for first background
 set yy = `echo ${FirstCycleDate} | cut -c 1-4`
 set mm = `echo ${FirstCycleDate} | cut -c 5-6`
@@ -151,8 +169,13 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   # deterministic
   # 30km, 60km, and 120km
-  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
-  setenv StaticFieldsDirInner ${GFSAnaDirInner}
+  if ( ${InitializationType} == "ColdStart" ) then
+    setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${FirstCycleDate}
+    setenv StaticFieldsDirInner ${GFSAnaDirInner}/${FirstCycleDate}
+  else if ( ${InitializationType} == "WarmStart" ) then
+    setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
+    setenv StaticFieldsDirInner ${GFSAnaDirInner}
+  endif
   setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
   setenv staticMemFmt " "
   setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
