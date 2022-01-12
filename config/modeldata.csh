@@ -20,12 +20,15 @@ if ( ${InitializationType} == "ColdStart" ) then
   # When ColdStart is fully functioning GFSAnaDirVerify will
   # be equal to GFSAnaDirOuter for both initialization types
   setenv GFSAnaDirVerify ${GFSAnaDirEnsemble}
+  # TODO(IHB): enable sea surface updating for ColdStart and set updateSea to 1 below
+  setenv updateSea 0
 else if ( ${InitializationType} == "WarmStart" ) then
   set OuterModelData = ${ModelData}/${MPASGridDescriptorOuter}
   set InnerModelData = ${ModelData}/${MPASGridDescriptorInner}
   set GFSAnaDirOuter = ${OuterModelData}/GFSAna
   set GFSAnaDirInner = ${InnerModelData}/GFSAna
   setenv GFSAnaDirVerify ${GFSAnaDirOuter}
+  setenv updateSea 1  
 endif
 
 
