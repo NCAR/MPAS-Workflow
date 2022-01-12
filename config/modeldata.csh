@@ -173,6 +173,8 @@ else
   if ( ${InitializationType} == "ColdStart" ) then
     setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${FirstCycleDate}
     setenv StaticFieldsDirInner ${GFSAnaDirInner}/${FirstCycleDate}
+    # TODO(IHB): modify InitICDir to use valid date instead of FirstCycleDate
+    # for verification purposes (remove it from here)
     setenv InitICDir ${InitICWorkDir}/${FirstCycleDate}
   else if ( ${InitializationType} == "WarmStart" ) then
     setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
