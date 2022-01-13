@@ -15,6 +15,10 @@ set FixedInput = /glade/work/guerrett/pandac/fixed_input
 ## CRTM
 setenv CRTMTABLES ${FixedInput}/crtm_bin/
 
+## IODA
+setenv OBS_ERRTABLE /glade/u/home/hclin/proj/ioda/obs_errtable
+setenv SPC_COEFF_DIR /glade/u/home/hclin/proj/ioda/SpcCoeff
+
 ## VARBC
 setenv INITIAL_VARBC_TABLE ${FixedInput}/satbias/satbias_crtm_in
 

@@ -59,6 +59,16 @@ set l = ($l amsua_aqua)
 set l = ($l amsua_metop-a)
 set benchmarkObsList = ($l)
 
+## list of observations to convert to IODA
+#set obtypes = ( prepbufr gpsro 1bamua 1bmhs airsev )
+#set obtypes = ( prepbufr gpsro 1bamua 1bmhs )
+#set obtypes = ( prepbufr )
+#set obtypes = ( satwnd )
+#set obtypes = ( 1bamua )
+#set obtypes = ( airsev )
+set obtypes = ( mtiasi )
+#set obtypes = ( cris )
+
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
 set ExpSuffix = ''

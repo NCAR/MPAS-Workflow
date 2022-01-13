@@ -19,6 +19,12 @@ set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_09JA
 setenv ungribEXE ungrib.exe
 setenv WPSBuildDir /glade/work/guerrett/pandac/data/GEFS
 
+# Obs2IODA
+setenv obs2iodaEXEC obs2ioda.x
+setenv obs2iodaBuildDir /glade/work/hclin/jedi/obs2ioda/obs2ioda-v1/src
+setenv iodaupgradeEXEC ioda-upgrade.x
+setenv iodaupgradeBuildDir ${commonBuild}/bin
+
 # MPAS-JEDI
 # ---------
 ## Variational

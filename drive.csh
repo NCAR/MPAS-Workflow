@@ -31,6 +31,10 @@ set finalCyclePoint = 20180514T18
 # OPTIONS: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
 
+## PreprocessObs: whether to convert BUFR observation to IODA
+# OPTIONS: True/False
+set PreprocessObs = True
+
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
 #    Only works when CriticalPathType == Normal.
@@ -130,8 +134,10 @@ cat >! suite.rc << EOF
 {% set firstCyclePoint   = "${firstCyclePoint}" %}
 {% set initialCyclePoint = "${initialCyclePoint}" %}
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
+{% set obtypes = "${obtypes}" %}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
+{% set PreprocessObs = "${PreprocessObs}" %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
@@ -165,7 +171,12 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
 {% elif CriticalPathType == "Normal" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
+  {# set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" #}
+  {% if PreprocessObs == "True" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H] => PreprocessObstoIODA" %}
+  {% else %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
+  {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => HofXEnsMeanBG" %}
@@ -399,6 +410,16 @@ cat >! suite.rc << EOF
     [[[directives]]]
       -q = share
       -m = ae
+      -l = select=1:ncpus=1:mpiprocs=1
+  # observations-related components
+  [[PreprocessObstoIODA]]
+    script = \$origin/PrepObstoIODA.csh "{{obtypes}}"
+    [[[job]]]
+      execution time limit = PT10M
+      execution retry delays = ${InitializationRetry}
+    [[[directives]]]
+      -m = ae
+      -q = share
       -l = select=1:ncpus=1:mpiprocs=1
   # variational-related components
   [[InitCyclingDA]]
