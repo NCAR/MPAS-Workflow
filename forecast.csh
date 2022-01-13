@@ -68,7 +68,7 @@ if ( ${InitializationType} == "ColdStart" && ${thisValidDate} == ${FirstCycleDat
   set initialState = ${InitICDir}/${InitFilePrefixOuter}.${icFileExt}
   set do_DAcycling = "false"
   ln -sfv ${initialState} ${localStaticFieldsFile}
-else #if ( ${InitializationType} == "ColdStart" && ${thisValidDate} != ${FirstCycleDate}) || ( ${InitializationType} == "WarmStart" ) then
+else
   set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
   set do_DAcycling = "true"
   set StaticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
