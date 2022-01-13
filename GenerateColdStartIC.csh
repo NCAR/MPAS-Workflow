@@ -22,9 +22,6 @@ cd ${InitICDir}
 
 # ================================================================================================
 
-## link ungribbed GFS
-ln -sfv ${ungribDir}/GFS:${ICfileDate} ./GFS:${ICfileDate}
-
 ## link MPAS mesh graph info and static field
 rm ./x1.${MPASnCellsOuter}.graph.info*
 ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .

@@ -32,6 +32,18 @@ setenv MPASGridDescriptor OIE120km
 #     - TODO: enable VarBC
 setenv FirstCycleDate 2018041418
 
+
+#######################
+# workflow date control
+#######################
+## InitializationType
+# Indicates the type of initialization at the initial cycle: cold or warm start
+# OPTIONS:
+#   ColdStart - generate first forecast online from an external GFS analysis
+#   WarmStart - copy a pre-generated forecast
+setenv InitializationType WarmStart
+
+
 ## benchmarkObsList
 # base set of observation types assimilated in all experiments
 set l = ()

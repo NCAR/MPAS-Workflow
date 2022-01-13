@@ -368,7 +368,6 @@ while ( $member <= ${nEnsDAMembers} )
     set memDir = `${memberDir} $DAType 1`
     set FirstCyclingFCDir = ${CyclingFCWorkDir}/${FirstCycleDate}${memDir}/Inner
     cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
-
     # modify xtime
     echo "${updateXTIME} $tFile ${thisCycleDate}"
     ${updateXTIME} $tFile ${thisCycleDate}
