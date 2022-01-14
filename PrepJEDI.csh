@@ -364,11 +364,11 @@ else
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # polynomial2d fit parameters
     if ($allSkyIRErrorType == Polynomial2D) then
-      set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
+      set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${InfraredInstrument}/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
       sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
     else if ($allSkyIRErrorType == Polynomial2DByLatBand) then
       foreach LatBand ($Polynomial2DLatBands)
-        set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_${LatBand}_0min_${InfraredInstrument}.yaml
+        set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${InfraredInstrument}/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_${LatBand}_0min_${InfraredInstrument}.yaml
         sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
       end
     else
