@@ -16,10 +16,7 @@ source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/obsdata.csh
-source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
-source config/environment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
 set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`
@@ -144,23 +141,25 @@ foreach inst ( ${OBTYPES} )
        echo "ERROR in $0 : Pre-processing observations to IODA-v1 failed" > ./FAIL-v1
        exit 1
      endif
-
-     # Run the executable to upgrade to IODA-v2
-     # ==================
-     #rm ./${iodaupgradeEXEC}
-     #ln -sfv ${iodaupgradeBuildDir}/${iodaupgradeEXEC} ./
-     #foreach obs ( *"${inst}"* )
-     #  ./${iodaupgradeEXEC} ${obs} ${obs}.h5 >&! log_${inst}_${obs}
-     #end
-     # Check status
-     # ============
-     #grep "all done!" log_${inst}
-     #if ( $status != 0 ) then
-     #  echo "ERROR in $0 : Upgrading to IODA-v2 failed" > ./FAIL-v2
-     #  exit 1
-     #endif
-
-
 end # inst loop
+
+
+# Run the executable to upgrade to IODA-v2
+# ==================
+source ${mainScriptDir}/config/environmentIODAupgrade.csh
+rm ./${iodaupgradeEXEC}
+ln -sfv ${iodaupgradeBuildDir}/${iodaupgradeEXEC} ./
+foreach i ( *".nc4"* )
+  set instdate = `echo "$i" | cut -d'.' -f1`
+  ./${iodaupgradeEXEC} ${instdate}.nc4 ${instdate}.h5 >&! log_${inst}_${obs}
+end
+
+# Check status
+# ============
+grep "Success!" log_${inst}_${obs}
+if ( $status != 0 ) then
+  echo "ERROR in $0 : Upgrading to IODA-v2 failed" > ./FAIL-v2
+  exit 1
+endif
 
 exit 0

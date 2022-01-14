@@ -420,7 +420,7 @@ cat >! suite.rc << EOF
     [[[directives]]]
       -m = ae
       -q = share
-      -l = select=1:ncpus=1:mpiprocs=1
+      -l = select=1:ncpus=1:mpiprocs=1:mem=109GB
   # variational-related components
   [[InitCyclingDA]]
     env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
