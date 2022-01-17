@@ -7,8 +7,8 @@ cycle_outdir="br_$b"      # br = build_run
 
 # can modify branch
 WorkflowRepo=MPAS-Workflow
-WorkflowBranch=feature/autotest
-tag=11747e24a1aa
+WorkflowBranch=feature/YGYU_Oct_13   # feature/autotest
+#tag=11747e24a1aa
 
 TopDirectory=`pwd`
 TestDir="${TopDirectory}/${TestDir_name}"
@@ -24,8 +24,8 @@ else
 fi
 cd ${TestDir}
 git clone --branch ${WorkflowBranch} https://github.com/NCAR/${WorkflowRepo}
-cd $WorkflowRepo
-git co $tag
+#cd $WorkflowRepo
+#git co $tag
 cd $exedir && mv -f gen_autotest.sh bundle_p*.sh  ${TestDir}/.  && cd -
 
 
