@@ -31,8 +31,8 @@ echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
 
-#setenv OPTIONS "-split"  # writing out hourly files
-setenv OPTIONS ""
+setenv OPTIONS "-split"  # writing out hourly files
+#setenv OPTIONS ""
 
 foreach inst ( ${OBTYPES} )
 
@@ -128,38 +128,19 @@ foreach inst ( ${OBTYPES} )
        ln -sf ${SPC_COEFF_DIR}/iasi616_metop-c.SpcCoeff.bin  ./iasi_metop-c.SpcCoeff.bin
      endif
 
-     # Run the executable to convert to IODA-v1
+     # Run the executable to convert to IODA-v2
      # ==================
      rm ./${obs2iodaEXEC}
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
-     ./${obs2iodaEXEC} ${THIS_FILE} >&! log_${inst}
+     ./${obs2iodaEXEC} ${OPTIONS} ${THIS_FILE} >&! log_${inst}
 
      # Check status
      # ============
      grep "all done!" log_${inst}
      if ( $status != 0 ) then
-       echo "ERROR in $0 : Pre-processing observations to IODA-v1 failed" > ./FAIL-v1
+       echo "ERROR in $0 : Pre-processing observations to IODA-v1 failed" > ./FAIL
        exit 1
      endif
 end # inst loop
-
-
-# Run the executable to upgrade to IODA-v2
-# ==================
-source ${mainScriptDir}/config/environmentIODAupgrade.csh
-rm ./${iodaupgradeEXEC}
-ln -sfv ${iodaupgradeBuildDir}/${iodaupgradeEXEC} ./
-foreach i ( *".nc4"* )
-  set instdate = `echo "$i" | cut -d'.' -f1`
-  ./${iodaupgradeEXEC} ${instdate}.nc4 ${instdate}.h5 >&! log_${inst}_${obs}
-end
-
-# Check status
-# ============
-grep "Success!" log_${inst}_${obs}
-if ( $status != 0 ) then
-  echo "ERROR in $0 : Upgrading to IODA-v2 failed" > ./FAIL-v2
-  exit 1
-endif
 
 exit 0
