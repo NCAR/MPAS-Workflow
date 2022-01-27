@@ -34,22 +34,11 @@ cost function:
     filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
     date: &analysisDate '2018-04-15T00:00:00Z'
   background error:
-    covariance model: BUMP
-    date: *analysisDate
-    bump:
-      datadir: /glade/scratch/bjung/pandac/20220111/CMAT_00 # directory where the bump NICAS output files are located.
-      prefix: mpas_parametersbump_cov
-      method: cor
-      strategy: specific_univariate
-      load_nicas_local: 1
-      verbosity: 'main'
-    variable changes:
-    - variable change: StdDev
-      bump:
-        load_var: 1
-        datadir: /glade/scratch/bjung/pandac/20220111/CMAT_00 # directory where the bump VAR output files are located.
-        prefix: mpas_parametersbump_cov
-        verbosity: 'main'
+    covariance model: SABER
+    saber blocks:
+    - saber block name: BUMP_NICAS
+      saber central block: true
+      iterative inverse: true
       input variables: &ctlvars
       - stream_function
       - velocity_potential
@@ -57,17 +46,34 @@ cost function:
       - spechum
       - surface_pressure
       output variables: *ctlvars
-    - variable change: StatsVariableChange
-      toleranceInverse: '1.0e-8'
-      testinverse: '0'
       bump:
-        check_vbal: 0
-        load_vbal: 1
-        datadir: /glade/scratch/bjung/pandac/20220111/VBAL_00 # directory where the bump VBAL output files are located.
-        prefix: mpas_vbal
+        datadir: /glade/scratch/bjung/pandac/20220111/bumpcov_tune
+        prefix: mpas_parametersbump_cov
         strategy: specific_univariate
-        vbal_block:     [1, 1,0, 0,0,0, 1,0,0,0]
-        vbal_diag_reg:  [1, 0,0, 0,0,0, 0,0,0,0]
-        vbal_diag_auto: [0, 0,0, 0,0,0, 0,0,0,0]
-        verbosity: 'main'    
+        load_nicas_local: true
+        verbosity: main
+    - saber block name: StdDev
+      input variables: *ctlvars
+      output variables: *ctlvars
+      file:
+        filename: /glade/scratch/bjung/pandac/20220111/bumpcov_tune/mpas.stddev.$Y-$M-$D_$h.$m.$s.nc
+        date: *analysisDate
+        stream name: control
+    - saber block name: BUMP_VerticalBalance
+      input variables: *ctlvars
+      output variables: *ctlvars
+      bump:
+        datadir: /glade/scratch/bjung/pandac/20220111/bumpcov_tune
+        prefix: mpas_vbal
+        load_vbal: true
+        #load_samp_global: true
+        load_samp_local: true
+        vbal_block:     [ true,  true,false, false,false,false,  true,false,false,false]
+        vbal_diag_reg:  [ true, false,false, false,false,false, false,false,false,false]
+        vbal_diag_auto: [false, false,false, false,false,false, false,false,false,false]
+        verbosity: main
+    linear variable change:
+      linear variable change name: Control2Analysis
+      input variables: *ctlvars
+      output variables: *incvars    
   observations: 
