@@ -17,8 +17,7 @@ VariationalMinimizer
 VariationalIterations
 final:
   diagnostics:
-    # no need to write out analysis departures
-    departures_: depan
+    departures: depan
 cost function:
   cost type: 3D-Var
   window begin: 'WindowBegin'
@@ -30,7 +29,7 @@ cost function:
     interpolation type: unstructured
   analysis variables: &incvars [AnalysisVariables]
   background:
-    state variables: *incvars
+    state variables: [StateVariables]
     filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
     date: &analysisDate '2018-04-15T00:00:00Z'
   background error:
@@ -56,7 +55,7 @@ cost function:
       input variables: *ctlvars
       output variables: *ctlvars
       file:
-        filename: /glade/scratch/bjung/pandac/20220111/bumpcov_tune/mpas.stddev.$Y-$M-$D_$h.$m.$s.nc
+        filename: /glade/scratch/bjung/pandac/20220111/bumpcov_tune/mpas.stddev.nc
         date: *analysisDate
         stream name: control
     - saber block name: BUMP_VerticalBalance
@@ -75,5 +74,5 @@ cost function:
     linear variable change:
       linear variable change name: Control2Analysis
       input variables: *ctlvars
-      output variables: *incvars    
-  observations: 
+      output variables: *incvars
+  observations:
