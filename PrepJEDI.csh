@@ -330,7 +330,7 @@ set allSkyIRErrorType = Polynomial2DByLatBand
 
 #POLYNOMIAL2DFITDEGREE
 # 2d polynomial fit degree for CFxMax vs. CFy, only applies when allSkyIRErrorType==Polynomial2D
-# Options: integer, 2 to 12
+# Options: [10, 12]
 set POLYNOMIAL2DFITDEGREE = 12
 
 #Polynomial2DLatBands
@@ -364,11 +364,11 @@ else
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # polynomial2d fit parameters
     if ($allSkyIRErrorType == Polynomial2D) then
-      set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${InfraredInstrument}/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
+      set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${InfraredInstrument}/MonitorCycle15daysTwice/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
       sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
     else if ($allSkyIRErrorType == Polynomial2DByLatBand) then
       foreach LatBand ($Polynomial2DLatBands)
-        set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${InfraredInstrument}/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_${LatBand}_0min_${InfraredInstrument}.yaml
+        set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${InfraredInstrument}/MonitorCycle15daysTwice/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_${LatBand}_0min_${InfraredInstrument}.yaml
         sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
       end
     else

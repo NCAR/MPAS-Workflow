@@ -5,7 +5,7 @@ _obs error diagonal: &ObsErrorDiagonal
 _clear crtm: &clearCRTMObsOperator
   name: CRTM
   SurfaceWindGeoVars: uv
-  Absorbers: [H2O,O3,CO2]
+  Absorbers: [H2O,O3]
   linear obs operator:
     Absorbers: [H2O]
   obs options: &CRTMObsOptions
@@ -15,7 +15,7 @@ _clear crtm: &clearCRTMObsOperator
 _cloudy crtm: &cloudyCRTMObsOperator
   name: CRTM
   SurfaceWindGeoVars: uv
-  Absorbers: [H2O,O3,CO2]
+  Absorbers: [H2O,O3]
   Clouds: [Water, Ice, Rain, Snow, Graupel]
   linear obs operator:
     Absorbers: [H2O]
@@ -25,4 +25,4 @@ _cloudy crtm: &cloudyCRTMObsOperator
 _get values: &GetValues
   interpolation type: InterpolationType
 _multi iteration filter: &multiIterationFilter
-  apply at iterations: 0, 1, 2, 3, 4, 5
+  apply at iterations: 0,1,2,3,4,5
