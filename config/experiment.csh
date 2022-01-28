@@ -9,7 +9,7 @@
 # I = variational Inner loop
 # E = variational Ensemble
 # OPTIONS:
-#   + OIE120km -- 3denvar, eda_3denvar
+#   + OIE120km -- 3dvar, 3denvar, eda_3denvar
 #   + O30kmIE120km -- dual-resolution 3denvar
 #   + OIE60km -- eda_3denvar only
 #   + TODO: OIE60km -- 3denvar, requires generating MPASSeaVariables update files from GFS analyses
@@ -90,8 +90,9 @@ set l = ($l $benchmarkObsList)
 set variationalObsList = ($l)
 
 ## DAType
-# OPTIONS: 3denvar, eda_3denvar, 3dvarId
-setenv DAType eda_3denvar
+# OPTIONS: 3dvar, 3denvar, eda_3denvar
+# Note: 3dvar currently only works for OIE120km
+setenv DAType 3dvar
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
