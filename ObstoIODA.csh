@@ -1,5 +1,5 @@
 #!/bin/csh -f
-#Sample script to convert CISL RDA archived NCEP BUFR files to IODA-v1 format from Jamie Bresch (NCAR/MMM)
+#Convert CISL RDA archived NCEP BUFR files to IODA-v2 format based on Jamie Bresch (NCAR/MMM) script rda_obs2ioda.csh
 
 date
 
@@ -15,7 +15,7 @@ source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
-source config/obsdata.csh
+#source config/obsdata.csh
 source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
@@ -26,13 +26,17 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # templated work directory
-set WorkDir = ${PreprocObsWorkDir}/${thisValidDate}
+set WorkDir = ${ObsDir}
 echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
 
-setenv OPTIONS "-split"  # writing out hourly files
-#setenv OPTIONS ""
+# static variables
+setenv OBS_ERRTABLE /glade/u/home/hclin/proj/ioda/obs_errtable
+setenv SPC_COEFF_DIR /glade/u/home/hclin/proj/ioda/SpcCoeff
+
+# write out hourly files for IASI
+setenv OPTIONS "-split"
 
 foreach inst ( ${OBTYPES} )
 
@@ -128,19 +132,55 @@ foreach inst ( ${OBTYPES} )
        ln -sf ${SPC_COEFF_DIR}/iasi616_metop-c.SpcCoeff.bin  ./iasi_metop-c.SpcCoeff.bin
      endif
 
-     # Run the executable to convert to IODA-v2
+     # Run the obs2ioda executable to convert files from BUFR to IODA-v2
      # ==================
      rm ./${obs2iodaEXEC}
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
-     ./${obs2iodaEXEC} ${OPTIONS} ${THIS_FILE} >&! log_${inst}
-
+     if ( ${inst} == 'mtiasi' ) then
+       ./${obs2iodaEXEC} ${OPTIONS} ${THIS_FILE} >&! log_${inst}
+     else
+       ./${obs2iodaEXEC} ${THIS_FILE} >&! log_${inst}
+     endif
      # Check status
      # ============
      grep "all done!" log_${inst}
      if ( $status != 0 ) then
-       echo "ERROR in $0 : Pre-processing observations to IODA-v1 failed" > ./FAIL
+       echo "ERROR in $0 : Pre-processing observations to IODA-v1 failed" > ./FAIL-converter
        exit 1
      endif
+  endif
+
 end # inst loop
+
+if ( "${OBTYPES}" =~ *"prepbufr"* ) then
+  # Run the ioda-upgrade executable to upgrade to get string station_id and string variable_names
+  # ==================
+  source ${mainScriptDir}/config/environmentIODAupgrade.csh
+  rm ./${iodaupgradeEXEC}
+  ln -sfv ${iodaupgradeBuildDir}/${iodaupgradeEXEC} ./
+
+  set prepbufr_types = ( aircraft ascat profiler satwind satwnd sfc sondes )
+  foreach pty ( ${prepbufr_types} )
+   if ( -f ${pty}_obs_${thisValidDate}.h5 ) then
+     set preptype = ${pty}_obs_${thisValidDate}.h5
+     set preptype_base = `echo "$preptype" | cut -d'.' -f1`
+     ./${iodaupgradeEXEC} ${preptype} ${preptype_base}_ok.h5 >&! log_${inst}_${obs}
+     rm -rf $preptype
+     mv ${preptype_base}_ok.h5 $preptype
+   endif
+  end
+  # Check status
+  # ============
+  grep "all done!" log_${inst}
+  if ( $status != 0 ) then
+   echo "ERROR in $0 : ioda-upgrade failed" > ./FAIL-upgrader
+   exit 1
+  endif
+endif
+
+# Remove BURF/PrepBUFR files
+foreach gdasfile ( *"gdas"* )
+  rm -rf $gdasfile
+end
 
 exit 0
