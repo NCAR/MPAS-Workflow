@@ -134,7 +134,7 @@ cat >! suite.rc << EOF
 {% set firstCyclePoint   = "${firstCyclePoint}" %}
 {% set initialCyclePoint = "${initialCyclePoint}" %}
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
-{% set obtypes = "${obtypes}" %}
+{% set preprocessObsList = "${preprocessObsList}" %}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
 {% set PreprocessObs = "${PreprocessObs}" %}
@@ -416,7 +416,7 @@ cat >! suite.rc << EOF
       -l = select=1:ncpus=1:mpiprocs=1
   # observations-related components
   [[ObstoIODA]]
-    script = \$origin/ObstoIODA.csh "{{obtypes}}"
+    script = \$origin/ObstoIODA.csh "{{preprocessObsList}}"
     [[[job]]]
       execution time limit = PT${ObstoIODAJobMinutes}M
       execution retry delays = ${InitializationRetry}

@@ -15,7 +15,6 @@ source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
-#source config/obsdata.csh
 source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
