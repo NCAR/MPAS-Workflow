@@ -183,4 +183,6 @@ foreach gdasfile ( *"gdas"* )
   rm -rf $gdasfile
 end
 
+date
+
 exit 0

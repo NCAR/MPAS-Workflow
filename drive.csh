@@ -33,7 +33,7 @@ set CriticalPathType = Normal
 
 ## PreprocessObs: whether to convert RDA archived BUFR observations to IODA
 # OPTIONS: True/False
-set PreprocessObs = True
+set PreprocessObs = False
 
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
@@ -272,11 +272,10 @@ cat >! suite.rc << EOF
       graph = '''
   {% if PreprocessObs == "True" %}
         ObstoIODA => HofXBG
-        ObstoIODA => VerifyModelBG
   {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
   {% endif %}
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
   {% for mem in [1] %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
         VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
@@ -419,11 +418,11 @@ cat >! suite.rc << EOF
   [[ObstoIODA]]
     script = \$origin/ObstoIODA.csh "{{obtypes}}"
     [[[job]]]
-      execution time limit = PT10M
+      execution time limit = PT${ObstoIODAJobMinutes}M
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
       -q = share
-      -l = select=1:ncpus=1:mpiprocs=1:mem=109GB
+      -l = select=${ObstoIODANodes}:ncpus=${ObstoIODAPEPerNode}:mpiprocs=${ObstoIODAPEPerNode}:mem=${ObstoIODAMemory}GB
   # variational-related components
   [[InitCyclingDA]]
     env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA" "{{PreprocessObs}}"
