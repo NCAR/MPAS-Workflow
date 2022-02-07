@@ -17,6 +17,7 @@ set workflowParts = ( \
   UngribColdStartIC.csh \
   GenerateColdStartIC.csh \
   GetWarmStartIC.csh \
+  ObstoIODA.csh \
   getCycleVars.csh \
   tools \
   config \

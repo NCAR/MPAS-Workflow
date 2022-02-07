@@ -9,6 +9,7 @@ setenv prevCycleDate ${prevCycleDate}
 #setenv nextCycleDate ${nextCycleDate}
 
 ## setup cycle directory names
+set ObsDir = ${ObsWorkDir}/${thisValidDate}
 set CyclingDADirs = (${CyclingDAWorkDir}/${thisCycleDate})
 set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})
 set CyclingDAInDir = $CyclingDADirs[1]/${bgDir}

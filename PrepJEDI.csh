@@ -24,6 +24,11 @@ set ArgDT = "$2"
 # ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
 
+# ArgPrepObsOn: boolean, determines the data source
+#         True: link observations generated online in the workflow
+#        False: link pre-generated observations
+set ArgPrepObsOn = "$4"
+
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isNotInt = ($status)
@@ -200,33 +205,49 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-# conventional
-# ============
-ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs*.h5 ${InDBDir}/
-ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs*.h5 ${InDBDir}/
-ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs*.h5 ${InDBDir}/
-ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs*.h5 ${InDBDir}/
-ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs*.h5 ${InDBDir}/
+if ( $ArgPrepObsOn == True ) then
+  # conventional
+  # ============
+  ln -sfv ${ObsDir}/aircraft_obs*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/ascat_obs*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/gnssro_obs*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/satwind_obs*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/satwnd_obs*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/sfc_obs*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/sondes_obs*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/profiler_obs*.h5 ${InDBDir}/
 
-# AMSUA+MHS
-# =========
-ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.h5 ${InDBDir}/
-ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.h5 ${InDBDir}/
+  # AMSUA+MHS+IASI
+  # =========
+  ln -sfv ${ObsDir}/amsua*_obs_*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/mhs*_obs_*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
+else
+  # conventional
+  # ============
+  ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs*.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs*.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs*.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs*.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs*.h5 ${InDBDir}/
 
-# ABI
-# ===
-ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
-set ABISUPEROBGRID = $ABISuperOb[$myAppIndex]
+  # AMSUA+MHS
+  # =========
+  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.h5 ${InDBDir}/
+  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.h5 ${InDBDir}/
 
-# AHI
-# ===
-ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
-set AHISUPEROBGRID = $AHISuperOb[$myAppIndex]
+  # ABI+AHI
+  # =======
+  ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
+  ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
+endif
 
 # VarBC prior
 # ===========
 ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 
+set ABISUPEROBGRID = $ABISuperOb[$myAppIndex]
+set AHISUPEROBGRID = $AHISuperOb[$myAppIndex]
 
 # =============
 # Generate yaml
@@ -253,7 +274,6 @@ set observationsYAML = observations.yaml
 rm $observationsYAML
 touch $observationsYAML
 
-set checkForMissingObs = (sondes aircraft satwind gnssro sfc amsua mhs abi ahi)
 set found = 0
 foreach obs ($self_ObsList)
   echo "Preparing YAML for ${obs} observations"
@@ -266,19 +286,15 @@ foreach obs ($self_ObsList)
     endif
   endif
   # check that obs string matches at least one non-broken observation file link
-  foreach inst ($checkForMissingObs)
-    if ( "$obs" =~ *"${inst}"* ) then
-      find ${InDBDir}/${inst}*_obs_*.h5 -mindepth 0 -maxdepth 0
-      if ($? > 0) then
+  find ${InDBDir}/${obs}_obs_*.h5 -mindepth 0 -maxdepth 0
+    if ($? > 0) then
+      @ missing++
+    else
+      set brokenLinks=( `find ${InDBDir}/${obs}_obs_*.h5 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
+      foreach link ($brokenLinks)
         @ missing++
-      else
-        set brokenLinks=( `find ${InDBDir}/${inst}*_obs_*.h5 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
-        foreach link ($brokenLinks)
-          @ missing++
-        end
-      endif
+      end
     endif
-  end
 
   if ($missing == 0) then
     echo "${obs} data is present and selected; adding ${obs} to the YAML"

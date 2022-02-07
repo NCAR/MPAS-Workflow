@@ -31,6 +31,10 @@ set finalCyclePoint = 20180514T18
 # OPTIONS: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
 
+## PreprocessObs: whether to convert RDA archived BUFR observations to IODA
+# OPTIONS: True/False
+set PreprocessObs = False
+
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
 #    Only works when CriticalPathType == Normal.
@@ -132,6 +136,7 @@ cat >! suite.rc << EOF
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
+{% set PreprocessObs = "${PreprocessObs}" %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
@@ -166,6 +171,9 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
 {% elif CriticalPathType == "Normal" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
+  {% if PreprocessObs == "True" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => ObstoIODA" %}
+  {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => HofXEnsMeanBG" %}
@@ -259,7 +267,11 @@ cat >! suite.rc << EOF
 {% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
     [[[${cyclingCycles}]]]
       graph = '''
+  {% if PreprocessObs == "True" %}
+        ObstoIODA => HofXBG
+  {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
+  {% endif %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
   {% for mem in [1] %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
@@ -398,11 +410,19 @@ cat >! suite.rc << EOF
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
       -q = share
-      -m = ae
       -l = select=1:ncpus=1:mpiprocs=1
+  # observations-related components
+  [[ObstoIODA]]
+    script = \$origin/ObstoIODA.csh
+    [[[job]]]
+      execution time limit = PT${ObstoIODAJobMinutes}M
+      execution retry delays = ${InitializationRetry}
+    [[[directives]]]
+      -q = share
+      -l = select=${ObstoIODANodes}:ncpus=${ObstoIODAPEPerNode}:mpiprocs=${ObstoIODAPEPerNode}:mem=${ObstoIODAMemory}GB
   # variational-related components
   [[InitCyclingDA]]
-    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA" "{{PreprocessObs}}"
     script = \$origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
@@ -471,7 +491,6 @@ cat >! suite.rc << EOF
       execution time limit = PT5M
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
-      -m = ae
       -q = share
       -l = select=1:ncpus=1:mpiprocs=1
   [[GenerateColdStartIC]]
@@ -480,7 +499,6 @@ cat >! suite.rc << EOF
       execution time limit = PT${InitICJobMinutes}M
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
-      -m = ae
       -l = select=${InitICNodes}:ncpus=${InitICPEPerNode}:mpiprocs=${InitICPEPerNode}
   [[ColdStartFC]]
     inherit = CyclingFCBase
@@ -517,7 +535,7 @@ cat >! suite.rc << EOF
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "{{PreprocessObs}}"
     script = \$origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -552,7 +570,7 @@ cat >! suite.rc << EOF
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
     inherit = HofX{{state}}
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}" "{{PreprocessObs}}"
     script = \$origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -583,7 +601,7 @@ cat >! suite.rc << EOF
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC{{mem}}
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC" "{{PreprocessObs}}"
     script = \$origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -608,7 +626,7 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[HofXEnsMeanBG]]
     inherit = HofXBase
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG" "{{PreprocessObs}}"
     script = \$origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = ${EnsMeanBGQueueName}
