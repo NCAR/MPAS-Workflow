@@ -6,8 +6,8 @@ date
 # Process arguments
 # =================
 ## args
-# OBTYPES: observation types to pre-process
-set OBTYPES = "$1"
+# preprocessObsList: observation types to pre-process
+set preprocessObsList = "$1"
 
 # Setup environment
 # =================
@@ -37,7 +37,7 @@ setenv SPC_COEFF_DIR /glade/u/home/hclin/proj/ioda/SpcCoeff
 # write out hourly files for IASI
 setenv OPTIONS "-split"
 
-foreach inst ( ${OBTYPES} )
+foreach inst ( ${preprocessObsList} )
 
   if ( ${inst} == satwnd ) then
      setenv THIS_FILE gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
@@ -151,7 +151,7 @@ foreach inst ( ${OBTYPES} )
 
 end # inst loop
 
-if ( "${OBTYPES}" =~ *"prepbufr"* ) then
+if ( "${preprocessObsList}" =~ *"prepbufr"* ) then
   # Run the ioda-upgrade executable to upgrade to get string station_id and string variable_names
   # ==================
   source ${ConfigDir}/environmentForJedi.csh ${BuildCompiler}
