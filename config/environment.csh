@@ -1,6 +1,7 @@
 #!/bin/csh -f
 
 source config/builds.csh
+source config/environmentForJedi.csh
 
 #######################
 # build/run environment
