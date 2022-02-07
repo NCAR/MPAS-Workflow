@@ -3,7 +3,7 @@
 # Process arguments
 # =================
 ## args
-# BuildCompiler: combination of compiler and MPI implementation used to build JEDI 
+# BuildCompiler: combination of compiler and MPI implementation used to build JEDI
 #                (defined in config/builds.csh)
 # OPTIONS: gnu-openmpi, intel-impi
 

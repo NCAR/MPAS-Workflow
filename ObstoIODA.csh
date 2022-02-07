@@ -3,12 +3,6 @@
 
 date
 
-# Process arguments
-# =================
-## args
-# preprocessObsList: observation types to pre-process
-set preprocessObsList = "$1"
-
 # Setup environment
 # =================
 source config/experiment.csh
