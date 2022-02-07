@@ -1,10 +1,19 @@
 #!/bin/csh -f
 
+# Process arguments
+# =================
+## args
+# BuildCompiler: combination of compiler and MPI implementation used to build JEDI 
+#                (defined in config/builds.csh)
+# OPTIONS: gnu-openmpi, intel-impi
+
+set BuildCompiler = "$1"
+
 source /etc/profile.d/modules.csh
 setenv OPT /glade/work/jedipara/cheyenne/opt/modules
 module purge
 module use $OPT/modulefiles/core
-module load jedi/${1}
+module load jedi/$BuildCompiler
 module load json
 module load json-schema-validator
 unalias ecbuild
