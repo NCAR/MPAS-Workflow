@@ -37,5 +37,8 @@ set StandardStateVariables = ( \
   tslb \
   pressure_p \
 )
-
+# Jake has t2m+q2 in state variables and stream_list.atmosphere.output
+#  t2m \
+#  q2 \
+#)
 set MPASJEDIVariablesFiles = (geovars.yaml)

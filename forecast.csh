@@ -208,6 +208,7 @@ while ( ${fcDate} <= ${finalFCDate} )
     # first try member-specific state file (central GFS state when ArgMember==0)
     set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
     set SeaFile = ${SeaAnaDir}/${fcDate}${seaMemDir}/${SeaFilePrefix}.${fcFileExt}
+    echo "ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}"
     ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}
     if ( $status != 0 ) then
       echo "WARNING in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}" > ./WARNING
@@ -215,6 +216,7 @@ while ( ${fcDate} <= ${finalFCDate} )
 
       # otherwise try central GFS state file
       set SeaFile = ${deterministicSeaAnaDir}/${fcDate}/${SeaFilePrefix}.${fcFileExt}
+      echo "ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}"
       ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}
       if ( $status != 0 ) then
         echo "ERROR in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}" > ./FAIL

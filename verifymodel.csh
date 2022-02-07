@@ -76,10 +76,12 @@ ln -fs ${pyModelDir}/*.py ./
 
 set mainScript = writediagstats_modelspace
 ln -fs ${pyModelDir}/${mainScript}.py ./
+set NUMPROC=`cat $PBS_NODEFILE | wc -l`
+
 set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -r $GFSAnaDirVerify/$InitFilePrefixOuter"
+  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $GFSAnaDirVerify/$InitFilePrefixOuter"
   echo "${baseCommand}" | tee ./myCommand
   ${baseCommand} >& log.$mainScript
   set success = $?

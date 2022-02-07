@@ -262,6 +262,14 @@ while ( $member <= ${nEnsDAMembers} )
   else
     sed -i 's@ObsPerturbations@true@g' $memberyaml
   endif
+
+  # perturb all members of EDA to...avoid spread bias?
+#  if ("$DAType" =~ *"eda"*) then
+#    sed -i 's@ObsPerturbations@true@g' $memberyaml
+#  else
+#    sed -i 's@ObsPerturbations@false@g' $memberyaml
+#  endif
+
   sed -i 's@MemberSeed@'$member'@g' $memberyaml
 
   @ member++
@@ -370,6 +378,11 @@ while ( $member <= ${nEnsDAMembers} )
     cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
 
     # modify xtime
+    # TODO: handle errors from python executions, e.g.:
+    # '''
+    #     import netCDF4 as nc
+    # ImportError: No module named netCDF4
+    # '''
     echo "${updateXTIME} $tFile ${thisCycleDate}"
     ${updateXTIME} $tFile ${thisCycleDate}
   endif

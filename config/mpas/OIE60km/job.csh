@@ -50,7 +50,8 @@ setenv VerifyModelPEPerNode 36
 # 384pe: 8-8.5 min., 234 GB memory
 # benchmark: < 9 minutes
 # longer duration with more observations
-set DeterministicDABaseMinutes = 13
+#set DeterministicDABaseMinutes = 13
+set DeterministicDABaseMinutes = 40
 
 # Variational
 setenv VariationalMemory 45
@@ -113,9 +114,10 @@ setenv VariationalPEPerNode 32
 # 80-members: 819-890 sec., 218-221 GB memory, ~132-145 sec. for Localization::multiply
 # 110 sec. premium per 20 members
 
-# note: more memory needed for all-sky experiments due to hydrometeor increment variables,
+# note1: more memory needed for all-sky experiments due to hydrometeor increment variables,
 # ~290GB for 20-member 3DEnVar.  Either increase memory or change Nodes and PE.
-#setenv VariationalMemory 109
+# note2: more memory needed for 80-member EDA, >52GB per node with 32 PE per node
+setenv VariationalMemory 109
 
 set ThreeDEnVarJobSecondsPerMember = 7
 
@@ -169,7 +171,10 @@ setenv EnsOfVariationalNodes $EnsOfVariationalNodes
 # inflation, e.g., RTPP
 setenv CyclingInflationJobMinutes 25
 setenv CyclingInflationMemory 109
-setenv CyclingInflationNodes ${HofXNodes}
-setenv CyclingInflationPEPerNode ${HofXPEPerNode}
+#setenv CyclingInflationNodes ${HofXNodes}
+#setenv CyclingInflationPEPerNode ${HofXPEPerNode}
+# note: need more memory for more members, XXGB per member
+setenv CyclingInflationNodes 3
+setenv CyclingInflationPEPerNode 12
 
 

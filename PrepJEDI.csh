@@ -326,7 +326,7 @@ sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 # TODO: move to experiment.csh? maybe keep it here as a lower level control knob
 # function used for the all-sky IR ObsError parameterization
 # Options: Okamoto, Polynomial2D, Polynomial2DByLatBand, Constant
-set allSkyIRErrorType = Polynomial2DByLatBand
+set allSkyIRErrorType = Constant
 
 #POLYNOMIAL2DFITDEGREE
 # 2d polynomial fit degree for CFxMax vs. CFy, only applies when allSkyIRErrorType==Polynomial2D

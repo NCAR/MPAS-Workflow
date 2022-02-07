@@ -190,10 +190,7 @@ fields:
   - field name: surface_wind_speed
     mpas template field: u10
 
-  - field name: land_type_index_USGS
-    mpas template field: ivgtyp
-
-  - field name: land_type_index_IGBP
+  - field name: land_type_index
     mpas template field: ivgtyp
 
   - field name: vegetation_type_index
