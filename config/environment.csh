@@ -1,19 +1,12 @@
 #!/bin/csh -f
 
 source config/builds.csh
-source config/environmentForJedi.csh
 
 #######################
 # build/run environment
 #######################
 
-source /etc/profile.d/modules.csh
-setenv OPT /glade/work/jedipara/cheyenne/opt/modules
-module purge
-module use $OPT/modulefiles/core
-module load jedi/${BuildCompiler}
-module load json
-module load json-schema-validator
+source config/environmentForJedi.csh ${BuildCompiler}
 
 ## CustomPIO
 # whether to unload the JEDI module PIO module
@@ -25,11 +18,8 @@ if ( CustomPIO == True ) then
 endif
 
 module load nco
-limit stacksize unlimited
-setenv OOPS_TRACE 0
 setenv OOPS_DEBUG 0
 #setenv OOPS_TRAPFPE 1
-setenv GFORTRAN_CONVERT_UNIT 'big_endian:101-200'
 setenv F_UFMTENDIAN 'big:101-200'
 setenv OMP_NUM_THREADS 1
 

@@ -154,7 +154,7 @@ end # inst loop
 if ( "${OBTYPES}" =~ *"prepbufr"* ) then
   # Run the ioda-upgrade executable to upgrade to get string station_id and string variable_names
   # ==================
-  source ${mainScriptDir}/config/environment.csh
+  source ${ConfigDir}/environmentForJedi.csh ${BuildCompiler}
   rm ./${iodaupgradeEXEC}
   ln -sfv ${iodaupgradeBuildDir}/${iodaupgradeEXEC} ./
 
@@ -163,7 +163,7 @@ if ( "${OBTYPES}" =~ *"prepbufr"* ) then
    if ( -f ${pty}_obs_${thisValidDate}.h5 ) then
      set preptype = ${pty}_obs_${thisValidDate}.h5
      set preptype_base = `echo "$preptype" | cut -d'.' -f1`
-     ./${iodaupgradeEXEC} ${preptype} ${preptype_base}_ok.h5 >&! log_${typ}
+     ./${iodaupgradeEXEC} ${preptype} ${preptype_base}_ok.h5 >&! log_${pty}
      rm -rf $preptype
      mv ${preptype_base}_ok.h5 $preptype
    endif
