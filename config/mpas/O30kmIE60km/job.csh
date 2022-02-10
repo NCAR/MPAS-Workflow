@@ -10,11 +10,11 @@ source config/modeldata.csh
 setenv InitICNodes 1
 setenv InitICPEPerNode 36
 
-@ CyclingFCJobMinutes = 2 + (7 * $CyclingWindowHR / 6)
+@ CyclingFCJobMinutes = 1 + (8 * $CyclingWindowHR / 6)
 setenv CyclingFCNodes 16
 setenv CyclingFCPEPerNode 32
 
-@ ExtendedFCJobMinutes = 1 + ($ExtendedFCWindowHR / 4)
+@ ExtendedFCJobMinutes = 1 + (6 * $ExtendedFCWindowHR / 6)
 setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
