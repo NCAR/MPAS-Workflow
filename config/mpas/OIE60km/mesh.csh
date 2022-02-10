@@ -10,7 +10,7 @@ setenv MPASnCellsInner 163842
 setenv MPASnCellsEnsemble ${MPASnCellsInner}
 setenv MPASTimeStep 360.0
 setenv MPASDiffusionLengthScale 60000.0
-setenv RADTHINDISTANCE     "100.0"
+setenv RADTHINDISTANCE     "120.0"
 setenv RADTHINAMOUNT       "0.95"
 
 ## ABI super-obbing footprint, set independently
