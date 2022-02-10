@@ -217,8 +217,8 @@ setenv nOuterIterations ${#nInnerIterations}
 ##################################
 setenv CyclingWindowHR 6                # forecast interval between CyclingDA analyses
 setenv ExtendedFCWindowHR 240           # length of verification forecasts
-setenv ExtendedFC_DT_HR 12              # interval between OMF verification times of an individual forecast
-setenv ExtendedMeanFCTimes T00,T12      # times of the day to run extended forecast from mean analysis
+setenv ExtendedFC_DT_HR 24              # interval between OMF verification times of an individual forecast
+setenv ExtendedMeanFCTimes T00          # times of the day to run extended forecast from mean analysis (T00, T06, T12, T18)
 setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of extended forecasts
 setenv DAVFWindowHR ${CyclingWindowHR}  # window of observations included in AN/BG verification
 setenv FCVFWindowHR 6                   # window of observations included in forecast verification
