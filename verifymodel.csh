@@ -74,7 +74,8 @@ ln -sf ${bgFileOther} ../restart.$fileDate.nc
 
 ln -fs ${pyModelDir}/*.py ./
 
-set mainScript = writediagstats_modelspace
+set mainScript = DiagnoseModelStatistics
+
 ln -fs ${pyModelDir}/${mainScript}.py ./
 set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 
