@@ -14,8 +14,10 @@ echo ""
 rm -rf ${mainScriptDir}
 mkdir -p ${mainScriptDir}
 set workflowParts = ( \
+  UngribColdStartIC.csh \
   GenerateColdStartIC.csh \
   GetWarmStartIC.csh \
+  ObstoIODA.csh \
   getCycleVars.csh \
   tools \
   config \

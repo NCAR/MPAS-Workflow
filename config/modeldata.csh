@@ -5,22 +5,32 @@ source config/filestructure.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 
-
 ####################
 ## static data files
 ####################
-## common directories
 set ModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input
-set OuterModelData = ${ModelData}/${MPASGridDescriptorOuter}
-set InnerModelData = ${ModelData}/${MPASGridDescriptorInner}
 set EnsembleModelData = ${ModelData}/${MPASGridDescriptorEnsemble}
-
-set GFSAnaDirOuter = ${OuterModelData}/GFSAna
-set GFSAnaDirInner = ${InnerModelData}/GFSAna
 set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
+if ( ${InitializationType} == "ColdStart" ) then
+  set OuterModelData = ${ExpDir}/${MPASGridDescriptorOuter}
+  set InnerModelData = ${ExpDir}/${MPASGridDescriptorInner}
+  set GFSAnaDirOuter = ${OuterModelData}/GFSAna
+  set GFSAnaDirInner = ${InnerModelData}/GFSAna
+  setenv InitICWorkDir ${GFSAnaDirOuter}
+  # When ColdStart is fully functioning GFSAnaDirVerify will
+  # be equal to GFSAnaDirOuter for both initialization types
+  setenv GFSAnaDirVerify ${GFSAnaDirEnsemble}
+  # TODO(IHB): enable sea surface updating for ColdStart and set updateSea to 1 below
+  setenv updateSea 0
+else if ( ${InitializationType} == "WarmStart" ) then
+  set OuterModelData = ${ModelData}/${MPASGridDescriptorOuter}
+  set InnerModelData = ${ModelData}/${MPASGridDescriptorInner}
+  set GFSAnaDirOuter = ${OuterModelData}/GFSAna
+  set GFSAnaDirInner = ${InnerModelData}/GFSAna
+  setenv GFSAnaDirVerify ${GFSAnaDirOuter}
+  setenv updateSea 1  
+endif
 
-## GFS analyses for model-space verification
-setenv GFSAnaDirVerify ${GFSAnaDirOuter}
 
 ## file date for first background
 set yy = `echo ${FirstCycleDate} | cut -c 1-4`
@@ -28,10 +38,6 @@ set mm = `echo ${FirstCycleDate} | cut -c 5-6`
 set dd = `echo ${FirstCycleDate} | cut -c 7-8`
 set hh = `echo ${FirstCycleDate} | cut -c 9-10`
 setenv FirstFileDate ${yy}-${mm}-${dd}_${hh}.00.00
-
-## previous date from which first background is initialized
-set prevFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} -${CyclingWindowHR}`
-setenv prevFirstCycleDate ${prevFirstCycleDate}
 
 ## next date from which first background is initialized
 set nextFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} +${CyclingWindowHR}`
@@ -42,8 +48,14 @@ set Ndd = `echo ${nextFirstCycleDate} | cut -c 7-8`
 set Nhh = `echo ${nextFirstCycleDate} | cut -c 9-10`
 set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
 
-## Ungribbed initial conditions
-setenv ungribDir /glade/p/mmm/parc/liuz/pandac_common/ungrib_GFS_o3
+## RDA data on Cheyenne
+setenv RDAdataDir /gpfs/fs1/collections/rda/data
+
+## RDA GFS forecasts
+setenv GFSgribdirRDA ${RDAdataDir}/ds084.1
+
+## linkWPS and Vtable files paths
+setenv VtableDir /glade/u/home/schwartz/MPAS_scripts
 
 # externally sourced model states
 # -------------------------------
@@ -130,7 +142,6 @@ endif
 setenv GraphInfoDir /glade/work/duda/static_moved_to_campaign
 
 ## sea/ocean surface files
-setenv updateSea 1
 setenv seaMaxMembers ${nGEFSMembers}
 setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
 setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
@@ -162,8 +173,16 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   # deterministic
   # 30km, 60km, and 120km
-  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
-  setenv StaticFieldsDirInner ${GFSAnaDirInner}
+  if ( ${InitializationType} == "ColdStart" ) then
+    setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${FirstCycleDate}
+    setenv StaticFieldsDirInner ${GFSAnaDirInner}/${FirstCycleDate}
+    # TODO(IHB): modify InitICDir to use valid date instead of FirstCycleDate
+    # for verification purposes (remove it from here)
+    setenv InitICDir ${InitICWorkDir}/${FirstCycleDate}
+  else if ( ${InitializationType} == "WarmStart" ) then
+    setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
+    setenv StaticFieldsDirInner ${GFSAnaDirInner}
+  endif
   setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
   setenv staticMemFmt " "
   setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
