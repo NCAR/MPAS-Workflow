@@ -63,6 +63,11 @@
         x1: [29.09, 24.19, 32.35]
         err0: [2.06, 1.35, 3.10]
         err1: [27.64, 22.93, 21.59]
+## 30 km, bias correction? - from Yali Wu and Jake Liu
+#        x0: [0.4, 0.4, 0.2]
+#        x1: [11.20, 14.40, 19.40]
+#        err0: [0.95, 0.94, 0.58]
+#        err1: [16.19, 18.92, 20.10]
       _symmetric cld fits 15X15-60km: &abi_g16_SymmCldFits15X15-60km
 ## 60 km, no bias correction - copy of 30km
         <<: *abi_g16_SymmCldFits15X15-30km
@@ -77,30 +82,6 @@
             channels: *abi_g16_channels
             options:
               channels: *abi_g16_channels
-#  ## damp impact of all-sky radiances in the first outer iteration
-#  - filter: Perform Action
-#    apply at iterations: 0
-#    filter variables:
-#    - name: brightness_temperature
-#      channels: *abi_g16_channels
-#    action:
-#      name: assign error
-#      _symmetric cld fits damped: &abi_g16_SymmCldFitsDamped
-#        x0: [0.0, 0.0, 0.0]
-#        x1: [2.0, 2.0, 2.0]
-#        err0: [4.0, 4.0, 6.0]
-#        err1: [20., 20., 40.]
-#      error function:
-#        name: ObsErrorModelRamp@ObsFunction
-#        channels: *abi_g16_channels
-#        options:
-#          <<: *abi_g16_SymmCldFitsDamped
-#          channels: *abi_g16_channels
-#          xvar:
-#            name: SymmCldImpactIR@ObsFunction
-#            channels: *abi_g16_channels
-#            options:
-#              channels: *abi_g16_channels
   - filter: Background Check
     threshold: 3.0
     apply at iterations: 0, 1, 2, 3, 4, 5
