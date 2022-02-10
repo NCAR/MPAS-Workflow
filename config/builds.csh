@@ -6,14 +6,24 @@
 
 ## BuildCompiler
 # {compiler}-{mpi-implementation} combination that selects the JEDI module to be loaded in
-# config/environment.csh
+# config/environmentForJedi.csh
 # OPTIONS: gnu-openmpi, intel-impi
 setenv BuildCompiler 'gnu-openmpi'
 
 # Note: at this time, all executables should be built in the same environment, one that is
-# consistent with config/environment.csh
+# consistent with config/environmentForJedi.csh
 
 set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--cldfracFunc_06JAN2022_Release
+
+# Ungrib
+setenv ungribEXE ungrib.exe
+setenv WPSBuildDir /glade/work/guerrett/pandac/data/GEFS
+
+# Obs2IODA-v2
+setenv obs2iodaEXEC obs2ioda-v2.x
+setenv obs2iodaBuildDir /glade/scratch/ivette/NRT-MPAS-JEDI/preprocessing/fork_obs2ioda/obs2ioda/obs2ioda-v2/src
+setenv iodaupgradeEXEC ioda-upgrade.x
+setenv iodaupgradeBuildDir ${commonBuild}/bin
 
 # MPAS-JEDI
 # ---------

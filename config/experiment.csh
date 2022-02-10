@@ -9,7 +9,7 @@
 # I = variational Inner loop
 # E = variational Ensemble
 # OPTIONS:
-#   + OIE120km -- 3denvar, eda_3denvar
+#   + OIE120km -- 3dvar, 3denvar, eda_3denvar
 #   + O30kmIE120km -- dual-resolution 3denvar
 #   + OIE60km -- eda_3denvar only
 #   + TODO: OIE60km -- 3denvar, requires generating MPASSeaVariables update files from GFS analyses
@@ -32,6 +32,18 @@ setenv MPASGridDescriptor OIE120km
 #     - TODO: enable VarBC
 setenv FirstCycleDate 2018041418
 
+
+#######################
+# workflow date control
+#######################
+## InitializationType
+# Indicates the type of initialization at the initial cycle: cold or warm start
+# OPTIONS:
+#   ColdStart - generate first forecast online from an external GFS analysis
+#   WarmStart - copy a pre-generated forecast
+setenv InitializationType WarmStart
+
+
 ## benchmarkObsList
 # base set of observation types assimilated in all experiments
 set l = ()
@@ -39,7 +51,7 @@ set l = ($l sondes)
 set l = ($l aircraft)
 set l = ($l satwind)
 set l = ($l gnssroref)
-set l = ($l sfcp)
+set l = ($l sfc)
 set l = ($l amsua_n19)
 set l = ($l amsua_n18)
 set l = ($l amsua_n15)
@@ -47,6 +59,19 @@ set l = ($l amsua_aqua)
 set l = ($l amsua_metop-a)
 set l = ($l amsua_metop-b)
 set benchmarkObsList = ($l)
+
+## list of observations to convert to IODA
+set l = ()
+set l = ($l prepbufr)
+set l = ($l satwnd)
+set l = ($l satwind)
+set l = ($l 1bamua)
+#set l = ($l gpsro)
+#set l = ($l 1bmhs)
+#set l = ($l airsev)
+#set l = ($l cris)
+#set l = ($l mtiasi)
+set preprocessObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
@@ -78,8 +103,9 @@ set l = ($l $benchmarkObsList)
 set variationalObsList = ($l)
 
 ## DAType
-# OPTIONS: 3denvar, eda_3denvar, 3dvarId, 3denvar-specific_multivariate
-setenv DAType eda_3denvar
+# OPTIONS: 3dvar, 3denvar, eda_3denvar
+# Note: 3dvar currently only works for OIE120km
+setenv DAType 3dvar
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
@@ -122,7 +148,6 @@ else
   set nPreviousEnsDAMembers = 20
   set PreviousEDAForecastDir = \
     /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_RTPP0.80_LeaveOneOut_OIE120km_memberSpecificTemplate_GEFSSeaUpdate/CyclingFC
-#    /glade/scratch/guerrett/pandac/guerrett_eda_3denvar-60-iter_NMEM80_RTPP0.80_LeaveOneOut_OIE60km/CyclingFC
 
   # override settings for EDASize, nDAInstances, and nEnsDAMembers for non-eda setups
   # TODO: make DAType setting agnostic of eda_3denvar vs. 3denvar
@@ -172,7 +197,7 @@ set l = ($l sondes)
 set l = ($l aircraft)
 set l = ($l satwind)
 set l = ($l gnssroref)
-set l = ($l sfcp)
+set l = ($l sfc)
 set l = ($l amsua_n19)
 set l = ($l amsua_n18)
 set l = ($l amsua_n15)

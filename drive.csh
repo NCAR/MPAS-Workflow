@@ -5,43 +5,17 @@
 ## load experiment configuration
 source config/experiment.csh
 
-#######################
-# workflow date control
-#######################
-## InitializationType
-# Indicates the type of initialization at the initial cycle: cold, warm, or re- start
-# OPTIONS:
-#   ColdStart - generate first forecast online from an external GFS analysis
-#   WarmStart - copy a pre-generated forecast
-#     ReStart - restart the cycling/suite from any cycle
-#               run from a warm start forecast produced within an already existing workflow, which
-#               was originally initiated from either a warm or cold start initial condition
-set InitializationType = WarmStart
-
-## Set the cycle hours (cyclingCycles) according to the initialization type defined in config/experiment.csh
-if ( ${InitializationType} == "ColdStart" || ${InitializationType} == "WarmStart") then
-  # Create the experiment directory and cylc task scripts
-  ./SetupWorkflow.csh
-
-  # The initialCyclePoint is the same as FirstCycleDate when starting a new experiment
-  set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
-  set hh = `echo ${FirstCycleDate} | cut -c 9-10`
-  set initialCyclePoint = ${yymmdd}T${hh}
-
-  # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
-  # initialCyclePoint
-  set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
-else if ( ${InitializationType} == "ReStart" ) then
-  ## initialCyclePoint
-  # OPTIONS: > FirstCycleDate (set in config/experiment.csh)
-  #   Set initialCyclePoint > FirstCycleDate to restart from a forecast produced in a
-  #   previously completed cycle. A CyclingFCBase or GetWarmStartIC task must have been completed
-  #   for the cycle before initialCyclePoint.
-  set initialCyclePoint = 20180415T00
-
-  # The cycles will run every CyclingWindowHR hours, starting at the initialCyclePoint
-  set cyclingCycles = PT${CyclingWindowHR}H
-endif
+######################
+# workflow date bounds
+######################
+## initialCyclePoint
+# OPTIONS: >= FirstCycleDate (see config/experiment.csh)
+# Either:
+# + initialCyclePoint must be equal to FirstCycleDate
+# OR:
+# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart
+#   from a previously completed cycle.
+set initialCyclePoint = 20180414T18
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
@@ -56,6 +30,10 @@ set finalCyclePoint = 20180514T18
 #                   DA and FC cycling components
 # OPTIONS: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
+
+## PreprocessObs: whether to convert RDA archived BUFR observations to IODA
+# OPTIONS: True/False
+set PreprocessObs = False
 
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
@@ -108,6 +86,23 @@ set VerifyExtendedEnsFC = False
 
 date
 
+## Set the FirstCycleDate in the right format for cylc
+set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
+set hh = `echo ${FirstCycleDate} | cut -c 9-10`
+set firstCyclePoint = ${yymmdd}T${hh}
+
+## Set the cycle hours (cyclingCycles) according to the dates
+if ($initialCyclePoint == $firstCyclePoint) then
+  # Create the experiment directory and cylc task script
+  ./SetupWorkflow.csh
+  # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
+  # initialCyclePoint
+  set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
+else
+  # The cycles will run every CyclingWindowHR hours, starting at the initialCyclePoint
+  set cyclingCycles = PT${CyclingWindowHR}H
+endif
+
 ## load the file structure
 source config/filestructure.csh
 
@@ -136,10 +131,12 @@ echo "creating suite.rc"
 cat >! suite.rc << EOF
 #!Jinja2
 # cycle dates
+{% set firstCyclePoint   = "${firstCyclePoint}" %}
 {% set initialCyclePoint = "${initialCyclePoint}" %}
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
+{% set PreprocessObs = "${PreprocessObs}" %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
@@ -174,6 +171,9 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
 {% elif CriticalPathType == "Normal" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
+  {% if PreprocessObs == "True" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => ObstoIODA" %}
+  {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => HofXEnsMeanBG" %}
@@ -213,12 +213,14 @@ cat >! suite.rc << EOF
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
   [[dependencies]]
-{% if InitializationType == "ColdStart" %}
-    [[[R1]]]
-      graph = GenerateColdStartIC => ColdStartFC => CyclingFCFinished
-{% elif InitializationType == "WarmStart" %}
-    [[[R1]]]
-      graph = GetWarmStartIC => CyclingFCFinished
+{% if initialCyclePoint == firstCyclePoint %}
+  {% if InitializationType == "ColdStart" %}
+      [[[R1]]]
+        graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
+  {% elif InitializationType == "WarmStart" %}
+      [[[R1]]]
+        graph = GetWarmStartIC => CyclingFCFinished
+  {% endif %}
 {% endif %}
 ## Critical path for cycling
     [[[${cyclingCycles}]]]
@@ -269,7 +271,11 @@ cat >! suite.rc << EOF
 {% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
     [[[${cyclingCycles}]]]
       graph = '''
+  {% if PreprocessObs == "True" %}
+        ObstoIODA => HofXBG
+  {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
+  {% endif %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
   {% for mem in [1] %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
@@ -412,11 +418,19 @@ cat >! suite.rc << EOF
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
       -q = share
-      -m = ae
       -l = select=1:ncpus=1:mpiprocs=1
+  # observations-related components
+  [[ObstoIODA]]
+    script = \$origin/ObstoIODA.csh
+    [[[job]]]
+      execution time limit = PT${ObstoIODAJobMinutes}M
+      execution retry delays = ${InitializationRetry}
+    [[[directives]]]
+      -q = share
+      -l = select=${ObstoIODANodes}:ncpus=${ObstoIODAPEPerNode}:mpiprocs=${ObstoIODAPEPerNode}:mem=${ObstoIODAMemory}GB
   # variational-related components
   [[InitCyclingDA]]
-    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA" "{{PreprocessObs}}"
     script = \$origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
@@ -479,17 +493,24 @@ cat >! suite.rc << EOF
     inherit = CleanBase
     script = \$origin/CleanVariational.csh
   # forecast-related components
+  [[UngribColdStartIC]]
+    script = \$origin/UngribColdStartIC.csh
+    [[[job]]]
+      execution time limit = PT5M
+      execution retry delays = ${InitializationRetry}
+    [[[directives]]]
+      -q = share
+      -l = select=1:ncpus=1:mpiprocs=1
   [[GenerateColdStartIC]]
     script = \$origin/GenerateColdStartIC.csh
     [[[job]]]
       execution time limit = PT${InitICJobMinutes}M
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
-      -m = ae
       -l = select=${InitICNodes}:ncpus=${InitICPEPerNode}:mpiprocs=${InitICPEPerNode}
   [[ColdStartFC]]
     inherit = CyclingFCBase
-    script = \$origin/CyclingFC.csh "1" "cold"
+    script = \$origin/CyclingFC.csh "1"
     [[[job]]]
       execution retry delays = ${CyclingFCRetry}
   [[CyclingFC]]
@@ -497,7 +518,7 @@ cat >! suite.rc << EOF
 {% for mem in EnsDAMembers %}
   [[CyclingFCMember{{mem}}]]
     inherit = CyclingFC
-    script = \$origin/CyclingFC.csh "{{mem}}" "warm"
+    script = \$origin/CyclingFC.csh "{{mem}}"
     [[[job]]]
       execution retry delays = ${CyclingFCRetry}
 {% endfor %}
@@ -514,7 +535,7 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
-    script = \$origin/ExtendedMeanFC.csh "1" "warm"
+    script = \$origin/ExtendedMeanFC.csh "1"
   [[HofXMeanFC]]
     inherit = HofXBase
   [[VerifyModelMeanFC]]
@@ -522,7 +543,7 @@ cat >! suite.rc << EOF
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "{{PreprocessObs}}"
     script = \$origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -557,7 +578,7 @@ cat >! suite.rc << EOF
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
     inherit = HofX{{state}}
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}" "{{PreprocessObs}}"
     script = \$origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -580,7 +601,7 @@ cat >! suite.rc << EOF
 ## Extended ensemble forecasts and verification
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
-    script = \$origin/ExtendedEnsFC.csh "{{mem}}" "warm"
+    script = \$origin/ExtendedEnsFC.csh "{{mem}}"
   [[HofXEnsFC{{mem}}]]
     inherit = HofXBase
   [[VerifyModelEnsFC{{mem}}]]
@@ -588,7 +609,7 @@ cat >! suite.rc << EOF
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC{{mem}}
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC" "{{PreprocessObs}}"
     script = \$origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -613,7 +634,7 @@ cat >! suite.rc << EOF
       -q = ${VFQueueName}
   [[HofXEnsMeanBG]]
     inherit = HofXBase
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG" "{{PreprocessObs}}"
     script = \$origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = ${EnsMeanBGQueueName}
