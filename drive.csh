@@ -205,7 +205,11 @@ cat >! suite.rc << EOF
   # and to avoid over-utilization of login nodes
   # hint: execute 'ps aux | grep $USER' to check your login node overhead
   # default: 3
+{% if CriticalPathType == "Bypass" %}
+  max active cycle points = 20
+{% else %}
   max active cycle points = 4
+{% endif %}
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
   [[dependencies]]
@@ -377,6 +381,7 @@ cat >! suite.rc << EOF
   [[VerifyObsBase]]
     [[[job]]]
       execution time limit = PT${VerifyObsJobMinutes}M
+      execution retry delays = ${HofXRetry}
     [[[directives]]]
       -q = ${VFQueueName}
       -A = ${VFAccountNumber}
@@ -400,7 +405,10 @@ cat >! suite.rc << EOF
   [[GetWarmStartIC]]
     script = \$origin/GetWarmStartIC.csh
     [[[job]]]
-      execution time limit = PT5M
+      # give longer for higher resolution and more EDA members
+      # TODO: set lime limit based on outer mesh and number of members OR have independent job
+      #       for each member
+      execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
       -q = share
