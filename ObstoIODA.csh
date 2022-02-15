@@ -24,12 +24,18 @@ echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
 
+# ================================================================================================
+
 # static variables
 setenv OBS_ERRTABLE /glade/u/home/hclin/proj/ioda/obs_errtable
 setenv SPC_COEFF_DIR /glade/u/home/hclin/proj/ioda/SpcCoeff
 
 # write out hourly files for IASI
-setenv OPTIONS "-split"
+setenv SPLIThourly "-split"
+
+# flag to de-activate additional QC for conventional 
+# observations as in GSI
+setenv PREPBUFRflag "-noqc"
 
 foreach inst ( ${preprocessObsList} )
 
@@ -130,7 +136,9 @@ foreach inst ( ${preprocessObsList} )
      rm ./${obs2iodaEXEC}
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
      if ( ${inst} == 'mtiasi' ) then
-       ./${obs2iodaEXEC} ${OPTIONS} ${THIS_FILE} >&! log_${inst}
+       ./${obs2iodaEXEC} ${SPLIThourly} ${THIS_FILE} >&! log_${inst}
+     else if ( ${inst} == 'prepbufr' ) then
+       ./${obs2iodaEXEC} ${PREPBUFRflag} ${THIS_FILE} >&! log_${inst}
      else
        ./${obs2iodaEXEC} ${THIS_FILE} >&! log_${inst}
      endif
@@ -145,30 +153,34 @@ foreach inst ( ${preprocessObsList} )
 
 end # inst loop
 
-if ( "${preprocessObsList}" =~ *"prepbufr"* ) then
+if ( "${preprocessObsList}" =~ *"prepbufr"* || "${preprocessObsList}" =~ *"satwnd"* ) then
   # Run the ioda-upgrade executable to upgrade to get string station_id and string variable_names
   # ==================
   source ${ConfigDir}/environmentForJedi.csh ${BuildCompiler}
   rm ./${iodaupgradeEXEC}
   ln -sfv ${iodaupgradeBuildDir}/${iodaupgradeEXEC} ./
-
-  set prepbufr_types = ( aircraft ascat profiler satwind satwnd sfc sondes )
-  foreach pty ( ${prepbufr_types} )
-   if ( -f ${pty}_obs_${thisValidDate}.h5 ) then
-     set preptype = ${pty}_obs_${thisValidDate}.h5
-     set preptype_base = `echo "$preptype" | cut -d'.' -f1`
-     ./${iodaupgradeEXEC} ${preptype} ${preptype_base}_ok.h5 >&! log_${pty}
-     rm -rf $preptype
-     mv ${preptype_base}_ok.h5 $preptype
-   endif
+  set types = ( aircraft ascat profiler satwind sfc sondes satwnd )
+  foreach ty ( ${types} )
+    if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
+      set ty_obs = ${ty}_obs_${thisValidDate}.h5
+      set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
+      ./${iodaupgradeEXEC} ${ty_obs} ${ty_obs_base}_tmp.h5 >&! log_${ty}_upgrade
+      rm -rf $ty_obs
+      mv ${ty_obs_base}_tmp.h5 $ty_obs
+      # Check status
+      # ============
+      grep "Success!" log_${ty}_upgrade
+      if ( $status != 0 ) then
+        echo "ERROR in $0 : ioda-upgrade failed for $ty" > ./FAIL-${ty}_upgrade
+        exit 1
+      endif
+    endif
   end
-  # Check status
-  # ============
-  grep "all done!" log_${inst}
-  if ( $status != 0 ) then
-   echo "ERROR in $0 : ioda-upgrade failed" > ./FAIL-upgrader
-   exit 1
-  endif
+endif
+
+# Create link to observations name match the yamls file name
+if ( "${preprocessObsList}" =~ *"gpsro"* ) then
+  ln -sfv gnssro_obs_${thisValidDate}.h5 ./gnssroref_obs_${thisValidDate}.h5
 endif
 
 # Remove BURF/PrepBUFR files

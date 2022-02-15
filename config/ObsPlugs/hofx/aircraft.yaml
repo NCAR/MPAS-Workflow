@@ -16,3 +16,6 @@
   obs filters:
   - filter: PreQC
     maxvalue: 3
+    apply at iterations: 0
+  - filter: Background Check
+    threshold: 3

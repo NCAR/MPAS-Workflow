@@ -2,7 +2,7 @@
     <<: *ObsSpace
     name: GnssroRef
     obsdatain:
-      obsfile: InDBDir/gnssro_obs_2018041500.h5
+      obsfile: InDBDir/gnssroref_obs_2018041500.h5
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_gnssroref.h5
     simulated variables: [refractivity]
@@ -18,20 +18,18 @@
     where:
     - variable:
         name: altitude@MetaData
-      minvalue: 0.0
-      maxvalue: 30000.0
+      minvalue: 0
+      maxvalue: 30000
     - variable:
         name: earth_radius_of_curvature@MetaData
-      minvalue: 6250000.0
-      maxvalue: 6450000.0
+      minvalue: 6250000
+      maxvalue: 6450000
     - variable:
         name: geoid_height_above_reference_ellipsoid@MetaData
       minvalue: -200
       maxvalue: 200
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1
   - filter: ROobserror
     variable: refractivity
     errmodel: NBAM
-    apply at iterations: 0, 1

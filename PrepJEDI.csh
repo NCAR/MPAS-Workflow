@@ -61,6 +61,7 @@ source config/mpas/variables.csh
 source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
+set yyyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
@@ -77,7 +78,6 @@ cd ${self_WorkDir}
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
 set self_ObsList = (${AppTypeTEMPLATEObsList})
-set self_VARBCTable = VARBCTableTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
 set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
@@ -209,19 +209,23 @@ if ( $ArgPrepObsOn == True ) then
   # conventional
   # ============
   ln -sfv ${ObsDir}/aircraft_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/ascat_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/gnssro_obs*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/gnssroref_obs*.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/satwind_obs*.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/satwnd_obs*.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/sfc_obs*.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/sondes_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/profiler_obs*.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/ascat_obs*.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/profiler_obs*.h5 ${InDBDir}/
 
   # AMSUA+MHS+IASI
   # =========
   ln -sfv ${ObsDir}/amsua*_obs_*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/mhs*_obs_*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/mhs*_obs_*.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
+
+  # VarBC online
+  # ===========
+  set SatbiasDir = ${VARBCDir}
 else
   # conventional
   # ============
@@ -240,11 +244,12 @@ else
   # =======
   ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
   ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
-endif
 
-# VarBC prior
-# ===========
-ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
+  # VarBC prior
+  # ===========
+  set SatbiasDir = ${SatbiasFixcoeff}/${yyyy}
+
+endif
 
 set ABISUPEROBGRID = $ABISuperOb[$myAppIndex]
 set AHISUPEROBGRID = $AHISuperOb[$myAppIndex]
@@ -370,6 +375,9 @@ sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' $thisYAML
 # input and output IODA DB directories
 sed -i 's@InDBDir@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
 sed -i 's@OutDBDir@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
+
+# VarBC prior
+sed -i 's@SatbiasDir@'${SatbiasDir}'@g' $thisYAML
 
 # obs, geo, and diag files with self_AppType suffixes
 sed -i 's@obsPrefix@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML

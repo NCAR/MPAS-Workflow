@@ -14,6 +14,9 @@
   obs filters:
   - filter: PreQC
     maxvalue: 3
+    apply at iterations: 0
+  - filter: Background Check
+    threshold: 3.0
 # avoids large ObsError values polluting plots of ObsError
   - filter: Bounds Check
     filter variables:

@@ -15,12 +15,12 @@ source config/experiment.csh
 # OR:
 # + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart
 #   from a previously completed cycle.
-set initialCyclePoint = 20180414T18
+set initialCyclePoint = 20190414T18
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180514T18
+set finalCyclePoint = 20190514T18
 
 
 #########################
@@ -33,7 +33,7 @@ set CriticalPathType = Normal
 
 ## PreprocessObs: whether to convert RDA archived BUFR observations to IODA
 # OPTIONS: True/False
-set PreprocessObs = False
+set PreprocessObs = True
 
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
@@ -172,7 +172,8 @@ cat >! suite.rc << EOF
 {% elif CriticalPathType == "Normal" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
   {% if PreprocessObs == "True" %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => ObstoIODA" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => SearchOBS => ObstoIODA" %}
+    {# set PrimaryCPGraph = PrimaryCPGraph + " => SearchOBS => ObstoIODA => VarBC" #}    
   {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
@@ -269,6 +270,7 @@ cat >! suite.rc << EOF
       graph = '''
   {% if PreprocessObs == "True" %}
         ObstoIODA => HofXBG
+        #ObstoIODA => VarBC => HofXBG        
   {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
   {% endif %}
@@ -398,7 +400,7 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT5M
     [[[directives]]]
-      -q = share
+      -q = economy
       -A = ${VFAccountNumber}
       -l = select=1:ncpus=1
 #Cycling components
@@ -409,17 +411,33 @@ cat >! suite.rc << EOF
       execution time limit = PT5M
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
-      -q = share
+      -q = economy
       -l = select=1:ncpus=1:mpiprocs=1
   # observations-related components
+  [[SearchOBS]]
+    script = \$origin/searchObsfile.csh
+    [[[job]]]
+      execution time limit = PT60M
+      execution retry delays = ${InitializationRetry}
+    [[[directives]]]
+      -q = economy
+      -l = select=1:ncpus=1:mpiprocs=1   
   [[ObstoIODA]]
     script = \$origin/ObstoIODA.csh
     [[[job]]]
       execution time limit = PT${ObstoIODAJobMinutes}M
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
-      -q = share
+      -q = economy
       -l = select=${ObstoIODANodes}:ncpus=${ObstoIODAPEPerNode}:mpiprocs=${ObstoIODAPEPerNode}:mem=${ObstoIODAMemory}GB
+  [[VarBC]]
+    script = \$origin/SatBiasCorrection.csh
+    [[[job]]]
+      execution time limit = PT5M
+      execution retry delays = ${InitializationRetry}
+    [[[directives]]]
+      -q = economy
+      -l = select=1:ncpus=1:mpiprocs=1   
   # variational-related components
   [[InitCyclingDA]]
     env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA" "{{PreprocessObs}}"
@@ -428,7 +446,7 @@ cat >! suite.rc << EOF
       execution time limit = PT20M
       execution retry delays = ${VariationalRetry}
     [[[directives]]]
-      -q = share
+      -q = economy
       -l = select=1:ncpus=1
   [[CyclingDA]]
 {% if EDASize > 1 %}
@@ -491,7 +509,7 @@ cat >! suite.rc << EOF
       execution time limit = PT5M
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
-      -q = share
+      -q = economy
       -l = select=1:ncpus=1:mpiprocs=1
   [[GenerateColdStartIC]]
     script = \$origin/GenerateColdStartIC.csh

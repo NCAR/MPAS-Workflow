@@ -30,7 +30,7 @@ setenv MPASGridDescriptor OIE120km
 #     - TODO: standardize GFS and observation source data
 #     - TODO: enable QC
 #     - TODO: enable VarBC
-setenv FirstCycleDate 2018041418
+setenv FirstCycleDate 2019041418
 
 
 #######################
@@ -41,7 +41,7 @@ setenv FirstCycleDate 2018041418
 # OPTIONS:
 #   ColdStart - generate first forecast online from an external GFS analysis
 #   WarmStart - copy a pre-generated forecast
-setenv InitializationType WarmStart
+setenv InitializationType ColdStart
 
 
 ## benchmarkObsList
@@ -50,6 +50,7 @@ set l = ()
 set l = ($l sondes)
 set l = ($l aircraft)
 set l = ($l satwind)
+set l = ($l satwnd)
 set l = ($l gnssroref)
 set l = ($l sfc)
 set l = ($l amsua_n19)
@@ -57,15 +58,15 @@ set l = ($l amsua_n18)
 set l = ($l amsua_n15)
 set l = ($l amsua_aqua)
 set l = ($l amsua_metop-a)
+set l = ($l amsua_metop-b)
 set benchmarkObsList = ($l)
 
 ## list of observations to convert to IODA
 set l = ()
 set l = ($l prepbufr)
-set l = ($l satwnd)
-set l = ($l satwind)
-set l = ($l 1bamua)
+#set l = ($l satwnd)
 #set l = ($l gpsro)
+#set l = ($l 1bamua)
 #set l = ($l 1bmhs)
 #set l = ($l airsev)
 #set l = ($l cris)
@@ -74,7 +75,7 @@ set preprocessObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = ''
+set ExpSuffix = '_RealTime_PrepBUFR_cold'
 
 ##############
 ## DA settings
@@ -196,6 +197,7 @@ set l = ()
 set l = ($l sondes)
 set l = ($l aircraft)
 set l = ($l satwind)
+set l = ($l satwnd)
 set l = ($l gnssroref)
 set l = ($l sfc)
 set l = ($l amsua_n19)

@@ -25,6 +25,10 @@ setenv obs2iodaBuildDir /glade/scratch/ivette/NRT-MPAS-JEDI/preprocessing/fork_o
 setenv iodaupgradeEXEC ioda-upgrade.x
 setenv iodaupgradeBuildDir ${commonBuild}/bin
 
+# Satbias2IODA
+setenv satbias2iodaEXE satbias2ioda.x
+setenv satbias2iodaBuildDir /glade/scratch/ivette/jedi/ioda-bundle/build/bin
+
 # MPAS-JEDI
 # ---------
 ## Variational
