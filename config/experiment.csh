@@ -1,5 +1,33 @@
 #!/bin/csh -f
 
+####################
+# workflow controls
+####################
+## FirstCycleDate
+# initial date of this experiment
+# OPTIONS:
+#   + 2018041500
+#   + 2020072300 --> experimental
+#     - TODO: standardize GFS and observation source data
+#     - TODO: enable QC
+#     - TODO: enable VarBC
+setenv FirstCycleDate 2018041418
+
+## InitializationType
+# Indicates the type of initialization at the initial cycle: cold or warm start
+# OPTIONS:
+#   ColdStart - generate first forecast online from an external GFS analysis
+#   WarmStart - copy a pre-generated forecast
+setenv InitializationType WarmStart
+
+## PreprocessObs
+# Whether to convert RDA archived BUFR observations to IODA on the fly (True)
+# or use pre-converted observation files, the latter only being available for
+# specific time periods
+# OPTIONS: True/False
+setenv PreprocessObs = False
+
+
 ##################################
 ## Fundamental experiment settings
 ##################################
@@ -21,28 +49,6 @@
 #   + TODO: "OIE60km" 4denvar
 #   + TODO: "O30kmIE60km" dual-resolution 4denvar
 setenv MPASGridDescriptor OIE120km
-
-## FirstCycleDate
-# initial date of this experiment
-# OPTIONS:
-#   + 2018041500
-#   + 2020072300 --> experimental
-#     - TODO: standardize GFS and observation source data
-#     - TODO: enable QC
-#     - TODO: enable VarBC
-setenv FirstCycleDate 2018041418
-
-
-#######################
-# workflow date control
-#######################
-## InitializationType
-# Indicates the type of initialization at the initial cycle: cold or warm start
-# OPTIONS:
-#   ColdStart - generate first forecast online from an external GFS analysis
-#   WarmStart - copy a pre-generated forecast
-setenv InitializationType WarmStart
-
 
 ## benchmarkObsList
 # base set of observation types assimilated in all experiments
