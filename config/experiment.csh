@@ -25,7 +25,7 @@ setenv InitializationType WarmStart
 # or use pre-converted observation files, the latter only being available for
 # specific time periods
 # OPTIONS: True/False
-setenv PreprocessObs = False
+setenv PreprocessObs False
 
 
 ##################################
