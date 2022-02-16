@@ -183,6 +183,15 @@ end
 # Observation data
 # ================
 
+# setup input+output obs databases
+# ================================
+rm -r ${InDBDir}
+mkdir -p ${InDBDir}
+
+rm -r ${OutDBDir}
+mkdir -p ${OutDBDir}
+
+
 # get application index
 # =====================
 set index = 0
@@ -193,57 +202,44 @@ foreach application (${applicationIndex})
   endif
 end
 
-# setup directories
-# =================
-rm -r ${InDBDir}
-mkdir -p ${InDBDir}
-rm -r ${OutDBDir}
-
-#TODO: member-dependence is only needed for the Variationl task
-#      move this to PrepVariational.csh and HofX.csh
-set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $self_AppName $member`
-  mkdir -p ${OutDBDir}${memDir}
-  @ member++
-end
-
 if ( $ArgPrepObsOn == True ) then
   # conventional
   # ============
-  ln -sfv ${ObsDir}/aircraft_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/ascat_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/gnssro_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/satwind_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/satwnd_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/sfc_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/sondes_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/profiler_obs*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/aircraft_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/ascat_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/gnssro_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/satwind_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/satwnd_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/sfc_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/sondes_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/profiler_obs_${thisValidDate}.h5 ${InDBDir}/
 
   # AMSUA+MHS+IASI
   # =========
-  ln -sfv ${ObsDir}/amsua*_obs_*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/mhs*_obs_*.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/amsua*_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/mhs*_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
 else
   # conventional
   # ============
-  ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs*.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs_${thisValidDate}.h5 ${InDBDir}/
 
   # AMSUA+MHS
   # =========
-  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.h5 ${InDBDir}/
-  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.h5 ${InDBDir}/
+  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_${thisValidDate}.h5 ${InDBDir}/
 
   # ABI+AHI
   # =======
-  ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
-  ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
+  ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_${thisValidDate}.h5 ${InDBDir}/
 endif
+
+ln -sfv gnssro_obs_${thisValidDate}.h5 ${InDBDir}/gnssroref_obs_${thisValidDate}.h5
 
 # VarBC prior
 # ===========

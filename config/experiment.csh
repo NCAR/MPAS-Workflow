@@ -174,14 +174,15 @@ setenv RTPPInflationFactor 0.80
 # OPTIONS: True/False
 setenv storeOriginalRTPPAnalyses False
 
-## ABEIInflation, whether to utilize adaptive background error inflation (ABEI) in cloud-affected scenes
-#  as measured by ABI and AHI observations
+## ABEIInflation, whether to utilize adaptive background error inflation (ABEI) in
+#  cloud-affected scenes as measured by ABI and AHI observations. Works for all
+#  DATypes with "envar" or "hybrid" in the name
 # OPTIONS: True/False
 setenv ABEInflation False
 
 ## ABEIChannel
 # OPTIONS: 8, 9, 10
-setenv ABEIChannel 8
+setenv ABEIChannel 10
 
 ################
 ## HofX settings
@@ -269,8 +270,8 @@ if ($nEnsDAMembers > 1) then
   endif
   if (${RTPPInflationFactor} != "0.0") set ExpEnsSuffix = ${ExpEnsSuffix}_RTPP${RTPPInflationFactor}
   if (${LeaveOneOutEDA} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_LeaveOneOut
-  if (${ABEInflation} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_ABEI_BT${ABEIChannel}
 endif
+if (${ABEInflation} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_ABEI_BT${ABEIChannel}
 
 #(2) observation selection
 setenv ExpObsSuffix ''

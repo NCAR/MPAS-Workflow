@@ -8,21 +8,35 @@ source config/experiment.csh
 
 ## *AccountNumber
 # OPTIONS: NMMM0015, NMMM0043
-setenv StandardAccountNumber NMMM0043
-setenv CYAccountNumber ${StandardAccountNumber}
-setenv VFAccountNumber ${StandardAccountNumber}
+setenv CheyenneAccountNumber NMMM0043
+setenv CasperAccountNumber NMMM0015
+#Note: NMMM0043 is not available on casper as of 15FEB2022
 
 ## *QueueName
-# OPTIONS: economy, regular, premium
-setenv CYQueueName regular
-setenv VFQueueName economy
+# OPTIONS: economy, regular, premium, casper@casper-pbs
+
+# CP*: used for all critical path jobs, single or multi-node, multi-processor only
+setenv CPAccountNumber ${CheyenneAccountNumber}
+setenv CPQueueName regular
+
+# NCP*: used non-critical path jobs, single or multi-node, multi-processor only
+setenv NCPAccountNumber ${CheyenneAccountNumber}
+setenv NCPQueueName economy
+
+# SingleProc*: used for single-processor jobs, both critical and non-critical paths
+# IMPORTANT: must NOT be executed on login node to comply with CISL requirements
+#setenv SingleProcAccountNumber ${CheyenneAccountNumber}
+#setenv SingleProcQueueName share
+setenv SingleProcAccountNumber ${CasperAccountNumber}
+setenv SingleProcQueueName "casper@casper-pbs"
+
 
 if ($ABEInflation == True) then
-  setenv EnsMeanBGQueueName ${CYQueueName}
-  setenv EnsMeanBGAccountNumber ${CYAccountNumber}
+  setenv EnsMeanBGQueueName ${CPQueueName}
+  setenv EnsMeanBGAccountNumber ${CPAccountNumber}
 else
-  setenv EnsMeanBGQueueName ${VFQueueName}
-  setenv EnsMeanBGAccountNumber ${VFAccountNumber}
+  setenv EnsMeanBGQueueName ${NCPQueueName}
+  setenv EnsMeanBGAccountNumber ${NCPAccountNumber}
 endif
 
 setenv InitializationRetry '2*PT30S'

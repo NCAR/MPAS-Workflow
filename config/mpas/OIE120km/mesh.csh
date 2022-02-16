@@ -12,6 +12,7 @@ setenv MPASTimeStep 720.0
 setenv MPASDiffusionLengthScale 120000.0
 setenv RADTHINDISTANCE     "200.0"
 setenv RADTHINAMOUNT       "0.98"
+setenv ABEILocalizationRadius "1200.0"
 
 ## ABI super-obbing footprint, set independently
 #  for variational and hofx

@@ -62,6 +62,20 @@ rm ${localStaticFieldsPrefix}*.nc*
 
 # ==================================================================================================
 
+# ======================================================
+# create member-specific output obs database directories
+# ======================================================
+#TODO: Change behavior to always using member-specific directories
+#      instead of only for EDA.  Will make EDA omb/oma verification easier.
+rm -r ${OutDBDir}
+set member = 1
+while ( $member <= ${nEnsDAMembers} )
+  set memDir = `${memberDir} $DAType $member`
+  mkdir -p ${OutDBDir}${memDir}
+  @ member++
+end
+
+
 # ============================
 # Variational YAML preparation
 # ============================
@@ -171,7 +185,7 @@ sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' $prevYAML
 set enspbinfsed = EnsemblePbInflation
 set thisSEDF = ${enspbinfsed}SEDF.yaml
 set removeInflation = 0
-if ( "$DAType" =~ *"eda"* && ${ABEInflation} == True ) then
+if ( ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) && ${ABEInflation} == True ) then
   set inflationFields = ${CyclingABEInflationDir}/BT${ABEIChannel}_ABEIlambda.nc
   find ${inflationFields} -mindepth 0 -maxdepth 0
   if ($? > 0) then

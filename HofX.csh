@@ -76,6 +76,10 @@ rm ${localStaticFieldsPrefix}*.nc*
 
 # ==================================================================================================
 
+# =============================
+# Input model state preparation
+# =============================
+
 ## copy static fields
 set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
@@ -103,7 +107,7 @@ foreach var ({$MPASJEDIDiagVariables})
   if ( $status != 0 ) then
     @ copyDiags++
     echo "variable ($var) not present"
-  endif 
+  endif
 end
 if ( $copyDiags > 0 ) then
   echo "Copy diagnostic variables used in HofX to bg: $MPASJEDIDiagVariables"
