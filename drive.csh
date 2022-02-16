@@ -418,7 +418,12 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
+    # currently ObstoIODA has to be on Cheyenne, because ioda-upgrade.x is built there
+    # TODO: build ioda-upgrade.x on casper, remove CP directives below
     [[[directives]]]
+      -m = ae
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
       -l = select=1:ncpus=1:mem=109GB
   # variational-related components
   [[InitCyclingDA]]
@@ -493,6 +498,11 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = ${InitializationRetry}
+    # currently UngribColdStartIC has to be on Cheyenne, because ungrib.exe is built there
+    # TODO: build ungrib.exe on casper, remove CP directives below
+    [[[directives]]]
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
   [[GenerateColdStartIC]]
     script = \$origin/GenerateColdStartIC.csh
     [[[job]]]
