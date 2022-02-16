@@ -10,7 +10,6 @@ setenv prevCycleDate ${prevCycleDate}
 
 ## setup cycle directory names
 set ObsDir = ${ObsWorkDir}/${thisValidDate}
-set VARBCDir = ${ObsWorkDir}/${thisValidDate}/VARBC
 set CyclingDADirs = (${CyclingDAWorkDir}/${thisCycleDate})
 set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})
 set CyclingDAInDir = $CyclingDADirs[1]/${bgDir}
@@ -94,3 +93,30 @@ set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set NMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set ConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
 set ICfileDate = ${yy}-${mm}-${dd}_${hh}
+
+## file date for first background
+set Fyy = `echo ${FirstCycleDate} | cut -c 1-4`
+set Fmm = `echo ${FirstCycleDate} | cut -c 5-6`
+set Fdd = `echo ${FirstCycleDate} | cut -c 7-8`
+set Fhh = `echo ${FirstCycleDate} | cut -c 9-10`
+setenv FirstFileDate ${Fyy}-${Fmm}-${Fdd}_${Fhh}.00.00
+
+if ( "$DAType" !~ *"eda"* ) then
+  if ( ${thisValidDate} == ${FirstCycleDate} ) then
+    # deterministic
+    # 30km, 60km, and 120km
+    setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
+    setenv StaticFieldsDirInner ${GFSAnaDirInner}
+    setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
+    setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
+    setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
+    setenv GFSAnaDirVerify ${GFSAnaDirOuter}
+  else
+    setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${thisValidDate}
+    setenv StaticFieldsDirInner ${GFSAnaDirInner}/${thisValidDate}
+    setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${fileDate}.nc
+    setenv StaticFieldsFileInner ${InitFilePrefixInner}.${fileDate}.nc
+    setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${fileDate}.nc
+    setenv GFSAnaDirVerify ${GFSAnaDirOuter}/${thisValidDate}
+  endif
+endif

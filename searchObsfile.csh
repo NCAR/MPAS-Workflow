@@ -20,23 +20,31 @@ source ./getCycleVars.csh
 
 # ================================================================================================
 
-foreach inst ( ${preprocessObsList} )
+# preprocessObsList is the list of observations provided in config/experiment
+# to convert to IODA
+# Note: Real-time currently only works for prepbufr
+#       until satbias correction is done online
 
-  if ( ${inst} == satwnd ) then
-     setenv THIS_FILE ${RDAdataDir}/ds351.0/bufr/${ccyy}/gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
-     if ( -e ${THIS_FILE}) then
-        echo "${THIS_FILE} exists"
-     else
-        echo "Waiting for ${THIS_FILE} to exist"
-        sleep 10m
-     endif
-  else if ( ${inst} == prepbufr ) then
+foreach inst ( ${preprocessObsList} )
+  if ( ${inst} == prepbufr ) then
      setenv THIS_FILE ${RDAdataDir}/ds337.0/prep48h/${ccyy}/prepbufr.gdas.${ccyy}${mmdd}.t${hh}z.nr.48h
-     if ( -e ${THIS_FILE}) then
+     if ( -e ${THIS_FILE} ) then
         echo "${THIS_FILE} exists"
      else
-        echo "Waiting for ${THIS_FILE} to exist"
-        sleep 10m
+        while ( ! -e ${THIS_FILE} )
+          echo "Waiting for ${THIS_FILE} to exist"
+          sleep 10m
+        end
+     endif
+  else if ( ${inst} == satwnd ) then
+     setenv THIS_FILE ${RDAdataDir}/ds351.0/bufr/${ccyy}/gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
+     if ( -e ${THIS_FILE} ) then
+        echo "${THIS_FILE} exists"
+     else
+        while ( ! -e ${THIS_FILE} )
+          echo "Waiting for ${THIS_FILE} to exist"
+          sleep 10m
+        end
      endif
   else
      set THIS_TAR_FILE = ${RDAdataDir}/ds735.0/${inst}/${ccyy}/${inst}.${ccyy}${mmdd}.tar.gz
@@ -44,11 +52,13 @@ foreach inst ( ${preprocessObsList} )
         # cris file name became crisf4 since 2021
         set THIS_TAR_FILE = ${RDAdataDir}/ds735.0/${inst}/${ccyy}/${inst}f4.${ccyy}${mmdd}.tar.gz
      endif
-     if ( -e ${THIS_TAR_FILE}) then
+     if ( -e ${THIS_TAR_FILE} ) then
         echo "${THIS_TAR_FILE} exists"
      else
-        echo "Waiting for ${THIS_FILE} to exist"
-        sleep 10m
+        while ( ! -e ${THIS_FILE} )
+          echo "Waiting for ${THIS_FILE} to exist"
+          sleep 10m
+       end
      endif
   endif
 

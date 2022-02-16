@@ -65,7 +65,7 @@ set icFileExt = ${fileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
 if ( ${InitializationType} == "ColdStart" && ${thisValidDate} == ${FirstCycleDate}) then
-  set initialState = ${InitICDir}/${InitFilePrefixOuter}.${icFileExt}
+  set initialState = ${InitICWorkDir}/${thisValidDate}/${InitFilePrefixOuter}.${icFileExt}
   set do_DAcycling = "false"
   ln -sfv ${initialState} ${localStaticFieldsFile}
 else

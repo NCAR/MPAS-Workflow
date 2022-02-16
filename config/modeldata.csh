@@ -4,33 +4,7 @@ source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
-
-####################
-## static data files
-####################
-set ModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input
-set EnsembleModelData = ${ModelData}/${MPASGridDescriptorEnsemble}
-set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
-if ( ${InitializationType} == "ColdStart" ) then
-  set OuterModelData = ${ExpDir}/${MPASGridDescriptorOuter}
-  set InnerModelData = ${ExpDir}/${MPASGridDescriptorInner}
-  set GFSAnaDirOuter = ${OuterModelData}/GFSAna
-  set GFSAnaDirInner = ${InnerModelData}/GFSAna
-  setenv InitICWorkDir ${GFSAnaDirOuter}
-  # When ColdStart is fully functioning GFSAnaDirVerify will
-  # be equal to GFSAnaDirOuter for both initialization types
-  setenv GFSAnaDirVerify ${GFSAnaDirEnsemble}
-  # TODO(IHB): enable sea surface updating for ColdStart and set updateSea to 1 below
-  setenv updateSea 0
-else if ( ${InitializationType} == "WarmStart" ) then
-  set OuterModelData = ${ModelData}/${MPASGridDescriptorOuter}
-  set InnerModelData = ${ModelData}/${MPASGridDescriptorInner}
-  set GFSAnaDirOuter = ${OuterModelData}/GFSAna
-  set GFSAnaDirInner = ${InnerModelData}/GFSAna
-  setenv GFSAnaDirVerify ${GFSAnaDirOuter}
-  setenv updateSea 1  
-endif
-
+source config/${InitializationType}ModelData.csh
 
 ## file date for first background
 set yy = `echo ${FirstCycleDate} | cut -c 1-4`
@@ -48,6 +22,9 @@ set Ndd = `echo ${nextFirstCycleDate} | cut -c 7-8`
 set Nhh = `echo ${nextFirstCycleDate} | cut -c 9-10`
 set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
 
+####################
+## static data files
+####################
 ## RDA data on Cheyenne
 setenv RDAdataDir /gpfs/fs1/collections/rda/data
 
@@ -168,21 +145,6 @@ if ( "$DAType" =~ *"eda"* ) then
   setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
   setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
 else
-  # deterministic
-  # 30km, 60km, and 120km
-  if ( ${InitializationType} == "ColdStart" ) then
-    setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${FirstCycleDate}
-    setenv StaticFieldsDirInner ${GFSAnaDirInner}/${FirstCycleDate}
-    # TODO(IHB): modify InitICDir to use valid date instead of FirstCycleDate
-    # for verification purposes (remove it from here)
-    setenv InitICDir ${InitICWorkDir}/${FirstCycleDate}
-  else if ( ${InitializationType} == "WarmStart" ) then
-    setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
-    setenv StaticFieldsDirInner ${GFSAnaDirInner}
-  endif
   setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
   setenv staticMemFmt " "
-  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
-  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
 endif

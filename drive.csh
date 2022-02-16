@@ -15,12 +15,12 @@ source config/experiment.csh
 # OR:
 # + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart
 #   from a previously completed cycle.
-set initialCyclePoint = 20190414T18
+set initialCyclePoint = 20220214T00 #20180414T18 
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20190514T18
+set finalCyclePoint = 20220214T12 #20180514T18
 
 
 #########################
@@ -173,7 +173,6 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
   {% if PreprocessObs == "True" %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => SearchOBS => ObstoIODA" %}
-    {# set PrimaryCPGraph = PrimaryCPGraph + " => SearchOBS => ObstoIODA => VarBC" #}    
   {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
@@ -187,7 +186,11 @@ cat >! suite.rc << EOF
     {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => RTPPInflation => CyclingDAFinished" %}
   {% endif %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
+  {% if PreprocessObs == "True" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => Wait => CyclingFCFinished" %}
+  {% else %}
+   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}  
+  {% endif %}
   {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
 {# else #}
 #TODO: indicate invalid CriticalPathType
@@ -209,6 +212,8 @@ cat >! suite.rc << EOF
   max active cycle points = 4
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
+  [[xtriggers]]
+    clock_1 = wall_clock(offset=PT1H):PT10S
   [[dependencies]]
 {% if initialCyclePoint == firstCyclePoint %}
   {% if InitializationType == "ColdStart" %}
@@ -255,7 +260,11 @@ cat >! suite.rc << EOF
     [[[${cyclingCycles}]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
+  {% if InitializationType == "ColdStart" %}
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => UngribColdStartIC => GenerateColdStartIC =>VerifyModelBG
+  {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
+  {% endif %}
   {% for mem in EnsVerifyMembers %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
         VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
@@ -270,11 +279,14 @@ cat >! suite.rc << EOF
       graph = '''
   {% if PreprocessObs == "True" %}
         ObstoIODA => HofXBG
-        #ObstoIODA => VarBC => HofXBG        
   {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
   {% endif %}
+  {% if InitializationType == "ColdStart" %}
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => UngribColdStartIC => GenerateColdStartIC =>VerifyModelBG
+  {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
+  {% endif %}
   {% for mem in [1] %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
         VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
@@ -418,10 +430,18 @@ cat >! suite.rc << EOF
     script = \$origin/searchObsfile.csh
     [[[job]]]
       execution time limit = PT60M
+      execution retry delays = ${SearchObsRetry}
+    [[[directives]]]
+      -q = economy
+      -l = select=1:ncpus=1:mpiprocs=1
+  [[Wait]]
+    script = sleep 18000; \$origin/wait.csh
+    [[[job]]]
+      execution time limit = PT5M
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
       -q = economy
-      -l = select=1:ncpus=1:mpiprocs=1   
+      -l = select=1:ncpus=1:mpiprocs=1      
   [[ObstoIODA]]
     script = \$origin/ObstoIODA.csh
     [[[job]]]
@@ -430,14 +450,6 @@ cat >! suite.rc << EOF
     [[[directives]]]
       -q = economy
       -l = select=${ObstoIODANodes}:ncpus=${ObstoIODAPEPerNode}:mpiprocs=${ObstoIODAPEPerNode}:mem=${ObstoIODAMemory}GB
-  [[VarBC]]
-    script = \$origin/SatBiasCorrection.csh
-    [[[job]]]
-      execution time limit = PT5M
-      execution retry delays = ${InitializationRetry}
-    [[[directives]]]
-      -q = economy
-      -l = select=1:ncpus=1:mpiprocs=1   
   # variational-related components
   [[InitCyclingDA]]
     env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA" "{{PreprocessObs}}"

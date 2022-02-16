@@ -16,9 +16,9 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-echo "WorkDir = ${InitICDir}"
-mkdir -p ${InitICDir}
-cd ${InitICDir}
+echo "WorkDir = ${InitICWorkDir}/${thisValidDate}"
+mkdir -p ${InitICWorkDir}/${thisValidDate}
+cd ${InitICWorkDir}/${thisValidDate}
 
 # ================================================================================================
 

@@ -33,7 +33,7 @@ setenv SPC_COEFF_DIR /glade/u/home/hclin/proj/ioda/SpcCoeff
 # write out hourly files for IASI
 setenv SPLIThourly "-split"
 
-# flag to de-activate additional QC for conventional 
+# flag to de-activate additional QC for conventional
 # observations as in GSI
 setenv PREPBUFRflag "-noqc"
 
@@ -176,11 +176,6 @@ if ( "${preprocessObsList}" =~ *"prepbufr"* || "${preprocessObsList}" =~ *"satwn
       endif
     endif
   end
-endif
-
-# Create link to observations name match the yamls file name
-if ( "${preprocessObsList}" =~ *"gpsro"* ) then
-  ln -sfv gnssro_obs_${thisValidDate}.h5 ./gnssroref_obs_${thisValidDate}.h5
 endif
 
 # Remove BURF/PrepBUFR files

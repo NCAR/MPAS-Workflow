@@ -1,9 +1,0 @@
-- sensor: amsua_metop-c
-  output file: satbias_amsua_metop-c.h5
-  predictors: *default_preds
-- sensor: mhs_metop-c
-  output file: satbias_mhs_metop-c.h5
-  predictors: *default_preds
-- sensor: iasi_metop-c
-  output file: satbias_iasi_metop-c.h5
-  predictors: *default_preds

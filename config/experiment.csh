@@ -30,7 +30,7 @@ setenv MPASGridDescriptor OIE120km
 #     - TODO: standardize GFS and observation source data
 #     - TODO: enable QC
 #     - TODO: enable VarBC
-setenv FirstCycleDate 2019041418
+setenv FirstCycleDate 2022021400 #2018041418
 
 
 #######################
@@ -62,6 +62,8 @@ set l = ($l amsua_metop-b)
 set benchmarkObsList = ($l)
 
 ## list of observations to convert to IODA
+# Note: Real-time currently only works for prepbufr
+#       until satbias correction is done online
 set l = ()
 set l = ($l prepbufr)
 #set l = ($l satwnd)
@@ -75,7 +77,7 @@ set preprocessObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = '_RealTime_PrepBUFR_cold'
+set ExpSuffix = '_REALTIME2'
 
 ##############
 ## DA settings

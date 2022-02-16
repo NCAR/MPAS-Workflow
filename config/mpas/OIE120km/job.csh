@@ -40,7 +40,7 @@ set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 9
 setenv VerifyObsNodes 1
 setenv VerifyObsPEPerNode 36
 
-setenv VerifyModelJobMinutes 2
+setenv VerifyModelJobMinutes 5
 setenv VerifyModelNodes 1
 setenv VerifyModelPEPerNode 36
 
