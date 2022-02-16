@@ -26,7 +26,7 @@ else
 endif
 
 setenv InitializationRetry '2*PT30S'
-setenv SearchObsRetry '20*PT30M'
+setenv SearchObsRetry '40*PT30M'
 setenv VariationalRetry '2*PT30S'
 setenv EnsOfVariationalRetry '1*PT30S'
 setenv CyclingFCRetry '2*PT30S'

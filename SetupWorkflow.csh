@@ -28,7 +28,6 @@ set workflowParts = ( \
   GenerateABEInflation.csh \
   PrepVariational.csh \
   EnsembleOfVariational.csh \
-  wait.csh \
 )
 foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/

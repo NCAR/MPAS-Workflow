@@ -15,12 +15,12 @@ source config/experiment.csh
 # OR:
 # + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart
 #   from a previously completed cycle.
-set initialCyclePoint = 20220130T00 #20220214T00 #20180414T18 
+set initialCyclePoint = 20180414T18 
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20220131T00 #20220214T12 #20180514T18
+set finalCyclePoint = 20180514T18
 
 
 #########################
@@ -33,7 +33,7 @@ set CriticalPathType = Normal
 
 ## PreprocessObs: whether to convert RDA archived BUFR observations to IODA
 # OPTIONS: True/False
-set PreprocessObs = True
+set PreprocessObs = False
 
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.

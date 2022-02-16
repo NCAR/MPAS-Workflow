@@ -209,7 +209,7 @@ if ( $ArgPrepObsOn == True ) then
   # conventional
   # ============
   # Note: Real-time currently only works for prepbufr
-  #       until satbias correction is done online
+  #       and satwnd until satbias correction is done online
   ln -sfv ${ObsDir}/aircraft_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/sfc_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/sondes_obs_${thisValidDate}.h5 ${InDBDir}/

@@ -30,7 +30,7 @@ setenv MPASGridDescriptor OIE120km
 #     - TODO: standardize GFS and observation source data
 #     - TODO: enable QC
 #     - TODO: enable VarBC
-setenv FirstCycleDate 2022013000 #2022021400 #2018041418
+setenv FirstCycleDate 2018041418
 
 
 #######################
@@ -41,7 +41,7 @@ setenv FirstCycleDate 2022013000 #2022021400 #2018041418
 # OPTIONS:
 #   ColdStart - generate first forecast online from an external GFS analysis
 #   WarmStart - copy a pre-generated forecast
-setenv InitializationType ColdStart
+setenv InitializationType WarmStart
 
 
 ## benchmarkObsList
@@ -63,10 +63,10 @@ set benchmarkObsList = ($l)
 
 ## list of observations to convert to IODA
 # Note: Real-time currently only works for prepbufr
-#       until satbias correction is done online
+#       and satwnd until satbias correction is done online
 set l = ()
 set l = ($l prepbufr)
-#set l = ($l satwnd)
+set l = ($l satwnd)
 #set l = ($l gpsro)
 #set l = ($l 1bamua)
 #set l = ($l 1bmhs)
@@ -77,7 +77,7 @@ set preprocessObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = '_Retrospective_ColdStart'
+set ExpSuffix = ''
 
 ##############
 ## DA settings
