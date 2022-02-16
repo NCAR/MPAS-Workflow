@@ -420,11 +420,13 @@ cat >! suite.rc << EOF
       execution retry delays = ${InitializationRetry}
     # currently ObstoIODA has to be on Cheyenne, because ioda-upgrade.x is built there
     # TODO: build ioda-upgrade.x on casper, remove CP directives below
+    # Note: memory for ObstoIODA may need to be increased when hyperspectral and/or
+    #       geostationary instruments are added
     [[[directives]]]
       -m = ae
       -q = ${CPQueueName}
       -A = ${CPAccountNumber}
-      -l = select=1:ncpus=1:mem=109GB
+      -l = select=1:ncpus=1:mem=10GB
   # variational-related components
   [[InitCyclingDA]]
     env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
