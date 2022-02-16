@@ -78,6 +78,7 @@ cd ${self_WorkDir}
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
 set self_ObsList = (${AppTypeTEMPLATEObsList})
+set self_VARBCTable = VARBCTableTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
 set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
@@ -208,48 +209,58 @@ end
 if ( $ArgPrepObsOn == True ) then
   # conventional
   # ============
-  ln -sfv ${ObsDir}/aircraft_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/gnssroref_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/satwind_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/satwnd_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/sfc_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/sondes_obs*.h5 ${InDBDir}/
-  #ln -sfv ${ObsDir}/ascat_obs*.h5 ${InDBDir}/
-  #ln -sfv ${ObsDir}/profiler_obs*.h5 ${InDBDir}/
+  # Note: Real-time currently only works for prepbufr
+  #       until satbias correction is done online
+  ln -sfv ${ObsDir}/aircraft_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/sfc_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/sondes_obs_${thisValidDate}.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/ascat_obs_${thisValidDate}.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/profiler_obs_${thisValidDate}.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/gnssro_obs_${thisValidDate}.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/satwind_obs_${thisValidDate}.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/satwnd_obs_${thisValidDate}.h5 ${InDBDir}/
 
   # AMSUA+MHS+IASI
   # =========
-  ln -sfv ${ObsDir}/amsua*_obs_*.h5 ${InDBDir}/
-  #ln -sfv ${ObsDir}/mhs*_obs_*.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/amsua*_obs_${thisValidDate}.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/mhs*_obs_${thisValidDate}.h5 ${InDBDir}/
   #ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
-
-  # VarBC online
+  # Fixed satbias
   # ===========
-  set SatbiasDir = ${VARBCDir}
+  set SatbiasDir = ${SatbiascoeffDir}
 else
   # conventional
   # ============
-  ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs*.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs_${thisValidDate}.h5 ${InDBDir}/
 
   # AMSUA+MHS
   # =========
-  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.h5 ${InDBDir}/
-  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.h5 ${InDBDir}/
+  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_${thisValidDate}.h5 ${InDBDir}/
 
   # ABI+AHI
   # =======
-  ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
-  ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
-
-  # VarBC prior
+  ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_${thisValidDate}.h5 ${InDBDir}/
+  
+  # Fixed satbias
   # ===========
   set SatbiasDir = ${SatbiasFixcoeff}/${yyyy}
 
 endif
+
+# Create link to gnssro observations name that matches the yaml file name
+if ( "${preprocessObsList}" =~ *"gpsro"* ) then
+  ln -sfv gnssro_obs_${thisValidDate}.h5 ./gnssroref_obs_${thisValidDate}.h5
+endif
+
+# VarBC prior
+# ===========
+ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 
 set ABISUPEROBGRID = $ABISuperOb[$myAppIndex]
 set AHISUPEROBGRID = $AHISuperOb[$myAppIndex]
@@ -376,7 +387,7 @@ sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' $thisYAML
 sed -i 's@InDBDir@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
 sed -i 's@OutDBDir@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
 
-# VarBC prior
+# Satbias correction
 sed -i 's@SatbiasDir@'${SatbiasDir}'@g' $thisYAML
 
 # obs, geo, and diag files with self_AppType suffixes

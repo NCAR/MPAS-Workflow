@@ -30,7 +30,7 @@ setenv MPASGridDescriptor OIE120km
 #     - TODO: standardize GFS and observation source data
 #     - TODO: enable QC
 #     - TODO: enable VarBC
-setenv FirstCycleDate 2019041418
+setenv FirstCycleDate 2018041418
 
 
 #######################
@@ -41,7 +41,7 @@ setenv FirstCycleDate 2019041418
 # OPTIONS:
 #   ColdStart - generate first forecast online from an external GFS analysis
 #   WarmStart - copy a pre-generated forecast
-setenv InitializationType ColdStart
+setenv InitializationType WarmStart
 
 
 ## benchmarkObsList
@@ -75,7 +75,7 @@ set preprocessObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = '_RealTime_PrepBUFR_cold'
+set ExpSuffix = '_YAML'
 
 ##############
 ## DA settings

@@ -10,7 +10,7 @@ setenv prevCycleDate ${prevCycleDate}
 
 ## setup cycle directory names
 set ObsDir = ${ObsWorkDir}/${thisValidDate}
-set VARBCDir = ${ObsWorkDir}/${thisValidDate}/VARBC
+set SatbiascoeffDir = ${ObsWorkDir}/${thisValidDate}/Satbias
 set CyclingDADirs = (${CyclingDAWorkDir}/${thisCycleDate})
 set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})
 set CyclingDAInDir = $CyclingDADirs[1]/${bgDir}
