@@ -41,16 +41,16 @@ setenv VerifyModelJobMinutes 2
 set DeterministicDABaseMinutes = 6
 
 # Variational
-if ( $nEnsDAMembers > 10 ) then
-  # user fewer resources in large EDA jobs
-  # nodes
-  setenv VariationalMemory 109
-  setenv VariationalNodesPerMember 1
-  setenv VariationalPEPerNode 36
-
-  # time per member (mostly localization multiplication, some IO)
-  set ThreeDEnVarJobSecondsPerMember = 10
-else
+#if ( $nEnsDAMembers > 10 ) then
+#  # user fewer resources in large EDA jobs
+#  # nodes
+#  setenv VariationalMemory 109
+#  setenv VariationalNodesPerMember 1
+#  setenv VariationalPEPerNode 36
+#
+#  # time per member (mostly localization multiplication, some IO)
+#  set ThreeDEnVarJobSecondsPerMember = 10
+#else
   # nodes
   setenv VariationalMemory 45
   setenv VariationalNodesPerMember 4
@@ -64,7 +64,7 @@ else
   # 80-members: 342-391 sec.
   # 50-60 sec. premium per 20 members
   set ThreeDEnVarJobSecondsPerMember = 5
-endif
+#endif
 setenv VariationalNodes ${VariationalNodesPerMember}
 @ ThreeDEnVarJobMinutes = ${ensPbNMembers} * ${ThreeDEnVarJobSecondsPerMember} / 60
 @ ThreeDEnVarJobMinutes = ${ThreeDEnVarJobMinutes} + ${DeterministicDABaseMinutes}
