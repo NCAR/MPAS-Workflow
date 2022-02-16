@@ -2,7 +2,7 @@
 
 ### Issue closed
 
-(if applicable)
+Closes #(if applicable)
 
 ### Tests completed
  - WarmStart
