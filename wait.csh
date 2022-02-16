@@ -2,6 +2,6 @@
 
 date
 
-echo 'Waited 18000s until next analysis cycle...'
+echo 'Ready for next analysis cycle...'
 
 exit 0

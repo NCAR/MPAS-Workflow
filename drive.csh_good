@@ -15,12 +15,12 @@ source config/experiment.csh
 # OR:
 # + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart
 #   from a previously completed cycle.
-set initialCyclePoint = 20220130T00 #20220214T00 #20180414T18 
+set initialCyclePoint = 20220214T00 #20180414T18 
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20220131T00 #20220214T12 #20180514T18
+set finalCyclePoint = 20220214T12 #20180514T18
 
 
 #########################
@@ -186,7 +186,11 @@ cat >! suite.rc << EOF
     {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => RTPPInflation => CyclingDAFinished" %}
   {% endif %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
+  {% if PreprocessObs == "True" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => Wait => CyclingFCFinished" %}
+  {% else %}
+   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}  
+  {% endif %}
   {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
 {# else #}
 #TODO: indicate invalid CriticalPathType
@@ -208,11 +212,15 @@ cat >! suite.rc << EOF
   max active cycle points = 4
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
+  #[[xtriggers]]
+  #  clock_1 = wall_clock(offset=PT1H):PT10S
   [[dependencies]]
 {% if initialCyclePoint == firstCyclePoint %}
   {% if InitializationType == "ColdStart" %}
       [[[R1]]]
-        graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
+        graph = '''
+        '''
+        #UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
   {% elif InitializationType == "WarmStart" %}
       [[[R1]]]
         graph = GetWarmStartIC => CyclingFCFinished
@@ -424,7 +432,15 @@ cat >! suite.rc << EOF
     script = \$origin/searchObsfile.csh
     [[[job]]]
       batch system = background
-      execution retry delays = ${SearchObsRetry}      
+      execution retry delays = ${SearchObsRetry}
+  [[Wait]]
+    script = sleep 18000; \$origin/wait.csh
+    [[[job]]]
+      execution time limit = PT5M
+      execution retry delays = ${InitializationRetry}
+    [[[directives]]]
+      -q = economy
+      -l = select=1:ncpus=1:mpiprocs=1      
   [[ObstoIODA]]
     script = \$origin/ObstoIODA.csh
     [[[job]]]

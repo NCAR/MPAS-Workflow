@@ -31,16 +31,20 @@ foreach inst ( ${preprocessObsList} )
      if ( -e ${THIS_FILE} ) then
         echo "${THIS_FILE} exists"
      else
-        echo "${THIS_FILE} does not exists -- waiting"
-        exit 1
+        while ( ! -e ${THIS_FILE} )
+          echo "Waiting for ${THIS_FILE} to exist"
+          sleep 10m
+        end
      endif
   else if ( ${inst} == satwnd ) then
      setenv THIS_FILE ${RDAdataDir}/ds351.0/bufr/${ccyy}/gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
      if ( -e ${THIS_FILE} ) then
         echo "${THIS_FILE} exists"
      else
-        echo "${THIS_FILE} does not exists -- waiting"
-        exit 1
+        while ( ! -e ${THIS_FILE} )
+          echo "Waiting for ${THIS_FILE} to exist"
+          sleep 10m
+        end
      endif
   else
      set THIS_TAR_FILE = ${RDAdataDir}/ds735.0/${inst}/${ccyy}/${inst}.${ccyy}${mmdd}.tar.gz
@@ -51,8 +55,10 @@ foreach inst ( ${preprocessObsList} )
      if ( -e ${THIS_TAR_FILE} ) then
         echo "${THIS_TAR_FILE} exists"
      else
-        echo "${THIS_FILE} does not exists -- waiting"
-        exit 1
+        while ( ! -e ${THIS_FILE} )
+          echo "Waiting for ${THIS_FILE} to exist"
+          sleep 10m
+       end
      endif
   endif
 

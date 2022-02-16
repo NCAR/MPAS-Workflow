@@ -30,7 +30,7 @@ setenv MPASGridDescriptor OIE120km
 #     - TODO: standardize GFS and observation source data
 #     - TODO: enable QC
 #     - TODO: enable VarBC
-setenv FirstCycleDate 2022021400 #2018041418
+setenv FirstCycleDate 2022013000 #2022021400 #2018041418
 
 
 #######################
@@ -77,7 +77,7 @@ set preprocessObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = '_REALTIME2'
+set ExpSuffix = '_Retrospective_ColdStart'
 
 ##############
 ## DA settings
