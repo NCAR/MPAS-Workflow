@@ -232,6 +232,7 @@
 #  Gross check
 #  - filter: Background Check
 #    threshold: 3
+#    apply at iterations: 0, 1, 2, 3, 4, 5
   - filter: Background Check
     filter variables:
     - name: brightness_temperature
@@ -323,3 +324,5 @@
       name: reject
   - filter: Gaussian_Thinning
     horizontal_mesh:   145 #km
+#  - filter: GOMsaver
+#    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_metop-a.nc4

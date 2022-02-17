@@ -60,6 +60,9 @@ echo "WorkDir = ${self_WorkDir}"
 set self_jediAppName = jediAppNameTEMPLATE
 set self_nOuter = nOuterTEMPLATE
 
+setenv HDF5_DISABLE_VERSION_CHECK 1
+setenv NUMEXPR_MAX_THREADS 1
+
 # ================================================================================================
 
 # collect obs-space diagnostic statistics into DB files
@@ -79,10 +82,10 @@ while ( $success != 0 )
   setenv baseCommand "python ${mainScript}.py -n ${NUMPROC} -p ${self_WorkDir}/${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} -app $self_jediAppName -nout $self_nOuter"
 
   if ($ArgNMembers > 1) then
-    echo "${baseCommand} -m $ArgNMembers -e ${VerificationWorkDir}/${bgDir}${flowMemFmt}/${thisCycleDate}/${OutDBDir}"
+    echo "${baseCommand} -m $ArgNMembers -e ${VerificationWorkDir}/${bgDir}${flowMemFmt}/${thisCycleDate}/${OutDBDir}" | tee ./myCommand
     ${baseCommand} -m $ArgNMembers -e "${VerificationWorkDir}/${bgDir}${flowMemFmt}/${thisCycleDate}/${OutDBDir}" >& log.${mainScript}
   else
-    echo "${baseCommand}"
+    echo "${baseCommand}" | tee ./myCommand
     ${baseCommand} >& log.${mainScript}
   endif
   set success = $?
@@ -91,7 +94,12 @@ while ( $success != 0 )
     sleep 3
   endif
 end
-cd -
+
+grep "Finished __main__ successfully" log.${mainScript}
+if ( $status != 0 ) then
+  echo "ERROR in $0 : ${mainScript} failed" > ./FAIL
+  exit 1
+endif
 
 date
 

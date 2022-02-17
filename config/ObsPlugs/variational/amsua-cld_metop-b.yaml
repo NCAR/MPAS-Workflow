@@ -21,9 +21,6 @@
   - filter: Background Check
     threshold: 3
     apply at iterations: 0, 1
-#  - filter: Thinning
-#    amount: RADTHINAMOUNT
-#    random_seed: 0
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver

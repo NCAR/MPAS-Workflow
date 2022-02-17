@@ -229,6 +229,7 @@
 #  - filter: Background Check
 #    threshold: 3
   - filter: Background Check
+<<<<<<< HEAD
     filter variables:
     - name: brightness_temperature
       channels: *amsua_n19_channels
@@ -319,3 +320,11 @@
       name: reject
   - filter: Gaussian_Thinning
     horizontal_mesh:   145 #km
+=======
+    threshold: 3
+    apply at iterations: 0, 1, 2, 3, 4, 5
+#  - filter: Gaussian Thinning
+#    horizontal_mesh: RADTHINDISTANCE #km
+  - filter: GOMsaver
+    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_n19.nc4
+>>>>>>> origin/develop

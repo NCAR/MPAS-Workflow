@@ -19,18 +19,15 @@
     maxvalue: 3
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1
-#  - filter: Bounds Check
-#    filter variables:
-#    - name: eastward_wind
-#    - name: northward_wind
-#    test variables:
-#    - name: eastward_wind@ObsErrorData
-#    - name: northward_wind@ObsErrorData
-#    minvalue: 0.0
-#    maxvalue: 200.0
-##  - filter: Thinning
-##    amount: RADTHINAMOUNT
-##    random_seed: 0
-##  - filter: Gaussian Thinning
-##    horizontal_mesh: RADTHINDISTANCE #km
+    apply at iterations: 0, 1, 2, 3, 4, 5
+  - filter: Bounds Check
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    test variables:
+    - name: eastward_wind@ObsErrorData
+    - name: northward_wind@ObsErrorData
+    minvalue: 0.0
+    maxvalue: 200.0
+#  - filter: Gaussian Thinning
+#    horizontal_mesh: RADTHINDISTANCE #km

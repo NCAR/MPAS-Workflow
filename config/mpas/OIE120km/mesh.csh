@@ -26,6 +26,19 @@ set variationalAHISuperOb = 101X101
 set hofxAHISuperOb = 101X101
 
 ## Background Error
+
+### Ensemble localization
+
+#### strategy: common
+
+#### 2000km horizontal loc
+#### 5 level vertical loc
 # works for 36pe/128pe and 120km domain
-setenv bumpLocDir /glade/p/mmm/parc/bjung/pandac_common/bumploc/20210811
-setenv bumpLocPrefix bumploc_2000_5
+#setenv bumpLocDir /glade/p/mmm/parc/bjung/pandac_common/bumploc/20210811
+#setenv bumpLocPrefix bumploc_2000_5
+
+#### 1200km horizontal loc
+#### 6km height vertical loc
+# 128pe only
+setenv bumpLocPrefix bumploc_1200.0km_6.0km
+setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_128pe_05OCT2021code

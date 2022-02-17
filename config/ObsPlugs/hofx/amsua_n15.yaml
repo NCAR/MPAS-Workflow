@@ -323,3 +323,15 @@
       name: reject
   - filter: Gaussian_Thinning
     horizontal_mesh:   145 #km
+##  - filter: PreQC
+##    maxvalue: 0
+#  - filter: Domain Check
+#    filter variables:
+#    - name: brightness_temperature
+#      channels: *amsua_n18_channels
+#    where:
+#    - variable:
+#        name: water_area_fraction@GeoVaLs
+#      minvalue: 1.0
+##  - filter: GOMsaver
+##    filename: OutDBDir/geoPrefix_amsua_n15.nc4

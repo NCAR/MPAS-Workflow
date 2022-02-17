@@ -24,11 +24,6 @@ set ArgDT = "$2"
 # ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
 
-# ArgPrepObsOn: boolean, determines the data source
-#         True: link observations generated online in the workflow
-#        False: link pre-generated observations
-set ArgPrepObsOn = "$4"
-
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isNotInt = ($status)
@@ -206,7 +201,7 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-if ( $ArgPrepObsOn == True ) then
+if ( $PreprocessObs == True ) then
   # conventional
   # ============
   # Note: Real-time currently only works for prepbufr
@@ -276,6 +271,10 @@ set thisYAML = orig.yaml
 set prevYAML = ${thisYAML}
 
 cp -v ${ConfigDir}/applicationBase/${self_AppName}.yaml $thisYAML
+if ( $status != 0 ) then
+  echo "ERROR in $0 : application YAML not available --> ${self_AppName}.yaml" > ./FAIL
+  exit 1
+endif
 
 # (2) obs-related substitutions
 # =============================
