@@ -2,7 +2,6 @@
 
 import argparse
 from copy import deepcopy
-import re
 import yaml
 
 def getConfig():
