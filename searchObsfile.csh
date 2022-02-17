@@ -55,6 +55,6 @@ foreach inst ( ${preprocessObsList} )
         exit 1
      endif
   endif
-
+end
 
 exit 0

@@ -213,11 +213,11 @@ if ( $ArgPrepObsOn == True ) then
   ln -sfv ${ObsDir}/aircraft_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/sfc_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/sondes_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/satwind_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/satwnd_obs_${thisValidDate}.h5 ${InDBDir}/
   #ln -sfv ${ObsDir}/ascat_obs_${thisValidDate}.h5 ${InDBDir}/
   #ln -sfv ${ObsDir}/profiler_obs_${thisValidDate}.h5 ${InDBDir}/
   #ln -sfv ${ObsDir}/gnssro_obs_${thisValidDate}.h5 ${InDBDir}/
-  #ln -sfv ${ObsDir}/satwind_obs_${thisValidDate}.h5 ${InDBDir}/
-  #ln -sfv ${ObsDir}/satwnd_obs_${thisValidDate}.h5 ${InDBDir}/
 
   # AMSUA+MHS+IASI
   # =========
