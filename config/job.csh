@@ -10,10 +10,11 @@ source config/experiment.csh
 # OPTIONS: NMMM0015, NMMM0043
 setenv CheyenneAccountNumber NMMM0043
 setenv CasperAccountNumber NMMM0015
-#Note: NMMM0043 is not available on casper as of 15FEB2022
+#Note: NMMM0043 is not available on casper
 
 ## *QueueName
-# OPTIONS: economy, regular, premium, casper@casper-pbs
+# Cheyenne Options: economy, regular, premium
+# Casper Options: casper@casper-pbs
 
 # CP*: used for all critical path jobs, single or multi-node, multi-processor only
 setenv CPAccountNumber ${CheyenneAccountNumber}

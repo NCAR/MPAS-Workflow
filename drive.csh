@@ -31,10 +31,6 @@ set finalCyclePoint = 20180514T18
 # OPTIONS: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
 
-## PreprocessObs: whether to convert RDA archived BUFR observations to IODA
-# OPTIONS: True/False
-set PreprocessObs = False
-
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
 #    Only works when CriticalPathType == Normal.
@@ -412,21 +408,28 @@ cat >! suite.rc << EOF
     script = \$origin/GetWarmStartIC.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members
-      # TODO: set lime limit based on outer mesh AND (number of members OR
-      #       independent task for each member)
+      # TODO: set time limit based on outer mesh AND (number of members OR
+      #       independent task for each member) under config/mpas/*/job.csh
       execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
   # observations-related components
   [[ObstoIODA]]
     script = \$origin/ObstoIODA.csh
     [[[job]]]
-      execution time limit = PT${ObstoIODAJobMinutes}M
+      execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
+    # currently ObstoIODA has to be on Cheyenne, because ioda-upgrade.x is built there
+    # TODO: build ioda-upgrade.x on casper, remove CP directives below
+    # Note: memory for ObstoIODA may need to be increased when hyperspectral and/or
+    #       geostationary instruments are added
     [[[directives]]]
-      -l = select=1:ncpus=1:mem=109GB
+      -m = ae
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
+      -l = select=1:ncpus=1:mem=10GB
   # variational-related components
   [[InitCyclingDA]]
-    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA" "$PreprocessObs"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
     script = \$origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
@@ -497,6 +500,11 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = ${InitializationRetry}
+    # currently UngribColdStartIC has to be on Cheyenne, because ungrib.exe is built there
+    # TODO: build ungrib.exe on casper, remove CP directives below
+    [[[directives]]]
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
   [[GenerateColdStartIC]]
     script = \$origin/GenerateColdStartIC.csh
     [[[job]]]
@@ -543,7 +551,7 @@ cat >! suite.rc << EOF
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "$PreprocessObs"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
     script = \$origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -578,7 +586,7 @@ cat >! suite.rc << EOF
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
     inherit = HofX{{state}}
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}" "$PreprocessObs"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     script = \$origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -609,7 +617,7 @@ cat >! suite.rc << EOF
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC{{mem}}
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC" "$PreprocessObs"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     script = \$origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -636,7 +644,7 @@ cat >! suite.rc << EOF
       -l = select=1:ncpus=36:mpiprocs=36
   [[HofXEnsMeanBG]]
     inherit = HofXBase
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG" "$PreprocessObs"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG"
     script = \$origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = ${EnsMeanBGQueueName}
