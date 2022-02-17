@@ -1,5 +1,14 @@
 #!/bin/csh -f
 
+## testStage
+# choose a stage of the workflow to run for the test cases.  It can be useful to run only the
+# SetupWorkflow stage in order to check that all scripts run correctly or to re-initialize
+# the MPAS-Worlfow config directories of all of the tests. The latter use useful when a simple
+# update to the config directory will enable a workflow task to run, and avoids re-starting
+# the entire workflow.
+# OPTIONS: drive, SetupWorkflow
+set testStage = drive
+
 ## test* settings
 # these values will be used to run the test suites
 set l = ()
@@ -10,8 +19,18 @@ set l = ($l ColdStart_2018041418_OIE120km_3dvar)
 set l = ($l WarmStart_O30kmIE60km_3denvar)
 set testCaseNames = ($l)
 
-set testExpSuffix = '_'
+## testExpSuffix
+# Controls the ExpSuffix in config/experiment.csh.  If testing for multiple branches or across
+# non-yaml-configured settings, it is convenient to modify this suffix here in order to distinguish
+# the scenarios.
+set testExpSuffix = '_autotest_cases'
+
+## testCPQueueName
+# Queue that will be used for critical path jobs.  If time allows, it is best to use economy.
 set testCPQueueName = economy
+
+## testFinalCyclePoint
+# final cycle date-time for all cases
 set testFinalCyclePoint = 20180415T06
 
 ## default* settings
@@ -37,7 +56,7 @@ foreach caseName ($testCaseNames)
   echo "${0}: Running test case: $caseName"
 
   sed -i 's@^set\ caseName\ =\ .*@set\ caseName\ =\ '$caseName'@' config/experiment.csh
-  ./drive.csh
+  ./${testStage}.csh
 end
 
 # always return to the default values at the end
