@@ -46,18 +46,20 @@ cost function:
     date: *analysisDate
   background error:
     covariance model: ensemble
+    date: *analysisDate
     localization:
-      localization method: SABER
-      saber block:
-        saber block name: BUMP_NICAS
-        input variables: *incvars
-        output variables: *incvars
-        bump:
-          datadir: bumpLocDir
-          prefix: bumpLocPrefix
-          strategy: common
-          load_nicas_local: true
-          verbosity: main
+      localization method: BUMP
+      localization variables: *incvars
+      bump:
+        datadir: bumpLocDir
+        prefix: bumpLocPrefix
+        strategy: specific_multivariate
+        load_nicas_local: 1
+        io_keys: [temperature-temperature,spechum-spechum,uReconstructZonal-uReconstructZonal,uReconstructMeridional-uReconstructMeridional,surface_pressure-surface_pressure,qc-qc,qi-qi,qr-qr,qs-qs,qg-qg]
+        #io_values: [dynamic,dynamic,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
+        io_values: [dynamic,cloud,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
+        verbosity: main
+    variables: *incvars
     members:
 EnsemblePbMembers
 EnsemblePbInflation

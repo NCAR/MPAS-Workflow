@@ -21,7 +21,6 @@
     reference: station_elevation@MetaData
     value: surface_altitude@GeoVaLs
     threshold: 200.0
-    apply at iterations: 0, 1
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1
+    apply at iterations: 0, 1, 2, 3, 4, 5

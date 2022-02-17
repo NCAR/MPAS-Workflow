@@ -21,7 +21,7 @@
     - variable:
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
-  - filter: BlackList
+  - filter: Perform Action
     filter variables:
     - name: brightness_temperature
       channels: *ahi_channels

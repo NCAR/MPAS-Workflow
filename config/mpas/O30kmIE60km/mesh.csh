@@ -27,6 +27,10 @@ set variationalAHISuperOb = 15X15
 set hofxAHISuperOb = 15X15
 
 ## Background Error
+
+### Ensemble localization
+
+#### strategy: common
 #### 1200km horizontal loc
 #### 6km height vertical loc
 setenv bumpLocPrefix bumploc_1200km_6km
