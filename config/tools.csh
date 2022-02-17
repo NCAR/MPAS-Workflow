@@ -16,15 +16,3 @@ end
 
 setenv getConfig "config/getConfig.csh"
 setenv setConfig "config/setConfig.csh"
-
-#config()
-#{
-#  set configSection = $1
-#  echo $configSection
-#  set yamlName = $2
-#  echo $yamlName
-#  set key = $3
-#  echo $key
-#  set value = "${getConfig} config/${configSection}/${yamlName}.yaml ${configSection}.${key}"
-#  echo $value
-#}

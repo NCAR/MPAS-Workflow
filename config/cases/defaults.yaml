@@ -4,7 +4,6 @@ experiment:
   InitializationType: WarmStart
   PreprocessObs: 'False'
   MPASGridDescriptor: OIE120km
-  ExpSuffix: ''
   # variational settings
   DAType: 3dvar
   nInnerIterations: [60,]

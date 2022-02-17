@@ -6,7 +6,7 @@ set thisYAML = $1
 set rootKey = $2
 set key1 = $3
 
-set defaultYAML = config/cases/default.yaml
+set defaultYAML = config/cases/defaults.yaml
 
 # retrieve config value
 set value = `${getYAMLKey} ${defaultYAML} ${thisYAML} ${rootKey}.${key1}`

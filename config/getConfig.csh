@@ -7,7 +7,7 @@ set thisYAML = $1
 set configSection = $2
 set key = $3
 
-set defaultYAML = config/cases/default.yaml
+set defaultYAML = config/cases/defaults.yaml
 
 # retrieve config value
 set value = `${getYAMLKey} ${defaultYAML} ${thisYAML} ${configSection}.${key}`
