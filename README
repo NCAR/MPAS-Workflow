@@ -67,6 +67,9 @@ tools.csh: initializes python tools for workflow task management
 
 verification.csh: post-processing and verification script descriptions
 
+cases/: directory containing pre-defined and user-defined top-level experiment settings
+cases/defaults.yaml: default experiment settings
+cases/*.yaml: particular case settings that are selected in experiment.csh
 
 ## MPAS-specific configuration (config/mpas/)
 ---------------------------------------------
@@ -92,7 +95,13 @@ on the previous cycle. Reanalysis is used to perform the CyclingDA task on each 
 re-running forecasts.  This requires the CyclingFC output files to already be present in the
 experiment directory, which might be added manually outside of the workflow.  Reforecast is used to
 perform forecasts from an existing set of analysis states, which are stored in the CyclingDA
-directory.  
+directory.
+
+## autotest driver(s)
+---------------------
+autotest-PR.csh: executes drive.csh for a subset of pre-defined cases defined in config/cases/*.yaml.
+It is recommended to run this set of tests before submitting a PR to MPAS-Workflow.  For example,
+execute "source env-script/cheyenne.csh; ./autotest-PR.csh" from the command line.
 
 ## templated workflow components
 --------------------------------

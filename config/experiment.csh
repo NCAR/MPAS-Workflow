@@ -13,7 +13,13 @@ source config/tools.csh
 
 set caseName = WarmStart_OIE120km_3dvar
 
+# The selected case should be described in a yaml file in the config/case directory.  Only the
+# options that differ from defaults.yaml need to be included in the case yaml, but other options
+# may also be included for clarity.
 set caseFile = config/cases/${caseName}.yaml
+
+# getExperiment and setExperiment are helper functions that pick out individual
+# configuration elements from within the "experiment" key of the case configuration
 set getExperiment = "$getConfig $caseFile experiment"
 setenv setExperiment "source $setConfig $caseFile experiment"
 
