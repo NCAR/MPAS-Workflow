@@ -30,8 +30,8 @@
       maxvalue: 200
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1
+    apply at iterations: 0, 1, 2, 3, 4, 5
   - filter: ROobserror
     variable: refractivity
     errmodel: NBAM
-    apply at iterations: 0, 1
+    apply at iterations: 0, 1, 2, 3, 4, 5
