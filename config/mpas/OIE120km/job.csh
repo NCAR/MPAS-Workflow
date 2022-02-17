@@ -41,6 +41,8 @@ setenv VerifyModelJobMinutes 2
 set DeterministicDABaseMinutes = 6
 
 # Variational
+# TODO: enable different number of processors to be selected at run-time.
+# The total PE count must align with localization files specified in mesh.csh.
 #if ( $nEnsDAMembers > 10 ) then
 #  # user fewer resources in large EDA jobs
 #  # nodes
