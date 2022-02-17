@@ -1,12 +1,10 @@
 #!/bin/csh -f
 
-source config/filestructure.csh
-
 ## workflow tools
-set pyDir = ${mainScriptDir}/tools
+set pyDir = tools
 set pyTools = ( \
   advanceCYMDH \
-  getConfig \
+  getYAMLKey \
   memberDir \
   nSpaces \
   substituteEnsembleB \
@@ -15,3 +13,18 @@ set pyTools = ( \
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"
 end
+
+setenv getConfig "config/getConfig.csh"
+setenv setConfig "config/setConfig.csh"
+
+#config()
+#{
+#  set configSection = $1
+#  echo $configSection
+#  set yamlName = $2
+#  echo $yamlName
+#  set key = $3
+#  echo $key
+#  set value = "${getConfig} config/${configSection}/${yamlName}.yaml ${configSection}.${key}"
+#  echo $value
+#}
