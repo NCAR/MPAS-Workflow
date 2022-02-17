@@ -24,11 +24,6 @@ set ArgDT = "$2"
 # ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
 
-# ArgPrepObsOn: boolean, determines the data source
-#         True: link observations generated online in the workflow
-#        False: link pre-generated observations
-set ArgPrepObsOn = "$4"
-
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isNotInt = ($status)
@@ -205,7 +200,7 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-if ( $ArgPrepObsOn == True ) then
+if ( $PreprocessObs == True ) then
   # conventional
   # ============
   ln -sfv ${ObsDir}/aircraft_obs*.h5 ${InDBDir}/

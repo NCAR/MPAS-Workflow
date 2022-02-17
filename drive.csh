@@ -31,10 +31,6 @@ set finalCyclePoint = 20180514T18
 # OPTIONS: Normal, Bypass, Reanalysis, Reforecast
 set CriticalPathType = Normal
 
-## PreprocessObs: whether to convert RDA archived BUFR observations to IODA
-# OPTIONS: True/False
-set PreprocessObs = False
-
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files from DA.  Does not work for ensemble DA.
 #    Only works when CriticalPathType == Normal.
@@ -136,7 +132,7 @@ cat >! suite.rc << EOF
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
-{% set PreprocessObs = "${PreprocessObs}" %}
+{% set PreprocessObs = ${PreprocessObs} %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
@@ -171,7 +167,7 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
 {% elif CriticalPathType == "Normal" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
-  {% if PreprocessObs == "True" %}
+  {% if PreprocessObs %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => ObstoIODA" %}
   {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
@@ -205,7 +201,11 @@ cat >! suite.rc << EOF
   # and to avoid over-utilization of login nodes
   # hint: execute 'ps aux | grep $USER' to check your login node overhead
   # default: 3
+{% if CriticalPathType == "Bypass" %}
+  max active cycle points = 20
+{% else %}
   max active cycle points = 4
+{% endif %}
   initial cycle point = {{initialCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
   [[dependencies]]
@@ -267,7 +267,7 @@ cat >! suite.rc << EOF
 {% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
     [[[${cyclingCycles}]]]
       graph = '''
-  {% if PreprocessObs == "True" %}
+  {% if PreprocessObs %}
         ObstoIODA => HofXBG
   {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
@@ -338,17 +338,18 @@ cat >! suite.rc << EOF
       execution time limit = PT60M
     [[[directives]]]
       -j = oe
-      -S = /bin/csh
-      -q = ${CYQueueName}
-      -A = ${CYAccountNumber}
       -k = eod
-      -l = select=1:ncpus=36:mpiprocs=36
+      -S = /bin/tcsh
+      # default to using one processor
+      -q = ${SingleProcQueueName}
+      -A = ${SingleProcAccountNumber}
+      -l = select=1:ncpus=1
 ## SLURM
 #    [[[job]]]
 #      batch system = slurm
 #      execution time limit = PT60M
 #    [[[directives]]]
-#      --account = ${CYAccountNumber}
+#      --account = ${CPAccountNumber}
 #      --mem = 45G
 #      --ntasks = 1
 #      --cpus-per-task = 36
@@ -358,78 +359,81 @@ cat >! suite.rc << EOF
       execution time limit = PT${CyclingFCJobMinutes}M
     [[[directives]]]
       -m = ae
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
       -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
   [[ExtendedFCBase]]
     [[[job]]]
       execution time limit = PT${ExtendedFCJobMinutes}M
     [[[directives]]]
       -m = ae
-      -q = ${VFQueueName}
+      -q = ${NCPQueueName}
+      -A = ${NCPAccountNumber}
       -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
   [[HofXBase]]
     [[[job]]]
       execution time limit = PT${HofXJobMinutes}M
     [[[directives]]]
-      -q = ${VFQueueName}
-      -A = ${VFAccountNumber}
+      -q = ${NCPQueueName}
+      -A = ${NCPAccountNumber}
       -l = select=${HofXNodes}:ncpus=${HofXPEPerNode}:mpiprocs=${HofXPEPerNode}:mem=${HofXMemory}GB
   [[VerifyModelBase]]
     [[[job]]]
       execution time limit = PT${VerifyModelJobMinutes}M
     [[[directives]]]
-      -q = ${VFQueueName}
-      -A = ${VFAccountNumber}
-      -l = select=${VerifyModelNodes}:ncpus=${VerifyModelPEPerNode}:mpiprocs=${VerifyModelPEPerNode}
+      -q = ${NCPQueueName}
+      -A = ${NCPAccountNumber}
+      -l = select=1:ncpus=36:mpiprocs=36
   [[VerifyObsBase]]
     [[[job]]]
       execution time limit = PT${VerifyObsJobMinutes}M
+      execution retry delays = ${HofXRetry}
     [[[directives]]]
-      -q = ${VFQueueName}
-      -A = ${VFAccountNumber}
-      -l = select=${VerifyObsNodes}:ncpus=${VerifyObsPEPerNode}:mpiprocs=${VerifyObsPEPerNode}
+      -q = ${NCPQueueName}
+      -A = ${NCPAccountNumber}
+      -l = select=1:ncpus=36:mpiprocs=36
   [[CompareBase]]
     [[[job]]]
       execution time limit = PT5M
     [[[directives]]]
-      -q = ${VFQueueName}
-      -A = ${VFAccountNumber}
+      -q = ${NCPQueueName}
+      -A = ${NCPAccountNumber}
       -l = select=1:ncpus=36:mpiprocs=36
   [[CleanBase]]
     [[[job]]]
       execution time limit = PT5M
-    [[[directives]]]
-      -q = share
-      -A = ${VFAccountNumber}
-      -l = select=1:ncpus=1
 #Cycling components
   # initialization-related components
   [[GetWarmStartIC]]
     script = \$origin/GetWarmStartIC.csh
     [[[job]]]
-      execution time limit = PT5M
+      # give longer for higher resolution and more EDA members
+      # TODO: set time limit based on outer mesh AND (number of members OR
+      #       independent task for each member) under config/mpas/*/job.csh
+      execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
-    [[[directives]]]
-      -q = share
-      -l = select=1:ncpus=1:mpiprocs=1
   # observations-related components
   [[ObstoIODA]]
     script = \$origin/ObstoIODA.csh
     [[[job]]]
-      execution time limit = PT${ObstoIODAJobMinutes}M
+      execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
+    # currently ObstoIODA has to be on Cheyenne, because ioda-upgrade.x is built there
+    # TODO: build ioda-upgrade.x on casper, remove CP directives below
+    # Note: memory for ObstoIODA may need to be increased when hyperspectral and/or
+    #       geostationary instruments are added
     [[[directives]]]
-      -q = share
-      -l = select=${ObstoIODANodes}:ncpus=${ObstoIODAPEPerNode}:mpiprocs=${ObstoIODAPEPerNode}:mem=${ObstoIODAMemory}GB
+      -m = ae
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
+      -l = select=1:ncpus=1:mem=10GB
   # variational-related components
   [[InitCyclingDA]]
-    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA" "{{PreprocessObs}}"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
     script = \$origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = ${VariationalRetry}
-    [[[directives]]]
-      -q = share
-      -l = select=1:ncpus=1
   [[CyclingDA]]
 {% if EDASize > 1 %}
   {% for inst in DAInstances %}
@@ -441,6 +445,8 @@ cat >! suite.rc << EOF
       execution retry delays = ${EnsOfVariationalRetry}
     [[[directives]]]
       -m = ae
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
       -l = select=${EnsOfVariationalNodes}:ncpus=${EnsOfVariationalPEPerNode}:mpiprocs=${EnsOfVariationalPEPerNode}:mem=${EnsOfVariationalMemory}GB
   {% endfor %}
 {% else %}
@@ -453,6 +459,8 @@ cat >! suite.rc << EOF
       execution retry delays = ${VariationalRetry}
     [[[directives]]]
       -m = ae
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
       -l = select=${VariationalNodes}:ncpus=${VariationalPEPerNode}:mpiprocs=${VariationalPEPerNode}:mem=${VariationalMemory}GB
   {% endfor %}
 {% endif %}
@@ -463,15 +471,17 @@ cat >! suite.rc << EOF
       execution retry delays = ${RTPPInflationRetry}
     [[[directives]]]
       -m = ae
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
       -l = select=${CyclingInflationNodes}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
   [[GenerateABEInflation]]
     script = \$origin/GenerateABEInflation.csh
     [[[job]]]
-      execution time limit = PT10M
+      execution time limit = PT20M
     [[[directives]]]
-      -q = ${CYQueueName}
-      -A = ${CYAccountNumber}
-      -l = select=${VerifyObsNodes}:ncpus=${VerifyObsPEPerNode}:mpiprocs=${VerifyObsPEPerNode}
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
+      -l = select=1:ncpus=36:mpiprocs=36
   [[CyclingDAFinished]]
     [[[job]]]
       batch system = background
@@ -490,15 +500,19 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = ${InitializationRetry}
+    # currently UngribColdStartIC has to be on Cheyenne, because ungrib.exe is built there
+    # TODO: build ungrib.exe on casper, remove CP directives below
     [[[directives]]]
-      -q = share
-      -l = select=1:ncpus=1:mpiprocs=1
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
   [[GenerateColdStartIC]]
     script = \$origin/GenerateColdStartIC.csh
     [[[job]]]
       execution time limit = PT${InitICJobMinutes}M
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
+      -q = ${CPQueueName}
+      -A = ${CPAccountNumber}
       -l = select=${InitICNodes}:ncpus=${InitICPEPerNode}:mpiprocs=${InitICPEPerNode}
   [[ColdStartFC]]
     inherit = CyclingFCBase
@@ -524,7 +538,9 @@ cat >! suite.rc << EOF
       execution time limit = PT5M
     [[[directives]]]
       -m = ae
-      -q = ${VFQueueName}
+      -q = ${NCPQueueName}
+      -A = ${NCPAccountNumber}
+      -l = select=1:ncpus=36:mpiprocs=36
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
     script = \$origin/ExtendedMeanFC.csh "1"
@@ -535,7 +551,7 @@ cat >! suite.rc << EOF
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "{{PreprocessObs}}"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
     script = \$origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -570,7 +586,7 @@ cat >! suite.rc << EOF
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
     inherit = HofX{{state}}
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}" "{{PreprocessObs}}"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     script = \$origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -601,7 +617,7 @@ cat >! suite.rc << EOF
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC{{mem}}
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC" "{{PreprocessObs}}"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     script = \$origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     [[[job]]]
       execution retry delays = ${HofXRetry}
@@ -623,10 +639,12 @@ cat >! suite.rc << EOF
       execution time limit = PT5M
     [[[directives]]]
       -m = ae
-      -q = ${VFQueueName}
+      -q = ${NCPQueueName}
+      -A = ${NCPAccountNumber}
+      -l = select=1:ncpus=36:mpiprocs=36
   [[HofXEnsMeanBG]]
     inherit = HofXBase
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG" "{{PreprocessObs}}"
+    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG"
     script = \$origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = ${EnsMeanBGQueueName}
