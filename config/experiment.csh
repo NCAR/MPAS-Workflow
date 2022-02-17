@@ -98,8 +98,7 @@ set preprocessObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-$setExperiment ExpSuffix
-set ExpSuffix = '_get_config'
+set ExpSuffix = ''
 
 ##############
 ## DA settings
