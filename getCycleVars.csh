@@ -8,6 +8,9 @@ set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 setenv prevCycleDate ${prevCycleDate}
 #setenv nextCycleDate ${nextCycleDate}
 
+set IAUDate = `$advanceCYMDH ${thisCycleDate} -${IAUoutIntervalHR}`
+setenv IAUDate ${IAUDate}
+
 ## setup cycle directory names
 set CyclingDADirs = (${CyclingDAWorkDir}/${thisCycleDate})
 set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})

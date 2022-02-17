@@ -43,7 +43,6 @@ setenv FirstCycleDate 2018041418
 #   WarmStart - copy a pre-generated forecast
 setenv InitializationType WarmStart
 
-
 ## benchmarkObsList
 # base set of observation types assimilated in all experiments
 set l = ()
@@ -61,7 +60,7 @@ set benchmarkObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = ''
+set ExpSuffix = 'IAU'
 
 ##############
 ## DA settings
@@ -92,7 +91,7 @@ set variationalObsList = ($l)
 ## DAType
 # OPTIONS: 3dvar, 3denvar, eda_3denvar
 # Note: 3dvar currently only works for OIE120km
-setenv DAType 3dvar
+setenv DAType 3denvar
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
@@ -228,7 +227,7 @@ setenv nOuterIterations ${#nInnerIterations}
 ## analysis and forecast intervals
 ##################################
 setenv CyclingWindowHR 6                # forecast interval between CyclingDA analyses
-setenv ExtendedFCWindowHR 240           # length of verification forecasts
+setenv ExtendedFCWindowHR 24            # length of verification forecasts
 setenv ExtendedFC_DT_HR 12              # interval between OMF verification times of an individual forecast
 setenv ExtendedMeanFCTimes T00,T12      # times of the day to run extended forecast from mean analysis
 setenv ExtendedEnsFCTimes T00           # times of the day to run ensemble of extended forecasts
@@ -236,6 +235,19 @@ setenv DAVFWindowHR ${CyclingWindowHR}  # window of observations included in AN/
 setenv FCVFWindowHR 6                   # window of observations included in forecast verification
 setenv forecastPrecision single         # floating-point precision of forecast output; options: [single, double]
 
+#####################################
+### IAU (Incremental Analysis Undate)
+#####################################
+# With config_IAU_option = 'on' in namelist.atmosphere,
+# forecast is no longer initialized at the analysis time,
+# but is shifted to -3h and integrated for 9h [IAUfcLengthHR] until the next analysis time.
+# Hence, the IAU setting only affects forecasts in the model, not the jedi analysis.
+# For this configuration, 1) we need to print out the model output every 3h and
+# 2) compute the analysis increments at the analysis time in a netcdf file
+#    (using tools/create_amb_in_nc.py).
+setenv IAU True 			# OPTIONS: True/False
+setenv IAUoutIntervalHR 3               # forecast output interval between CyclingDA analyses
+setenv IAUfcLengthHR 9                  # forecast length with IAU on: [-3h, 6h]
 
 ########################
 ## experiment name parts

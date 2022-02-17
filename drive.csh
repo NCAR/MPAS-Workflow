@@ -15,12 +15,12 @@ source config/experiment.csh
 # OR:
 # + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart
 #   from a previously completed cycle.
-set initialCyclePoint = 20180414T18
+set initialCyclePoint = 20180414T18	#20180414T18
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180514T18
+set finalCyclePoint = 20180418T18
 
 
 #########################
@@ -386,7 +386,7 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT5M
     [[[directives]]]
-      -q = share
+      -q = economy
       -A = ${VFAccountNumber}
       -l = select=1:ncpus=1
 #Cycling components
@@ -397,7 +397,7 @@ cat >! suite.rc << EOF
       execution time limit = PT5M
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
-      -q = share
+      -q = economy
       -m = ae
       -l = select=1:ncpus=1:mpiprocs=1
   # variational-related components
@@ -408,7 +408,7 @@ cat >! suite.rc << EOF
       execution time limit = PT20M
       execution retry delays = ${VariationalRetry}
     [[[directives]]]
-      -q = share
+      -q = economy
       -l = select=1:ncpus=1
   [[CyclingDA]]
 {% if EDASize > 1 %}
@@ -472,7 +472,7 @@ cat >! suite.rc << EOF
       execution retry delays = ${InitializationRetry}
     [[[directives]]]
       -m = ae
-      -q = share
+      -q = economy
       -l = select=1:ncpus=1:mpiprocs=1
   [[GenerateColdStartIC]]
     script = \$origin/GenerateColdStartIC.csh

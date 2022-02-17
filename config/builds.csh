@@ -13,11 +13,12 @@ setenv BuildCompiler 'gnu-openmpi'
 # Note: at this time, all executables should be built in the same environment, one that is
 # consistent with config/environment.csh
 
-set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_09JAN2022
-
 # Ungrib
 setenv ungribEXE ungrib.exe
 setenv WPSBuildDir /glade/work/guerrett/pandac/data/GEFS
+
+set commonBuild = /glade/scratch/syha/mpas-bundle-iaufix-build
+#set commonBuild = /glade/work/syha/mpas-bundle-build-gnu-openmpi #default
 
 # MPAS-JEDI
 # ---------

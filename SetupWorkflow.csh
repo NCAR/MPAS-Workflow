@@ -76,6 +76,8 @@ rm ${WrapperScript}
 
 
 ## CyclingFC
+if (${IAU} == False) then
+
 echo "Making CyclingFC job script"
 set JobScript=${mainScriptDir}/CyclingFC.csh
 sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
@@ -85,6 +87,20 @@ sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
     -e 's@deleteZerothForecastTEMPLATE@True@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
+
+else ## CyclingFC for IAU
+
+echo "Making CyclingFC job script for IAU"
+set JobScript=${mainScriptDir}/CyclingFC.csh
+sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
+    -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
+    -e 's@CyclingFrequencyHR@'${CyclingWindowHR}'@' \
+    -e 's@fcLengthHRTEMPLATE@'${IAUfcLengthHR}'@' \
+    -e 's@fcIntervalHRTEMPLATE@'${IAUoutIntervalHR}'@' \
+    -e 's@deleteZerothForecastTEMPLATE@False@' \
+    forecast.csh > ${JobScript}
+chmod 744 ${JobScript}
+endif #(${IAU} == False) then
 
 
 ## ExtendedMeanFC
