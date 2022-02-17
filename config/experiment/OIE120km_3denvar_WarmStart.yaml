@@ -1,0 +1,15 @@
+experiment:
+  # basic experiment settings
+  FirstCycleDate: 2018041418
+  InitializationType: WarmStart
+  PreprocessObs: 'False'
+  MPASGridDescriptor: OIE120km
+  ExpSuffix: ''
+  # variational settings
+  DAType: 3denvar
+  nInnerIterations: [60]
+  # EDA settings
+  EDASize: 1
+  nDAInstances: 1
+  LeaveOneOutEDA: 'True'
+  RTPPInflationFactor: 0.80

@@ -1,5 +1,11 @@
 #!/bin/csh -f
 
+source config/tools.csh
+
+set experimentName = default
+
+set config = "${getConfig} experiment/${experimentName}.yaml experiment."
+echo $config
 ####################
 # workflow controls
 ####################
@@ -11,21 +17,21 @@
 #     - TODO: standardize GFS and observation source data
 #     - TODO: enable QC
 #     - TODO: enable VarBC
-setenv FirstCycleDate 2018041418
+set FirstCycleDate = `${config}FirstCycleDate`
 
 ## InitializationType
 # Indicates the type of initialization at the initial cycle: cold or warm start
 # OPTIONS:
 #   ColdStart - generate first forecast online from an external GFS analysis
 #   WarmStart - copy a pre-generated forecast
-setenv InitializationType WarmStart
+set InitializationType = `${config}InitializationType`
 
 ## PreprocessObs
 # Whether to convert RDA archived BUFR observations to IODA on the fly (True)
 # or use pre-converted observation files, the latter only being available for
 # specific time periods
 # OPTIONS: True/False
-setenv PreprocessObs False
+set PreprocessObs = `${config}PreprocessObs`
 
 
 ##################################
@@ -80,7 +86,7 @@ set preprocessObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = ''
+set ExpSuffix = '_get_config'
 
 ##############
 ## DA settings
