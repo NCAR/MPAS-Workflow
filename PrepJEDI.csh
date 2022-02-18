@@ -220,10 +220,6 @@ if ( $PreprocessObs == True ) then
   ln -sfv ${ObsDir}/amsua*_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/mhs*_obs_${thisValidDate}.h5 ${InDBDir}/
   #ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
-
-  # Fixed satbias
-  # ===========
-  set SatbiasDir = ${SatbiascoeffDir}
 else
   # conventional
   # ============
@@ -242,15 +238,21 @@ else
   # =======
   ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_${thisValidDate}.h5 ${InDBDir}/
-
-  # Fixed satbias
-  # ===========
-  set SatbiasDir = ${SatbiasFixcoeff}/${yyyy}
 endif
 
 # Create link to gnssro observations name that matches the yaml file name
 if ( "${preprocessObsList}" =~ *"gpsro"* ) then
   ln -sfv gnssro_obs_${thisValidDate}.h5 ${InDBDir}/gnssroref_obs_${thisValidDate}.h5
+endif
+
+if ( 2018051418 <= ${thisValidDate} >= 2018041418 || 2020082518 <= ${thisValidDate} >= 2020072418) then
+  # Fixed satbias
+  # ===========
+    set SatbiasDir = ${SatbiasFixcoeff}/${yyyy}
+else
+  # Online satbias
+  # ===========
+    set SatbiasDir = ${SatbiascoeffDir}
 endif
 
 # VarBC prior
