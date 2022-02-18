@@ -11,4 +11,4 @@ experiment:
   EDASize: 1
   nDAInstances: 1
   LeaveOneOutEDA: 'True'
-  RTPPInflationFactor: '0.80'
+  RTPPInflationFactor: 0.80
