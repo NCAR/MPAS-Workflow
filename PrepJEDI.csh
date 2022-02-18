@@ -216,7 +216,12 @@ if ( $PreprocessObs == True ) then
   # =========
   ln -sfv ${ObsDir}/amsua*_obs_*.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/mhs*_obs_*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
+
+  # Fixed satbias
+  # ===========
+  set SatbiasDir = ${SatbiascoeffDir}
+   
 else
   # conventional
   # ============
@@ -235,6 +240,14 @@ else
   # =======
   ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
   ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
+  
+  # IASI
+  # =======
+  ln -sfv ${IASIobsDir}/${thisValidDate}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
+  
+  # Fixed satbias
+  # ===========
+  set SatbiasDir = ${SatbiasFixcoeff}/${yyyy}
 endif
 
 # VarBC prior
@@ -369,6 +382,9 @@ sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' $thisYAML
 # input and output IODA DB directories
 sed -i 's@InDBDir@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
 sed -i 's@OutDBDir@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
+
+# Satbias correction
+sed -i 's@SatbiasDir@'${SatbiasDir}'@g' $thisYAML
 
 # obs, geo, and diag files with self_AppType suffixes
 sed -i 's@obsPrefix@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML

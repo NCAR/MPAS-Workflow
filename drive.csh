@@ -426,7 +426,7 @@ cat >! suite.rc << EOF
       -m = ae
       -q = ${CPQueueName}
       -A = ${CPAccountNumber}
-      -l = select=1:ncpus=1:mem=10GB
+      -l = select=1:ncpus=1:mem=109GB
   # variational-related components
   [[InitCyclingDA]]
     env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"

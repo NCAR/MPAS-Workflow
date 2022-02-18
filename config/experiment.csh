@@ -106,6 +106,9 @@ set l = ($l $benchmarkObsList)
 #set l = ($l amsua-cld_aqua)
 #set l = ($l amsua-cld_metop-a)
 #set l = ($l amsua-cld_metop-b)
+#set l = ($l iasi_metop-a)
+#set l = ($l iasi_metop-b)
+#set l = ($l iasi_metop-c)
 set variationalObsList = ($l)
 
 ## DAType
@@ -224,6 +227,9 @@ set l = ($l abi_g16)
 set l = ($l ahi_himawari8)
 #set l = ($l abi-clr_g16)
 #set l = ($l ahi-clr_himawari8)
+#set l = ($l iasi_metop-a)
+#set l = ($l iasi_metop-b)
+#set l = ($l iasi_metop-c)
 set hofxObsList = ($l)
 
 

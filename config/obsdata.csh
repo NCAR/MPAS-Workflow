@@ -18,6 +18,9 @@ setenv CRTMTABLES ${FixedInput}/crtm_bin/
 ## VARBC
 setenv INITIAL_VARBC_TABLE ${FixedInput}/satbias/satbias_crtm_in
 
+## Fixed satbias coefficients
+setenv SatbiasFixcoeff /glade/p/mmm/parc/ivette/SATBIAS_fix
+
 
 #####################
 # application indices
@@ -123,3 +126,6 @@ set AHIObsDir[$variationalIndex] = $AHIObsDir[$variationalIndex]$AHIBiasCorrect
 
 # no bias correction for hofx
 set AHIObsDir[$hofxIndex] = $AHIObsDir[$hofxIndex]$GEOIRNoBias
+
+# IASI directory
+set IASIobsDir = /glade/p/mmm/parc/ivette/Observations
