@@ -67,9 +67,12 @@ tools.csh: initializes python tools for workflow task management
 
 verification.csh: post-processing and verification script descriptions
 
-cases/: directory containing pre-defined and user-defined top-level experiment settings
-cases/defaults.yaml: default experiment settings
-cases/*.yaml: particular case settings that are selected in experiment.csh
+cases/: directory containing pre-defined and user-defined top-level settings
+cases/defaults.yaml: default settings
+cases/*.yaml: particular case settings, one of which must be selected in experiment.csh
+
+Note: users may add new cases by copying any of the yaml files in the cases directory to a new
+yaml, modifying the entries, and then selecting their new case in experiment.csh
 
 ## MPAS-specific configuration (config/mpas/)
 ---------------------------------------------
