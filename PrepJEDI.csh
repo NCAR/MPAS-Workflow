@@ -241,7 +241,7 @@ else
   # =======
   ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_${thisValidDate}.h5 ${InDBDir}/
-  
+
   # Fixed satbias
   # ===========
   set SatbiasDir = ${SatbiasFixcoeff}/${yyyy}

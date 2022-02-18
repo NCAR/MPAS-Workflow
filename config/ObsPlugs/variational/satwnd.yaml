@@ -16,9 +16,9 @@
     <<: *GetValues
   obs filters:
   - filter: PreQC
-    maxvalue: 3 
+    maxvalue: 3
   - filter: Background Check
-    threshold: 3.0 
+    threshold: 3.0
     apply at iterations: 0, 1
   # Assign the initial observation error, based on height/pressure
   - filter: BlackList

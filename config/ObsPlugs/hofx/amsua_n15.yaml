@@ -6,7 +6,7 @@
     obsdataout:
       obsfile: OutDBDir/obsPrefix_amsua_n15.h5
     simulated variables: [brightness_temperature]
-    channels: &amsua_n15_channels 1-15 
+    channels: &amsua_n15_channels 1-15
   obs error: *ObsErrorDiagonal
   obs operator:
     <<: *clearCRTMObsOperator
@@ -50,6 +50,8 @@
           ratio for small dataset: 2.0
 #        output file: SatbiasDir/satbias_cov_amsua_n15_out.h5
   obs filters:
+  - filter: PreQC
+    maxvalue: 0
   - filter: Domain Check
     where:
     - variable:
@@ -121,7 +123,7 @@
                      0.000,  0.000,  0.000,  0.000,  0.000,
                      0.000,  0.000,  0.000,  0.000,  0.200]
             err0:  [ 3.000,  2.200,  2.000,  0.600,  0.300,
-                     0.230,  0.250,  0.275,  0.340,  0.400, 
+                     0.230,  0.250,  0.275,  0.340,  0.400,
                      0.600,  1.000,  1.500,  2.000,  3.500]
             err1:  [ 3.000,  2.200,  2.000,  0.600,  0.300,
                      0.230,  0.250,  0.275,  0.340,  0.400,
@@ -323,8 +325,6 @@
       name: reject
   - filter: Gaussian_Thinning
     horizontal_mesh:   145 #km
-##  - filter: PreQC
-##    maxvalue: 0
 #  - filter: Domain Check
 #    filter variables:
 #    - name: brightness_temperature
@@ -333,5 +333,5 @@
 #    - variable:
 #        name: water_area_fraction@GeoVaLs
 #      minvalue: 1.0
-##  - filter: GOMsaver
-##    filename: OutDBDir/geoPrefix_amsua_n15.nc4
+  - filter: GOMsaver
+    filename: OutDBDir/geoPrefix_amsua_n15.nc4

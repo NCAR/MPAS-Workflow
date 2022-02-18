@@ -28,7 +28,7 @@
 #      minvalue: 1.0
   - filter: GOMsaver
     filename: OutDBDir/geoPrefix_mhs_metop-a.nc4
-  - filter: YDIAGsaver 
+  - filter: YDIAGsaver
     filename: OutDBDir/diagPrefix_mhs_metop-a.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky

@@ -33,7 +33,7 @@ setenv SPC_COEFF_DIR /glade/u/home/hclin/proj/ioda/SpcCoeff
 # write out hourly files for IASI
 setenv SPLIThourly "-split"
 
-# flag to de-activate additional QC for conventional 
+# flag to de-activate additional QC for conventional
 # observations as in GSI
 setenv PREPBUFRflag "-noqc"
 

@@ -269,7 +269,6 @@ cat >! suite.rc << EOF
       graph = '''
   {% if PreprocessObs %}
         ObstoIODA => HofXBG
-        #ObstoIODA => VarBC => HofXBG        
   {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
   {% endif %}

@@ -25,7 +25,7 @@ end
 #Application preparation
 set PreparationScript=${mainScriptDir}/${preparationName}${self_taskBaseScript}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
-    -e 's@WindowHRTEMPLATE@wrapWindowHRTEMPLATE@' \    
+    -e 's@WindowHRTEMPLATE@wrapWindowHRTEMPLATE@' \
     -e 's@VARBCTableTEMPLATE@wrapVARBCTableTEMPLATE@' \
     -e 's@AppNameTEMPLATE@'${self_AppName}'@' \
     -e 's@AppTypeTEMPLATE@wrapAppTypeTEMPLATE@' \

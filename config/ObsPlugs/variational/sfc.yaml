@@ -5,9 +5,9 @@
       obsfile: InDBDir/sfc_obs_2018041500.h5
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_sfc.h5
-    simulated variables: [surface_pressure]  
+    simulated variables: [surface_pressure]
     obs perturbations seed: 1
-  obs error: *ObsErrorDiagonal    
+  obs error: *ObsErrorDiagonal
   obs operator:
     name: SfcPCorrected
     da_psfc_scheme: UKMO   # or WRFDA

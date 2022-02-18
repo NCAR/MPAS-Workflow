@@ -17,7 +17,7 @@ set workflowParts = ( \
   UngribColdStartIC.csh \
   GenerateColdStartIC.csh \
   GetWarmStartIC.csh \
-  ObstoIODA.csh \\
+  ObstoIODA.csh \
   getCycleVars.csh \
   tools \
   config \
@@ -63,7 +63,7 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapStateDirsTEMPLATE@prevCyclingFCDirs@' \
     -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeTEMPLATE@DA@' \
-    -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \    
+    -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \
     -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
     -e 's@wrapAppNameTEMPLATE@'${DAType}'@g' \
     -e 's@wrapjediAppNameTEMPLATE@variational@g' \
@@ -134,7 +134,7 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
       -e 's@wrapStateDirsTEMPLATE@'$TemplateVariables[1]'@' \
       -e 's@wrapStatePrefixTEMPLATE@'$TemplateVariables[2]'@' \
       -e 's@wrapStateTypeTEMPLATE@'${state}'@' \
-      -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \      
+      -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \
       -e 's@wrapWindowHRTEMPLATE@'$TemplateVariables[3]'@' \
       -e 's@wrapAppNameTEMPLATE@hofx@g' \
       -e 's@wrapjediAppNameTEMPLATE@hofx@g' \
