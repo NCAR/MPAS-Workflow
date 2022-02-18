@@ -11,12 +11,18 @@ set testStage = drive
 
 ## test* settings
 # these values will be used to run the test suites
+
+## testCaseNames
+# list of test cases to run, ordered from most simple to most complex
+# If multiple test cases fail, it is advisable to progress by debugging and re-testing with only
+# the most simple of the failing cases until it passes in order to reduce computational overhead.
+# Then proceed with the remainder of the cases until all complete.
 set l = ()
 set l = ($l WarmStart_OIE120km_3dvar)
 set l = ($l WarmStart_OIE120km_3denvar)
-set l = ($l WarmStart_OIE120km_eda_3denvar)
 set l = ($l ColdStart_2018041418_OIE120km_3dvar)
 set l = ($l WarmStart_O30kmIE60km_3denvar)
+set l = ($l WarmStart_OIE120km_eda_3denvar)
 set testCaseNames = ($l)
 
 ## testExpSuffix
