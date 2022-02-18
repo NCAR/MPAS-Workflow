@@ -1,6 +1,11 @@
 #!/bin/csh -f
 
-source config/tools.csh
+if ( $?config_experiment ) exit 0
+setenv config_experiment 1
+
+set wd = `pwd`
+source config/tools.csh $wd
+source config/environmentPython.csh
 
 ## caseName
 # select from pre-defined cases or define your own
@@ -104,7 +109,7 @@ set preprocessObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = ''
+set ExpSuffix = ""
 
 ##############
 ## DA settings

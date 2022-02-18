@@ -1,5 +1,8 @@
 #!/bin/csh -f
 
+if ( $?config_job ) exit 0
+setenv config_job 1
+
 source config/experiment.csh
 
 #

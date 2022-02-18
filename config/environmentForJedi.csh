@@ -1,5 +1,8 @@
 #!/bin/csh -f
 
+if ( $?config_environmentForJedi ) exit 0
+setenv config_environmentForJedi 1
+
 # Process arguments
 # =================
 ## args

@@ -1,8 +1,12 @@
 #!/bin/csh -f
 
+if ( $?config_modeldata ) exit 0
+setenv config_modeldata 1
+
 source config/experiment.csh
 source config/filestructure.csh
-source config/tools.csh
+set wd = `pwd`
+source config/tools.csh $wd
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 
 ####################

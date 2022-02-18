@@ -2,6 +2,9 @@
 
 ## Top-level workflow configuration
 
+## load the file structure
+source config/filestructure.csh
+
 ## load experiment configuration
 source config/experiment.csh
 
@@ -98,9 +101,6 @@ else
   # The cycles will run every CyclingWindowHR hours, starting at the initialCyclePoint
   set cyclingCycles = PT${CyclingWindowHR}H
 endif
-
-## load the file structure
-source config/filestructure.csh
 
 ## Change to the cylc suite directory
 cd ${mainScriptDir}

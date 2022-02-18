@@ -6,7 +6,7 @@ date
 # =================
 source config/experiment.csh
 source config/filestructure.csh
-source config/tools.csh
+source config/tools.csh ${mainScriptDir}
 source config/modeldata.csh
 source config/mpas/variables.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh

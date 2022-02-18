@@ -6,7 +6,7 @@ date
 # =================
 source config/experiment.csh
 source config/filestructure.csh
-source config/tools.csh
+source config/tools.csh ${mainScriptDir}
 source config/modeldata.csh
 source config/verification.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`

@@ -23,7 +23,7 @@ set testCaseNames = ($l)
 # Controls the ExpSuffix in config/experiment.csh.  If testing for multiple branches or across
 # non-yaml-configured settings, it is convenient to modify this suffix here in order to distinguish
 # the scenarios.
-set testExpSuffix = '_autotest_cases'
+set testExpSuffix = '_autotest-PR'
 
 ## testCPQueueName
 # Queue that will be used for critical path jobs.  If time allows, it is best to use economy.

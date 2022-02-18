@@ -1,6 +1,7 @@
 #!/bin/csh -f
 
-source config/tools.csh
+set wd = `pwd`
+source config/tools.csh $wd
 
 set thisYAML = $1
 set rootKey = $2

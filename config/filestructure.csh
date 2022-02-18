@@ -1,5 +1,8 @@
 #!/bin/csh -f
 
+if ( $?config_filestructure ) exit 0
+setenv config_filestructure 1
+
 source config/experiment.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
@@ -31,6 +34,7 @@ setenv ExperimentName ${ExperimentName}${ExpIterSuffix}
 setenv ExperimentName ${ExperimentName}${ExpObsSuffix}
 setenv ExperimentName ${ExperimentName}${ExpEnsSuffix}
 setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
+setenv ExperimentName ${ExperimentName}_${InitializationType}
 setenv ExperimentNameWithoutSuffix ${ExperimentName}
 setenv ExperimentName ${ExperimentName}${ExpSuffix}
 
