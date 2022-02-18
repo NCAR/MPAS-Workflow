@@ -46,7 +46,7 @@
         inflation:
           ratio: 1.1
           ratio for small dataset: 2.0
-#        output file: SatbiasDir/satbias_cov_iasi_metop-c_out.h5      
+#        output file: SatbiasDir/satbias_cov_iasi_metop-c_out.h5
   obs filters:
   #  Wavenumber Check
   - filter: BlackList
@@ -189,5 +189,3 @@
     minvalue: 1.0e-12
     action:
       name: reject
-  - filter: Gaussian_Thinning
-    horizontal_mesh:   200 #km      

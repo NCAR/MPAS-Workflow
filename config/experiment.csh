@@ -76,7 +76,7 @@ set l = ($l 1bamua)
 #set l = ($l 1bmhs)
 #set l = ($l airsev)
 #set l = ($l cris)
-#set l = ($l mtiasi)
+set l = ($l mtiasi)
 set preprocessObsList = ($l)
 
 ## ExpSuffix

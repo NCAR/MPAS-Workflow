@@ -69,7 +69,7 @@ set DeterministicDABaseMinutes = 6
   #setenv VariationalNodesPerMember 16
   #setenv VariationalPEPerNode 8
   #set ThreeDEnVarJobSecondsPerMember = 10
-  
+
   # time per member (mostly localization multiplication, some IO)
   # 60 inner x 1 outer, CONV+AMSUA obs; 20OCT2021
   # XX-members: 2018041506 (short) - (2018041518 (long) on 128pe

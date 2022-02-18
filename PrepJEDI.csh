@@ -216,12 +216,12 @@ if ( $PreprocessObs == True ) then
   # =========
   ln -sfv ${ObsDir}/amsua*_obs_*.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/mhs*_obs_*.h5 ${InDBDir}/
-  #ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
 
   # Fixed satbias
   # ===========
   set SatbiasDir = ${SatbiascoeffDir}
-   
+
 else
   # conventional
   # ============
@@ -240,11 +240,11 @@ else
   # =======
   ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
   ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
-  
+
   # IASI
   # =======
   ln -sfv ${IASIobsDir}/${thisValidDate}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
-  
+
   # Fixed satbias
   # ===========
   set SatbiasDir = ${SatbiasFixcoeff}/${yyyy}
