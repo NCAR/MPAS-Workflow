@@ -209,17 +209,18 @@ if ( $PreprocessObs == True ) then
   ln -sfv ${ObsDir}/aircraft_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/sfc_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/sondes_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/gnssro_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/satwind_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/satwnd_obs_${thisValidDate}.h5 ${InDBDir}/
   #ln -sfv ${ObsDir}/ascat_obs_${thisValidDate}.h5 ${InDBDir}/
   #ln -sfv ${ObsDir}/profiler_obs_${thisValidDate}.h5 ${InDBDir}/
-  #ln -sfv ${ObsDir}/gnssro_obs_${thisValidDate}.h5 ${InDBDir}/
-  #ln -sfv ${ObsDir}/satwind_obs_${thisValidDate}.h5 ${InDBDir}/
-  #ln -sfv ${ObsDir}/satwnd_obs_${thisValidDate}.h5 ${InDBDir}/
 
   # AMSUA+MHS+IASI
   # =========
-  #ln -sfv ${ObsDir}/amsua*_obs_${thisValidDate}.h5 ${InDBDir}/
-  #ln -sfv ${ObsDir}/mhs*_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/amsua*_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/mhs*_obs_${thisValidDate}.h5 ${InDBDir}/
   #ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
+
   # Fixed satbias
   # ===========
   set SatbiasDir = ${SatbiascoeffDir}
@@ -245,12 +246,11 @@ else
   # Fixed satbias
   # ===========
   set SatbiasDir = ${SatbiasFixcoeff}/${yyyy}
-
 endif
 
 # Create link to gnssro observations name that matches the yaml file name
 if ( "${preprocessObsList}" =~ *"gpsro"* ) then
-  ln -sfv gnssro_obs_${thisValidDate}.h5 ./gnssroref_obs_${thisValidDate}.h5
+  ln -sfv gnssro_obs_${thisValidDate}.h5 ${InDBDir}/gnssroref_obs_${thisValidDate}.h5
 endif
 
 # VarBC prior

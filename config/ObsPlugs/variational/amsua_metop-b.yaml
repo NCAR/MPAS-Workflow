@@ -27,9 +27,9 @@
 #        - name: sine_of_latitude
       - name: lapse_rate
         order: 2
-        tlapse: &amsuametopatlap SatbiasDir/amsua_metop-b_tlapmean.txt
+        tlapse: &amsuametopbtlap SatbiasDir/amsua_metop-b_tlapmean.txt
       - name: lapse_rate
-        tlapse: *amsuametopatlap
+        tlapse: *amsuametopbtlap
       - name: emissivity
       - name: scan_angle
         order: 4
@@ -325,6 +325,6 @@
     action:
       name: reject
   - filter: Gaussian_Thinning
-    horizontal_mesh:   145 #km
+    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_metop-b.nc4

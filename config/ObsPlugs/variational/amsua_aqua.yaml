@@ -325,6 +325,6 @@
     action:
       name: reject
   - filter: Gaussian_Thinning
-    horizontal_mesh:   145 #km
+    horizontal_mesh: RADTHINDISTANCE #km
   - filter: GOMsaver
     filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_aqua.nc4
