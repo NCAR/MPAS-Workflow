@@ -28,10 +28,9 @@ setenv InitializationType WarmStart
 setenv PreprocessObs False
 
 ## Satbias
-# Use satellite bias coefficients created for specific dates or online 
-# for each cycle
-# OPTIONS: Online/Fix
-setenv Satbias Fix
+# Use GDAS satellite bias coefficients created for specific dates or at each cycle
+# OPTIONS: GDASDynamic/GDASFixed
+setenv Satbias GDASFixed
 
 
 ##################################

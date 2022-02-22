@@ -178,11 +178,6 @@ if ( "${preprocessObsList}" =~ *"prepbufr"* || "${preprocessObsList}" =~ *"satwn
   end
 endif
 
-# Create link to observations name match the yamls file name
-if ( "${preprocessObsList}" =~ *"gpsro"* ) then
-  ln -sfv gnssro_obs_${thisValidDate}.h5 ./gnssroref_obs_${thisValidDate}.h5
-endif
-
 # Remove BURF/PrepBUFR files
 foreach gdasfile ( *"gdas"* )
   rm -rf $gdasfile

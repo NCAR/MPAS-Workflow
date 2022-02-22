@@ -1,33 +1,24 @@
 #!/bin/csh -f
 
-# Process arguments
-# =================
-## args
-# thisValidDate: date, cycle date
-set thisValidDate = "$1"
-
-
 # Setup environment
 # =================
 source config/experiment.csh
-source config/filestructure.csh
 
 ## VARBC
 setenv INITIAL_VARBC_TABLE ${FixedInput}/satbias/satbias_crtm_in
 
 ## Satbias coefficients
-setenv SatbiasFixcoeff /glade/p/mmm/parc/ivette/SATBIAS_fix
+setenv SatbiasFixedcoeff /glade/p/mmm/parc/ivette/SATBIAS_fixed
 
-if ( $Satbias == Fix ) then
-  # Fixed satbias
+if ( $Satbias == GDASDynamic ) then
+  # Dynamic satbias using GDAS coefficientes
   # ===========
-  set yyyy = `echo ${thisValidDate} | cut -c 1-4`
-  set SatbiasDir = ${SatbiasFixcoeff}/${yyyy}
+  set SatbiasDir = ${SatbiasDir}
 else
-  # Online satbias
+  # GDAS fixed satbias for single cycle
   # ===========
-  set SatbiascoeffDir = ${ObsWorkDir}/${thisValidDate}/Satbias
-  set SatbiasDir = ${SatbiascoeffDir}
+  set yyyy = `echo ${FirstCycleDate} | cut -c 1-4`
+  set SatbiasDir = ${SatbiasFixedcoeff}/${yyyy}
 endif
 
 exit 0

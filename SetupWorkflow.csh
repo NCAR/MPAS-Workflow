@@ -44,12 +44,9 @@ source config/mpas/${MPASGridDescriptor}/mesh.csh
 set thisCycleDate = $FirstCycleDate
 set thisValidDate = $thisCycleDate
 source getCycleVars.csh
-source config/satbiasdata.csh $thisValidDate
 
 #TODO: enable VARBC updating between cycles
 #  setenv VARBC_TABLE ${prevCyclingDADir}/${VarBCAnalysis}
-
-setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
 
 ## PrepJEDICyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA
 # *VerifyModelDA is non-functional and unused
@@ -64,7 +61,6 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapStateDirsTEMPLATE@prevCyclingFCDirs@' \
     -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeTEMPLATE@DA@' \
-    -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \
     -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
     -e 's@wrapAppNameTEMPLATE@'${DAType}'@g' \
     -e 's@wrapjediAppNameTEMPLATE@variational@g' \
@@ -135,7 +131,6 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
       -e 's@wrapStateDirsTEMPLATE@'$TemplateVariables[1]'@' \
       -e 's@wrapStatePrefixTEMPLATE@'$TemplateVariables[2]'@' \
       -e 's@wrapStateTypeTEMPLATE@'${state}'@' \
-      -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \
       -e 's@wrapWindowHRTEMPLATE@'$TemplateVariables[3]'@' \
       -e 's@wrapAppNameTEMPLATE@hofx@g' \
       -e 's@wrapjediAppNameTEMPLATE@hofx@g' \

@@ -38,6 +38,7 @@ set ExpDir = ${TopExpDir}/${ExperimentName}
 
 ## immediate subdirectories
 setenv ObsWorkDir ${ExpDir}/Observations
+setenv SatbiasWorkDir ${ExpDir}/Satbias
 setenv CyclingDAWorkDir ${ExpDir}/CyclingDA
 setenv CyclingFCWorkDir ${ExpDir}/CyclingFC
 setenv CyclingInflationWorkDir ${ExpDir}/CyclingInflation

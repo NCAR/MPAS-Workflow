@@ -59,8 +59,7 @@ set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
-
-source config/satbiasdata.csh $thisValidDate
+source config/satbiasdata.csh
 
 # templated work directory
 set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
@@ -74,7 +73,6 @@ cd ${self_WorkDir}
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
 set self_ObsList = (${AppTypeTEMPLATEObsList})
-set self_VARBCTable = VARBCTableTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
 set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
@@ -248,7 +246,8 @@ endif
 
 # VarBC prior
 # ===========
-ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
+set VARBC_TABLE = ${INITIAL_VARBC_TABLE}
+ln -sfv ${VARBC_TABLE} ${InDBDir}/satbias_crtm_bak
 
 set ABISUPEROBGRID = $ABISuperOb[$myAppIndex]
 set AHISUPEROBGRID = $AHISuperOb[$myAppIndex]
