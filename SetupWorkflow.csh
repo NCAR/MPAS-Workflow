@@ -44,6 +44,7 @@ source config/mpas/${MPASGridDescriptor}/mesh.csh
 set thisCycleDate = $FirstCycleDate
 set thisValidDate = $thisCycleDate
 source getCycleVars.csh
+source config/satbiasdata.csh $thisValidDate
 
 #TODO: enable VARBC updating between cycles
 #  setenv VARBC_TABLE ${prevCyclingDADir}/${VarBCAnalysis}

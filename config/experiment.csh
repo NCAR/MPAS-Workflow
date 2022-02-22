@@ -27,6 +27,12 @@ setenv InitializationType WarmStart
 # OPTIONS: True/False
 setenv PreprocessObs False
 
+## Satbias
+# Use satellite bias coefficients created for specific dates or online 
+# for each cycle
+# OPTIONS: Online/Fix
+setenv Satbias Fix
+
 
 ##################################
 ## Fundamental experiment settings

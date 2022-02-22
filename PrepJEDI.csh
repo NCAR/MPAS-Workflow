@@ -56,10 +56,11 @@ source config/mpas/variables.csh
 source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set yyyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
+
+source config/satbiasdata.csh $thisValidDate
 
 # templated work directory
 set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
@@ -243,16 +244,6 @@ endif
 # Create link to gnssro observations name that matches the yaml file name
 if ( "${preprocessObsList}" =~ *"gpsro"* ) then
   ln -sfv gnssro_obs_${thisValidDate}.h5 ${InDBDir}/gnssroref_obs_${thisValidDate}.h5
-endif
-
-if ( 2018051418 <= ${thisValidDate} >= 2018041418 || 2020082518 <= ${thisValidDate} >= 2020072418) then
-  # Fixed satbias
-  # ===========
-    set SatbiasDir = ${SatbiasFixcoeff}/${yyyy}
-else
-  # Online satbias
-  # ===========
-    set SatbiasDir = ${SatbiascoeffDir}
 endif
 
 # VarBC prior
