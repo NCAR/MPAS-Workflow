@@ -37,10 +37,6 @@ foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
 end
 
-source config/modeldata.csh
-source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
-
 ## First cycle "forecast" established offline
 # TODO: Setup FirstCycleDate using a new fcinit job type and put in R1 cylc position
 set thisCycleDate = $FirstCycleDate
