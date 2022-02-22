@@ -1,5 +1,10 @@
 #!/bin/csh -f
 
+# TODO: uncomment these two lines after applicationIndex is refactored
+#       PrepJEDI.csh fails when applicationIndex is not set every time
+#if ( $?config_obsdata ) exit 0
+#set config_obsdata = 1
+
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 
 ## InterpolationType

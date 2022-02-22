@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 if ( $?config_modeldata ) exit 0
-setenv config_modeldata 1
+set config_modeldata = 1
 
 source config/experiment.csh
 source config/filestructure.csh

@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 if ( $?config_filestructure ) exit 0
-setenv config_filestructure 1
+set config_filestructure = 1
 
 source config/experiment.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh

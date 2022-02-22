@@ -72,7 +72,6 @@ cd ${self_WorkDir}
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
 set self_ObsList = (${AppTypeTEMPLATEObsList})
-set self_VARBCTable = VARBCTableTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
 set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
@@ -236,10 +235,6 @@ else
   ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
   ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
 endif
-
-# VarBC prior
-# ===========
-ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
 
 set ABISUPEROBGRID = $ABISuperOb[$myAppIndex]
 set AHISUPEROBGRID = $AHISuperOb[$myAppIndex]

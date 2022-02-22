@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 if ( $?config_tools ) exit 0
-setenv config_tools 1
+set config_tools = 1
 
 ## ArgToolsDir
 # directory where tools are located

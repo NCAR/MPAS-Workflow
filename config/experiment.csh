@@ -1,7 +1,9 @@
 #!/bin/csh -f
 
+# only load experiment if it is not already loaded
+# note: set must be used instead of setenv, because this script includes set
 if ( $?config_experiment ) exit 0
-setenv config_experiment 1
+set config_experiment = 1
 
 set wd = `pwd`
 source config/tools.csh $wd
@@ -173,15 +175,16 @@ if ( "$DAType" =~ *"eda"* ) then
   # total number of ensemble DA members, product of EDASize and nDAInstances
   # Should be between 2 and $firstEnsFCNMembers, depends on data source in config/modeldata.csh
   @ nEnsDAMembers = $EDASize * $nDAInstances
+  setenv nEnsDAMembers $nEnsDAMembers
 else
   ## fixedEnsBType
   # selection of data source for fixed ensemble background covariance members
   # OPTIONS: GEFS (default), PreviousEDA
-  set fixedEnsBType = GEFS
+  setenv fixedEnsBType GEFS
 
   # tertiary settings for when fixedEnsBType is set to PreviousEDA
-  set nPreviousEnsDAMembers = 20
-  set PreviousEDAForecastDir = \
+  setenv nPreviousEnsDAMembers 20
+  setenv PreviousEDAForecastDir \
     /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_RTPP0.80_LeaveOneOut_OIE120km_memberSpecificTemplate_GEFSSeaUpdate/CyclingFC
 
   # override settings for EDASize, nDAInstances, and nEnsDAMembers for non-eda setups
@@ -190,6 +193,7 @@ else
   setenv EDASize 1
   setenv nDAInstances 1
   @ nEnsDAMembers = $EDASize * $nDAInstances
+  setenv nEnsDAMembers $nEnsDAMembers
 endif
 
 if ($EDASize == 1 && $MinimizerAlgorithm == $BlockEDA) then

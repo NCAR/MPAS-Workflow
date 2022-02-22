@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 if ( $?config_builds ) exit 0
-setenv config_builds 1
+set config_builds = 1
 
 #############################
 ## build directory structures
