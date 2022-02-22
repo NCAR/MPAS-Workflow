@@ -7,7 +7,7 @@ MPAS-JEDI data assimilation package.
 
 # starting a cycling experiment on the Cheyenne HPC
 ---------------------------------------------------
-login to Cheyenne
+#login to Cheyenne
 
 mkdir -p /fresh/path/for/submitting/experiments
 
@@ -17,13 +17,15 @@ module load git
 
 git clone https://github.com/NCAR/MPAS-Workflow
 
-modify configuration files as needed
+#modify configuration files (config) as needed
 
 source env-setup/cheyenne.csh
-OR
+#OR
 source env-setup/cheyenne.sh
 
 ./drive.csh
+#OR
+./autotestForPR.csh
 
 # It is required to set the work/run directories in $HOME/.cylc/global.rc as follows:
 [hosts]
@@ -36,6 +38,7 @@ source env-setup/cheyenne.sh
 
 # It is recommended to also set 'job name length maximum' to a large value
 
+# See below for more documentation aboute drive.csh and autotestForPR.csh
 
 # Configuration Files (config/)
 -------------------------------
@@ -102,9 +105,9 @@ directory, and must already be present in the experiment directory.
 
 ## autotest driver(s)
 ---------------------
-autotest-PR.csh: executes drive.csh for a subset of pre-defined cases defined in config/cases/*.yaml.
+autotestForPR.csh: executes drive.csh for a subset of pre-defined cases defined in config/cases/*.yaml.
 It is recommended to run this set of tests before submitting a PR to MPAS-Workflow.  For example,
-execute "source env-script/cheyenne.csh; ./autotest-PR.csh" from the command line.
+execute "source env-script/cheyenne.csh; ./autotestForPR.csh" from the command line.
 
 ## templated workflow components
 --------------------------------
