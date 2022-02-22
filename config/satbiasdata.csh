@@ -7,7 +7,7 @@ source config/experiment.csh
 ## VARBC
 setenv INITIAL_VARBC_TABLE ${FixedInput}/satbias/satbias_crtm_in
 
-## Satbias coefficients
+## Satbias fixed coefficients for first date of specific time periods
 setenv SatbiasFixedcoeff /glade/p/mmm/parc/ivette/SATBIAS_fixed
 
 if ( $Satbias == GDASDynamic ) then
