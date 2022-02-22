@@ -122,6 +122,7 @@ module load graphviz
 set SuiteName = ${ExperimentName}
 
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
+mkdir -p ${cylcWorkDir}
 echo "creating suite.rc"
 cat >! suite.rc << EOF
 #!Jinja2
