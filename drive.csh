@@ -122,7 +122,6 @@ module load graphviz
 set SuiteName = ${ExperimentName}
 
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
-rm -fr ${cylcWorkDir}/${SuiteName}
 echo "creating suite.rc"
 cat >! suite.rc << EOF
 #!Jinja2
@@ -673,8 +672,18 @@ cat >! suite.rc << EOF
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
 
+cylc poll $SuiteName
+if ( $status == 0 ) then
+  echo "INFO in $0 : a cylc suite named $SuiteName is already running."
+  echo "INFO in $0 : stopping the suite before starting a new one"
+  cylc stop --kill $SuiteName
+  sleep 5
+endif
+
+rm -rf ${cylcWorkDir}/${SuiteName}
+
 cylc register ${SuiteName} ${mainScriptDir}
 cylc validate ${SuiteName}
 cylc run ${SuiteName}
 
-exit
+exit 0

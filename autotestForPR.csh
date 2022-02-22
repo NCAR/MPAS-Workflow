@@ -1,11 +1,23 @@
 #!/bin/csh -f
 
+####################################################################################################
+# This script runs an automated set of cylc suites that test the MPAS-Workflow. Each of the test
+# cases is designed to exercise a unique aspect of the known working functionality.  If the
+# user has previously executed this script, and one or more test case suites are already running,
+# then executing this script again will cause drive.csh to kill those running suites.
+####################################################################################################
+
+## Usage:
+#   source env/cheyenne.${YourEnvironment}
+#   ./autotestForPR.csh
+
 ## testStage
 # choose a stage of the workflow to run for the test cases.  It can be useful to run only the
 # SetupWorkflow stage in order to check that all scripts run correctly or to re-initialize
-# the MPAS-Worlfow config directories of all of the tests. The latter use useful when a simple
+# the MPAS-Worlfow config directories of all of the tests.  The latter is useful when a simple
 # update to the config directory will enable a workflow task to run, and avoids re-starting
-# the entire workflow.
+# the one or more cylc suites.  drive.csh automatically stops active test suites when this script
+# is executed.
 # OPTIONS: drive, SetupWorkflow
 set testStage = drive
 
@@ -29,7 +41,7 @@ set testCaseNames = ($l)
 # Controls the ExpSuffix in config/experiment.csh.  If testing for multiple branches or across
 # non-yaml-configured settings, it is convenient to modify this suffix here in order to distinguish
 # the scenarios.
-set testExpSuffix = '_autotest-PR'
+set testExpSuffix = '_autotestForPR'
 
 ## testCPQueueName
 # Queue that will be used for critical path jobs.  If time allows, it is best to use economy.
@@ -62,7 +74,13 @@ foreach caseName ($testCaseNames)
   echo "${0}: Running test case: $caseName"
 
   sed -i 's@^set\ caseName\ =\ .*@set\ caseName\ =\ '$caseName'@' config/experiment.csh
+  sed -i 's@^set\ SuiteName\ =\ .*@set\ SuiteName\ =\ '$caseName'@' drive.csh
   ./${testStage}.csh
+
+  if ( $status != 0 ) then
+    echo "ERROR in $0 : error when setting up $caseName" > ./FAIL
+    exit 1
+  endif
 end
 
 # always return to the default values at the end
@@ -70,3 +88,4 @@ sed -i 's@^set\ caseName\ =\ .*@set\ caseName\ =\ '$defaultCaseName'@' config/ex
 sed -i 's@^set\ ExpSuffix\ =\ .*@set\ ExpSuffix\ =\ "'$defaultExpSuffix'"@' config/experiment.csh
 sed -i 's@^setenv\ CPQueueName.*@setenv\ CPQueueName\ '$defaultCPQueueName'@' config/job.csh
 sed -i 's@^set\ finalCyclePoint\ =\ .*@set\ finalCyclePoint\ =\ '$defaultFinalCyclePoint'@' drive.csh
+sed -i 's@^set\ SuiteName\ =\ .*@set\ SuiteName\ =\ ${ExperimentName}@' drive.csh
