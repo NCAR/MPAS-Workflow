@@ -37,17 +37,10 @@ foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
 end
 
-## First cycle "forecast" established offline
-# TODO: Setup FirstCycleDate using a new fcinit job type and put in R1 cylc position
-set thisCycleDate = $FirstCycleDate
-set thisValidDate = $thisCycleDate
-source getCycleVars.csh
-
 
 ## PrepJEDICyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA
 # *VerifyModelDA is non-functional and unused
 #TODO: enable VerifyObsDA for ensemble DA; only works for deterministic DA
-set WorkDir = $CyclingDADirs[1]
 set taskBaseScript = Variational
 set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
 sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
