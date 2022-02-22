@@ -98,7 +98,7 @@ on the previous cycle. Reanalysis is used to perform the CyclingDA task on each 
 re-running forecasts.  This requires the CyclingFC output files to already be present in the
 experiment directory, which might be added manually outside of the workflow.  Reforecast is used to
 perform forecasts from an existing set of analysis states, which are stored in the CyclingDA
-directory.
+directory, and must already be present in the experiment directory.
 
 ## autotest driver(s)
 ---------------------
