@@ -1,8 +1,8 @@
+workflow:
+  InitializationType: WarmStart
+  PreprocessObs: False
 experiment:
   MPASGridDescriptor: OIE120km
   DAType: 3denvar
   EDASize: 1
   nDAInstances: 1
-workflow:
-  InitializationType: WarmStart
-  PreprocessObs: False

@@ -27,7 +27,7 @@ endif
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
 
-## load job submission environment
+## load job submission settings
 source config/job.csh
 source config/mpas/${MPASGridDescriptor}/job.csh
 

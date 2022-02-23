@@ -1,3 +1,6 @@
+workflow:
+  InitializationType: WarmStart
+  PreprocessObs: False
 experiment:
   ExpSuffix: _GEFSVerify
   MPASGridDescriptor: OIE120km
@@ -7,6 +10,3 @@ experiment:
   LeaveOneOutEDA: False
   RTPPInflationFactor: 0.0
   nInnerIterations: [,]
-workflow:
-  InitializationType: WarmStart
-  PreprocessObs: False

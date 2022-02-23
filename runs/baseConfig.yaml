@@ -1,9 +1,7 @@
 run:
 ## scenarios
 # scenarios located under config/scenarios that will be run
-  scenarios: [
-    WarmStart_OIE120km_3dvar,
-  ]
+  scenarios: [,]
 ## ExpSuffix
 # Controls the ExpSuffix in config/experiment.csh.  If running multiple code branches or across
 # differing low-level settings, it is convenient to modify the suffix here in order to distinguish
@@ -18,5 +16,4 @@ run:
   finalCyclePoint: 20180514T18
 restore:
   scenario: WarmStart_OIE120km_3dvar
-  ExpSuffix: ''
   CPQueueName: regular

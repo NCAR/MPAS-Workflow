@@ -29,15 +29,16 @@ set TopExpDir = /glade/scratch/${ExperimentUser}/pandac
 
 ## absolute experiment directory
 setenv PackageBaseName MPAS-Workflow
-setenv ExperimentName ${ExperimentUser}
-setenv ExperimentName ${ExperimentName}_${DAType}
-setenv ExperimentName ${ExperimentName}${ExpIterSuffix}
-setenv ExperimentName ${ExperimentName}${ExpObsSuffix}
-setenv ExperimentName ${ExperimentName}${ExpEnsSuffix}
-setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
-setenv ExperimentName ${ExperimentName}_${InitializationType}
-setenv ExperimentNameWithoutSuffix ${ExperimentName}
-setenv ExperimentName ${ExperimentName}${ExpSuffix}
+if ($ExperimentName == '') then
+  setenv ExperimentName ${ExperimentUser}
+  setenv ExperimentName ${ExperimentName}_${DAType}
+  setenv ExperimentName ${ExperimentName}${ExpIterSuffix}
+  setenv ExperimentName ${ExperimentName}${ExpObsSuffix}
+  setenv ExperimentName ${ExperimentName}${ExpEnsSuffix}
+  setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
+  setenv ExperimentName ${ExperimentName}_${InitializationType}
+  setenv ExperimentName ${ExperimentName}${ExpSuffix}
+endif
 
 set ExpDir = ${TopExpDir}/${ExperimentName}
 

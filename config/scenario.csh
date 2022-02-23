@@ -12,7 +12,7 @@ source config/environmentPython.csh
 # + WarmStart_OIE120km_3denvar
 # + WarmStart_OIE120km_eda_3denvar
 # + WarmStart_O30kmIE60km_3denvar
-# + ColdStart_2018041418_OIE120km_3dvar
+# + ColdStart_OIE120km_3dvar
 
 setenv scenario WarmStart_OIE120km_3dvar
 

@@ -158,3 +158,5 @@ end
 if ( $nOuterIterations > 0 ) then
   set ExpIterSuffix = ${ExpIterSuffix}-iter
 endif
+
+$setExperiment ExperimentName

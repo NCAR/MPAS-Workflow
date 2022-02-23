@@ -1,3 +1,6 @@
+workflow:
+  InitializationType: WarmStart
+  PreprocessObs: False
 experiment:
   MPASGridDescriptor: OIE120km
   DAType: eda_3denvar
@@ -5,6 +8,3 @@ experiment:
   nDAInstances: 20
   LeaveOneOutEDA: True
   RTPPInflationFactor: 0.80
-workflow:
-  InitializationType: WarmStart
-  PreprocessObs: False
