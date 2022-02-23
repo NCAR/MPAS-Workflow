@@ -30,6 +30,7 @@ endif
 
 # Setup environment
 # =================
+source config/workflow.csh
 source config/environment.csh
 source config/experiment.csh
 source config/filestructure.csh

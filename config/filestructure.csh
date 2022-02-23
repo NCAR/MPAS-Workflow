@@ -3,6 +3,7 @@
 if ( $?config_filestructure ) exit 0
 set config_filestructure = 1
 
+source config/workflow.csh
 source config/experiment.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh

@@ -20,11 +20,11 @@ setenv scenario WarmStart_OIE120km_3dvar
 # options that differ from the defaults need to be included in the scenario yaml, but other options
 # may also be included for clarity.
 
-# config tools
+## config tools
 source config/config.csh
 
-# default config
-setenv defaults scenarios/defaults.yaml
+## default config
+setenv baseConfig scenarios/baseConfig.yaml
 
-# this config
+## this config
 setenv scenarioConfig scenarios/${scenario}.yaml

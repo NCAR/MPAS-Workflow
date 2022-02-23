@@ -5,21 +5,12 @@
 if ( $?config_experiment ) exit 0
 set config_experiment = 1
 
-source config/config.csh
-source config/environmentPython.csh
 source config/scenario.csh
-source config/workflow.csh
 
 # getExperiment and setExperiment are helper functions that pick out individual
 # configuration elements from within the "experiment" key of the scenario configuration
-setenv getExperiment "$getConfig $defaults $scenarioConfig experiment"
-setenv setExperiment "source $setConfig $defaults $scenarioConfig experiment"
-
-## Set the FirstCycleDate in the right format for non-cylc parts of the workflow
-set yymmdd = `echo ${firstCyclePoint} | cut -c 1-8`
-set hh = `echo ${firstCyclePoint} | cut -c 10-11`
-setenv FirstCycleDate ${yymmdd}${hh}
-
+setenv getExperiment "$getConfig $baseConfig $scenarioConfig experiment"
+setenv setExperiment "source $setConfig $baseConfig $scenarioConfig experiment"
 
 ##################################
 ## Fundamental experiment settings

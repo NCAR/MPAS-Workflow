@@ -68,8 +68,6 @@ $setRun CPQueueName
 $setRun firstCyclePoint
 $setRun initialCyclePoint
 $setRun finalCyclePoint
-#TODO: enable FirstCycleDate setting
-#$setRun FirstCycleDate
 
 ###################################################################################################
 # run the scenarios (only developers should modify this)

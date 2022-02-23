@@ -2,7 +2,7 @@
 experiment:
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-  ExpSuffix: '_autotest'
+  ExpSuffix: ''
 
 ## MPASGridDescriptor
 # used to distinguish betwen MPAS meshes across experiments
