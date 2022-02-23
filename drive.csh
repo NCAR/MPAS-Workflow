@@ -15,12 +15,12 @@ source config/experiment.csh
 # OR:
 # + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart
 #   from a previously completed cycle.
-set initialCyclePoint = 20220122T06 #20180414T18
+set initialCyclePoint = 20180414T18
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20220122T18 #20180514T18
+set finalCyclePoint = 20180514T18
 
 
 #########################

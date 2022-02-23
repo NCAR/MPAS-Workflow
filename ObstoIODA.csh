@@ -40,13 +40,13 @@ setenv PREPBUFRflag "-noqc"
 foreach gdasfile ( *"gdas"* )
    echo "Running ${obs2iodaEXEC} for ${gdasfile} ..."
    # link SpcCoeff files for converting IR radiances to brightness temperature
-   if ( ${gdasfile} == *"cris"* && ${ccyy} >= '2021' ) then
+   if ( ${gdasfile} =~ *"cris"* && ${ccyy} >= '2021' ) then
      ln -sf ${SPC_COEFF_DIR}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
      ln -sf ${SPC_COEFF_DIR}/cris-fsr431_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
-   else if ( ${gdasfile} == *"cris"* && ${ccyy} < '2021' ) then
+   else if ( ${gdasfile} =~ *"cris"* && ${ccyy} < '2021' ) then
      ln -sf ${SPC_COEFF_DIR}/cris399_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
      ln -sf ${SPC_COEFF_DIR}/cris399_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
-   else if ( ${gdasfile} == *"mtiasi"* ) then
+   else if ( ${gdasfile} =~ *"mtiasi"* ) then
      ln -sf ${SPC_COEFF_DIR}/iasi616_metop-a.SpcCoeff.bin  ./iasi_metop-a.SpcCoeff.bin
      ln -sf ${SPC_COEFF_DIR}/iasi616_metop-b.SpcCoeff.bin  ./iasi_metop-b.SpcCoeff.bin
      ln -sf ${SPC_COEFF_DIR}/iasi616_metop-c.SpcCoeff.bin  ./iasi_metop-c.SpcCoeff.bin
@@ -56,9 +56,9 @@ foreach gdasfile ( *"gdas"* )
    # ==================
    rm ./${obs2iodaEXEC}
    ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
-   if ( ${gdasfile} == *"mtiasi"* ) then
+   if ( ${gdasfile} =~ *"mtiasi"* ) then
      ./${obs2iodaEXEC} ${SPLIThourly} ${gdasfile} >&! log_${gdasfile}
-   else if ( ${gdasfile} == *"prepbufr"* ) then
+   else if ( ${gdasfile} =~ *"prepbufr"* ) then
      ./${obs2iodaEXEC} ${PREPBUFRflag} ${gdasfile} >&! log_${gdasfile}
    else
      ./${obs2iodaEXEC} ${gdasfile} >&! log_${gdasfile}
@@ -71,7 +71,7 @@ foreach gdasfile ( *"gdas"* )
      exit 1
    endif
   # Remove BURF/PrepBUFR files
-  #rm -rf $gdasfile
+  rm -rf $gdasfile
 end # gdasfile loop
 
 if ( "${preprocessObsList}" =~ *"prepbufr"* || "${preprocessObsList}" =~ *"satwnd"* ) then

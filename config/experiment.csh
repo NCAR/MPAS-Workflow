@@ -11,21 +11,21 @@
 #     - TODO: standardize GFS and observation source data
 #     - TODO: enable QC
 #     - TODO: enable VarBC
-setenv FirstCycleDate 2022012206 # 2018041418
+setenv FirstCycleDate 2018041418
 
 ## InitializationType
 # Indicates the type of initialization at the initial cycle: cold or warm start
 # OPTIONS:
 #   ColdStart - generate first forecast online from an external GFS analysis
 #   WarmStart - copy a pre-generated forecast
-setenv InitializationType ColdStart
+setenv InitializationType WarmStart
 
 ## PreprocessObs
 # Whether to convert RDA archived BUFR observations to IODA on the fly (True)
 # or use pre-converted observation files, the latter only being available for
 # specific time periods
 # OPTIONS: True/False
-setenv PreprocessObs True
+setenv PreprocessObs False
 
 ## Satbias
 # Use GDAS satellite bias coefficients created for specific dates or at each cycle
@@ -38,7 +38,7 @@ setenv Satbias GDASFixed
 #   Staged  - data already staged for specific dates
 #   RDA     - arquived data on Cheyenne for retrospective runs
 #   NCEPftp - data from last 10 days for real time runs
-setenv ObsSource RDA
+setenv ObsSource Staged
 
 
 ##################################
@@ -96,7 +96,7 @@ set preprocessObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = '_'$ObsSource
+set ExpSuffix = '_'
 
 ##############
 ## DA settings
