@@ -1,7 +1,7 @@
 run:
 ## scenarios
 # scenarios located under config/scenarios that will be run
-  scenarios: [,]
+  scenarios: [InvalidScenario,]
 ## ExpSuffix
 # Controls the ExpSuffix in config/experiment.csh.  If running multiple code branches or across
 # differing low-level settings, it is convenient to modify the suffix here in order to distinguish
