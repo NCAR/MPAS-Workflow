@@ -1,5 +1,46 @@
 #!/bin/csh -f
 
+####################
+# workflow controls
+####################
+## FirstCycleDate
+# initial date of this experiment
+# OPTIONS:
+#   + 2018041500
+#   + 2020072300 --> experimental
+#     - TODO: standardize GFS and observation source data
+#     - TODO: enable QC
+#     - TODO: enable VarBC
+setenv FirstCycleDate 2022012206 # 2018041418
+
+## InitializationType
+# Indicates the type of initialization at the initial cycle: cold or warm start
+# OPTIONS:
+#   ColdStart - generate first forecast online from an external GFS analysis
+#   WarmStart - copy a pre-generated forecast
+setenv InitializationType ColdStart
+
+## PreprocessObs
+# Whether to convert RDA archived BUFR observations to IODA on the fly (True)
+# or use pre-converted observation files, the latter only being available for
+# specific time periods
+# OPTIONS: True/False
+setenv PreprocessObs True
+
+## Satbias
+# Use GDAS satellite bias coefficients created for specific dates or at each cycle
+# OPTIONS: GDASDynamic/GDASFixed
+setenv Satbias GDASFixed
+
+## ObsSource
+# indicates the observations source from where to get them
+# OPTIONS: 
+#   Staged  - data already staged for specific dates
+#   RDA     - arquived data on Cheyenne for retrospective runs
+#   NCEPftp - data from last 10 days for real time runs
+setenv ObsSource RDA
+
+
 ##################################
 ## Fundamental experiment settings
 ##################################
@@ -21,28 +62,6 @@
 #   + TODO: "OIE60km" 4denvar
 #   + TODO: "O30kmIE60km" dual-resolution 4denvar
 setenv MPASGridDescriptor OIE120km
-
-## FirstCycleDate
-# initial date of this experiment
-# OPTIONS:
-#   + 2018041500
-#   + 2020072300 --> experimental
-#     - TODO: standardize GFS and observation source data
-#     - TODO: enable QC
-#     - TODO: enable VarBC
-setenv FirstCycleDate 2018041418
-
-
-#######################
-# workflow date control
-#######################
-## InitializationType
-# Indicates the type of initialization at the initial cycle: cold or warm start
-# OPTIONS:
-#   ColdStart - generate first forecast online from an external GFS analysis
-#   WarmStart - copy a pre-generated forecast
-setenv InitializationType WarmStart
-
 
 ## benchmarkObsList
 # base set of observation types assimilated in all experiments
@@ -77,7 +96,7 @@ set preprocessObsList = ($l)
 
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-set ExpSuffix = ''
+set ExpSuffix = '_'$ObsSource
 
 ##############
 ## DA settings
@@ -92,7 +111,6 @@ set l = ()
 set l = ($l $benchmarkObsList)
 #set l = ($l abi_g16)
 #set l = ($l ahi_himawari8)
-#set l = ($l amsua_metop-b)
 #set l = ($l abi-clr_g16)
 #set l = ($l ahi-clr_himawari8)
 # TODO: add scene-dependent ObsErrors to amsua-cld_* ObsSpaces
@@ -150,7 +168,7 @@ else
   # tertiary settings for when fixedEnsBType is set to PreviousEDA
   set nPreviousEnsDAMembers = 20
   set PreviousEDAForecastDir = \
-    /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_LeaveOneOut_OIE120km/CyclingFC
+    /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_RTPP0.80_LeaveOneOut_OIE120km_memberSpecificTemplate_GEFSSeaUpdate/CyclingFC
 
   # override settings for EDASize, nDAInstances, and nEnsDAMembers for non-eda setups
   # TODO: make DAType setting agnostic of eda_3denvar vs. 3denvar

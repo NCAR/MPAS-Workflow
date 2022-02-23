@@ -24,7 +24,8 @@
     - variable:
         name: cloud_area_fraction@MetaData
       maxvalue: 0.05
-    apply at iterations: 0, 1
+  - filter: Gaussian Thinning
+    horizontal_mesh: RADTHINDISTANCE #km
   - filter: Background Check
     threshold: 3.0
     apply at iterations: 0, 1

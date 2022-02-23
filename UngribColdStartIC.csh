@@ -22,19 +22,8 @@ cd ${InitICWorkDir}/${thisValidDate}
 
 # ================================================================================================
 
-## RDA GFS forecasts
-set GFSgribdirRDA = ${RDAdataDir}/ds084.1
-
-## link ungribbed GFS
-set fhour = 000
+## link Vtable
 set Vtable = Vtable.GFS_FV3
-set linkWPS = link_grib.csh
-set GFSprefix = gfs.0p25
-rm -rf GRIBFILE.*
-ln -sfv ${WPSBuildDir}/${linkWPS} .
-./${linkWPS} ${GFSgribdirRDA}/${yy}/${yymmdd}/${GFSprefix}.${yymmdd}${hh}.f${fhour}.grib2
-
-## copy Vtable
 ln -sfv ${VtableDir}/${Vtable} Vtable
 
 ## copy/modify dynamic namelist

@@ -21,5 +21,5 @@ set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
 setenv InitICWorkDir ${GFSAnaDirOuter}
 
 setenv updateSea 0
-  
+
 exit 0

@@ -8,6 +8,7 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_satwind.h5
       max frame size: 80000
     simulated variables: [eastward_wind, northward_wind]
+    obs perturbations seed: 1
   obs error: *ObsErrorDiagonal
   obs operator:
     name: VertInterp
@@ -18,7 +19,7 @@
     maxvalue: 3
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1
+    apply at iterations: 0, 1, 2, 3, 4, 5
   - filter: Bounds Check
     filter variables:
     - name: eastward_wind
@@ -28,8 +29,5 @@
     - name: northward_wind@ObsErrorData
     minvalue: 0.0
     maxvalue: 200.0
-#  - filter: Thinning
-#    amount: RADTHINAMOUNT
-#    random_seed: 0
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: RADTHINDISTANCE #km

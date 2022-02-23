@@ -2,7 +2,7 @@
     <<: *ObsSpace
     name: GnssroRef
     obsdatain:
-      obsfile: InDBDir/gnssro_obs_2018041500.h5
+      obsfile: InDBDir/gnssroref_obs_2018041500.h5
     obsdataout:
       obsfile: OutDBDir/obsPrefix_gnssroref.h5
     simulated variables: [refractivity]
@@ -28,6 +28,8 @@
         name: geoid_height_above_reference_ellipsoid@MetaData
       minvalue: -200
       maxvalue: 200
+  - filter: Background Check
+    threshold: 3.0
   - filter: ROobserror
     variable: refractivity
     errmodel: NBAM

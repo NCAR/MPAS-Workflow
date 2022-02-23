@@ -15,9 +15,6 @@ set FixedInput = /glade/work/guerrett/pandac/fixed_input
 ## CRTM
 setenv CRTMTABLES ${FixedInput}/crtm_bin/
 
-## VARBC
-setenv INITIAL_VARBC_TABLE ${FixedInput}/satbias/satbias_crtm_in
-
 
 #####################
 # application indices
@@ -55,7 +52,7 @@ set AHISuperOb = ($variationalAHISuperOb $hofxAHISuperOb)
 ##########################
 
 ## Conventional instruments
-setenv ConventionalObsDir /glade/p/mmm/parc/liuz/pandac_common/ioda_obs_v2/2018/conv_obs
+setenv ConventionalObsDir /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
 
 ## Polar MW (amsua, mhs)
 # bias correction
@@ -64,7 +61,7 @@ set PolarMWGSIBC = bias_corr
 setenv PolarMWBiasCorrect $PolarMWGSIBC
 
 # directories
-set basePolarMWObsDir = /glade/p/mmm/parc/liuz/pandac_common/ioda_obs_v2/2018
+set basePolarMWObsDir = /glade/p/mmm/parc/liuz/pandac_common/newobs_2018
 set PolarMWObsDir = ()
 foreach application (${applicationIndex})
   set PolarMWObsDir = ($PolarMWObsDir \

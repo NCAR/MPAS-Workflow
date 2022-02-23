@@ -9,11 +9,6 @@ setenv InitICJobMinutes 1
 setenv InitICNodes 1
 setenv InitICPEPerNode 36
 
-setenv ObstoIODAJobMinutes 10
-setenv ObstoIODANodes 1
-setenv ObstoIODAPEPerNode 1
-setenv ObstoIODAMemory 109
-
 @ CyclingFCJobMinutes = 5 + (5 * $CyclingWindowHR / 6)
 setenv CyclingFCNodes 8
 setenv CyclingFCPEPerNode 32
@@ -33,12 +28,8 @@ set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
 set EnsembleVerifyObsEnsMeanMembersPerJobMinute = 10
 @ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} / ${EnsembleVerifyObsEnsMeanMembersPerJobMinute}
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
-setenv VerifyObsNodes 1
-setenv VerifyObsPEPerNode 36
 
 setenv VerifyModelJobMinutes 2
-setenv VerifyModelNodes 1
-setenv VerifyModelPEPerNode 36
 
 set DeterministicDABaseMinutes = 25
 set ThreeDEnVarMembersPerJobMinute = 12

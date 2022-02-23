@@ -11,7 +11,7 @@ setenv MPASnCellsInner 163842
 setenv MPASnCellsEnsemble ${MPASnCellsInner}
 setenv MPASTimeStep 180.0
 setenv MPASDiffusionLengthScale 30000.0
-setenv RADTHINDISTANCE    "100.0"
+setenv RADTHINDISTANCE    "145.0"
 setenv RADTHINAMOUNT      "0.75"
 
 ## ABI super-obbing footprint, set independently
@@ -27,6 +27,10 @@ set variationalAHISuperOb = 15X15
 set hofxAHISuperOb = 15X15
 
 ## Background Error
+
+### Ensemble localization
+
+#### strategy: common
 #### 1200km horizontal loc
 #### 6km height vertical loc
 setenv bumpLocPrefix bumploc_1200km_6km

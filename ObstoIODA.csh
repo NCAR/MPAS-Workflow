@@ -37,121 +37,42 @@ setenv SPLIThourly "-split"
 # observations as in GSI
 setenv PREPBUFRflag "-noqc"
 
-foreach inst ( ${preprocessObsList} )
+foreach gdasfile ( *"gdas"* )
+   echo "Running ${obs2iodaEXEC} for ${gdasfile} ..."
+   # link SpcCoeff files for converting IR radiances to brightness temperature
+   if ( ${gdasfile} == *"cris"* && ${ccyy} >= '2021' ) then
+     ln -sf ${SPC_COEFF_DIR}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
+     ln -sf ${SPC_COEFF_DIR}/cris-fsr431_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
+   else if ( ${gdasfile} == *"cris"* && ${ccyy} < '2021' ) then
+     ln -sf ${SPC_COEFF_DIR}/cris399_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
+     ln -sf ${SPC_COEFF_DIR}/cris399_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
+   else if ( ${gdasfile} == *"mtiasi"* ) then
+     ln -sf ${SPC_COEFF_DIR}/iasi616_metop-a.SpcCoeff.bin  ./iasi_metop-a.SpcCoeff.bin
+     ln -sf ${SPC_COEFF_DIR}/iasi616_metop-b.SpcCoeff.bin  ./iasi_metop-b.SpcCoeff.bin
+     ln -sf ${SPC_COEFF_DIR}/iasi616_metop-c.SpcCoeff.bin  ./iasi_metop-c.SpcCoeff.bin
+   endif
 
-  if ( ${inst} == satwnd ) then
-     setenv THIS_FILE gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
-     if ( ! -e ${THIS_FILE}) then
-        echo "Source file: ${RDAdataDir}/ds351.0/bufr/${ccyy}/${THIS_FILE}"
-        cp -p ${RDAdataDir}/ds351.0/bufr/${ccyy}/${THIS_FILE} .
-     endif
-     if ( -e ${OBS_ERRTABLE} ) then
-        ln -sf ${OBS_ERRTABLE} obs_errtable
-     endif
-  else if ( ${inst} == prepbufr ) then
-     setenv THIS_FILE prepbufr.gdas.${ccyy}${mmdd}.t${hh}z.nr.48h
-     if ( ! -e ${THIS_FILE}) then
-        echo "Source file: ${RDAdataDir}/ds337.0/prep48h/${ccyy}/${THIS_FILE}"
-        cp -p ${RDAdataDir}/ds337.0/prep48h/${ccyy}/${THIS_FILE} .
-     endif
-     # use obs errors embedded in prepbufr file
-     if ( -e obs_errtable ) then
-        rm -f obs_errtable
-     endif
-     # use external obs error table
-     #if ( -e ${OBS_ERRTABLE} ) then
-     #   ln -sf ${OBS_ERRTABLE} obs_errtable
-     #endif
-  else
-     # set the specific file to be extracted from the tar file
-     setenv THIS_FILE gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
-     if ( ${inst} == 'cris' && ${ccyy} >= '2021' ) then
-        # cris file name became crisf4 since 2021
-        setenv THIS_FILE gdas.${inst}f4.t${hh}z.${ccyy}${mmdd}.bufr
-     endif
-     set THIS_TAR_FILE = ${RDAdataDir}/ds735.0/${inst}/${ccyy}/${inst}.${ccyy}${mmdd}.tar.gz
-     if ( ${inst} == 'cris' && ${ccyy} >= '2021' ) then
-        # cris file name became crisf4 since 2021
-        set THIS_TAR_FILE = ${RDAdataDir}/ds735.0/${inst}/${ccyy}/${inst}f4.${ccyy}${mmdd}.tar.gz
-     endif
-     if ( ! -e ${THIS_FILE}) then
-# tar -x -f /gpfs/fs1/collections/rda/data/ds735.0/gpsro/2018/gpsro.20180415.tar.gz 20180415.gpsro/gdas.gpsro.t00z.20180415.bufr
-# tar -x -f ${RDAdataDir}/ds735.0/${inst}/${ccyy}/${inst}.${ccyy}${mmdd}.tar.gz ${ccyy}${mmdd}.airssev/gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
-# mv ${ccyy}${mmdd}.airssev/gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr .
-        # some tar files contain sub-directory
-        set THIS_TAR_DIR = ${ccyy}${mmdd}.${inst}
-        tar -x -f ${THIS_TAR_FILE} ${THIS_TAR_DIR}/${THIS_FILE}
-        if ( $status == 0 ) then
-           echo "Source file: tar -x -f ${THIS_TAR_FILE} ${THIS_TAR_DIR}/${THIS_FILE}"
-           set got_file = true
-           set SUB_DIR = true
-        else #if ( $status != 0 ) then
-           # try no sub-directory
-           tar -x -f ${THIS_TAR_FILE} ${THIS_FILE}
-           if ( $status == 0 ) then
-              echo "Source file: tar -x -f ${THIS_TAR_FILE} ${THIS_FILE}"
-              set SUB_DIR = false
-              set got_file = true
-           else
-              set got_file = false
-           endif
-        endif
-        if ( ${got_file} == false && ${inst} == airsev ) then
-           #if airs, try again with another dir name
-           #typo in the archived directory name
-           set THIS_TAR_DIR = ${ccyy}${mmdd}.airssev
-           tar -x -f ${THIS_TAR_FILE} ${THIS_TAR_DIR}/${THIS_FILE}
-           if ( $status == 0 ) then
-              set SUB_DIR = true
-              echo "Source file: tar -x -f ${THIS_TAR_FILE} ${THIS_TAR_DIR}/${THIS_FILE}"
-              set got_file = true
-           endif
-        endif
-        if ( ${got_file} == true ) then
-           if (  ${SUB_DIR} == true ) then
-              mv ${THIS_TAR_DIR}/${THIS_FILE} .
-              rmdir ${THIS_TAR_DIR}
-           endif
-        endif
-     endif # others
-  endif # satwnd, prepbufr or others
-
-  if ( -e ${THIS_FILE} ) then
-     echo "Running ${obs2iodaEXEC} for ${inst} ..."
-     # link SpcCoeff files for converting IR radiances to brightness temperature
-     if ( ${inst} == 'cris' && ${ccyy} >= '2021' ) then
-       ln -sf ${SPC_COEFF_DIR}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
-       ln -sf ${SPC_COEFF_DIR}/cris-fsr431_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
-     else if ( ${inst} == 'cris' && ${ccyy} < '2021' ) then
-       ln -sf ${SPC_COEFF_DIR}/cris399_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
-       ln -sf ${SPC_COEFF_DIR}/cris399_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
-     else if ( ${inst} == 'mtiasi' ) then
-       ln -sf ${SPC_COEFF_DIR}/iasi616_metop-a.SpcCoeff.bin  ./iasi_metop-a.SpcCoeff.bin
-       ln -sf ${SPC_COEFF_DIR}/iasi616_metop-b.SpcCoeff.bin  ./iasi_metop-b.SpcCoeff.bin
-       ln -sf ${SPC_COEFF_DIR}/iasi616_metop-c.SpcCoeff.bin  ./iasi_metop-c.SpcCoeff.bin
-     endif
-
-     # Run the obs2ioda executable to convert files from BUFR to IODA-v2
-     # ==================
-     rm ./${obs2iodaEXEC}
-     ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
-     if ( ${inst} == 'mtiasi' ) then
-       ./${obs2iodaEXEC} ${SPLIThourly} ${THIS_FILE} >&! log_${inst}
-     else if ( ${inst} == 'prepbufr' ) then
-       ./${obs2iodaEXEC} ${PREPBUFRflag} ${THIS_FILE} >&! log_${inst}
-     else
-       ./${obs2iodaEXEC} ${THIS_FILE} >&! log_${inst}
-     endif
-     # Check status
-     # ============
-     grep "all done!" log_${inst}
-     if ( $status != 0 ) then
-       echo "ERROR in $0 : Pre-processing observations to IODA-v2 failed" > ./FAIL-converter
-       exit 1
-     endif
-  endif
-
-end # inst loop
+   # Run the obs2ioda executable to convert files from BUFR to IODA-v2
+   # ==================
+   rm ./${obs2iodaEXEC}
+   ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
+   if ( ${gdasfile} == *"mtiasi"* ) then
+     ./${obs2iodaEXEC} ${SPLIThourly} ${gdasfile} >&! log_${gdasfile}
+   else if ( ${gdasfile} == *"prepbufr"* ) then
+     ./${obs2iodaEXEC} ${PREPBUFRflag} ${gdasfile} >&! log_${gdasfile}
+   else
+     ./${obs2iodaEXEC} ${gdasfile} >&! log_${gdasfile}
+   endif
+   # Check status
+   # ============
+   grep "all done!" log_${gdasfile}
+   if ( $status != 0 ) then
+     echo "ERROR in $0 : Pre-processing observations to IODA-v2 failed" > ./FAIL-converter
+     exit 1
+   endif
+  # Remove BURF/PrepBUFR files
+  #rm -rf $gdasfile
+end # gdasfile loop
 
 if ( "${preprocessObsList}" =~ *"prepbufr"* || "${preprocessObsList}" =~ *"satwnd"* ) then
   # Run the ioda-upgrade executable to upgrade to get string station_id and string variable_names
@@ -179,9 +100,9 @@ if ( "${preprocessObsList}" =~ *"prepbufr"* || "${preprocessObsList}" =~ *"satwn
 endif
 
 # Remove BURF/PrepBUFR files
-foreach gdasfile ( *"gdas"* )
-  rm -rf $gdasfile
-end
+#foreach gdasfile ( *"gdas"* )
+  #rm -rf $gdasfile
+#end
 
 date
 

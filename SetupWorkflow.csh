@@ -14,10 +14,12 @@ echo ""
 rm -rf ${mainScriptDir}
 mkdir -p ${mainScriptDir}
 set workflowParts = ( \
+  GetGFSanalysis.csh \
   UngribColdStartIC.csh \
   GenerateColdStartIC.csh \
   GetWarmStartIC.csh \
-  searchObsfile.csh \
+  GetRDAobs.csh \
+  GetNCEPFTPobs.csh \
   ObstoIODA.csh \
   getCycleVars.csh \
   tools \
@@ -46,11 +48,8 @@ set thisCycleDate = $FirstCycleDate
 set thisValidDate = $thisCycleDate
 source getCycleVars.csh
 
-setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
-
 #TODO: enable VARBC updating between cycles
 #  setenv VARBC_TABLE ${prevCyclingDADir}/${VarBCAnalysis}
-
 
 ## PrepJEDICyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA
 # *VerifyModelDA is non-functional and unused
@@ -65,7 +64,6 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapStateDirsTEMPLATE@prevCyclingFCDirs@' \
     -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeTEMPLATE@DA@' \
-    -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \
     -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
     -e 's@wrapAppNameTEMPLATE@'${DAType}'@g' \
     -e 's@wrapjediAppNameTEMPLATE@variational@g' \
@@ -137,7 +135,6 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
       -e 's@wrapStateDirsTEMPLATE@'$TemplateVariables[1]'@' \
       -e 's@wrapStatePrefixTEMPLATE@'$TemplateVariables[2]'@' \
       -e 's@wrapStateTypeTEMPLATE@'${state}'@' \
-      -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \
       -e 's@wrapWindowHRTEMPLATE@'$TemplateVariables[3]'@' \
       -e 's@wrapAppNameTEMPLATE@hofx@g' \
       -e 's@wrapjediAppNameTEMPLATE@hofx@g' \

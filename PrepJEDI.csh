@@ -24,11 +24,6 @@ set ArgDT = "$2"
 # ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
 
-# ArgPrepObsOn: boolean, determines the data source
-#         True: link observations generated online in the workflow
-#        False: link pre-generated observations
-set ArgPrepObsOn = "$4"
-
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isNotInt = ($status)
@@ -64,6 +59,7 @@ set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
+source config/satbiasdata.csh
 
 # templated work directory
 set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
@@ -77,7 +73,6 @@ cd ${self_WorkDir}
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
 set self_ObsList = (${AppTypeTEMPLATEObsList})
-set self_VARBCTable = VARBCTableTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
 set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
@@ -205,19 +200,24 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-if ( $ArgPrepObsOn == True ) then
+if ( $PreprocessObs == True ) then
   # conventional
   # ============
   # Note: Real-time currently only works for prepbufr
-  #       and satwnd until satbias correction is done online
+  #       until satbias correction is done online
   ln -sfv ${ObsDir}/aircraft_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/sfc_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/sondes_obs_${thisValidDate}.h5 ${InDBDir}/
+  ln -sfv ${ObsDir}/gnssro_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/satwind_obs_${thisValidDate}.h5 ${InDBDir}/
   ln -sfv ${ObsDir}/satwnd_obs_${thisValidDate}.h5 ${InDBDir}/
   #ln -sfv ${ObsDir}/ascat_obs_${thisValidDate}.h5 ${InDBDir}/
   #ln -sfv ${ObsDir}/profiler_obs_${thisValidDate}.h5 ${InDBDir}/
-  #ln -sfv ${ObsDir}/gnssro_obs_${thisValidDate}.h5 ${InDBDir}/
+
+  # AMSUA+MHS+IASI
+  # =========
+  #ln -sfv ${ObsDir}/amsua*_obs_${thisValidDate}.h5 ${InDBDir}/
+  #ln -sfv ${ObsDir}/mhs*_obs_${thisValidDate}.h5 ${InDBDir}/
 
   # AMSUA+MHS+IASI
   # =========
@@ -246,12 +246,13 @@ endif
 
 # Create link to gnssro observations name that matches the yaml file name
 if ( "${preprocessObsList}" =~ *"gpsro"* ) then
-  ln -sfv gnssro_obs_${thisValidDate}.h5 ./gnssroref_obs_${thisValidDate}.h5
+  ln -sfv gnssro_obs_${thisValidDate}.h5 ${InDBDir}/gnssroref_obs_${thisValidDate}.h5
 endif
 
 # VarBC prior
 # ===========
-ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
+set VARBC_TABLE = ${INITIAL_VARBC_TABLE}
+ln -sfv ${VARBC_TABLE} ${InDBDir}/satbias_crtm_bak
 
 set ABISUPEROBGRID = $ABISuperOb[$myAppIndex]
 set AHISUPEROBGRID = $AHISuperOb[$myAppIndex]
@@ -267,6 +268,10 @@ set thisYAML = orig.yaml
 set prevYAML = ${thisYAML}
 
 cp -v ${ConfigDir}/applicationBase/${self_AppName}.yaml $thisYAML
+if ( $status != 0 ) then
+  echo "ERROR in $0 : application YAML not available --> ${self_AppName}.yaml" > ./FAIL
+  exit 1
+endif
 
 # (2) obs-related substitutions
 # =============================
@@ -377,6 +382,9 @@ sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' $thisYAML
 # input and output IODA DB directories
 sed -i 's@InDBDir@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
 sed -i 's@OutDBDir@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
+
+# Satbias correction
+sed -i 's@SatbiasDir@'${SatbiasDir}'@g' $thisYAML
 
 # obs, geo, and diag files with self_AppType suffixes
 sed -i 's@obsPrefix@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML

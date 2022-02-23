@@ -4,7 +4,6 @@ source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
-source config/${InitializationType}ModelData.csh
 
 ## file date for first background
 set yy = `echo ${FirstCycleDate} | cut -c 1-4`
@@ -12,6 +11,8 @@ set mm = `echo ${FirstCycleDate} | cut -c 5-6`
 set dd = `echo ${FirstCycleDate} | cut -c 7-8`
 set hh = `echo ${FirstCycleDate} | cut -c 9-10`
 setenv FirstFileDate ${yy}-${mm}-${dd}_${hh}.00.00
+
+source config/${InitializationType}ModelData.csh
 
 ## next date from which first background is initialized
 set nextFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} +${CyclingWindowHR}`
@@ -68,6 +69,9 @@ else
   setenv firstFCDirOuter ${firstDetermFCDirOuter}
   setenv firstFCDirInner ${firstDetermFCDirInner}
   setenv firstFCFilePrefix ${FCFilePrefix}
+  # static
+  setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
+  setenv staticMemFmt " "
 endif
 
 # background covariance
@@ -129,22 +133,4 @@ else
   # 60km and 120km
   setenv SeaAnaDir ${deterministicSeaAnaDir}
   setenv seaMemFmt " "
-endif
-
-## static stream data
-if ( "$DAType" =~ *"eda"* ) then
-  # stochastic
-  # 60km and 120km
-  setenv StaticFieldsDirOuter ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
-  setenv StaticFieldsDirInner ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
-  setenv StaticFieldsDirEnsemble ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
-  setenv staticMemFmt "${gefsMemFmt}"
-
-  #TODO: switch to using FirstFileDate static files for GEFS
-  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
-  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
-else
-  setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
-  setenv staticMemFmt " "
 endif

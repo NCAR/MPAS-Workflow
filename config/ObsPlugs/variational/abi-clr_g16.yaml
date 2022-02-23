@@ -27,11 +27,6 @@
 #    - variable:
 #        name: water_area_fraction@GeoVaLs
 #      minvalue: 1.0
-    apply at iterations: 0, 1
-#  - filter: Thinning
-#    amount: RADTHINAMOUNT
-#    random_seed: 0
-#    apply at iterations: 0
   - filter: Gaussian Thinning
     horizontal_mesh: RADTHINDISTANCE #km
   - filter: Background Check
