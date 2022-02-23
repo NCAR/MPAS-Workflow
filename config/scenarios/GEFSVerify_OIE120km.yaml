@@ -1,10 +1,12 @@
 experiment:
+  ExpSuffix: _GEFSVerify
   MPASGridDescriptor: OIE120km
   DAType: eda_3denvar
   EDASize: 1
   nDAInstances: 20
-  LeaveOneOutEDA: True
-  RTPPInflationFactor: 0.80
+  LeaveOneOutEDA: False
+  RTPPInflationFactor: 0.0
+  nInnerIterations: [,]
 workflow:
   InitializationType: WarmStart
   PreprocessObs: False

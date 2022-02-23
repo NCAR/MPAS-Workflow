@@ -1,10 +1,8 @@
 experiment:
-  # basic experiment settings
-  InitializationType: WarmStart
-  PreprocessObs: False
   MPASGridDescriptor: O30kmIE60km
-  # variational settings
   DAType: 3denvar
-  # EDA settings
   EDASize: 1
   nDAInstances: 1
+workflow:
+  InitializationType: WarmStart
+  PreprocessObs: False
