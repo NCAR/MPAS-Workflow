@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 source config/filestructure.csh
-source config/tools.csh ${mainScriptDir}
+source config/tools.csh
 
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 #set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`
