@@ -25,7 +25,7 @@ source env-setup/cheyenne.sh
 
 ./drive.csh
 #OR
-./run.csh
+./run.csh {{runConfig}}
 
 # It is required to set the work/run directories in $HOME/.cylc/global.rc as follows:
 [hosts]
@@ -112,7 +112,7 @@ the command-line:
 
   source env-script/cheyenne.${YourShell}
 
-  ./run.csh
+  ./run.csh PullRequest
 
 run/config/*.yaml: suite settings for sets of scenarios.  In most cases, each of these yaml
 files will only run one scenario, with the exception of automated testing for pull requests.

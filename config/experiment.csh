@@ -152,7 +152,6 @@ $setExperiment DAType
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
 set nInnerIterations = (`$getExperiment nInnerIterations`)
-#echo "nInnerIterations = ($nInnerIterations)"
 
 ## MinimizerAlgorithm
 # OPTIONS: DRIPCG, DRPLanczos, DRPBlockLanczos
