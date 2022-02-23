@@ -1,0 +1,27 @@
+run:
+## scenarios
+# list of test scenarios to run, ordered from most simple to most complex
+# If multiple test scenarios fail, it is advisable to progress by debugging and re-testing with only
+# the most simple of the failing scenarios until it passes in order to reduce computational overhead.
+# Then proceed with the remainder of the scenarios until all complete.
+  scenarios: [
+    WarmStart_OIE120km_3dvar,
+  ]
+## ExpSuffix
+# Controls the ExpSuffix in config/experiment.csh.  If testing for multiple branches or across
+# non-yaml-configured settings, it is convenient to modify this suffix here in order to distinguish
+# the scenarios.
+  ExpSuffix: ''
+## CPQueueName
+# Queue that will be used for critical path jobs.  If time allows, it is best to use economy.
+  CPQueueName: regular
+## FinalCyclePoint
+# final cycle date-time for all scenarios
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180514T18
+restore:
+  scenario: WarmStart_OIE120km_3dvar
+  ExpSuffix: ''
+  CPQueueName: regular
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180514T18

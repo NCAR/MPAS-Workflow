@@ -675,13 +675,13 @@ EOF
 
 cylc poll $SuiteName
 if ( $status == 0 ) then
-  echo "INFO in $0 : a cylc suite named $SuiteName is already running!"
-  echo "INFO in $0 : stopping the suite, then starting a new one"
+  echo "$0 (INFO): a cylc suite named $SuiteName is already running!"
+  echo "$0 (INFO): stopping the suite, then starting a new one"
   cylc stop --kill $SuiteName
   sleep 5
 else
-  echo "INFO in $0 : confirmed that a cylc suite named $SuiteName is not running"
-  echo "INFO in $0 : starting a new suite"
+  echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not running"
+  echo "$0 (INFO): starting a new suite"
 endif
 
 rm -rf ${cylcWorkDir}/${SuiteName}

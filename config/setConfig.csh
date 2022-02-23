@@ -1,13 +1,12 @@
 #!/bin/csh -f
 
-set wd = `pwd`
-source config/tools.csh $wd
+source config/config.csh
 
-set thisYAML = $1
-set rootKey = $2
-set key1 = $3
-
-set defaultYAML = config/cases/defaults.yaml
+# get arguments
+set defaultYAML = $1
+set thisYAML = $2
+set rootKey = $3
+set key1 = $4
 
 # retrieve config value
 set value = `${getYAMLKey} ${defaultYAML} ${thisYAML} ${rootKey}.${key1}`

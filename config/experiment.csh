@@ -5,12 +5,10 @@
 if ( $?config_experiment ) exit 0
 set config_experiment = 1
 
-set wd = `pwd`
-source config/tools.csh $wd
 source config/environmentPython.csh
 
-## caseName
-# select from pre-defined cases or define your own
+## scenario
+# select from pre-defined scenarios or define your own
 # canned options:
 # + WarmStart_OIE120km_3dvar
 # + WarmStart_OIE120km_3denvar
@@ -18,17 +16,25 @@ source config/environmentPython.csh
 # + WarmStart_O30kmIE60km_3denvar
 # + ColdStart_2018041418_OIE120km_3dvar
 
-set caseName = WarmStart_OIE120km_3dvar
+set scenario = WarmStart_OIE120km_3dvar
 
-# The selected case should be described in a yaml file in the config/case directory.  Only the
-# options that differ from defaults.yaml need to be included in the case yaml, but other options
+# The selected scenario should be described in a yaml file in the config/scenarios directory.  Only the
+# options that differ from the defaults need to be included in the scenario yaml, but other options
 # may also be included for clarity.
-set caseFile = config/cases/${caseName}.yaml
+
+# config tools
+source config/config.csh
+
+# default config
+set scenarioDefaults = config/scenarios/defaults.yaml
+
+# this config
+set scenarioFile = config/scenarios/${scenario}.yaml
 
 # getExperiment and setExperiment are helper functions that pick out individual
-# configuration elements from within the "experiment" key of the case configuration
-set getExperiment = "$getConfig $caseFile experiment"
-setenv setExperiment "source $setConfig $caseFile experiment"
+# configuration elements from within the "experiment" key of the scenario configuration
+set getExperiment = "$getConfig $scenarioDefaults $scenarioFile experiment"
+setenv setExperiment "source $setConfig $scenarioDefaults $scenarioFile experiment"
 
 ####################
 # workflow controls

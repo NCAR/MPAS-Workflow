@@ -1,0 +1,6 @@
+run:
+  scenarios: [WarmStart_O30kmIE60km_3denvar]
+  ExpSuffix: '_OneMonth'
+  CPQueueName: regular
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180514T18

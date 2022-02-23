@@ -25,7 +25,7 @@ source env-setup/cheyenne.sh
 
 ./drive.csh
 #OR
-./autotestForPR.csh
+./run.csh
 
 # It is required to set the work/run directories in $HOME/.cylc/global.rc as follows:
 [hosts]
@@ -38,7 +38,7 @@ source env-setup/cheyenne.sh
 
 # It is recommended to also set 'job name length maximum' to a large value
 
-# See below for more documentation aboute drive.csh and autotestForPR.csh
+# See below for more documentation aboute drive.csh and run.csh
 
 # Configuration Files (config/)
 -------------------------------
@@ -70,9 +70,9 @@ tools.csh: initializes python tools for workflow task management
 
 verification.csh: post-processing and verification script descriptions
 
-cases/: directory containing pre-defined and user-defined top-level settings
-cases/defaults.yaml: default settings
-cases/*.yaml: particular case settings, one of which must be selected in experiment.csh
+scenarios/: directory containing pre-defined and user-defined top-level settings
+scenarios/defaults.yaml: default settings
+scenarios/*.yaml: particular scenario settings, one of which must be selected in experiment.csh
 
 Note: users may add new cases by copying any of the yaml files in the cases directory to a new
 yaml, modifying the entries, and then selecting their new case in experiment.csh
@@ -103,11 +103,19 @@ experiment directory, which might be added manually outside of the workflow.  Re
 perform forecasts from an existing set of analysis states, which are stored in the CyclingDA
 directory, and must already be present in the experiment directory.
 
-## autotest driver(s)
----------------------
-autotestForPR.csh: executes drive.csh for a subset of pre-defined cases defined in config/cases/*.yaml.
-It is recommended to run this set of tests before submitting a PR to MPAS-Workflow.  For example,
-execute "source env-script/cheyenne.csh; ./autotestForPR.csh" from the command line.
+## super driver: run.csh
+-----------------------------
+run.csh: executes drive.csh for a set of pre-defined scenarios using config/scenarios/*.yaml and
+run/config/*.yaml. It is recommended to run the PullRequest scenarios before submitting a
+GitHub pull request to NCAR/MPAS-Workflow::develop.  For example, execute the following from
+the command-line:
+
+  source env-script/cheyenne.${YourShell}
+
+  ./run.csh
+
+run/config/*.yaml: suite settings for sets of scenarios.  In most cases, each of these yaml
+files will only run one scenario, with the exception of automated testing for pull requests.
 
 ## templated workflow components
 --------------------------------

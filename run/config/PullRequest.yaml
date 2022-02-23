@@ -1,0 +1,12 @@
+run:
+  scenarios: [
+    WarmStart_OIE120km_3dvar,
+    WarmStart_OIE120km_3denvar,
+    ColdStart_2018041418_OIE120km_3dvar,
+    WarmStart_O30kmIE60km_3denvar,
+    WarmStart_OIE120km_eda_3denvar,
+  ]
+  ExpSuffix: '_PullRequest'
+  CPQueueName: economy
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180415T06
