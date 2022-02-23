@@ -12,4 +12,4 @@ set key1 = $4
 set value = `${getYAMLKey} ${defaultYAML} ${thisYAML} ${rootKey}.${key1}`
 
 setenv $key1 $value
-#echo "$key1 = $value"
+echo "$key1 = $value"

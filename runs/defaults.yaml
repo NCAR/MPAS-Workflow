@@ -12,15 +12,11 @@ run:
 ## CPQueueName
 # Queue that will be used for critical path jobs.  If time allows, it is cheapest to use economy.
   CPQueueName: economy
-## initialCyclePoint and finalCyclePoint in drive.csh
+## firstCyclePoint, initialCyclePoint, and finalCyclePoint in workflow.csh
+  firstCyclePoint: 20180414T18
   initialCyclePoint: 20180414T18
   finalCyclePoint: 20180514T18
-# TODO: only the 2018 case period will work, FirstCycleDate needs to be configured too
-  FirstCycleDate: "2018041418"
 restore:
   scenario: WarmStart_OIE120km_3dvar
   ExpSuffix: ''
   CPQueueName: regular
-  initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180514T18
-  FirstCycleDate: "2018041418"

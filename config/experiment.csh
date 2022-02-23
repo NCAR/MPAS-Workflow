@@ -5,123 +5,40 @@
 if ( $?config_experiment ) exit 0
 set config_experiment = 1
 
-source config/environmentPython.csh
-
-## scenario
-# select from pre-defined scenarios or define your own
-# canned options:
-# + WarmStart_OIE120km_3dvar
-# + WarmStart_OIE120km_3denvar
-# + WarmStart_OIE120km_eda_3denvar
-# + WarmStart_O30kmIE60km_3denvar
-# + ColdStart_2018041418_OIE120km_3dvar
-
-set scenario = WarmStart_OIE120km_3dvar
-
-# The selected scenario should be described in a yaml file in the config/scenarios directory.  Only the
-# options that differ from the defaults need to be included in the scenario yaml, but other options
-# may also be included for clarity.
-
-# config tools
 source config/config.csh
-
-# default config
-set defaults = config/scenarios/defaults.yaml
-
-# this config
-set scenarioConfig = config/scenarios/${scenario}.yaml
+source config/environmentPython.csh
+source config/scenario.csh
+source config/workflow.csh
 
 # getExperiment and setExperiment are helper functions that pick out individual
 # configuration elements from within the "experiment" key of the scenario configuration
-set getExperiment = "$getConfig $defaults $scenarioConfig experiment"
+setenv getExperiment "$getConfig $defaults $scenarioConfig experiment"
 setenv setExperiment "source $setConfig $defaults $scenarioConfig experiment"
 
-####################
-# workflow controls
-####################
-## FirstCycleDate
-# initial date of this experiment
-# OPTIONS:
-#   + 2018041500
-#   + 2020072300 --> experimental
-#     - TODO: standardize GFS and observation source data
-#     - TODO: enable QC
-#     - TODO: enable VarBC
-$setExperiment FirstCycleDate
-
-## InitializationType
-# Indicates the type of initialization at the initial cycle: cold or warm start
-# OPTIONS:
-#   ColdStart - generate first forecast online from an external GFS analysis
-#   WarmStart - copy a pre-generated forecast
-$setExperiment InitializationType
-
-## PreprocessObs
-# Whether to convert RDA archived BUFR observations to IODA on the fly (True)
-# or use pre-converted observation files, the latter only being available for
-# specific time periods
-# OPTIONS: True/False
-$setExperiment PreprocessObs
+## Set the FirstCycleDate in the right format for non-cylc parts of the workflow
+set yymmdd = `echo ${firstCyclePoint} | cut -c 1-8`
+set hh = `echo ${firstCyclePoint} | cut -c 10-11`
+setenv FirstCycleDate ${yymmdd}${hh}
 
 
 ##################################
 ## Fundamental experiment settings
 ##################################
-## MPASGridDescriptor
-# used to distinguish betwen MPAS meshes across experiments
-# O = variational Outer loop, forecast, HofX
-# I = variational Inner loop
-# E = variational Ensemble
-# OPTIONS:
-#   + OIE120km -- 3dvar, 3denvar, eda_3denvar
-#   + O30kmIE120km -- dual-resolution 3denvar
-#   + OIE60km -- eda_3denvar only
-#   + TODO: OIE60km -- 3denvar, requires generating MPASSeaVariables update files from GFS analyses
-#   + O30kmIE60km -- dual-resolution 3denvar
-#   + TODO: "OIE30km" 3denvar
-#   + TODO: "O30kmIE60km" dual-resolution eda_3denvar with 60km ensemble, 30km deterministic
-#   + TODO: "OE30kmI60km" dual-resolution eda_3denvar with 30km ensemble, no deterministic?
-#   + TODO: "OIE120km" 4denvar
-#   + TODO: "OIE60km" 4denvar
-#   + TODO: "O30kmIE60km" dual-resolution 4denvar
+$setExperiment ExpSuffix
 $setExperiment MPASGridDescriptor
+set preprocessObsList = (`$getExperiment preprocessObsList`)
+set benchmarkObsList = (`$getExperiment benchmarkObsList`)
+set hofxObsList = (`$getExperiment hofxObsList`)
+$setExperiment DAType
+set nInnerIterations = (`$getExperiment nInnerIterations`)
 
-## benchmarkObsList
-# base set of observation types assimilated in all experiments
-set l = ()
-set l = ($l sondes)
-set l = ($l aircraft)
-set l = ($l satwind)
-set l = ($l gnssroref)
-set l = ($l sfc)
-set l = ($l amsua_n19)
-set l = ($l amsua_n18)
-set l = ($l amsua_n15)
-set l = ($l amsua_aqua)
-set l = ($l amsua_metop-a)
-set l = ($l amsua_metop-b)
-set benchmarkObsList = ($l)
+## nOuterIterations, automatically determined from length of nInnerIterations
+setenv nOuterIterations ${#nInnerIterations}
 
-## list of observations to convert to IODA
-set l = ()
-set l = ($l prepbufr)
-set l = ($l satwnd)
-set l = ($l satwind)
-set l = ($l 1bamua)
-#set l = ($l gpsro)
-#set l = ($l 1bmhs)
-#set l = ($l airsev)
-#set l = ($l cris)
-#set l = ($l mtiasi)
-set preprocessObsList = ($l)
 
-## ExpSuffix
-# a unique suffix to distinguish this experiment from others
-set ExpSuffix = ""
-
-##############
-## DA settings
-##############
+#######################
+## Variational settings
+#######################
 ## variationalObsList
 # observation types assimilated in variational application instances
 # OPTIONS: see list below
@@ -144,15 +61,6 @@ set l = ($l $benchmarkObsList)
 #set l = ($l amsua-cld_metop-b)
 set variationalObsList = ($l)
 
-## DAType
-# OPTIONS: 3dvar, 3denvar, eda_3denvar
-# Note: 3dvar currently only works for OIE120km
-$setExperiment DAType
-
-## nInnerIterations
-# list of inner iteration counts across all outer iterations
-set nInnerIterations = (`$getExperiment nInnerIterations`)
-
 ## MinimizerAlgorithm
 # OPTIONS: DRIPCG, DRPLanczos, DRPBlockLanczos
 # see classes derived from oops/src/oops/assimilation/Minimizer.h for all options
@@ -163,17 +71,7 @@ setenv BlockEDA DRPBlockLanczos
 setenv MinimizerAlgorithm DRIPCG
 
 if ( "$DAType" =~ *"eda"* ) then
-  ## EDASize
-  # ensemble size of each DA instance
-  # OPTIONS:
-  #   1: ensemble of nDAInstances independent Variational applications (nEnsDAMembers jobs), each
-  #      with 1 background state member per DA job
-  # > 1: ensemble of nDAInstances independent EnsembleOfVariational applications, each with EDASize
-  #      background state members per DA job
-  # In both cases, nEnsDAMembers forecasts are used for the flow-dependent background error
   $setExperiment EDASize
-
-  ## nDAInstances
   $setExperiment nDAInstances
 
   ## nEnsDAMembers
@@ -205,85 +103,16 @@ if ($EDASize == 1 && $MinimizerAlgorithm == $BlockEDA) then
   echo "WARNING: MinimizerAlgorithm cannot be $BlockEDA when EDASize is 1, re-setting to DRPLanczos"
   setenv MinimizerAlgorithm DRPLanczos
 endif
-
-## LeaveOneOutEDA, whether to use self-exclusion in the EnVar ensemble B during EDA cycling
-# OPTIONS: True/False
 $setExperiment LeaveOneOutEDA
-
-## RTPPInflationFactor, relaxation parameter for the relaxation to prior perturbation (RTPP) inflation mechanism
-# Typical Values: 0.0 or 0.50 to 0.90
 $setExperiment RTPPInflationFactor
-
-## storeOriginalRTPPAnalyses, whether to store the analyses taken as inputs to RTPP for diagnostic purposes
-# OPTIONS: True/False
-setenv storeOriginalRTPPAnalyses False
-
-## ABEIInflation, whether to utilize adaptive background error inflation (ABEI) in cloud-affected scenes
-#  as measured by ABI and AHI observations
-# OPTIONS: True/False
-setenv ABEInflation False
-
-## ABEIChannel
-# OPTIONS: 8, 9, 10
-setenv ABEIChannel 8
-
-################
-## HofX settings
-################
-## hofxObsList
-# observation types simulated in hofx application instances for verification
-# OPTIONS: see list below
-# Abbreviations:
-#   clr == clear-sky
-#   cld == cloudy-sky
-set l = ()
-set l = ($l sondes)
-set l = ($l aircraft)
-set l = ($l satwind)
-set l = ($l gnssroref)
-set l = ($l sfc)
-set l = ($l amsua_n19)
-set l = ($l amsua_n18)
-set l = ($l amsua_n15)
-set l = ($l amsua_aqua)
-set l = ($l amsua_metop-a)
-set l = ($l amsua_metop-b)
-set l = ($l amsua-cld_n19)
-set l = ($l amsua-cld_n18)
-set l = ($l amsua-cld_n15)
-set l = ($l amsua-cld_aqua)
-set l = ($l amsua-cld_metop-a)
-set l = ($l amsua-cld_metop-b)
-set l = ($l mhs_n19)
-set l = ($l mhs_n18)
-set l = ($l mhs_metop-a)
-set l = ($l mhs_metop-b)
-set l = ($l abi_g16)
-set l = ($l ahi_himawari8)
-#set l = ($l abi-clr_g16)
-#set l = ($l ahi-clr_himawari8)
-set hofxObsList = ($l)
-
-
-#GEFS reference case (override above settings)
-#====================================================
-#set ExpSuffix = _GEFSVerify
-#setenv DAType eda_3denvar
-#setenv EDASize 1
-#setenv nDAInstances 20
-#setenv nEnsDAMembers 20
-#setenv RTPPInflationFactor 0.0
-#setenv LeaveOneOutEDA False
-#set variationalObsList = ($benchmarkObsList)
-#set nInnerIterations = ()
-#====================================================
-
-## nOuterIterations, automatically determined from length of nInnerIterations
-setenv nOuterIterations ${#nInnerIterations}
+$setExperiment storeOriginalRTPPAnalyses
+$setExperiment ABEInflation
+$setExperiment ABEIChannel
 
 ##################################
 ## analysis and forecast intervals
 ##################################
+#TODO: move these settings to scenario.workflow yaml section
 setenv CyclingWindowHR 6                # forecast interval between CyclingDA analyses
 setenv ExtendedFCWindowHR 240           # length of verification forecasts
 setenv ExtendedFC_DT_HR 12              # interval between OMF verification times of an individual forecast

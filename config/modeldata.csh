@@ -3,6 +3,7 @@
 if ( $?config_modeldata ) exit 0
 set config_modeldata = 1
 
+source config/workflow.csh
 source config/experiment.csh
 source config/filestructure.csh
 set wd = `pwd`

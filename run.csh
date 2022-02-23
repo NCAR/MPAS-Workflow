@@ -65,6 +65,7 @@ setenv setRestore "source $setConfig $defaults $runConfig restore"
 set scenarios = (`$getRun scenarios`)
 $setRun ExpSuffix
 $setRun CPQueueName
+$setRun firstCyclePoint
 $setRun initialCyclePoint
 $setRun finalCyclePoint
 #TODO: enable FirstCycleDate setting
@@ -74,10 +75,11 @@ $setRun finalCyclePoint
 # run the scenarios (only developers should modify this)
 ###################################################################################################
 
-sed -i 's@^set\ ExpSuffix\ =\ .*@set\ ExpSuffix\ =\ "'$ExpSuffix'"@' config/experiment.csh
+sed -i 's@$setExperiment\ ExpSuffix@set\ ExpSuffix\ =\ "'$ExpSuffix'"@' config/experiment.csh
 sed -i 's@^setenv\ CPQueueName.*@setenv\ CPQueueName\ '$CPQueueName'@' config/job.csh
-sed -i 's@^set\ initialCyclePoint\ =\ .*@set\ initialCyclePoint\ =\ '$initialCyclePoint'@' drive.csh
-sed -i 's@^set\ finalCyclePoint\ =\ .*@set\ finalCyclePoint\ =\ '$finalCyclePoint'@' drive.csh
+sed -i 's@$setWorkflow\ firstCyclePoint@set\ firstCyclePoint\ =\ '$firstCyclePoint'@' config/workflow.csh
+sed -i 's@$setWorkflow\ initialCyclePoint@set\ initialCyclePoint\ =\ '$initialCyclePoint'@' config/workflow.csh
+sed -i 's@$setWorkflow\ finalCyclePoint@set\ finalCyclePoint\ =\ '$finalCyclePoint'@' config/workflow.csh
 
 foreach thisScenario ($scenarios)
   echo ""
@@ -85,7 +87,7 @@ foreach thisScenario ($scenarios)
   echo "##################################################################"
   echo "${0}: Running scenario: $thisScenario"
 
-  sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$thisScenario'@' config/experiment.csh
+  sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$thisScenario'@' config/scenario.csh
   sed -i 's@^set\ SuiteName\ =\ .*@set\ SuiteName\ =\ '$thisScenario'@' drive.csh
   ./${stage}.csh
 
@@ -102,19 +104,13 @@ end
 ## restore* settings
 # these values are restored now that all suites are initialized
 $setRestore scenario
-$setRestore ExpSuffix
 $setRestore CPQueueName
-$setRestore initialCyclePoint
-$setRestore finalCyclePoint
-#TODO: enable FirstCycleDate setting
-#$setRestore FirstCycleDate
 
-sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$scenario'@' config/experiment.csh
-sed -i 's@^set\ SuiteName\ =\ .*@set\ SuiteName\ =\ ${ExperimentName}@' drive.csh
-
-sed -i 's@^set\ ExpSuffix\ =\ .*@set\ ExpSuffix\ =\ "'$ExpSuffix'"@' config/experiment.csh
-
+sed -i 's@set\ ExpSuffix\ =\ .*@$setExperiment\ ExpSuffix@' config/experiment.csh
 sed -i 's@^setenv\ CPQueueName.*@setenv\ CPQueueName\ '$CPQueueName'@' config/job.csh
+sed -i 's@set\ firstCyclePoint\ =\ .*@$setWorkflow\ firstCyclePoint@' config/workflow.csh
+sed -i 's@set\ initialCyclePoint\ =\ .*@$setWorkflow\ initialCyclePoint@' config/workflow.csh
+sed -i 's@set\ finalCyclePoint\ =\ .*@$setWorkflow\ finalCyclePoint@' config/workflow.csh
 
-sed -i 's@^set\ initialCyclePoint\ =\ .*@set\ initialCyclePoint\ =\ '$initialCyclePoint'@' drive.csh
-sed -i 's@^set\ finalCyclePoint\ =\ .*@set\ finalCyclePoint\ =\ '$finalCyclePoint'@' drive.csh
+sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$scenario'@' config/scenario.csh
+sed -i 's@^set\ SuiteName\ =\ .*@set\ SuiteName\ =\ ${ExperimentName}@' drive.csh

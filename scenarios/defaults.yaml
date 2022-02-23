@@ -2,7 +2,7 @@
 experiment:
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-  ExpSuffix: ''
+  ExpSuffix: '_autotest'
 
 ## MPASGridDescriptor
 # used to distinguish betwen MPAS meshes across experiments
@@ -54,7 +54,7 @@ experiment:
 
 ## storeOriginalRTPPAnalyses, whether to store the analyses taken as inputs to RTPP for diagnostic purposes
 # OPTIONS: True/False
-  RTPPInflationFactor: False
+  storeOriginalRTPPAnalyses: False
 
 ## ABEIInflation, whether to utilize adaptive background error inflation (ABEI) in cloud-affected scenes
 #  as measured by ABI and AHI observations

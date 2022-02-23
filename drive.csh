@@ -1,94 +1,16 @@
 #!/bin/csh
 
-## Top-level workflow configuration
+####################################################################################################
+# This script runs a pre-configure cylc suite scenario described in config/scenario.csh. If the user
+# has previously executed this script with the same effecitve "SuiteName" the scenario is
+# already running, then executing this script will automatically kill those running suites.
+####################################################################################################
 
-## load the file structure
+source config/workflow.csh
+source config/experiment.csh
 source config/filestructure.csh
 
-## load experiment configuration
-source config/experiment.csh
-
-######################
-# workflow date bounds
-######################
-## initialCyclePoint
-# OPTIONS: >= FirstCycleDate (see config/experiment.csh)
-# Either:
-# + initialCyclePoint must be equal to FirstCycleDate
-# OR:
-# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart
-#   from a previously completed cycle.
-set initialCyclePoint = 20180414T18
-
-## finalCyclePoint
-# OPTIONS: >= initialCyclePoint
-# + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180514T18
-
-
-#########################
-# workflow task selection
-#########################
-## CriticalPathType: controls dependencies between and chilrdren of
-#                   DA and FC cycling components
-# OPTIONS: Normal, Bypass, Reanalysis, Reforecast
-set CriticalPathType = Normal
-
-## VerifyDeterministicDA: whether to run verification scripts for
-#    obs feedback files from DA.  Does not work for ensemble DA.
-#    Only works when CriticalPathType == Normal.
-# OPTIONS: True/False
-set VerifyDeterministicDA = True
-
-## CompareDA2Benchmark: compare verification nc files between two experiments
-#    after the DA verification completes
-# OPTIONS: True/False
-set CompareDA2Benchmark = False
-
-## VerifyExtendedMeanFC: whether to run verification scripts across
-#    extended forecast states, first intialized at mean analysis
-# OPTIONS: True/False
-set VerifyExtendedMeanFC = False
-
-## VerifyBGMembers: whether to run verification scripts for CyclingWindowHR
-#    forecast length. Runs HofXBG, VerifyObsBG, and VerifyModelBG on critical
-#    path forecasts that are initialized from ensemble member analyses.
-# OPTIONS: True/False
-set VerifyBGMembers = False
-
-## CompareBG2Benchmark: compare verification nc files between two experiments
-#    after the BGMembers verification completes
-# OPTIONS: True/False
-set CompareBG2Benchmark = False
-
-## VerifyEnsMeanBG: whether to run verification scripts for ensemble mean
-#    background (nEnsDAMembers > 1) or deterministic background (nEnsDAMembers == 1)
-# OPTIONS: True/False
-set VerifyEnsMeanBG = True
-
-## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
-#    space while VerifyEnsMeanBG is True.  Automatically triggers HofXBG
-#    for all ensemble members.
-# OPTIONS: True/False
-set DiagnoseEnsSpreadBG = True
-
-## VerifyEnsMeanAN: whether to run verification scripts for ensemble
-#    mean analysis state.
-# OPTIONS: True/False
-set VerifyANMembers = False
-
-## VerifyExtendedEnsBG: whether to run verification scripts across
-#    extended forecast states, first intialized at ensemble of analysis
-#    states.
-# OPTIONS: True/False
-set VerifyExtendedEnsFC = False
-
 date
-
-## Set the FirstCycleDate in the right format for cylc
-set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
-set hh = `echo ${FirstCycleDate} | cut -c 9-10`
-set firstCyclePoint = ${yymmdd}T${hh}
 
 ## Set the cycle hours (cyclingCycles) according to the dates
 if ($initialCyclePoint == $firstCyclePoint) then
