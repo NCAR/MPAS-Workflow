@@ -60,7 +60,6 @@ set getRun = "$getConfig $defaults $runConfig run"
 setenv setRun "source $setConfig $defaults $runConfig run"
 setenv setRestore "source $setConfig $defaults $runConfig restore"
 
-
 # these values will be used during the run phase
 # see runs/defaults.yaml for configuration documentation
 set scenarios = (`$getRun scenarios`)
