@@ -2,7 +2,7 @@ experiment:
   # basic experiment settings
   FirstCycleDate: 2018041418
   InitializationType: ColdStart
-  PreprocessObs: 'True'
+  PreprocessObs: True
   # variational settings
   DAType: 3dvar
   # EDA settings

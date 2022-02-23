@@ -1,12 +1,12 @@
 experiment:
   # basic experiment settings
   InitializationType: WarmStart
-  PreprocessObs: 'False'
+  PreprocessObs: False
   MPASGridDescriptor: OIE120km
   # variational settings
   DAType: eda_3denvar
   # EDA settings
   EDASize: 1
   nDAInstances: 20
-  LeaveOneOutEDA: 'True'
+  LeaveOneOutEDA: True
   RTPPInflationFactor: 0.80

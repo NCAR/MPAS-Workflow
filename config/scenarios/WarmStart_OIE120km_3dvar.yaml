@@ -1,7 +1,7 @@
 experiment:
   # basic experiment settings
   InitializationType: WarmStart
-  PreprocessObs: 'False'
+  PreprocessObs: False
   MPASGridDescriptor: OIE120km
   # variational settings
   DAType: 3dvar
