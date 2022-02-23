@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
-#if ( $?config_config ) exit 0
-#set config_config = 1
+if ( $?config_config ) exit 0
+set config_config = 1
 
 ## config tools
 set wd = `pwd`

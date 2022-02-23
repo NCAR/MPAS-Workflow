@@ -4,7 +4,7 @@ import argparse
 from copy import deepcopy
 import yaml
 
-def getConfig():
+def getYAMLKey():
   # Parse command line
   ap = argparse.ArgumentParser()
   ap.add_argument('default', type=str,
@@ -39,4 +39,4 @@ def getConfig():
     p = p.replace(',',' ')
   print(p)
 
-if __name__ == '__main__': getConfig()
+if __name__ == '__main__': getYAMLKey()

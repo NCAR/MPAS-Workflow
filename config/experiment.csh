@@ -26,15 +26,15 @@ set scenario = WarmStart_OIE120km_3dvar
 source config/config.csh
 
 # default config
-set scenarioDefaults = config/scenarios/defaults.yaml
+set defaults = config/scenarios/defaults.yaml
 
 # this config
-set scenarioFile = config/scenarios/${scenario}.yaml
+set scenarioConfig = config/scenarios/${scenario}.yaml
 
 # getExperiment and setExperiment are helper functions that pick out individual
 # configuration elements from within the "experiment" key of the scenario configuration
-set getExperiment = "$getConfig $scenarioDefaults $scenarioFile experiment"
-setenv setExperiment "source $setConfig $scenarioDefaults $scenarioFile experiment"
+set getExperiment = "$getConfig $defaults $scenarioConfig experiment"
+setenv setExperiment "source $setConfig $defaults $scenarioConfig experiment"
 
 ####################
 # workflow controls

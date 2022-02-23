@@ -3,15 +3,15 @@
 source config/environmentPython.csh
 
 ####################################################################################################
-# This script runs an pre-configured set of cylc suites via MPAS-Workflow. If the user has
-# previously executed this script with the same config, and one or more of the scenarios is
+# This script runs a pre-configured set of cylc suites via MPAS-Workflow. If the user has
+# previously executed this script with the same "config", and one or more of the scenarios is
 # already running, then executing this script again will cause drive.csh to kill those running
 # suites.
 ####################################################################################################
 
 ## Usage:
 #   source env/cheyenne.${YourShell}
-#   ./autorun.csh
+#   ./run.csh
 
 ## stage
 # Choose which stage of the workflow to run for all scenarios.  It can be useful to run only the
@@ -25,7 +25,7 @@ set stage = drive
 
 ## config
 # A YAML file describing the set of scenarios to run
-#Options:
+# OPTIONS:
 # + PullRequest
 # + OneMonth120km3dvar
 # + OneMonth120km3denvar
@@ -40,24 +40,20 @@ set config = PullRequest
 source config/config.csh
 
 # defaults config
-set defaults = run/config/defaults.yaml
+set defaults = runs/defaults.yaml
 
 # this config
-set runConfig = run/config/${config}.yaml
+set runConfig = runs/${config}.yaml
 
-# getRun and setRun are helper functions that pick out individual
-# configuration elements from within the "run" key of the run configuration
+# getRun, setRun, and setRestore are helper functions that pick out individual
+# configuration elements from within the "run"  and "restore" keys of runConfig
 set getRun = "$getConfig $defaults $runConfig run"
 setenv setRun "source $setConfig $defaults $runConfig run"
-
-## getRestore and setRestore are helper functions that pick out individual
-## configuration elements from within the "run" key of the run configuration
-#set getRestore = "$getConfig $defaults $runConfig restore"
 setenv setRestore "source $setConfig $defaults $runConfig restore"
 
 
 # these values will be used during the run phase
-# see run/config/defaults.yaml for configuration documentation
+# see runs/defaults.yaml for configuration documentation
 set scenarios = (`$getRun scenarios`)
 $setRun ExpSuffix
 $setRun CPQueueName
@@ -73,18 +69,18 @@ sed -i 's@^setenv\ CPQueueName.*@setenv\ CPQueueName\ '$CPQueueName'@' config/jo
 sed -i 's@^set\ initialCyclePoint\ =\ .*@set\ initialCyclePoint\ =\ '$initialCyclePoint'@' drive.csh
 sed -i 's@^set\ finalCyclePoint\ =\ .*@set\ finalCyclePoint\ =\ '$finalCyclePoint'@' drive.csh
 
-foreach scenario ($scenarios)
+foreach thisScenario ($scenarios)
   echo ""
   echo ""
   echo "##################################################################"
-  echo "${0}: Running scenario: $scenario"
+  echo "${0}: Running scenario: $thisScenario"
 
-  sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$scenario'@' config/experiment.csh
-  sed -i 's@^set\ SuiteName\ =\ .*@set\ SuiteName\ =\ '$scenario'@' drive.csh
+  sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$thisScenario'@' config/experiment.csh
+  sed -i 's@^set\ SuiteName\ =\ .*@set\ SuiteName\ =\ '$thisScenario'@' drive.csh
   ./${stage}.csh
 
   if ( $status != 0 ) then
-    echo "ERROR in $0 : error when setting up $scenario" > ./FAIL
+    echo "ERROR in $0 : error when setting up $thisScenario" > ./FAIL
     exit 1
   endif
 end
