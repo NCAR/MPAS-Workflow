@@ -4,5 +4,6 @@ workflow:
 experiment:
   MPASGridDescriptor: O30kmIE60km
   DAType: 3denvar
+  nInnerIterations: [60,60,]
   EDASize: 1
   nDAInstances: 1

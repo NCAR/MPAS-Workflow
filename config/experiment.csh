@@ -16,14 +16,26 @@ setenv setExperiment "source $setConfig $baseConfig $scenarioConfig experiment"
 ## Fundamental experiment settings
 ##################################
 
-## from scenarioConfig
+### from scenarioConfig
 $setExperiment ExpSuffix
+
+## model
 $setExperiment MPASGridDescriptor
+
+## obs
 $setExperiment preprocessObsList
-$setExperiment benchmarkObsList
-$setExperiment hofxObsList
+
+## variational
 $setExperiment DAType
+
 $setExperiment nInnerIterations
+# nOuterIterations, automatically determined from length of nInnerIterations
+setenv nOuterIterations ${#nInnerIterations}
+
+$setExperiment variationalBenchmarkObsList
+$setExperiment variationalExperimentalObsList
+# variationalObsList, automatically combine two parent ObsList's
+set variationalObsList = ($variationalBenchmarkObsList $variationalExperimentalObsList)
 
 # deterministic settings
 $setExperiment fixedEnsBType
@@ -41,35 +53,13 @@ $setExperiment storeOriginalRTPPAnalyses
 $setExperiment ABEInflation
 $setExperiment ABEIChannel
 
-## nOuterIterations, automatically determined from length of nInnerIterations
-setenv nOuterIterations ${#nInnerIterations}
+## hofx
+$setExperiment hofxObsList
 
 
-#######################
-## Variational settings
-#######################
-## variationalObsList
-# observation types assimilated in variational application instances
-# OPTIONS: see list below
-# Abbreviations:
-#   clr == clear-sky
-#   cld == cloudy-sky
-set l = ()
-set l = ($l $benchmarkObsList)
-#set l = ($l abi_g16)
-#set l = ($l ahi_himawari8)
-#set l = ($l abi-clr_g16)
-#set l = ($l ahi-clr_himawari8)
-# TODO: add scene-dependent ObsErrors to amsua-cld_* ObsSpaces
-# TODO: combine amsua_* and amsua-cld_* similar to jedi-gdas
-#set l = ($l amsua-cld_n19)
-#set l = ($l amsua-cld_n18)
-#set l = ($l amsua-cld_n15)
-#set l = ($l amsua-cld_aqua)
-#set l = ($l amsua-cld_metop-a)
-#set l = ($l amsua-cld_metop-b)
-set variationalObsList = ($l)
-
+############################
+## More variational settings
+############################
 ## MinimizerAlgorithm
 # OPTIONS: DRIPCG, DRPLanczos, DRPBlockLanczos
 # see classes derived from oops/src/oops/assimilation/Minimizer.h for all options
@@ -139,7 +129,7 @@ endif
 setenv ExpObsSuffix ''
 foreach obs ($variationalObsList)
   set isBench = False
-  foreach benchObs ($benchmarkObsList)
+  foreach benchObs ($variationalBenchmarkObsList)
     if ("$obs" =~ *"$benchObs"*) then
       set isBench = True
     endif

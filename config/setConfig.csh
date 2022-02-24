@@ -17,7 +17,7 @@ set key1 = $4
 set key = "`${getYAMLNode} ${defaultYAML} ${thisYAML} ${rootKey}.${key1} -o key`"
 set value = "`${getYAMLNode} ${defaultYAML} ${thisYAML} ${rootKey}.${key1} -o value`"
 
-if ("$value" == None) then
+if ("$value" =~ *"None"*) then
   echo "$0 (ERROR): invalid value for $key1"
   echo "$0 (ERROR): $key1 = $value"
   exit 1

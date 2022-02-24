@@ -16,13 +16,14 @@ workflow:
 # Either:
 # + initialCyclePoint must be equal to FirstCycleDate
 # OR:
-# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart
-#   from a previously completed cycle.
+# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate
+#   to automatically restart from a previously completed cycle.
   initialCyclePoint: 20180414T18
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
-# + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
+# + ancillary model and/or observation data must be available between initialCyclePoint and
+#   finalCyclePoint
   finalCyclePoint: 20180514T18
 
 ################
@@ -162,7 +163,8 @@ experiment:
   nInnerIterations: [60,]
 
 ## fixedEnsBType
-# selection of data source for fixed ensemble background covariance members when EDASize==nDAInstances==1
+# selection of data source for fixed ensemble background covariance members when
+# EDASize==nDAInstances==1
 # OPTIONS: GEFS (default), PreviousEDA
   fixedEnsBType: GEFS
 
@@ -208,20 +210,49 @@ experiment:
 # OPTIONS: 8, 9, 10
   ABEIChannel: 8
 
-## benchmarkObsList
+## variationalBenchmarkObsList
 # base set of observation types assimilated in all experiments
-  benchmarkObsList:
-  - sondes
+  variationalBenchmarkObsList:
+# anchor
   - aircraft
-  - satwind
   - gnssroref
+  - satwind
+#TODO: add satwnd, used in ColdStart, and will not break WarmStart
+# - satwnd
   - sfc
-  - amsua_n19
-  - amsua_n18
-  - amsua_n15
+  - sondes
+# MW satellite-based
   - amsua_aqua
   - amsua_metop-a
   - amsua_metop-b
+  - amsua_n15
+  - amsua_n18
+  - amsua_n19
+
+
+## variationalExperimentalObsList
+# observation types assimilated in variational application instances
+# in addition to the variationalBenchmarkObsList
+# OPTIONS: see list below
+# Abbreviations:
+#   clr == clear-sky
+#   cld == cloudy-sky
+  variationalExperimentalObsList: [
+# IR satellite-based
+#    abi_g16,
+#    ahi_himawari8,
+#    abi-clr_g16,
+#    ahi-clr_himawari8,
+# MW satellite-based
+# TODO: add scene-dependent ObsErrors to amsua-cld_* ObsSpaces
+# TODO: combine amsua_* and amsua-cld_* similar to jedi-gdas
+#    amsua-cld_aqua,
+#    amsua-cld_metop-a,
+#    amsua-cld_metop-b,
+#    amsua-cld_n15,
+#    amsua-cld_n18,
+#    amsua-cld_n19,
+  ]
 
 ######
 # hofx
@@ -233,27 +264,32 @@ experiment:
 #   clr == clear-sky
 #   cld == cloudy-sky
   hofxObsList:
-  - sondes
+# anchor
   - aircraft
-  - satwind
   - gnssroref
+  - satwind
+#TODO: add satwnd, used in ColdStart, and will not break WarmStart
+# - satwnd
   - sfc
-  - amsua_n19
-  - amsua_n18
-  - amsua_n15
+  - sondes
+# MW satellite-based
   - amsua_aqua
   - amsua_metop-a
   - amsua_metop-b
-  - amsua-cld_n19
-  - amsua-cld_n18
-  - amsua-cld_n15
+  - amsua_n15
+  - amsua_n18
+  - amsua_n19
   - amsua-cld_aqua
   - amsua-cld_metop-a
   - amsua-cld_metop-b
+  - amsua-cld_n15
+  - amsua-cld_n18
+  - amsua-cld_n19
   - mhs_n19
   - mhs_n18
   - mhs_metop-a
   - mhs_metop-b
+# IR satellite-based
   - abi_g16
   - ahi_himawari8
   #- abi-clr_g16
