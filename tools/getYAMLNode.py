@@ -44,6 +44,7 @@ def getYAMLNode():
       p = p.replace('[','')
       p = p.replace(']','')
       p = p.replace(',',' ')
+      p = ' '+p+' '
     print(p)
   elif args.outputType in ['k', 'key']:
     print(str(l))
