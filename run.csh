@@ -17,10 +17,10 @@ source config/environmentPython.csh
 # A YAML file describing the set of scenarios to run
 # OPTIONS:
 set ValidRunConfigs = ( \
-  PullRequest \
-  OneMonth120km3dvar \
-  OneMonth120km3denvar \
-  OneMonth30km-60km3denvar \
+  test \
+  120km3dvar \
+  120km3denvar \
+  30km-60km3denvar \
 )
 set ArgRunConfig = $1
 
@@ -63,21 +63,15 @@ setenv setRestore "source $setConfig $baseConfig $runConfig restore"
 # these values will be used during the run phase
 # see runs/baseConfig.yaml for configuration documentation
 set scenarios = (`$getRun scenarios`)
-$setRun ExpSuffix
+$setRun scenarioDirectory
 $setRun CPQueueName
-$setRun firstCyclePoint
-$setRun initialCyclePoint
-$setRun finalCyclePoint
 
 ###################################################################################################
 # run the scenarios (only developers should modify this)
 ###################################################################################################
 
-sed -i 's@\$setExperiment\ ExpSuffix@set\ ExpSuffix\ =\ "'$ExpSuffix'"@' config/experiment.csh
 sed -i 's@^setenv\ CPQueueName.*@setenv\ CPQueueName\ '$CPQueueName'@' config/job.csh
-sed -i 's@\$setWorkflow\ firstCyclePoint@set\ firstCyclePoint\ =\ '$firstCyclePoint'@' config/workflow.csh
-sed -i 's@\$setWorkflow\ initialCyclePoint@set\ initialCyclePoint\ =\ '$initialCyclePoint'@' config/workflow.csh
-sed -i 's@\$setWorkflow\ finalCyclePoint@set\ finalCyclePoint\ =\ '$finalCyclePoint'@' config/workflow.csh
+sed -i 's@^set\ scenarioDirectory\ =\ .*@set\ scenarioDirectory\ =\ '$scenarioDirectory'@' config/scenario.csh
 
 foreach thisScenario ($scenarios)
   if ($thisScenario == InvalidScenario) then
@@ -89,7 +83,6 @@ foreach thisScenario ($scenarios)
   echo "${0}: Running scenario: $thisScenario"
 
   sed -i 's@^setenv\ scenario\ .*@setenv\ scenario\ '$thisScenario'@' config/scenario.csh
-  sed -i 's@^set\ SuiteName\ =\ .*@set\ SuiteName\ =\ '$thisScenario'@' drive.csh
   ./${stage}.csh
 
   if ( $status != 0 ) then
@@ -105,13 +98,10 @@ end
 ## restore* settings
 # these values are restored now that all suites are initialized
 $setRestore scenario
+$setRestore scenarioDirectory
 $setRestore CPQueueName
 
-sed -i 's@set\ ExpSuffix\ =\ .*@\$setExperiment\ ExpSuffix@' config/experiment.csh
 sed -i 's@^setenv\ CPQueueName.*@setenv\ CPQueueName\ '$CPQueueName'@' config/job.csh
-sed -i 's@set\ firstCyclePoint\ =\ .*@\$setWorkflow\ firstCyclePoint@' config/workflow.csh
-sed -i 's@set\ initialCyclePoint\ =\ .*@\$setWorkflow\ initialCyclePoint@' config/workflow.csh
-sed -i 's@set\ finalCyclePoint\ =\ .*@\$setWorkflow\ finalCyclePoint@' config/workflow.csh
+sed -i 's@^set\ scenarioDirectory\ =\ .*@set\ scenarioDirectory\ =\ '$scenarioDirectory'@' config/scenario.csh
 
 sed -i 's@^setenv\ scenario\ .*@setenv\ scenario\ '$scenario'@' config/scenario.csh
-sed -i 's@^set\ SuiteName\ =\ .*@set\ SuiteName\ =\ ${ExperimentName}@' drive.csh

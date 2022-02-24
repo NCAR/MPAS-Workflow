@@ -104,7 +104,8 @@ experiment:
 
 ## ExperimentName
 # allows for manually overriding the ExperimentName instead of auto-generating it from the config
-# Note: this does not work with run.csh when multiple scenarios are run simultaneously
+# Note: when using with run.csh and for multiple simultaneously running scenarios, either
+# all scenarios must have ExperimentName specified explicitly or else ExperimentName must be empty
   ExperimentName: ''
 
 ## MPASGridDescriptor

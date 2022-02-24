@@ -4,14 +4,13 @@ run:
 # the most simple of the failing scenarios until it passes in order to reduce computational overhead.
 # Then proceed with the remainder of the scenarios until all complete.
   scenarios: [
-    WarmStart_OIE120km_3dvar,
-    WarmStart_OIE120km_3denvar,
-    ColdStart_OIE120km_3dvar,
-    WarmStart_O30kmIE60km_3denvar,
-    WarmStart_OIE120km_eda_3denvar,
+    3dvar_OIE120km_WarmStart,
+    3denvar_OIE120km_WarmStart,
+    3dvar_OIE120km_ColdStart,
+    3denvar_O30kmIE60km_WarmStart,
+    eda_OIE120km_WarmStart,
   ]
-  ExpSuffix: '_PullRequest'
+# test scenario configurations are located in a unique directory to achieve lower resource overhead
+  scenarioDirectory: scenarios/testinput
+# the economy queue is used to conserve resources
   CPQueueName: economy
-  firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180415T06

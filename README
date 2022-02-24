@@ -106,13 +106,13 @@ directory, and must already be present in the experiment directory.
 ## super driver: run.csh
 -----------------------------
 run.csh: executes drive.csh for a set of pre-defined scenarios using config/scenarios/*.yaml and
-run/config/*.yaml. It is recommended to run the PullRequest scenarios before submitting a
+run/config/*.yaml. It is recommended to run the "test" scenarios before submitting a
 GitHub pull request to NCAR/MPAS-Workflow::develop.  For example, execute the following from
 the command-line:
 
   source env-script/cheyenne.${YourShell}
 
-  ./run.csh PullRequest
+  ./run.csh test
 
 run/config/*.yaml: suite settings for sets of scenarios.  In most cases, each of these yaml
 files will only run one scenario, with the exception of automated testing for pull requests.

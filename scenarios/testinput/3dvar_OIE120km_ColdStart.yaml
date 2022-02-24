@@ -1,0 +1,17 @@
+workflow:
+  # test a recent date
+  firstCyclePoint: 20220201T00
+  initialCyclePoint: 20220201T00
+  finalCyclePoint: 20220201T12
+  InitializationType: ColdStart
+  PreprocessObs: True
+  VerifyDeterministicDA: True
+  # TODO: enable GFS analysis generation every cycle, then engage forecast verification
+  VerifyEnsMeanBG: False
+experiment:
+  MPASGridDescriptor: OIE120km
+  DAType: 3dvar
+  nInnerIterations: [15,]
+  EDASize: 1
+  nDAInstances: 1
+  ExperimentName: '3dvar_OIE120km_ColdStart_TEST'

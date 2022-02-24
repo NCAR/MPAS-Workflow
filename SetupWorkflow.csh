@@ -26,6 +26,7 @@ set workflowParts = ( \
   getCycleVars.csh \
   tools \
   config \
+  scenarios \
   MeanAnalysis.csh \
   MeanBackground.csh \
   RTPPInflation.csh \

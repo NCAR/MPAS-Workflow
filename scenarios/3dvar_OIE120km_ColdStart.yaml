@@ -1,9 +1,8 @@
 workflow:
-  firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180514T18
   InitializationType: ColdStart
   PreprocessObs: True
+  # TODO: enable GFS analysis generation every cycle, then engage forecast verification
+  VerifyEnsMeanBG: False
 experiment:
   MPASGridDescriptor: OIE120km
   DAType: 3dvar

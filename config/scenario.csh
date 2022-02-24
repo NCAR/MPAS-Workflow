@@ -8,13 +8,13 @@ source config/environmentPython.csh
 ## scenario
 # select from pre-defined scenarios or define your own
 # canned options:
-# + WarmStart_OIE120km_3dvar
-# + WarmStart_OIE120km_3denvar
-# + WarmStart_OIE120km_eda_3denvar
-# + WarmStart_O30kmIE60km_3denvar
-# + ColdStart_OIE120km_3dvar
+# + 3dvar_OIE120km_WarmStart
+# + 3dvar_OIE120km_ColdStart
+# + 3denvar_OIE120km_WarmStart
+# + eda_OIE120km_WarmStart
+# + 3denvar_O30kmIE60km_WarmStart
 
-setenv scenario WarmStart_OIE120km_3dvar
+setenv scenario 3dvar_OIE120km_WarmStart
 
 # The selected scenario should be described in a yaml file in the config/scenarios directory.  Only the
 # options that differ from the defaults need to be included in the scenario yaml, but other options
@@ -23,8 +23,11 @@ setenv scenario WarmStart_OIE120km_3dvar
 ## config tools
 source config/config.csh
 
+## directory where config is located
+set scenarioDirectory = scenarios
+
 ## default config
-setenv baseConfig scenarios/baseConfig.yaml
+setenv baseConfig ${scenarioDirectory}/baseConfig.yaml
 
 ## this config
-setenv scenarioConfig scenarios/${scenario}.yaml
+setenv scenarioConfig ${scenarioDirectory}/${scenario}.yaml

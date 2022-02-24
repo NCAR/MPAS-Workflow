@@ -24,21 +24,22 @@ mkdir -p $TMPDIR
 ##########################
 # TopExpDir, where all experiments are located
 # TODO: move to a higher level config file so that benchmark.csh can use it too
+# TODO: replace "/glade/scratch", "${USER}", and "pandac" with a user-configurable directory
 set ExperimentUser = ${USER}
 set TopExpDir = /glade/scratch/${ExperimentUser}/pandac
 
 ## absolute experiment directory
 setenv PackageBaseName MPAS-Workflow
 if ($ExperimentName == '') then
-  setenv ExperimentName ${ExperimentUser}
-  setenv ExperimentName ${ExperimentName}_${DAType}
+  setenv ExperimentName ${DAType}
   setenv ExperimentName ${ExperimentName}${ExpIterSuffix}
   setenv ExperimentName ${ExperimentName}${ExpObsSuffix}
   setenv ExperimentName ${ExperimentName}${ExpEnsSuffix}
   setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
   setenv ExperimentName ${ExperimentName}_${InitializationType}
-  setenv ExperimentName ${ExperimentName}${ExpSuffix}
 endif
+setenv ExperimentName ${ExperimentUser}_${ExperimentName}
+setenv ExperimentName ${ExperimentName}${ExpSuffix}
 
 set ExpDir = ${TopExpDir}/${ExperimentName}
 
