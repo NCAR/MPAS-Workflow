@@ -15,3 +15,6 @@ experiment:
   EDASize: 1
   nDAInstances: 1
   ExperimentName: '3dvar_OIE120km_ColdStart_TEST'
+job:
+  CPQueueName: economy
+  NCPQueueName: economy

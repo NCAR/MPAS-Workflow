@@ -11,5 +11,5 @@ set key1 = $4
 # retrieve config value
 set value = `${getYAMLKey} ${defaultYAML} ${thisYAML} ${rootKey}.${key1}`
 
-setenv $key1 $value
+setenv $key1 "$value"
 #echo "$key1 = $value"

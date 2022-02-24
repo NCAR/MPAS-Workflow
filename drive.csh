@@ -6,16 +6,39 @@
 # already running, then executing this script will automatically kill those running suites.
 ####################################################################################################
 
-source config/workflow.csh
-source config/experiment.csh
-source config/filestructure.csh
+echo "$0 (INFO): generating a new cylc suite"
 
 date
 
+echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
+
+source config/workflow.csh
+source config/experiment.csh
+source config/filestructure.csh
+source config/job.csh
+source config/mpas/${MPASGridDescriptor}/job.csh
+
+echo "$0 (INFO): setting up the environment"
+
+module purge
+module load cylc
+module load graphviz
+
+date
+
+## SuiteName: name of the cylc suite, can be used to differentiate between two
+# suites running simultaneously in the same ${ExperimentName} directory
+#
+# default: ${ExperimentName}
+# example: ${ExperimentName}_verify for a simultaneous suite running only Verification
+set SuiteName = ${ExperimentName}
+
 ## Set the cycle hours (cyclingCycles) according to the dates
 if ($initialCyclePoint == $firstCyclePoint) then
-  # Create the experiment directory and cylc task script
+  echo "$0 (INFO): Initializing ${PackageBaseName} in the experiment directory"
+  # Create the experiment directory and cylc task scripts
   ./SetupWorkflow.csh
+
   # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
   # initialCyclePoint
   set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
@@ -27,25 +50,10 @@ endif
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
 
-## load job submission settings
-source config/job.csh
-source config/mpas/${MPASGridDescriptor}/job.csh
-
-echo "Initializing ${PackageBaseName}"
-module purge
-module load cylc
-module load graphviz
-
-## SuiteName: name of the cylc suite, can be used to differentiate between two
-# suites running simultaneously in the same ${ExperimentName} directory
-#
-# default: ${ExperimentName}
-# example: ${ExperimentName}_verify for a simultaneous suite running only Verification
-set SuiteName = ${ExperimentName}
-
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
 mkdir -p ${cylcWorkDir}
-echo "creating suite.rc"
+
+echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
 # cycle dates

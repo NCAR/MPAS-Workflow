@@ -3,11 +3,6 @@ run:
 # scenarios located under config/scenarios that will be run
   scenarios: [InvalidScenario]
   scenarioDirectory: scenarios
-## CPQueueName
-# Queue that will be used for critical path jobs.
-# For testing, use economy.  For production or time-sensitive results, use regular or premium.
-  CPQueueName: regular
 restore:
   scenario: 3dvar_OIE120km_WarmStart
   scenarioDirectory: scenarios
-  CPQueueName: regular

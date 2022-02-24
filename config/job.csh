@@ -3,51 +3,27 @@
 if ( $?config_job ) exit 0
 setenv config_job 1
 
-source config/experiment.csh
+source config/scenario.csh
 
-#
-# static job submission settings
-# =============================================
+# getJob and setJob are helper functions that pick out individual
+# configuration elements from within the "job" key of the scenario configuration
+setenv getJob "$getConfig $baseConfig $scenarioConfig job"
+setenv setJob "source $setConfig $baseConfig $scenarioConfig job"
 
-## *AccountNumber
-# OPTIONS: NMMM0015, NMMM0043
-setenv CheyenneAccountNumber NMMM0043
-setenv CasperAccountNumber NMMM0015
-#Note: NMMM0043 is not available on casper
+$setJob CPAccountNumber
+$setJob CPQueueName
+$setJob NCPAccountNumber
+$setJob NCPQueueName
+$setJob SingleProcAccountNumber
+$setJob SingleProcQueueName
+$setJob EnsMeanBGQueueName
+$setJob EnsMeanBGAccountNumber
 
-## *QueueName
-# Cheyenne Options: economy, regular, premium
-# Casper Options: casper@casper-pbs
-
-# CP*: used for all critical path jobs, single or multi-node, multi-processor only
-setenv CPAccountNumber ${CheyenneAccountNumber}
-setenv CPQueueName regular
-
-# NCP*: used non-critical path jobs, single or multi-node, multi-processor only
-setenv NCPAccountNumber ${CheyenneAccountNumber}
-setenv NCPQueueName economy
-
-# SingleProc*: used for single-processor jobs, both critical and non-critical paths
-# IMPORTANT: must NOT be executed on login node to comply with CISL requirements
-#setenv SingleProcAccountNumber ${CheyenneAccountNumber}
-#setenv SingleProcQueueName share
-setenv SingleProcAccountNumber ${CasperAccountNumber}
-setenv SingleProcQueueName "casper@casper-pbs"
-
-
-if ($ABEInflation == True) then
-  setenv EnsMeanBGQueueName ${CPQueueName}
-  setenv EnsMeanBGAccountNumber ${CPAccountNumber}
-else
-  setenv EnsMeanBGQueueName ${NCPQueueName}
-  setenv EnsMeanBGAccountNumber ${NCPAccountNumber}
-endif
-
-setenv InitializationRetry '2*PT30S'
-setenv VariationalRetry '2*PT30S'
-setenv EnsOfVariationalRetry '1*PT30S'
-setenv CyclingFCRetry '2*PT30S'
-setenv RTPPInflationRetry '2*PT30S'
-setenv HofXRetry '2*PT30S'
-#setenv VerifyObsRetry '1*PT30S'
-#setenv VerifyModelRetry '1*PT30S'
+$setJob InitializationRetry
+$setJob VariationalRetry
+$setJob EnsOfVariationalRetry
+$setJob CyclingFCRetry
+$setJob RTPPInflationRetry
+$setJob HofXRetry
+#$setJob VerifyObsRetry
+#$setJob VerifyModelRetry

@@ -15,6 +15,8 @@ setenv setExperiment "source $setConfig $baseConfig $scenarioConfig experiment"
 ##################################
 ## Fundamental experiment settings
 ##################################
+
+## from scenarioConfig
 $setExperiment ExpSuffix
 $setExperiment MPASGridDescriptor
 set preprocessObsList = (`$getExperiment preprocessObsList`)
@@ -22,6 +24,22 @@ set benchmarkObsList = (`$getExperiment benchmarkObsList`)
 set hofxObsList = (`$getExperiment hofxObsList`)
 $setExperiment DAType
 set nInnerIterations = (`$getExperiment nInnerIterations`)
+
+# deterministic settings
+$setExperiment fixedEnsBType
+$setExperiment nPreviousEnsDAMembers
+$setExperiment PreviousEDAForecastDir
+
+# stochastic settings
+$setExperiment EDASize
+$setExperiment nDAInstances
+$setExperiment LeaveOneOutEDA
+$setExperiment RTPPInflationFactor
+$setExperiment storeOriginalRTPPAnalyses
+
+# ensemble inflation settings
+$setExperiment ABEInflation
+$setExperiment ABEIChannel
 
 ## nOuterIterations, automatically determined from length of nInnerIterations
 setenv nOuterIterations ${#nInnerIterations}
@@ -62,43 +80,24 @@ setenv BlockEDA DRPBlockLanczos
 setenv MinimizerAlgorithm DRIPCG
 
 if ( "$DAType" =~ *"eda"* ) then
-  $setExperiment EDASize
-  $setExperiment nDAInstances
-
-  ## nEnsDAMembers
-  # total number of ensemble DA members, product of EDASize and nDAInstances
-  # Should be between 2 and $firstEnsFCNMembers, depends on data source in config/modeldata.csh
-  @ nEnsDAMembers = $EDASize * $nDAInstances
-  setenv nEnsDAMembers $nEnsDAMembers
+  # placeholder for now
 else
-  ## fixedEnsBType
-  # selection of data source for fixed ensemble background covariance members
-  # OPTIONS: GEFS (default), PreviousEDA
-  setenv fixedEnsBType GEFS
-
-  # tertiary settings for when fixedEnsBType is set to PreviousEDA
-  setenv nPreviousEnsDAMembers 20
-  setenv PreviousEDAForecastDir \
-    /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_RTPP0.80_LeaveOneOut_OIE120km_memberSpecificTemplate_GEFSSeaUpdate/CyclingFC
-
   # override settings for EDASize, nDAInstances, and nEnsDAMembers for non-eda setups
   # TODO: make DAType setting agnostic of eda_3denvar vs. 3denvar
   #       and use EDASize and nDAInstances instead
   setenv EDASize 1
   setenv nDAInstances 1
-  @ nEnsDAMembers = $EDASize * $nDAInstances
-  setenv nEnsDAMembers $nEnsDAMembers
 endif
+## nEnsDAMembers
+# total number of ensemble DA members, product of EDASize and nDAInstances
+# Should be in range (1, $firstEnsFCNMembers), depends on data source in config/modeldata.csh
+@ nEnsDAMembers = $EDASize * $nDAInstances
+setenv nEnsDAMembers $nEnsDAMembers
 
 if ($EDASize == 1 && $MinimizerAlgorithm == $BlockEDA) then
   echo "WARNING: MinimizerAlgorithm cannot be $BlockEDA when EDASize is 1, re-setting to DRPLanczos"
   setenv MinimizerAlgorithm DRPLanczos
 endif
-$setExperiment LeaveOneOutEDA
-$setExperiment RTPPInflationFactor
-$setExperiment storeOriginalRTPPAnalyses
-$setExperiment ABEInflation
-$setExperiment ABEIChannel
 
 ##################################
 ## analysis and forecast intervals

@@ -64,13 +64,11 @@ setenv setRestore "source $setConfig $baseConfig $runConfig restore"
 # see runs/baseConfig.yaml for configuration documentation
 set scenarios = (`$getRun scenarios`)
 $setRun scenarioDirectory
-$setRun CPQueueName
 
 ###################################################################################################
 # run the scenarios (only developers should modify this)
 ###################################################################################################
 
-sed -i 's@^setenv\ CPQueueName.*@setenv\ CPQueueName\ '$CPQueueName'@' config/job.csh
 sed -i 's@^set\ scenarioDirectory\ =\ .*@set\ scenarioDirectory\ =\ '$scenarioDirectory'@' config/scenario.csh
 
 foreach thisScenario ($scenarios)
@@ -99,9 +97,7 @@ end
 # these values are restored now that all suites are initialized
 $setRestore scenario
 $setRestore scenarioDirectory
-$setRestore CPQueueName
 
-sed -i 's@^setenv\ CPQueueName.*@setenv\ CPQueueName\ '$CPQueueName'@' config/job.csh
 sed -i 's@^set\ scenarioDirectory\ =\ .*@set\ scenarioDirectory\ =\ '$scenarioDirectory'@' config/scenario.csh
 
 sed -i 's@^setenv\ scenario\ .*@setenv\ scenario\ '$scenario'@' config/scenario.csh

@@ -12,5 +12,3 @@ run:
   ]
 # test scenario configurations are located in a unique directory to achieve lower resource overhead
   scenarioDirectory: scenarios/testinput
-# the economy queue is used to conserve resources
-  CPQueueName: economy

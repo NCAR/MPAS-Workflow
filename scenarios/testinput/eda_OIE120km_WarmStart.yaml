@@ -15,3 +15,6 @@ experiment:
   LeaveOneOutEDA: True
   RTPPInflationFactor: 0.80
   ExperimentName: 'eda_OIE120km_WarmStart_TEST'
+job:
+  CPQueueName: economy
+  NCPQueueName: economy

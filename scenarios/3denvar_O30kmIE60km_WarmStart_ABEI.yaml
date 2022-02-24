@@ -1,0 +1,13 @@
+workflow:
+  InitializationType: WarmStart
+  PreprocessObs: False
+experiment:
+  MPASGridDescriptor: O30kmIE60km
+  DAType: 3denvar
+  EDASize: 1
+  nDAInstances: 1
+  ABEInflation: True
+  ABEIChannel: 10
+job:
+  # use premium queue for ensemble mean calculation
+  EnsMeanBGQueueName: premium
