@@ -1,15 +1,15 @@
 #!/bin/csh -f
 
 # only load experiment if it is not already loaded
-# note: set must be used instead of setenv, because this script includes set
+# note: set must be used instead of setenv, because some of the setExperiment commands apply to
+# lists, which use set instead of setenv
 if ( $?config_experiment ) exit 0
 set config_experiment = 1
 
 source config/scenario.csh
 
-# getExperiment and setExperiment are helper functions that pick out individual
-# configuration elements from within the "experiment" key of the scenario configuration
-setenv getExperiment "$getConfig $baseConfig $scenarioConfig experiment"
+# setExperiment is a helper function that picks out a configuration node
+# under the "experiment" key of scenarioConfig
 setenv setExperiment "source $setConfig $baseConfig $scenarioConfig experiment"
 
 ##################################
@@ -19,11 +19,11 @@ setenv setExperiment "source $setConfig $baseConfig $scenarioConfig experiment"
 ## from scenarioConfig
 $setExperiment ExpSuffix
 $setExperiment MPASGridDescriptor
-set preprocessObsList = (`$getExperiment preprocessObsList`)
-set benchmarkObsList = (`$getExperiment benchmarkObsList`)
-set hofxObsList = (`$getExperiment hofxObsList`)
+$setExperiment preprocessObsList
+$setExperiment benchmarkObsList
+$setExperiment hofxObsList
 $setExperiment DAType
-set nInnerIterations = (`$getExperiment nInnerIterations`)
+$setExperiment nInnerIterations
 
 # deterministic settings
 $setExperiment fixedEnsBType

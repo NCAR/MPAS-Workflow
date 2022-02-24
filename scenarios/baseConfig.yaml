@@ -98,6 +98,9 @@ workflow:
 
 ####################################################################################################
 experiment:
+#TODO: move model-, obs-, variational-, hofx-specific settings under their own headers
+# outside of the "experiment" header
+
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
   ExpSuffix: ''
@@ -108,6 +111,9 @@ experiment:
 # all scenarios must have ExperimentName specified explicitly or else ExperimentName must be empty
   ExperimentName: ''
 
+#######
+# model
+#######
 ## MPASGridDescriptor
 # used to distinguish betwen MPAS meshes across experiments
 # O = variational Outer loop, forecast, HofX
@@ -125,12 +131,31 @@ experiment:
 #   + TODO: "OIE120km" 4denvar
 #   + TODO: "OIE60km" 4denvar
 #   + TODO: "O30kmIE60km" dual-resolution 4denvar
-  MPASGridDescriptor: OIE120km
+  MPASGridDescriptor: None
 
+#####
+# obs
+#####
+## preprocessObsList
+# list of raw observation types to convert to IODA
+  preprocessObsList:
+  - prepbufr
+  - satwnd
+  - satwind
+  - 1bamua
+  #- gpsro
+  #- 1bmhs
+  #- airsev
+  #- cris
+  #- mtiasi
+
+#############
+# variational
+#############
 ## DAType
 # OPTIONS: 3dvar, 3denvar, eda_3denvar
 # Note: 3dvar currently only works for OIE120km
-  DAType: 3dvar
+  DAType: None
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
@@ -141,7 +166,7 @@ experiment:
 # OPTIONS: GEFS (default), PreviousEDA
   fixedEnsBType: GEFS
 
-# tertiary settings for when fixedEnsBType is set to PreviousEDA
+# tertiary settings that only apply when fixedEnsBType is set to PreviousEDA
   nPreviousEnsDAMembers: 20
   PreviousEDAForecastDir: /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_RTPP0.80_LeaveOneOut_OIE120km_memberSpecificTemplate_GEFSSeaUpdate/CyclingFC
 
@@ -161,35 +186,27 @@ experiment:
 # OPTIONS: True/False
   LeaveOneOutEDA: True
 
-## RTPPInflationFactor, relaxation parameter for the relaxation to prior perturbation (RTPP) inflation mechanism
+## RTPPInflationFactor
+# relaxation parameter for the relaxation to prior perturbation (RTPP) inflation mechanism; only
+# applies to EDA cycling
 # Typical Values: 0.0 or 0.50 to 0.90
   RTPPInflationFactor: 0.80
 
-## storeOriginalRTPPAnalyses, whether to store the analyses taken as inputs to RTPP for diagnostic purposes
+## storeOriginalRTPPAnalyses
+# whether to keep/store the analyses taken as inputs to RTPP for diagnostic purposes
 # OPTIONS: True/False
   storeOriginalRTPPAnalyses: False
 
-## ABEIInflation, whether to utilize adaptive background error inflation (ABEI) in cloud-affected scenes
-#  as measured by ABI and AHI observations
+## ABEIInflation
+# whether to utilize adaptive background error inflation (ABEI) in cloud-affected scenes
+# as measured by ABI and AHI observations
 # OPTIONS: True/False
   ABEInflation: False
 
 ## ABEIChannel
+# ABI and AHI channel used to determine the inflation factor
 # OPTIONS: 8, 9, 10
   ABEIChannel: 8
-
-## preprocessObsList
-# list of raw observation types to convert to IODA
-  preprocessObsList:
-  - prepbufr
-  - satwnd
-  - satwind
-  - 1bamua
-  #- gpsro
-  #- 1bmhs
-  #- airsev
-  #- cris
-  #- mtiasi
 
 ## benchmarkObsList
 # base set of observation types assimilated in all experiments
@@ -206,6 +223,9 @@ experiment:
   - amsua_metop-a
   - amsua_metop-b
 
+######
+# hofx
+######
 ## hofxObsList
 # observation types simulated in hofx application instances for verification
 # OPTIONS: see list below

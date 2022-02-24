@@ -4,7 +4,7 @@ import argparse
 from copy import deepcopy
 import yaml
 
-def getYAMLKey():
+def getYAMLNode():
   # Parse command line
   ap = argparse.ArgumentParser()
   ap.add_argument('default', type=str,
@@ -13,6 +13,10 @@ def getYAMLKey():
                   help='yaml file to parse')
   ap.add_argument('key', type=str,
                   help='configuration address')
+
+  ap.add_argument('-o','--outputType', type=str, default='v',
+                  choices=['k', 'v', 'key', 'value'],
+                  help='type of output, key or value')
 
   args = ap.parse_args()
 
@@ -24,19 +28,24 @@ def getYAMLKey():
       a = deepcopy(config)
       for level in key:
         a = deepcopy(a[level])
+        l = level
   except:
     with open(args.default) as file:
       config = yaml.load(file, Loader=yaml.FullLoader)
       a = deepcopy(config)
       for level in key:
         a = deepcopy(a[level])
+        l = level
 
-  p = str(a)
-  if isinstance(a, list):
-    p = p.replace('\'','')
-    p = p.replace('[','')
-    p = p.replace(']','')
-    p = p.replace(',',' ')
-  print(p)
+  if args.outputType in ['v', 'value']:
+    p = str(a)
+    if isinstance(a, list):
+      p = p.replace('\'','')
+      p = p.replace('[','')
+      p = p.replace(']','')
+      p = p.replace(',',' ')
+    print(p)
+  elif args.outputType in ['k', 'key']:
+    print(str(l))
 
-if __name__ == '__main__': getYAMLKey()
+if __name__ == '__main__': getYAMLNode()

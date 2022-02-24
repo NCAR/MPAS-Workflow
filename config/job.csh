@@ -5,9 +5,8 @@ setenv config_job 1
 
 source config/scenario.csh
 
-# getJob and setJob are helper functions that pick out individual
-# configuration elements from within the "job" key of the scenario configuration
-setenv getJob "$getConfig $baseConfig $scenarioConfig job"
+# setJob is a helper function that picks out a configuration node
+# under the "job" key of scenarioConfig
 setenv setJob "source $setConfig $baseConfig $scenarioConfig job"
 
 $setJob CPAccountNumber

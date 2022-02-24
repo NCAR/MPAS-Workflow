@@ -5,9 +5,8 @@ setenv config_workflow 1
 
 source config/scenario.csh
 
-# getWorkflow and setWorkflow are helper functions that pick out individual
-# configuration elements from within the "workflow" key of the scenario configuration
-setenv getWorkflow "$getConfig $baseConfig $scenarioConfig workflow"
+# setWorkflow is a helper function that picks out a configuration node
+# under the "workflow" key of scenarioConfig
 setenv setWorkflow "source $setConfig $baseConfig $scenarioConfig workflow"
 
 $setWorkflow firstCyclePoint
