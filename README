@@ -113,6 +113,8 @@ the command-line:
   source env-script/cheyenne.${YourShell}
 
   ./run.csh test
+  OR, equivalently,
+  ./test.csh
 
 run/config/*.yaml: suite settings for sets of scenarios.  In most cases, each of these yaml
 files will only run one scenario, with the exception of automated testing for pull requests.
