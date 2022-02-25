@@ -13,18 +13,6 @@ setenv MPASDiffusionLengthScale 120000.0
 setenv RADTHINDISTANCE     "200.0"
 setenv RADTHINAMOUNT       "0.98"
 
-## ABI super-obbing footprint, set independently
-#  for variational and hofx
-#OPTIONS: 15X15, 59X59
-set variationalABISuperOb = 59X59
-set hofxABISuperOb = 59X59
-
-## AHI super-obbing footprint set independently
-#  for variational and hofx
-#OPTIONS: 15X15, 101X101
-set variationalAHISuperOb = 101X101
-set hofxAHISuperOb = 101X101
-
 ## Background Error
 
 ### Ensemble localization

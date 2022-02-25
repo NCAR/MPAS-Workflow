@@ -1,9 +1,40 @@
 workflow:
   InitializationType: WarmStart
   PreprocessObs: False
-experiment:
+model:
   MPASGridDescriptor: O30kmIE60km
+variational:
   DAType: 3denvar
   nInnerIterations: [60,60,]
   EDASize: 1
   nDAInstances: 1
+observations:
+  PANDACArchive:
+    IODADirectory:
+      variational:
+        ## abi
+        abi_g16:
+          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          superObGrid: 15X15
+        abi-clr_g16:
+          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ##ahi
+        ahi_himawari8:
+          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+          superObGrid: 15X15
+        ahi-clr_himawari8:
+          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+
+      hofx:
+        ## abi
+        abi_g16:
+          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          superObGrid: 15X15
+        abi-clr_g16:
+          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ## ahi
+        ahi_himawari8:
+          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+          superObGrid: 15X15
+        ahi-clr_himawari8:
+          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct

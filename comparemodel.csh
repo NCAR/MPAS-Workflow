@@ -35,7 +35,6 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
@@ -73,8 +72,8 @@ nccmp -d -S ${self_bgFile} ${benchmark_bgFile} | tee -a compare.txt
 
 # nccmp returns 0 if the files are identical. Log non-zero returns in a file for human review.
 if ($status != 0) then
-  echo "$self_bgFile" >> ${ExpDir}/verifymodel_differences_found.txt
-  echo "--> ${CompareDir}/diffState.nc" >> ${ExpDir}/verifymodel_differences_found.txt
+  echo "$self_bgFile" >> ${ExperimentDirectory}/verifymodel_differences_found.txt
+  echo "--> ${CompareDir}/diffState.nc" >> ${ExperimentDirectory}/verifymodel_differences_found.txt
   ncdiff -O ${self_bgFile} ${benchmark_bgFile} diffState.nc
 endif
 
@@ -86,8 +85,8 @@ echo "nccmp -dfFmSN -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_Sta
 nccmp -d -N -S -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} | tee -a compare.txt
 #echo "${self_StatisticsFile} - nccmp returned $status"
 if ($status != 0) then
-  echo "$self_StatisticsFile" >> ${ExpDir}/verifymodel_differences_found.txt
-  echo "--> ${CompareDir}/diffStatistics.nc" >> ${ExpDir}/verifymodel_differences_found.txt
+  echo "$self_StatisticsFile" >> ${ExperimentDirectory}/verifymodel_differences_found.txt
+  echo "--> ${CompareDir}/diffStatistics.nc" >> ${ExperimentDirectory}/verifymodel_differences_found.txt
   ncdiff -O -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} diffStatistics.nc
 endif
 

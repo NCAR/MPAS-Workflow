@@ -36,13 +36,6 @@ workflow:
 #   WarmStart - copy a pre-generated forecast
   InitializationType: WarmStart
 
-## PreprocessObs
-# Whether to convert RDA archived BUFR observations to IODA on the fly (True)
-# or use pre-converted observation files, the latter only being available for
-# specific time periods
-# OPTIONS: True/False
-  PreprocessObs: False
-
 ## CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
 # OPTIONS: Normal, Bypass, Reanalysis, Reforecast
@@ -97,25 +90,362 @@ workflow:
 # OPTIONS: True/False
   VerifyExtendedEnsFC: False
 
+##################################
+## analysis and forecast intervals
+##################################
+#TODO: move these settings to scenario.workflow yaml section
+  # forecast interval between CyclingDA analyses
+  CyclingWindowHR: 6
+
+  # length of verification forecasts
+  ExtendedFCWindowHR: 240
+
+  # interval between OMF verification times of an individual forecast
+  ExtendedFC_DT_HR: 12
+
+  # times of the day to run extended forecast from mean analysis
+  ExtendedMeanFCTimes: T00,T12
+
+  # times of the day to run ensemble of extended forecasts
+  ExtendedEnsFCTimes: T00
+
+  # window of observations included in AN/BG verification
+  DAVFWindowHR: 6
+
+  # window of observations included in forecast verification
+  FCVFWindowHR: 6
+
 ####################################################################################################
 experiment:
-#TODO: move model-, obs-, variational-, hofx-specific settings under their own headers
-# outside of the "experiment" header
-
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
   ExpSuffix: ''
 
 ## ExperimentName
-# allows for manually overriding the ExperimentName instead of auto-generating it from the config
-# Note: when using with run.csh and for multiple simultaneously running scenarios, either
-# all scenarios must have ExperimentName specified explicitly or else ExperimentName must be empty
-  ExperimentName: ''
+# leave as DEFAULT to be automatically generated from critical config elements
+# Note: when using with run.csh and for multiple simultaneously running scenarios, setting
+# ExperimentName explicitly for all scenarios is the safest way to ensure that two scenarios do not
+# have identically auto-generated ExperimentName's
+  ExperimentName: DEFAULT
 
+## ParentDirectory will be constructd using
+# set ParentDirectory = ${ParentDirectoryPrefix}/${ExperimentUser}/${ParentDirectorySuffix}
+
+## ParentDirectoryPrefix
+  ParentDirectoryPrefix: /glade/scratch
+
+## ExperimentUser
+# leave as DEFAULT to be assigned with 'set ExperimentUser = ${USER}'
+  ExperimentUser: DEFAULT
+
+## ParentDirectorySuffix
+  ParentDirectorySuffix: pandac
+
+
+####################################################################################################
+observations:
+## observationSource
+# OPTIONS: PANDACArchive, GladeRDAOnline
+# Note: add more options as they become available, e.g., NCEPFTPOnline
+  observationSource: PANDACArchive
+
+## convertToIODAObservations
+# list of raw observation types to convert to IODA format, when (observationSource != PANDACArchive)
+  convertToIODAObservations:
+  - prepbufr
+  - satwnd
+  - satwind
+  - 1bamua
+  #- gpsro
+  #- 1bmhs
+  #- airsev
+  #- cris
+  #- mtiasi
+
+## *Directory
+# locations of raw bufr and prepbufr observation data, separated by observationSource
+  GladeRDAOnline:
+    defaultBUFRDirectory: /gpfs/fs1/collections/rda/data/ds735.0
+    satwndBUFRDirectory: /gpfs/fs1/collections/rda/data/ds351.0
+    PrepBUFRDirectory: /gpfs/fs1/collections/rda/data/ds337.0
+
+    IODADirectory:
+      variational:
+        ## anchor
+        aircraft:
+          directory: __ObsWorkDir__
+        gnssroref:
+          directory: __ObsWorkDir__
+          prefix: gnssro
+        satwind:
+          directory: __ObsWorkDir__
+        satwnd:
+          directory: __ObsWorkDir__
+        sfc:
+          directory: __ObsWorkDir__
+        sondes:
+          directory: __ObsWorkDir__
+
+        ## amsua
+        amsua_aqua:
+          directory: __ObsWorkDir__
+        amsua_metop-a:
+          directory: __ObsWorkDir__
+        amsua_metop-b:
+          directory: __ObsWorkDir__
+        amsua_n15:
+          directory: __ObsWorkDir__
+        amsua_n18:
+          directory: __ObsWorkDir__
+        amsua_n19:
+          directory: __ObsWorkDir__
+        amsua-cld_aqua:
+          directory: __ObsWorkDir__
+          prefix: amsua_aqua
+        amsua-cld_metop-a:
+          directory: __ObsWorkDir__
+          prefix: amsua_metop-a
+        amsua-cld_metop-b:
+          directory: __ObsWorkDir__
+          prefix: amsua_metop-b
+        amsua-cld_n15:
+          directory: __ObsWorkDir__
+          prefix: amsua_n15
+        amsua-cld_n18:
+          directory: __ObsWorkDir__
+          prefix: amsua_n18
+        amsua-cld_n19:
+          directory: __ObsWorkDir__
+          prefix: amsua_n19
+
+        ## mhs
+        mhs_metop-a:
+          directory: __ObsWorkDir__
+        mhs_metop-b:
+          directory: __ObsWorkDir__
+        mhs_n18:
+          directory: __ObsWorkDir__
+        mhs_n19:
+          directory: __ObsWorkDir__
+
+      hofx:
+        ##anchor
+        aircraft:
+          directory: __ObsWorkDir__
+        gnssroref:
+          directory: __ObsWorkDir__
+          prefix: gnssro
+        satwind:
+          directory: __ObsWorkDir__
+        satwnd:
+          directory: __ObsWorkDir__
+        sfc:
+          directory: __ObsWorkDir__
+        sondes:
+          directory: __ObsWorkDir__
+
+        ## amsua
+        amsua_aqua:
+          directory: __ObsWorkDir__
+        amsua_metop-a:
+          directory: __ObsWorkDir__
+        amsua_metop-b:
+          directory: __ObsWorkDir__
+        amsua_n15:
+          directory: __ObsWorkDir__
+        amsua_n18:
+          directory: __ObsWorkDir__
+        amsua_n19:
+          directory: __ObsWorkDir__
+        amsua-cld_aqua:
+          directory: __ObsWorkDir__
+          prefix: amsua_aqua
+        amsua-cld_metop-a:
+          directory: __ObsWorkDir__
+          prefix: amsua_metop-a
+        amsua-cld_metop-b:
+          directory: __ObsWorkDir__
+          prefix: amsua_metop-b
+        amsua-cld_n15:
+          directory: __ObsWorkDir__
+          prefix: amsua_n15
+        amsua-cld_n18:
+          directory: __ObsWorkDir__
+          prefix: amsua_n18
+        amsua-cld_n19:
+          directory: __ObsWorkDir__
+          prefix: amsua_n19
+
+        ## mhs
+        mhs_metop-a:
+          directory: __ObsWorkDir__
+        mhs_metop-b:
+          directory: __ObsWorkDir__
+        mhs_n18:
+          directory: __ObsWorkDir__
+        mhs_n19:
+          directory: __ObsWorkDir__
+
+  PANDACArchive:
+    IODADirectory:
+      variational:
+        ##anchor
+        aircraft:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        gnssroref:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+          prefix: gnssro
+        satwind:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        sfc:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        sondes:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+
+        ## amsua
+        amsua_aqua:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua_metop-a:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua_metop-b:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua_n15:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua_n18:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua_n19:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua-cld_aqua:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+          prefix: amsua_aqua
+        amsua-cld_metop-a:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+          prefix: amsua_metop-a
+        amsua-cld_metop-b:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+          prefix: amsua_metop-b
+        amsua-cld_n15:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+          prefix: amsua_n15
+        amsua-cld_n18:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+          prefix: amsua_n18
+        amsua-cld_n19:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+          prefix: amsua_n19
+
+        ## mhs
+        mhs_metop-a:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs_metop-b:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs_n18:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs_n19:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+
+        ## abi
+        abi_g16:
+          #directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB59X59_no-bias-correct
+          superObGrid: 59X59
+        abi-clr_g16:
+          #directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO59X59_no-bias-correct
+          prefix: abi_g16
+
+        ## ahi
+        ahi_himawari8:
+          #directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
+          superObGrid: 101X101
+        ahi-clr_himawari8:
+          #directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
+          prefix: ahi_himawari8
+
+      hofx:
+        ## anchor
+        aircraft:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        gnssroref:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+          prefix: gnssro
+        satwind:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        sfc:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        sondes:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+
+        ## amsua
+        amsua_aqua:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua_metop-a:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua_metop-b:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua_n15:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua_n18:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua_n19:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua-cld_aqua:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+          prefix: amsua_aqua
+        amsua-cld_metop-a:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+          prefix: amsua_metop-a
+        amsua-cld_metop-b:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+          prefix: amsua_metop-b
+        amsua-cld_n15:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+          prefix: amsua_n15
+        amsua-cld_n18:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+          prefix: amsua_n18
+        amsua-cld_n19:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+          prefix: amsua_n19
+
+        ## mhs
+        mhs_metop-a:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        mhs_metop-b:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        mhs_n18:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        mhs_n19:
+          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+
+        ## abi
+        abi_g16:
+          #directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB59X59_no-bias-correct
+          superObGrid: 59X59
+        abi-clr_g16:
+          #directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO59X59_no-bias-correct
+          prefix: abi_g16
+
+        ## ahi
+        ahi_himawari8:
+          #directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
+          superObGrid: 101X101
+        ahi-clr_himawari8:
+          #directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
+          prefix: ahi_himawari8
+
+####################################################################################################
+model:
 #######
 # model
 #######
-## MPASGridDescriptor
+## MPASGridDescriptor [Required Parameter]
 # used to distinguish betwen MPAS meshes across experiments
 # O = variational Outer loop, forecast, HofX
 # I = variational Inner loop
@@ -134,26 +464,57 @@ experiment:
 #   + TODO: "O30kmIE60km" dual-resolution 4denvar
   MPASGridDescriptor: None
 
-#####
-# obs
-#####
-## preprocessObsList
-# list of raw observation types to convert to IODA
-  preprocessObsList:
-  - prepbufr
-  - satwnd
-  - satwind
-  - 1bamua
-  #- gpsro
-  #- 1bmhs
-  #- airsev
-  #- cris
-  #- mtiasi
+## forecastPrecision
+# floating-point precision of forecast output; options: [single, double]
+  forecastPrecision: single
 
-#############
-# variational
-#############
-## DAType
+####################################################################################################
+hofx:
+## observations
+# observation types simulated in hofx application instances for verification
+# OPTIONS: see list below
+# Abbreviations:
+#   clr == clear-sky
+#   cld == cloudy-sky
+  observations:
+# anchor
+  - aircraft
+  - gnssroref
+  - satwind
+#TODO: add satwnd, used in ColdStart and will not break WarmStart
+# - satwnd
+  - sfc
+  - sondes
+# MW satellite-based
+  - amsua_aqua
+  - amsua_metop-a
+  - amsua_metop-b
+  - amsua_n15
+  - amsua_n18
+  - amsua_n19
+  - amsua-cld_aqua
+  - amsua-cld_metop-a
+  - amsua-cld_metop-b
+  - amsua-cld_n15
+  - amsua-cld_n18
+  - amsua-cld_n19
+  - mhs_n19
+  - mhs_n18
+  - mhs_metop-a
+  - mhs_metop-b
+# IR satellite-based
+  - abi_g16
+  - ahi_himawari8
+  #- abi-clr_g16
+  #- ahi-clr_himawari8
+
+## nObsIndent
+# number of spaces to precede members of the 'observations' list in the JEDI YAML
+  nObsIndent: 0
+
+####################################################################################################
+variational:
+## DAType [Required Parameter]
 # OPTIONS: 3dvar, 3denvar, eda_3denvar
 # Note: 3dvar currently only works for OIE120km
   DAType: None
@@ -210,14 +571,14 @@ experiment:
 # OPTIONS: 8, 9, 10
   ABEIChannel: 8
 
-## variationalBenchmarkObsList
+## benchmarkObservations
 # base set of observation types assimilated in all experiments
-  variationalBenchmarkObsList:
+  benchmarkObservations:
 # anchor
   - aircraft
   - gnssroref
   - satwind
-#TODO: add satwnd, used in ColdStart, and will not break WarmStart
+#TODO: add satwnd, used in ColdStart and will not break WarmStart
 # - satwnd
   - sfc
   - sondes
@@ -229,15 +590,14 @@ experiment:
   - amsua_n18
   - amsua_n19
 
-
-## variationalExperimentalObsList
+## experimentalObservations
 # observation types assimilated in variational application instances
-# in addition to the variationalBenchmarkObsList
+# in addition to the benchmarkObservations
 # OPTIONS: see list below
 # Abbreviations:
 #   clr == clear-sky
 #   cld == cloudy-sky
-  variationalExperimentalObsList: [
+  experimentalObservations: [
 # IR satellite-based
 #    abi_g16,
 #    ahi_himawari8,
@@ -254,47 +614,11 @@ experiment:
 #    amsua-cld_n19,
   ]
 
-######
-# hofx
-######
-## hofxObsList
-# observation types simulated in hofx application instances for verification
-# OPTIONS: see list below
-# Abbreviations:
-#   clr == clear-sky
-#   cld == cloudy-sky
-  hofxObsList:
-# anchor
-  - aircraft
-  - gnssroref
-  - satwind
-#TODO: add satwnd, used in ColdStart, and will not break WarmStart
-# - satwnd
-  - sfc
-  - sondes
-# MW satellite-based
-  - amsua_aqua
-  - amsua_metop-a
-  - amsua_metop-b
-  - amsua_n15
-  - amsua_n18
-  - amsua_n19
-  - amsua-cld_aqua
-  - amsua-cld_metop-a
-  - amsua-cld_metop-b
-  - amsua-cld_n15
-  - amsua-cld_n18
-  - amsua-cld_n19
-  - mhs_n19
-  - mhs_n18
-  - mhs_metop-a
-  - mhs_metop-b
-# IR satellite-based
-  - abi_g16
-  - ahi_himawari8
-  #- abi-clr_g16
-  #- ahi-clr_himawari8
+## nObsIndent
+# number of spaces to precede members of the 'observations' list in the JEDI YAML
+  nObsIndent: 2
 
+####################################################################################################
 job:
 ## *AccountNumber
 # OPTIONS: NMMM0015, NMMM0043

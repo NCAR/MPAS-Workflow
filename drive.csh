@@ -12,9 +12,11 @@ date
 
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
-source config/workflow.csh
-source config/experiment.csh
 source config/filestructure.csh
+source config/workflow.csh
+source config/observations.csh
+source config/model.csh
+source config/variational.csh
 source config/job.csh
 source config/mpas/${MPASGridDescriptor}/job.csh
 
@@ -62,7 +64,7 @@ cat >! suite.rc << EOF
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
-{% set PreprocessObs = ${PreprocessObs} %}
+{% set observationSource = "${observationSource}" %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
@@ -97,8 +99,8 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
 {% elif CriticalPathType == "Normal" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
-  {% if PreprocessObs %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => ObstoIODA" %}
+  {% if observationSource in ["GladeRDAOnline"] %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => ObsToIODA" %}
   {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
@@ -197,8 +199,8 @@ cat >! suite.rc << EOF
 {% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
     [[[${cyclingCycles}]]]
       graph = '''
-  {% if PreprocessObs %}
-        ObstoIODA => HofXBG
+  {% if observationSource in ["GladeRDAOnline"] %}
+        ObsToIODA => HofXBG
   {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
   {% endif %}
@@ -343,14 +345,14 @@ cat >! suite.rc << EOF
       execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
   # observations-related components
-  [[ObstoIODA]]
-    script = \$origin/ObstoIODA.csh
+  [[ObsToIODA]]
+    script = \$origin/ObsToIODA.csh
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
-    # currently ObstoIODA has to be on Cheyenne, because ioda-upgrade.x is built there
+    # currently ObsToIODA has to be on Cheyenne, because ioda-upgrade.x is built there
     # TODO: build ioda-upgrade.x on casper, remove CP directives below
-    # Note: memory for ObstoIODA may need to be increased when hyperspectral and/or
+    # Note: memory for ObsToIODA may need to be increased when hyperspectral and/or
     #       geostationary instruments are added
     [[[directives]]]
       -m = ae

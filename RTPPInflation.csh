@@ -4,7 +4,8 @@ date
 
 # Setup environment
 # =================
-source config/experiment.csh
+source config/variational.csh
+source config/model.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh

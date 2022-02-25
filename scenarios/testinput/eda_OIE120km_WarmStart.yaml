@@ -7,14 +7,16 @@ workflow:
   VerifyEnsMeanBG: True
   DiagnoseEnsSpreadBG: True
 experiment:
+  ExperimentName: 'eda_OIE120km_WarmStart_TEST'
+model:
   MPASGridDescriptor: OIE120km
+variational:
   DAType: eda_3denvar
   nInnerIterations: [15,]
   EDASize: 1
   nDAInstances: 5
   LeaveOneOutEDA: True
   RTPPInflationFactor: 0.80
-  ExperimentName: 'eda_OIE120km_WarmStart_TEST'
 job:
   CPQueueName: economy
   NCPQueueName: economy

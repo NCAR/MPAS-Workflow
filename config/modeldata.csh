@@ -4,7 +4,8 @@ if ( $?config_modeldata ) exit 0
 set config_modeldata = 1
 
 source config/workflow.csh
-source config/experiment.csh
+source config/model.csh
+source config/variational.csh
 source config/filestructure.csh
 set wd = `pwd`
 source config/tools.csh $wd
@@ -17,8 +18,8 @@ set ModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input
 set EnsembleModelData = ${ModelData}/${MPASGridDescriptorEnsemble}
 set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
 if ( ${InitializationType} == "ColdStart" ) then
-  set OuterModelData = ${ExpDir}/${MPASGridDescriptorOuter}
-  set InnerModelData = ${ExpDir}/${MPASGridDescriptorInner}
+  set OuterModelData = ${ExperimentDirectory}/${MPASGridDescriptorOuter}
+  set InnerModelData = ${ExperimentDirectory}/${MPASGridDescriptorInner}
   set GFSAnaDirOuter = ${OuterModelData}/GFSAna
   set GFSAnaDirInner = ${InnerModelData}/GFSAna
   setenv InitICWorkDir ${GFSAnaDirOuter}

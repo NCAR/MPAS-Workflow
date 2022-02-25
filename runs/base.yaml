@@ -1,8 +1,8 @@
 run:
 ## scenarios
 # scenarios located under config/scenarios that will be run
-  primaryScenarios: [None]
+  scenarios: [None]
   scenarioDirectory: scenarios
 restore:
-  primaryScenario: 3dvar_OIE120km_WarmStart
+  scenario: 3dvar_OIE120km_WarmStart
   scenarioDirectory: scenarios

@@ -2,6 +2,8 @@
 
 source config/filestructure.csh
 source config/tools.csh
+source config/workflow.csh
+source config/variational.csh
 
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 #set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`

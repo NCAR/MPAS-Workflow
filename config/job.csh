@@ -5,24 +5,25 @@ setenv config_job 1
 
 source config/scenario.csh
 
-# setJob is a helper function that picks out a configuration node
+# setLocal is a helper function that picks out a configuration node
 # under the "job" key of scenarioConfig
-setenv setJob "source $setConfig $baseConfig $scenarioConfig job"
+setenv baseConfig scenarios/base/job.yaml
+setenv setLocal "source $setConfig $baseConfig $scenarioConfig job"
 
-$setJob CPAccountNumber
-$setJob CPQueueName
-$setJob NCPAccountNumber
-$setJob NCPQueueName
-$setJob SingleProcAccountNumber
-$setJob SingleProcQueueName
-$setJob EnsMeanBGQueueName
-$setJob EnsMeanBGAccountNumber
+$setLocal CPAccountNumber
+$setLocal CPQueueName
+$setLocal NCPAccountNumber
+$setLocal NCPQueueName
+$setLocal SingleProcAccountNumber
+$setLocal SingleProcQueueName
+$setLocal EnsMeanBGQueueName
+$setLocal EnsMeanBGAccountNumber
 
-$setJob InitializationRetry
-$setJob VariationalRetry
-$setJob EnsOfVariationalRetry
-$setJob CyclingFCRetry
-$setJob RTPPInflationRetry
-$setJob HofXRetry
-#$setJob VerifyObsRetry
-#$setJob VerifyModelRetry
+$setLocal InitializationRetry
+$setLocal VariationalRetry
+$setLocal EnsOfVariationalRetry
+$setLocal CyclingFCRetry
+$setLocal RTPPInflationRetry
+$setLocal HofXRetry
+#$setLocal VerifyObsRetry
+#$setLocal VerifyModelRetry

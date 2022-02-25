@@ -28,25 +28,29 @@ def getYAMLNode():
       a = deepcopy(config)
       for level in key:
         a = deepcopy(a[level])
-        l = level
+        k = level
   except:
-    with open(args.default) as file:
-      config = yaml.load(file, Loader=yaml.FullLoader)
-      a = deepcopy(config)
-      for level in key:
-        a = deepcopy(a[level])
-        l = level
+    try:
+      with open(args.default) as file:
+        config = yaml.load(file, Loader=yaml.FullLoader)
+        a = deepcopy(config)
+        for level in key:
+          a = deepcopy(a[level])
+          k = level
+    except:
+      a = None
+      k = None
 
   if args.outputType in ['v', 'value']:
-    p = str(a)
+    v = str(a)
     if isinstance(a, list):
-      p = p.replace('\'','')
-      p = p.replace('[','')
-      p = p.replace(']','')
-      p = p.replace(',',' ')
-      p = ' '+p+' '
-    print(p)
+      v = v.replace('\'','')
+      v = v.replace('[','')
+      v = v.replace(']','')
+      v = v.replace(',',' ')
+      v = ' '+v+' '
+    print(v)
   elif args.outputType in ['k', 'key']:
-    print(str(l))
+    print(str(k))
 
 if __name__ == '__main__': getYAMLNode()

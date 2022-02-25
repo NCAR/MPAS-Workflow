@@ -1,2 +1,2 @@
 run:
-  primaryScenarios: [3denvar_O30kmIE60km_WarmStart]
+  scenarios: [3denvar_O30kmIE60km_WarmStart]

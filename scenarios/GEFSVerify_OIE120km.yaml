@@ -3,7 +3,9 @@ workflow:
   PreprocessObs: False
 experiment:
   ExpSuffix: _GEFSVerify
+model:
   MPASGridDescriptor: OIE120km
+variational:
   DAType: eda_3denvar
   EDASize: 1
   nDAInstances: 20

@@ -1,5 +1,5 @@
 #!/bin/csh -f
-source config/experiment.csh
+source config/variational.csh
 source config/filestructure.csh
 source config/modeldata.csh
 source config/workflow.csh

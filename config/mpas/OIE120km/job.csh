@@ -1,6 +1,7 @@
 #!/bin/csh -f
 
-source config/experiment.csh
+source config/workflow.csh
+source config/variational.csh
 source config/modeldata.csh
 
 # job length and node/pe requirements

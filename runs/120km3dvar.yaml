@@ -1,2 +1,2 @@
 run:
-  primaryScenarios: [3dvar_OIE120km_WarmStart]
+  scenarios: [3dvar_OIE120km_WarmStart]

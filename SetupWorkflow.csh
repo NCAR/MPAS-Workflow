@@ -3,8 +3,11 @@
 ## load the file structure
 source config/filestructure.csh
 
-## load experiment configuration
-source config/experiment.csh
+## load the workflow settings
+source config/workflow.csh
+
+## load the variational settings
+source config/variational.csh
 
 set AppAndVerify = AppAndVerify
 
@@ -22,7 +25,7 @@ set workflowParts = ( \
   UngribColdStartIC.csh \
   GenerateColdStartIC.csh \
   GetWarmStartIC.csh \
-  ObstoIODA.csh \
+  ObsToIODA.csh \
   getCycleVars.csh \
   tools \
   config \
@@ -41,7 +44,6 @@ end
 
 ## PrepJEDICyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA
 # *VerifyModelDA is non-functional and unused
-#TODO: enable VerifyObsDA for ensemble DA; only works for deterministic DA
 set taskBaseScript = Variational
 set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
 sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \

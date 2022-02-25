@@ -3,10 +3,10 @@
 source config/config.csh
 
 # get arguments
-set defaultYAML = $1
-set thisYAML = $2
-set rootKey = $3
-set key1 = $4
+set defaultYAML = "$1"
+set thisYAML = "$2"
+set rootKey = "$3"
+set key1 = "$4"
 
 # retrieve config value
 # TODO: for larger config files, this process will get more expensive; move toward:

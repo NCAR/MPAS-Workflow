@@ -26,7 +26,7 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
+source config/variational.csh
 source config/builds.csh
 source config/environment.csh
 source config/mpas/variables.csh

@@ -14,7 +14,7 @@ source config/environmentPython.csh
 #   ./run.csh {{runConfig}}
 
 ## ArgRunConfig
-# A YAML file describing the set of primaryScenarios to run
+# A YAML file describing the set of scenarios to run
 # OPTIONS:
 set ValidRunConfigs = ( \
   test \
@@ -25,7 +25,7 @@ set ValidRunConfigs = ( \
 set ArgRunConfig = $1
 
 if ("$ValidRunConfigs" =~ *"$ArgRunConfig"* && $ArgRunConfig != '') then
-  echo "$0 (INFO): Running the $ArgRunConfig set of primaryScenarios"
+  echo "$0 (INFO): Running the $ArgRunConfig set of scenarios"
 else
   echo "$0 (ERROR): invalid ArgRunConfig, $ArgRunConfig"
   exit 1
@@ -49,7 +49,7 @@ set stage = drive
 source config/config.csh
 
 # defaults config
-set baseConfig = runs/baseConfig.yaml
+set baseConfig = runs/base.yaml
 
 # this config
 set runConfig = runs/${ArgRunConfig}.yaml
@@ -61,28 +61,28 @@ setenv setRestore "source $setConfig $baseConfig $runConfig restore"
 
 # these values will be used during the run phase
 # see runs/baseConfig.yaml for configuration documentation
-$setRun primaryScenarios
+$setRun scenarios
 $setRun scenarioDirectory
 
 ###################################################################################################
-# run the primaryScenarios (only developers should modify this)
+# run the scenarios (only developers should modify this)
 ###################################################################################################
 
 sed -i 's@^set\ scenarioDirectory\ =\ .*@set\ scenarioDirectory\ =\ '$scenarioDirectory'@' config/scenario.csh
 
-foreach thisScenario ($primaryScenarios)
-  if ($thisScenario == InvalidScenario) then
+foreach scenario ($scenarios)
+  if ($scenario == InvalidScenario) then
     continue
   endif
   echo ""
   echo ""
   echo "##################################################################"
-  echo "${0}: Running scenario: $thisScenario"
-  sed -i 's@^set\ primaryScenario\ =\ .*@set\ primaryScenario\ =\ '$thisScenario'@' config/scenario.csh
+  echo "${0}: Running scenario: $scenario"
+  sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$scenario'@' config/scenario.csh
   ./${stage}.csh
 
   if ( $status != 0 ) then
-    echo "$0 (ERROR): error when setting up $thisScenario"
+    echo "$0 (ERROR): error when setting up $scenario"
     exit 1
   endif
 end
@@ -95,5 +95,5 @@ end
 # these values are restored now that all suites are initialized
 $setRestore scenarioDirectory
 sed -i 's@^set\ scenarioDirectory\ =\ .*@set\ scenarioDirectory\ =\ '$scenarioDirectory'@' config/scenario.csh
-$setRestore primaryScenario
-sed -i 's@^set\ primaryScenario\ =\ .*@set\ primaryScenario\ =\ '$primaryScenario'@' config/scenario.csh
+$setRestore scenario
+sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$scenario'@' config/scenario.csh

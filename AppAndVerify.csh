@@ -33,6 +33,7 @@ chmod 744 ${JobScript}
 #Application verification
 if ( "$self_AppName" =~ *"eda"* ) then
   #NOTE: verification not set up for multiple states yet
+  #TODO: enable VerifyObsDA for ensemble DA; only works for deterministic DA
   set VFOBSScript=None
   set VFMODELScript=None
 else

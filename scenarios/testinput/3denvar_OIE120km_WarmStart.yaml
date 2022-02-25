@@ -7,12 +7,14 @@ workflow:
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
 experiment:
+  ExperimentName: '3denvar_OIE120km_WarmStart_TEST'
+model:
   MPASGridDescriptor: OIE120km
+variational:
   DAType: 3denvar
   nInnerIterations: [15,]
   EDASize: 1
   nDAInstances: 1
-  ExperimentName: '3denvar_OIE120km_WarmStart_TEST'
 job:
   CPQueueName: economy
   NCPQueueName: economy

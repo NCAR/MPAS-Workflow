@@ -38,11 +38,10 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/verification.csh
-source config/environment.csh
+source config/environmentPython.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -82,6 +81,7 @@ while ( $success != 0 )
   setenv baseCommand "python ${mainScript}.py -n ${NUMPROC} -p ${self_WorkDir}/${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} -app $self_jediAppName -nout $self_nOuter"
 
   if ($ArgNMembers > 1) then
+    #Note: this only works for BG verifcation, not extended ensemble forecasts
     echo "${baseCommand} -m $ArgNMembers -e ${VerificationWorkDir}/${bgDir}${flowMemFmt}/${thisCycleDate}/${OutDBDir}" | tee ./myCommand
     ${baseCommand} -m $ArgNMembers -e "${VerificationWorkDir}/${bgDir}${flowMemFmt}/${thisCycleDate}/${OutDBDir}" >& log.${mainScript}
   else
