@@ -13,24 +13,32 @@ source config/scenario.csh
 # under the "experiment" key of scenarioConfig
 setenv baseConfig scenarios/base/experiment.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig experiment"
+setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig experiment"
 
-$setLocal ExpSuffix
-$setLocal ExperimentName
+# ParentDirectory parts
 $setLocal ParentDirectoryPrefix
-$setLocal ExperimentUser
 $setLocal ParentDirectorySuffix
 
-if ($ExperimentUser == DEFAULT) then
+# ExperimentUser
+set get = "`$getLocalOrNone ExperimentUser`"
+setenv ExperimentUser $get
+if ($ExperimentUser == None) then
   setenv ExperimentUser ${USER}
 endif
 
-# ParentDirectory, where all experiments are located
-# TODO: move to a higher level config file so that benchmark.csh can use it too
-# TODO: replace "/glade/scratch", "${USER}", and "pandac" with a user-configurable directory
+# ExperimentName
+set get = "`$getLocalOrNone ExperimentName`"
+setenv ExperimentName $get
+
+# ExpSuffix
+$setLocal ExpSuffix
+
+## ParentDirectory
+# where this experiment is located
 setenv ParentDirectory ${ParentDirectoryPrefix}/${ExperimentUser}/${ParentDirectorySuffix}
 
 ## experiment name
-if ($ExperimentName == DEFAULT) then
+if ($ExperimentName == None) then
   # derive experiment title parts from critical config elements
   setenv ExperimentName ${DAType}
 
