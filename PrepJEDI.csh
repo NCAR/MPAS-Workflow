@@ -236,6 +236,7 @@ else
   ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
   ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
 endif
+ln -sfv gnssro_obs_${thisValidDate}.h5 ${InDBDir}/gnssroref_obs_${thisValidDate}.h5
 
 # VarBC prior
 # ===========
