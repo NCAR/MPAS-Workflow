@@ -58,7 +58,6 @@ cost function:
           strategy: common
           load_nicas_local: true
           verbosity: main
-    members:
 EnsemblePbMembers
 EnsemblePbInflation
   observations:

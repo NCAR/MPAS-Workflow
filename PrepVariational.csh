@@ -211,23 +211,9 @@ endif
 # performs sed substitution for EnsemblePbMembers
 set enspbmemsed = EnsemblePbMembers
 
-# established file lists
-set ensPbFiles = ${enspbmemsed}.txt
-rm $ensPbFiles
+# initialize variational member yamls
 set yamlFiles = variationals.txt
 rm $yamlFiles
-
-# establish ensemble Pb member states
-set member = 1
-while ( $member <= ${ensPbNMembers} )
-  set memDir = `${memberDir} ensemble $member "${ensPbMemFmt}"`
-
-  set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
-  echo $filename >> $ensPbFiles
-  @ member++
-end
-
-# initialize variational member yamls
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set memberyaml = variational_${member}.yaml
@@ -238,12 +224,38 @@ while ( $member <= ${nEnsDAMembers} )
 end
 
 # substitute Jb members
-setenv myCommand "${substituteEnsembleB} $ensPbFiles $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
+setenv myCommand "${substituteEnsembleBTemplate} ${ensPbDir}/${prevValidDate} ${ensPbMemPrefix} None ${ensPbFilePrefix}.${fileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
+
 echo "$myCommand"
 ${myCommand}
 
-rm $ensPbFiles $yamlFiles
+if ($status != 0) then
+  echo "$0 (ERROR): failed to substitute ${enspbmemsed}" > ./FAIL
+  exit 1
+endif
 
+###################################################################################################
+# OLD implementation for individual members in YAML, DEPRECATED
+# initialize ensemble Pb member states
+#set ensPbFiles = ${enspbmemsed}.txt
+#rm $ensPbFiles
+#set member = 1
+#while ( $member <= ${ensPbNMembers} )
+#  set memDir = `${memberDir} ensemble $member "${ensPbMemFmt}"`
+#
+#  set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
+#  echo $filename >> $ensPbFiles
+#  @ member++
+#end
+
+#setenv myCommand "${substituteEnsembleBMembers} $ensPbFiles $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
+#echo "$myCommand"
+#${myCommand}
+
+#rm $ensPbFiles $yamlFiles
+###################################################################################################
+
+rm $yamlFiles
 
 # Jo term
 # =======

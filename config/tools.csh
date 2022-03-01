@@ -9,7 +9,8 @@ set pyTools = ( \
   advanceCYMDH \
   nSpaces \
   updateXTIME \
-  substituteEnsembleB \
+  substituteEnsembleBMembers \
+  substituteEnsembleBTemplate \
 )
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"
