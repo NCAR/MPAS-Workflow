@@ -20,6 +20,8 @@ source config/variational.csh
 source config/job.csh
 source config/mpas/${MPASGridDescriptor}/job.csh
 
+echo "$0 (INFO):  ExperimentName = ${ExperimentName}"
+
 echo "$0 (INFO): setting up the environment"
 
 module purge
