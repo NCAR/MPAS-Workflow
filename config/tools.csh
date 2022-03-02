@@ -8,9 +8,9 @@ set pyTools = ( \
   memberDir \
   advanceCYMDH \
   nSpaces \
-  updateXTIME \
   substituteEnsembleBMembers \
   substituteEnsembleBTemplate \
+  updateXTIME \
 )
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"
