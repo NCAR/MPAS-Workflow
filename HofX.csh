@@ -89,8 +89,8 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 set bg = ./${bgDir}
 mkdir -p ${bg}
 
-set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$fileDate.nc
-set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
+set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$thisMPASFileDate.nc
+set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
 rm ${bgFile}${OrigFileSuffix} ${bgFile}
 ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
@@ -109,7 +109,7 @@ if ( $copyDiags > 0 ) then
   echo "Copy diagnostic variables used in HofX to bg: $MPASJEDIDiagVariables"
   rm ${bgFile}
   cp -v ${bgFileOther} ${bgFile}
-  set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
+  set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$thisMPASFileDate.nc
   ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
 endif
 

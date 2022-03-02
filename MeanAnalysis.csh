@@ -25,9 +25,9 @@ cd ${self_WorkDir}
 # other static variables
 set self_StateDirs = ($CyclingDAOutDirs)
 set self_StatePrefix = ${ANFilePrefix}
-set memberPrefix = ${self_StatePrefix}.${fileDate}mem
-set meanName = ${self_StatePrefix}.$fileDate.nc
-set varianceName = ${self_StatePrefix}.$fileDate.variance.nc
+set memberPrefix = ${self_StatePrefix}.${thisMPASFileDate}mem
+set meanName = ${self_StatePrefix}.$thisMPASFileDate.nc
+set varianceName = ${self_StatePrefix}.$thisMPASFileDate.variance.nc
 
 # ================================================================================================
 

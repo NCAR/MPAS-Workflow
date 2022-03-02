@@ -10,7 +10,8 @@ set pyTools = ( \
   advanceCYMDH \
   memberDir \
   nSpaces \
-  substituteEnsembleB \
+  substituteEnsembleBMembers \
+  substituteEnsembleBTemplate \
   updateXTIME \
 )
 foreach tool ($pyTools)

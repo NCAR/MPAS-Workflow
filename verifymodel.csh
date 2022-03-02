@@ -68,8 +68,8 @@ mkdir -p ${self_WorkDir}/${ModelDiagnosticsDir}
 cd ${self_WorkDir}/${ModelDiagnosticsDir}
 
 set other = $self_StateDir
-set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
-ln -sf ${bgFileOther} ../restart.$fileDate.nc
+set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
+ln -sf ${bgFileOther} ../restart.$thisMPASFileDate.nc
 
 ln -fs ${pyModelDir}/*.py ./
 

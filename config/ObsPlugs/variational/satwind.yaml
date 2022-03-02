@@ -2,7 +2,7 @@
     <<: *ObsSpace
     name: Satwind
     obsdatain:
-      obsfile: InDBDir/satwind_obs_2018041500.h5
+      obsfile: InDBDir/satwind_obs_{{thisValidDate}}.h5
       max frame size: 80000
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_satwind.h5

@@ -1,12 +1,12 @@
 ObsAnchors
-window begin: 'WindowBegin'
-window length: PT6H
+window begin: {{windowBegin}}
+window length: {{windowLength}}
 geometry:
   nml_file: HofXNamelistFile
   streams_file: HofXStreamsFile
   deallocate non-da fields: true
 state:
   state variables: [ModelVariables]
-  filename: bgStateDir/bgStatePrefix.2018-04-15_00.00.00.nc
-  date: '2018-04-15T00:00:00Z'
+  filename: bgStateDir/bgStatePrefix.{{thisMPASFileDate}}.nc
+  date: {{thisISO8601Date}}
 observations:

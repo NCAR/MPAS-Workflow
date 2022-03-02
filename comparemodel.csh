@@ -63,8 +63,8 @@ set CompareDir = ${self_WorkDir}/${ModelCompareDir}
 mkdir -p ${CompareDir}
 cd ${CompareDir}
 
-set self_bgFile = ${self_WorkDir}/${ModelDiagnosticsDir}/../restart.$fileDate.nc
-set benchmark_bgFile = ${benchmark_WorkDir}/${ModelDiagnosticsDir}/../restart.$fileDate.nc
+set self_bgFile = ${self_WorkDir}/${ModelDiagnosticsDir}/../restart.$thisMPASFileDate.nc
+set benchmark_bgFile = ${benchmark_WorkDir}/${ModelDiagnosticsDir}/../restart.$thisMPASFileDate.nc
 
 #(1) Compare self_bgFile to benchmark_bgFile
 echo "nccmp -dfFmqS ${self_bgFile} ${benchmark_bgFile}" | tee compare.txt
