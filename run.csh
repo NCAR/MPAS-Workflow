@@ -77,7 +77,7 @@ foreach thisScenario ($scenarios)
   echo ""
   echo ""
   echo "##################################################################"
-  echo "${0}: Running scenario: $thisScenario"
+  echo "${0}: Executing ${stage}.csh for the $thisScenario scenario"
   sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$thisScenario'@' config/scenario.csh
   ./${stage}.csh
 
