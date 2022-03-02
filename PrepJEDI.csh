@@ -91,9 +91,6 @@ set yy = `echo ${prevValidDate} | cut -c 1-4`
 set mm = `echo ${prevValidDate} | cut -c 5-6`
 set dd = `echo ${prevValidDate} | cut -c 7-8`
 set hh = `echo ${prevValidDate} | cut -c 9-10`
-set prevFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
-set prevNMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
-set prevConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
 #TODO: HALF STEP ONLY WORKS FOR INTEGER VALUES OF self_WindowHR
 @ HALF_DT_HR = ${self_WindowHR} / 2
@@ -111,7 +108,7 @@ set yy = `echo ${halfprevValidDate} | cut -c 1-4`
 set mm = `echo ${halfprevValidDate} | cut -c 5-6`
 set dd = `echo ${halfprevValidDate} | cut -c 7-8`
 set hh = `echo ${halfprevValidDate} | cut -c 9-10`
-set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
+set halfprevISO8601Date = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 
 # =========================================
 # =========================================
@@ -162,7 +159,7 @@ foreach NamelistFile_ ($NamelistFileList)
   @ iMesh++
   rm ${NamelistFile_}
   cp -v ${self_ModelConfigDir}/${NamelistFile} ./${NamelistFile_}
-  sed -i 's@startTime@'${NMLDate}'@' ${NamelistFile_}
+  sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
   sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'${MPASTimeStep}'@' ${NamelistFile_}
@@ -344,23 +341,16 @@ sed -i 's@HofXMeshDescriptor@'${HofXMeshDescriptor}'@' $thisYAML
 
 
 ## date-time information
-# TODO(JJG): revise these date replacements to loop over
-#            all dates relevant to this application (e.g., 4DEnVar?)
-# previous date
-sed -i 's@2018-04-14_18.00.00@'${prevFileDate}'@g' $thisYAML
-sed -i 's@2018041418@'${prevValidDate}'@g' $thisYAML
-sed -i 's@2018-04-14T18:00:00Z@'${prevConfDate}'@g'  $thisYAML
-
 # current date
-sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' $thisYAML
-sed -i 's@2018041500@'${thisValidDate}'@g' $thisYAML
-sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
+sed -i 's@{{thisValidDate}}@'${thisValidDate}'@g' $thisYAML
+sed -i 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@g' $thisYAML
+sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $thisYAML
 
 # window length
-sed -i 's@PT6H@PT'${self_WindowHR}'H@g' $thisYAML
+sed -i 's@{{windowLength}}@PT'${self_WindowHR}'H@g' $thisYAML
 
 # window beginning
-sed -i 's@WindowBegin@'${halfprevConfDate}'@' $thisYAML
+sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
 
 
 ## obs-related file naming

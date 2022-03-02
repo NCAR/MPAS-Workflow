@@ -20,8 +20,8 @@ final:
     departures: depan
 cost function:
   cost type: 3D-Var
-  window begin: 'WindowBegin'
-  window length: PT6H
+  window begin: {{windowBegin}}
+  window length: {{windowLength}}
   geometry:
     nml_file: OuterNamelistFile
     streams_file: OuterStreamsFile
@@ -30,8 +30,8 @@ cost function:
   analysis variables: &incvars [AnalysisVariables]
   background:
     state variables: [StateVariables]
-    filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
-    date: &analysisDate '2018-04-15T00:00:00Z'
+    filename: bgStateDirOOPSMemberDir/bgStatePrefix.{{thisMPASFileDate}}.nc
+    date: &analysisDate {{thisISO8601Date}}
   background error:
     covariance model: SABER
     saber blocks:
