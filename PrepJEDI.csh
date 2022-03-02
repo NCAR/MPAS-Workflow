@@ -44,16 +44,16 @@ endif
 # Setup environment
 # =================
 source config/environment.csh
+source config/filestructure.csh
 source config/model.csh
 source config/observations.csh
-source config/AppTypeTEMPLATE.csh
-source config/filestructure.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/modeldata.csh
 source config/obsdata.csh
 source config/mpas/variables.csh
 source config/builds.csh
+source config/AppTypeTEMPLATE.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -207,10 +207,10 @@ endif
 # (2) obs-related substitutions
 # =============================
 
-## indentation of observations vector members, specified in AppTypeTEMPLATE.csh
+## indentation of observations vector members, specified in config/AppTypeTEMPLATE.csh
 set obsIndent = "`${nSpaces} $nObsIndent`"
 
-## Add selected observations (see AppTypeTEMPLATE.csh)
+## Add selected observations (see config/AppTypeTEMPLATE.csh)
 # (i) combine the observation YAML stubs into single file
 set observationsYAML = observations.yaml
 rm $observationsYAML
