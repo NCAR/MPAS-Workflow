@@ -234,28 +234,8 @@ if ($status != 0) then
   exit 1
 endif
 
-###################################################################################################
-# OLD implementation for individual members in YAML, DEPRECATED
-# initialize ensemble Pb member states
-#set ensPbFiles = ${enspbmemsed}.txt
-#rm $ensPbFiles
-#set member = 1
-#while ( $member <= ${ensPbNMembers} )
-#  set memDir = `${memberDir} ensemble $member "${ensPbMemFmt}"`
-#
-#  set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${thisMPASFileDate}.nc
-#  echo $filename >> $ensPbFiles
-#  @ member++
-#end
-
-#setenv myCommand "${substituteEnsembleBMembers} $ensPbFiles $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
-#echo "$myCommand"
-#${myCommand}
-
-#rm $ensPbFiles $yamlFiles
-###################################################################################################
-
 rm $yamlFiles
+
 
 # Jo term
 # =======
