@@ -70,19 +70,19 @@ $setRun scenarioDirectory
 
 sed -i 's@^set\ scenarioDirectory\ =\ .*@set\ scenarioDirectory\ =\ '$scenarioDirectory'@' config/scenario.csh
 
-foreach scenario ($scenarios)
-  if ($scenario == InvalidScenario) then
+foreach thisScenario ($scenarios)
+  if ($thisScenario == InvalidScenario) then
     continue
   endif
   echo ""
   echo ""
   echo "##################################################################"
-  echo "${0}: Running scenario: $scenario"
-  sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$scenario'@' config/scenario.csh
+  echo "${0}: Running scenario: $thisScenario"
+  sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$thisScenario'@' config/scenario.csh
   ./${stage}.csh
 
   if ( $status != 0 ) then
-    echo "$0 (ERROR): error when setting up $scenario"
+    echo "$0 (ERROR): error when setting up $thisScenario"
     exit 1
   endif
 end
