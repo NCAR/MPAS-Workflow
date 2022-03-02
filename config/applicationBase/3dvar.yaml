@@ -46,7 +46,7 @@ cost function:
       - surface_pressure
       output variables: *ctlvars
       bump:
-        datadir: /glade/scratch/bjung/pandac/20220111/bumpcov_tune
+        datadir: /glade/scratch/bjung/pandac/20220218_develop/bumpcov_tune
         prefix: mpas_parametersbump_cov
         strategy: specific_univariate
         load_nicas_local: true
@@ -55,14 +55,14 @@ cost function:
       input variables: *ctlvars
       output variables: *ctlvars
       file:
-        filename: /glade/scratch/bjung/pandac/20220111/bumpcov_tune/mpas.stddev.nc
+        filename: /glade/scratch/bjung/pandac/20220218_develop/CMAT_00.tune/mpas.stddev.2018-04-15_00.00.00.nc
         date: *analysisDate
         stream name: control
     - saber block name: BUMP_VerticalBalance
       input variables: *ctlvars
       output variables: *ctlvars
       bump:
-        datadir: /glade/scratch/bjung/pandac/20220111/bumpcov_tune
+        datadir: /glade/scratch/bjung/pandac/20220218_develop/bumpcov_tune
         prefix: mpas_vbal
         load_vbal: true
         #load_samp_global: true
