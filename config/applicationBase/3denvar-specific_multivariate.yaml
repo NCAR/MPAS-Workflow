@@ -14,7 +14,7 @@ _iteration: &iterationConfig
 #    adj obs test: true
 #    online adj test: true
 _member: &memberConfig
-  date: &analysisDate '2018-04-15T00:00:00Z'
+  date: &analysisDate {{thisISO8601Date}}
   state variables: &incvars [AnalysisVariables]
   stream name: ensemble
 ObsAnchors
@@ -31,8 +31,8 @@ final:
     departures: depan
 cost function:
   cost type: 3D-Var
-  window begin: 'WindowBegin'
-  window length: PT6H
+  window begin: {{windowBegin}}
+  window length: {{windowLength}}
   jb evaluation: false
   geometry:
     nml_file: OuterNamelistFile
@@ -42,25 +42,25 @@ cost function:
   analysis variables: *incvars
   background:
     state variables: [StateVariables]
-    filename: bgStateDirOOPSMemberDir/bgStatePrefix.2018-04-15_00.00.00.nc
+    filename: bgStateDirOOPSMemberDir/bgStatePrefix.{{thisMPASFileDate}}.nc
     date: *analysisDate
   background error:
     covariance model: ensemble
-    date: *analysisDate
     localization:
-      localization method: BUMP
-      localization variables: *incvars
-      bump:
-        datadir: bumpLocDir
-        prefix: bumpLocPrefix
-        strategy: specific_multivariate
-        load_nicas_local: 1
-        io_keys: [temperature-temperature,spechum-spechum,uReconstructZonal-uReconstructZonal,uReconstructMeridional-uReconstructMeridional,surface_pressure-surface_pressure,qc-qc,qi-qi,qr-qr,qs-qs,qg-qg]
-        #io_values: [dynamic,dynamic,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
-        io_values: [dynamic,cloud,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
-        verbosity: main
-    variables: *incvars
-    members:
+      localization method: SABER
+      saber block:
+        saber block name: BUMP_NICAS
+        input variables: *incvars
+        output variables: *incvars
+        bump:
+          datadir: bumpLocDir
+          prefix: bumpLocPrefix
+          strategy: specific_multivariate
+          load_nicas_local: true
+          io_keys: [temperature-temperature,spechum-spechum,uReconstructZonal-uReconstructZonal,uReconstructMeridional-uReconstructMeridional,surface_pressure-surface_pressure,qc-qc,qi-qi,qr-qr,qs-qs,qg-qg]
+          #io_values: [dynamic,dynamic,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
+          io_values: [dynamic,cloud,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
+          verbosity: main
 EnsemblePbMembers
 EnsemblePbInflation
   observations:

@@ -4,7 +4,8 @@ date
 
 # Setup environment
 # =================
-source config/experiment.csh
+source config/variational.csh
+source config/model.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
@@ -61,7 +62,7 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 set memDir = `${memberDir} ensemble 0 "${flowMemFmt}"`
 set meanDir = ${CyclingDAOutDir}${memDir}
 mkdir -p ${meanDir}
-set firstANFile = $anDirs[1]/${anPrefix}.$fileDate.nc
+set firstANFile = $anDirs[1]/${anPrefix}.$thisMPASFileDate.nc
 cp ${firstANFile} ${meanDir}
 
 # ====================
@@ -110,7 +111,7 @@ sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile}
 ## copy/modify dynamic namelist
 rm $NamelistFile
 cp -v ${self_ModelConfigDir}/${NamelistFile} .
-sed -i 's@startTime@'${NMLDate}'@' $NamelistFile
+sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${MPASnCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
@@ -137,9 +138,7 @@ sed -i 's@EnsembleStreamsFile@'${self_WorkDir}'/'${StreamsFile}'@' $thisYAML
 sed -i 's@EnsembleNamelistFile@'${self_WorkDir}'/'${NamelistFile}'@' $thisYAML
 
 ## revise current date
-#sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' $thisYAML
-#sed -i 's@2018041500@'${thisValidDate}'@g' $thisYAML
-sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
+sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $thisYAML
 
 # use one of the analyses as the TemplateFieldsFileOuter
 set meshFile = ${firstANFile}
@@ -204,7 +203,7 @@ EOF
 
   set member = 1
   while ( $member <= ${nEnsDAMembers} )
-    set filename = $ensPDirs[$member]/${ensPFilePrefix}.${fileDate}.nc
+    set filename = $ensPDirs[$member]/${ensPFilePrefix}.${thisMPASFileDate}.nc
     ## optionally copy original analysis files for diagnosing RTPP behavior
     if ($PMatrix == Pa && ${storeOriginalRTPPAnalyses} == True) then
       set memDir = "."`${memberDir} ensemble $member "${flowMemFmt}"`

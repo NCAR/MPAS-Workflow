@@ -2,7 +2,7 @@
     <<: *ObsSpace
     name: mhs_metop-b
     obsdatain:
-      obsfile: InDBDir/mhs_metop-b_obs_2018041500.h5
+      obsfile: InDBDir/mhs_metop-b_obs_{{thisValidDate}}.h5
     obsdataout:
       obsfile: OutDBDir/obsPrefix_mhs_metop-b.h5
     simulated variables: [brightness_temperature]
