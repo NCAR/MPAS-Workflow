@@ -38,8 +38,7 @@ setenv VerifyModelJobMinutes 2
 ## Variational+EnsOfVariational
 # benchmark: < 3 minutes
 # longer duration with more observations
-set DeterministicDABaseMinutes = 6 #develop
-#set DeterministicDABaseMinutes = 30 #feature/getvals_upd
+set DeterministicDABaseMinutes = 6
 
 # Variational
 if ( $nEnsDAMembers > 10 ) then
