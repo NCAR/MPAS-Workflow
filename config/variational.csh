@@ -12,8 +12,12 @@ source config/scenario.csh
 # under the "variational" key of scenarioConfig
 setenv baseConfig scenarios/base/variational.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig variational"
+setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig variational"
 
 $setLocal DAType
+
+set ensembleCovarianceWeight = "`$getLocalOrNone ensembleCovarianceWeight`"
+set staticCovarianceWeight = "`$getLocalOrNone staticCovarianceWeight`"
 
 $setLocal nInnerIterations
 # nOuterIterations, automatically determined from length of nInnerIterations
@@ -31,8 +35,15 @@ $setLocal nPreviousEnsDAMembers
 $setLocal PreviousEDAForecastDir
 
 # stochastic settings
-$setLocal EDASize
-$setLocal nDAInstances
+set EDASize = "`$getLocalOrNone EDASize`"
+if (EDASize == None) then
+  set EDASize = 1
+endif
+set nDAInstances = "`$getLocalOrNone nDAInstances`"
+if (nDAInstances == None) then
+  set nDAInstances = 1
+endif
+
 $setLocal LeaveOneOutEDA
 $setLocal RTPPInflationFactor
 $setLocal storeOriginalRTPPAnalyses
@@ -53,15 +64,6 @@ $setLocal ABEIChannel
 setenv BlockEDA DRPBlockLanczos
 setenv MinimizerAlgorithm DRIPCG
 
-if ( "$DAType" =~ *"eda"* ) then
-  # placeholder for now
-else
-  # override settings for EDASize, nDAInstances, and nEnsDAMembers for non-eda setups
-  # TODO: make DAType setting agnostic of eda_3denvar vs. 3denvar
-  #       and use EDASize and nDAInstances instead
-  setenv EDASize 1
-  setenv nDAInstances 1
-endif
 ## nEnsDAMembers
 # total number of ensemble DA members, product of EDASize and nDAInstances
 # Should be in range (1, $firstEnsFCNMembers), depends on data source in config/modeldata.csh
@@ -72,3 +74,5 @@ if ($EDASize == 1 && $MinimizerAlgorithm == $BlockEDA) then
   echo "WARNING: MinimizerAlgorithm cannot be $BlockEDA when EDASize is 1, re-setting to DRPLanczos"
   setenv MinimizerAlgorithm DRPLanczos
 endif
+
+setenv variationalYAMLPrefix variational_

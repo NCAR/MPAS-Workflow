@@ -46,7 +46,7 @@ cd ${self_WorkDir}
 # build, executable, yaml
 set myBuildDir = ${VariationalBuildDir}
 set myEXE = ${VariationalEXE}
-set myYAML = ${self_WorkDir}/variational_${ArgMember}.yaml
+set myYAML = ${self_WorkDir}/${variationalYAMLPrefix}${ArgMember}.yaml
 
 if ( $ArgMember > $nEnsDAMembers ) then
   echo "ERROR in $0 : ArgMember ($ArgMember) must be <= nEnsDAMembers ($nEnsDAMembers)" > ./FAIL

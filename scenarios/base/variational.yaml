@@ -1,12 +1,19 @@
 variational:
 ## DAType [Required Parameter]
-# OPTIONS: 3dvar, 3denvar, eda_3denvar
+# OPTIONS: 3dvar, 3denvar, 3dhybrid, eda_3denvar
 # Note: 3dvar currently only works for OIE120km
   DAType: None
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
   nInnerIterations: [60,]
+
+
+##ensembleCovarianceWeight and staticCovarianceWeight
+# weights of ensemble and static components of the background errorcovariance
+# MUST be specified when DAType==3dhybrid in order to avoid an error
+  ensembleCovarianceWeight: None
+  staticCovarianceWeight: None
 
 ## fixedEnsBType
 # selection of data source for fixed ensemble background covariance members when
@@ -20,6 +27,7 @@ variational:
 
 ## EDASize and nDAInstances
 # ensemble size of each DA instance
+# DEFAULTS: 1
 # OPTIONS:
 #   1: ensemble of nDAInstances independent Variational applications (nEnsDAMembers jobs), each
 #      with 1 background state member per DA job
@@ -27,8 +35,8 @@ variational:
 #      background state members per DA job
 # In both cases, nEnsDAMembers=(EDASize * nDAInstances) forecasts are used for the flow-dependent
 # background error
-  EDASize: 1
-  nDAInstances: 1
+  EDASize: None
+  nDAInstances: None
 
 ## LeaveOneOutEDA, whether to use self-exclusion in the EnVar ensemble B during EDA cycling
 # OPTIONS: True/False

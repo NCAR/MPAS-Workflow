@@ -150,12 +150,18 @@ sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
 
+# Hybrid Jb weights
+# =================
+if ( "$DAType" =~ *"hybrid"* ) then
+  sed -i 's@{{staticCovarianceWeight}}@'${staticCovarianceWeight}'@' $prevYAML
+  sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
+endif
+
 
 # Static Jb term
 # ==============
 if ( "$DAType" =~ *"3dvar"* || "$DAType" =~ *"hybrid"* ) then
-
-  # substitute bumpCovControlVariables
+  # bumpCovControlVariables
   set Variables = ($bumpCovControlVariables)
 #TODO: turn on hydrometeors in static B when applicable by uncommenting below
 # This requires the bumpCov* files to include hydrometeors
@@ -182,22 +188,6 @@ if ( "$DAType" =~ *"3dvar"* || "$DAType" =~ *"hybrid"* ) then
   sed -i 's@{{bumpCovVBalPrefix}}@'${bumpCovVBalPrefix}'@' $prevYAML
   sed -i 's@{{bumpCovVBalDir}}@'${bumpCovVBalDir}'@' $prevYAML
 endif # 3dvar || hybrid
-
-
-# Generate variational member yamls
-# =================================
-#note: all yaml prep before this point must be common across EDA members
-
-set yamlFiles = variationals.txt
-rm $yamlFiles
-set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memberyaml = variational_${member}.yaml
-  echo $memberyaml >> $yamlFiles
-  cp $prevYAML $memberyaml
-
-  @ member++
-end
 
 
 # Ensemble Jb term
@@ -254,7 +244,33 @@ EOF
     # delete the line containing $enspbinfsed
     sed -i '/^'${enspbinfsed}'/d' $prevYAML
   endif
+endif
 
+
+# Generate individual background member yamls
+# ===========================================
+
+# Note: all yaml prep before this point must be common across EDA members
+
+set yamlFiles = variationals.txt
+set yamlFileList = ()
+
+rm $yamlFiles
+set member = 1
+while ( $member <= ${nEnsDAMembers} )
+  set memberyaml = ${variationalYAMLPrefix}${member}.yaml
+  echo $memberyaml >> $yamlFiles
+  set yamlFileList = ($yamlFileList $memberyaml)
+  cp $prevYAML $memberyaml
+
+  @ member++
+end
+
+
+# Ensemble Jb term (member dependent)
+# ===================================
+
+if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
   ## members
   # + pure envar: 'background error.members from template'
   # + hybrid envar: 'background error.components[iEnsemble].covariance.members from template'
@@ -274,15 +290,17 @@ EOF
     exit 1
   endif
 
-  rm $yamlFiles
 endif # envar || hybrid
 
-# Jo term
-# =======
+rm $yamlFiles
+
+
+# Jo term (member dependent)
+# ==========================
 
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set memberyaml = variational_${member}.yaml
+  set memberyaml = $yamlFileList[$member]
 
   # member-specific state I/O and observation file output directory
   set memDir = `${memberDir} $DAType $member`
@@ -412,7 +430,7 @@ while ( $member <= ${nEnsDAMembers} )
     sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
     sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
   end
-  sed -i 's@StreamsFileMember@'${memSuffix}'@' variational_${member}.yaml
+  sed -i 's@StreamsFileMember@'${memSuffix}'@' $yamlFileList[$member]
 
   # Remove existing analysis file, make full copy from bg file
   # ==========================================================
