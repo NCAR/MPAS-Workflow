@@ -6,8 +6,6 @@ model:
 variational:
   DAType: 3denvar
   nInnerIterations: [60,60,]
-  EDASize: 1
-  nDAInstances: 1
   ABEInflation: True
   ABEIChannel: 10
 job:

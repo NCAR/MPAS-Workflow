@@ -16,8 +16,6 @@ model:
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]
-  EDASize: 1
-  nDAInstances: 1
 job:
   CPQueueName: economy
   NCPQueueName: economy

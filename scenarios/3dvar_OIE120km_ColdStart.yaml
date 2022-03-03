@@ -8,5 +8,3 @@ model:
   MPASGridDescriptor: OIE120km
 variational:
   DAType: 3dvar
-  EDASize: 1
-  nDAInstances: 1
