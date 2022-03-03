@@ -38,7 +38,17 @@ workflow:
 
 ## CriticalPathType: controls dependencies between and chilrdren of
 #                   DA and FC cycling components
-# OPTIONS: Normal, Bypass, Reanalysis, Reforecast
+# OPTIONS:
+# + Normal - run both the Variational and forecast applications on the CriticalPath
+# + Bypass - do not run either Variational or forecast applications from the CriticalPath
+#          - only run verification, including non-CriticalPath forecasts, e.g.,
+#            VerifyExtendedMeanFC
+# + Reanalysis
+#   - run only the Variational application on the CriticalPath
+#   - requires CyclingFC forecast files or links to already be present in ExperimentDirectory
+# + Reforecast
+#   - run only the forecast application on the CriticalPath
+#   - requires CyclingDA analysis files or links to already be present in ExperimentDirectory
   CriticalPathType: Normal
 
 ## VerifyDeterministicDA: whether to run verification scripts for

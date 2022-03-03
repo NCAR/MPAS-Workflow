@@ -186,7 +186,6 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-
 # VarBC prior
 # ===========
 set VARBC_TABLE = ${INITIAL_VARBC_TABLE}
