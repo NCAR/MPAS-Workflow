@@ -17,7 +17,7 @@ module load git
 
 git clone https://github.com/NCAR/MPAS-Workflow
 
-#modify configuration files (config) as needed
+#modify configuration as needed in scenarios/ and config/
 
 source env-setup/cheyenne.csh
 #OR
