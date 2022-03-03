@@ -1,7 +1,7 @@
 variational:
 ## DAType [Required Parameter]
 # OPTIONS: 3dvar, 3denvar, 3dhybrid, eda_3denvar
-# Note: 3dvar currently only works for OIE120km
+# Note: 3dvar and 3dhybrid currently only work for OIE120km
   DAType: None
 
 ## nInnerIterations
