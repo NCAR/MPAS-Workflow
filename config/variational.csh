@@ -36,11 +36,11 @@ $setLocal PreviousEDAForecastDir
 
 # stochastic settings
 set EDASize = "`$getLocalOrNone EDASize`"
-if (EDASize == None) then
+if ($EDASize == None) then
   set EDASize = 1
 endif
 set nDAInstances = "`$getLocalOrNone nDAInstances`"
-if (nDAInstances == None) then
+if ($nDAInstances == None) then
   set nDAInstances = 1
 endif
 
