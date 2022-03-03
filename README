@@ -46,8 +46,8 @@ source env-setup/cheyenne.sh
 The files in this directory describe the configuration for the entire workflow.  Some files are
 designed to be modified by users, and others mostly by developers.
 
-## top-level configuration (config/*.csh)
------------------------------------------
+## top-level configuration (config/*.csh and scenarios/)
+--------------------------------------------------------
 
 builds.csh: describes the build directories for critical applications
 
@@ -58,24 +58,32 @@ used across all cycles.
 
 environment.csh: run-time environment used across compiled executables and python scripts
 
-experiment.csh: primary control knobs for individualizing experiments
-
 filestructure.csh: workflow file structure
 
-job.csh: job queue settings
-
 obsdata.csh: static observation-space data file structure
+
+scenario.csh: selection of a particular experiment scenario
 
 tools.csh: initializes python tools for workflow task management
 
 verification.csh: post-processing and verification script descriptions
 
-scenarios/: directory containing pre-defined and user-defined top-level settings
-scenarios/defaults.yaml: default settings
-scenarios/*.yaml: particular scenario settings, one of which must be selected in experiment.csh
+For many config/*.csh files, there is a one-to-one correspondance with the scenarios/base/*.yaml.
+They are as follows:
 
-Note: users may add new cases by copying any of the yaml files in the cases directory to a new
-yaml, modifying the entries, and then selecting their new case in experiment.csh
+scenarios/base/*.yaml: default user-configurable settings and their descriptions
+scenarios/base/workflow.yaml: cylc task selection and date bounds
+scenarios/base/experiment.yaml: experiment naming conventions
+scenarios/base/model.yaml: model mesh settings
+scenarios/base/observations.yaml: observation source data
+scenarios/base/variational.yaml: settings specific to the variational application
+scenarios/base/hofx.yaml: settings specific to the hofx application
+scenarios/base/job.yaml: account and queue selection
+
+Deviations from the default settings are located in scenarios/*.yaml and scenarios/testinput/*.yaml.
+A particular scenario is selected within config/scenario.csh. Users may add new scenarios by copying
+one of the yaml files in the scenarios directory to a new file, modifying the entries, and then
+selecting the new scenario in config/scenario.csh.
 
 ## MPAS-specific configuration (config/mpas/)
 ---------------------------------------------
@@ -105,10 +113,9 @@ directory, and must already be present in the experiment directory.
 
 ## super driver: run.csh
 -----------------------------
-run.csh: executes drive.csh for a set of pre-defined scenarios using config/scenarios/*.yaml and
-run/config/*.yaml. It is recommended to run the "test" scenarios before submitting a
-GitHub pull request to NCAR/MPAS-Workflow::develop.  For example, execute the following from
-the command-line:
+run.csh: executes drive.csh for a set of pre-defined scenarios as described in scenarios/*.yaml and
+runs/*.yaml. It is recommended to run the "test" scenarios before submitting a GitHub pull request
+to NCAR/MPAS-Workflow::develop.  For example, execute the following from the command-line:
 
   source env-script/cheyenne.${YourShell}
 
@@ -116,8 +123,9 @@ the command-line:
   OR, equivalently,
   ./test.csh
 
-run/config/*.yaml: suite settings for sets of scenarios.  In most cases, each of these yaml
-files will only run one scenario, with the exception of automated testing for pull requests.
+runs/*.yaml: single- or multi-scenario selection used by run.csh.  Most of the run.csh yaml input
+files only selects a single scenario, except for the automated testing of pull requests.  One only
+one scenario is selected, the user can achieve the same effect by executing drive.csh.
 
 ## templated workflow components
 --------------------------------
