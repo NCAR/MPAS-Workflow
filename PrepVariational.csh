@@ -151,69 +151,43 @@ rm ${thisSEDF}
 set prevYAML = $thisYAML
 
 
-# Ensemble Jb term
-# ================
+# Static Jb term
+# ==============
+if ( "$DAType" =~ *"3dvar"* || "$DAType" =~ *"hybrid"* ) then
 
-## ensemble Jb yaml indentation
-if ( "$DAType" =~ *"envar"* ) then
-  set nEnsPbIndent = 4
-else if ( "$DAType" =~ *"hybrid"* ) then
-  set nEnsPbIndent = 8
-else
-  set nEnsPbIndent = 0
-endif
-set indentPb = "`${nSpaces} $nEnsPbIndent`"
+  # substitute bumpCovControlVariables
+  set Variables = ($bumpCovControlVariables)
+#TODO: turn on hydrometeors in static B when applicable by uncommenting below
+# This requires the bumpCov* files to include hydrometeors
+#  # if any CRTM yaml section includes the *cloudyCRTMObsOperator alias, then hydrometeors
+#  # must be included in both the Analysis and State variables
+#  grep '*cloudyCRTMObsOperator' $prevYAML
+#  if ( $status == 0 ) then
+#    foreach hydro ($MPASHydroStateVariables)
+#      set Variables = ($Variables $hydro)
+#    end
+#  endif
+  set VarSub = ""
+  foreach var ($Variables)
+    set VarSub = "$VarSub$var,"
+  end
+  # remove trailing comma
+  set VarSub = `echo "$VarSub" | sed 's/.$//'`
+  sed -i 's@{{bumpCovControlVariables}}@'$VarSub'@' $prevYAML
 
-## ensemble Jb localization
-sed -i 's@bumpLocDir@'${bumpLocDir}'@g' $prevYAML
-sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' $prevYAML
+  # substitute bumpCov* file descriptors
+  sed -i 's@{{bumpCovPrefix}}@'${bumpCovPrefix}'@' $prevYAML
+  sed -i 's@{{bumpCovDir}}@'${bumpCovDir}'@' $prevYAML
+  sed -i 's@{{bumpCovStdDevFile}}@'${bumpCovStdDevFile}'@' $prevYAML
+  sed -i 's@{{bumpCovVBalPrefix}}@'${bumpCovVBalPrefix}'@' $prevYAML
+  sed -i 's@{{bumpCovVBalDir}}@'${bumpCovVBalDir}'@' $prevYAML
+endif # 3dvar || hybrid
 
-## ensemble Jb inflation
-# performs sed substitution for EnsemblePbInflation
-set enspbinfsed = EnsemblePbInflation
-set thisSEDF = ${enspbinfsed}SEDF.yaml
-set removeInflation = 0
-if ( "$DAType" =~ *"eda"* && ${ABEInflation} == True ) then
-  set inflationFields = ${CyclingABEInflationDir}/BT${ABEIChannel}_ABEIlambda.nc
-  find ${inflationFields} -mindepth 0 -maxdepth 0
-  if ($? > 0) then
-    ## inflation file not generated because all instruments (abi, ahi?) missing at this cylce date
-    #TODO: use last valid inflation factors?
-    set removeInflation = 1
-  else
-    set thisYAML = insertInflation.yaml
-#NOTE: 'stream name: control' allows for spechum and temperature inflation values to be read
-#      read directly from inflationFields without a variable transform. Also requires spechum and
-#      temperature to be in stream_list.atmosphere.control.
 
-cat >! ${thisSEDF} << EOF
-/${enspbinfsed}/c\
-${indentPb}inflation field:\
-${indentPb}  date: *analysisDate\
-${indentPb}  filename: ${inflationFields}\
-${indentPb}  stream name: control
-EOF
+# Generate variational member yamls
+# =================================
+#note: all yaml prep before this point must be common across EDA members
 
-    sed -f ${thisSEDF} $prevYAML >! $thisYAML
-    set prevYAML = $thisYAML
-  endif
-else
-  set removeInflation = 1
-endif
-if ($removeInflation > 0) then
-  # delete the line containing $enspbinfsed
-  sed -i '/^'${enspbinfsed}'/d' $prevYAML
-endif
-
-## ensemble Jb members
-# + pure envar: background error.members
-# + hybrid envar: background error.components[iEnsemble].covariance.members
-#   where iEnsemble is the ensemble component index of the hybrid B
-
-# performs sed substitution for EnsemblePbMembers
-set enspbmemsed = EnsemblePbMembers
-
-# initialize variational member yamls
 set yamlFiles = variationals.txt
 rm $yamlFiles
 set member = 1
@@ -225,19 +199,83 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-# substitute Jb members
-setenv myCommand "${substituteEnsembleBTemplate} ${ensPbDir}/${prevValidDate} ${ensPbMemPrefix} None ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
 
-echo "$myCommand"
-${myCommand}
+# Ensemble Jb term
+# ================
 
-if ($status != 0) then
-  echo "$0 (ERROR): failed to substitute ${enspbmemsed}" > ./FAIL
-  exit 1
-endif
+if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
+  ## yaml indentation
+  if ( "$DAType" =~ *"envar"* ) then
+    set nEnsPbIndent = 4
+  else if ( "$DAType" =~ *"hybrid"* ) then
+    set nEnsPbIndent = 8
+  else
+    set nEnsPbIndent = 0
+  endif
+  set indentPb = "`${nSpaces} $nEnsPbIndent`"
 
-rm $yamlFiles
+  ## localization
+  sed -i 's@{{bumpLocDir}}@'${bumpLocDir}'@g' $prevYAML
+  sed -i 's@{{bumpLocPrefix}}@'${bumpLocPrefix}'@g' $prevYAML
 
+  ## inflation
+  # performs sed substitution for EnsemblePbInflation
+  set enspbinfsed = EnsemblePbInflation
+  set thisSEDF = ${enspbinfsed}SEDF.yaml
+  set removeInflation = 0
+  if ( ${ABEInflation} == True ) then
+    set inflationFields = ${CyclingABEInflationDir}/BT${ABEIChannel}_ABEIlambda.nc
+    find ${inflationFields} -mindepth 0 -maxdepth 0
+    if ($? > 0) then
+      ## inflation file not generated because all instruments (abi, ahi?) missing at this cylce date
+      #TODO: use last valid inflation factors?
+      set removeInflation = 1
+    else
+      set thisYAML = insertInflation.yaml
+  #NOTE: 'stream name: control' allows for spechum and temperature inflation values to be read
+  #      read directly from inflationFields without a variable transform. Also requires spechum and
+  #      temperature to be in stream_list.atmosphere.control.
+
+  cat >! ${thisSEDF} << EOF
+/${enspbinfsed}/c\
+${indentPb}inflation field:\
+${indentPb}  date: *analysisDate\
+${indentPb}  filename: ${inflationFields}\
+${indentPb}  stream name: control
+EOF
+
+      sed -f ${thisSEDF} $prevYAML >! $thisYAML
+      set prevYAML = $thisYAML
+    endif
+  else
+    set removeInflation = 1
+  endif
+  if ($removeInflation > 0) then
+    # delete the line containing $enspbinfsed
+    sed -i '/^'${enspbinfsed}'/d' $prevYAML
+  endif
+
+  ## members
+  # + pure envar: 'background error.members from template'
+  # + hybrid envar: 'background error.components[iEnsemble].covariance.members from template'
+  #   where iEnsemble is the ensemble component index of the hybrid B
+
+  # performs sed substitution for EnsemblePbMembers
+  set enspbmemsed = EnsemblePbMembers
+
+  # substitute Jb members
+  setenv myCommand "${substituteEnsembleBTemplate} ${ensPbDir}/${prevValidDate} ${ensPbMemPrefix} None ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
+
+  echo "$myCommand"
+  ${myCommand}
+
+  if ($status != 0) then
+    echo "$0 (ERROR): failed to substitute ${enspbmemsed}" > ./FAIL
+    exit 1
+  endif
+
+  rm $yamlFiles
+endif # envar || hybrid
 
 # Jo term
 # =======

@@ -53,8 +53,8 @@ cost function:
         input variables: *incvars
         output variables: *incvars
         bump:
-          datadir: bumpLocDir
-          prefix: bumpLocPrefix
+          datadir: {{bumpLocDir}}
+          prefix: {{bumpLocPrefix}}
           strategy: common
           load_nicas_local: true
           verbosity: main

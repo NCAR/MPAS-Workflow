@@ -15,6 +15,23 @@ setenv RADTHINAMOUNT       "0.98"
 
 ## Background Error
 
+### Static B
+
+#### control variables: [stream_function, velocity_potential, temperature, spechum, surface_pressure]
+#### strategy: specific_univariate
+set bumpCovControlVariables = ( \
+  stream_function \
+  velocity_potential \
+  temperature \
+  spechum \
+  surface_pressure \
+)
+setenv bumpCovPrefix mpas_parametersbump_cov
+setenv bumpCovDir /glade/scratch/bjung/pandac/20220218_develop/bumpcov_tune
+setenv bumpCovStdDevFile /glade/scratch/bjung/pandac/20220218_develop/CMAT_00.tune/mpas.stddev.2018-04-15_00.00.00.nc
+setenv bumpCovVBalPrefix mpas_vbal
+setenv bumpCovVBalDir /glade/scratch/bjung/pandac/20220218_develop/bumpcov_tune
+
 ### Ensemble localization
 
 #### strategy: common

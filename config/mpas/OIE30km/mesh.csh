@@ -14,5 +14,28 @@ setenv RADTHINDISTANCE    "100.0"
 setenv RADTHINAMOUNT      "0.75"
 
 ## Background Error
-setenv bumpLocDir /glade/p/mmm/parc/liuz/pandac_common/30km_bumploc_2000km_512p_20210208code
-setenv bumpLocPrefix bumploc_2000_5
+
+### Static B
+
+#### control variables: [stream_function, velocity_potential, temperature, spechum, surface_pressure]
+#### strategy: specific_univariate
+set bumpCovControlVariables = ( \
+  stream_function \
+  velocity_potential \
+  temperature \
+  spechum \
+  surface_pressure \
+)
+setenv bumpCovPrefix None
+setenv bumpCovDir None
+setenv bumpCovStdDevFile None
+setenv bumpCovVBalPrefix None
+setenv bumpCovVBalDir None
+
+### Ensemble localization
+
+#### strategy: common
+#### 1200km horizontal loc
+#### 6km height vertical loc
+setenv bumpLocPrefix bumploc_1200.0km_6.0km
+setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_28FEB2022code

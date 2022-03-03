@@ -16,6 +16,23 @@ setenv RADTHINAMOUNT      "0.75"
 
 ## Background Error
 
+### Static B
+
+#### control variables: [stream_function, velocity_potential, temperature, spechum, surface_pressure]
+#### strategy: specific_univariate
+set bumpCovControlVariables = ( \
+  stream_function \
+  velocity_potential \
+  temperature \
+  spechum \
+  surface_pressure \
+)
+setenv bumpCovPrefix None
+setenv bumpCovDir None
+setenv bumpCovStdDevFile None
+setenv bumpCovVBalPrefix None
+setenv bumpCovVBalDir None
+
 ### Ensemble localization
 
 #### strategy: common
