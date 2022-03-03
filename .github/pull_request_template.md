@@ -9,6 +9,6 @@ Closes #(if applicable)
    - [ ] OIE120km 3dvar, 2 cycles
    - [ ] OIE120km 3denvar, 2 cycles
    - [ ] OIE120km eda_3denvar, 2 cycles
-   - [ ] O30kmIE60km 3denvar, 2 cycles
+   - [ ] O30kmIE60km 3denvar, 1 cycle
  - ColdStart
-   - [ ] OIE120km 3dvar, 2 cycles, PreprocessObs=True
+   - [ ] OIE120km 3dvar, 2 cycles, observationSource=GladeRDAOnline
