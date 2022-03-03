@@ -1,0 +1,11 @@
+workflow:
+  InitializationType: ColdStart
+  # TODO: enable GFS analysis generation every cycle, then engage forecast verification
+  VerifyEnsMeanBG: False
+observations:
+  observationSource: GladeRDAOnline
+model:
+  MPASGridDescriptor: OIE120km
+variational:
+  DAType: 3dvar
+  Satbias: GDASFixed

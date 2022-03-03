@@ -7,7 +7,7 @@ MPAS-JEDI data assimilation package.
 
 # starting a cycling experiment on the Cheyenne HPC
 ---------------------------------------------------
-login to Cheyenne
+#login to Cheyenne
 
 mkdir -p /fresh/path/for/submitting/experiments
 
@@ -17,13 +17,15 @@ module load git
 
 git clone https://github.com/NCAR/MPAS-Workflow
 
-modify configuration files as needed
+#modify configuration files (config) as needed
 
 source env-setup/cheyenne.csh
-OR
+#OR
 source env-setup/cheyenne.sh
 
 ./drive.csh
+#OR
+./run.csh {{runConfig}}
 
 # It is required to set the work/run directories in $HOME/.cylc/global.rc as follows:
 [hosts]
@@ -36,6 +38,7 @@ source env-setup/cheyenne.sh
 
 # It is recommended to also set 'job name length maximum' to a large value
 
+# See below for more documentation aboute drive.csh and run.csh
 
 # Configuration Files (config/)
 -------------------------------
@@ -67,6 +70,12 @@ tools.csh: initializes python tools for workflow task management
 
 verification.csh: post-processing and verification script descriptions
 
+scenarios/: directory containing pre-defined and user-defined top-level settings
+scenarios/defaults.yaml: default settings
+scenarios/*.yaml: particular scenario settings, one of which must be selected in experiment.csh
+
+Note: users may add new cases by copying any of the yaml files in the cases directory to a new
+yaml, modifying the entries, and then selecting their new case in experiment.csh
 
 ## MPAS-specific configuration (config/mpas/)
 ---------------------------------------------
@@ -92,7 +101,23 @@ on the previous cycle. Reanalysis is used to perform the CyclingDA task on each 
 re-running forecasts.  This requires the CyclingFC output files to already be present in the
 experiment directory, which might be added manually outside of the workflow.  Reforecast is used to
 perform forecasts from an existing set of analysis states, which are stored in the CyclingDA
-directory.  
+directory, and must already be present in the experiment directory.
+
+## super driver: run.csh
+-----------------------------
+run.csh: executes drive.csh for a set of pre-defined scenarios using config/scenarios/*.yaml and
+run/config/*.yaml. It is recommended to run the "test" scenarios before submitting a
+GitHub pull request to NCAR/MPAS-Workflow::develop.  For example, execute the following from
+the command-line:
+
+  source env-script/cheyenne.${YourShell}
+
+  ./run.csh test
+  OR, equivalently,
+  ./test.csh
+
+run/config/*.yaml: suite settings for sets of scenarios.  In most cases, each of these yaml
+files will only run one scenario, with the exception of automated testing for pull requests.
 
 ## templated workflow components
 --------------------------------

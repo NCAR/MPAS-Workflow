@@ -1,0 +1,7 @@
+workflow:
+  InitializationType: WarmStart
+  PreprocessObs: False
+model:
+  MPASGridDescriptor: OIE120km
+variational:
+  DAType: 3denvar
