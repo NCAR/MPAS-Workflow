@@ -42,7 +42,7 @@ sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFileInit}
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}
 cp -v ${initModelConfigDir}/${NamelistFileInit} .
-sed -i 's@startTime@'${NMLDate}'@' $NamelistFileInit
+sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFileInit
 
 # Run the executable

@@ -4,7 +4,7 @@
     obsdatain:
       obsfile: InDBDir/sondes_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_sondes.h5
+      obsfile: OutDBDir/obsPrefix_sondes.h5
     simulated variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind]
   obs error: *ObsErrorDiagonal
   obs operator:
@@ -14,6 +14,3 @@
   obs filters:
   - filter: PreQC
     maxvalue: 3
-  - filter: Background Check
-    threshold: 3.0
-    apply at iterations: 0, 1, 2, 3, 4, 5

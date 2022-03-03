@@ -2,7 +2,7 @@
     <<: *ObsSpace
     name: abi-clr_g16
     obsdatain:
-      obsfile: InDBDir/abi_g16_obs_2018041500.h5
+      obsfile: InDBDir/abi_g16_obs_{{thisValidDate}}.h5
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_abi-clr_g16.h5
     simulated variables: [brightness_temperature]

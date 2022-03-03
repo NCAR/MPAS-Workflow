@@ -40,7 +40,7 @@ ln -sfv ${VtableDir}/${Vtable} Vtable
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}
 cp -v ${initModelConfigDir}/${NamelistFileWPS} .
-sed -i 's@startTime@'${NMLDate}'@' $NamelistFileWPS
+sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
 
 # Run the executable
 # ==================

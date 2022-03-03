@@ -88,7 +88,7 @@ def substituteEnsembleB():
     if shuffle: random.shuffle(stateMembers)
 
     # populate replacementString with yaml stubs
-    replacementString = ''
+    replacementString = indent+'members:\n'
 
     for stateMember in stateMembers:
       if SelfExclusion and yamlMember==stateMember and len(yamls) > 1: continue

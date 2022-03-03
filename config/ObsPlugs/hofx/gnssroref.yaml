@@ -2,7 +2,7 @@
     <<: *ObsSpace
     name: GnssroRef
     obsdatain:
-      obsfile: InDBDir/gnssroref_obs_2018041500.h5
+      obsfile: InDBDir/gnssroref_obs_{{thisValidDate}}.h5
     obsdataout:
       obsfile: OutDBDir/obsPrefix_gnssroref.h5
     simulated variables: [refractivity]

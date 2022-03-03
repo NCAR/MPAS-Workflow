@@ -56,8 +56,8 @@ cd ${self_WorkDir}
 
 # Remove unnecessary model state files
 # ====================================
-rm ${self_WorkDir}/${bgDir}/${BGFilePrefix}.$fileDate.nc
-rm ${self_WorkDir}/${anDir}/${ANFilePrefix}.$fileDate.nc
+rm ${self_WorkDir}/${bgDir}/${BGFilePrefix}.$thisMPASFileDate.nc
+rm ${self_WorkDir}/${anDir}/${ANFilePrefix}.$thisMPASFileDate.nc
 
 # Remove obs-database output files
 # ================================
