@@ -101,6 +101,9 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
 {% elif CriticalPathType == "Normal" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
+#TODO: in order to avoid waits for observation conversion, ObsToIODA need only depend on
+# + ObsToIODA[-PT${CyclingWindowHR}H]
+# + check whether observations are present
   {% if observations__resource in ["GladeRDAOnline"] %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => ObsToIODA" %}
   {% endif %}
