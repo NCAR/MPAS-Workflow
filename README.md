@@ -132,8 +132,7 @@ E.g., `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*
 `config/mpas/init/*.csh`: `GenerateColdStartIC.csh`
 
 
-MPAS-JEDI application configuration files
---------------------------------------------
+#### MPAS-JEDI application configuration files
 `config/applicationBase/*.yaml`: MPAS-JEDI application-specific YAML templates
 
 `config/ObsPlugs/variational/*.yaml`: observation yaml stubs that get plugged into `Variational`
