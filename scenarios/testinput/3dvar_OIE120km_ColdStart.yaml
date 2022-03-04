@@ -8,7 +8,7 @@ workflow:
   # TODO: enable GFS analysis generation every cycle, then engage forecast verification
   VerifyEnsMeanBG: False
 observations:
-  observationSource: GladeRDAOnline
+  resource: GladeRDAOnline
 experiment:
   ExperimentName: '3dvar_OIE120km_ColdStart_TEST'
 model:

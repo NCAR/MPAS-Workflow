@@ -169,25 +169,60 @@ foreach file ($MPASJEDIVariablesFiles)
   ln -sfv ${ModelConfigDir}/${file} .
 end
 
-# ================
-# Observation data
-# ================
 
-# setup directories
-# =================
+# ======================
+# Link observations data
+# ======================
+
 rm -r ${InDBDir}
 mkdir -p ${InDBDir}
+
 rm -r ${OutDBDir}
-set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $self_AppName $member`
-  mkdir -p ${OutDBDir}${memDir}
-  @ member++
+mkdir ${OutDBDir}
+
+date
+
+foreach instrument ($observations)
+  echo "Retrieving data for ${instrument} observations"
+  # need to change to mainScriptDir for getObservationsOrNone to work
+  cd ${mainScriptDir}
+
+  # Check for instrument-specific directory first
+  set key = IODADirectory
+  set address = "${observations__resource}.${key}.${self_AppType}.${instrument}"
+  # TODO: this is somewhat slow with lots of redundant loads of the entire observations.yaml config
+  set IODADirectory = "`$getObservationsOrNone ${address}`"
+  if ("$IODADirectory" == None) then
+    # Fall back on "common" directory, if present
+    set address_ = "${observations__resource}.${key}.${self_AppType}.common"
+    set IODADirectory = "`$getObservationsOrNone ${address_}`"
+    if ("$IODADirectory" == None) then
+      echo "$0 (WARNING): skipping ${instrument} due to missing value at ${address} and ${address_}"
+      continue
+    endif
+  endif
+  # substitute $ObsWorkDir for {{ObsWorkDir}}
+  set IODADirectory = `echo "$IODADirectory" | sed 's@{{ObsWorkDir}}@'$ObsWorkDir'@'`
+
+  # prefix
+  set key = IODAPrefix
+  set address = "${observations__resource}.${key}.${instrument}"
+  set IODAPrefix = "`$getObservationsOrNone ${address}`"
+  if ("$IODAPrefix" == None) then
+    set IODAPrefix = ${instrument}
+  endif
+  cd ${self_WorkDir}
+
+  # link the data
+  ln -sfv ${IODADirectory}/${thisValidDate}/${IODAPrefix}_obs_${thisValidDate}.h5 \
+          ${InDBDir}/${instrument}_obs_${thisValidDate}.h5
+  date
 end
 
-# ========================================
-# Link observations data and generate yaml
-# ========================================
+
+# =============
+# Generate yaml
+# =============
 
 # (1) copy applicationBase yaml
 # =============================
@@ -212,37 +247,6 @@ set obsIndent = "`${nSpaces} $nObsIndent`"
 set observationsYAML = observations.yaml
 rm $observationsYAML
 touch $observationsYAML
-
-date
-foreach instrument ($observations)
-  echo "Retrieving data for ${instrument} observations"
-  # need to change to mainScriptDir for getObservationsOrNone to work
-  cd ${mainScriptDir}
-  if ( $observationSource == GladeRDAOnline ) then
-    set DataDir = ${ObsWorkDir}
-  else
-    set address = ${observationSource}.IODADirectory.${self_AppType}.${instrument}.directory
-    # TODO: this is somewhat slow with lots of redundant loads of the entire observations.yaml config
-    set DataDir = `$getObservationsOrNone ${address}`
-    if ($DataDir == None) then
-      echo "$0 (WARNING): skipping ${instrument} due to missing value at ${address}"
-      continue
-    #else if ($DataDir == __ObsWorkDir__) then
-    #  set DataDir = ${ObsWorkDir}
-    endif
-  endif
-  set address = ${observationSource}.IODADirectory.${self_AppType}.${instrument}.prefix
-  set DataPrefix = `$getObservationsOrNone ${address}`
-  if ($DataPrefix == None) then
-    set DataPrefix = ${instrument}
-  endif
-  cd ${self_WorkDir}
-
-  # link the data
-  ln -sfv ${DataDir}/${thisValidDate}/${DataPrefix}_obs_${thisValidDate}.h5 ${InDBDir}/${instrument}_obs_${thisValidDate}.h5
-
-  date
-end
 
 set found = 0
 foreach instrument ($observations)
@@ -311,8 +315,8 @@ sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
 
 # need to change to mainScriptDir for getObservationsOrNone to work
 cd ${mainScriptDir}
-set ABISuperObGrid = "`$getObservationsOrNone ${observationSource}.IODADirectory.${self_AppType}.abi_g16.superObGrid`"
-set AHISuperObGrid = "`$getObservationsOrNone ${observationSource}.IODADirectory.${self_AppType}.ahi_himawari8.superObGrid`"
+set ABISuperObGrid = "`$getObservationsOrNone ${observations__resource}.IODASuperObGrid.abi_g16`"
+set AHISuperObGrid = "`$getObservationsOrNone ${observations__resource}.IODASuperObGrid.ahi_himawari8`"
 cd ${self_WorkDir}
 
 if ("$ABISuperObGrid" != None) then
@@ -355,11 +359,9 @@ sed -i 's@diagPrefix@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
 # (3) model-related substitutions
 # ===============================
 
-# bg and an files
+# bg file
 sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' $thisYAML
 sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
-sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' $thisYAML
-sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' $thisYAML
 
 # streams+namelist
 set iMesh = 0
