@@ -61,12 +61,19 @@ They are as follows:
 
 ```
   scenarios/base/\*.yaml: default user-configurable settings and their descriptions
+
   scenarios/base/workflow.yaml: cylc task selection and date bounds
+
   scenarios/base/experiment.yaml: experiment naming conventions
+
   scenarios/base/model.yaml: model mesh settings
+
   scenarios/base/observations.yaml: observation source data
+
   scenarios/base/variational.yaml: settings specific to the variational application
+
   scenarios/base/hofx.yaml: settings specific to the hofx application
+
   scenarios/base/job.yaml: account and queue selection
 ```
 
@@ -109,36 +116,54 @@ to be merged back into the GitHub repository via GitHub issues.
 
 
 
-#### MPAS-specific configuration (config/mpas/)
-`mpas/variables.csh`: model/analysis variables used to generate YAML files for MPAS-JEDI applications
+#### MPAS configuration (config/mpas/)
+Configuration aspects that are unique to `MPAS-Atmosphere`
 
-`mpas/$MPASGridDescriptor/mesh.csh`: mesh-specific options that affect the workflow and application
-  behaviors.  In time, these options will be configured via yaml.
+`config/mpas/geovars.yaml`: list of templated geophysical variables (`GeoVars`) that MPAS-JEDI can
+provide to UFO; identical to `mpas-jedi/test/testinput/namelists/geovars.yaml`, but duplicated here
+so that users modify it at run-time as needed.
 
-`mpas/$MPASGridDescriptor/job.csh`: job durations and processor usages
+`config/mpas/variables.csh`: model/analysis variables used to generate YAML files for MPAS-JEDI applications
+
+
+##### Mesh-specific configuration
+Mesh-dependent aspects of the configuration; in time, this functionality will migrate to the
+scenario yaml files
+
+`config/mpas/$MPASGridDescriptor/mesh.csh`: mesh-specific options for multiple applications
+that affect the workflow and application behaviors
+
+`config/mpas/$MPASGridDescriptor/job.csh`: job durations and processor usages
 
 In the above, MPASGridDescriptor describes the mesh selected in the `model` part of the
 scenario configuration.  See `scenarios/base/model.yaml` for more information.
 
 
-#### Application-specific MPAS-Atmosphere configuration
+##### Application-specific MPAS-Atmosphere configuration
 
 E.g., `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*`
 
 `config/mpas/forecast/*`: tasks derived from `forecast.csh`
+
 `config/mpas/hofx/*`: tasks derived from `HofX.csh`
-`config/mpas/rtpp/*`: `RTPPInflation.csh`
-`config/mpas/variational/*`: tasks derived from `Variational.csh` and `EnsembleOfVariational.csh`
+
 `config/mpas/init/*.csh`: `GenerateColdStartIC.csh`
 
+`config/mpas/rtpp/*`: `RTPPInflation.csh`
 
-#### MPAS-JEDI application configuration files
-`config/applicationBase/*.yaml`: MPAS-JEDI application-specific YAML templates
+`config/mpas/variational/*`: `Variational`-type tasks derived from either of `Variational.csh` or
+`EnsembleOfVariational.csh`
+
+
+#### MPAS-JEDI application-specific configuration files
+`config/applicationBase/*.yaml`: MPAS-JEDI application-specific YAML templates.  These will be
+further populated by scripts templated on `PrepJEDA.csh` and/or `PrepVariational.csh`.
 
 `config/ObsPlugs/variational/*.yaml`: observation yaml stubs that get plugged into `Variational`
-applications, e.g., `3denvar` and `eda_3denvar`
+`applicationBase` yamls, e.g., `3dvar.yaml`, `3denvar.yaml`, `3dhybrid.yaml`, and
+`eda_3denvar.yaml`
 
-`config/ObsPlugs/hofx/*.yaml`: same, but for the `HofX` application
+`config/ObsPlugs/hofx/*.yaml`: same, but for the `HofX` `applicationBase` yaml, `hofx.yaml`
 
 
 
