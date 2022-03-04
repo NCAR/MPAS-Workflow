@@ -6,7 +6,6 @@ workflow:
   # Can cycle for a full month when nInnerIterations==[60,60]
   finalCyclePoint: 20180415T00
   InitializationType: WarmStart
-  PreprocessObs: False
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
 experiment:

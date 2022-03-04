@@ -1,6 +1,5 @@
 workflow:
   InitializationType: WarmStart
-  PreprocessObs: False
 model:
   MPASGridDescriptor: O30kmIE60km
 variational:
