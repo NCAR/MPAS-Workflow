@@ -620,6 +620,8 @@ endif
 
 rm -rf ${cylcWorkDir}/${SuiteName}
 
+#exit -1
+
 cylc register ${SuiteName} ${mainScriptDir}
 cylc validate ${SuiteName}
 cylc run ${SuiteName}

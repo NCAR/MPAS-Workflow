@@ -1,0 +1,79 @@
+diff --git a/config/builds.csh b/config/builds.csh
+index 2afbfe3..d4f658e 100644
+--- a/config/builds.csh
++++ b/config/builds.csh
+@@ -16,7 +16,8 @@ setenv BuildCompiler 'gnu-openmpi'
+ # Note: at this time, all executables should be built in the same environment, one that is
+ # consistent with config/environmentForJedi.csh
+ 
+-set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_28FEB2022
++#set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_28FEB2022
++set commonBuild = /glade/scratch/yonggangyu/br_getvals_upd_Feb_17_future/build
+ 
+ # Ungrib
+ setenv ungribEXE ungrib.exe
+diff --git a/config/scenario.csh b/config/scenario.csh
+index 9b7b4c5..0bdada8 100644
+--- a/config/scenario.csh
++++ b/config/scenario.csh
+@@ -28,7 +28,7 @@ set scenarioDirectory = scenarios
+ # + eda_OIE120km_WarmStart
+ # + eda_OIE60km_WarmStart (experimental)
+ 
+-set scenario = 3dvar_OIE120km_WarmStart
++set scenario = 3denvar_OIE120km_WarmStart  #  3dvar_OIE120km_WarmStart
+ 
+ ## this config
+ setenv scenarioConfig ${scenarioDirectory}/${scenario}.yaml
+diff --git a/drive.csh b/drive.csh
+index c1ee1ce..f919e53 100755
+--- a/drive.csh
++++ b/drive.csh
+@@ -620,6 +620,8 @@ endif
+ 
+ rm -rf ${cylcWorkDir}/${SuiteName}
+ 
++#exit -1
++
+ cylc register ${SuiteName} ${mainScriptDir}
+ cylc validate ${SuiteName}
+ cylc run ${SuiteName}
+diff --git a/scenarios/base/experiment.yaml b/scenarios/base/experiment.yaml
+index 2090243..716388e 100644
+--- a/scenarios/base/experiment.yaml
++++ b/scenarios/base/experiment.yaml
+@@ -1,7 +1,7 @@
+ experiment:
+ ## ExpSuffix
+ # a unique suffix to distinguish this experiment from others
+-  ExpSuffix: ''
++  ExpSuffix: '_X1'
+ 
+ ## ExperimentName
+ # leave as DEFAULT to be automatically generated from critical config elements
+diff --git a/scenarios/base/model.yaml b/scenarios/base/model.yaml
+index 8d205eb..4bf2247 100644
+--- a/scenarios/base/model.yaml
++++ b/scenarios/base/model.yaml
+@@ -16,7 +16,7 @@ model:
+ #   + TODO: "OIE120km" 4denvar
+ #   + TODO: "OIE60km" 4denvar
+ #   + TODO: "O30kmIE60km" dual-resolution 4denvar
+-  MPASGridDescriptor: None
++  MPASGridDescriptor:  OIE120km   # 
+ 
+ ## forecastPrecision
+ # floating-point precision of forecast output; options: [single, double]
+diff --git a/scenarios/base/workflow.yaml b/scenarios/base/workflow.yaml
+index 1dedc3c..343f3f5 100644
+--- a/scenarios/base/workflow.yaml
++++ b/scenarios/base/workflow.yaml
+@@ -24,7 +24,7 @@ workflow:
+ # OPTIONS: >= initialCyclePoint
+ # + ancillary model and/or observation data must be available between initialCyclePoint and
+ #   finalCyclePoint
+-  finalCyclePoint: 20180514T18
++  finalCyclePoint: 20180415T18    # 20180514T18
+ 
+ ################
+ # task selection

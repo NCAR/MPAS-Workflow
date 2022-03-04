@@ -16,7 +16,7 @@ model:
 #   + TODO: "OIE120km" 4denvar
 #   + TODO: "OIE60km" 4denvar
 #   + TODO: "O30kmIE60km" dual-resolution 4denvar
-  MPASGridDescriptor: None
+  MPASGridDescriptor:  OIE120km   # 
 
 ## forecastPrecision
 # floating-point precision of forecast output; options: [single, double]

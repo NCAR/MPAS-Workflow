@@ -16,7 +16,8 @@ setenv BuildCompiler 'gnu-openmpi'
 # Note: at this time, all executables should be built in the same environment, one that is
 # consistent with config/environmentForJedi.csh
 
-set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_28FEB2022
+#set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_28FEB2022
+set commonBuild = /glade/scratch/yonggangyu/br_getvals_upd_Feb_17_future/build
 
 # Ungrib
 setenv ungribEXE ungrib.exe

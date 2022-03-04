@@ -24,7 +24,7 @@ workflow:
 # OPTIONS: >= initialCyclePoint
 # + ancillary model and/or observation data must be available between initialCyclePoint and
 #   finalCyclePoint
-  finalCyclePoint: 20180514T18
+  finalCyclePoint: 20180415T18    # 20180514T18
 
 ################
 # task selection
