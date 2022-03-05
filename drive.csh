@@ -148,11 +148,11 @@ cat >! suite.rc << EOF
   [[dependencies]]
 {% if initialCyclePoint == firstCyclePoint %}
   {% if InitializationType == "ColdStart" %}
-      [[[R1]]]
-        graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
+    [[[R1]]]
+      graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
   {% elif InitializationType == "WarmStart" %}
-      [[[R1]]]
-        graph = GetWarmStartIC => CyclingFCFinished
+    [[[R1]]]
+      graph = GetWarmStartIC => CyclingFCFinished
   {% endif %}
 {% endif %}
 ## Critical path for cycling
