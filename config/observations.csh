@@ -9,7 +9,10 @@ source config/scenario.csh
 # under the "observations" key of scenarioConfig
 setenv baseConfig scenarios/base/observations.yaml
 setenv setObservations "source $setConfig $baseConfig $scenarioConfig observations"
+setenv setNestedObservations "source $setNestedConfig $baseConfig $scenarioConfig observations"
 setenv getObservationsOrNone "source $getConfigOrNone $baseConfig $scenarioConfig observations"
 
-$setObservations observationSource
+# nested observations__resource
+$setNestedObservations resource
+
 $setObservations convertToIODAObservations

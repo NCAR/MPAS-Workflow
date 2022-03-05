@@ -4,7 +4,7 @@ experiment:
   ExpSuffix: ''
 
 ## ExperimentName
-# leave as DEFAULT to be automatically generated from critical config elements
+# leave as None to be automatically generated from critical config elements
 # Note: when using with run.csh and for multiple simultaneously running scenarios, setting
 # ExperimentName explicitly for all scenarios is the safest way to ensure that two scenarios do not
 # have identically auto-generated ExperimentName's
@@ -17,7 +17,7 @@ experiment:
   ParentDirectoryPrefix: /glade/scratch
 
 ## ExperimentUser
-# leave as DEFAULT to be assigned with 'set ExperimentUser = ${USER}'
+# leave as None to be assigned with 'set ExperimentUser = ${USER}'
   ExperimentUser: None
 
 ## ParentDirectorySuffix

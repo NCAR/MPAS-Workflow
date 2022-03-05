@@ -6,9 +6,9 @@ date
 # Setup environment
 # =================
 source config/observations.csh
-$setObservations ${observationSource}.defaultBUFRDirectory
-$setObservations ${observationSource}.satwndBUFRDirectory
-$setObservations ${observationSource}.PrepBUFRDirectory
+$setObservations ${observations__resource}.defaultBUFRDirectory
+$setObservations ${observations__resource}.satwndBUFRDirectory
+$setObservations ${observations__resource}.PrepBUFRDirectory
 source config/filestructure.csh
 source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`

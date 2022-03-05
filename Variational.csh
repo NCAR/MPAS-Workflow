@@ -39,7 +39,7 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-set self_WorkDir = $CyclingDADirs[1]
+set self_WorkDir = $CyclingDADir
 echo "WorkDir = ${self_WorkDir}"
 cd ${self_WorkDir}
 

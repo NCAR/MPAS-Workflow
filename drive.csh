@@ -66,7 +66,7 @@ cat >! suite.rc << EOF
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
-{% set observationSource = "${observationSource}" %}
+{% set observations__resource = "${observations__resource}" %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
@@ -101,7 +101,10 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
 {% elif CriticalPathType == "Normal" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
-  {% if observationSource in ["GladeRDAOnline"] %}
+#TODO: in order to avoid waits for observation conversion, ObsToIODA need only depend on
+# + ObsToIODA[-PT${CyclingWindowHR}H]
+# + check whether observations are present
+  {% if observations__resource in ["GladeRDAOnline"] %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => ObsToIODA" %}
   {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
@@ -145,11 +148,11 @@ cat >! suite.rc << EOF
   [[dependencies]]
 {% if initialCyclePoint == firstCyclePoint %}
   {% if InitializationType == "ColdStart" %}
-      [[[R1]]]
-        graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
+    [[[R1]]]
+      graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
   {% elif InitializationType == "WarmStart" %}
-      [[[R1]]]
-        graph = GetWarmStartIC => CyclingFCFinished
+    [[[R1]]]
+      graph = GetWarmStartIC => CyclingFCFinished
   {% endif %}
 {% endif %}
 ## Critical path for cycling
@@ -201,7 +204,7 @@ cat >! suite.rc << EOF
 {% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
     [[[${cyclingCycles}]]]
       graph = '''
-  {% if observationSource in ["GladeRDAOnline"] %}
+  {% if observations__resource in ["GladeRDAOnline"] %}
         ObsToIODA => HofXBG
   {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG

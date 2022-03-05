@@ -46,7 +46,7 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-set self_WorkDir = $CyclingDADirs[1]
+set self_WorkDir = $CyclingDADir
 echo "WorkDir = ${self_WorkDir}"
 cd ${self_WorkDir}
 
@@ -63,6 +63,17 @@ rm *.nc*.lock
 rm ${localStaticFieldsPrefix}*.nc*
 
 # ==================================================================================================
+
+# ========================================
+# Member-dependent Observation Directories
+# ========================================
+set member = 1
+while ( $member <= ${nEnsDAMembers} )
+  set memDir = `${memberDir} $DAType $member`
+  mkdir -p ${OutDBDir}${memDir}
+  @ member++
+end
+
 
 # ============================
 # Variational YAML preparation
@@ -149,6 +160,13 @@ set thisYAML = insertAlgorithm.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
+
+
+# Analysis directory
+# ==================
+sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' $prevYAML
+sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' $prevYAML
+
 
 # Hybrid Jb weights
 # =================

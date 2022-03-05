@@ -1,11 +1,11 @@
 observations:
-## observationSource
+## resource
 # OPTIONS: PANDACArchive, GladeRDAOnline
 # Note: add more options as they become available, e.g., NCEPFTPOnline
-  observationSource: PANDACArchive
+  resource: PANDACArchive
 
 ## convertToIODAObservations
-# list of raw observation types to convert to IODA format, when (observationSource != PANDACArchive)
+# list of raw observation types to convert to IODA format, when (resource != PANDACArchive)
   convertToIODAObservations:
   - prepbufr
   - satwnd
@@ -18,279 +18,114 @@ observations:
   #- mtiasi
 
 ## *Directory
-# locations of raw bufr and prepbufr observation data, separated by observationSource
+# locations of raw bufr and prepbufr observation data, separated by resource
   GladeRDAOnline:
     defaultBUFRDirectory: /gpfs/fs1/collections/rda/data/ds735.0
     satwndBUFRDirectory: /gpfs/fs1/collections/rda/data/ds351.0
     PrepBUFRDirectory: /gpfs/fs1/collections/rda/data/ds337.0
 
+    IODAPrefix:
+      gnssroref: gnssro
+      amsua-cld_aqua: amsua_aqua
+      amsua-cld_metop-a: amsua_metop-a
+      amsua-cld_metop-b: amsua_metop-b
+      amsua-cld_n15: amsua_n15
+      amsua-cld_n18: amsua_n18
+      amsua-cld_n19: amsua_n19
+
     IODADirectory:
       variational:
-        ## anchor
-        aircraft:
-          directory: __ObsWorkDir__
-        gnssroref:
-          directory: __ObsWorkDir__
-          prefix: gnssro
-        satwind:
-          directory: __ObsWorkDir__
-        satwnd:
-          directory: __ObsWorkDir__
-        sfc:
-          directory: __ObsWorkDir__
-        sondes:
-          directory: __ObsWorkDir__
-
-        ## amsua
-        amsua_aqua:
-          directory: __ObsWorkDir__
-        amsua_metop-a:
-          directory: __ObsWorkDir__
-        amsua_metop-b:
-          directory: __ObsWorkDir__
-        amsua_n15:
-          directory: __ObsWorkDir__
-        amsua_n18:
-          directory: __ObsWorkDir__
-        amsua_n19:
-          directory: __ObsWorkDir__
-        amsua-cld_aqua:
-          directory: __ObsWorkDir__
-          prefix: amsua_aqua
-        amsua-cld_metop-a:
-          directory: __ObsWorkDir__
-          prefix: amsua_metop-a
-        amsua-cld_metop-b:
-          directory: __ObsWorkDir__
-          prefix: amsua_metop-b
-        amsua-cld_n15:
-          directory: __ObsWorkDir__
-          prefix: amsua_n15
-        amsua-cld_n18:
-          directory: __ObsWorkDir__
-          prefix: amsua_n18
-        amsua-cld_n19:
-          directory: __ObsWorkDir__
-          prefix: amsua_n19
-
-        ## mhs
-        mhs_metop-a:
-          directory: __ObsWorkDir__
-        mhs_metop-b:
-          directory: __ObsWorkDir__
-        mhs_n18:
-          directory: __ObsWorkDir__
-        mhs_n19:
-          directory: __ObsWorkDir__
+        common: "{{ObsWorkDir}}"
 
       hofx:
-        ##anchor
-        aircraft:
-          directory: __ObsWorkDir__
-        gnssroref:
-          directory: __ObsWorkDir__
-          prefix: gnssro
-        satwind:
-          directory: __ObsWorkDir__
-        satwnd:
-          directory: __ObsWorkDir__
-        sfc:
-          directory: __ObsWorkDir__
-        sondes:
-          directory: __ObsWorkDir__
-
-        ## amsua
-        amsua_aqua:
-          directory: __ObsWorkDir__
-        amsua_metop-a:
-          directory: __ObsWorkDir__
-        amsua_metop-b:
-          directory: __ObsWorkDir__
-        amsua_n15:
-          directory: __ObsWorkDir__
-        amsua_n18:
-          directory: __ObsWorkDir__
-        amsua_n19:
-          directory: __ObsWorkDir__
-        amsua-cld_aqua:
-          directory: __ObsWorkDir__
-          prefix: amsua_aqua
-        amsua-cld_metop-a:
-          directory: __ObsWorkDir__
-          prefix: amsua_metop-a
-        amsua-cld_metop-b:
-          directory: __ObsWorkDir__
-          prefix: amsua_metop-b
-        amsua-cld_n15:
-          directory: __ObsWorkDir__
-          prefix: amsua_n15
-        amsua-cld_n18:
-          directory: __ObsWorkDir__
-          prefix: amsua_n18
-        amsua-cld_n19:
-          directory: __ObsWorkDir__
-          prefix: amsua_n19
-
-        ## mhs
-        mhs_metop-a:
-          directory: __ObsWorkDir__
-        mhs_metop-b:
-          directory: __ObsWorkDir__
-        mhs_n18:
-          directory: __ObsWorkDir__
-        mhs_n19:
-          directory: __ObsWorkDir__
+        common: "{{ObsWorkDir}}"
 
   PANDACArchive:
+    IODAPrefix:
+      gnssroref: gnssro
+      amsua-cld_aqua: amsua_aqua
+      amsua-cld_metop-a: amsua_metop-a
+      amsua-cld_metop-b: amsua_metop-b
+      amsua-cld_n15: amsua_n15
+      amsua-cld_n18: amsua_n18
+      amsua-cld_n19: amsua_n19
+      abi-clr_g16: abi_g16
+      ahi-clr_himawari8: ahi_himawari8
+
     IODADirectory:
+      #TODO: update to locations of files with new DateTime format
       variational:
         ##anchor
-        aircraft:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
-        gnssroref:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
-          prefix: gnssro
-        satwind:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
-        sfc:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
-        sondes:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        aircraft: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        gnssroref: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        satwind: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        sfc: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        sondes: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
 
         ## amsua
-        amsua_aqua:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        amsua_metop-a:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        amsua_metop-b:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        amsua_n15:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        amsua_n18:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        amsua_n19:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        amsua-cld_aqua:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-          prefix: amsua_aqua
-        amsua-cld_metop-a:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-          prefix: amsua_metop-a
-        amsua-cld_metop-b:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-          prefix: amsua_metop-b
-        amsua-cld_n15:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-          prefix: amsua_n15
-        amsua-cld_n18:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-          prefix: amsua_n18
-        amsua-cld_n19:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-          prefix: amsua_n19
+        amsua_aqua: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua_n15: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua-cld_aqua: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua-cld_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua-cld_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua-cld_n15: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua-cld_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        amsua-cld_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
 
         ## mhs
-        mhs_metop-a:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        mhs_metop-b:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        mhs_n18:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        mhs_n19:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
 
         ## abi
-        abi_g16:
-          #directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB59X59_no-bias-correct
-          superObGrid: 59X59
-        abi-clr_g16:
-          #directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
-          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO59X59_no-bias-correct
-          prefix: abi_g16
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB59X59_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO59X59_no-bias-correct
 
         ## ahi
-        ahi_himawari8:
-          #directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
-          superObGrid: 101X101
-        ahi-clr_himawari8:
-          #directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
-          prefix: ahi_himawari8
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
 
       hofx:
         ## anchor
-        aircraft:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
-        gnssroref:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
-          prefix: gnssro
-        satwind:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
-        sfc:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
-        sondes:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        aircraft: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        gnssroref: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        satwind: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        sfc: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        sondes: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
 
         ## amsua
-        amsua_aqua:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-        amsua_metop-a:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-        amsua_metop-b:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-        amsua_n15:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-        amsua_n18:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-        amsua_n19:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-        amsua-cld_aqua:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-          prefix: amsua_aqua
-        amsua-cld_metop-a:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-          prefix: amsua_metop-a
-        amsua-cld_metop-b:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-          prefix: amsua_metop-b
-        amsua-cld_n15:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-          prefix: amsua_n15
-        amsua-cld_n18:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-          prefix: amsua_n18
-        amsua-cld_n19:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-          prefix: amsua_n19
+        amsua_aqua: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua_n15: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua-cld_aqua: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua-cld_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua-cld_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua-cld_n15: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua-cld_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        amsua-cld_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
 
         ## mhs
-        mhs_metop-a:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-        mhs_metop-b:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-        mhs_n18:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
-        mhs_n19:
-          directory: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        mhs_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        mhs_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        mhs_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
+        mhs_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/no_bias
 
         ## abi
-        abi_g16:
-          #directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB59X59_no-bias-correct
-          superObGrid: 59X59
-        abi-clr_g16:
-          #directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
-          directory: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO59X59_no-bias-correct
-          prefix: abi_g16
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB59X59_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO59X59_no-bias-correct
 
         ## ahi
-        ahi_himawari8:
-          #directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
-          superObGrid: 101X101
-        ahi-clr_himawari8:
-          #directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-          directory: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
-          prefix: ahi_himawari8
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
+
+    IODASuperObGrid:
+      abi_g16: 59X59
+      ahi_himawari8: 101X101

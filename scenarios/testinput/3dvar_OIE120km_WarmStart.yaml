@@ -3,7 +3,6 @@ workflow:
   initialCyclePoint: 20180414T18
   finalCyclePoint: 20180415T06
   InitializationType: WarmStart
-  PreprocessObs: False
   # turn off verification to reduce overhead, repeat of 3denvar case
   VerifyDeterministicDA: False
   VerifyEnsMeanBG: False
