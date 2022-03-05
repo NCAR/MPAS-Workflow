@@ -8,7 +8,7 @@ MPAS-JEDI data assimilation package.
 Starting a cycling experiment on the Cheyenne HPC
 -------------------------------------------------
 
-```
+```shell
  #login to Cheyenne
 
  mkdir -p /fresh/path/for/submitting/experiments
@@ -28,20 +28,23 @@ Starting a cycling experiment on the Cheyenne HPC
  ./drive.csh
  #OR
  ./run.csh {{runConfig}}
+ #OR
+ ./test.csh
 ```
 
-It is required to set the work/run directories in $HOME/.cylc/global.rc as follows:
+It is required to set the `work` and `run` directories in $HOME/.cylc/global.rc as follows:
 ```
-  [hosts]
-      [[localhost]]
-          work directory = /glade/scratch/USERNAME/cylc-run
-          run directory = /glade/scratch/USERNAME/cylc-run
-          [[[batch systems]]]
-              [[[[pbs]]]]
-                  job name length maximum = 236
+[hosts]
+  [[localhost]]
+    work directory = /glade/scratch/USERNAME/cylc-run
+    run directory = /glade/scratch/USERNAME/cylc-run
+    [[[batch systems]]]
+      [[[[pbs]]]]
+        job name length maximum = 236
 ```
-It is recommended to also set `job name length maximum` to a large value. Continue reading for 
-more documentation aboute drive.csh and run.csh.
+`USERNAME` must be filled in with your user-name.  It is possible to choose different locations for
+the cylc `work` and `run` directories, as long as you also modify `cylcWorkDir` in `drive.csh`. It is
+recommended to set `job name length maximum` to a large value.
 
 
 Configuration Files
@@ -56,34 +59,34 @@ entire workflow.  Some files are designed to be modified by users, and others mo
 
 `config/scenario.csh`: selection of a particular experiment scenario
 
-For many `config/*.csh` files, there is a one-to-one correspondance with the scenarios/base/\*.yaml.
-They are as follows:
+For many `config/*.csh` files, there is a one-to-one correspondance with `scenarios/base/*.yaml`.
+For those configuration components, the `csh` script is used to parse the `yaml` the
+identically named portion of the scenario `yaml` file. The `base` scenario `yaml`'s contain
+the default values for all settings.  Those `base` configurations are as follows:
 
-```
-  scenarios/base/\*.yaml: default user-configurable settings and their descriptions
+`scenarios/base/workflow.yaml`: cylc task selection and date bounds
 
-  scenarios/base/workflow.yaml: cylc task selection and date bounds
+`scenarios/base/experiment.yaml`: experiment naming conventions
 
-  scenarios/base/experiment.yaml: experiment naming conventions
+`scenarios/base/model.yaml`: model mesh settings
 
-  scenarios/base/model.yaml: model mesh settings
+`scenarios/base/observations.yaml`: observation source data
 
-  scenarios/base/observations.yaml: observation source data
+`scenarios/base/variational.yaml`: settings specific to the variational application
 
-  scenarios/base/variational.yaml: settings specific to the variational application
+`scenarios/base/hofx.yaml`: settings specific to the hofx application
 
-  scenarios/base/hofx.yaml: settings specific to the hofx application
+`scenarios/base/job.yaml`: account and queue selection
 
-  scenarios/base/job.yaml: account and queue selection
-```
 
-While users can directly modify those `base` scripts to achieve their desired configuration,
-it is recommended to modify an existing scenario or create their own at
-`scenarios/{{ScenarioName}}.yaml`.  Users are referred to the pre-canned scenario
-configurations located in `scenarios/*.yaml` and `scenarios/testinput/*.yaml`.
-A particular scenario is selected within `config/scenario.csh`. Users may add new scenarios by
-copying one of the yaml files in the scenarios directory to a new file, modifying the entries, and
-then selecting the new scenario in config/scenario.csh.
+While users can directly modify those `base` `yaml`'s to achieve their desired configuration,
+it is recommended to modify or create a particular scenario `yaml`, i.e.,
+`scenarios/{{ScenarioName}}.yaml` to allow for easy distinction between their own experimental
+setups and the GitHub HEAD branch.  Users are referred to the pre-canned scenario configurations
+located in `scenarios/*.yaml` and `scenarios/testinput/*.yaml`.  A particular scenario is selected
+within `config/scenario.csh`. Users may add new scenarios by copying one of the `yaml` files in the
+scenarios directory to a new file, modifying the entries, and then selecting the new scenario in
+`config/scenario.csh`.
 
 ### Developer-modifiable configuration
 
@@ -94,7 +97,7 @@ GitHub issues, and to submit pull requests when appropriate.
 
 `config/environment.csh`: run-time environment used across compiled executables and python scripts
 
-`config/filestructure.csh`: workflow file structure
+`config/filestructure.csh`: global description of the workflow file structure
 
 `config/modeldata.csh`: static model-space data file structure, including mesh-specific partition files,
 fixed ensemble forecast members for deterministic experiments, first guess files for the first cycle
@@ -110,25 +113,25 @@ the `observations` configuration section and `observations.csh`
 
 If a developer wishes to add a new configuration key beyond the current available options, the
 recommended procedure is to add the key, default value, and description in one of the `base`
-yaml files, then parse the option in the corresponding `config/*.csh` file.  Developers
+`yaml` files, then parse the option in the corresponding `config/*.csh` file.  Developers
 are referred to the many existing examples and it is recommended to discuss additional options
 to be merged back into the GitHub repository via GitHub issues.
 
 
 
-#### MPAS configuration (config/mpas/)
+#### MPAS (`config/mpas/`)
 Configuration aspects that are unique to `MPAS-Atmosphere`
 
 `config/mpas/geovars.yaml`: list of templated geophysical variables (`GeoVars`) that MPAS-JEDI can
 provide to UFO; identical to `mpas-jedi/test/testinput/namelists/geovars.yaml`, but duplicated here
 so that users modify it at run-time as needed.
 
-`config/mpas/variables.csh`: model/analysis variables used to generate YAML files for MPAS-JEDI applications
+`config/mpas/variables.csh`: model/analysis variables used to generate `yaml` files for MPAS-JEDI applications
 
 
-##### Mesh-specific configuration
+##### Mesh-specific controls
 Mesh-dependent aspects of the configuration; in time, this functionality will migrate to the
-scenario yaml files
+scenario `yaml` files
 
 `config/mpas/$MPASGridDescriptor/mesh.csh`: mesh-specific options for multiple applications
 that affect the workflow and application behaviors
@@ -139,7 +142,7 @@ In the above, MPASGridDescriptor describes the mesh selected in the `model` part
 scenario configuration.  See `scenarios/base/model.yaml` for more information.
 
 
-##### Application-specific MPAS-Atmosphere configuration
+##### Application-specific MPAS-Atmosphere controls
 
 E.g., `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*`
 
@@ -155,15 +158,20 @@ E.g., `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*
 `EnsembleOfVariational.csh`
 
 
-#### MPAS-JEDI application-specific configuration files
-`config/applicationBase/*.yaml`: MPAS-JEDI application-specific YAML templates.  These will be
+#### MPAS-JEDI application-specific controls
+The application-specific `yaml` stubs provide a base set of options that are common across most
+experiments.  Parts of those stubs are automatically populated via the workflow.  Advanced
+users or developers are encouraged to modify the application-specific yamls directly to suit
+their needs.
+
+`config/applicationBase/*.yaml`: MPAS-JEDI application-specific `yaml` templates.  These will be
 further populated by scripts templated on `PrepJEDA.csh` and/or `PrepVariational.csh`.
 
-`config/ObsPlugs/variational/*.yaml`: observation yaml stubs that get plugged into `Variational`
+`config/ObsPlugs/variational/*.yaml`: observation `yaml` stubs that get plugged into `Variational`
 `applicationBase` yamls, e.g., `3dvar.yaml`, `3denvar.yaml`, `3dhybrid.yaml`, and
 `eda_3denvar.yaml`
 
-`config/ObsPlugs/hofx/*.yaml`: same, but for the `HofX` `applicationBase` yaml, `hofx.yaml`
+`config/ObsPlugs/hofx/*.yaml`: same, but for the `HofX` `applicationBase` `yaml`, `hofx.yaml`
 
 
 
@@ -171,14 +179,16 @@ Main driver: drive.csh
 ----------------------
 Creates a new cylc suite file, then runs it. Users need not modify this file. Developers who wish
 to add new cylc tasks, or modify the relationships between tasks, will modify `drive.csh`.
-The tasks that are selected in `drive.csh` also the bounding dates of the experiment are
+The tasks that are selected in `drive.csh` and the bounding dates of the experiment are
 controlled in the `workflow` section of the scenario configuration. Full descriptions of
 all options are available in `scenarios/base/workflow.yaml`.  Here we describe only the
 `CriticalPathType`, which is integral to running experiments and post-processing.
 
 The `CriticalPathType` determines whether the verification is performed concurrently with and
 depends on the critical path (`Normal`) tasks, or as an independent post-processing diagnostic step
-(`Bypass`). Setting `CriticalPathType` to either `Reanalysis` or `Reforecast` gives two variations of
+(`Bypass`). `Normal` and `Bypass` cover most use-cases for "continuous cycling" experiments.
+
+Setting `CriticalPathType` to either `Reanalysis` or `Reforecast` gives two variations of
 "partial cycling", where each cycle is independent and does not depende on any of the previous
 cycles. `Reanalysis` is used to perform the `CyclingDA` task on each cycle without re-running
 forecasts.  This requires the `CyclingFC` forecast files to already be present in the experiment
@@ -203,7 +213,7 @@ a new user first clones the MPAS-Workflow repository and (2) before submitting a
 to [MPAS-Workflow](https://github.com/NCAR/MPAS-Workflow).  For example, execute the following from
 the command-line:
 
-```
+```shell
   source env-script/cheyenne.${YourShell}
 
   ./run.csh test
@@ -247,13 +257,13 @@ templated interval. Takes `Variational` analyses or cold-start initial condition
 the input state directory and prefix, allowing it to read any forecast state written through the
 `MPAS-Atmosphere` `da_state` stream.
 
-`PrepJEDI.csh`: substitutes commonly repeated sections in the yaml file for all MPAS-JEDI
+`PrepJEDI.csh`: substitutes commonly repeated sections in the `yaml` file for all MPAS-JEDI
 applications. Templated w.r.t. the application type (i.e., `variational`, `hofx`) and application
 name (e.g., `3denvar`, `hofx`). Prepares `namelist.atmosphere`, `streams.atmosphere`, and
 `stream_list.atmosphere.*`.  Links required static files and graph info files that describe MPI
 partitioning.
 
-`PrepVariational.csh`: further modifies the application yaml file(s) for the `Variational` task
+`PrepVariational.csh`: further modifies the application `yaml` file(s) for the `Variational` task
 
 `Variational.csh`: used in the `DAMember*` cylc task; executes the `mpasjedi_variational`
 application.  Templated w.r.t. the background state prefix and directory. Reads one output
@@ -291,6 +301,23 @@ AHI
 ensembles, one each of background states and analysis states
 
 
+Non-task shell scripts
+----------------------
+`AppAndVerify.csh`: generate "Application" and "Verification" cylc-task shell scripts from the
+templated workflow task scripts via `sed` substitution
+
+`getCycleVars.csh`: defines cycle-specific variables, such as multiple formats of the valid date,
+and date-resolved directories
+
+`SetupWorkflow.csh`:
+1. Generate the experiment directory
+2. Copy the current config and scenarios directories to the experiment workflow directory
+   so that a record is kept of all settings
+3. Copy non-templated task scripts to the experiment directory
+4. Generate cylc-task shell scripts from via templated substitution of `AppAndVerify.csh`, then
+   execution of application-specific `AppAndVerify*.csh` scripts
+
+
 Python tools (`tools/*.py`)
 ---------------------------
 Each of these tools perform a useful part of the workflow that is otherwise cumbersome to achieve
@@ -299,13 +326,13 @@ via shell scripts. The argument definitions for each script can be retrieved by 
 
 `advanceCYMDH`: time-stepping used to figure out dates relative to an arbitrary input date
 
-`getYAMLNode`: retrieves a yaml node key or value from a yaml file
+`getYAMLNode`: retrieves a `yaml` node key or value from a `yaml` file
 
 `memberDir`: generates an ensemble member directory string, dependent on experiment- and
 application-specific inputs
 
 `nSpaces`: generates a string containing the number of spaces that are input. Used for
-controlling indentation of some yaml components
+controlling indentation of some `yaml` components
 
 `substituteEnsembleBMembers`: replaced by `substituteEnsembleBTemplate`
 
@@ -328,14 +355,12 @@ executables.
 Some useful cylc commands
 -------------------------
 1. Print a list of active suites
-
-```
+```shell
 cylc scan
 ```
 
 2. Open an X-window GUI showing the status of all active suites.
-
-```
+```shell
 cylc gscan
 ```
 
@@ -346,10 +371,30 @@ real-time progress the cylc tasks being executed and, in some cases, the next ta
 triggered. There are multiple views available, including a flow chart view that is useful for new
 users to learn the dependencies between tasks.
 
-3. Trigger all tasks in a suite with a particular {{STATUS}}.  Examples: failed, submit-failed
-
+3. Shut down a suite (`SUITENAME`) after killing all active tasks
+```shell
+cylc stop --kill SUITENAME
 ```
-cylc trigger {{SUITENAME}} '*.*:{{STATUS}}'
+
+4. Trigger all tasks in a suite with a particular `STATUS` (e.g., failed,
+submit-failed)
+```shell
+cylc trigger SUITENAME "*.*:STATUS"
+```
+
+5. Useful c-shell alises based on the above
+```csh
+alias cylcstopkill "cylc stop --kill \!:1"
+# usage:
+cylcstopkill SUITENAME
+
+alias cylctriggerfailed "cylc trigger \!:1 '*.*:failed'"
+# usage:
+cylctriggerfailed SUITENAME
+
+alias cylctriggerstatus "cylc trigger \!:1 '*.*:\!:2'"
+# usage:
+cylctriggerstatus SUITENAME STATUS
 ```
 
 A note about disk management
