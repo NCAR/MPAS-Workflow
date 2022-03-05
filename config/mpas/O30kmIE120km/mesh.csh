@@ -14,19 +14,25 @@ setenv MPASDiffusionLengthScale 30000.0
 setenv RADTHINDISTANCE    "60.0"
 setenv RADTHINAMOUNT      "0.75"
 
-## ABI super-obbing footprint, set independently
-#  for variational and hofx
-#OPTIONS: 15X15, 59X59
-set variationalABISuperOb = 15X15
-set hofxABISuperOb = 15X15
-
-## AHI super-obbing footprint set independently
-#  for variational and hofx
-#OPTIONS: 15X15, 101X101
-set variationalAHISuperOb = 15X15
-set hofxAHISuperOb = 15X15
-
 ## Background Error
+
+### Static B
+# TODO: should static B correspond to the inner or outer loop mesh?
+
+#### control variables: [stream_function, velocity_potential, temperature, spechum, surface_pressure]
+#### strategy: specific_univariate
+set bumpCovControlVariables = ( \
+  stream_function \
+  velocity_potential \
+  temperature \
+  spechum \
+  surface_pressure \
+)
+setenv bumpCovPrefix mpas_parametersbump_cov
+setenv bumpCovDir /glade/scratch/bjung/pandac/20220218_develop/bumpcov_tune
+setenv bumpCovStdDevFile /glade/scratch/bjung/pandac/20220218_develop/CMAT_00.tune/mpas.stddev.2018-04-15_00.00.00.nc
+setenv bumpCovVBalPrefix mpas_vbal
+setenv bumpCovVBalDir /glade/scratch/bjung/pandac/20220218_develop/bumpcov_tune
 
 ### Ensemble localization
 

@@ -5,10 +5,8 @@
 Closes #(if applicable)
 
 ### Tests completed
- - WarmStart
-   - [ ] OIE120km 3dvar, 2 cycles
-   - [ ] OIE120km 3denvar, 2 cycles
-   - [ ] OIE120km eda_3denvar, 2 cycles
-   - [ ] O30kmIE60km 3denvar, 2 cycles
- - ColdStart
-   - [ ] OIE120km 3dvar, 2 cycles, PreprocessObs=True
+ - [ ] 3dvar_OIE120km_WarmStart
+ - [ ] 3denvar_OIE120km_WarmStart
+ - [ ] 3dvar_OIE120km_ColdStart
+ - [ ] 3denvar_O30kmIE60km_WarmStart
+ - [ ] eda_OIE120km_WarmStart

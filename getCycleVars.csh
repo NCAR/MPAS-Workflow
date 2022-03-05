@@ -2,6 +2,8 @@
 
 source config/filestructure.csh
 source config/tools.csh
+source config/workflow.csh
+source config/variational.csh
 
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 #set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`
@@ -10,10 +12,11 @@ setenv prevCycleDate ${prevCycleDate}
 
 ## setup cycle directory names
 set ObsDir = ${ObsWorkDir}/${thisValidDate}
-set CyclingDADirs = (${CyclingDAWorkDir}/${thisCycleDate})
+set CyclingDADir = ${CyclingDAWorkDir}/${thisCycleDate}
+set CyclingDAInDir = $CyclingDADir/${bgDir}
+set CyclingDAOutDir = $CyclingDADir/${anDir}
+set CyclingDADirs = (${CyclingDADir})
 set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})
-set CyclingDAInDir = $CyclingDADirs[1]/${bgDir}
-set CyclingDAOutDir = $CyclingDADirs[1]/${anDir}
 
 set prevCyclingDADir = ${CyclingDAWorkDir}/${prevCycleDate}
 set CyclingFCDir = ${CyclingFCWorkDir}/${thisCycleDate}

@@ -1,0 +1,24 @@
+experiment:
+## ExpSuffix
+# a unique suffix to distinguish this experiment from others
+  ExpSuffix: ''
+
+## ExperimentName
+# leave as None to be automatically generated from critical config elements
+# Note: when using with run.csh and for multiple simultaneously running scenarios, setting
+# ExperimentName explicitly for all scenarios is the safest way to ensure that two scenarios do not
+# have identically auto-generated ExperimentName's
+  ExperimentName: None
+
+## ParentDirectory will be constructd using
+# set ParentDirectory = ${ParentDirectoryPrefix}/${ExperimentUser}/${ParentDirectorySuffix}
+
+## ParentDirectoryPrefix
+  ParentDirectoryPrefix: /glade/scratch
+
+## ExperimentUser
+# leave as None to be assigned with 'set ExperimentUser = ${USER}'
+  ExperimentUser: None
+
+## ParentDirectorySuffix
+  ParentDirectorySuffix: pandac

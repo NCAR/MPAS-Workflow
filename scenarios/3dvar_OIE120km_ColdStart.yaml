@@ -1,0 +1,13 @@
+workflow:
+  firstCyclePoint: 20220217T18
+  initialCyclePoint: 20220218T00
+  finalCyclePoint: 20220228T00
+  InitializationType: ColdStart
+  # TODO: enable GFS analysis generation every cycle, then engage forecast verification
+  VerifyEnsMeanBG: False
+observations:
+  resource: GladeRDAOnline
+model:
+  MPASGridDescriptor: OIE120km
+variational:
+  DAType: 3dvar

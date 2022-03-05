@@ -1,118 +1,34 @@
 #!/bin/csh
 
-## Top-level workflow configuration
+####################################################################################################
+# This script runs a pre-configure cylc suite scenario described in config/scenario.csh. If the user
+# has previously executed this script with the same effecitve "SuiteName" the scenario is
+# already running, then executing this script will automatically kill those running suites.
+####################################################################################################
 
-## load experiment configuration
-source config/experiment.csh
-
-######################
-# workflow date bounds
-######################
-## initialCyclePoint
-# OPTIONS: >= FirstCycleDate (see config/experiment.csh)
-# Either:
-# + initialCyclePoint must be equal to FirstCycleDate
-# OR:
-# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate to automatically restart
-#   from a previously completed cycle.
-set initialCyclePoint = 20180414T18
-
-## finalCyclePoint
-# OPTIONS: >= initialCyclePoint
-# + ancillary model and/or observation data must be available between initialCyclePoint and finalCyclePoint
-set finalCyclePoint = 20180514T18
-
-
-#########################
-# workflow task selection
-#########################
-## CriticalPathType: controls dependencies between and chilrdren of
-#                   DA and FC cycling components
-# OPTIONS: Normal, Bypass, Reanalysis, Reforecast
-set CriticalPathType = Normal
-
-## VerifyDeterministicDA: whether to run verification scripts for
-#    obs feedback files from DA.  Does not work for ensemble DA.
-#    Only works when CriticalPathType == Normal.
-# OPTIONS: True/False
-set VerifyDeterministicDA = True
-
-## CompareDA2Benchmark: compare verification nc files between two experiments
-#    after the DA verification completes
-# OPTIONS: True/False
-set CompareDA2Benchmark = False
-
-## VerifyExtendedMeanFC: whether to run verification scripts across
-#    extended forecast states, first intialized at mean analysis
-# OPTIONS: True/False
-set VerifyExtendedMeanFC = False
-
-## VerifyBGMembers: whether to run verification scripts for CyclingWindowHR
-#    forecast length. Runs HofXBG, VerifyObsBG, and VerifyModelBG on critical
-#    path forecasts that are initialized from ensemble member analyses.
-# OPTIONS: True/False
-set VerifyBGMembers = False
-
-## CompareBG2Benchmark: compare verification nc files between two experiments
-#    after the BGMembers verification completes
-# OPTIONS: True/False
-set CompareBG2Benchmark = False
-
-## VerifyEnsMeanBG: whether to run verification scripts for ensemble mean
-#    background (nEnsDAMembers > 1) or deterministic background (nEnsDAMembers == 1)
-# OPTIONS: True/False
-set VerifyEnsMeanBG = True
-
-## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
-#    space while VerifyEnsMeanBG is True.  Automatically triggers HofXBG
-#    for all ensemble members.
-# OPTIONS: True/False
-set DiagnoseEnsSpreadBG = True
-
-## VerifyEnsMeanAN: whether to run verification scripts for ensemble
-#    mean analysis state.
-# OPTIONS: True/False
-set VerifyANMembers = False
-
-## VerifyExtendedEnsBG: whether to run verification scripts across
-#    extended forecast states, first intialized at ensemble of analysis
-#    states.
-# OPTIONS: True/False
-set VerifyExtendedEnsFC = False
+echo "$0 (INFO): generating a new cylc suite"
 
 date
 
-## Set the FirstCycleDate in the right format for cylc
-set yymmdd = `echo ${FirstCycleDate} | cut -c 1-8`
-set hh = `echo ${FirstCycleDate} | cut -c 9-10`
-set firstCyclePoint = ${yymmdd}T${hh}
+echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
-## Set the cycle hours (cyclingCycles) according to the dates
-if ($initialCyclePoint == $firstCyclePoint) then
-  # Create the experiment directory and cylc task script
-  ./SetupWorkflow.csh
-  # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
-  # initialCyclePoint
-  set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
-else
-  # The cycles will run every CyclingWindowHR hours, starting at the initialCyclePoint
-  set cyclingCycles = PT${CyclingWindowHR}H
-endif
-
-## load the file structure
 source config/filestructure.csh
-
-## Change to the cylc suite directory
-cd ${mainScriptDir}
-
-## load job submission environment
+source config/workflow.csh
+source config/observations.csh
+source config/model.csh
+source config/variational.csh
 source config/job.csh
 source config/mpas/${MPASGridDescriptor}/job.csh
 
-echo "Initializing ${PackageBaseName}"
+echo "$0 (INFO):  ExperimentName = ${ExperimentName}"
+
+echo "$0 (INFO): setting up the environment"
+
 module purge
 module load cylc
 module load graphviz
+
+date
 
 ## SuiteName: name of the cylc suite, can be used to differentiate between two
 # suites running simultaneously in the same ${ExperimentName} directory
@@ -121,9 +37,27 @@ module load graphviz
 # example: ${ExperimentName}_verify for a simultaneous suite running only Verification
 set SuiteName = ${ExperimentName}
 
+## Set the cycle hours (cyclingCycles) according to the dates
+if ($initialCyclePoint == $firstCyclePoint) then
+  echo "$0 (INFO): Initializing ${PackageBaseName} in the experiment directory"
+  # Create the experiment directory and cylc task scripts
+  ./SetupWorkflow.csh
+
+  # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
+  # initialCyclePoint
+  set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
+else
+  # The cycles will run every CyclingWindowHR hours, starting at the initialCyclePoint
+  set cyclingCycles = PT${CyclingWindowHR}H
+endif
+
+## Change to the cylc suite directory
+cd ${mainScriptDir}
+
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
-rm -fr ${cylcWorkDir}/${SuiteName}
-echo "creating suite.rc"
+mkdir -p ${cylcWorkDir}
+
+echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
 # cycle dates
@@ -132,7 +66,7 @@ cat >! suite.rc << EOF
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
-{% set PreprocessObs = ${PreprocessObs} %}
+{% set observations__resource = "${observations__resource}" %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
@@ -167,8 +101,11 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
 {% elif CriticalPathType == "Normal" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
-  {% if PreprocessObs %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => ObstoIODA" %}
+#TODO: in order to avoid waits for observation conversion, ObsToIODA need only depend on
+# + ObsToIODA[-PT${CyclingWindowHR}H]
+# + check whether observations are present
+  {% if observations__resource in ["GladeRDAOnline"] %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => ObsToIODA" %}
   {% endif %}
   {% if ABEInflation %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
@@ -211,11 +148,11 @@ cat >! suite.rc << EOF
   [[dependencies]]
 {% if initialCyclePoint == firstCyclePoint %}
   {% if InitializationType == "ColdStart" %}
-      [[[R1]]]
-        graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
+    [[[R1]]]
+      graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
   {% elif InitializationType == "WarmStart" %}
-      [[[R1]]]
-        graph = GetWarmStartIC => CyclingFCFinished
+    [[[R1]]]
+      graph = GetWarmStartIC => CyclingFCFinished
   {% endif %}
 {% endif %}
 ## Critical path for cycling
@@ -267,8 +204,8 @@ cat >! suite.rc << EOF
 {% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
     [[[${cyclingCycles}]]]
       graph = '''
-  {% if PreprocessObs %}
-        ObstoIODA => HofXBG
+  {% if observations__resource in ["GladeRDAOnline"] %}
+        ObsToIODA => HofXBG
   {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
   {% endif %}
@@ -413,14 +350,14 @@ cat >! suite.rc << EOF
       execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
   # observations-related components
-  [[ObstoIODA]]
-    script = \$origin/ObstoIODA.csh
+  [[ObsToIODA]]
+    script = \$origin/ObsToIODA.csh
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
-    # currently ObstoIODA has to be on Cheyenne, because ioda-upgrade.x is built there
+    # currently ObsToIODA has to be on Cheyenne, because ioda-upgrade.x is built there
     # TODO: build ioda-upgrade.x on casper, remove CP directives below
-    # Note: memory for ObstoIODA may need to be increased when hyperspectral and/or
+    # Note: memory for ObsToIODA may need to be increased when hyperspectral and/or
     #       geostationary instruments are added
     [[[directives]]]
       -m = ae
@@ -673,8 +610,21 @@ cat >! suite.rc << EOF
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
 
+cylc poll $SuiteName
+if ( $status == 0 ) then
+  echo "$0 (INFO): a cylc suite named $SuiteName is already running!"
+  echo "$0 (INFO): stopping the suite, then starting a new one"
+  cylc stop --kill $SuiteName
+  sleep 5
+else
+  echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not running"
+  echo "$0 (INFO): starting a new suite"
+endif
+
+rm -rf ${cylcWorkDir}/${SuiteName}
+
 cylc register ${SuiteName} ${mainScriptDir}
 cylc validate ${SuiteName}
 cylc run ${SuiteName}
 
-exit
+exit 0

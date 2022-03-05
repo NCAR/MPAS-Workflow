@@ -38,16 +38,11 @@ cost function:
     - saber block name: BUMP_NICAS
       saber central block: true
       iterative inverse: true
-      input variables: &ctlvars
-      - stream_function
-      - velocity_potential
-      - temperature
-      - spechum
-      - surface_pressure
+      input variables: &ctlvars [{{bumpCovControlVariables}}]
       output variables: *ctlvars
       bump:
-        datadir: /glade/scratch/bjung/pandac/20220218_develop/bumpcov_tune
-        prefix: mpas_parametersbump_cov
+        datadir: {{bumpCovDir}}
+        prefix: {{bumpCovPrefix}}
         strategy: specific_univariate
         load_nicas_local: true
         verbosity: main
@@ -55,15 +50,15 @@ cost function:
       input variables: *ctlvars
       output variables: *ctlvars
       file:
-        filename: /glade/scratch/bjung/pandac/20220218_develop/CMAT_00.tune/mpas.stddev.2018-04-15_00.00.00.nc
+        filename: {{bumpCovStdDevFile}}
         date: *analysisDate
         stream name: control
     - saber block name: BUMP_VerticalBalance
       input variables: *ctlvars
       output variables: *ctlvars
       bump:
-        datadir: /glade/scratch/bjung/pandac/20220218_develop/bumpcov_tune
-        prefix: mpas_vbal
+        datadir: {{bumpCovVBalDir}}
+        prefix: {{bumpCovVBalPrefix}}
         load_vbal: true
         #load_samp_global: true
         load_samp_local: true

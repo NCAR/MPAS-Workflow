@@ -14,19 +14,24 @@ setenv RADTHINDISTANCE     "200.0"
 setenv RADTHINAMOUNT       "0.98"
 setenv ABEILocalizationRadius "1200.0"
 
-## ABI super-obbing footprint, set independently
-#  for variational and hofx
-#OPTIONS: 15X15, 59X59
-set variationalABISuperOb = 59X59
-set hofxABISuperOb = 59X59
-
-## AHI super-obbing footprint set independently
-#  for variational and hofx
-#OPTIONS: 15X15, 101X101
-set variationalAHISuperOb = 101X101
-set hofxAHISuperOb = 101X101
-
 ## Background Error
+
+### Static B
+
+#### control variables: [stream_function, velocity_potential, temperature, spechum, surface_pressure]
+#### strategy: specific_univariate
+set bumpCovControlVariables = ( \
+  stream_function \
+  velocity_potential \
+  temperature \
+  spechum \
+  surface_pressure \
+)
+setenv bumpCovPrefix mpas_parametersbump_cov
+setenv bumpCovDir /glade/scratch/bjung/pandac/20220218_develop/bumpcov_tune
+setenv bumpCovStdDevFile /glade/scratch/bjung/pandac/20220218_develop/CMAT_00.tune/mpas.stddev.2018-04-15_00.00.00.nc
+setenv bumpCovVBalPrefix mpas_vbal
+setenv bumpCovVBalDir /glade/scratch/bjung/pandac/20220218_develop/bumpcov_tune
 
 ### Ensemble localization
 

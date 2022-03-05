@@ -1,6 +1,7 @@
 #!/bin/csh -f
 
-source config/experiment.csh
+source config/workflow.csh
+source config/variational.csh
 source config/modeldata.csh
 
 # job length and node/pe requirements
@@ -38,7 +39,8 @@ setenv VerifyModelJobMinutes 2
 ## Variational+EnsOfVariational
 # benchmark: < 3 minutes
 # longer duration with more observations
-set DeterministicDABaseMinutes = 6
+set DeterministicDABaseMinutes = 6 #develop
+#set DeterministicDABaseMinutes = 30 #feature/getvals_upd
 
 # Variational
 if ( $nEnsDAMembers > 10 ) then
