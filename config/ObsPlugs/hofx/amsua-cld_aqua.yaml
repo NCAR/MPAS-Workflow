@@ -2,7 +2,7 @@
     <<: *ObsSpace
     name: amsua-cld_aqua
     obsdatain:
-      obsfile: InDBDir/amsua_aqua_obs_2018041500.h5
+      obsfile: InDBDir/amsua_aqua_obs_{{thisValidDate}}.h5
     obsdataout:
       obsfile: OutDBDir/obsPrefix_amsua-cld_aqua.h5
     simulated variables: [brightness_temperature]

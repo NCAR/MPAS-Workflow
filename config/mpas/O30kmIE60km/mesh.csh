@@ -34,14 +34,5 @@ set hofxAHISuperOb = 15X15
 #### strategy: common
 #### 1200km horizontal loc
 #### 6km height vertical loc
-setenv bumpLocPrefix bumploc_1200km_6km
-###### 384pe
-#setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200km_v=6km_384pe_05OCT2021code
-###### 192pe
-setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200km_v=6km_192pe_05OCT2021code
-###### 144pe
-#setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200km_v=6km_144pe_05OCT2021code
-###### 128pe
-#setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200km_v=6km_128pe_05OCT2021code
-###### 96pe
-#setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200km_v=6km_96pe_05OCT2021code
+setenv bumpLocPrefix bumploc_1200.0km_6.0km
+setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_28FEB2022code

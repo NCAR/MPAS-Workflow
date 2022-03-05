@@ -2,7 +2,7 @@
     <<: *ObsSpace
     name: ahi-clr_himawari8
     obsdatain:
-      obsfile: InDBDir/ahi_himawari8_obs_2018041500.h5
+      obsfile: InDBDir/ahi_himawari8_obs_{{thisValidDate}}.h5
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_ahi-clr_himawari8.h5
     simulated variables: [brightness_temperature]

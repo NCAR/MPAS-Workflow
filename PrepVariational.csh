@@ -225,23 +225,9 @@ endif
 # performs sed substitution for EnsemblePbMembers
 set enspbmemsed = EnsemblePbMembers
 
-# established file lists
-set ensPbFiles = ${enspbmemsed}.txt
-rm $ensPbFiles
+# initialize variational member yamls
 set yamlFiles = variationals.txt
 rm $yamlFiles
-
-# establish ensemble Pb member states
-set member = 1
-while ( $member <= ${ensPbNMembers} )
-  set memDir = `${memberDir} ensemble $member "${ensPbMemFmt}"`
-
-  set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
-  echo $filename >> $ensPbFiles
-  @ member++
-end
-
-# initialize variational member yamls
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set memberyaml = variational_${member}.yaml
@@ -252,11 +238,17 @@ while ( $member <= ${nEnsDAMembers} )
 end
 
 # substitute Jb members
-setenv myCommand "${substituteEnsembleB} $ensPbFiles $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
+setenv myCommand "${substituteEnsembleBTemplate} ${ensPbDir}/${prevValidDate} ${ensPbMemPrefix} None ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
+
 echo "$myCommand"
 ${myCommand}
 
-rm $ensPbFiles $yamlFiles
+if ($status != 0) then
+  echo "$0 (ERROR): failed to substitute ${enspbmemsed}" > ./FAIL
+  exit 1
+endif
+
+rm $yamlFiles
 
 
 # Jo term
@@ -330,8 +322,8 @@ while ( $member <= ${nEnsDAMembers} )
 
   # Link bg from StateDirs, ensuring that MPASJEDIDiagVariables are present
   # ============================================================================
-  set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
-  set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
+  set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
+  set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
   rm ${bgFile}${OrigFileSuffix} ${bgFile}
   ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
@@ -370,7 +362,7 @@ while ( $member <= ${nEnsDAMembers} )
     cp -v ${bgFileOther} ${bgFile}
 
     # add diagnostic variables
-    set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
+    set diagFile = ${other}/${DIAGFilePrefix}.$thisMPASFileDate.nc
     ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
   endif
 
@@ -413,7 +405,7 @@ while ( $member <= ${nEnsDAMembers} )
   # ==========================================================
   set an = $CyclingDAOutDirs[$member]
   mkdir -p ${an}
-  set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
+  set anFile = ${an}/${ANFilePrefix}.$thisMPASFileDate.nc
   rm ${anFile}
   cp -v ${bgFile} ${anFile}
 

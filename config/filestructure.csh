@@ -57,9 +57,11 @@ setenv ConfigDir ${mainScriptDir}/config
 
 ## directory string formatter for EDA members
 # third argument to memberDir.py
-setenv flowMemFmt "/mem{:03d}"
-setenv flowInstFmt "/instance{:03d}"
-setenv flowMemFileFmt "_{:03d}"
+setenv flowMemPrefix "mem"
+setenv flowMemNDigits 3
+setenv flowMemFmt "/${flowMemPrefix}{:0${flowMemNDigits}d}"
+setenv flowInstFmt "/instance{:0${flowMemNDigits}d}"
+setenv flowMemFileFmt "_{:0${flowMemNDigits}d}"
 
 ## appyaml: universal yaml file name for all jedi applications
 setenv appyaml jedi.yaml

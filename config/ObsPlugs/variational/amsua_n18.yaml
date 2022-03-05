@@ -2,7 +2,7 @@
     <<: *ObsSpace
     name: amsua_n18
     obsdatain:
-      obsfile: InDBDir/amsua_n18_obs_2018041500.h5
+      obsfile: InDBDir/amsua_n18_obs_{{thisValidDate}}.h5
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_amsua_n18.h5
     simulated variables: [brightness_temperature]

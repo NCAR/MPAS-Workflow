@@ -44,7 +44,7 @@ set gridTemplateFile = ${self_WorkDir}/${localStaticFieldsFile}
 
 # could use mean state, but not guaranteed to have all required fields
 #set meanStatePrefix = ${FCFilePrefix}
-#set meanName = ${meanStatePrefix}.$fileDate.nc
+#set meanName = ${meanStatePrefix}.$thisMPASFileDate.nc
 #set gridTemplateFile = $MeanBackgroundDirs[1]/$meanName
 
 
