@@ -377,8 +377,7 @@ rm ${thisSEDF}
 set prevYAML = $thisYAML
 
 # (iv) substitute allsky IR PerformActionFilters
-set nIndent = $applicationObsIndent[$myAppIndex]
-@ nIndent = $nIndent + 2
+@ nIndent = $nObsIndent + 2
 set filtersIndent = "`${nSpaces} $nIndent`"
 
 foreach InfraredInstrument (abi_g16 ahi_himawari8)
