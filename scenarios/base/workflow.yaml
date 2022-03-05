@@ -30,7 +30,7 @@ workflow:
 # task selection
 ################
 ## InitializationType
-# Indicates the type of initialization at the initial cycle: cold or warm start
+# Indicates the type of initialization in the R1 cylc task of the first cycle: cold or warm start
 # OPTIONS:
 #   ColdStart - generate first forecast online from an external GFS analysis
 #   WarmStart - copy a pre-generated forecast
@@ -103,7 +103,6 @@ workflow:
 ##################################
 ## analysis and forecast intervals
 ##################################
-#TODO: move these settings to scenario.workflow yaml section
   # forecast interval between CyclingDA analyses
   CyclingWindowHR: 6
 
