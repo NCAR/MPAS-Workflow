@@ -26,11 +26,11 @@ setenv HofXPEPerNode 36
 setenv HofXMemory 109
 
 # ~?-? min. for VerifyObsDA, ~? min. for VerifyObsBG
-set DeterministicVerifyObsJobMinutes = 15
+set DeterministicVerifyObsJobMinutes = 10
 set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
 
 # ? min. premium per 20 members for VerifyObsEnsMean
-set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 9
+set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 120
 @ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} * ${EnsembleVerifyObsEnsMeanJobSecondsPerMember} / 60
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
 
