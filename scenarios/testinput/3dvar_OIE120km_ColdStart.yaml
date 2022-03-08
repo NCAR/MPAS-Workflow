@@ -16,7 +16,7 @@ model:
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]
-  Satbias: GDASFixed
+  satelliteBias: GDASFixed
 job:
   CPQueueName: economy
   NCPQueueName: economy

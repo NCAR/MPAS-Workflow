@@ -185,7 +185,7 @@ rm -r ${InDBDir}
 mkdir -p ${InDBDir}
 
 rm -r ${OutDBDir}
-mkdir ${OutDBDir}
+mkdir -p ${OutDBDir}
 
 date
 
