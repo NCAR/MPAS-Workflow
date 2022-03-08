@@ -1,5 +1,8 @@
 #!/bin/csh -f
 
+if ( $?config_verification ) exit 0
+setenv config_verification 1
+
 #####################
 ## Verification tools
 #####################

@@ -1,6 +1,7 @@
 #!/bin/csh -f
 
-source config/experiment.csh
+source config/workflow.csh
+source config/variational.csh
 source config/modeldata.csh
 
 # job length and node/pe requirements
@@ -33,7 +34,7 @@ set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 9
 @ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} * ${EnsembleVerifyObsEnsMeanJobSecondsPerMember} / 60
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
 
-setenv VerifyModelJobMinutes 5
+setenv VerifyModelJobMinutes 8
 
 ## Variational+EnsOfVariational
 # Timing and memory required for different PE counts

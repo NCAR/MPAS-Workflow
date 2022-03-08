@@ -53,8 +53,8 @@ cost function:
         input variables: *incvars
         output variables: *incvars
         bump:
-          datadir: bumpLocDir
-          prefix: bumpLocPrefix
+          datadir: {{bumpLocDir}}
+          prefix: {{bumpLocPrefix}}
           strategy: specific_multivariate
           load_nicas_local: true
           io_keys: [temperature-temperature,spechum-spechum,uReconstructZonal-uReconstructZonal,uReconstructMeridional-uReconstructMeridional,surface_pressure-surface_pressure,qc-qc,qi-qi,qr-qr,qs-qs,qg-qg]
