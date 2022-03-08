@@ -326,19 +326,15 @@ while ( $member <= ${nEnsDAMembers} )
   set memDir = `${memberDir} $DAType $member`
   sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
 
-  # first EDA member and deterministic EnVar do not perturb observations
-  if ($member == 1) then
+#  # first EDA member and deterministic EnVar do not perturb observations
+#  #if ($member == 1) then
+  # deterministic EnVar does not perturb observations
+
+  if ($nEnsDAMembers == 1) then
     sed -i 's@ObsPerturbations@false@g' $memberyaml
   else
     sed -i 's@ObsPerturbations@true@g' $memberyaml
   endif
-
-  # perturb all members of EDA to...avoid spread bias?
-#  if ("$DAType" =~ *"eda"*) then
-#    sed -i 's@ObsPerturbations@true@g' $memberyaml
-#  else
-#    sed -i 's@ObsPerturbations@false@g' $memberyaml
-#  endif
 
   sed -i 's@MemberSeed@'$member'@g' $memberyaml
 
