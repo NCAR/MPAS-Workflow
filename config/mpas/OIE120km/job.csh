@@ -26,11 +26,11 @@ setenv HofXPEPerNode 36
 setenv HofXMemory 109
 
 # ~8-12 min. for VerifyObsDA, ~5 min. for VerifyObsBG; 08OCT2021
-set DeterministicVerifyObsJobMinutes = 15
+set DeterministicVerifyObsJobMinutes = 10
 set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
 
 # ~180 sec. premium per 20 members for VerifyObsEnsMean; 08OCT2021
-set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 9
+set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 120
 @ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} * ${EnsembleVerifyObsEnsMeanJobSecondsPerMember} / 60
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
 
