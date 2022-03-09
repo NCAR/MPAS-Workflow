@@ -317,6 +317,7 @@ cat >! suite.rc << EOF
   [[VerifyModelBase]]
     [[[job]]]
       execution time limit = PT${VerifyModelJobMinutes}M
+      execution retry delays = ${VerifyModelRetry}
     [[[directives]]]
       -q = ${NCPQueueName}
       -A = ${NCPAccountNumber}
@@ -324,7 +325,7 @@ cat >! suite.rc << EOF
   [[VerifyObsBase]]
     [[[job]]]
       execution time limit = PT${VerifyObsJobMinutes}M
-      execution retry delays = ${HofXRetry}
+      execution retry delays = ${VerifyObsRetry}
     [[[directives]]]
       -q = ${NCPQueueName}
       -A = ${NCPAccountNumber}
@@ -339,6 +340,7 @@ cat >! suite.rc << EOF
   [[CleanBase]]
     [[[job]]]
       execution time limit = PT5M
+      execution retry delays = ${CleanRetry}
 #Cycling components
   # initialization-related components
   [[GetWarmStartIC]]

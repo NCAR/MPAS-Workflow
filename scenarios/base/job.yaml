@@ -36,3 +36,4 @@ job:
   HofXRetry: '2*PT30S'
   VerifyObsRetry: '1*PT30S'
   VerifyModelRetry: '1*PT30S'
+  CleanRetry: '2*PT10S'
