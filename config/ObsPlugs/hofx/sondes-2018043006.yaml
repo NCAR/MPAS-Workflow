@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: Radiosonde
     obsdatain:
-      obsfile: InDBDir/sondes_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/sondes_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_sondes.h5
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_sondes.h5
     simulated variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind]
   obs error: *ObsErrorDiagonal
   obs operator:

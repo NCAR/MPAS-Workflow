@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: ahi-clr_himawari8
     obsdatain:
-      obsfile: InDBDir/ahi_himawari8_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/ahi_himawari8_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_ahi-clr_himawari8.h5
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_ahi-clr_himawari8.h5
     simulated variables: [brightness_temperature]
     channels: &clrahi_channels 7-16
   obs error: *ObsErrorDiagonal
@@ -25,9 +25,9 @@
         name: cloud_area_fraction@MetaData
       maxvalue: 0.05
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_ahi-clr_himawari8.nc4
+    filename: {{OutDBDir}}/{{geoPrefix}}_ahi-clr_himawari8.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_ahi-clr_himawari8.nc4
+    filename: {{OutDBDir}}/{{diagPrefix}}_ahi-clr_himawari8.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *clrahi_channels

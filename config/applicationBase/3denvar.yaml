@@ -1,11 +1,11 @@
 _iteration: &iterationConfig
   geometry:
-    nml_file: InnerNamelistFile
-    streams_file: InnerStreamsFileStreamsFileMember
+    nml_file: {{InnerNamelistFile}}
+    streams_file: {{InnerStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
     interpolation type: unstructured
   gradient norm reduction: 1e-3
-  obs perturbations: ObsPerturbations
+  obs perturbations: {{ObsPerturbations}}
   #Several 'online diagnostics' are useful for checking the H correctness and Hessian symmetry
 #  online diagnostics:
 #    tlm taylor test: true
@@ -15,17 +15,17 @@ _iteration: &iterationConfig
 #    online adj test: true
 _member: &memberConfig
   date: &analysisDate {{thisISO8601Date}}
-  state variables: &incvars [AnalysisVariables]
+  state variables: &incvars [{{AnalysisVariables}}]
   stream name: ensemble
 ObsAnchors
 output:
-  filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
+  filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis
 variational:
   minimizer:
-VariationalMinimizer
+{{VariationalMinimizer}}
   iterations:
-VariationalIterations
+{{VariationalIterations}}
 final:
   diagnostics:
     departures: depan
@@ -35,14 +35,14 @@ cost function:
   window length: {{windowLength}}
   jb evaluation: false
   geometry:
-    nml_file: OuterNamelistFile
-    streams_file: OuterStreamsFileStreamsFileMember
+    nml_file: {{OuterNamelistFile}}
+    streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
     interpolation type: unstructured
   analysis variables: *incvars
   background:
-    state variables: [StateVariables]
-    filename: bgStateDirOOPSMemberDir/bgStatePrefix.{{thisMPASFileDate}}.nc
+    state variables: [{{StateVariables}}]
+    filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
     date: *analysisDate
   background error:
     covariance model: ensemble
@@ -58,6 +58,6 @@ cost function:
           strategy: common
           load_nicas_local: true
           verbosity: main
-EnsemblePbMembers
-EnsemblePbInflation
+{{EnsemblePbMembers}}
+{{EnsemblePbInflation}}
   observations:

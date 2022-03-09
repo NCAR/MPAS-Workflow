@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: amsua-cld_n18
     obsdatain:
-      obsfile: InDBDir/amsua_n18_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/amsua_n18_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_amsua-cld_n18.h5
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_amsua-cld_n18.h5
     simulated variables: [brightness_temperature]
     channels: &amsua-cld_n18_channels 1-4,15
   obs error: *ObsErrorDiagonal
@@ -31,9 +31,9 @@
 #    minvalue: 170.0
 #    maxvalue: 300.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_amsua-cld_n18.nc4
+    filename: {{OutDBDir}}/{{geoPrefix}}_amsua-cld_n18.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_amsua-cld_n18.nc4
+    filename: {{OutDBDir}}/{{diagPrefix}}_amsua-cld_n18.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *amsua-cld_n18_channels

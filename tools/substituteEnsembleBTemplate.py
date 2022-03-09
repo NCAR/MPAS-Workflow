@@ -148,7 +148,7 @@ members from template:
       filedata = f.read()
 
     # replace for substitutionString
-    filedata = filedata.replace(substitutionString+'\n', replacementString)
+    filedata = filedata.replace('{{'+substitutionString+'}}\n', replacementString)
 
     # replace yamlFile with new version
     f = open(yamlFile, 'w')
