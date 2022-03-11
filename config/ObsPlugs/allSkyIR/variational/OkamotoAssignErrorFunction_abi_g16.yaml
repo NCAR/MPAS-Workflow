@@ -44,7 +44,7 @@ _okamoto error function abi_g16: &OkamotoAssignErrorFunction_abi_g16
   name: ObsErrorModelRamp@ObsFunction
   channels: *abi_g16_channels
   options:
-    <<: *abi_g16_SymmCldFitsABISUPEROBGRID-HofXMeshDescriptor
+    <<: *abi_g16_SymmCldFits{{ABISUPEROBGRID}}-{{HofXMeshDescriptor}}
     channels: *abi_g16_channels
     xvar:
       name: SymmCldImpactIR@ObsFunction

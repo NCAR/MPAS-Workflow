@@ -129,13 +129,13 @@ set thisYAML = orig.yaml
 cp -v ${ConfigDir}/applicationBase/rtpp.yaml $thisYAML
 
 ## RTPP inflation factor
-sed -i 's@RTPPInflationFactor@'${RTPPInflationFactor}'@g' $thisYAML
+sed -i 's@{{RTPPInflationFactor}}@'${RTPPInflationFactor}'@g' $thisYAML
 
 ## streams
-sed -i 's@EnsembleStreamsFile@'${self_WorkDir}'/'${StreamsFile}'@' $thisYAML
+sed -i 's@{{EnsembleStreamsFile}}@'${self_WorkDir}'/'${StreamsFile}'@' $thisYAML
 
 ## namelist
-sed -i 's@EnsembleNamelistFile@'${self_WorkDir}'/'${NamelistFile}'@' $thisYAML
+sed -i 's@{{EnsembleNamelistFile}}@'${self_WorkDir}'/'${NamelistFile}'@' $thisYAML
 
 ## revise current date
 sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $thisYAML
@@ -145,9 +145,9 @@ set meshFile = ${firstANFile}
 ln -sfv $meshFile ${TemplateFieldsFileOuter}
 
 ## file naming
-sed -i 's@OOPSMemberDir@/mem%{member}%@g' $thisYAML
-sed -i 's@anStatePrefix@'${anPrefix}'@g' $thisYAML
-sed -i 's@anStateDir@'${CyclingDAOutDir}'@g' $thisYAML
+sed -i 's@{{MemberDir}}@/mem%{member}%@g' $thisYAML
+sed -i 's@{{anStatePrefix}}@'${anPrefix}'@g' $thisYAML
+sed -i 's@{{anStateDir}}@'${CyclingDAOutDir}'@g' $thisYAML
 set prevYAML = $thisYAML
 
 ## state and analysis variable configs
@@ -181,7 +181,7 @@ foreach VarGroup (Analysis State)
   end
   # remove trailing comma
   set VarSub = `echo "$VarSub" | sed 's/.$//'`
-  sed -i 's@'$VarGroup'Variables@'$VarSub'@' $prevYAML
+  sed -i 's@{{'$VarGroup'Variables}}@'$VarSub'@' $prevYAML
 end
 
 ## fill in ensemble B config and link/copy analysis ensemble members
@@ -198,7 +198,7 @@ foreach PMatrix (Pb Pa)
 
   set enspsed = Ensemble${PMatrix}Members
 cat >! ${enspsed}SEDF.yaml << EOF
-/${enspsed}/c\
+/{{${enspsed}}}/c\
 EOF
 
   set member = 1

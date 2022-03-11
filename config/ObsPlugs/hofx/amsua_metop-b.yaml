@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: amsua_metop-b
     obsdatain:
-      obsfile: InDBDir/amsua_metop-b_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/amsua_metop-b_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_amsua_metop-b.h5
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_amsua_metop-b.h5
     simulated variables: [brightness_temperature]
     channels: &amsua_metop-b_channels 5-14
   obs error: *ObsErrorDiagonal
@@ -27,4 +27,4 @@
 #        name: water_area_fraction@GeoVaLs
 #      minvalue: 1.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_amsua_metop-b.nc4
+    filename: {{OutDBDir}}/{{geoPrefix}}_amsua_metop-b.nc4

@@ -166,8 +166,8 @@ set prevYAML = $thisYAML
 
 # Analysis directory
 # ==================
-sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' $prevYAML
-sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' $prevYAML
+sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $prevYAML
+sed -i 's@{{anStateDir}}@'${self_WorkDir}'/'${anDir}'@g' $prevYAML
 
 
 # Hybrid Jb weights
@@ -247,7 +247,7 @@ if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
   #      temperature to be in stream_list.atmosphere.control.
 
   cat >! ${thisSEDF} << EOF
-/${enspbinfsed}/c\
+/{{${enspbinfsed}}}/c\
 ${indentPb}inflation field:\
 ${indentPb}  date: *analysisDate\
 ${indentPb}  filename: ${inflationFields}\
@@ -262,7 +262,7 @@ EOF
   endif
   if ($removeInflation > 0) then
     # delete the line containing $enspbinfsed
-    sed -i '/^'${enspbinfsed}'/d' $prevYAML
+    sed -i '/^{{'${enspbinfsed}'}}/d' $prevYAML
   endif
 endif
 
@@ -324,16 +324,17 @@ while ( $member <= ${nEnsDAMembers} )
 
   # member-specific state I/O and observation file output directory
   set memDir = `${memberDir} $DAType $member`
-  sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
+  sed -i 's@{{MemberDir}}@'${memDir}'@g' $memberyaml
 
   # deterministic EnVar does not perturb observations
   if ($nEnsDAMembers == 1) then
-    sed -i 's@ObsPerturbations@false@g' $memberyaml
+    sed -i 's@{{ObsPerturbations}}@false@g' $memberyaml
   else
-    sed -i 's@ObsPerturbations@true@g' $memberyaml
+    sed -i 's@{{ObsPerturbations}}@true@g' $memberyaml
   endif
 
-  sed -i 's@MemberSeed@'$member'@g' $memberyaml
+  sed -i 's@{{MemberNumber}}@'$member'@g' $memberyaml
+  sed -i 's@{{TotalMemberCount}}@'${nEnsDAMembers}'@g' $memberyaml
 
   @ member++
 end
@@ -456,7 +457,7 @@ while ( $member <= ${nEnsDAMembers} )
     sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
     sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
   end
-  sed -i 's@StreamsFileMember@'${memSuffix}'@' $yamlFileList[$member]
+  sed -i 's@{{StreamsFileMember}}@'${memSuffix}'@' $yamlFileList[$member]
 
   # Remove existing analysis file, make full copy from bg file
   # ==========================================================

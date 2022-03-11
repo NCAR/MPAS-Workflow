@@ -339,7 +339,20 @@ else if ($allSkyIRErrorType == Okamoto) then
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # assign error function anchor
     set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${self_AppType}/${allSkyIRErrorType}AssignErrorFunction_${InfraredInstrument}.yaml
-    sed 's@HofXMeshDescriptor@'${HofXMeshDescriptor}'@g' ${SUBYAML} > tempYAML
+    sed 's@{{HofXMeshDescriptor}}@'${HofXMeshDescriptor}'@g' ${SUBYAML} > tempYAML
+
+    # need to change to mainScriptDir for getObservationsOrNone to work
+    cd ${mainScriptDir}
+    set ABISuperObGrid = "`$getObservationsOrNone ${observations__resource}.IODASuperObGrid.abi_g16`"
+    set AHISuperObGrid = "`$getObservationsOrNone ${observations__resource}.IODASuperObGrid.ahi_himawari8`"
+    cd ${self_WorkDir}
+    if ("$ABISuperObGrid" != None) then
+      sed -i 's@{{ABISUPEROBGRID}}@'${ABISuperObGrid}'@g' tempYAML
+    endif
+    if ("$AHISuperObGrid" != None) then
+      sed -i 's@{{AHISUPEROBGRID}}@'${AHISuperObGrid}'@g' tempYAML
+    endif
+
     sed 's@$@\\@' tempYAML >> ${thisSEDF}
     rm tempYAML
   end
@@ -408,28 +421,11 @@ end
 
 
 ## Horizontal interpolation type
-sed -i 's@InterpolationType@'${InterpolationType}'@g' $thisYAML
+sed -i 's@{{InterpolationType}}@'${InterpolationType}'@g' $thisYAML
 
 
 ## QC characteristics
-sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
-sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
-
-# need to change to mainScriptDir for getObservationsOrNone to work
-cd ${mainScriptDir}
-set ABISuperObGrid = "`$getObservationsOrNone ${observations__resource}.IODASuperObGrid.abi_g16`"
-set AHISuperObGrid = "`$getObservationsOrNone ${observations__resource}.IODASuperObGrid.ahi_himawari8`"
-cd ${self_WorkDir}
-
-if ("$ABISuperObGrid" != None) then
-  sed -i 's@ABISUPEROBGRID@'${ABISuperObGrid}'@g' $thisYAML
-endif
-if ("$AHISuperObGrid" != None) then
-  sed -i 's@AHISUPEROBGRID@'${AHISuperObGrid}'@g' $thisYAML
-endif
-
-sed -i 's@HofXMeshDescriptor@'${HofXMeshDescriptor}'@' $thisYAML
-
+sed -i 's@{{RADTHINDISTANCE}}@'${RADTHINDISTANCE}'@g' $thisYAML
 
 ## date-time information
 # current date
@@ -446,31 +442,31 @@ sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
 
 ## obs-related file naming
 # crtm tables
-sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' $thisYAML
+sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 
 # input and output IODA DB directories
-sed -i 's@InDBDir@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
-sed -i 's@OutDBDir@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
+sed -i 's@{{InDBDir}}@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
+sed -i 's@{{OutDBDir}}@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
 
 # obs, geo, and diag files with self_AppType suffixes
-sed -i 's@obsPrefix@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
-sed -i 's@geoPrefix@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
-sed -i 's@diagPrefix@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
+sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
+sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
+sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
 
 
 # (3) model-related substitutions
 # ===============================
 
 # bg file
-sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' $thisYAML
-sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
+sed -i 's@{{bgStatePrefix}}@'${BGFilePrefix}'@g' $thisYAML
+sed -i 's@{{bgStateDir}}@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
 
 # streams+namelist
 set iMesh = 0
 foreach mesh ($MeshList)
   @ iMesh++
-  sed -i 's@'$mesh'StreamsFile@'${self_WorkDir}'/'$StreamsFileList[$iMesh]'@' $thisYAML
-  sed -i 's@'$mesh'NamelistFile@'${self_WorkDir}'/'$NamelistFileList[$iMesh]'@' $thisYAML
+  sed -i 's@{{'$mesh'StreamsFile}}@'${self_WorkDir}'/'$StreamsFileList[$iMesh]'@' $thisYAML
+  sed -i 's@{{'$mesh'NamelistFile}}@'${self_WorkDir}'/'$NamelistFileList[$iMesh]'@' $thisYAML
 end
 
 ## model and analysis variables
@@ -504,7 +500,7 @@ foreach VarGroup (Analysis Model State)
   end
   # remove trailing comma
   set VarSub = `echo "$VarSub" | sed 's/.$//'`
-  sed -i 's@'$VarGroup'Variables@'$VarSub'@' $thisYAML
+  sed -i 's@{{'$VarGroup'Variables}}@'$VarSub'@' $thisYAML
 end
 
 cp $thisYAML $appyaml

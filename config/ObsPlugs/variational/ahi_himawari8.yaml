@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: ahi_himawari8
     obsdatain:
-      obsfile: InDBDir/ahi_himawari8_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/ahi_himawari8_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_ahi_himawari8.h5
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_ahi_himawari8.h5
     simulated variables: [brightness_temperature]
     channels: *ahi_himawari8_channels
   obs error: *ObsErrorDiagonal
@@ -22,15 +22,15 @@
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
   - filter: Gaussian Thinning
-    horizontal_mesh: RADTHINDISTANCE #km
+    horizontal_mesh: {{RADTHINDISTANCE}} #km
 PerformActionFilters_ahi_himawari8
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_ahi_himawari8.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi_himawari8.nc4
   - filter: YDIAGsaver
-    filename: OutDBDirOOPSMemberDir/diagPrefix_ahi_himawari8.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_ahi_himawari8.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *ahi_himawari8_channels

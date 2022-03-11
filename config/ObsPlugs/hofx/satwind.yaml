@@ -2,10 +2,10 @@
     <<: *ObsSpace
     name: Satwind
     obsdatain:
-      obsfile: InDBDir/satwind_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/satwind_obs_{{thisValidDate}}.h5
       max frame size: 80000
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_satwind.h5
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_satwind.h5
       max frame size: 80000
     simulated variables: [eastward_wind, northward_wind]
   obs error: *ObsErrorDiagonal

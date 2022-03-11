@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: abi_g16
     obsdatain:
-      obsfile: InDBDir/abi_g16_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/abi_g16_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_abi_g16.h5
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_abi_g16.h5
     simulated variables: [brightness_temperature]
     channels: *abi_g16_channels
   obs error: *ObsErrorDiagonal
@@ -22,15 +22,15 @@
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
   - filter: Gaussian Thinning
-    horizontal_mesh: RADTHINDISTANCE #km
+    horizontal_mesh: {{RADTHINDISTANCE}} #km
 PerformActionFilters_abi_g16
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_abi_g16.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_abi_g16.nc4
   - filter: YDIAGsaver
-    filename: OutDBDirOOPSMemberDir/diagPrefix_abi_g16.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_abi_g16.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *abi_g16_channels

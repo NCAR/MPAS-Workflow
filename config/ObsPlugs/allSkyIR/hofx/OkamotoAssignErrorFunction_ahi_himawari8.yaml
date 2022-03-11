@@ -24,7 +24,7 @@ _okamoto error function ahi_himawari8: &OkamotoAssignErrorFunction_ahi_himawari8
   name: ObsErrorModelRamp@ObsFunction
   channels: *ahi_himawari8_channels
   options:
-    <<: *ahi_himawari8_SymmCldFitsAHISUPEROBGRID-HofXMeshDescriptor
+    <<: *ahi_himawari8_SymmCldFits{{AHISUPEROBGRID}}-{{HofXMeshDescriptor}}
     channels: *ahi_himawari8_channels
     xvar:
       name: SymmCldImpactIR@ObsFunction

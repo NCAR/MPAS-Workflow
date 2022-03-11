@@ -2,10 +2,10 @@
     <<: *ObsSpace
     name: Aircraft
     obsdatain:
-      obsfile: InDBDir/aircraft_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/aircraft_obs_{{thisValidDate}}.h5
       max frame size: 40000
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_aircraft.h5
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_aircraft.h5
       max frame size: 40000
     simulated variables: [air_temperature, eastward_wind, northward_wind, specific_humidity]
   obs error: *ObsErrorDiagonal
