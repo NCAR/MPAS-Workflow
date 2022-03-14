@@ -283,23 +283,36 @@ if ($found == 0) then
   exit 1
 endif
 
-# (ii) concatenate all observations to thisYAML
-cat $observationsYAML >> $thisYAML
-
-# (iii) add re-usable YAML anchors
-set obsanchorssed = ObsAnchors
-set thisSEDF = ${obsanchorssed}SEDF.yaml
+# (ii) insert Observations
+set sedstring = Observations
+set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
-/${obsanchorssed}/c\
+/{{${sedstring}}}/c\
 EOF
 
 # substitute with line breaks
-set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${obsanchorssed}.yaml
+sed 's@$@\\@' ${observationsYAML} >> ${thisSEDF}
+
+# insert into prevYAML
+set thisYAML = insert${sedstring}.yaml
+sed -f ${thisSEDF} $prevYAML >! $thisYAML
+rm ${thisSEDF}
+set prevYAML = $thisYAML
+
+# (iii) insert re-usable YAML anchors
+set sedstring = ObsAnchors
+set thisSEDF = ${sedstring}SEDF.yaml
+cat >! ${thisSEDF} << EOF
+/{{${sedstring}}}/c\
+EOF
+
+# substitute with line breaks
+set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${sedstring}.yaml
 sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 echo '_blank: null' >> ${thisSEDF}
 
 # insert into prevYAML
-set thisYAML = insertObsAnchors.yaml
+set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
