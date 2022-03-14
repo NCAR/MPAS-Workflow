@@ -96,10 +96,10 @@ set prevYAML = prevPrep.yaml
 # Outer iterations configuration elements
 # ===========================================
 # performs sed substitution for VariationalIterations
-set iterationssed = VariationalIterations
-set thisSEDF = ${iterationssed}SEDF.yaml
+set sedstring = VariationalIterations
+set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
-/${iterationssed}/c\
+/${sedstring}/c\
 EOF
 
 set nIterationsIndent = 2
@@ -128,7 +128,7 @@ EOF
 
 end
 
-set thisYAML = insertIterations.yaml
+set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
@@ -137,10 +137,10 @@ set prevYAML = $thisYAML
 # Minimization algorithm configuration element
 # ================================================
 # performs sed substitution for VariationalMinimizer
-set algorithmsed = VariationalMinimizer
-set thisSEDF = ${algorithmsed}SEDF.yaml
+set sedstring = VariationalMinimizer
+set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
-/${algorithmsed}/c\
+/${sedstring}/c\
 EOF
 
 set nAlgorithmIndent = 4
@@ -158,7 +158,7 @@ EOF
 
 endif
 
-set thisYAML = insertAlgorithm.yaml
+set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
@@ -230,8 +230,8 @@ if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
 
   ## inflation
   # performs sed substitution for EnsemblePbInflation
-  set enspbinfsed = EnsemblePbInflation
-  set thisSEDF = ${enspbinfsed}SEDF.yaml
+  set sedstring = EnsemblePbInflation
+  set thisSEDF = ${sedstring}SEDF.yaml
   set removeInflation = 0
   if ( ${ABEInflation} == True ) then
     set inflationFields = ${CyclingABEInflationDir}/BT${ABEIChannel}_ABEIlambda.nc
@@ -241,13 +241,13 @@ if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
       #TODO: use last valid inflation factors?
       set removeInflation = 1
     else
-      set thisYAML = insertInflation.yaml
+      set thisYAML = insert${sedstring}.yaml
   #NOTE: 'stream name: control' allows for spechum and temperature inflation values to be read
   #      read directly from inflationFields without a variable transform. Also requires spechum and
   #      temperature to be in stream_list.atmosphere.control.
 
   cat >! ${thisSEDF} << EOF
-/{{${enspbinfsed}}}/c\
+/{{${sedstring}}}/c\
 ${indentPb}inflation field:\
 ${indentPb}  date: *analysisDate\
 ${indentPb}  filename: ${inflationFields}\
@@ -261,8 +261,8 @@ EOF
     set removeInflation = 1
   endif
   if ($removeInflation > 0) then
-    # delete the line containing $enspbinfsed
-    sed -i '/^{{'${enspbinfsed}'}}/d' $prevYAML
+    # delete the line containing $sedstring
+    sed -i '/^{{'${sedstring}'}}/d' $prevYAML
   endif
 endif
 
