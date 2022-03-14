@@ -18,6 +18,7 @@ setenv BuildCompiler 'gnu-openmpi'
 
 #set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_28FEB2022
 set commonBuild = /glade/scratch/yonggangyu/br_getvals_upd_Feb_17_future/build
+set commonBuild = /glade/scratch/yonggangyu/br_mpasjedi_dev_manual/build
 
 # Ungrib
 setenv ungribEXE ungrib.exe

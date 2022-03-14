@@ -1,7 +1,7 @@
 experiment:
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-  ExpSuffix: '_X1'
+  ExpSuffix: '_X1_March_14'
 
 ## ExperimentName
 # leave as DEFAULT to be automatically generated from critical config elements

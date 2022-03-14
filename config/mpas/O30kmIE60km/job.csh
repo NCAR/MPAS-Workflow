@@ -44,7 +44,7 @@ setenv VerifyModelJobMinutes 20
 
 # benchmark: < 20 minutes
 # longer duration with more observations
-set DeterministicDABaseMinutes = 20
+set DeterministicDABaseMinutes = 80       #  20
 
 # wall-time increase per member in ensemble B
 # TODO: run tests w/ > 20 members

@@ -292,7 +292,7 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
     [[[directives]]]
-      -m = ae
+      #-m = ae
       -q = ${CPQueueName}
       -A = ${CPAccountNumber}
       -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
@@ -300,7 +300,7 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT${ExtendedFCJobMinutes}M
     [[[directives]]]
-      -m = ae
+      #-m = ae
       -q = ${NCPQueueName}
       -A = ${NCPAccountNumber}
       -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
@@ -357,7 +357,7 @@ cat >! suite.rc << EOF
     # Note: memory for ObsToIODA may need to be increased when hyperspectral and/or
     #       geostationary instruments are added
     [[[directives]]]
-      -m = ae
+      #-m = ae
       -q = ${CPQueueName}
       -A = ${CPAccountNumber}
       -l = select=1:ncpus=1:mem=10GB
@@ -378,7 +378,7 @@ cat >! suite.rc << EOF
       execution time limit = PT${EnsOfVariationalJobMinutes}M
       execution retry delays = ${EnsOfVariationalRetry}
     [[[directives]]]
-      -m = ae
+      #-m = ae
       -q = ${CPQueueName}
       -A = ${CPAccountNumber}
       -l = select=${EnsOfVariationalNodes}:ncpus=${EnsOfVariationalPEPerNode}:mpiprocs=${EnsOfVariationalPEPerNode}:mem=${EnsOfVariationalMemory}GB
@@ -392,7 +392,7 @@ cat >! suite.rc << EOF
       execution time limit = PT${VariationalJobMinutes}M
       execution retry delays = ${VariationalRetry}
     [[[directives]]]
-      -m = ae
+      #-m = ae
       -q = ${CPQueueName}
       -A = ${CPAccountNumber}
       -l = select=${VariationalNodes}:ncpus=${VariationalPEPerNode}:mpiprocs=${VariationalPEPerNode}:mem=${VariationalMemory}GB
@@ -404,7 +404,7 @@ cat >! suite.rc << EOF
       execution time limit = PT${CyclingInflationJobMinutes}M
       execution retry delays = ${RTPPInflationRetry}
     [[[directives]]]
-      -m = ae
+      #-m = ae
       -q = ${CPQueueName}
       -A = ${CPAccountNumber}
       -l = select=${CyclingInflationNodes}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
@@ -471,7 +471,7 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT5M
     [[[directives]]]
-      -m = ae
+      #-m = ae
       -q = ${NCPQueueName}
       -A = ${NCPAccountNumber}
       -l = select=1:ncpus=36:mpiprocs=36
@@ -572,7 +572,7 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT5M
     [[[directives]]]
-      -m = ae
+      #-m = ae
       -q = ${NCPQueueName}
       -A = ${NCPAccountNumber}
       -l = select=1:ncpus=36:mpiprocs=36
