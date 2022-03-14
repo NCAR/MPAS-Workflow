@@ -15,7 +15,7 @@ setenv InitICPEPerNode 36
 setenv CyclingFCNodes 16
 setenv CyclingFCPEPerNode 32
 
-@ ExtendedFCJobMinutes = 1 + ($ExtendedFCWindowHR / 4)
+@ ExtendedFCJobMinutes = 1 + (6 * $ExtendedFCWindowHR / 6)
 setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
@@ -32,11 +32,11 @@ setenv HofXPEPerNode 36
 setenv HofXMemory 109
 
 # ~8-12 min. for VerifyObsDA, ~5 min. for VerifyObsBG
-set DeterministicVerifyObsJobMinutes = 15
+set DeterministicVerifyObsJobMinutes = 10
 set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
 
 # 3 min. premium per 20 members for VerifyObsEnsMean
-set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 9
+set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 120
 @ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} * ${EnsembleVerifyObsEnsMeanJobSecondsPerMember} / 60
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
 
@@ -44,7 +44,7 @@ setenv VerifyModelJobMinutes 20
 
 # benchmark: < 20 minutes
 # longer duration with more observations
-set DeterministicDABaseMinutes = 20
+set DeterministicDABaseMinutes = 40
 
 # wall-time increase per member in ensemble B
 # TODO: run tests w/ > 20 members
