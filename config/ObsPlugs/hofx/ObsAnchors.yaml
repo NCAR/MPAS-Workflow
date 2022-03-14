@@ -5,7 +5,7 @@ _obs error diagonal: &ObsErrorDiagonal
 _clear crtm: &clearCRTMObsOperator
   name: CRTM
   SurfaceWindGeoVars: uv
-  Absorbers: [H2O,O3,CO2]
+  Absorbers: [H2O, O3]
   obs options: &CRTMObsOptions
     EndianType: little_endian
     CoefficientPath: {{CRTMTABLES}}
@@ -13,7 +13,7 @@ _clear crtm: &clearCRTMObsOperator
 _cloudy crtm: &cloudyCRTMObsOperator
   name: CRTM
   SurfaceWindGeoVars: uv
-  Absorbers: [H2O,O3,CO2]
+  Absorbers: [H2O, O3]
   Clouds: [Water, Ice, Rain, Snow, Graupel]
   obs options:
     <<: *CRTMObsOptions
