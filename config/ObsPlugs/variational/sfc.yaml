@@ -6,7 +6,6 @@
     obsdataout:
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_sfc.h5
     simulated variables: [surface_pressure]
-    obs perturbations seed: 1
   obs error: *ObsErrorDiagonal
   obs operator:
     name: SfcPCorrected

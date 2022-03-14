@@ -8,7 +8,6 @@
       obsfile: OutDBDirOOPSMemberDir/obsPrefix_satwnd.h5
       max frame size: 80000
     simulated variables: [eastward_wind, northward_wind]
-    obs perturbations seed: 1
   obs error: *ObsErrorDiagonal
   obs operator:
     name: VertInterp
@@ -19,9 +18,9 @@
     maxvalue: 3
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1
+    apply at iterations: 0, 1, 2, 3, 4, 5
   # Assign the initial observation error, based on height/pressure
-  - filter: BlackList
+  - filter: Perform Action
     filter variables:
     - name: eastward_wind
     - name: northward_wind

@@ -12,12 +12,12 @@
     <<: *clearCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
-      Sensor_ID: &Sensor_ID amsua_aqua
+      Sensor_ID: amsua_aqua
   get values:
     <<: *GetValues
   obs bias:
-    input file: SatbiasDir/satbias_amsua_aqua.h5
-#      output file: SatbiasDir/satbias_amsua_aqua_out.h5
+    input file: satelliteBiasDir/satbias_amsua_aqua.h5
+#      output file: satelliteBiasDir/satbias_amsua_aqua_out.h5
     variational bc:
       predictors: &predictors5
       - name: constant
@@ -27,7 +27,7 @@
 #        - name: sine_of_latitude
       - name: lapse_rate
         order: 2
-        tlapse: &amsuaaquatlap SatbiasDir/amsua_aqua_tlapmean.txt
+        tlapse: &amsuaaquatlap satelliteBiasDir/amsua_aqua_tlapmean.txt
       - name: lapse_rate
         tlapse: *amsuaaquatlap
       - name: emissivity
@@ -44,11 +44,11 @@
       step size: 1.0e-4
       largest analysis variance: 10000.0
       prior:
-        input file: SatbiasDir/satbias_cov_amsua_aqua.h5
+        input file: satelliteBiasDir/satbias_cov_amsua_aqua.h5
         inflation:
           ratio: 1.1
           ratio for small dataset: 2.0
-#        output file: SatbiasDir/satbias_cov_amsua_aqua_out.h5
+#        output file: satelliteBiasDir/satbias_cov_amsua_aqua_out.h5
   obs filters:
   - filter: PreQC
     maxvalue: 0
@@ -85,7 +85,6 @@
     maxvalue: 999.0
     action:
       name: reject
-#   passedBenchmark: 1472
 #  Hydrometeor Check (cloud/precipitation affected chanels)
   - filter: Bounds Check
     filter variables:
@@ -131,9 +130,8 @@
     maxvalue: 0.0
     action:
       name: reject
-#   passedBenchmark: 1272
 #  Topography check
-  - filter: BlackList
+  - filter: Perform Action
     filter variables:
     - name: brightness_temperature
       channels: *amsua_aqua_channels
@@ -143,10 +141,10 @@
         name: ObsErrorFactorTopoRad@ObsFunction
         channels: *amsua_aqua_channels
         options:
-          sensor: *Sensor_ID
+          sensor: amsua_aqua
           channels: *amsua_aqua_channels
 #  Transmittnace Top Check
-  - filter: BlackList
+  - filter: Perform Action
     filter variables:
     - name: brightness_temperature
       channels: *amsua_aqua_channels
@@ -158,7 +156,7 @@
         options:
           channels: *amsua_aqua_channels
 #  Surface Jacobian check
-  - filter: BlackList
+  - filter: Perform Action
     filter variables:
     - name: brightness_temperature
       channels: *amsua_aqua_channels
@@ -171,9 +169,8 @@
           channels: *amsua_aqua_channels
           obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
           obserr_dtempf: [0.500, 2.000, 1.000, 2.000, 4.500]
-#   passedBenchmark: 1272
 #  Situation dependent Check
-  - filter: BlackList
+  - filter: Perform Action
     filter variables:
     - name: brightness_temperature
       channels: *amsua_aqua_channels
@@ -183,7 +180,7 @@
         name: ObsErrorFactorSituDependMW@ObsFunction
         channels: *amsua_aqua_channels
         options:
-          sensor: *Sensor_ID
+          sensor: amsua_aqua
           channels: *amsua_aqua_channels
           clwobs_function:
             name: CLWRetMW@ObsFunction
@@ -230,7 +227,6 @@
           obserr_clearsky: [ 2.500, 2.000, 2.000, 0.500, 0.400,
                             0.400, 0.500, 0.300, 0.350, 0.350,
                             0.450, 1.000, 1.500, 2.500, 2.500]
-#   passedBenchmark: 1272
 #  Gross check
 #  - filter: Background Check
 #    threshold: 3
@@ -242,7 +238,7 @@
     - name: ObsErrorBoundMW@ObsFunction
       channels: *amsua_aqua_channels
       options:
-        sensor: *Sensor_ID
+        sensor: amsua_aqua
         channels: *amsua_aqua_channels
         obserr_bound_latitude:
           name: ObsErrorFactorLatRad@ObsFunction
@@ -258,7 +254,7 @@
           channels: *amsua_aqua_channels
           options:
             channels: *amsua_aqua_channels
-            sensor: *Sensor_ID
+            sensor: amsua_aqua
         obserr_function:
           name: ObsErrorModelRamp@ObsFunction
           channels: *amsua_aqua_channels
@@ -300,7 +296,7 @@
       channels: *amsua_aqua_channels
       options:
         channels: *amsua_aqua_channels
-        sensor: *Sensor_ID
+        sensor: amsua_aqua
         use_flag: [ -1,  -1, -1, -1, -1,
                     -1, -1, 1, 1, -1,
                     -1, -1, -1, -1, -1 ]
