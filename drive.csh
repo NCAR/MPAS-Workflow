@@ -339,6 +339,7 @@ cat >! suite.rc << EOF
   [[CleanBase]]
     [[[job]]]
       execution time limit = PT5M
+      execution retry delays = ${CleanRetry}
 #Cycling components
   # initialization-related components
   [[GetWarmStartIC]]

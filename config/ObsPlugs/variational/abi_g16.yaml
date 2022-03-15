@@ -24,7 +24,7 @@
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}} #km
   - filter: Perform Action
-    apply at iterations: 0, 1, 2, 3, 4, 5
+    <<: *multiIterationFilter
     filter variables:
     - name: brightness_temperature
       channels: *abi_g16_channels
@@ -84,10 +84,10 @@
               channels: *abi_g16_channels
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1, 2, 3, 4, 5
+    <<: *multiIterationFilter
 ## Ignore cloud-affected pixels in 1st iteration
 #  - filter: Domain Check
-#    apply at iterations: 0
+#    <<: *multiIterationFilter
 #    filter variables:
 #    - name: brightness_temperature
 #      channels: *abi_g16_channels

@@ -24,7 +24,7 @@
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}} #km
   - filter: Perform Action
-    apply at iterations: 0, 1, 2, 3, 4, 5
+    <<: *multiIterationFilter
     filter variables:
     - name: brightness_temperature
       channels: *ahi_himawari8_channels
@@ -69,7 +69,7 @@
               channels: *ahi_himawari8_channels
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1, 2, 3, 4, 5
+    <<: *multiIterationFilter
   - filter: GOMsaver
     filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi_himawari8.nc4
   - filter: YDIAGsaver

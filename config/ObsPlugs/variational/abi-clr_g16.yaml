@@ -31,7 +31,7 @@
     horizontal_mesh: {{RADTHINDISTANCE}} #km
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1
+    <<: *multiIterationFilter
   - filter: GOMsaver
     filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_abi-clr_g16.nc4
   - filter: YDIAGsaver
