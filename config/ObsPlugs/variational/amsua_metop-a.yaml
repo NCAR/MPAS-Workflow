@@ -143,7 +143,7 @@
         options:
           sensor: amsua_metop-a
           channels: *amsua_metop-a_channels
-#  Transmittnace Top Check
+#  Transmittance Top Check
   - filter: Perform Action
     filter variables:
     - name: brightness_temperature
@@ -228,8 +228,6 @@
                             0.230, 0.230, 0.250, 0.250, 0.350,
                             0.400, 0.550, 0.800, 3.000, 3.500]
 #  Gross check
-#  - filter: Background Check
-#    threshold: 3
   - filter: Background Check
     filter variables:
     - name: brightness_temperature
@@ -285,7 +283,6 @@
     action:
       name: reject
     apply at iterations: 0, 1, 2, 3, 4, 5
- # passedBenchmark: 1212
 #  Inter-channel check
   - filter: Bounds Check
     filter variables:
@@ -303,7 +300,6 @@
     maxvalue: 1.0e-12
     action:
       name: reject
-#   passedBenchmark: 1206
 #  Useflag check
   - filter: Bounds Check
     filter variables:

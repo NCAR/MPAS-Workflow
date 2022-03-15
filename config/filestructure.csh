@@ -29,7 +29,7 @@ setenv ExperimentDirectory ${ParentDirectory}/${ExperimentName}
 
 ## immediate subdirectories
 setenv ObsWorkDir ${ExperimentDirectory}/Observations
-setenv SatbiasWorkDir ${ExperimentDirectory}/Satbias
+setenv satelliteBiasWorkDir ${ExperimentDirectory}/SatelliteBias
 setenv CyclingDAWorkDir ${ExperimentDirectory}/CyclingDA
 setenv CyclingFCWorkDir ${ExperimentDirectory}/CyclingFC
 setenv CyclingInflationWorkDir ${ExperimentDirectory}/CyclingInflation

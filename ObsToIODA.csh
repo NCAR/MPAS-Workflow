@@ -6,6 +6,7 @@ date
 # Setup environment
 # =================
 source config/observations.csh
+source config/obsdata.csh
 $setObservations ${observations__resource}.defaultBUFRDirectory
 $setObservations ${observations__resource}.satwndBUFRDirectory
 $setObservations ${observations__resource}.PrepBUFRDirectory
@@ -27,10 +28,6 @@ cd ${WorkDir}
 
 # ================================================================================================
 
-# static variables
-setenv OBS_ERRTABLE /glade/u/home/hclin/proj/ioda/obs_errtable
-setenv SPC_COEFF_DIR /glade/u/home/hclin/proj/ioda/SpcCoeff
-
 # write out hourly files for IASI
 setenv SPLIThourly "-split"
 
@@ -46,8 +43,8 @@ foreach inst ( ${convertToIODAObservations} )
         echo "Source file: ${satwndBUFRDirectory}/bufr/${ccyy}/${THIS_FILE}"
         cp -p ${satwndBUFRDirectory}/bufr/${ccyy}/${THIS_FILE} .
      endif
-     if ( -e ${OBS_ERRTABLE} ) then
-        ln -sf ${OBS_ERRTABLE} obs_errtable
+     if ( -e ${GDASObsErrtable} ) then
+        ln -sf ${GDASObsErrtable} obs_errtable
      endif
   else if ( ${inst} == prepbufr ) then
      setenv THIS_FILE prepbufr.gdas.${ccyy}${mmdd}.t${hh}z.nr.48h
@@ -60,8 +57,8 @@ foreach inst ( ${convertToIODAObservations} )
         rm -f obs_errtable
      endif
      # use external obs error table
-     #if ( -e ${OBS_ERRTABLE} ) then
-     #   ln -sf ${OBS_ERRTABLE} obs_errtable
+     #if ( -e ${GDASObsErrtable} ) then
+     #   ln -sf ${GDASObsErrtable} obs_errtable
      #endif
   else
      # set the specific file to be extracted from the tar file
@@ -121,15 +118,15 @@ foreach inst ( ${convertToIODAObservations} )
      echo "Running ${obs2iodaEXEC} for ${inst} ..."
      # link SpcCoeff files for converting IR radiances to brightness temperature
      if ( ${inst} == 'cris' && ${ccyy} >= '2021' ) then
-       ln -sf ${SPC_COEFF_DIR}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
-       ln -sf ${SPC_COEFF_DIR}/cris-fsr431_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
+       ln -sf ${CRTMTABLES}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
+       ln -sf ${CRTMTABLES}/cris-fsr431_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
      else if ( ${inst} == 'cris' && ${ccyy} < '2021' ) then
-       ln -sf ${SPC_COEFF_DIR}/cris399_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
-       ln -sf ${SPC_COEFF_DIR}/cris399_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
+       ln -sf ${CRTMTABLES}/cris399_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
+       ln -sf ${CRTMTABLES}/cris399_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
      else if ( ${inst} == 'mtiasi' ) then
-       ln -sf ${SPC_COEFF_DIR}/iasi616_metop-a.SpcCoeff.bin  ./iasi_metop-a.SpcCoeff.bin
-       ln -sf ${SPC_COEFF_DIR}/iasi616_metop-b.SpcCoeff.bin  ./iasi_metop-b.SpcCoeff.bin
-       ln -sf ${SPC_COEFF_DIR}/iasi616_metop-c.SpcCoeff.bin  ./iasi_metop-c.SpcCoeff.bin
+       ln -sf ${CRTMTABLES}/iasi616_metop-a.SpcCoeff.bin  ./iasi_metop-a.SpcCoeff.bin
+       ln -sf ${CRTMTABLES}/iasi616_metop-b.SpcCoeff.bin  ./iasi_metop-b.SpcCoeff.bin
+       ln -sf ${CRTMTABLES}/iasi616_metop-c.SpcCoeff.bin  ./iasi_metop-c.SpcCoeff.bin
      endif
 
      # Run the obs2ioda executable to convert files from BUFR to IODA-v2

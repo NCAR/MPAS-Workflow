@@ -9,8 +9,7 @@ observations:
   convertToIODAObservations:
   - prepbufr
   - satwnd
-  - satwind
-  - 1bamua
+  #- 1bamua
   #- gpsro
   #- 1bmhs
   #- airsev

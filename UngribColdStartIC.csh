@@ -22,9 +22,6 @@ cd ${InitICDir}
 
 # ================================================================================================
 
-## RDA GFS forecasts
-set GFSgribdirRDA = ${RDAdataDir}/ds084.1
-
 ## link ungribbed GFS
 set fhour = 000
 set Vtable = Vtable.GFS_FV3

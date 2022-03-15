@@ -12,7 +12,7 @@ source config/variational.csh
 #variational:
 #  satbias:
 #    type: options like None, GDASDynamic, GDASFixed, VarBC (later)
-#    fixedCoeff: /glade/p/mmm/parc/ivette/SATBIAS_fixed
+#    fixedCoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
 #    initialVarBCCoeff: /glade/work/guerrett/pandac/fixed_input/satbias/satbias_crtm_in
 
 # then in variational.csh:
@@ -39,7 +39,7 @@ source config/variational.csh
 setenv INITIAL_VARBC_TABLE /glade/work/guerrett/pandac/fixed_input/satbias/satbias_crtm_in
 
 ## satelliteBias fixed coefficients for first date of specific time periods
-setenv satelliteBiasFixedcoeff /glade/p/mmm/parc/ivette/SATBIAS_fixed
+setenv satelliteBiasFixedcoeff /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
 
 if ( $satelliteBias == GDASDynamic ) then
   # Dynamic satbias using GDAS coefficientes

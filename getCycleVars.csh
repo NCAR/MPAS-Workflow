@@ -12,7 +12,7 @@ setenv prevCycleDate ${prevCycleDate}
 
 ## setup cycle directory names
 set ObsDir = ${ObsWorkDir}/${thisValidDate}
-set SatbiasDir = ${SatbiasWorkDir}/${thisValidDate}
+set satelliteBiasDir = ${satelliteBiasWorkDir}/${thisValidDate}
 set CyclingDADir = ${CyclingDAWorkDir}/${thisCycleDate}
 set CyclingDAInDir = $CyclingDADir/${bgDir}
 set CyclingDAOutDir = $CyclingDADir/${anDir}

@@ -120,9 +120,9 @@
             err0:  [ 3.000,  2.200,  2.000,  0.600,  0.300,
                      0.230,  0.250,  0.275,  0.340,  0.400,
                      0.600,  1.000,  1.500,  2.000,  3.500]
-            err1:  [ 3.000,  2.200,  2.000,  0.600,  0.300,
-                     0.230,  0.250,  0.275,  0.340,  0.400,
-                     0.600,  1.000,  1.500,  2.000,  3.500]
+            err1:  [20.000, 18.000, 12.000,  3.000,  0.500,
+                     0.300,  0.250,  0.275,  0.340,  0.400,
+                     0.600,  1.000,  1.500,  2.000, 18.000]
     maxvalue: 0.0
     action:
       name: reject
@@ -139,7 +139,7 @@
         options:
           sensor: amsua_n19
           channels: *amsua_n19_channels
-#  Transmittnace Top Check
+#  Transmittance Top Check
   - filter: Perform Action
     filter variables:
     - name: brightness_temperature
@@ -224,8 +224,6 @@
                             0.230, 0.250, 0.275, 0.340, 0.400,
                             0.600, 1.000, 1.500, 2.000, 3.500]
 #  Gross check
-#  - filter: Background Check
-#    threshold: 3
   - filter: Background Check
     filter variables:
     - name: brightness_temperature
@@ -272,16 +270,15 @@
             err0:  [ 3.000,  2.200,  2.000,  0.600,  0.300,
                      0.230,  0.250,  0.275,  0.340,  0.400,
                      0.600,  1.000,  1.500,  2.000,  3.500]
-            err1:  [ 3.000,  2.200,  2.000,  0.600,  0.300,
-                     0.230,  0.250,  0.275,  0.340,  0.400,
-                     0.600,  1.000,  1.500,  2.000,  3.500]
+            err1:  [20.000, 18.000, 12.000,  3.000,  0.500,
+                     0.300,  0.250,  0.275,  0.340,  0.400,
+                     0.600,  1.000,  1.500,  2.000, 18.000]
         obserr_bound_max: [4.5, 4.5, 4.5, 2.5, 2.0,
                            2.0, 2.0, 2.0, 2.0, 2.0,
                            2.5, 3.5, 4.5, 4.5, 4.5]
     action:
       name: reject
     apply at iterations: 0, 1, 2, 3, 4, 5
-#   passedBenchmark: 1212
 #  Inter-channel check #amsua-n19
   - filter: Bounds Check
     filter variables:
@@ -299,7 +296,6 @@
     maxvalue: 1.0e-12
     action:
       name: reject
-#   passedBenchmark: 1206
 #  Useflag check #amsua-n19
   - filter: Bounds Check
     filter variables:
