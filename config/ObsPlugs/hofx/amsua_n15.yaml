@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: amsua_n15
     obsdatain:
-      obsfile: InDBDir/amsua_n15_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/amsua_n15_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_amsua_n15.h5
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_amsua_n15.h5
     simulated variables: [brightness_temperature]
     channels: &amsua_n15_channels 5-14
   obs error: *ObsErrorDiagonal
@@ -27,4 +27,4 @@
 #        name: water_area_fraction@GeoVaLs
 #      minvalue: 1.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_amsua_n15.nc4
+    filename: {{OutDBDir}}/{{geoPrefix}}_amsua_n15.nc4

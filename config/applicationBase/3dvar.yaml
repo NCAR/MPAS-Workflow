@@ -1,20 +1,20 @@
 _iteration: &iterationConfig
   geometry:
-    nml_file: InnerNamelistFile
-    streams_file: InnerStreamsFile
+    nml_file: {{InnerNamelistFile}}
+    streams_file: {{InnerStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
     interpolation type: unstructured
   gradient norm reduction: 1e-3
-  obs perturbations: ObsPerturbations
-ObsAnchors
+  obs perturbations: {{ObsPerturbations}}
+{{ObsAnchors}}
 output:
-  filename: anStateDirOOPSMemberDir/anStatePrefix.$Y-$M-$D_$h.$m.$s.nc
+  filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis
 variational:
   minimizer:
-VariationalMinimizer
+{{VariationalMinimizer}}
   iterations:
-VariationalIterations
+{{VariationalIterations}}
 final:
   diagnostics:
     departures: depan
@@ -23,14 +23,14 @@ cost function:
   window begin: {{windowBegin}}
   window length: {{windowLength}}
   geometry:
-    nml_file: OuterNamelistFile
-    streams_file: OuterStreamsFile
+    nml_file: {{OuterNamelistFile}}
+    streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
     interpolation type: unstructured
-  analysis variables: &incvars [AnalysisVariables]
+  analysis variables: &incvars [{{AnalysisVariables}}]
   background:
-    state variables: [StateVariables]
-    filename: bgStateDirOOPSMemberDir/bgStatePrefix.{{thisMPASFileDate}}.nc
+    state variables: [{{StateVariables}}]
+    filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
     date: &analysisDate {{thisISO8601Date}}
   background error:
     covariance model: SABER
@@ -71,3 +71,4 @@ cost function:
       input variables: *ctlvars
       output variables: *incvars
   observations:
+{{Observations}}

@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: GnssroRef
     obsdatain:
-      obsfile: InDBDir/gnssroref_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/gnssroref_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_gnssroref.h5
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssroref.h5
     simulated variables: [refractivity]
   obs error: *ObsErrorDiagonal
   obs operator:
@@ -30,8 +30,8 @@
       maxvalue: 200
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1, 2, 3, 4, 5
+    <<: *multiIterationFilter
   - filter: ROobserror
     variable: refractivity
     errmodel: NBAM
-    apply at iterations: 0, 1, 2, 3, 4, 5
+    <<: *multiIterationFilter
