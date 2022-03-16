@@ -1,17 +1,17 @@
 #!/bin/csh -f
-# Get NCEP FTP BUFR files
+# Get NCEP FTP BUFR/PrepBUFR files
 
 date
 
 # Setup environment
 # =================
-source config/experiment.csh
+source config/workflow.csh
+source config/model.csh
+source config/observations.csh
 source config/filestructure.csh
-source config/tools.csh
-source config/modeldata.csh
 source config/builds.csh
+source config/${InitializationType}ModelData.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
-set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
 set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -26,7 +26,7 @@ cd ${WorkDir}
 
 # ================================================================================================
 
-foreach inst ( ${preprocessObsList} )
+foreach inst ( ${convertToIODAObservations} )
   set gdas_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gdas.${yymmdd}/${hh}/atmos
 
   if ( ${inst} == prepbufr ) then
@@ -40,8 +40,8 @@ foreach inst ( ${preprocessObsList} )
   
   if ( ! -e ${THIS_FILE}) then
     set ftp_file = ${gdas_ftp}/${THIS_FILE}
-    wget -S --spider $ftp_file >&! check_wget_${inst}
-    grep "HTTP/1.1 200 OK" check_wget_${inst}
+    wget -S --spider $ftp_file >&! log_check_${inst}
+    grep "HTTP/1.1 200 OK" log_check_${inst}
     if ( $status == 0 ) then
      echo "Downloading $ftp_file ..."
      wget -r -np -nd $ftp_file

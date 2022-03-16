@@ -1,6 +1,7 @@
 #!/bin/csh -f
 
-source config/experiment.csh
+source config/workflow.csh
+source config/variational.csh
 source config/modeldata.csh
 
 # job length and node/pe requirements
@@ -25,11 +26,11 @@ setenv HofXPEPerNode 36
 setenv HofXMemory 109
 
 # ~8-12 min. for VerifyObsDA, ~5 min. for VerifyObsBG; 08OCT2021
-set DeterministicVerifyObsJobMinutes = 15
+set DeterministicVerifyObsJobMinutes = 10
 set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
 
 # ~180 sec. premium per 20 members for VerifyObsEnsMean; 08OCT2021
-set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 9
+set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 120
 @ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} * ${EnsembleVerifyObsEnsMeanJobSecondsPerMember} / 60
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
 
@@ -40,21 +41,20 @@ setenv VerifyModelPEPerNode 36
 ## Variational+EnsOfVariational
 # benchmark: < 3 minutes
 # longer duration with more observations
-set DeterministicDABaseMinutes = 6
+set DeterministicDABaseMinutes = 6 #develop
+#set DeterministicDABaseMinutes = 30 #feature/getvals_upd
 
 # Variational
-# TODO: enable different number of processors to be selected at run-time.
-# The total PE count must align with localization files specified in mesh.csh.
-#if ( $nEnsDAMembers > 10 ) then
-#  # user fewer resources in large EDA jobs
-#  # nodes
-#  setenv VariationalMemory 109
-#  setenv VariationalNodesPerMember 1
-#  setenv VariationalPEPerNode 36
-#
-#  # time per member (mostly localization multiplication, some IO)
-#  set ThreeDEnVarJobSecondsPerMember = 10
-#else
+if ( $nEnsDAMembers > 10 ) then
+  # user fewer resources in large EDA jobs
+  # nodes
+  setenv VariationalMemory 109
+  setenv VariationalNodesPerMember 1
+  setenv VariationalPEPerNode 36
+
+  # time per member (mostly localization multiplication, some IO)
+  set ThreeDEnVarJobSecondsPerMember = 10
+else
   # nodes
   setenv VariationalMemory 45
   setenv VariationalNodesPerMember 4
@@ -68,7 +68,8 @@ set DeterministicDABaseMinutes = 6
   # 80-members: 342-391 sec.
   # 50-60 sec. premium per 20 members
   set ThreeDEnVarJobSecondsPerMember = 5
-#endif
+endif
+
 setenv VariationalNodes ${VariationalNodesPerMember}
 @ ThreeDEnVarJobMinutes = ${ensPbNMembers} * ${ThreeDEnVarJobSecondsPerMember} / 60
 @ ThreeDEnVarJobMinutes = ${ThreeDEnVarJobMinutes} + ${DeterministicDABaseMinutes}

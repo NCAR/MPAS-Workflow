@@ -1,0 +1,22 @@
+workflow:
+  # test a recent date
+  firstCyclePoint: 20220316T00
+  initialCyclePoint: 20220316T00
+  finalCyclePoint: 20220316T12
+  InitializationType: ColdStart
+  VerifyDeterministicDA: True
+  # TODO: enable GFS analysis generation every cycle, then engage forecast verification
+  VerifyEnsMeanBG: True #False
+observations:
+  resource: NCEPFTPOnline
+experiment:
+  ExperimentName: '3dvar_OIE120km_ColdStart_TEST_NCEPftp_2'
+model:
+  MPASGridDescriptor: OIE120km
+  AnaSource: GFSNCEPFTPOnline
+variational:
+  DAType: 3dvar
+  nInnerIterations: [15,]
+job:
+  CPQueueName: economy
+  NCPQueueName: economy

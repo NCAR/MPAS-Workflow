@@ -1,6 +1,10 @@
 #!/bin/csh -f
 
+if ( $?config_filestructure ) exit 0
+set config_filestructure = 1
+
 source config/experiment.csh
+source config/model.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/benchmark.csh
@@ -18,49 +22,37 @@ mkdir -p $TMPDIR
 ##########################
 ## run directory structure
 ##########################
-# TopExpDir, where all experiments are located
-# TODO: move to a higher level config file so that benchmark.csh can use it too
-set ExperimentUser = ${USER}
-set TopExpDir = /glade/scratch/${ExperimentUser}/pandac
+setenv PackageBaseName MPAS-Workflow
 
 ## absolute experiment directory
-setenv PackageBaseName MPAS-Workflow
-setenv ExperimentName ${ExperimentUser}
-setenv ExperimentName ${ExperimentName}_${DAType}
-setenv ExperimentName ${ExperimentName}${ExpIterSuffix}
-setenv ExperimentName ${ExperimentName}${ExpObsSuffix}
-setenv ExperimentName ${ExperimentName}${ExpEnsSuffix}
-setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
-setenv ExperimentNameWithoutSuffix ${ExperimentName}
-setenv ExperimentName ${ExperimentName}${ExpSuffix}
-
-set ExpDir = ${TopExpDir}/${ExperimentName}
+setenv ExperimentDirectory ${ParentDirectory}/${ExperimentName}
 
 ## immediate subdirectories
-setenv ObsWorkDir ${ExpDir}/Observations
-setenv SatbiasWorkDir ${ExpDir}/Satbias
-setenv CyclingDAWorkDir ${ExpDir}/CyclingDA
-setenv CyclingFCWorkDir ${ExpDir}/CyclingFC
-setenv CyclingInflationWorkDir ${ExpDir}/CyclingInflation
+setenv ObsWorkDir ${ExperimentDirectory}/Observations
+setenv CyclingDAWorkDir ${ExperimentDirectory}/CyclingDA
+setenv CyclingFCWorkDir ${ExperimentDirectory}/CyclingFC
+setenv CyclingInflationWorkDir ${ExperimentDirectory}/CyclingInflation
 setenv RTPPInflationWorkDir ${CyclingInflationWorkDir}/RTPP
 setenv ABEInflationWorkDir ${CyclingInflationWorkDir}/ABEI
 
-setenv ExtendedFCWorkDir ${ExpDir}/ExtendedFC
-setenv VerificationWorkDir ${ExpDir}/Verification
+setenv ExtendedFCWorkDir ${ExperimentDirectory}/ExtendedFC
+setenv VerificationWorkDir ${ExperimentDirectory}/Verification
 
 ## benchmark experiment archive
-setenv BenchmarkCyclingDAWorkDir ${BenchmarkExpDir}/CyclingDA
-setenv BenchmarkVerificationWorkDir ${BenchmarkExpDir}/Verification
+setenv BenchmarkCyclingDAWorkDir ${BenchmarkExperimentDirectory}/CyclingDA
+setenv BenchmarkVerificationWorkDir ${BenchmarkExperimentDirectory}/Verification
 
 ## directories copied from PackageBaseName
-setenv mainScriptDir ${ExpDir}/${PackageBaseName}
+setenv mainScriptDir ${ExperimentDirectory}/${PackageBaseName}
 setenv ConfigDir ${mainScriptDir}/config
 
 ## directory string formatter for EDA members
 # third argument to memberDir.py
-setenv flowMemFmt "/mem{:03d}"
-setenv flowInstFmt "/instance{:03d}"
-setenv flowMemFileFmt "_{:03d}"
+setenv flowMemPrefix "mem"
+setenv flowMemNDigits 3
+setenv flowMemFmt "/${flowMemPrefix}{:0${flowMemNDigits}d}"
+setenv flowInstFmt "/instance{:0${flowMemNDigits}d}"
+setenv flowMemFileFmt "_{:0${flowMemNDigits}d}"
 
 ## appyaml: universal yaml file name for all jedi applications
 setenv appyaml jedi.yaml

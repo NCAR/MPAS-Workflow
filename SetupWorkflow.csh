@@ -1,5 +1,13 @@
 #!/bin/csh -f
+
+## load the file structure
 source config/filestructure.csh
+
+## load the workflow settings
+source config/workflow.csh
+
+## load the variational settings
+source config/variational.csh
 
 set AppAndVerify = AppAndVerify
 
@@ -20,10 +28,11 @@ set workflowParts = ( \
   GetWarmStartIC.csh \
   GetRDAobs.csh \
   GetNCEPFTPobs.csh \
-  ObstoIODA.csh \
+  ObsToIODA.csh \
   getCycleVars.csh \
   tools \
   config \
+  scenarios \
   MeanAnalysis.csh \
   MeanBackground.csh \
   RTPPInflation.csh \
@@ -35,26 +44,9 @@ foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
 end
 
-source config/tools.csh
-source config/modeldata.csh
-source config/obsdata.csh
-source config/mpas/variables.csh
-source config/experiment.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
-
-## First cycle "forecast" established offline
-# TODO: Setup FirstCycleDate using a new fcinit job type and put in R1 cylc position
-set thisCycleDate = $FirstCycleDate
-set thisValidDate = $thisCycleDate
-source getCycleVars.csh
-
-#TODO: enable VARBC updating between cycles
-#  setenv VARBC_TABLE ${prevCyclingDADir}/${VarBCAnalysis}
 
 ## PrepJEDICyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA
 # *VerifyModelDA is non-functional and unused
-#TODO: enable VerifyObsDA for ensemble DA; only works for deterministic DA
-set WorkDir = $CyclingDADirs[1]
 set taskBaseScript = Variational
 set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
 sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \

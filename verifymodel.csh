@@ -35,12 +35,11 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/verification.csh
-source config/environment.csh
+source config/environmentPython.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -69,17 +68,20 @@ mkdir -p ${self_WorkDir}/${ModelDiagnosticsDir}
 cd ${self_WorkDir}/${ModelDiagnosticsDir}
 
 set other = $self_StateDir
-set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
-ln -sf ${bgFileOther} ../restart.$fileDate.nc
+set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
+ln -sf ${bgFileOther} ../restart.$thisMPASFileDate.nc
 
 ln -fs ${pyModelDir}/*.py ./
 
-set mainScript = writediagstats_modelspace
+set mainScript = DiagnoseModelStatistics
+
 ln -fs ${pyModelDir}/${mainScript}.py ./
+set NUMPROC=`cat $PBS_NODEFILE | wc -l`
+
 set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -r $GFSAnaDirVerify/$InitFilePrefixOuter"
+  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $GFSAnaDirVerify/$InitFilePrefixOuter"
   echo "${baseCommand}" | tee ./myCommand
   ${baseCommand} >& log.$mainScript
   set success = $?

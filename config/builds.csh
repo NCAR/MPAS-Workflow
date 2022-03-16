@@ -1,5 +1,8 @@
 #!/bin/csh -f
 
+if ( $?config_builds ) exit 0
+set config_builds = 1
+
 #############################
 ## build directory structures
 #############################
@@ -13,7 +16,7 @@ setenv BuildCompiler 'gnu-openmpi'
 # Note: at this time, all executables should be built in the same environment, one that is
 # consistent with config/environmentForJedi.csh
 
-set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_09JAN2022
+set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_07MAR2022
 
 # Ungrib
 setenv ungribEXE ungrib.exe

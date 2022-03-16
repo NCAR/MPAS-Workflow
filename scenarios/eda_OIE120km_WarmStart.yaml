@@ -1,0 +1,10 @@
+workflow:
+  InitializationType: WarmStart
+model:
+  MPASGridDescriptor: OIE120km
+variational:
+  DAType: eda_3denvar
+  EDASize: 1
+  nDAInstances: 20
+  LeaveOneOutEDA: True
+  RTPPInflationFactor: 0.80

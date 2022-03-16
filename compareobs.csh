@@ -38,7 +38,6 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/verification.csh
@@ -92,8 +91,8 @@ foreach obstype ($ObsTypeList)
 
   # nccmp returns 0 if the files are identical. Log non-zero returns in a file for human review.
   if ($status != 0) then
-    echo "$self_StatisticsFile" >> ${ExpDir}/verifyobs_differences_found.txt
-    echo "--> ${CompareDir}/diffStatistics.nc" >> ${ExpDir}/verifyobs_differences_found.txt
+    echo "$self_StatisticsFile" >> ${ExperimentDirectory}/verifyobs_differences_found.txt
+    echo "--> ${CompareDir}/diffStatistics.nc" >> ${ExperimentDirectory}/verifyobs_differences_found.txt
     ncdiff -O -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} diffStatistics_${obstype}.nc
   endif
 end

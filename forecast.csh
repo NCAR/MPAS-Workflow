@@ -22,7 +22,8 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
+source config/workflow.csh
+source config/model.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
@@ -61,7 +62,7 @@ rm ${localStaticFieldsPrefix}*.nc
 rm ${localStaticFieldsPrefix}*.nc-lock
 set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
-set icFileExt = ${fileDate}.nc
+set icFileExt = ${thisMPASFileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
 if ( ${InitializationType} == "ColdStart" && ${thisValidDate} == ${FirstCycleDate}) then
@@ -110,7 +111,7 @@ sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile}
 ## copy/modify dynamic namelist
 rm ${NamelistFile}
 cp -v ${self_ModelConfigDir}/${NamelistFile} .
-sed -i 's@startTime@'${NMLDate}'@' $NamelistFile
+sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
 sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFile
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile

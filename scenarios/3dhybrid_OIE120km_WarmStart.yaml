@@ -1,0 +1,8 @@
+workflow:
+  InitializationType: WarmStart
+model:
+  MPASGridDescriptor: OIE120km
+variational:
+  DAType: 3dhybrid
+  ensembleCovarianceWeight: 0.5
+  staticCovarianceWeight: 0.5

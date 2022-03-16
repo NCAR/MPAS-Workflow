@@ -1,6 +1,6 @@
 #!/bin/csh -f
 
-source config/experiment.csh
+source config/workflow.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh

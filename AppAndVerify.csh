@@ -10,17 +10,8 @@ set self_AppName = wrapAppNameTEMPLATE
 set self_nOuter = wrapnOuterTEMPLATE
 
 set preparationName = PrepJEDI
-foreach name ( \
-  ${preparationName}${self_taskBaseScript} \
-  ${self_taskBaseScript} \
-  VerifyObs${self_StateType} \
-  CompareObs${self_StateType} \
-  VerifyModel${self_StateType} \
-  CompareModel${self_StateType} \
-  Clean${self_taskBaseScript} \
-)
-  echo "Making $name job script for ${self_StateType} state"
-end
+
+echo "Making task scripts for ${self_StateType} state"
 
 #Application preparation
 set PreparationScript=${mainScriptDir}/${preparationName}${self_taskBaseScript}.csh
@@ -42,6 +33,7 @@ chmod 744 ${JobScript}
 #Application verification
 if ( "$self_AppName" =~ *"eda"* ) then
   #NOTE: verification not set up for multiple states yet
+  #TODO: enable VerifyObsDA for ensemble DA; only works for deterministic DA
   set VFOBSScript=None
   set VFMODELScript=None
 else

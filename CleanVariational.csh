@@ -4,10 +4,11 @@ date
 
 # Setup environment
 # =================
-source config/experiment.csh
 source config/filestructure.csh
-source config/tools.csh
+source config/model.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
+source config/tools.csh
+source config/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}

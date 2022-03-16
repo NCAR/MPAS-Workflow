@@ -1,0 +1,21 @@
+workflow:
+  firstCyclePoint: 20180414T18
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180415T06
+  InitializationType: WarmStart
+  VerifyEnsMeanBG: True
+  DiagnoseEnsSpreadBG: True
+experiment:
+  ExperimentName: 'eda_OIE120km_WarmStart_TEST'
+model:
+  MPASGridDescriptor: OIE120km
+variational:
+  DAType: eda_3denvar
+  nInnerIterations: [15,]
+  EDASize: 1
+  nDAInstances: 5
+  LeaveOneOutEDA: True
+  RTPPInflationFactor: 0.80
+job:
+  CPQueueName: economy
+  NCPQueueName: economy

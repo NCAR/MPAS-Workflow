@@ -1,8 +1,14 @@
 #!/bin/csh -f
 
-source config/experiment.csh
+if ( $?config_modeldata ) exit 0
+set config_modeldata = 1
+
+source config/workflow.csh
+source config/model.csh
+source config/variational.csh
 source config/filestructure.csh
-source config/tools.csh
+set wd = `pwd`
+source config/tools.csh $wd
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 
 ## file date for first background
@@ -43,7 +49,9 @@ setenv firstDetermFCDirOuter ${GFS6hfcFORFirstCycleOuter}
 setenv firstDetermFCDirInner ${GFS6hfcFORFirstCycleInner}
 
 ## stochastic - GEFS
-set gefsMemFmt = "/{:02d}"
+set gefsMemPrefix = "None"
+set gefsMemNDigits = 2
+set gefsMemFmt = "/{:0${gefsMemNDigits}d}"
 set nGEFSMembers = 20
 set GEFS6hfcFOREnsBDir = ${EnsembleModelData}/EnsForCov
 set GEFS6hfcFOREnsBFilePrefix = EnsForCov
@@ -77,7 +85,8 @@ endif
 # background covariance
 # ---------------------
 ## stochastic analysis (dynamic directory structure, depends on $nEnsDAMembers)
-set dynamicEnsBMemFmt = "${flowMemFmt}"
+set dynamicEnsBMemPrefix = "${flowMemPrefix}"
+set dynamicEnsBMemNDigits = ${flowMemNDigits}
 set dynamicEnsBFilePrefix = ${FCFilePrefix}
 
 ## select the ensPb settings based on DAType
@@ -87,18 +96,21 @@ if ( "$DAType" =~ *"eda"* ) then
 
   setenv ensPbDir ${dynamicEnsBDir}
   setenv ensPbFilePrefix ${dynamicEnsBFilePrefix}
-  setenv ensPbMemFmt "${dynamicEnsBMemFmt}"
+  setenv ensPbMemPrefix ${dynamicEnsBMemPrefix}
+  setenv ensPbMemNDigits ${dynamicEnsBMemNDigits}
   setenv ensPbNMembers ${dynamicEnsBNMembers}
 else
   ## deterministic analysis (static directory structure)
   # parse selections
   if ("$fixedEnsBType" == "GEFS") then
-    set fixedEnsBMemFmt = "${gefsMemFmt}"
+    set fixedEnsBMemPrefix = "${gefsMemPrefix}"
+    set fixedEnsBMemNDigits = ${gefsMemNDigits}
     set fixedEnsBNMembers = ${nGEFSMembers}
     set fixedEnsBDir = ${GEFS6hfcFOREnsBDir}
     set fixedEnsBFilePrefix = ${GEFS6hfcFOREnsBFilePrefix}
   else if ("$fixedEnsBType" == "PreviousEDA") then
-    set fixedEnsBMemFmt = "${dynamicEnsBMemFmt}"
+    set fixedEnsBMemPrefix = "${dynamicEnsBMemPrefix}"
+    set fixedEnsBMemNDigits = ${dynamicEnsBMemNDigits}
     set fixedEnsBNMembers = ${nPreviousEnsDAMembers}
     set fixedEnsBDir = ${PreviousEDAForecastDir}
     set fixedEnsBFilePrefix = ${dynamicEnsBFilePrefix}
@@ -109,7 +121,8 @@ else
 
   setenv ensPbDir ${fixedEnsBDir}
   setenv ensPbFilePrefix ${fixedEnsBFilePrefix}
-  setenv ensPbMemFmt "${fixedEnsBMemFmt}"
+  setenv ensPbMemPrefix "${fixedEnsBMemPrefix}"
+  setenv ensPbMemNDigits "${fixedEnsBMemNDigits}"
   setenv ensPbNMembers ${fixedEnsBNMembers}
 endif
 

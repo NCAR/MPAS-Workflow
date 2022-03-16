@@ -5,10 +5,9 @@ date
 
 # Setup environment
 # =================
-source config/experiment.csh
+source config/observations.csh
+source config/obsdata.csh
 source config/filestructure.csh
-source config/tools.csh
-source config/modeldata.csh
 source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
@@ -26,10 +25,6 @@ cd ${WorkDir}
 
 # ================================================================================================
 
-# static variables
-setenv OBS_ERRTABLE /glade/u/home/hclin/proj/ioda/obs_errtable
-setenv SPC_COEFF_DIR /glade/u/home/hclin/proj/ioda/SpcCoeff
-
 # write out hourly files for IASI
 setenv SPLIThourly "-split"
 
@@ -41,15 +36,15 @@ foreach gdasfile ( *"gdas"* )
    echo "Running ${obs2iodaEXEC} for ${gdasfile} ..."
    # link SpcCoeff files for converting IR radiances to brightness temperature
    if ( ${gdasfile} =~ *"cris"* && ${ccyy} >= '2021' ) then
-     ln -sf ${SPC_COEFF_DIR}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
-     ln -sf ${SPC_COEFF_DIR}/cris-fsr431_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
+     ln -sf ${CRTMTABLES}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
+     ln -sf ${CRTMTABLES}/cris-fsr431_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
    else if ( ${gdasfile} =~ *"cris"* && ${ccyy} < '2021' ) then
-     ln -sf ${SPC_COEFF_DIR}/cris399_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
-     ln -sf ${SPC_COEFF_DIR}/cris399_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
+     ln -sf ${CRTMTABLES}/cris399_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
+     ln -sf ${CRTMTABLES}/cris399_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
    else if ( ${gdasfile} =~ *"mtiasi"* ) then
-     ln -sf ${SPC_COEFF_DIR}/iasi616_metop-a.SpcCoeff.bin  ./iasi_metop-a.SpcCoeff.bin
-     ln -sf ${SPC_COEFF_DIR}/iasi616_metop-b.SpcCoeff.bin  ./iasi_metop-b.SpcCoeff.bin
-     ln -sf ${SPC_COEFF_DIR}/iasi616_metop-c.SpcCoeff.bin  ./iasi_metop-c.SpcCoeff.bin
+     ln -sf ${CRTMTABLES}/iasi616_metop-a.SpcCoeff.bin  ./iasi_metop-a.SpcCoeff.bin
+     ln -sf ${CRTMTABLES}/iasi616_metop-b.SpcCoeff.bin  ./iasi_metop-b.SpcCoeff.bin
+     ln -sf ${CRTMTABLES}/iasi616_metop-c.SpcCoeff.bin  ./iasi_metop-c.SpcCoeff.bin
    endif
 
    # Run the obs2ioda executable to convert files from BUFR to IODA-v2
@@ -74,7 +69,7 @@ foreach gdasfile ( *"gdas"* )
   rm -rf $gdasfile
 end # gdasfile loop
 
-if ( "${preprocessObsList}" =~ *"prepbufr"* || "${preprocessObsList}" =~ *"satwnd"* ) then
+if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservations}" =~ *"satwnd"* ) then
   # Run the ioda-upgrade executable to upgrade to get string station_id and string variable_names
   # ==================
   source ${ConfigDir}/environmentForJedi.csh ${BuildCompiler}
@@ -98,11 +93,6 @@ if ( "${preprocessObsList}" =~ *"prepbufr"* || "${preprocessObsList}" =~ *"satwn
     endif
   end
 endif
-
-# Remove BURF/PrepBUFR files
-#foreach gdasfile ( *"gdas"* )
-  #rm -rf $gdasfile
-#end
 
 date
 

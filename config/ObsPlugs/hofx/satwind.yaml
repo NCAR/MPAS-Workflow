@@ -2,13 +2,12 @@
     <<: *ObsSpace
     name: Satwind
     obsdatain:
-      obsfile: InDBDir/satwind_obs_2018041500.h5
+      obsfile: InDBDir/satwind_obs_{{thisValidDate}}.h5
       max frame size: 80000
     obsdataout:
       obsfile: OutDBDir/obsPrefix_satwind.h5
       max frame size: 80000
     simulated variables: [eastward_wind, northward_wind]
-    obs perturbations seed: 1
   obs error: *ObsErrorDiagonal
   obs operator:
     name: VertInterp
@@ -17,9 +16,6 @@
   obs filters:
   - filter: PreQC
     maxvalue: 3
-  - filter: Background Check
-    threshold: 3.0
-    apply at iterations: 0, 1
   - filter: Bounds Check
     filter variables:
     - name: eastward_wind

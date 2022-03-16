@@ -4,7 +4,7 @@ date
 
 # Setup environment
 # =================
-source config/experiment.csh
+source config/variational.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
@@ -25,9 +25,9 @@ cd ${self_WorkDir}
 # other static variables
 set self_StateDirs = ($prevCyclingFCDirs)
 set self_StatePrefix = ${FCFilePrefix}
-set memberPrefix = ${self_StatePrefix}.${fileDate}mem
-set meanName = ${self_StatePrefix}.$fileDate.nc
-set varianceName = ${self_StatePrefix}.$fileDate.variance.nc
+set memberPrefix = ${self_StatePrefix}.${thisMPASFileDate}mem
+set meanName = ${self_StatePrefix}.$thisMPASFileDate.nc
+set varianceName = ${self_StatePrefix}.$thisMPASFileDate.variance.nc
 
 # ================================================================================================
 
