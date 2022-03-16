@@ -1,4 +1,4 @@
-ObsAnchors
+{{ObsAnchors}}
 window begin: {{windowBegin}}
 window length: {{windowLength}}
 geometry:
@@ -10,3 +10,4 @@ state:
   filename: {{bgStateDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
   date: {{thisISO8601Date}}
 observations:
+{{Observations}}

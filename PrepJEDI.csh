@@ -283,18 +283,31 @@ if ($found == 0) then
   exit 1
 endif
 
-# (ii) concatenate all observations to thisYAML
-cat $observationsYAML >> $thisYAML
-
-# (iii) add re-usable YAML anchors
-set obsanchorssed = ObsAnchors
-set thisSEDF = ${obsanchorssed}SEDF.yaml
+# (ii) insert Observations
+set sedstring = Observations
+set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
-/${obsanchorssed}/c\
+/{{${sedstring}}}/c\
+EOF
+
+# substitute with line breaks
+sed 's@$@\\@' ${observationsYAML} >> ${thisSEDF}
+
+# insert into prevYAML
+set thisYAML = insert${sedstring}.yaml
+sed -f ${thisSEDF} $prevYAML >! $thisYAML
+rm ${thisSEDF}
+set prevYAML = $thisYAML
+
+# (iii) insert re-usable YAML anchors
+set sedstring = ObsAnchors
+set thisSEDF = ${sedstring}SEDF.yaml
+cat >! ${thisSEDF} << EOF
+/{{${sedstring}}}/c\
 EOF
 
 # add base anchors
-foreach SUBYAML (${ConfigDir}/ObsPlugs/${self_AppType}/${obsanchorssed}.yaml)
+foreach SUBYAML (${ConfigDir}/ObsPlugs/${self_AppType}/${sedstring}.yaml)
   # concatenate with line breaks substituted
   sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 end
@@ -302,7 +315,7 @@ end
 # add anchors for allSkyIR ObsError fits
 
 # allSkyIR ObsAnchors (channel selection)
-set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${self_AppType}/ObsAnchors.yaml
+set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${self_AppType}/${sedstring}.yaml
 sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 
 # allSkyIRErrorType
@@ -384,7 +397,7 @@ endif
 #echo '_blank: null' >> ${thisSEDF}
 
 # finally, insert into prevYAML
-set thisYAML = insertObsAnchors.yaml
+set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
@@ -426,6 +439,7 @@ sed -i 's@{{InterpolationType}}@'${InterpolationType}'@g' $thisYAML
 
 ## QC characteristics
 sed -i 's@{{RADTHINDISTANCE}}@'${RADTHINDISTANCE}'@g' $thisYAML
+
 
 ## date-time information
 # current date

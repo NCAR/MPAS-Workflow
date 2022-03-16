@@ -6,7 +6,7 @@ _iteration: &iterationConfig
     interpolation type: unstructured
   gradient norm reduction: 1e-3
   obs perturbations: {{ObsPerturbations}}
-ObsAnchors
+{{ObsAnchors}}
 output:
   filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis
@@ -71,3 +71,4 @@ cost function:
       input variables: *ctlvars
       output variables: *incvars
   observations:
+{{Observations}}

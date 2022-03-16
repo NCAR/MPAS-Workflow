@@ -25,6 +25,6 @@ $setLocal EnsOfVariationalRetry
 $setLocal CyclingFCRetry
 $setLocal RTPPInflationRetry
 $setLocal HofXRetry
+$setLocal CleanRetry
 $setLocal VerifyObsRetry
 $setLocal VerifyModelRetry
-$setLocal CleanRetry

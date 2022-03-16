@@ -17,7 +17,7 @@ _member: &memberConfig
   date: &analysisDate {{thisISO8601Date}}
   state variables: &incvars [{{AnalysisVariables}}]
   stream name: ensemble
-ObsAnchors
+{{ObsAnchors}}
 output:
   filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis
@@ -64,3 +64,4 @@ cost function:
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:
+{{Observations}}

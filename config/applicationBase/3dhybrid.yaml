@@ -1,7 +1,7 @@
 _iteration: &iterationConfig
   geometry:
-    nml_file: InnerNamelistFile
-    streams_file: InnerStreamsFileStreamsFileMember
+    nml_file: {{InnerNamelistFile}}
+    streams_file: {{InnerStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
     interpolation type: unstructured
   gradient norm reduction: 1e-3
@@ -17,7 +17,7 @@ _member: &memberConfig
   date: &analysisDate {{thisISO8601Date}}
   state variables: &incvars [{{AnalysisVariables}}]
   stream name: ensemble
-ObsAnchors
+{{ObsAnchors}}
 output:
   filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis
@@ -35,8 +35,8 @@ cost function:
   window length: {{windowLength}}
   jb evaluation: false
   geometry:
-    nml_file: OuterNamelistFile
-    streams_file: OuterStreamsFileStreamsFileMember
+    nml_file: {{OuterNamelistFile}}
+    streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
     interpolation type: unstructured
   analysis variables: *incvars
@@ -106,3 +106,4 @@ cost function:
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:
+{{Observations}}

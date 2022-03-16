@@ -34,6 +34,7 @@ job:
   CyclingFCRetry: '2*PT30S'
   RTPPInflationRetry: '2*PT30S'
   HofXRetry: '2*PT30S'
+  CleanRetry: '2*PT15S'
   VerifyObsRetry: '1*PT30S'
   VerifyModelRetry: '1*PT30S'
   CleanRetry: '2*PT10S'
