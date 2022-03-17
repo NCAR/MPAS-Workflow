@@ -152,7 +152,7 @@ cat >! suite.rc << EOF
   [[dependencies]]
 {% if initialCyclePoint == firstCyclePoint %}
   {% if InitializationType == "ColdStart" %}
-      [[[R1]]]
+    [[[R1]]]
         graph = {{GFSAnalysisWorkflow}} => ColdStartFC => CyclingFCFinished
   {% elif InitializationType == "WarmStart" %}
     [[[R1]]]
