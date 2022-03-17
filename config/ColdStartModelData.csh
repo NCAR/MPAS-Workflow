@@ -17,7 +17,6 @@ set GFSAnaDirInner = ${InnerModelData}/GFSAna
 set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
 
 setenv InitICWorkDir ${GFSAnaDirOuter}
-
 setenv updateSea 0
-
-exit 0
+setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${FirstCycleDate}
+setenv StaticFieldsDirInner ${GFSAnaDirInner}/${FirstCycleDate}

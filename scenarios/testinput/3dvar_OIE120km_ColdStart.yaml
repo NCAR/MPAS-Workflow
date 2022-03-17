@@ -5,14 +5,14 @@ workflow:
   finalCyclePoint: 20220201T12
   InitializationType: ColdStart
   VerifyDeterministicDA: True
-  # TODO: enable GFS analysis generation every cycle, then engage forecast verification
-  VerifyEnsMeanBG: False
+  VerifyEnsMeanBG: True
 observations:
   resource: GladeRDAOnline
 experiment:
   ExperimentName: '3dvar_OIE120km_ColdStart_TEST'
 model:
   MPASGridDescriptor: OIE120km
+  AnaSource: GFSRDAOnline
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]

@@ -18,30 +18,8 @@ set GFSAnaDirOuter = ${OuterModelData}/GFSAna
 set GFSAnaDirInner = ${InnerModelData}/GFSAna
 set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
 
+setenv GFSAnaDirVerify ${GFSAnaDirOuter}
 setenv InitICWorkDir  ${GFSAnaDirOuter}
-
 setenv updateSea 1
-
-## static stream data
-if ( "$DAType" =~ *"eda"* ) then
-  # stochastic
-  # 60km and 120km
-  setenv StaticFieldsDirOuter ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
-  setenv StaticFieldsDirInner ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
-  setenv StaticFieldsDirEnsemble ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
-  setenv staticMemFmt "${gefsMemFmt}"
-
-  #TODO: switch to using FirstFileDate static files for GEFS
-  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
-  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
-else
-  # deterministic
-  # 30km, 60km, and 120km
-  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
-  setenv StaticFieldsDirInner ${GFSAnaDirInner}
-  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
-  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
-  setenv GFSAnaDirVerify ${GFSAnaDirOuter}
-endif
+setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
+setenv StaticFieldsDirInner ${GFSAnaDirInner}

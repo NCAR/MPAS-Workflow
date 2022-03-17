@@ -1,5 +1,5 @@
 #!/bin/csh -f
-# Get GFS analysis for cold start initial conditions
+# Get GFS analysis (0-h forecast) for cold start initial conditions
 
 date
 
@@ -7,7 +7,6 @@ date
 # =================
 source config/workflow.csh
 source config/model.csh
-source config/observations.csh
 source config/filestructure.csh
 source config/builds.csh
 source config/${InitializationType}ModelData.csh
@@ -31,19 +30,25 @@ set linkWPS = link_grib.csh
 ln -sfv ${WPSBuildDir}/${linkWPS} .
 rm -rf GRIBFILE.*
 
-if ( ${AnaSource} == "GFSRDAOnline" ) then
-  ## RDA GFS forecasts}
-  set GFSgribdirRDA = /gpfs/fs1/collections/rda/data/ds084.1 #${GFSRDADirectory}
-  ## link ungribbed GFS
+if ( ${model__AnaSource} == "GFSRDAOnline" ) then
+  echo "Getting GFS analysis from RDA"
+  # RDA GFS forecasts directory
+  set GFSgribdirRDA = /gpfs/fs1/collections/rda/data/ds084.1
+  # link ungribbed GFS
   ./${linkWPS} ${GFSgribdirRDA}/${yy}/${yymmdd}/gfs.${res}.${yymmdd}${hh}.f${fhour}.grib2
-else if ( ${AnaSource} == "GFSNCEPFTPOnline" ) then
+
+else if ( ${model__AnaSource} == "GFSNCEPFTPOnline" ) then
+  echo "Getting GFS analysis from the NCEP FTP"
+  # url for GFS data
   set gfs_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gfs.${yymmdd}/${hh}/atmos
   set gfs_file = gfs.t${hh}z.pgrb2.${res}.f${fhour}
-  echo $gfs_file
+  # check if the GFS analysis is available
   if ( ! -e ${gfs_file}) then
     set gfs_ftp_file = ${gfs_ftp}/${gfs_file}
     wget -S --spider $gfs_ftp_file >&! log_check_gfs_f000
     grep "HTTP/1.1 200 OK" log_check_gfs_f000
+    # if the file exists then download it
+    # otherwise, retry until available
     if ( $status == 0 ) then
      echo "Downloading $gfs_ftp_file ..."
      wget -r -np -nd $gfs_ftp_file
@@ -54,7 +59,7 @@ else if ( ${AnaSource} == "GFSNCEPFTPOnline" ) then
   else
     echo "$gfs_file is already in ${WorkDir}"
   endif
-  ## link ungribbed GFS
+  # link ungribbed GFS
   ./${linkWPS} $gfs_file
 endif
 

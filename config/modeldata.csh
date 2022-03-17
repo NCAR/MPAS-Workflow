@@ -29,11 +29,11 @@ set Ndd = `echo ${nextFirstCycleDate} | cut -c 7-8`
 set Nhh = `echo ${nextFirstCycleDate} | cut -c 9-10`
 set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
 
-####################
-## static data files
-####################
 ## RDA data on Cheyenne
 setenv RDAdataDir /gpfs/fs1/collections/rda/data
+
+## RDA GFS forecasts
+setenv GFSgribdirRDA ${RDAdataDir}/ds084.1
 
 ## linkWPS and Vtable files paths
 setenv VtableDir /glade/u/home/schwartz/MPAS_scripts
@@ -77,9 +77,6 @@ else
   setenv firstFCDirOuter ${firstDetermFCDirOuter}
   setenv firstFCDirInner ${firstDetermFCDirInner}
   setenv firstFCFilePrefix ${FCFilePrefix}
-  # static
-  setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
-  setenv staticMemFmt " "
 endif
 
 # background covariance
@@ -146,4 +143,27 @@ else
   # 60km and 120km
   setenv SeaAnaDir ${deterministicSeaAnaDir}
   setenv seaMemFmt " "
+endif
+
+## static stream data
+if ( "$DAType" =~ *"eda"* ) then
+  # stochastic
+  # 60km and 120km
+  setenv StaticFieldsDirOuter ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
+  setenv StaticFieldsDirInner ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
+  setenv StaticFieldsDirEnsemble ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
+  setenv staticMemFmt "${gefsMemFmt}"
+
+  #TODO: switch to using FirstFileDate static files for GEFS
+  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
+  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
+  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
+else
+  # deterministic
+  # 30km, 60km, and 120km
+  setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
+  setenv staticMemFmt " "
+  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
+  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
+  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
 endif

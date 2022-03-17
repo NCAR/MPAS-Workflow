@@ -7,9 +7,6 @@ date
 # =================
 source config/workflow.csh
 source config/observations.csh
-$setObservations ${observations__resource}.defaultBUFRDirectory
-$setObservations ${observations__resource}.satwndBUFRDirectory
-$setObservations ${observations__resource}.PrepBUFRDirectory
 source config/obsdata.csh
 source config/filestructure.csh
 source config/builds.csh
@@ -30,8 +27,12 @@ cd ${WorkDir}
 
 # ================================================================================================
 
-foreach inst ( ${convertToIODAObservations} )
+set defaultBUFRDirectory = /gpfs/fs1/collections/rda/data/ds735.0
+set satwndBUFRDirectory = /gpfs/fs1/collections/rda/data/ds351.0
+set PrepBUFRDirectory = /gpfs/fs1/collections/rda/data/ds337.0
 
+foreach inst ( ${convertToIODAObservations} )
+  echo "Getting ${inst} from RDA"
   if ( ${inst} == satwnd ) then
      setenv THIS_FILE gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
      if ( ! -e ${THIS_FILE}) then

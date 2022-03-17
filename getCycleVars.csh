@@ -1,6 +1,5 @@
 #!/bin/csh -f
 
-source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/workflow.csh
@@ -100,10 +99,5 @@ set thisISO8601Date = ${yy}-${mm}-${dd}T${hh}:00:00Z
 set ICfileDate = ${yy}-${mm}-${dd}_${hh}
 
 if ( ${InitializationType} == "ColdStart" ) then
-  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${thisValidDate}
-  setenv StaticFieldsDirInner ${GFSAnaDirInner}/${thisValidDate}
-  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${thisMPASFileDate}.nc
-  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${thisMPASFileDate}.nc
-  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${thisMPASFileDate}.nc
   setenv GFSAnaDirVerify ${GFSAnaDirOuter}/${thisValidDate}
 endif

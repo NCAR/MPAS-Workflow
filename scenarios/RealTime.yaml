@@ -9,7 +9,7 @@ workflow:
 observations:
   resource: NCEPFTPOnline
 experiment:
-  ExperimentName: 'REAL_TIME'
+  ExperimentName: 'RealTime'
 model:
   MPASGridDescriptor: OIE120km
   AnaSource: GFSNCEPFTPOnline

@@ -33,7 +33,7 @@ setenv SPLIThourly "-split"
 setenv PREPBUFRflag "-noqc"
 
 foreach gdasfile ( *"gdas"* )
-   echo "Running ${obs2iodaEXEC} for ${gdasfile} ..."
+   echo "Running ${obs2iodaEXEC} for ${gdasfile}"
    # link SpcCoeff files for converting IR radiances to brightness temperature
    if ( ${gdasfile} =~ *"cris"* && ${ccyy} >= '2021' ) then
      ln -sf ${CRTMTABLES}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
@@ -54,13 +54,15 @@ foreach gdasfile ( *"gdas"* )
    if ( ${gdasfile} =~ *"mtiasi"* ) then
      ./${obs2iodaEXEC} ${SPLIThourly} ${gdasfile} >&! log_${gdasfile}
    else if ( ${gdasfile} =~ *"prepbufr"* ) then
+     # run obs2ioda for preburf with additional QC as in GSI
      ./${obs2iodaEXEC} ${gdasfile} >&! log_${gdasfile}
-     mv sfc_obs_${thisCycleDate}.h5 sfc_obs_${thisCycleDate}.h5_allqc
+     # for surface obs, run obs2ioda for prepbufr without additional QC
      mkdir -p sfc
      cd sfc
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
      ./${obs2iodaEXEC} ${PREPBUFRflag} ../${gdasfile} >&! log_sfc
-     mv sfc_obs_${thisCycleDate}.h5 ../
+     # replace surface obs file with file created without additional QC
+     mv sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
      cd ..
      rm -rf sfc
    else
@@ -73,7 +75,7 @@ foreach gdasfile ( *"gdas"* )
      echo "ERROR in $0 : Pre-processing observations to IODA-v2 failed" > ./FAIL-converter
      exit 1
    endif
-  # Remove BURF/PrepBUFR files
+  # remove BURF/PrepBUFR files
   rm -rf $gdasfile
 end # gdasfile loop
 

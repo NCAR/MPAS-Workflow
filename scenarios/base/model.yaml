@@ -25,11 +25,3 @@ model:
 ## Analysis source
 # OPTIONS: PANDACGFSArchive, GFSRDAOnline, GFSNCEPFTPOnline
   AnaSource: PANDACGFSArchive
-
-## *Directory
-# locations of analysis data, separated by resource
-  GFSRDAOnline:
-    GFSRDADirectory: /gpfs/fs1/collections/rda/data/ds084.1
-
-  GFSNCEPFTPOnline:
-    GFSNCEPFtpUrl: https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gfs

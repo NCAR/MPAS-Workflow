@@ -132,7 +132,7 @@ cat >! suite.rc << EOF
 {% set DAInstances = range(1, nDAInstances+1, 1) %}
 {% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 # Cold initial conditions from GFS analysis
-{% set GFSAnalysisWorflow = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC" %}
+{% set GFSAnalysisWorkflow = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC" %}
 [cylc]
   UTC mode = False
   [[environment]]
@@ -153,7 +153,7 @@ cat >! suite.rc << EOF
 {% if initialCyclePoint == firstCyclePoint %}
   {% if InitializationType == "ColdStart" %}
       [[[R1]]]
-        graph = {{GFSAnalysisWorflow}} => ColdStartFC => CyclingFCFinished
+        graph = {{GFSAnalysisWorkflow}} => ColdStartFC => CyclingFCFinished
   {% elif InitializationType == "WarmStart" %}
     [[[R1]]]
       graph = GetWarmStartIC => CyclingFCFinished
@@ -196,7 +196,7 @@ cat >! suite.rc << EOF
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
   {% if InitializationType == "ColdStart" %}
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => {{GFSAnalysisWorflow}} => VerifyModelBG
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => {{GFSAnalysisWorkflow}} => VerifyModelBG
   {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
   {% endif %}
@@ -218,7 +218,7 @@ cat >! suite.rc << EOF
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
   {% endif %}
   {% if InitializationType == "ColdStart" %}
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => {{GFSAnalysisWorflow}} => VerifyModelBG
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => {{GFSAnalysisWorkflow}} => VerifyModelBG
   {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
   {% endif %}
