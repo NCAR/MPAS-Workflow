@@ -67,6 +67,8 @@ rm ${localStaticFieldsPrefix}*.nc*
 # ========================================
 # Member-dependent Observation Directories
 # ========================================
+#TODO: Change behavior to always using member-specific directories
+#      instead of only for EDA.  Will make EDA omb/oma verification easier.
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
   set memDir = `${memberDir} $DAType $member`
@@ -94,10 +96,10 @@ set prevYAML = prevPrep.yaml
 # Outer iterations configuration elements
 # ===========================================
 # performs sed substitution for VariationalIterations
-set iterationssed = VariationalIterations
-set thisSEDF = ${iterationssed}SEDF.yaml
+set sedstring = VariationalIterations
+set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
-/${iterationssed}/c\
+/${sedstring}/c\
 EOF
 
 set nIterationsIndent = 2
@@ -126,7 +128,7 @@ EOF
 
 end
 
-set thisYAML = insertIterations.yaml
+set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
@@ -135,10 +137,10 @@ set prevYAML = $thisYAML
 # Minimization algorithm configuration element
 # ================================================
 # performs sed substitution for VariationalMinimizer
-set algorithmsed = VariationalMinimizer
-set thisSEDF = ${algorithmsed}SEDF.yaml
+set sedstring = VariationalMinimizer
+set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
-/${algorithmsed}/c\
+/${sedstring}/c\
 EOF
 
 set nAlgorithmIndent = 4
@@ -156,7 +158,7 @@ EOF
 
 endif
 
-set thisYAML = insertAlgorithm.yaml
+set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
@@ -164,8 +166,8 @@ set prevYAML = $thisYAML
 
 # Analysis directory
 # ==================
-sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' $prevYAML
-sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' $prevYAML
+sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $prevYAML
+sed -i 's@{{anStateDir}}@'${self_WorkDir}'/'${anDir}'@g' $prevYAML
 
 
 # Hybrid Jb weights
@@ -228,8 +230,8 @@ if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
 
   ## inflation
   # performs sed substitution for EnsemblePbInflation
-  set enspbinfsed = EnsemblePbInflation
-  set thisSEDF = ${enspbinfsed}SEDF.yaml
+  set sedstring = EnsemblePbInflation
+  set thisSEDF = ${sedstring}SEDF.yaml
   set removeInflation = 0
   if ( ${ABEInflation} == True ) then
     set inflationFields = ${CyclingABEInflationDir}/BT${ABEIChannel}_ABEIlambda.nc
@@ -239,13 +241,13 @@ if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
       #TODO: use last valid inflation factors?
       set removeInflation = 1
     else
-      set thisYAML = insertInflation.yaml
+      set thisYAML = insert${sedstring}.yaml
   #NOTE: 'stream name: control' allows for spechum and temperature inflation values to be read
   #      read directly from inflationFields without a variable transform. Also requires spechum and
   #      temperature to be in stream_list.atmosphere.control.
 
   cat >! ${thisSEDF} << EOF
-/${enspbinfsed}/c\
+/{{${sedstring}}}/c\
 ${indentPb}inflation field:\
 ${indentPb}  date: *analysisDate\
 ${indentPb}  filename: ${inflationFields}\
@@ -259,8 +261,8 @@ EOF
     set removeInflation = 1
   endif
   if ($removeInflation > 0) then
-    # delete the line containing $enspbinfsed
-    sed -i '/^'${enspbinfsed}'/d' $prevYAML
+    # delete the line containing $sedstring
+    sed -i '/^{{'${sedstring}'}}/d' $prevYAML
   endif
 endif
 
@@ -322,15 +324,17 @@ while ( $member <= ${nEnsDAMembers} )
 
   # member-specific state I/O and observation file output directory
   set memDir = `${memberDir} $DAType $member`
-  sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
+  sed -i 's@{{MemberDir}}@'${memDir}'@g' $memberyaml
 
-  # first EDA member and deterministic EnVar do not perturb observations
-  if ($member == 1) then
-    sed -i 's@ObsPerturbations@false@g' $memberyaml
+  # deterministic EnVar does not perturb observations
+  if ($nEnsDAMembers == 1) then
+    sed -i 's@{{ObsPerturbations}}@false@g' $memberyaml
   else
-    sed -i 's@ObsPerturbations@true@g' $memberyaml
+    sed -i 's@{{ObsPerturbations}}@true@g' $memberyaml
   endif
-  sed -i 's@MemberSeed@'$member'@g' $memberyaml
+
+  sed -i 's@{{MemberNumber}}@'$member'@g' $memberyaml
+  sed -i 's@{{TotalMemberCount}}@'${nEnsDAMembers}'@g' $memberyaml
 
   @ member++
 end
@@ -437,6 +441,11 @@ while ( $member <= ${nEnsDAMembers} )
     set FirstCyclingFCDir = ${CyclingFCWorkDir}/${FirstCycleDate}${memDir}/Inner
     cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
     # modify xtime
+    # TODO: handle errors from python executions, e.g.:
+    # '''
+    #     import netCDF4 as nc
+    # ImportError: No module named netCDF4
+    # '''
     echo "${updateXTIME} $tFile ${thisCycleDate}"
     ${updateXTIME} $tFile ${thisCycleDate}
   endif
@@ -448,7 +457,7 @@ while ( $member <= ${nEnsDAMembers} )
     sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
     sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
   end
-  sed -i 's@StreamsFileMember@'${memSuffix}'@' $yamlFileList[$member]
+  sed -i 's@{{StreamsFileMember}}@'${memSuffix}'@' $yamlFileList[$member]
 
   # Remove existing analysis file, make full copy from bg file
   # ==========================================================

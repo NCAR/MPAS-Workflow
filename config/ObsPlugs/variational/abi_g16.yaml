@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: abi_g16
     obsdatain:
-      obsfile: InDBDir/abi_g16_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/abi_g16_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_abi_g16.h5
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_abi_g16.h5
     simulated variables: [brightness_temperature]
     channels: &abi_g16_channels 8-10
   obs error: *ObsErrorDiagonal
@@ -22,9 +22,9 @@
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
   - filter: Gaussian Thinning
-    horizontal_mesh: RADTHINDISTANCE #km
+    horizontal_mesh: {{RADTHINDISTANCE}} #km
   - filter: Perform Action
-    apply at iterations: 0, 1, 2, 3, 4, 5
+    <<: *multiIterationFilter
     filter variables:
     - name: brightness_temperature
       channels: *abi_g16_channels
@@ -75,7 +75,7 @@
         name: ObsErrorModelRamp@ObsFunction
         channels: *abi_g16_channels
         options:
-          <<: *abi_g16_SymmCldFitsABISUPEROBGRID-HofXMeshDescriptor
+          <<: *abi_g16_SymmCldFits{{ABISUPEROBGRID}}-{{HofXMeshDescriptor}}
           channels: *abi_g16_channels
           xvar:
             name: SymmCldImpactIR@ObsFunction
@@ -84,10 +84,10 @@
               channels: *abi_g16_channels
   - filter: Background Check
     threshold: 3.0
-    apply at iterations: 0, 1, 2, 3, 4, 5
+    <<: *multiIterationFilter
 ## Ignore cloud-affected pixels in 1st iteration
 #  - filter: Domain Check
-#    apply at iterations: 0
+#    <<: *multiIterationFilter
 #    filter variables:
 #    - name: brightness_temperature
 #      channels: *abi_g16_channels
@@ -103,9 +103,9 @@
 #      name: assign error
 #      error parameter: 1000.0
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_abi_g16.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_abi_g16.nc4
   - filter: YDIAGsaver
-    filename: OutDBDirOOPSMemberDir/diagPrefix_abi_g16.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_abi_g16.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *abi_g16_channels
