@@ -54,7 +54,15 @@ foreach gdasfile ( *"gdas"* )
    if ( ${gdasfile} =~ *"mtiasi"* ) then
      ./${obs2iodaEXEC} ${SPLIThourly} ${gdasfile} >&! log_${gdasfile}
    else if ( ${gdasfile} =~ *"prepbufr"* ) then
-     ./${obs2iodaEXEC} ${PREPBUFRflag} ${gdasfile} >&! log_${gdasfile}
+     ./${obs2iodaEXEC} ${gdasfile} >&! log_${gdasfile}
+     mv sfc_obs_${thisCycleDate}.h5 sfc_obs_${thisCycleDate}.h5_allqc
+     mkdir -p sfc
+     cd sfc
+     ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
+     ./${obs2iodaEXEC} ${PREPBUFRflag} ../${gdasfile} >&! log_sfc
+     mv sfc_obs_${thisCycleDate}.h5 ../
+     cd ..
+     rm -rf sfc
    else
      ./${obs2iodaEXEC} ${gdasfile} >&! log_${gdasfile}
    endif

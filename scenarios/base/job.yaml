@@ -29,8 +29,8 @@ job:
 ## *Retry
 # various retry counts for different types of tasks
   InitializationRetry: '2*PT30S'
-  NCEPftpRetry: '40*PT30M'
   GFSAnalysisRetry: '40*PT30M'
+  NCEPftpRetry: '40*PT30M'
   VariationalRetry: '2*PT30S'
   EnsOfVariationalRetry: '1*PT30S'
   CyclingFCRetry: '2*PT30S'

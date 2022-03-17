@@ -367,14 +367,9 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
-    [[[directives]]]
-      -q = ${CPQueueName}
-      -A = ${CPAccountNumber}
-      -l = select=1:ncpus=1
   [[GetNCEPFTPobs]]
     script = \$origin/GetNCEPFTPobs.csh
     [[[job]]]
-      batch system = background
       execution retry delays = ${NCEPftpRetry}
   [[ObsToIODA]]
     script = \$origin/ObsToIODA.csh
@@ -461,8 +456,7 @@ cat >! suite.rc << EOF
   [[GetGFSanalysis]]
     script = \$origin/GetGFSanalysis.csh
     [[[job]]]
-      batch system = background
-      execution retry delays = ${GFSAnalysisRetry}  
+      execution retry delays = ${GFSAnalysisRetry}
   [[UngribColdStartIC]]
     script = \$origin/UngribColdStartIC.csh
     [[[job]]]

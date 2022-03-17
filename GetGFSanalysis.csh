@@ -1,4 +1,5 @@
 #!/bin/csh -f
+# Get GFS analysis for cold start initial conditions
 
 date
 
@@ -30,7 +31,7 @@ set linkWPS = link_grib.csh
 ln -sfv ${WPSBuildDir}/${linkWPS} .
 rm -rf GRIBFILE.*
 
-if ( ${AnaSource} == "GFSRDAOnline" ) then 
+if ( ${AnaSource} == "GFSRDAOnline" ) then
   ## RDA GFS forecasts}
   set GFSgribdirRDA = /gpfs/fs1/collections/rda/data/ds084.1 #${GFSRDADirectory}
   ## link ungribbed GFS
@@ -53,7 +54,7 @@ else if ( ${AnaSource} == "GFSNCEPFTPOnline" ) then
   else
     echo "$gfs_file is already in ${WorkDir}"
   endif
-  ## link ungribbed GFS  
+  ## link ungribbed GFS
   ./${linkWPS} $gfs_file
 endif
 

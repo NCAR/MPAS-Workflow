@@ -4,11 +4,11 @@ run:
 # the most simple of the failing scenarios until it passes in order to reduce computational overhead.
 # Then proceed with the remaining failing scenarios until all complete.
   scenarios: [
-    #3dvar_OIE120km_WarmStart,
-    #3denvar_OIE120km_WarmStart,
+    3dvar_OIE120km_WarmStart,
+    3denvar_OIE120km_WarmStart,
     3dvar_OIE120km_ColdStart,
-    #3denvar_O30kmIE60km_WarmStart,
-    #eda_OIE120km_WarmStart,
+    3denvar_O30kmIE60km_WarmStart,
+    eda_OIE120km_WarmStart,
   ]
 # test scenario configurations are copies of the default scenarios, with lower resource overhead
   scenarioDirectory: scenarios/testinput

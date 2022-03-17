@@ -6,12 +6,12 @@ date
 # Setup environment
 # =================
 source config/workflow.csh
-source config/model.csh
 source config/observations.csh
 source config/filestructure.csh
 source config/builds.csh
 source config/${InitializationType}ModelData.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
+set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
 set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -37,7 +37,7 @@ foreach inst ( ${convertToIODAObservations} )
     set THIS_FILE = gdas.t${hh}z.${inst}.tm00.bufr_d
   endif
   echo $THIS_FILE
-  
+
   if ( ! -e ${THIS_FILE}) then
     set ftp_file = ${gdas_ftp}/${THIS_FILE}
     wget -S --spider $ftp_file >&! log_check_${inst}
