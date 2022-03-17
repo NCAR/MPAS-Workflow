@@ -1,7 +1,7 @@
 - filter: Perform Action
   <<: *multiIterationFilter
-  filter variables: *errorAssignFilterVariables_InfraredInstrument
+  filter variables: *errorAssignFilterVariables_{{InfraredInstrument}}
   action:
     name: assign error
     error function:
-      <<: *OkamotoAssignErrorFunction_InfraredInstrument
+      <<: *OkamotoAssignErrorFunction_{{InfraredInstrument}}

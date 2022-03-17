@@ -343,8 +343,8 @@ if ($allSkyIRErrorType == Constant) then
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # assign error parameter anchor
     set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${allSkyIRErrorType}AssignErrorParameter_InfraredInstrument.yaml
-    sed 's@InfraredInstrument@'${InfraredInstrument}'@g' ${SUBYAML} > tempYAML
-    sed -i 's@ConstantErrorValueAllChannels@'${ConstantErrorValueAllChannels}'@g' tempYAML
+    sed 's@{{InfraredInstrument}}@'${InfraredInstrument}'@g' ${SUBYAML} > tempYAML
+    sed -i 's@{{ConstantErrorValueAllChannels}}@'${ConstantErrorValueAllChannels}'@g' tempYAML
     sed 's@$@\\@' tempYAML >> ${thisSEDF}
     rm tempYAML
   end
@@ -387,8 +387,8 @@ else
 
     # assign error function anchor (Polynomial2D depends on fit parameters being added first above)
     set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${allSkyIRErrorType}AssignErrorFunction_InfraredInstrument.yaml
-    sed 's@InfraredInstrument@'${InfraredInstrument}'@g' ${SUBYAML} > tempYAML
-    sed -i 's@POLYNOMIAL2DFITDEGREE@'${POLYNOMIAL2DFITDEGREE}'@g' tempYAML
+    sed 's@{{InfraredInstrument}}@'${InfraredInstrument}'@g' ${SUBYAML} > tempYAML
+    sed -i 's@{{POLYNOMIAL2DFITDEGREE}}@'${POLYNOMIAL2DFITDEGREE}'@g' tempYAML
     sed 's@$@\\@' tempYAML >> ${thisSEDF}
     rm tempYAML
   end
@@ -418,7 +418,7 @@ EOF
   foreach SUBYAML (${ConfigDir}/ObsPlugs/allSkyIR/${allSkyIRErrorType}${performactiontemplate}.yaml)
     # concatenate with line breaks substituted
     sed 's@$@\\@' ${SUBYAML} > tempYAML
-    sed -i 's@InfraredInstrument@'${InfraredInstrument}'@g' tempYAML
+    sed -i 's@{{InfraredInstrument}}@'${InfraredInstrument}'@g' tempYAML
     sed 's@^@'"$filtersIndent"'@' tempYAML >> ${thisSEDF}
     rm tempYAML
   end

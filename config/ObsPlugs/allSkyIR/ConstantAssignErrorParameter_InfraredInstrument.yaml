@@ -1,2 +1,2 @@
-_constant error parameter InfraredInstrument:
-  value: &ConstantAssignErrorParameter_InfraredInstrument ConstantErrorValueAllChannels
+_constant error parameter {{InfraredInstrument}}:
+  value: &ConstantAssignErrorParameter_{{InfraredInstrument}} {{ConstantErrorValueAllChannels}}

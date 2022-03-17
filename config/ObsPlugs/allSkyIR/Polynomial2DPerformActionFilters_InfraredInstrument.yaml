@@ -1,7 +1,7 @@
 - filter: Perform Action
   <<: *multiIterationFilter
-  filter variables: *errorAssignFilterVariables_InfraredInstrument
+  filter variables: *errorAssignFilterVariables_{{InfraredInstrument}}
   action:
     name: assign error
     error function:
-      <<: *Polynomial2DAssignErrorFunction_InfraredInstrument
+      <<: *Polynomial2DAssignErrorFunction_{{InfraredInstrument}}

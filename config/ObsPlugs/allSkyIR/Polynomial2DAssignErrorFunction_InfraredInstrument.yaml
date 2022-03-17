@@ -1,9 +1,9 @@
-_poly2d error function InfraredInstrument: &Polynomial2DAssignErrorFunction_InfraredInstrument
+_poly2d error function {{InfraredInstrument}}: &Polynomial2DAssignErrorFunction_{{InfraredInstrument}}
   name: ObsFunction/Polynomial2D
-  channels: *InfraredInstrument_channels
+  channels: *{{InfraredInstrument}}_channels
   options:
-    <<: *InfraredInstrument_fit2D_CldFrac2D_degreePOLYNOMIAL2DFITDEGREE
-    filter variables: *errorAssignFilterVariables_InfraredInstrument
+    <<: *{{InfraredInstrument}}_fit2D_CldFrac2D_degree{{POLYNOMIAL2DFITDEGREE}}
+    filter variables: *errorAssignFilterVariables_{{InfraredInstrument}}
     xvar:
       name: MetaData/cloud_area_fraction
     yvar:
