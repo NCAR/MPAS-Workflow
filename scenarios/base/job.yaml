@@ -29,10 +29,13 @@ job:
 ## *Retry
 # various retry counts for different types of tasks
   InitializationRetry: '2*PT30S'
+  GFSAnalysisRetry: '40*PT30M'
+  NCEPftpRetry: '40*PT30M'
   VariationalRetry: '2*PT30S'
   EnsOfVariationalRetry: '1*PT30S'
   CyclingFCRetry: '2*PT30S'
   RTPPInflationRetry: '2*PT30S'
   HofXRetry: '2*PT30S'
+  CleanRetry: '2*PT15S'
   VerifyObsRetry: '1*PT30S'
   VerifyModelRetry: '1*PT30S'

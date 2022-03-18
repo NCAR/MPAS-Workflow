@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: amsua_n18
     obsdatain:
-      obsfile: InDBDir/amsua_n18_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/amsua_n18_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_amsua_n18.h5
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua_n18.h5
     simulated variables: [brightness_temperature]
     channels: &amsua_n18_channels 1-15
   obs error: *ObsErrorDiagonal
@@ -21,10 +21,6 @@
     variational bc:
       predictors: &predictors3
       - name: constant
-#        - name: cosine_of_latitude_times_orbit_node
-#          options:
-#            preconditioner: 0.01
-#        - name: sine_of_latitude
       - name: lapse_rate
         order: 2
         tlapse: &amsua18tlap satelliteBiasDir/amsua_n18_tlapmean.txt
@@ -282,7 +278,7 @@
                            2.5, 3.5, 4.5, 4.5, 4.5]
     action:
       name: reject
-    apply at iterations: 0, 1, 2, 3, 4, 5
+    <<: *multiIterationFilter
 #  Inter-channel check #amsua-n18
   - filter: Bounds Check
     filter variables:
@@ -317,6 +313,6 @@
     action:
       name: reject
   - filter: Gaussian_Thinning
-    horizontal_mesh: RADTHINDISTANCE #km
+    horizontal_mesh: RADTHINDISTANCE
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_n18.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n18.nc4

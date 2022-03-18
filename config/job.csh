@@ -20,10 +20,13 @@ $setLocal EnsMeanBGQueueName
 $setLocal EnsMeanBGAccountNumber
 
 $setLocal InitializationRetry
+$setLocal GFSAnalysisRetry
+$setLocal NCEPftpRetry
 $setLocal VariationalRetry
 $setLocal EnsOfVariationalRetry
 $setLocal CyclingFCRetry
 $setLocal RTPPInflationRetry
 $setLocal HofXRetry
+$setLocal CleanRetry
 #$setLocal VerifyObsRetry
 #$setLocal VerifyModelRetry

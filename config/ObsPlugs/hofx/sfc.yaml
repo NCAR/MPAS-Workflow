@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: SfcPCorrected
     obsdatain:
-      obsfile: InDBDir/sfc_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/sfc_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_sfc.h5
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_sfc.h5
     simulated variables: [surface_pressure]
   obs error: *ObsErrorDiagonal
   obs operator:
@@ -21,3 +21,4 @@
     reference: station_elevation@MetaData
     value: surface_altitude@GeoVaLs
     threshold: 200.0
+    <<: *multiIterationFilter

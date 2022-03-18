@@ -1,7 +1,6 @@
 observations:
 ## resource
-# OPTIONS: PANDACArchive, GladeRDAOnline
-# Note: add more options as they become available, e.g., NCEPFTPOnline
+# OPTIONS: PANDACArchive, GladeRDAOnline, NCEPFTPOnline
   resource: PANDACArchive
 
 ## convertToIODAObservations
@@ -9,20 +8,34 @@ observations:
   convertToIODAObservations:
   - prepbufr
   - satwnd
+  - gpsro
   #- 1bamua
-  #- gpsro
   #- 1bmhs
   #- airsev
   #- cris
   #- mtiasi
 
+## GDAS observations error table
+# This file provides observation errors for all types of conventional and satwnd data
+# for 33 pressure levels (1100 hPa to 0 hPa). More information on this table can be
+# found in the GSI User's guide (https://dtcenter.ucar.edu/com-GSI/users/docs/users_guide/GSIUserGuide_v3.7.pdf)
+  GDASObsErrtable: /glade/work/guerrett/pandac/fixed_input/GSI_errtables/HRRRENS_errtable_10sep2018.r3dv
+
 ## *Directory
 # locations of raw bufr and prepbufr observation data, separated by resource
-  GladeRDAOnline:
-    defaultBUFRDirectory: /gpfs/fs1/collections/rda/data/ds735.0
-    satwndBUFRDirectory: /gpfs/fs1/collections/rda/data/ds351.0
-    PrepBUFRDirectory: /gpfs/fs1/collections/rda/data/ds337.0
 
+  NCEPFTPOnline:
+    IODAPrefix:
+      gnssroref: gnssro
+
+    IODADirectory:
+      variational:
+        common: "{{ObsWorkDir}}"
+
+      hofx:
+        common: "{{ObsWorkDir}}"
+
+  GladeRDAOnline:
     IODAPrefix:
       gnssroref: gnssro
       amsua-cld_aqua: amsua_aqua

@@ -34,7 +34,9 @@ set EnsembleVerifyObsEnsMeanJobSecondsPerMember = 120
 @ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} * ${EnsembleVerifyObsEnsMeanJobSecondsPerMember} / 60
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
 
-setenv VerifyModelJobMinutes 2
+setenv VerifyModelJobMinutes 5
+setenv VerifyModelNodes 1
+setenv VerifyModelPEPerNode 36
 
 ## Variational+EnsOfVariational
 # benchmark: < 3 minutes

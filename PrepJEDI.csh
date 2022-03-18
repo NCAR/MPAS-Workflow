@@ -59,7 +59,6 @@ set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
-source config/satbiasdata.csh
 
 # templated work directory
 set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
@@ -290,35 +289,47 @@ if ($found == 0) then
   exit 1
 endif
 
-# (ii) concatenate all observations to thisYAML
-cat $observationsYAML >> $thisYAML
-
-# (iii) add re-usable YAML anchors
-set obsanchorssed = ObsAnchors
-set thisSEDF = ${obsanchorssed}SEDF.yaml
+# (ii) insert Observations
+set sedstring = Observations
+set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
-/${obsanchorssed}/c\
+/{{${sedstring}}}/c\
 EOF
 
 # substitute with line breaks
-set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${obsanchorssed}.yaml
+sed 's@$@\\@' ${observationsYAML} >> ${thisSEDF}
+
+# insert into prevYAML
+set thisYAML = insert${sedstring}.yaml
+sed -f ${thisSEDF} $prevYAML >! $thisYAML
+rm ${thisSEDF}
+set prevYAML = $thisYAML
+
+# (iii) insert re-usable YAML anchors
+set sedstring = ObsAnchors
+set thisSEDF = ${sedstring}SEDF.yaml
+cat >! ${thisSEDF} << EOF
+/{{${sedstring}}}/c\
+EOF
+
+# substitute with line breaks
+set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${sedstring}.yaml
 sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 echo '_blank: null' >> ${thisSEDF}
 
 # insert into prevYAML
-set thisYAML = insertObsAnchors.yaml
+set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
 
 
 ## Horizontal interpolation type
-sed -i 's@InterpolationType@'${InterpolationType}'@g' $thisYAML
+sed -i 's@{{InterpolationType}}@'${InterpolationType}'@g' $thisYAML
 
 
 ## QC characteristics
-sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
-sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
+sed -i 's@{{RADTHINDISTANCE}}@'${RADTHINDISTANCE}'@g' $thisYAML
 
 # need to change to mainScriptDir for getObservationsOrNone to work
 cd ${mainScriptDir}
@@ -327,13 +338,13 @@ set AHISuperObGrid = "`$getObservationsOrNone ${observations__resource}.IODASupe
 cd ${self_WorkDir}
 
 if ("$ABISuperObGrid" != None) then
-  sed -i 's@ABISUPEROBGRID@'${ABISuperObGrid}'@g' $thisYAML
+  sed -i 's@{{ABISUPEROBGRID}}@'${ABISuperObGrid}'@g' $thisYAML
 endif
 if ("$AHISuperObGrid" != None) then
-  sed -i 's@AHISUPEROBGRID@'${AHISuperObGrid}'@g' $thisYAML
+  sed -i 's@{{AHISUPEROBGRID}}@'${AHISuperObGrid}'@g' $thisYAML
 endif
 
-sed -i 's@HofXMeshDescriptor@'${HofXMeshDescriptor}'@' $thisYAML
+sed -i 's@{{HofXMeshDescriptor}}@'${HofXMeshDescriptor}'@' $thisYAML
 
 
 ## date-time information
@@ -351,34 +362,31 @@ sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
 
 ## obs-related file naming
 # crtm tables
-sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' $thisYAML
+sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 
 # input and output IODA DB directories
 sed -i 's@InDBDir@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
 sed -i 's@OutDBDir@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
 
-# satellite bias correction
-sed -i 's@satelliteBiasDir@'${satelliteBiasDir}'@g' $thisYAML
-
 # obs, geo, and diag files with self_AppType suffixes
-sed -i 's@obsPrefix@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
-sed -i 's@geoPrefix@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
-sed -i 's@diagPrefix@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
+sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
+sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
+sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
 
 
 # (3) model-related substitutions
 # ===============================
 
 # bg file
-sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' $thisYAML
-sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
+sed -i 's@{{bgStatePrefix}}@'${BGFilePrefix}'@g' $thisYAML
+sed -i 's@{{bgStateDir}}@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
 
 # streams+namelist
 set iMesh = 0
 foreach mesh ($MeshList)
   @ iMesh++
-  sed -i 's@'$mesh'StreamsFile@'${self_WorkDir}'/'$StreamsFileList[$iMesh]'@' $thisYAML
-  sed -i 's@'$mesh'NamelistFile@'${self_WorkDir}'/'$NamelistFileList[$iMesh]'@' $thisYAML
+  sed -i 's@{{'$mesh'StreamsFile}}@'${self_WorkDir}'/'$StreamsFileList[$iMesh]'@' $thisYAML
+  sed -i 's@{{'$mesh'NamelistFile}}@'${self_WorkDir}'/'$NamelistFileList[$iMesh]'@' $thisYAML
 end
 
 ## model and analysis variables
@@ -412,7 +420,7 @@ foreach VarGroup (Analysis Model State)
   end
   # remove trailing comma
   set VarSub = `echo "$VarSub" | sed 's/.$//'`
-  sed -i 's@'$VarGroup'Variables@'$VarSub'@' $thisYAML
+  sed -i 's@{{'$VarGroup'Variables}}@'$VarSub'@' $thisYAML
 end
 
 cp $thisYAML $appyaml

@@ -96,3 +96,8 @@ set hh = `echo ${thisValidDate} | cut -c 9-10`
 set thisMPASFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set thisMPASNamelistDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set thisISO8601Date = ${yy}-${mm}-${dd}T${hh}:00:00Z
+set ICfileDate = ${yy}-${mm}-${dd}_${hh}
+
+if ( ${InitializationType} == "ColdStart" ) then
+  setenv GFSAnaDirVerify ${GFSAnaDirOuter}/${thisValidDate}
+endif

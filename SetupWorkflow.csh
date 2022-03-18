@@ -22,9 +22,12 @@ echo ""
 rm -rf ${mainScriptDir}
 mkdir -p ${mainScriptDir}
 set workflowParts = ( \
+  GetGFSanalysis.csh \
   UngribColdStartIC.csh \
   GenerateColdStartIC.csh \
   GetWarmStartIC.csh \
+  GetRDAobs.csh \
+  GetNCEPFTPobs.csh \
   ObsToIODA.csh \
   getCycleVars.csh \
   tools \
@@ -62,6 +65,7 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
 chmod 744 ${WrapperScript}
 ${WrapperScript}
 rm ${WrapperScript}
+
 
 ## CyclingFC
 echo "Making CyclingFC job script"

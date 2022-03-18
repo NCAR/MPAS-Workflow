@@ -104,8 +104,10 @@ cat >! suite.rc << EOF
 #TODO: in order to avoid waits for observation conversion, ObsToIODA need only depend on
 # + ObsToIODA[-PT${CyclingWindowHR}H]
 # + check whether observations are present
-  {% if observations__resource in ["GladeRDAOnline"] %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => ObsToIODA" %}
+  {% if observations__resource == "GladeRDAOnline" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => GetRDAobs => ObsToIODA" %}
+  {% elif observations__resource == "NCEPFTPOnline" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => GetNCEPFTPobs => ObsToIODA" %}
   {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
@@ -129,6 +131,8 @@ cat >! suite.rc << EOF
 {% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
 {% set DAInstances = range(1, nDAInstances+1, 1) %}
 {% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
+# Cold initial conditions from GFS analysis
+{% set GFSAnalysisWorkflow = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC" %}
 [cylc]
   UTC mode = False
   [[environment]]
@@ -149,7 +153,7 @@ cat >! suite.rc << EOF
 {% if initialCyclePoint == firstCyclePoint %}
   {% if InitializationType == "ColdStart" %}
     [[[R1]]]
-      graph = UngribColdStartIC => GenerateColdStartIC => ColdStartFC => CyclingFCFinished
+      graph = {{GFSAnalysisWorkflow}} => ColdStartFC => CyclingFCFinished
   {% elif InitializationType == "WarmStart" %}
     [[[R1]]]
       graph = GetWarmStartIC => CyclingFCFinished
@@ -191,7 +195,11 @@ cat >! suite.rc << EOF
     [[[${cyclingCycles}]]]
       graph = '''
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
+  {% if InitializationType == "ColdStart" %}
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => {{GFSAnalysisWorkflow}} => VerifyModelBG
+  {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
+  {% endif %}
   {% for mem in EnsVerifyMembers %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
         VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
@@ -204,12 +212,16 @@ cat >! suite.rc << EOF
 {% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
     [[[${cyclingCycles}]]]
       graph = '''
-  {% if observations__resource in ["GladeRDAOnline"] %}
+  {% if observations__resource in ["GladeRDAOnline", "NCEPFTPOnline"] %}
         ObsToIODA => HofXBG
   {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
   {% endif %}
+  {% if InitializationType == "ColdStart" %}
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => {{GFSAnalysisWorkflow}} => VerifyModelBG
+  {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
+  {% endif %}
   {% for mem in [1] %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
         VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
@@ -339,6 +351,7 @@ cat >! suite.rc << EOF
   [[CleanBase]]
     [[[job]]]
       execution time limit = PT5M
+      execution retry delays = ${CleanRetry}
 #Cycling components
   # initialization-related components
   [[GetWarmStartIC]]
@@ -350,6 +363,15 @@ cat >! suite.rc << EOF
       execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
   # observations-related components
+  [[GetRDAobs]]
+    script = \$origin/GetRDAobs.csh
+    [[[job]]]
+      execution time limit = PT10M
+      execution retry delays = ${InitializationRetry}
+  [[GetNCEPFTPobs]]
+    script = \$origin/GetNCEPFTPobs.csh
+    [[[job]]]
+      execution retry delays = ${NCEPftpRetry}
   [[ObsToIODA]]
     script = \$origin/ObsToIODA.csh
     [[[job]]]
@@ -432,6 +454,10 @@ cat >! suite.rc << EOF
     inherit = CleanBase
     script = \$origin/CleanVariational.csh
   # forecast-related components
+  [[GetGFSanalysis]]
+    script = \$origin/GetGFSanalysis.csh
+    [[[job]]]
+      execution retry delays = ${GFSAnalysisRetry}
   [[UngribColdStartIC]]
     script = \$origin/UngribColdStartIC.csh
     [[[job]]]

@@ -17,12 +17,10 @@
   - filter: PreQC
     maxvalue: 3
   # Assign the initial observation error, based on height/pressure
-  - filter: Perform Action
+  - filter: Perform action
     filter variables:
     - name: eastward_wind
     - name: northward_wind
-#      minvalue: -135
-#      maxvalue: 135
     action:
       name: assign error
       error function:
