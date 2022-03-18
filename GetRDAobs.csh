@@ -1,5 +1,5 @@
 #!/bin/csh -f
-# Copy and untar CISL RDA archived NCEP BUFR files based on Jamie Bresch (NCAR/MMM) script rda_obs2ioda.csh
+# Copy and untar CISL RDA archived NCEP BUFR files
 
 date
 
@@ -7,10 +7,8 @@ date
 # =================
 source config/workflow.csh
 source config/observations.csh
-source config/obsdata.csh
 source config/filestructure.csh
 source config/builds.csh
-source config/${InitializationType}ModelData.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
 set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`
@@ -33,6 +31,7 @@ set PrepBUFRDirectory = /gpfs/fs1/collections/rda/data/ds337.0
 
 foreach inst ( ${convertToIODAObservations} )
   echo "Getting ${inst} from RDA"
+  # for satwnd observations
   if ( ${inst} == satwnd ) then
      setenv THIS_FILE gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
      if ( ! -e ${THIS_FILE}) then
@@ -42,6 +41,7 @@ foreach inst ( ${convertToIODAObservations} )
      if ( -e ${GDASObsErrtable} ) then
         ln -sf ${GDASObsErrtable} obs_errtable
      endif
+  # for prepbufr observations
   else if ( ${inst} == prepbufr ) then
      setenv THIS_FILE prepbufr.gdas.${ccyy}${mmdd}.t${hh}z.nr.48h
      if ( ! -e ${THIS_FILE}) then
@@ -56,6 +56,7 @@ foreach inst ( ${convertToIODAObservations} )
      #if ( -e ${GDASObsErrtable} ) then
      #   ln -sf ${GDASObsErrtable} obs_errtable
      #endif
+  # for all other observations
   else
      # set the specific file to be extracted from the tar file
      setenv THIS_FILE gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr

@@ -16,9 +16,6 @@
   obs filters:
   - filter: PreQC
     maxvalue: 3
-  - filter: Background Check
-    threshold: 3.0
-    <<: *multiIterationFilter
   - filter: Bounds Check
     filter variables:
     - name: eastward_wind
@@ -30,3 +27,6 @@
     maxvalue: 200.0
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: {{RADTHINDISTANCE}} #km
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter

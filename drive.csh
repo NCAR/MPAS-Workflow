@@ -371,6 +371,7 @@ cat >! suite.rc << EOF
   [[GetNCEPFTPobs]]
     script = \$origin/GetNCEPFTPobs.csh
     [[[job]]]
+      execution time limit = PT10M
       execution retry delays = ${NCEPftpRetry}
   [[ObsToIODA]]
     script = \$origin/ObsToIODA.csh
@@ -457,6 +458,7 @@ cat >! suite.rc << EOF
   [[GetGFSanalysis]]
     script = \$origin/GetGFSanalysis.csh
     [[[job]]]
+      execution time limit = PT10M
       execution retry delays = ${GFSAnalysisRetry}
   [[UngribColdStartIC]]
     script = \$origin/UngribColdStartIC.csh

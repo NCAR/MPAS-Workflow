@@ -19,3 +19,5 @@ _cloudy crtm: &cloudyCRTMObsOperator
     <<: *CRTMObsOptions
 _get values: &GetValues
   interpolation type: {{InterpolationType}}
+_multi iteration filter: &multiIterationFilter
+  apply at iterations: 0,1,2,3,4,5

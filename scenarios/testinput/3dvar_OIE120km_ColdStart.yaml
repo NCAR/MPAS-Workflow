@@ -12,7 +12,7 @@ experiment:
   ExperimentName: '3dvar_OIE120km_ColdStart_TEST'
 model:
   MPASGridDescriptor: OIE120km
-  AnaSource: GFSRDAOnline
+  AnalysisSource: GFSfromRDAOnline
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]

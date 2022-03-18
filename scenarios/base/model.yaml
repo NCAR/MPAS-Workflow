@@ -23,5 +23,5 @@ model:
   forecastPrecision: single
 
 ## Analysis source
-# OPTIONS: PANDACGFSArchive, GFSRDAOnline, GFSNCEPFTPOnline
-  AnaSource: PANDACGFSArchive
+# OPTIONS: GFSfromPANDACArchive, GFSfromRDAOnline, GFSfromNCEPFTPOnline
+  AnalysisSource: GFSfromPANDACArchive

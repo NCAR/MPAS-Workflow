@@ -9,7 +9,6 @@ source config/workflow.csh
 source config/observations.csh
 source config/filestructure.csh
 source config/builds.csh
-source config/${InitializationType}ModelData.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
 set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`
@@ -45,12 +44,12 @@ foreach inst ( ${convertToIODAObservations} )
     wget -S --spider $ftp_file >&! log_check_${inst}
     grep "HTTP/1.1 200 OK" log_check_${inst}
     # if the file exists then download it
-    # otherwise, retry until available
+    # otherwise, exit with failure
     if ( $status == 0 ) then
      echo "Downloading $ftp_file ..."
      wget -r -np -nd $ftp_file
     else
-     echo "$ftp_file not available yet -- waiting"
+     echo "$ftp_file not available yet -- exiting"
      exit 1
     endif
   else

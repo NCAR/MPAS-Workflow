@@ -12,10 +12,10 @@ experiment:
   ExperimentName: 'RealTime'
 model:
   MPASGridDescriptor: OIE120km
-  AnaSource: GFSNCEPFTPOnline
+  AnalysisSource: GFSfromNCEPFTPOnline
 variational:
   DAType: 3dvar
-  nInnerIterations: [15,]
+  nInnerIterations: [60,]
 job:
-  CPQueueName: economy
+  CPQueueName: premium
   NCPQueueName: economy

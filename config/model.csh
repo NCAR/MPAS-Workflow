@@ -13,7 +13,7 @@ setenv baseConfig scenarios/base/model.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig model"
 setenv setNestedModel "source $setNestedConfig $baseConfig $scenarioConfig model"
 
-$setNestedModel AnaSource
+$setNestedModel AnalysisSource
 
 $setLocal MPASGridDescriptor
 $setLocal forecastPrecision single
