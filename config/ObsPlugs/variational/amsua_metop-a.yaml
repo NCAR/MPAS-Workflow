@@ -19,7 +19,7 @@
   - filter: PreQC
     maxvalue: 0
 #  - filter: Gaussian Thinning
-#    horizontal_mesh: {{RADTHINDISTANCE}} #km
+#    horizontal_mesh: {{RADTHINDISTANCE}}
   - filter: GOMsaver
     filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_metop-a.nc4
   - filter: Background Check

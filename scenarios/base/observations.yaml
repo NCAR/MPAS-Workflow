@@ -141,3 +141,6 @@ observations:
     IODASuperObGrid:
       abi_g16: 59X59
       ahi_himawari8: 101X101
+
+## CRTM
+  CRTMTABLES: /glade/work/guerrett/pandac/fixed_input/crtm_bin/

@@ -404,9 +404,3 @@ in scripts that look like `Clean{{Application}}.csh`.  If data storage is still 
 recommended to remove the `Cycling*` directories of an experiment after all desired verification has
 completed. The model- and observation-space statistical summary files in the `Verification`
 directory are orders of magnitude smaller than the full model states and instrument feedback files.
-
-Acknowledgments
----------------
-MPAS-Workflow developers would like to thank invaluable contributions from:
-- Jamie Bresch (@jamiebresch) for the obs2ioda converter (https://github.com/jamiebresch/obs2ioda) developments. In addition, the script GetRDAobs.csh in this workflow is based on rda_obs2ioda.csh from that repository;
-- Junmei Ban (NCAR/MMM @junmeiban) for the guidance with the quality control flags in yaml stubs and satellite bias correction implementation.

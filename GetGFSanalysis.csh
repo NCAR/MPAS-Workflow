@@ -29,14 +29,14 @@ set linkWPS = link_grib.csh
 ln -sfv ${WPSBuildDir}/${linkWPS} .
 rm -rf GRIBFILE.*
 
-if ( ${model__AnalysisSource} == "GFSRDAOnline" ) then
+if ( ${model__AnalysisSource} == "GFSfromRDAOnline" ) then
   echo "Getting GFS analysis from RDA"
   # RDA GFS forecasts directory
   set GFSgribdirRDA = /gpfs/fs1/collections/rda/data/ds084.1
   # link ungribbed GFS
   ./${linkWPS} ${GFSgribdirRDA}/${yy}/${yymmdd}/gfs.${res}.${yymmdd}${hh}.f${fhour}.grib2
 
-else if ( ${model__AnalysisSource} == "GFSNCEPFTPOnline" ) then
+else if ( ${model__AnalysisSource} == "GFSfromNCEPFTPOnline" ) then
   echo "Getting GFS analysis from the NCEP FTP"
   # url for GFS data
   set gfs_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gfs.${yymmdd}/${hh}/atmos

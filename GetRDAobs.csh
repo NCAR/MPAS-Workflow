@@ -38,8 +38,12 @@ foreach inst ( ${convertToIODAObservations} )
         echo "Source file: ${satwndBUFRDirectory}/bufr/${ccyy}/${THIS_FILE}"
         cp -p ${satwndBUFRDirectory}/bufr/${ccyy}/${THIS_FILE} .
      endif
+     # link the GDAS observation error table
      if ( -e ${GDASObsErrtable} ) then
         ln -sf ${GDASObsErrtable} obs_errtable
+     else
+        echo "ERROR: ${GDASObsErrtable} does NOT exist" > ./FAIL
+        exit 1
      endif
   # for prepbufr observations
   else if ( ${inst} == prepbufr ) then
@@ -69,10 +73,9 @@ foreach inst ( ${convertToIODAObservations} )
         # cris file name became crisf4 since 2021
         set THIS_TAR_FILE = ${defaultBUFRDirectory}/${inst}/${ccyy}/${inst}f4.${ccyy}${mmdd}.tar.gz
      endif
+     # if the observation file does not exist, untar it
+     # whether in the sub-directory or current directory
      if ( ! -e ${THIS_FILE}) then
-# tar -x -f /gpfs/fs1/collections/rda/data/ds735.0/gpsro/2018/gpsro.20180415.tar.gz 20180415.gpsro/gdas.gpsro.t00z.20180415.bufr
-# tar -x -f ${defaultBUFRDirectory}/${inst}/${ccyy}/${inst}.${ccyy}${mmdd}.tar.gz ${ccyy}${mmdd}.airssev/gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
-# mv ${ccyy}${mmdd}.airssev/gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr .
         # some tar files contain sub-directory
         set THIS_TAR_DIR = ${ccyy}${mmdd}.${inst}
         tar -x -f ${THIS_TAR_FILE} ${THIS_TAR_DIR}/${THIS_FILE}
@@ -91,9 +94,10 @@ foreach inst ( ${convertToIODAObservations} )
               set got_file = false
            endif
         endif
+        # if the file was not untarred and if airs observations
         if ( ${got_file} == false && ${inst} == airsev ) then
-           #if airs, try again with another dir name
-           #typo in the archived directory name
+           # try again with another dir name
+           # typo in the archived directory name
            set THIS_TAR_DIR = ${ccyy}${mmdd}.airssev
            tar -x -f ${THIS_TAR_FILE} ${THIS_TAR_DIR}/${THIS_FILE}
            if ( $status == 0 ) then
@@ -102,6 +106,8 @@ foreach inst ( ${convertToIODAObservations} )
               set got_file = true
            endif
         endif
+        # if the file was untarred and the sub-directory exists,
+        # remove the sub-directory
         if ( ${got_file} == true ) then
            if (  ${SUB_DIR} == true ) then
               mv ${THIS_TAR_DIR}/${THIS_FILE} .

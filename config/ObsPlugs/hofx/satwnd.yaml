@@ -2,10 +2,10 @@
     <<: *ObsSpace
     name: Satwnd
     obsdatain:
-      obsfile: InDBDir/satwnd_obs_2018041500.h5
+      obsfile: {{InDBDir}}/satwnd_obs_{{thisValidDate}}.h5
       max frame size: 80000
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_satwnd.h5
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_satwnd.h5
       max frame size: 80000
     simulated variables: [eastward_wind, northward_wind]
   obs error: *ObsErrorDiagonal
@@ -40,3 +40,5 @@
     maxvalue: 95000
     action:
       name: reject
+  - filter: Gaussian Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}

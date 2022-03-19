@@ -76,3 +76,9 @@ if ($EDASize == 1 && $MinimizerAlgorithm == $BlockEDA) then
 endif
 
 setenv variationalYAMLPrefix variational_
+
+# VARBC
+$setLocal initialVARBCtable
+
+# InterpolationType
+$setLocal InterpolationType

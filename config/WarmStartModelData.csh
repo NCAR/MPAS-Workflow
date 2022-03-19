@@ -21,5 +21,7 @@ set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
 setenv GFSAnaDirVerify ${GFSAnaDirOuter}
 setenv InitICWorkDir  ${GFSAnaDirOuter}
 setenv updateSea 1
-setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
-setenv StaticFieldsDirInner ${GFSAnaDirInner}
+if ( "$DAType" !~ *"eda"* ) then
+  setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
+  setenv StaticFieldsDirInner ${GFSAnaDirInner}
+endif

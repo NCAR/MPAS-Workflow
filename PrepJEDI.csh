@@ -47,10 +47,10 @@ source config/environment.csh
 source config/filestructure.csh
 source config/model.csh
 source config/observations.csh
+source config/variational.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/modeldata.csh
-source config/obsdata.csh
 source config/mpas/variables.csh
 source config/builds.csh
 source config/AppTypeTEMPLATE.csh
