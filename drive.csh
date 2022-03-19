@@ -611,7 +611,7 @@ cat >! suite.rc << EOF
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
 
-cylc poll $SuiteName
+cylc poll $SuiteName >& /dev/null
 if ( $status == 0 ) then
   echo "$0 (INFO): a cylc suite named $SuiteName is already running!"
   echo "$0 (INFO): stopping the suite, then starting a new one"
