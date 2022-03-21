@@ -6,6 +6,8 @@ workflow:
   # turn off verification to reduce overhead, repeat of 3denvar case
   VerifyDeterministicDA: False
   VerifyEnsMeanBG: False
+observations:
+  resource: PANDACArchive
 experiment:
   ExperimentName: '3dvar_OIE120km_WarmStart_TEST'
 model:

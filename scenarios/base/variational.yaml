@@ -110,3 +110,6 @@ variational:
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML
   nObsIndent: 2
+
+## Initial table for VARBC
+  initialVARBCtable: /glade/work/guerrett/pandac/fixed_input/satbias/satbias_crtm_in

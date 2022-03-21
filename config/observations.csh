@@ -16,3 +16,6 @@ setenv getObservationsOrNone "source $getConfigOrNone $baseConfig $scenarioConfi
 $setNestedObservations resource
 
 $setObservations convertToIODAObservations
+$setObservations GDASObsErrtable
+$setObservations CRTMTABLES
+$setObservations InterpolationType
