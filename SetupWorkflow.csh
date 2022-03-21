@@ -26,8 +26,7 @@ set workflowParts = ( \
   UngribColdStartIC.csh \
   GenerateColdStartIC.csh \
   GetWarmStartIC.csh \
-  GetRDAobs.csh \
-  GetNCEPFTPobs.csh \
+  GetObs.csh \
   ObsToIODA.csh \
   getCycleVars.csh \
   tools \
