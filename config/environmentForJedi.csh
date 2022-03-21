@@ -19,10 +19,20 @@ module use $OPT/modulefiles/core
 module load jedi/$BuildCompiler
 module load json
 module load json-schema-validator
-unalias ecbuild
-#setenv LOCAL_PATH_JEDI_TESTFILES /glade/u/home/maryamao/JEDI_test_files
-git lfs install
 limit stacksize unlimited
-setenv OOPS_TRACE 0  # Note: Some ctests fail when OOPS_TRACE=1
+setenv OOPS_TRACE 0
+setenv OOPS_DEBUG 0
+#setenv OOPS_TRAPFPE 1
 module list
 setenv GFORTRAN_CONVERT_UNIT 'big_endian:101-200'
+setenv F_UFMTENDIAN 'big:101-200'
+setenv OMP_NUM_THREADS 1
+
+## CustomPIO
+# whether to unload the JEDI module PIO module
+# A custom PIO build (outside JEDI modules) must be used consistently across all MPAS-JEDI and
+# MPAS-Model executable builds
+set CustomPIO = False
+if ( CustomPIO == True ) then
+  module unload pio
+endif
