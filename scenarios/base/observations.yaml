@@ -1,7 +1,7 @@
 observations:
 ## resource
 # OPTIONS: PANDACArchive, GladeRDAOnline, NCEPFTPOnline
-  resource: PANDACArchive
+  resource: None
 
 ## convertToIODAObservations
 # list of raw observation types to convert to IODA format, when (resource != PANDACArchive)

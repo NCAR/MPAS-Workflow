@@ -1,5 +1,7 @@
 workflow:
   InitializationType: WarmStart
+observations:
+  resource: PANDACArchive
 model:
   MPASGridDescriptor: O30kmIE60km
 variational:

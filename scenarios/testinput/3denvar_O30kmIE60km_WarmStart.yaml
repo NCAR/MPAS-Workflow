@@ -8,6 +8,8 @@ workflow:
   InitializationType: WarmStart
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
+observations:
+  resource: PANDACArchive
 experiment:
   ExperimentName: '3denvar_O30kmIE60km_WarmStart_TEST'
 model:
