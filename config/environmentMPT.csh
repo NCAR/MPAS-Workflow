@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
-if ( $?config_environmentGnuMPT ) exit 0
-setenv config_environmentGnuMPT 1
+if ( $?config_environmentMPT ) exit 0
+setenv config_environmentMPT 1
 
 source /etc/profile.d/modules.csh
 module purge
