@@ -1,7 +1,5 @@
 workflow:
   InitializationType: WarmStart
-observations:
-  resource: PANDACArchive
 model:
   MPASGridDescriptor: O30kmIE60km
 variational:
@@ -13,6 +11,7 @@ job:
   # use premium queue for ensemble mean calculation
   EnsMeanBGQueueName: premium
 observations:
+  resource: PANDACArchive
   PANDACArchive:
     IODADirectory:
       variational:

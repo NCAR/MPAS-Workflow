@@ -1,13 +1,12 @@
 workflow:
   InitializationType: WarmStart
-observations:
-  resource: PANDACArchive
 model:
   MPASGridDescriptor: O30kmIE60km
 variational:
   DAType: 3denvar
   nInnerIterations: [60,60,]
 observations:
+  resource: PANDACArchive
   PANDACArchive:
     IODADirectory:
       variational:

@@ -8,8 +8,6 @@ workflow:
   InitializationType: WarmStart
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
-observations:
-  resource: PANDACArchive
 experiment:
   ExperimentName: '3denvar_O30kmIE60km_WarmStart_TEST'
 model:
@@ -22,6 +20,7 @@ job:
   CPQueueName: economy
   NCPQueueName: economy
 observations:
+  resource: PANDACArchive
   PANDACArchive:
     IODADirectory:
       variational:
