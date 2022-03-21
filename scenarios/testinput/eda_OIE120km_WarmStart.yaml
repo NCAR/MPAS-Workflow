@@ -5,6 +5,8 @@ workflow:
   InitializationType: WarmStart
   VerifyEnsMeanBG: True
   DiagnoseEnsSpreadBG: True
+observations:
+  resource: PANDACArchive
 experiment:
   ExperimentName: 'eda_OIE120km_WarmStart_TEST'
 model:

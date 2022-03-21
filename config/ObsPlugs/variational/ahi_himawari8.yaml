@@ -22,7 +22,7 @@
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
   - filter: Gaussian Thinning
-    horizontal_mesh: {{RADTHINDISTANCE}} #km
+    horizontal_mesh: {{RADTHINDISTANCE}}
 PerformActionFilters_ahi_himawari8
   - filter: Background Check
     threshold: 3.0

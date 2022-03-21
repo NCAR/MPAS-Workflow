@@ -16,6 +16,7 @@ variational:
   LeaveOneOutEDA: True
   RTPPInflationFactor: 0.4
 observations:
+  resource: PANDACArchive
   PANDACArchive:
     IODADirectory:
       variational:

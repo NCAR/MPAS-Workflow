@@ -20,6 +20,7 @@ job:
   CPQueueName: economy
   NCPQueueName: economy
 observations:
+  resource: PANDACArchive
   PANDACArchive:
     IODADirectory:
       variational:
