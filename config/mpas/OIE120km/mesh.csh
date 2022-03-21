@@ -10,7 +10,7 @@ setenv MPASnCellsInner 40962
 setenv MPASnCellsEnsemble ${MPASnCellsInner}
 setenv MPASTimeStep 720.0
 setenv MPASDiffusionLengthScale 120000.0
-setenv RADTHINDISTANCE     "200.0"
+setenv RADTHINDISTANCE     "145.0"
 setenv RADTHINAMOUNT       "0.98"
 
 ## Background Error

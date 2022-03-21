@@ -11,6 +11,9 @@ source config/variational.csh
 # under the "model" key of scenarioConfig
 setenv baseConfig scenarios/base/model.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig model"
+setenv setNestedModel "source $setNestedConfig $baseConfig $scenarioConfig model"
+
+$setNestedModel AnalysisSource
 
 $setLocal MPASGridDescriptor
 $setLocal forecastPrecision single

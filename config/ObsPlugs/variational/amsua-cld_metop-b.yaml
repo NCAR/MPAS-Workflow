@@ -22,6 +22,6 @@
     threshold: 3
     <<: *multiIterationFilter
 #  - filter: Gaussian Thinning
-#    horizontal_mesh: {{RADTHINDISTANCE}} #km
+#    horizontal_mesh: {{RADTHINDISTANCE}}
   - filter: GOMsaver
     filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_metop-b.nc4
