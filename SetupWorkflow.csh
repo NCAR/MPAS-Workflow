@@ -22,9 +22,11 @@ echo ""
 rm -rf ${mainScriptDir}
 mkdir -p ${mainScriptDir}
 set workflowParts = ( \
+  GetGFSanalysis.csh \
   UngribColdStartIC.csh \
   GenerateColdStartIC.csh \
   GetWarmStartIC.csh \
+  GetObs.csh \
   ObsToIODA.csh \
   getCycleVars.csh \
   tools \

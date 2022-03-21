@@ -21,3 +21,7 @@ model:
 ## forecastPrecision
 # floating-point precision of forecast output; options: [single, double]
   forecastPrecision: single
+
+## Analysis source
+# OPTIONS: GFSfromPANDACArchive, GFSfromRDAOnline, GFSfromNCEPFTPOnline
+  AnalysisSource: GFSfromPANDACArchive

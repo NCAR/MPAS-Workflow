@@ -1,18 +1,18 @@
 - obs space:
     <<: *ObsSpace
-    name: amsua_n19
+    name: amsua_metop-c
     obsdatain:
-      obsfile: {{InDBDir}}/amsua_n19_obs_{{thisValidDate}}.h5
+      obsfile: {{InDBDir}}/amsua_metop-c_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua_n19.h5
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua_metop-c.h5
     simulated variables: [brightness_temperature]
-    channels: &amsua_n19_channels 5-7,9
+    channels: &amsua_metop-c_channels 5,6,9
   obs error: *ObsErrorDiagonal
   obs operator:
     <<: *clearCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
-      Sensor_ID: amsua_n19
+      Sensor_ID: amsua_metop-c
   get values:
     <<: *GetValues
   obs filters:
@@ -21,7 +21,7 @@
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: {{RADTHINDISTANCE}}
   - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n19.nc4
+    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_metop-c.nc4
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter

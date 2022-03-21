@@ -6,6 +6,8 @@ workflow:
   VerifyDeterministicDA: False
   VerifyEnsMeanBG: False
   DiagnoseEnsSpreadBG: False
+observations:
+  resource: PANDACArchive
 model:
   MPASGridDescriptor: OIE60km
 variational:

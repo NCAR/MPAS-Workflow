@@ -1,0 +1,21 @@
+workflow:
+  # test a recent date
+  firstCyclePoint: 20220316T00
+  initialCyclePoint: 20220316T00
+  finalCyclePoint: 20250320T00
+  InitializationType: ColdStart
+  VerifyDeterministicDA: True
+  VerifyEnsMeanBG: True
+observations:
+  resource: NCEPFTPOnline
+experiment:
+  ExperimentName: 'RealTime'
+model:
+  MPASGridDescriptor: OIE120km
+  AnalysisSource: GFSfromNCEPFTPOnline
+variational:
+  DAType: 3dvar
+  nInnerIterations: [60,]
+job:
+  CPQueueName: premium
+  NCPQueueName: economy
