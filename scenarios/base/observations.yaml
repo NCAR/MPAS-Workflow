@@ -144,3 +144,8 @@ observations:
 
 ## CRTM
   CRTMTABLES: /glade/work/guerrett/pandac/fixed_input/crtm_bin/
+
+## InterpolationType
+# controls the horizontal interpolation used in variational and hofx applications
+# OPTIONS: bump, unstructured
+  InterpolationType: unstructured

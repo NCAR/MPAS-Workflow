@@ -113,8 +113,3 @@ variational:
 
 ## Initial table for VARBC
   initialVARBCtable: /glade/work/guerrett/pandac/fixed_input/satbias/satbias_crtm_in
-
-## InterpolationType
-# controls the horizontal interpolation used in variational and hofx applications
-# OPTIONS: bump, unstructured
-  InterpolationType: unstructured

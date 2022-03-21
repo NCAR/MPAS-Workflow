@@ -79,6 +79,3 @@ setenv variationalYAMLPrefix variational_
 
 # VARBC
 $setLocal initialVARBCtable
-
-# InterpolationType
-$setLocal InterpolationType

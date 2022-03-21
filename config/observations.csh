@@ -18,3 +18,4 @@ $setNestedObservations resource
 $setObservations convertToIODAObservations
 $setObservations GDASObsErrtable
 $setObservations CRTMTABLES
+$setObservations InterpolationType
