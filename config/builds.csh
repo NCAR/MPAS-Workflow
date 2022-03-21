@@ -51,9 +51,19 @@ setenv RTPPBuildDir ${commonBuild}/bin
 setenv MPASCore atmosphere
 setenv InitEXE mpas_init_${MPASCore}
 setenv InitBuildDir ${commonBuild}/bin
-setenv ForecastEXE mpas_${MPASCore}
 setenv ForecastTopBuildDir ${commonBuild}
-setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
+
+# Use a static single-precision build of MPAS-A to conserve resources
+setenv ForecastBuildDir /glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single/
+setenv ForecastEXE ${MPASCore}_model
+
+# TODO: enable single-precision MPAS-A build in mpas-bundle, then use bundle-built executables
+# Note to developers: it is easier to use the ForecastBuildDir and ForecastEXE settings below when
+# modifying MPAS-Model source code.  The added expense is minimal for short-range cycling tests.
+# This also requires modifying the mpiexec executable in forecast.csh.
+#setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
+#setenv ForecastEXE mpas_${MPASCore}
+
 
 setenv MPASLookupDir ${ForecastTopBuildDir}/MPAS/core_${MPASCore}
 set MPASLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
