@@ -51,7 +51,7 @@
         filename_template="x1.nCells.sfc_update.nc"
         filename_interval="none"
         input_interval="none" >
-	<file name="stream_list.atmosphere.surface"/>
+	      <file name="stream_list.atmosphere.surface"/>
 </stream>
 
 </streams>

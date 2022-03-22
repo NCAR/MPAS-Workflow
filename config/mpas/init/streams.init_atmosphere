@@ -17,9 +17,11 @@
 
 <immutable_stream name="surface"
                   type="output"
+                  precision="forecastPrecision"
+                  clobber_mode="truncate"
                   filename_template="x1.nCells.sfc_update.nc"
                   io_type="pnetcdf,cdf5"
                   filename_interval="none"
                   packages="sfc_update"
-                  output_interval="86400" />
+                  output_interval="21600" />
 </streams>

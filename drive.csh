@@ -100,12 +100,6 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
 {% elif CriticalPathType == "Normal" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
-#TODO: in order to avoid waits for observation conversion, ObsToIODA need only depend on
-# + ObsToIODA[-PT${CyclingWindowHR}H]
-# + check whether observations are present
-  {% if InitializationType == "ColdStart" %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => GetObs => ObsToIODA" %}
-  {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => HofXEnsMeanBG" %}
@@ -130,6 +124,7 @@ cat >! suite.rc << EOF
 {% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 # Cold initial conditions from GFS analysis
 {% set GFSAnalysisWorkflow = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC" %}
+
 [cylc]
   UTC mode = False
   [[environment]]
@@ -159,6 +154,11 @@ cat >! suite.rc << EOF
 ## Critical path for cycling
     [[[${cyclingCycles}]]]
       graph = '''{{PrimaryCPGraph}}{{SecondaryCPGraph}}
+  {% if InitializationType == "ColdStart" %}
+        GenerateColdStartIC => CyclingFC
+        GetObs => ObsToIODA
+        ObsToIODA => InitCyclingDA
+  {% endif %}
       '''
 ## Many kinds of verification
 {% if CriticalPathType == "Normal" and VerifyDeterministicDA and nEnsDAMembers < 2 %}
@@ -209,12 +209,11 @@ cat >! suite.rc << EOF
 {% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
     [[[${cyclingCycles}]]]
       graph = '''
-  {% if InitializationType == "ColdStart" %}
-        ObsToIODA => HofXBG
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => {{GFSAnalysisWorkflow}} => VerifyModelBG
-  {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
+  {% if InitializationType == "ColdStart" %}
+        ObsToIODA => HofXBG
+        {{GFSAnalysisWorkflow}} => VerifyModelBG
   {% endif %}
   {% for mem in [1] %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}

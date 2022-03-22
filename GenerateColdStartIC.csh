@@ -34,6 +34,9 @@ foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
+## link surface stream_list
+ln -sfv ${initModelConfigDir}/stream_list.${MPASCore}.surface  .
+
 ## copy/modify dynamic streams file
 rm ${StreamsFileInit}
 cp -v ${initModelConfigDir}/${StreamsFileInit} .
