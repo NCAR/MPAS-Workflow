@@ -124,7 +124,6 @@ cat >! suite.rc << EOF
 {% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 # Cold initial conditions from GFS analysis
 {% set GFSAnalysisWorkflow = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC" %}
-
 [cylc]
   UTC mode = False
   [[environment]]
