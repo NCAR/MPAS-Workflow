@@ -33,7 +33,7 @@ ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.static.nc .
 foreach fileGlob ($MPASLookupFileGlobs)
   rm ./*${fileGlob}
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
-ends
+end
 
 ## copy/modify dynamic streams file
 rm ${StreamsFileInit}
