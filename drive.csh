@@ -153,13 +153,14 @@ cat >! suite.rc << EOF
 ## Critical path for cycling
     [[[${cyclingCycles}]]]
       graph = '''{{PrimaryCPGraph}}{{SecondaryCPGraph}}
+  # critical path tasks that are independent of the previous forecast
   {% if InitializationType == "ColdStart" %}
-        # ensure that there is a GFS analysis file valid at the analysis time
-        # from which to pull sea-surface fields
-        {{GFSAnalysisWorkflow}} => CyclingFC
-        # get observations and convert them to IODA outside the cycling
-        GetObs => ObsToIODA
-        ObsToIODA => InitCyclingDA
+      # ensure that there is a GFS analysis file valid at the analysis time
+      # from which to pull sea-surface fields
+      {{GFSAnalysisWorkflow}} => CyclingFC
+      # get observations and convert them to IODA
+      GetObs => ObsToIODA
+      ObsToIODA => InitCyclingDA
   {% endif %}
       '''
 ## Many kinds of verification
