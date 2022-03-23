@@ -159,6 +159,9 @@ cat >! suite.rc << EOF
 ## Critical path for cycling
     [[[${cyclingCycles}]]]
       graph = '''{{PrimaryCPGraph}}{{SecondaryCPGraph}}
+  {% if InitializationType == "ColdStart" %}
+        SatelliteBiasCoeff => InitCyclingDA
+  {% endif %}        
       '''
 ## Many kinds of verification
 {% if CriticalPathType == "Normal" and VerifyDeterministicDA and nEnsDAMembers < 2 %}
@@ -362,6 +365,11 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = ${GetObsRetry}
+  [[SatelliteBiasCoeff]]
+    script = \$origin/SatelliteBiasCoeff.csh
+    [[[job]]]
+      execution time limit = PT10M
+      execution retry delays = ${SatelliteBiasCoeffRetry}      
   [[ObsToIODA]]
     script = \$origin/ObsToIODA.csh
     [[[job]]]

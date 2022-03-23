@@ -38,6 +38,7 @@ set workflowParts = ( \
   GenerateABEInflation.csh \
   PrepVariational.csh \
   EnsembleOfVariational.csh \
+  SatelliteBiasCoeff.csh \
 )
 foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
