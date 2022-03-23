@@ -80,21 +80,23 @@ endif
 ln -sfv ${initialState} ./${icFile}
 
 ## Update MPASSeaVariables from GFS/GEFS analyses for DA
-# first try member-specific state file (central GFS state when ArgMember==0)
-set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
-set SeaFile = ${SeaAnaDir}/${thisValidDate}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
-ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}
-if ( $status != 0 ) then
-  echo "WARNING in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}" > ./WARNING
-  echo "WARNING in $0 : ncks could not add (${MPASSeaVariables}) to $icFile" >> ./WARNING
-
-  # otherwise try central GFS state file
-  set SeaFile = ${deterministicSeaAnaDir}/${thisValidDate}/${SeaFilePrefix}.${icFileExt}
+if ( ${updateSea} ) then
+  # first try member-specific state file (central GFS state when ArgMember==0)
+  set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
+  set SeaFile = ${SeaAnaDir}/${thisValidDate}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
   ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}
   if ( $status != 0 ) then
-    echo "ERROR in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}" > ./FAIL
-    echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $icFile" >> ./FAIL
-    exit 1
+    echo "WARNING in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}" > ./WARNING
+    echo "WARNING in $0 : ncks could not add (${MPASSeaVariables}) to $icFile" >> ./WARNING
+
+    # otherwise try central GFS state file
+    set SeaFile = ${deterministicSeaAnaDir}/${thisValidDate}/${SeaFilePrefix}.${icFileExt}
+    ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}
+    if ( $status != 0 ) then
+      echo "ERROR in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}" > ./FAIL
+      echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $icFile" >> ./FAIL
+      exit 1
+    endif
   endif
 endif
 

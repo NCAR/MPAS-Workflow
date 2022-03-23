@@ -154,7 +154,10 @@ cat >! suite.rc << EOF
     [[[${cyclingCycles}]]]
       graph = '''{{PrimaryCPGraph}}{{SecondaryCPGraph}}
   {% if InitializationType == "ColdStart" %}
-        GenerateColdStartIC => CyclingFC
+        # ensure that there is a GFS analysis file valid at the analysis time
+        # from which to pull sea-surface fields
+        {{GFSAnalysisWorkflow}} => CyclingFC
+        # get observations and convert them to IODA outside the cycling
         GetObs => ObsToIODA
         ObsToIODA => InitCyclingDA
   {% endif %}
