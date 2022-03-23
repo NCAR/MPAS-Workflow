@@ -10,9 +10,11 @@ variational:
 
 ## satelliteBias
 # Use GDAS satellite bias coefficients created for specific dates or at each cycle
-# OPTIONS: None, GDASDynamic, GDASFixed
+# OPTIONS: None, GDASDynamic, GDASFixed, VarBC
 # TODO: the default option should be None for observations.observationSource==PANDACArchive, not GDASFixed
-  satelliteBias: GDASFixed
+  satelliteBias: None
+  fixedCoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
+  initialVarBCCoeff: /glade/work/guerrett/pandac/fixed_input/satbias/satbias_crtm_in
 
 ##ensembleCovarianceWeight and staticCovarianceWeight
 # weights of ensemble and static components of the background errorcovariance
@@ -115,6 +117,3 @@ variational:
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML
   nObsIndent: 2
-
-## Initial table for VARBC
-  initialVARBCtable: /glade/work/guerrett/pandac/fixed_input/satbias/satbias_crtm_in

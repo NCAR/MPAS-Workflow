@@ -93,15 +93,20 @@ rm prevPrep.yaml
 mv $appyaml prevPrep.yaml
 set prevYAML = prevPrep.yaml
 
-# VarBC prior
-# ===========
-set VARBC_TABLE = ${INITIAL_VARBC_TABLE}
-ln -sfv ${VARBC_TABLE} ${InDBDir}/satbias_crtm_bak
-
 # Satellite bias correction directory
 # ==================
-sed -i 's@satelliteBiasDir@'${satelliteBiasDir}'@g' $prevYAML
-
+if ( $variational__satbias__type == GDASDynamic ) then
+  set satBiasDir = ${satelliteBiasDir}
+else if ( $variational__satbias__type == GDASFixed ) then
+  set yyyy = `echo ${FirstCycleDate} | cut -c 1-4`
+  set satBiasDir = $variational__satbias__fixedCoeff/${yyyy}
+else if ( $variational__satbias__type == None ) then
+  set satBiasDir = None
+else
+  echo "ERROR: $variational__satbias__type option NOT available" > ./FAIL
+  exit 1
+endif
+sed -i 's@satelliteBiasDir@'${satBiasDir}'@g' $prevYAML
 
 # Outer iterations configuration elements
 # ===========================================

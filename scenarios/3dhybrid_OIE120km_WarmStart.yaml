@@ -8,3 +8,4 @@ variational:
   DAType: 3dhybrid
   ensembleCovarianceWeight: 0.5
   staticCovarianceWeight: 0.5
+  satelliteBias: GDASFixed

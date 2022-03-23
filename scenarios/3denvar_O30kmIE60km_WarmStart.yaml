@@ -5,6 +5,7 @@ model:
 variational:
   DAType: 3denvar
   nInnerIterations: [60,60,]
+  satelliteBias: GDASFixed
 observations:
   resource: PANDACArchive
   PANDACArchive:
