@@ -79,6 +79,29 @@ else
 endif
 ln -sfv ${initialState} ./${icFile}
 
+## Update MPASSeaVariables from GFS/GEFS analyses for DA
+if ( ${updateSea} ) then
+  # first try member-specific state file (central GFS state when ArgMember==0)
+  set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
+  set SeaFile = ${SeaAnaDir}/${thisValidDate}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
+  echo "ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}"
+  ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}
+  if ( $status != 0 ) then
+    echo "WARNING in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}" > ./WARNING
+    echo "WARNING in $0 : ncks could not add (${MPASSeaVariables}) to $icFile" >> ./WARNING
+
+    # otherwise try central GFS state file
+    set SeaFile = ${deterministicSeaAnaDir}/${thisValidDate}/${SeaFilePrefix}.${icFileExt}
+    echo "ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}"
+    ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}
+    if ( $status != 0 ) then
+      echo "ERROR in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}" > ./FAIL
+      echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $icFile" >> ./FAIL
+      exit 1
+    endif
+  endif
+endif
+
 ## link MPAS mesh graph info
 rm ./x1.${MPASnCellsOuter}.graph.info*
 ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .
@@ -200,29 +223,6 @@ while ( ${fcDate} <= ${finalFCDate} )
   set fcFileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
   set fcFileExt = ${fcFileDate}.nc
   set fcFile = ${FCFilePrefix}.${fcFileExt}
-
-  ## Update MPASSeaVariables from GFS/GEFS analyses
-  if ( ${updateSea} ) then
-    # first try member-specific state file (central GFS state when ArgMember==0)
-    set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
-    set SeaFile = ${SeaAnaDir}/${fcDate}${seaMemDir}/${SeaFilePrefix}.${fcFileExt}
-    echo "ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}"
-    ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}
-    if ( $status != 0 ) then
-      echo "WARNING in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}" > ./WARNING
-      echo "WARNING in $0 : ncks could not add (${MPASSeaVariables}) to $fcFile" >> ./WARNING
-
-      # otherwise try central GFS state file
-      set SeaFile = ${deterministicSeaAnaDir}/${fcDate}/${SeaFilePrefix}.${fcFileExt}
-      echo "ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}"
-      ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}
-      if ( $status != 0 ) then
-        echo "ERROR in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${fcFile}" > ./FAIL
-        echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $fcFile" >> ./FAIL
-        exit 1
-      endif
-    endif
-  endif
 
   ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
   set copyDiags = 0

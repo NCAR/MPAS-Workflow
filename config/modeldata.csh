@@ -130,8 +130,8 @@ setenv GraphInfoDir /glade/work/duda/static_moved_to_campaign
 
 ## sea/ocean surface files
 setenv seaMaxMembers ${nGEFSMembers}
-setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
 setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
+setenv updateSea 1
 if ( "$DAType" =~ *"eda"* ) then
   # using member-specific sst/xice data from GEFS
   # 60km and 120km
