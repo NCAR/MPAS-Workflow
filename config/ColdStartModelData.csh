@@ -17,8 +17,8 @@ set GFSAnaDirInner = ${InnerModelData}/GFSAna
 set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
 
 setenv InitICWorkDir ${GFSAnaDirOuter}
-# TODO: enable sea-surface file generation, then turn on sea-surface updating
-setenv updateSea 0
+setenv SeaFilePrefix ${InitFilePrefixOuter}
+
 if ( "$DAType" !~ *"eda"* ) then
   setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${FirstCycleDate}
   setenv StaticFieldsDirInner ${GFSAnaDirInner}/${FirstCycleDate}

@@ -54,7 +54,7 @@ setenv InitBuildDir ${commonBuild}/bin
 setenv ForecastTopBuildDir ${commonBuild}
 
 # Use a static single-precision build of MPAS-A to conserve resources
-setenv ForecastBuildDir /glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single/
+setenv ForecastBuildDir /glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single
 setenv ForecastEXE ${MPASCore}_model
 
 # TODO: enable single-precision MPAS-A build in mpas-bundle, then use bundle-built executables
