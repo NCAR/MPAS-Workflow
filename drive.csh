@@ -100,12 +100,6 @@ cat >! suite.rc << EOF
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
 {% elif CriticalPathType == "Normal" %}
   {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
-#TODO: in order to avoid waits for observation conversion, ObsToIODA need only depend on
-# + ObsToIODA[-PT${CyclingWindowHR}H]
-# + check whether observations are present
-  {% if InitializationType == "ColdStart" %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => GetObs => ObsToIODA" %}
-  {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => HofXEnsMeanBG" %}
@@ -159,9 +153,16 @@ cat >! suite.rc << EOF
 ## Critical path for cycling
     [[[${cyclingCycles}]]]
       graph = '''{{PrimaryCPGraph}}{{SecondaryCPGraph}}
+  # critical path tasks that are independent of the previous forecast
   {% if InitializationType == "ColdStart" %}
-        SatelliteBiasCoeff => InitCyclingDA
-  {% endif %}        
+      # ensure that there is a GFS analysis file valid at the analysis time
+      # from which to pull sea-surface fields
+      {{GFSAnalysisWorkflow}} => CyclingFC
+      # get observations and convert them to IODA
+      GetObs => ObsToIODA
+      ObsToIODA => InitCyclingDA
+      SatelliteBiasCoeff => InitCyclingDA
+  {% endif %}
       '''
 ## Many kinds of verification
 {% if CriticalPathType == "Normal" and VerifyDeterministicDA and nEnsDAMembers < 2 %}
@@ -212,12 +213,11 @@ cat >! suite.rc << EOF
 {% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
     [[[${cyclingCycles}]]]
       graph = '''
-  {% if InitializationType == "ColdStart" %}
-        ObsToIODA => HofXBG
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => {{GFSAnalysisWorkflow}} => VerifyModelBG
-  {% else %}
         CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
+  {% if InitializationType == "ColdStart" %}
+        ObsToIODA => HofXBG
+        {{GFSAnalysisWorkflow}} => VerifyModelBG
   {% endif %}
   {% for mem in [1] %}
         HofXBG{{mem}} => VerifyObsBG{{mem}}
@@ -455,7 +455,7 @@ cat >! suite.rc << EOF
   [[GetGFSanalysis]]
     script = \$origin/GetGFSanalysis.csh
     [[[job]]]
-      execution time limit = PT10M
+      execution time limit = PT20M
       execution retry delays = ${GFSAnalysisRetry}
   [[UngribColdStartIC]]
     script = \$origin/UngribColdStartIC.csh
