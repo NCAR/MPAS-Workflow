@@ -446,7 +446,7 @@ cat >! suite.rc << EOF
   [[GetGFSanalysis]]
     script = \$origin/GetGFSanalysis.csh
     [[[job]]]
-      execution time limit = PT10M
+      execution time limit = PT20M
       execution retry delays = ${GFSAnalysisRetry}
   [[UngribColdStartIC]]
     script = \$origin/UngribColdStartIC.csh
