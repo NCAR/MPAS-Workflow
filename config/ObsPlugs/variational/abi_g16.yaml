@@ -22,7 +22,7 @@
         name: sensor_zenith_angle@MetaData
       maxvalue: 65.0
   - filter: Gaussian Thinning
-    horizontal_mesh: {{RADTHINDISTANCE}} #km
+    horizontal_mesh: {{RADTHINDISTANCE}}
   - filter: Perform Action
     <<: *multiIterationFilter
     filter variables:

@@ -66,7 +66,6 @@ cat >! suite.rc << EOF
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
 # cycling components
 {% set CriticalPathType = "${CriticalPathType}" %}
-{% set observations__resource = "${observations__resource}" %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
@@ -104,10 +103,8 @@ cat >! suite.rc << EOF
 #TODO: in order to avoid waits for observation conversion, ObsToIODA need only depend on
 # + ObsToIODA[-PT${CyclingWindowHR}H]
 # + check whether observations are present
-  {% if observations__resource == "GladeRDAOnline" %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => GetRDAobs => ObsToIODA" %}
-  {% elif observations__resource == "NCEPFTPOnline" %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => GetNCEPFTPobs => ObsToIODA" %}
+  {% if InitializationType == "ColdStart" %}
+    {% set PrimaryCPGraph = PrimaryCPGraph + " => GetObs => ObsToIODA" %}
   {% endif %}
   {% if (ABEInflation and nEnsDAMembers > 1) %}
     {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
@@ -212,14 +209,11 @@ cat >! suite.rc << EOF
 {% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
     [[[${cyclingCycles}]]]
       graph = '''
-  {% if observations__resource in ["GladeRDAOnline", "NCEPFTPOnline"] %}
-        ObsToIODA => HofXBG
-  {% else %}
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
-  {% endif %}
   {% if InitializationType == "ColdStart" %}
+        ObsToIODA => HofXBG
         CyclingFCFinished[-PT${CyclingWindowHR}H] => {{GFSAnalysisWorkflow}} => VerifyModelBG
   {% else %}
+        CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
         CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
   {% endif %}
   {% for mem in [1] %}
@@ -363,15 +357,11 @@ cat >! suite.rc << EOF
       execution time limit = PT10M
       execution retry delays = ${InitializationRetry}
   # observations-related components
-  [[GetRDAobs]]
-    script = \$origin/GetRDAobs.csh
+  [[GetObs]]
+    script = \$origin/GetObs.csh
     [[[job]]]
       execution time limit = PT10M
-      execution retry delays = ${InitializationRetry}
-  [[GetNCEPFTPobs]]
-    script = \$origin/GetNCEPFTPobs.csh
-    [[[job]]]
-      execution retry delays = ${NCEPftpRetry}
+      execution retry delays = ${GetObsRetry}
   [[ObsToIODA]]
     script = \$origin/ObsToIODA.csh
     [[[job]]]
@@ -457,6 +447,7 @@ cat >! suite.rc << EOF
   [[GetGFSanalysis]]
     script = \$origin/GetGFSanalysis.csh
     [[[job]]]
+      execution time limit = PT10M
       execution retry delays = ${GFSAnalysisRetry}
   [[UngribColdStartIC]]
     script = \$origin/UngribColdStartIC.csh

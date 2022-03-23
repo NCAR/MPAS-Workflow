@@ -50,7 +50,6 @@ source config/observations.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/modeldata.csh
-source config/obsdata.csh
 source config/mpas/variables.csh
 source config/builds.csh
 source config/AppTypeTEMPLATE.csh
@@ -168,12 +167,6 @@ end
 foreach file ($MPASJEDIVariablesFiles)
   ln -sfv ${ModelConfigDir}/${file} .
 end
-
-
-# VarBC prior
-# ===========
-set VARBC_TABLE = ${INITIAL_VARBC_TABLE}
-ln -sfv ${VARBC_TABLE} ${InDBDir}/satbias_crtm_bak
 
 
 # ======================
@@ -365,8 +358,8 @@ sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
 sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 
 # input and output IODA DB directories
-sed -i 's@InDBDir@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
-sed -i 's@OutDBDir@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
+sed -i 's@{{InDBDir}}@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
+sed -i 's@{{OutDBDir}}@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
 
 # obs, geo, and diag files with self_AppType suffixes
 sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML

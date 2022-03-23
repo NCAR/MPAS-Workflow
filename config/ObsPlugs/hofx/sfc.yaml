@@ -10,8 +10,6 @@
   obs operator:
     name: SfcPCorrected
     da_psfc_scheme: UKMO   # or WRFDA
-  linear obs operator:
-    name: Identity
   get values:
     <<: *GetValues
   obs filters:
@@ -21,4 +19,3 @@
     reference: station_elevation@MetaData
     value: surface_altitude@GeoVaLs
     threshold: 200.0
-    <<: *multiIterationFilter

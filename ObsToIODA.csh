@@ -6,7 +6,6 @@ date
 # Setup environment
 # =================
 source config/observations.csh
-source config/obsdata.csh
 source config/filestructure.csh
 source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -30,7 +29,7 @@ setenv SPLIThourly "-split"
 
 # flag to de-activate additional QC for conventional
 # observations as in GSI
-setenv PREPBUFRflag "-noqc"
+setenv noGSIQCFilters "-noqc"
 
 foreach gdasfile ( *"gdas"* )
    echo "Running ${obs2iodaEXEC} for ${gdasfile}"
@@ -60,7 +59,7 @@ foreach gdasfile ( *"gdas"* )
      mkdir -p sfc
      cd sfc
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
-     ./${obs2iodaEXEC} ${PREPBUFRflag} ../${gdasfile} >&! log_sfc
+     ./${obs2iodaEXEC} ${noGSIQCFilters} ../${gdasfile} >&! log_sfc
      # replace surface obs file with file created without additional QC
      mv sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
      cd ..

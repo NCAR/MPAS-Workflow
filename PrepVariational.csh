@@ -93,6 +93,11 @@ rm prevPrep.yaml
 mv $appyaml prevPrep.yaml
 set prevYAML = prevPrep.yaml
 
+# VarBC prior
+# ===========
+set VARBC_TABLE = ${INITIAL_VARBC_TABLE}
+ln -sfv ${VARBC_TABLE} ${InDBDir}/satbias_crtm_bak
+
 # Satellite bias correction directory
 # ==================
 sed -i 's@satelliteBiasDir@'${satelliteBiasDir}'@g' $prevYAML

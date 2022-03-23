@@ -10,6 +10,7 @@ source config/filestructure.csh
 set wd = `pwd`
 source config/tools.csh $wd
 source config/mpas/${MPASGridDescriptor}/mesh.csh
+source config/${InitializationType}ModelData.csh
 
 ## file date for first background
 set yy = `echo ${FirstCycleDate} | cut -c 1-4`
@@ -17,8 +18,6 @@ set mm = `echo ${FirstCycleDate} | cut -c 5-6`
 set dd = `echo ${FirstCycleDate} | cut -c 7-8`
 set hh = `echo ${FirstCycleDate} | cut -c 9-10`
 setenv FirstFileDate ${yy}-${mm}-${dd}_${hh}.00.00
-
-source config/${InitializationType}ModelData.csh
 
 ## next date from which first background is initialized
 set nextFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} +${CyclingWindowHR}`

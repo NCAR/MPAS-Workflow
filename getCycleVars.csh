@@ -4,6 +4,7 @@ source config/filestructure.csh
 source config/tools.csh
 source config/workflow.csh
 source config/variational.csh
+source config/${InitializationType}ModelData.csh
 
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 #set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`

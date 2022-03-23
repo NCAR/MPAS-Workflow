@@ -257,6 +257,6 @@
     action:
       name: reject
   - filter: Gaussian_Thinning
-    horizontal_mesh: RADTHINDISTANCE
+    horizontal_mesh: {{RADTHINDISTANCE}}
   - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n18.nc4
+    filename: {{OutDBDir}}/{{geoPrefix}}_amsua_n18.nc4
