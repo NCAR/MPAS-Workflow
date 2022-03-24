@@ -1,4 +1,4 @@
-#Base components
+## Root
   [[root]] # suite defaults
     pre-script = "cd  $origin/"
     [[[environment]]]
@@ -25,6 +25,9 @@
 #      --ntasks = 1
 #      --cpus-per-task = 36
 #      --partition = dav
+
+
+## Base
   [[ForecastBase]]
     [[[job]]]
       execution time limit = PT{{CyclingFCJobMinutes}}M
@@ -76,17 +79,9 @@
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = {{CleanRetry}}
-#Cycling components
-  # initialization-related components
-  [[GetWarmStartIC]]
-    script = $origin/GetWarmStartIC.csh
-    [[[job]]]
-      # give longer for higher resolution and more EDA members
-      # TODO: set time limit based on outer mesh AND (number of members OR
-      #       independent task for each member) under "config/mpas/*/job.csh"
-      execution time limit = PT10M
-      execution retry delays = {{InitializationRetry}}
-  # observations-related components
+
+
+## Observations
   [[GetObs]]
     script = $origin/GetObs.csh
     [[[job]]]
@@ -106,7 +101,12 @@
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select=1:ncpus=1:mem=10GB
-  # variational-related components
+  [[ObsReady]]
+    [[[job]]]
+      batch system = background
+
+
+## Data assimilation (critical path)
   [[InitDataAssim]]
     env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA"
     script = $origin/PrepVariational.csh "1"
@@ -173,7 +173,32 @@
   [[CleanDataAssim]]
     inherit = CleanBase
     script = $origin/CleanVariational.csh
-  # forecast-related components
+
+
+## Forecast (critical path)
+  [[Forecast]]
+    inherit = ForecastBase
+{% for mem in EnsDAMembers %}
+  [[ForecastMember{{mem}}]]
+    inherit = Forecast
+    script = $origin/Forecast.csh "{{mem}}"
+    [[[job]]]
+      execution retry delays = {{CyclingFCRetry}}
+{% endfor %}
+  [[ForecastFinished]]
+    [[[job]]]
+      batch system = background
+
+
+## Forecasts and analyses generated outside MPAS-Workflow
+  [[GetWarmStartIC]]
+    script = $origin/GetWarmStartIC.csh
+    [[[job]]]
+      # give longer for higher resolution and more EDA members
+      # TODO: set time limit based on outer mesh AND (number of members OR
+      #       independent task for each member) under "config/mpas/*/job.csh"
+      execution time limit = PT10M
+      execution retry delays = {{InitializationRetry}}
   [[GetGFSanalysis]]
     script = $origin/GetGFSanalysis.csh
     [[[job]]]
@@ -198,22 +223,12 @@
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select={{InitICNodes}}:ncpus={{InitICPEPerNode}}:mpiprocs={{InitICPEPerNode}}
-  [[ColdStartAvailable]]
+  [[ExternalAnalysisReady]]
     [[[job]]]
       batch system = background
-  [[Forecast]]
-    inherit = ForecastBase
-{% for mem in EnsDAMembers %}
-  [[ForecastMember{{mem}}]]
-    inherit = Forecast
-    script = $origin/Forecast.csh "{{mem}}"
-    [[[job]]]
-      execution retry delays = {{CyclingFCRetry}}
-{% endfor %}
-  [[ForecastFinished]]
-    [[[job]]]
-      batch system = background
-## Extended mean analysis, forecast, and verification
+
+
+## Verification: extended forecast from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
     script = $origin/MeanAnalysis.csh
     [[[job]]]
@@ -245,70 +260,9 @@
     inherit = VerifyModelMeanFC
     script = $origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC"
 {% endfor %}
-  [[ExtendedEnsFC]]
-    inherit = ExtendedFCBase
-{% for state in ['BG', 'AN']%}
-  [[HofX{{state}}]]
-    inherit = HofXBase
-  [[VerifyModel{{state}}]]
-    inherit = VerifyModelBase
-  [[CompareModel{{state}}]]
-    inherit = CompareBase
-  [[VerifyObs{{state}}]]
-    inherit = VerifyObsBase
-  [[CompareObs{{state}}]]
-    inherit = CompareBase
-  [[CleanHofX{{state}}]]
-    inherit = CleanBase
-{% endfor %}
-{% for mem in EnsVerifyMembers %}
-## Ensemble BG/AN verification
-  {% for state in ['BG', 'AN']%}
-  [[HofX{{state}}{{mem}}]]
-    inherit = HofX{{state}}
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
-    script = $origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
-  [[VerifyModel{{state}}{{mem}}]]
-    inherit = VerifyModel{{state}}
-    script = $origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
-  [[CompareModel{{state}}{{mem}}]]
-    inherit = CompareModel{{state}}
-    script = $origin/CompareModel{{state}}.csh "{{mem}}" "0" "{{state}}"
-  [[VerifyObs{{state}}{{mem}}]]
-    inherit = VerifyObs{{state}}
-    script = $origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
-  [[CompareObs{{state}}{{mem}}]]
-    inherit = CompareObs{{state}}
-    script = $origin/CompareObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
-  [[CleanHofX{{state}}{{mem}}]]
-    inherit = CleanHofX{{state}}
-    script = $origin/CleanHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
-  {% endfor %}
-## Extended ensemble forecasts and verification
-  [[ExtendedFC{{mem}}]]
-    inherit = ExtendedEnsFC
-    script = $origin/ExtendedEnsFC.csh "{{mem}}"
-  [[HofXEnsFC{{mem}}]]
-    inherit = HofXBase
-  [[VerifyModelEnsFC{{mem}}]]
-    inherit = VerifyModelBase
-  {% for dt in ExtendedFCLengths %}
-  [[HofXEnsFC{{mem}}-{{dt}}hr]]
-    inherit = HofXEnsFC{{mem}}
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-    script = $origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-  [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
-    inherit = VerifyModelEnsFC{{mem}}
-    script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-  [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
-    inherit = VerifyObsBase
-    script = $origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
-  [[CleanHofXEnsFC{{mem}}-{{dt}}hr]]
-    inherit = CleanBase
-    script = $origin/CleanHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-  {% endfor %}
-{% endfor %}
-## Mean/ensemble background verification
+
+
+## Verification: ensemble mean background
   [[MeanBackground]]
     script = $origin/MeanBackground.csh
     [[[job]]]
@@ -340,8 +294,72 @@
   [[CleanHofXEnsMeanBG]]
     inherit = CleanBase
     script = $origin/CleanHofXEnsMeanBG.csh "1" "0" "BG"
-[visualization]
-  initial cycle point = {{initialCyclePoint}}
-  final cycle point   = {{finalCyclePoint}}
-  number of cycle points = 200
-  default node attributes = "style=filled", "fillcolor=grey"
+
+
+## Verification: various kinds of ensembles
+  [[ExtendedEnsFC]]
+    inherit = ExtendedFCBase
+{% for state in ['BG', 'AN']%}
+  [[HofX{{state}}]]
+    inherit = HofXBase
+  [[VerifyModel{{state}}]]
+    inherit = VerifyModelBase
+  [[CompareModel{{state}}]]
+    inherit = CompareBase
+  [[VerifyObs{{state}}]]
+    inherit = VerifyObsBase
+  [[CompareObs{{state}}]]
+    inherit = CompareBase
+  [[CleanHofX{{state}}]]
+    inherit = CleanBase
+{% endfor %}
+{% for mem in EnsVerifyMembers %}
+
+  # ensemble of backgrounds and analyses (including single-member deterministic)
+  {% for state in ['BG', 'AN']%}
+  [[HofX{{state}}{{mem}}]]
+    inherit = HofX{{state}}
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+    script = $origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+  [[VerifyModel{{state}}{{mem}}]]
+    inherit = VerifyModel{{state}}
+    script = $origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
+  [[CompareModel{{state}}{{mem}}]]
+    inherit = CompareModel{{state}}
+    script = $origin/CompareModel{{state}}.csh "{{mem}}" "0" "{{state}}"
+  [[VerifyObs{{state}}{{mem}}]]
+    inherit = VerifyObs{{state}}
+    script = $origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
+  [[CompareObs{{state}}{{mem}}]]
+    inherit = CompareObs{{state}}
+    script = $origin/CompareObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
+  [[CleanHofX{{state}}{{mem}}]]
+    inherit = CleanHofX{{state}}
+    script = $origin/CleanHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+  {% endfor %}
+
+
+  # ensemble of extended forecasts from ensemble of analyses
+  [[ExtendedFC{{mem}}]]
+    inherit = ExtendedEnsFC
+    script = $origin/ExtendedEnsFC.csh "{{mem}}"
+  [[HofXEnsFC{{mem}}]]
+    inherit = HofXBase
+  [[VerifyModelEnsFC{{mem}}]]
+    inherit = VerifyModelBase
+  {% for dt in ExtendedFCLengths %}
+  [[HofXEnsFC{{mem}}-{{dt}}hr]]
+    inherit = HofXEnsFC{{mem}}
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    script = $origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+  [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
+    inherit = VerifyModelEnsFC{{mem}}
+    script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+  [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
+    inherit = VerifyObsBase
+    script = $origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
+  [[CleanHofXEnsFC{{mem}}-{{dt}}hr]]
+    inherit = CleanBase
+    script = $origin/CleanHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+  {% endfor %}
+{% endfor %}

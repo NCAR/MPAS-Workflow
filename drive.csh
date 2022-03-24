@@ -89,6 +89,7 @@ cat >! suite.rc << EOF
 
 # initialization type
 {% set InitializationType = "${InitializationType}" %}
+{% set observationsResource = "${observations__resource}" %}
 
 # eda
 {% set EDASize = ${EDASize} %} #integer
@@ -170,8 +171,22 @@ cat >! suite.rc << EOF
 {% set VerifyANMembers = ${VerifyANMembers} %} #bool
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %} #bool
 
-## Import composite tasks with sub-task dependecies
-%include include/composite-tasks.rc
+## Mini-workflow that prepares observations for IODA ingest
+{% if observationsResource == "PANDACArchive" %}
+  {% set PrepareObservations = "ObsReady" %}
+{% else %}
+  {% set PrepareObservations = "GetObs => ObsToIODA => ObsReady" %}
+{% endif %}
+
+## Mini-workflow that prepares a cold-start initial condition file from a GFS analysis
+{% if InitializationType == "WarmStart" %}
+  # assume that cold-start IC files are already available for WarmStart case
+  {% set PrepareExternalAnalysis = "ExternalAnalysisReady" %}
+{% else %}
+  {% set PrepareExternalAnalysis = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady" %}
+{% endif %}
+# Use GFS analysis for sea surface updating
+{% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysis %}
 
 [meta]
   title = "${PackageBaseName}--${SuiteName}"
@@ -195,24 +210,14 @@ cat >! suite.rc << EOF
 {% endif %}
 
   [[dependencies]]
-## (1) Critical path for firstCyclePoint
-{% if initialCyclePoint == firstCyclePoint %}
-    [[[R1]]]
-      graph = '''{{firstCycleCriticalPath}}'''
-{% endif %}
+## (1) Critical Path
+%include include/criticalpath.rc
 
-## (2) Critical path
-    [[[{{AnalysisTimes}}]]]
-      graph = '''{{DACriticalPath}}'''
-
-    [[[{{ForecastTimes}}]]]
-      graph = '''{{FCCriticalPath}}'''
-
-## (3) Verification
+## (2) Verification
 %include include/verification.rc
 
 [runtime]
-%include include/basic-tasks.rc
+%include include/tasks.rc
 
 [visualization]
   initial cycle point = {{initialCyclePoint}}

@@ -1,8 +1,8 @@
-# verification and extended forecast controls
 {% set ExtendedFCLengths = range(0, ExtendedFCWindowHR+ExtendedFC_DT_HR, ExtendedFC_DT_HR) %}
 {% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 
-  # Deterministic DA in observation space only (OMB+OMA together)
+
+  # ... for deterministic DA in observation space only (OMB+OMA together)
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
 {% if CriticalPathType in ["Normal", "Reanalysis"] and VerifyDeterministicDA and nEnsDAMembers < 2 %}
@@ -16,7 +16,8 @@
       '''
 {% endif %}
 
-  # Background-duration forecast from ensemble or deterministic background state(s)
+
+  # ... for background-duration forecast from deterministic analysis or ensemble of analyses
 {% if VerifyBGMembers or (VerifyEnsMeanBG and nEnsDAMembers == 1)%}
     [[[{{AnalysisTimes}}]]]
       graph = '''
@@ -35,7 +36,8 @@
       '''
 {% endif %}
 
-  # Background-duration forecast from mean of ensemble of background states
+
+  # ... for mean of ensemble of backgrounds and ensemble spread
 {% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
@@ -54,7 +56,8 @@
       '''
 {% endif %}
 
-  # Ensemble of analyses
+
+  # ... for ensemble of analyses
 {% if VerifyANMembers %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
@@ -68,8 +71,9 @@
       '''
 {% endif %}
 
-  # Extended forecast from mean of analysis states
-#      note: requires obs and verifying analyses to be available at extended forecast times
+
+  # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
+  # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedMeanFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
@@ -83,8 +87,9 @@
       '''
 {% endif %}
 
-  # Extended forecast from ensemble of analysis states
-#      note: requires obs and verifying analyses to be available at extended forecast times
+
+  # ... for extended forecast from ensemble of analyses
+  # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedEnsFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
     [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
