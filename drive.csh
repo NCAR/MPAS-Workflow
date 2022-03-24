@@ -37,18 +37,35 @@ date
 # example: ${ExperimentName}_verify for a simultaneous suite running only Verification
 set SuiteName = ${ExperimentName}
 
-## Set the cycle hours (AnalysisTimes) according to the dates
+
+## DA2FCOffsetHR and FC2DAOffsetHR: control the offsets between DataAssim and Forecast
+# tasks in the critical path
+# TODO: set DA2FCOffsetHR and FC2DAOffsetHR based on IAU controls
+set DA2FCOffsetHR = 0
+set FC2DAOffsetHR = ${CyclingWindowHR}
+
+# Differentiate between creating the workflowsuite for the first time
+# and restarting when initialCyclePoint > firstCyclePoint
 if ($initialCyclePoint == $firstCyclePoint) then
   echo "$0 (INFO): Initializing ${PackageBaseName} in the experiment directory"
   # Create the experiment directory and cylc task scripts
   ./SetupWorkflow.csh
 
-  # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
+  # The analysis will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
   # initialCyclePoint
   set AnalysisTimes = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
+
+  # The forecast will run every CyclingWindowHR hours, starting CyclingWindowHR+DA2FCOffsetHR hours
+  # after the initialCyclePoint
+  @ ColdFCOffset = ${CyclingWindowHR} + ${DA2FCOffsetHR}
+  set ForecastTimes = +PT${ColdFCOffset}H/PT${CyclingWindowHR}H
 else
-  # The cycles will run every CyclingWindowHR hours, starting at the initialCyclePoint
+  # The analysis will run every CyclingWindowHR hours, starting at the initialCyclePoint
   set AnalysisTimes = PT${CyclingWindowHR}H
+
+  # The forecast will run every CyclingWindowHR hours, starting DA2FCOffsetHR hours after the
+  # initialCyclePoint
+  set ForecastTimes = +PT${DA2FCOffsetHR}H/PT${CyclingWindowHR}H
 endif
 
 ## Change to the cylc suite directory
@@ -60,30 +77,99 @@ mkdir -p ${cylcWorkDir}
 echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
-# Cycling dates
+# Main suite directory
+{% set mainScriptDir = "${mainScriptDir}" %}
+
+# cycling dates-time information
 {% set firstCyclePoint   = "${firstCyclePoint}" %}
 {% set initialCyclePoint = "${initialCyclePoint}" %}
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
+{% set AnalysisTimes = "${AnalysisTimes}" %}
+{% set ForecastTimes = "${ForecastTimes}" %}
+{% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
+{% set ExtendedEnsFCTimes = "${ExtendedEnsFCTimes}" %}
+{% set DA2FCOffsetHR = "${DA2FCOffsetHR}" %}
+{% set FC2DAOffsetHR = "${FC2DAOffsetHR}" %}
+
+{% set ExtendedFCWindowHR = ${ExtendedFCWindowHR} %} #integer
+{% set ExtendedFC_DT_HR = ${ExtendedFC_DT_HR} %} #integer
+
+# common job controls
+{% set CPQueueName = "${CPQueueName}" %}
+{% set CPAccountNumber = "${CPAccountNumber}" %}
+{% set NCPQueueName = "${NCPQueueName}" %}
+{% set NCPAccountNumber = "${NCPAccountNumber}" %}
+{% set SingleProcQueueName = "${SingleProcQueueName}" %}
+{% set SingleProcAccountNumber = "${SingleProcAccountNumber}" %}
+{% set EnsMeanBGQueueName = "${EnsMeanBGQueueName}" %}
+{% set EnsMeanBGAccountNumber = "${EnsMeanBGAccountNumber}" %}
+
+{% set InitializationRetry = "${InitializationRetry}" %}
+{% set GFSAnalysisRetry = "${GFSAnalysisRetry}" %}
+{% set GetObsRetry = "${GetObsRetry}" %}
+{% set VariationalRetry = "${VariationalRetry}" %}
+{% set EnsOfVariationalRetry = "${EnsOfVariationalRetry}" %}
+{% set CyclingFCRetry = "${CyclingFCRetry}" %}
+{% set RTPPInflationRetry = "${RTPPInflationRetry}" %}
+{% set HofXRetry = "${HofXRetry}" %}
+{% set CleanRetry = "${CleanRetry}" %}
+
+# mesh-specific job controls
+{% set CyclingFCJobMinutes = "${CyclingFCJobMinutes}" %}
+{% set CyclingFCNodes = "${CyclingFCNodes}" %}
+{% set CyclingFCPEPerNode = "${CyclingFCPEPerNode}" %}
+
+{% set CyclingInflationJobMinutes = "${CyclingInflationJobMinutes}" %}
+{% set CyclingInflationNodes = "${CyclingInflationNodes}" %}
+{% set CyclingInflationPEPerNode = "${CyclingInflationPEPerNode}" %}
+{% set CyclingInflationMemory = "${CyclingInflationMemory}" %}
+
+{% set EnsOfVariationalJobMinutes = "${EnsOfVariationalJobMinutes}" %}
+{% set EnsOfVariationalNodes = "${EnsOfVariationalNodes}" %}
+{% set EnsOfVariationalPEPerNode = "${EnsOfVariationalPEPerNode}" %}
+{% set EnsOfVariationalMemory = "${EnsOfVariationalMemory}" %}
+
+{% set ExtendedFCJobMinutes = "${ExtendedFCJobMinutes}" %}
+{% set ExtendedFCNodes = "${ExtendedFCNodes}" %}
+{% set ExtendedFCPEPerNode = "${ExtendedFCPEPerNode}" %}
+
+{% set HofXJobMinutes = "${HofXJobMinutes}" %}
+{% set HofXNodes = "${HofXNodes}" %}
+{% set HofXPEPerNode = "${HofXPEPerNode}" %}
+{% set HofXMemory = "${HofXMemory}" %}
+
+{% set InitICJobMinutes = "${InitICJobMinutes}" %}
+{% set InitICNodes = "${InitICNodes}" %}
+{% set InitICPEPerNode = "${InitICPEPerNode}" %}
+
+{% set VariationalJobMinutes = "${VariationalJobMinutes}" %}
+{% set VariationalNodes = "${VariationalNodes}" %}
+{% set VariationalPEPerNode = "${VariationalPEPerNode}" %}
+{% set VariationalMemory = "${VariationalMemory}" %}
+
+{% set VerifyModelJobMinutes = "${VerifyModelJobMinutes}" %}
+{% set VerifyObsJobMinutes = "${VerifyObsJobMinutes}" %}
+{% set VerifyObsEnsMeanJobMinutes = "${VerifyObsEnsMeanJobMinutes}" %}
 
 # External task dependency controls
 {% set CriticalPathType = "${CriticalPathType}" %}
-{% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
-{% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
-{% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %}
-{% set VerifyBGMembers = ${VerifyBGMembers} %}
-{% set CompareBG2Benchmark = ${CompareBG2Benchmark} %}
-{% set VerifyEnsMeanBG = ${VerifyEnsMeanBG} %}
-{% set DiagnoseEnsSpreadBG = ${DiagnoseEnsSpreadBG} %}
-{% set VerifyANMembers = ${VerifyANMembers} %}
-{% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
+{% set VerifyDeterministicDA = ${VerifyDeterministicDA} %} #bool
+{% set CompareDA2Benchmark = ${CompareDA2Benchmark} %} #bool
+{% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %} #bool
+{% set VerifyBGMembers = ${VerifyBGMembers} %} #bool
+{% set CompareBG2Benchmark = ${CompareBG2Benchmark} %} #bool
+{% set VerifyEnsMeanBG = ${VerifyEnsMeanBG} %} #bool
+{% set DiagnoseEnsSpreadBG = ${DiagnoseEnsSpreadBG} %} #bool
+{% set VerifyANMembers = ${VerifyANMembers} %} #bool
+{% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %} #bool
 
 # Initialization
 {% set InitializationType = "${InitializationType}" %}
 
 # EDA
-{% set EDASize = ${EDASize} %}
-{% set nDAInstances = ${nDAInstances} %}
-{% set nEnsDAMembers = ${nEnsDAMembers} %}
+{% set EDASize = ${EDASize} %} #integer
+{% set nDAInstances = ${nDAInstances} %} #integer
+{% set nEnsDAMembers = ${nEnsDAMembers} %} #integer
 {% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
 {% set DAInstances = range(1, nDAInstances+1, 1) %}
 
@@ -106,7 +192,7 @@ cat >! suite.rc << EOF
 {% endif %}
 
 ## Data Assimilation mini-workflow (DAPath)
-{% set bypassDA = "\\n        DataAssimFinished" %}
+{% set DABypass = "\\n        DataAssimFinished" %}
 {% set DAPath = "" %}
 
 ## Mini-workflow for observation processing
@@ -115,7 +201,7 @@ cat >! suite.rc << EOF
 
 # Pre-DA inflation
 {% if ABEInflation %}
-  {% set DAPath = DAPath + "\\n        ForecastFinished[-PT${CyclingWindowHR}H]" %}
+  {% set DAPath = DAPath + "\\n        ForecastFinished[-PT"+FC2DAOffsetHR+"H]" %}
   {% set DAPath = DAPath + " => MeanBackground" %}
   {% set DAPath = DAPath + " => HofXEnsMeanBG" %}
   {% set DAPath = DAPath + " => GenerateABEInflation" %}
@@ -134,7 +220,7 @@ cat >! suite.rc << EOF
 {% endif %}
 
 ## Forecast mini-workflow (FCPath)
-{% set bypassFC = "\\n        ForecastFinished" %}
+{% set FCBypass = "\\n        ForecastFinished" %}
 {% set FCPath = "" %}
 # preceed Forecast with PrepareExternalAnalysis to ensure there is a GFS analysis file valid
 # at the analysis time from which to pull sea-surface fields
@@ -147,43 +233,31 @@ cat >! suite.rc << EOF
 {% endif %}
 
 ## Critical path cycle dependencies
-{% set CriticalPath = "" %}
 {% if CriticalPathType == "Normal" %}
-  # DA, with dependency on previous cycle Forecast
-  {% set CriticalPath = CriticalPath + DAPath %}
-  {% set CriticalPath = CriticalPath + "\\n        ForecastFinished[-PT${CyclingWindowHR}H] => InitDataAssim" %}
+  {% set DACriticalPath = DAPath %}
+  {% set DACriticalPath = DACriticalPath + "\\n        ForecastFinished[-PT"+FC2DAOffsetHR+"H] => InitDataAssim" %}
 
-  # Forecast, with dependency on current cycle DataAssim
-  {% set CriticalPath = CriticalPath + FCPath %}
-  {% set CriticalPath = CriticalPath + "\\n        DataAssimFinished => Forecast" %}
+  {% set FCCriticalPath = FCPath %}
+  {% set FCCriticalPath = FCCriticalPath + "\\n        DataAssimFinished[-PT"+DA2FCOffsetHR+"H] => Forecast" %}
 
 {% elif CriticalPathType == "Bypass" %}
-  # DA (bypass)
-  {% set CriticalPath = CriticalPath + bypassDA %}
-
-  # Forecast (bypass)
-  {% set CriticalPath = CriticalPath + bypassFC %}
+  {% set DACriticalPath = DABypass %}
+  {% set FCCriticalPath = FCBypass %}
 
 {% elif CriticalPathType == "Reanalysis" %}
-  # DA
-  {% set CriticalPath = CriticalPath + DAPath %}
-
-  # Forecast (bypass)
-  {% set CriticalPath = CriticalPath + bypassFC %}
+  {% set DACriticalPath = DAPath %}
+  {% set FCCriticalPath = FCBypass %}
 
 {% elif CriticalPathType == "Reforecast" %}
-  # DA (bypass)
-  {% set CriticalPath = CriticalPath + bypassDA %}
-
-  # Forecast
-  {% set CriticalPath = CriticalPath + FCPath %}
+  {% set DACriticalPath = DABypass %}
+  {% set FCCriticalPath = FCPath %}
 
 {# else #}
   {{ raise('CriticalPathType is not valid') }}
 {% endif %}
 
 # verification and extended forecast controls
-{% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
+{% set ExtendedFCLengths = range(0, ExtendedFCWindowHR+ExtendedFC_DT_HR, ExtendedFC_DT_HR) %}
 {% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 [cylc]
   UTC mode = False
@@ -211,14 +285,17 @@ cat >! suite.rc << EOF
 {% endif %}
 
 ## (2) Critical path
-    [[[${AnalysisTimes}]]]
-      graph = '''{{CriticalPath}}'''
+    [[[{{AnalysisTimes}}]]]
+      graph = '''{{DACriticalPath}}'''
+
+    [[[{{ForecastTimes}}]]]
+      graph = '''{{FCCriticalPath}}'''
 
 ## (3) Verification of deterministic DA with observations (OMB+OMA together)
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
 {% if CriticalPathType in ["Normal", "Reanalysis"] and VerifyDeterministicDA and nEnsDAMembers < 2 %}
-    [[[${AnalysisTimes}]]]
+    [[[{{AnalysisTimes}}]]]
       graph = '''
         DataAssimFinished => VerifyObsDA
         VerifyObsDA => CleanDataAssim
@@ -230,10 +307,10 @@ cat >! suite.rc << EOF
 
 ## (4) Ensemble and deterministic background-duration forecast verification
 {% if VerifyBGMembers or (VerifyEnsMeanBG and nEnsDAMembers == 1)%}
-    [[[${AnalysisTimes}]]]
+    [[[{{AnalysisTimes}}]]]
       graph = '''
-        ForecastFinished[-PT${CyclingWindowHR}H] => HofXBG
-        ForecastFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => VerifyModelBG
         {{PrepareObservations}} => HofXBG
         {{PrepareExternalAnalysis}} => VerifyModelBG
   {% for mem in EnsVerifyMembers %}
@@ -249,9 +326,9 @@ cat >! suite.rc << EOF
 
 ## (5) Ensemble mean background-duration forecast verification
 {% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
-    [[[${AnalysisTimes}]]]
+    [[[{{AnalysisTimes}}]]]
       graph = '''
-        ForecastFinished[-PT${CyclingWindowHR}H] => MeanBackground
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => MeanBackground
         MeanBackground => HofXEnsMeanBG
         MeanBackground => VerifyModelEnsMeanBG
         {{PrepareObservations}} => HofXEnsMeanBG
@@ -259,7 +336,7 @@ cat >! suite.rc << EOF
         HofXEnsMeanBG => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanHofXEnsMeanBG
   {% if DiagnoseEnsSpreadBG %}
-        ForecastFinished[-PT${CyclingWindowHR}H] => HofXBG
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
         HofXBG:succeed-all => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanHofXBG
   {% endif %}
@@ -268,7 +345,7 @@ cat >! suite.rc << EOF
 
 ## (6) Ensemble analysis verification
 {% if VerifyANMembers %}
-    [[[${AnalysisTimes}]]]
+    [[[{{AnalysisTimes}}]]]
       graph = '''
         {{PrepareExternalAnalysis}} => VerifyModelAN
   {% for mem in EnsVerifyMembers %}
@@ -283,7 +360,7 @@ cat >! suite.rc << EOF
 ## (7) Extended forecast and verification from mean of analysis states
 #      note: requires obs and verifying analyses to be available at extended forecast times
 {% if VerifyExtendedMeanFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
-    [[[${ExtendedMeanFCTimes}]]]
+    [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
         DataAssimFinished => MeanAnalysis => ExtendedMeanFC
         ExtendedMeanFC => HofXMeanFC
@@ -298,7 +375,7 @@ cat >! suite.rc << EOF
 ## (8) Extended forecast and verification from ensemble of analysis states
 #      note: requires obs and verifying analyses to be available at extended forecast times
 {% if VerifyExtendedEnsFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
-    [[[${ExtendedEnsFCTimes}]]]
+    [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
         DataAssimFinished => ExtendedEnsFC
   {% for mem in EnsVerifyMembers %}
@@ -317,7 +394,7 @@ cat >! suite.rc << EOF
   [[root]] # suite defaults
     pre-script = "cd  \$origin/"
     [[[environment]]]
-      origin = ${mainScriptDir}
+      origin = {{mainScriptDir}}
 ## PBS
     [[[job]]]
       batch system = pbs
@@ -327,70 +404,70 @@ cat >! suite.rc << EOF
       -k = eod
       -S = /bin/tcsh
       # default to using one processor
-      -q = ${SingleProcQueueName}
-      -A = ${SingleProcAccountNumber}
+      -q = {{SingleProcQueueName}}
+      -A = {{SingleProcAccountNumber}}
       -l = select=1:ncpus=1
 ## SLURM
 #    [[[job]]]
 #      batch system = slurm
 #      execution time limit = PT60M
 #    [[[directives]]]
-#      --account = ${CPAccountNumber}
+#      --account = {{CPAccountNumber}}
 #      --mem = 45G
 #      --ntasks = 1
 #      --cpus-per-task = 36
 #      --partition = dav
   [[ForecastBase]]
     [[[job]]]
-      execution time limit = PT${CyclingFCJobMinutes}M
+      execution time limit = PT{{CyclingFCJobMinutes}}M
     [[[directives]]]
       -m = ae
-      -q = ${CPQueueName}
-      -A = ${CPAccountNumber}
-      -l = select=${CyclingFCNodes}:ncpus=${CyclingFCPEPerNode}:mpiprocs=${CyclingFCPEPerNode}
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{CyclingFCNodes}}:ncpus={{CyclingFCPEPerNode}}:mpiprocs={{CyclingFCPEPerNode}}
   [[ExtendedFCBase]]
     [[[job]]]
-      execution time limit = PT${ExtendedFCJobMinutes}M
+      execution time limit = PT{{ExtendedFCJobMinutes}}M
     [[[directives]]]
       -m = ae
-      -q = ${NCPQueueName}
-      -A = ${NCPAccountNumber}
-      -l = select=${ExtendedFCNodes}:ncpus=${ExtendedFCPEPerNode}:mpiprocs=${ExtendedFCPEPerNode}
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select={{ExtendedFCNodes}}:ncpus={{ExtendedFCPEPerNode}}:mpiprocs={{ExtendedFCPEPerNode}}
   [[HofXBase]]
     [[[job]]]
-      execution time limit = PT${HofXJobMinutes}M
-      execution retry delays = ${HofXRetry}
+      execution time limit = PT{{HofXJobMinutes}}M
+      execution retry delays = {{HofXRetry}}
     [[[directives]]]
-      -q = ${NCPQueueName}
-      -A = ${NCPAccountNumber}
-      -l = select=${HofXNodes}:ncpus=${HofXPEPerNode}:mpiprocs=${HofXPEPerNode}:mem=${HofXMemory}GB
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select={{HofXNodes}}:ncpus={{HofXPEPerNode}}:mpiprocs={{HofXPEPerNode}}:mem={{HofXMemory}}GB
   [[VerifyModelBase]]
     [[[job]]]
-      execution time limit = PT${VerifyModelJobMinutes}M
-      execution retry delays = ${HofXRetry}
+      execution time limit = PT{{VerifyModelJobMinutes}}M
+      execution retry delays = {{HofXRetry}}
     [[[directives]]]
-      -q = ${NCPQueueName}
-      -A = ${NCPAccountNumber}
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[VerifyObsBase]]
     [[[job]]]
-      execution time limit = PT${VerifyObsJobMinutes}M
-      execution retry delays = ${HofXRetry}
+      execution time limit = PT{{VerifyObsJobMinutes}}M
+      execution retry delays = {{HofXRetry}}
     [[[directives]]]
-      -q = ${NCPQueueName}
-      -A = ${NCPAccountNumber}
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[CompareBase]]
     [[[job]]]
       execution time limit = PT5M
     [[[directives]]]
-      -q = ${NCPQueueName}
-      -A = ${NCPAccountNumber}
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[CleanBase]]
     [[[job]]]
       execution time limit = PT5M
-      execution retry delays = ${CleanRetry}
+      execution retry delays = {{CleanRetry}}
 #Cycling components
   # initialization-related components
   [[GetWarmStartIC]]
@@ -400,34 +477,34 @@ cat >! suite.rc << EOF
       # TODO: set time limit based on outer mesh AND (number of members OR
       #       independent task for each member) under config/mpas/*/job.csh
       execution time limit = PT10M
-      execution retry delays = ${InitializationRetry}
+      execution retry delays = {{InitializationRetry}}
   # observations-related components
   [[GetObs]]
     script = \$origin/GetObs.csh
     [[[job]]]
       execution time limit = PT10M
-      execution retry delays = ${GetObsRetry}
+      execution retry delays = {{GetObsRetry}}
   [[ObsToIODA]]
     script = \$origin/ObsToIODA.csh
     [[[job]]]
       execution time limit = PT10M
-      execution retry delays = ${InitializationRetry}
+      execution retry delays = {{InitializationRetry}}
     # currently ObsToIODA has to be on Cheyenne, because ioda-upgrade.x is built there
     # TODO: build ioda-upgrade.x on casper, remove CP directives below
     # Note: memory for ObsToIODA may need to be increased when hyperspectral and/or
     #       geostationary instruments are added
     [[[directives]]]
       -m = ae
-      -q = ${CPQueueName}
-      -A = ${CPAccountNumber}
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
       -l = select=1:ncpus=1:mem=10GB
   # variational-related components
   [[InitDataAssim]]
-    env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA"
     script = \$origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = ${VariationalRetry}
+      execution retry delays = {{VariationalRetry}}
   [[DataAssim]]
 {% if EDASize > 1 %}
   {% for inst in DAInstances %}
@@ -435,13 +512,13 @@ cat >! suite.rc << EOF
     inherit = DataAssim
     script = \$origin/EnsembleOfVariational.csh "{{inst}}"
     [[[job]]]
-      execution time limit = PT${EnsOfVariationalJobMinutes}M
-      execution retry delays = ${EnsOfVariationalRetry}
+      execution time limit = PT{{EnsOfVariationalJobMinutes}}M
+      execution retry delays = {{EnsOfVariationalRetry}}
     [[[directives]]]
       -m = ae
-      -q = ${CPQueueName}
-      -A = ${CPAccountNumber}
-      -l = select=${EnsOfVariationalNodes}:ncpus=${EnsOfVariationalPEPerNode}:mpiprocs=${EnsOfVariationalPEPerNode}:mem=${EnsOfVariationalMemory}GB
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{EnsOfVariationalNodes}}:ncpus={{EnsOfVariationalPEPerNode}}:mpiprocs={{EnsOfVariationalPEPerNode}}:mem={{EnsOfVariationalMemory}}GB
   {% endfor %}
 {% else %}
   {% for mem in EnsDAMembers %}
@@ -449,32 +526,32 @@ cat >! suite.rc << EOF
     inherit = DataAssim
     script = \$origin/Variational.csh "{{mem}}"
     [[[job]]]
-      execution time limit = PT${VariationalJobMinutes}M
-      execution retry delays = ${VariationalRetry}
+      execution time limit = PT{{VariationalJobMinutes}}M
+      execution retry delays = {{VariationalRetry}}
     [[[directives]]]
       -m = ae
-      -q = ${CPQueueName}
-      -A = ${CPAccountNumber}
-      -l = select=${VariationalNodes}:ncpus=${VariationalPEPerNode}:mpiprocs=${VariationalPEPerNode}:mem=${VariationalMemory}GB
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{VariationalNodes}}:ncpus={{VariationalPEPerNode}}:mpiprocs={{VariationalPEPerNode}}:mem={{VariationalMemory}}GB
   {% endfor %}
 {% endif %}
   [[RTPPInflation]]
     script = \$origin/RTPPInflation.csh
     [[[job]]]
-      execution time limit = PT${CyclingInflationJobMinutes}M
-      execution retry delays = ${RTPPInflationRetry}
+      execution time limit = PT{{CyclingInflationJobMinutes}}M
+      execution retry delays = {{RTPPInflationRetry}}
     [[[directives]]]
       -m = ae
-      -q = ${CPQueueName}
-      -A = ${CPAccountNumber}
-      -l = select=${CyclingInflationNodes}:ncpus=${CyclingInflationPEPerNode}:mpiprocs=${CyclingInflationPEPerNode}:mem=${CyclingInflationMemory}GB
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{CyclingInflationNodes}}:ncpus={{CyclingInflationPEPerNode}}:mpiprocs={{CyclingInflationPEPerNode}}:mem={{CyclingInflationMemory}}GB
   [[GenerateABEInflation]]
     script = \$origin/GenerateABEInflation.csh
     [[[job]]]
       execution time limit = PT20M
     [[[directives]]]
-      -q = ${CPQueueName}
-      -A = ${CPAccountNumber}
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[DataAssimFinished]]
     [[[job]]]
@@ -493,26 +570,26 @@ cat >! suite.rc << EOF
     script = \$origin/GetGFSanalysis.csh
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = ${GFSAnalysisRetry}
+      execution retry delays = {{GFSAnalysisRetry}}
   [[UngribColdStartIC]]
     script = \$origin/UngribColdStartIC.csh
     [[[job]]]
       execution time limit = PT5M
-      execution retry delays = ${InitializationRetry}
+      execution retry delays = {{InitializationRetry}}
     # currently UngribColdStartIC has to be on Cheyenne, because ungrib.exe is built there
     # TODO: build ungrib.exe on casper, remove CP directives below
     [[[directives]]]
-      -q = ${CPQueueName}
-      -A = ${CPAccountNumber}
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
   [[GenerateColdStartIC]]
     script = \$origin/GenerateColdStartIC.csh
     [[[job]]]
-      execution time limit = PT${InitICJobMinutes}M
-      execution retry delays = ${InitializationRetry}
+      execution time limit = PT{{InitICJobMinutes}}M
+      execution retry delays = {{InitializationRetry}}
     [[[directives]]]
-      -q = ${CPQueueName}
-      -A = ${CPAccountNumber}
-      -l = select=${InitICNodes}:ncpus=${InitICPEPerNode}:mpiprocs=${InitICPEPerNode}
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{InitICNodes}}:ncpus={{InitICPEPerNode}}:mpiprocs={{InitICPEPerNode}}
   [[ColdStartAvailable]]
   [[Forecast]]
     inherit = ForecastBase
@@ -521,7 +598,7 @@ cat >! suite.rc << EOF
     inherit = Forecast
     script = \$origin/Forecast.csh "{{mem}}"
     [[[job]]]
-      execution retry delays = ${CyclingFCRetry}
+      execution retry delays = {{CyclingFCRetry}}
 {% endfor %}
   [[ForecastFinished]]
     [[[job]]]
@@ -533,8 +610,8 @@ cat >! suite.rc << EOF
       execution time limit = PT5M
     [[[directives]]]
       -m = ae
-      -q = ${NCPQueueName}
-      -A = ${NCPAccountNumber}
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
@@ -546,7 +623,7 @@ cat >! suite.rc << EOF
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
     script = \$origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
   [[CleanHofXMeanFC{{dt}}hr]]
     inherit = CleanBase
@@ -579,7 +656,7 @@ cat >! suite.rc << EOF
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
     inherit = HofX{{state}}
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     script = \$origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
   [[VerifyModel{{state}}{{mem}}]]
     inherit = VerifyModel{{state}}
@@ -608,7 +685,7 @@ cat >! suite.rc << EOF
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC{{mem}}
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     script = \$origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyModelEnsFC{{mem}}
@@ -628,16 +705,16 @@ cat >! suite.rc << EOF
       execution time limit = PT5M
     [[[directives]]]
       -m = ae
-      -q = ${NCPQueueName}
-      -A = ${NCPAccountNumber}
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[HofXEnsMeanBG]]
     inherit = HofXBase
-    env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG"
     script = \$origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
-      -q = ${EnsMeanBGQueueName}
-      -A = ${EnsMeanBGAccountNumber}
+      -q = {{EnsMeanBGQueueName}}
+      -A = {{EnsMeanBGAccountNumber}}
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
     script = \$origin/VerifyModelEnsMeanBG.csh "1" "0" "BG"
@@ -646,7 +723,7 @@ cat >! suite.rc << EOF
 {% if DiagnoseEnsSpreadBG %}
     script = \$origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsDAMembers}}"
     [[[job]]]
-      execution time limit = PT${VerifyObsEnsMeanJobMinutes}M
+      execution time limit = PT{{VerifyObsEnsMeanJobMinutes}}M
 {% else %}
     script = \$origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "0"
 {% endif %}
