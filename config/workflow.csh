@@ -45,3 +45,9 @@ $setLocal ExtendedMeanFCTimes
 $setLocal ExtendedEnsFCTimes
 $setLocal DAVFWindowHR
 $setLocal FCVFWindowHR
+
+## DA2FCOffsetHR and FC2DAOffsetHR: control the offsets between DataAssim and Forecast
+# tasks in the critical path
+# TODO: set DA2FCOffsetHR and FC2DAOffsetHR based on IAU controls
+setenv DA2FCOffsetHR 0
+setenv FC2DAOffsetHR ${CyclingWindowHR}
