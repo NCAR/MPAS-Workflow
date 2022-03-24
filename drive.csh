@@ -37,7 +37,7 @@ date
 # example: ${ExperimentName}_verify for a simultaneous suite running only Verification
 set SuiteName = ${ExperimentName}
 
-## Set the cycle hours (cyclingCycles) according to the dates
+## Set the cycle hours (AnalysisTimes) according to the dates
 if ($initialCyclePoint == $firstCyclePoint) then
   echo "$0 (INFO): Initializing ${PackageBaseName} in the experiment directory"
   # Create the experiment directory and cylc task scripts
@@ -45,10 +45,10 @@ if ($initialCyclePoint == $firstCyclePoint) then
 
   # The cycles will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
   # initialCyclePoint
-  set cyclingCycles = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
+  set AnalysisTimes = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
 else
   # The cycles will run every CyclingWindowHR hours, starting at the initialCyclePoint
-  set cyclingCycles = PT${CyclingWindowHR}H
+  set AnalysisTimes = PT${CyclingWindowHR}H
 endif
 
 ## Change to the cylc suite directory
@@ -60,11 +60,12 @@ mkdir -p ${cylcWorkDir}
 echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
-# cycle dates
+# Cycling dates
 {% set firstCyclePoint   = "${firstCyclePoint}" %}
 {% set initialCyclePoint = "${initialCyclePoint}" %}
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
-# cycling components
+
+# External task dependency controls
 {% set CriticalPathType = "${CriticalPathType}" %}
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %}
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %}
@@ -75,113 +76,216 @@ cat >! suite.rc << EOF
 {% set DiagnoseEnsSpreadBG = ${DiagnoseEnsSpreadBG} %}
 {% set VerifyANMembers = ${VerifyANMembers} %}
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %}
+
+# Initialization
+{% set InitializationType = "${InitializationType}" %}
+
+# EDA
 {% set EDASize = ${EDASize} %}
 {% set nDAInstances = ${nDAInstances} %}
 {% set nEnsDAMembers = ${nEnsDAMembers} %}
-{% set RTPPInflationFactor = ${RTPPInflationFactor} %}
-{% set ABEInflation = ${ABEInflation} %}
-{% set InitializationType = "${InitializationType}" %}
-[meta]
-  title = "${PackageBaseName}--${SuiteName}"
-# critical path cycle dependencies
-  {% set PrimaryCPGraph = "" %}
-  {% set SecondaryCPGraph = "" %}
-{% if CriticalPathType == "Bypass" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
-{% elif CriticalPathType == "Reanalysis" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        InitCyclingDA => CyclingDA" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => CyclingDAFinished" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished" %}
-  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
-{% elif CriticalPathType == "Reforecast" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished" %}
-{% elif CriticalPathType == "Normal" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFCFinished[-PT${CyclingWindowHR}H]" %}
-  {% if (ABEInflation and nEnsDAMembers > 1) %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => MeanBackground" %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => HofXEnsMeanBG" %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + " => GenerateABEInflation" %}
-    {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        GenerateABEInflation => CleanHofXEnsMeanBG" %}
-  {% endif %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + " => InitCyclingDA => CyclingDA" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => CyclingDAFinished" %}
-  {% if (RTPPInflationFactor > 0.0 and nEnsDAMembers > 1) %}
-    {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDA:succeed-all => RTPPInflation => CyclingDAFinished" %}
-  {% endif %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingDAFinished => CyclingFC" %}
-  {% set PrimaryCPGraph = PrimaryCPGraph + "\\n        CyclingFC:succeed-all => CyclingFCFinished" %}
-  {% set SecondaryCPGraph = SecondaryCPGraph + "\\n        CyclingDAFinished => CleanCyclingDA" %}
-{# else #}
-#TODO: indicate invalid CriticalPathType
-{% endif %}
-# verification and extended forecast controls
-{% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
 {% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
 {% set DAInstances = range(1, nDAInstances+1, 1) %}
+
+# Inflation
+{% set RTPPInflationFactor = ${RTPPInflationFactor} %}
+{% set ABEInflation = ${ABEInflation} %}
+
+[meta]
+  title = "${PackageBaseName}--${SuiteName}"
+
+## Mini-workflow that prepares observations for IODA ingest
+{% set PrepareObservations = "GetObs => ObsToIODA" %}
+
+## Mini-workflow that prepares a cold-start initial condition file from a GFS analysis
+{% if InitializationType == "WarmStart" %}
+  # assume that cold-start IC files are already available for WarmStart case
+  {% set PrepareExternalAnalysis = "ColdStartAvailable" %}
+{% else %}
+  {% set PrepareExternalAnalysis = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC => ColdStartAvailable" %}
+{% endif %}
+
+## Data Assimilation mini-workflow (DAPath)
+{% set bypassDA = "\\n        DataAssimFinished" %}
+{% set DAPath = "" %}
+
+## Mini-workflow for observation processing
+# Pre-DA observation processing
+{% set DAPath = DAPath + "\\n        "+PrepareObservations+" => InitDataAssim" %}
+
+# Pre-DA inflation
+{% if ABEInflation %}
+  {% set DAPath = DAPath + "\\n        ForecastFinished[-PT${CyclingWindowHR}H]" %}
+  {% set DAPath = DAPath + " => MeanBackground" %}
+  {% set DAPath = DAPath + " => HofXEnsMeanBG" %}
+  {% set DAPath = DAPath + " => GenerateABEInflation" %}
+  {% set DAPath = DAPath + "\\n        GenerateABEInflation => InitDataAssim" %}
+  {% set DAPath = DAPath + "\\n        GenerateABEInflation => CleanHofXEnsMeanBG" %}
+{% endif %}
+
+# Data assimilation
+{% set DAPath = DAPath + "\\n        InitDataAssim => DataAssim" %}
+{% set DAPath = DAPath + "\\n        DataAssim:succeed-all => DataAssimFinished" %}
+{% set DAPath = DAPath + "\\n        DataAssimFinished => CleanDataAssim" %}
+
+# Post-DA inflation
+{% if (RTPPInflationFactor > 0.0 and nEnsDAMembers > 1) %}
+  {% set DAPath = DAPath + "\\n        DataAssim:succeed-all => RTPPInflation => DataAssimFinished" %}
+{% endif %}
+
+## Forecast mini-workflow (FCPath)
+{% set bypassFC = "\\n        ForecastFinished" %}
+{% set FCPath = "" %}
+# preceed Forecast with PrepareExternalAnalysis to ensure there is a GFS analysis file valid
+# at the analysis time from which to pull sea-surface fields
+{% set FCPath = FCPath + "\\n        "+PrepareExternalAnalysis+" => Forecast" %}
+{% set FCPath = FCPath + "\\n        Forecast:succeed-all => ForecastFinished" %}
+{% if InitializationType == "WarmStart" %}
+  {% set firstCycleFC = "\\n        GetWarmStartIC => ForecastFinished" %}
+{% else %}
+  {% set firstCycleFC = FCPath %}
+{% endif %}
+
+## Critical path cycle dependencies
+{% set CriticalPath = "" %}
+{% if CriticalPathType == "Normal" %}
+  # DA, with dependency on previous cycle Forecast
+  {% set CriticalPath = CriticalPath + DAPath %}
+  {% set CriticalPath = CriticalPath + "\\n        ForecastFinished[-PT${CyclingWindowHR}H] => InitDataAssim" %}
+
+  # Forecast, with dependency on current cycle DataAssim
+  {% set CriticalPath = CriticalPath + FCPath %}
+  {% set CriticalPath = CriticalPath + "\\n        DataAssimFinished => Forecast" %}
+
+{% elif CriticalPathType == "Bypass" %}
+  # DA (bypass)
+  {% set CriticalPath = CriticalPath + bypassDA %}
+
+  # Forecast (bypass)
+  {% set CriticalPath = CriticalPath + bypassFC %}
+
+{% elif CriticalPathType == "Reanalysis" %}
+  # DA
+  {% set CriticalPath = CriticalPath + DAPath %}
+
+  # Forecast (bypass)
+  {% set CriticalPath = CriticalPath + bypassFC %}
+
+{% elif CriticalPathType == "Reforecast" %}
+  # DA (bypass)
+  {% set CriticalPath = CriticalPath + bypassDA %}
+
+  # Forecast
+  {% set CriticalPath = CriticalPath + FCPath %}
+
+{# else #}
+  {{ raise('CriticalPathType is not valid') }}
+{% endif %}
+
+# verification and extended forecast controls
+{% set ExtendedFCLengths = range(0, ${ExtendedFCWindowHR}+${ExtendedFC_DT_HR}, ${ExtendedFC_DT_HR}) %}
 {% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
-# Cold initial conditions from GFS analysis
-{% set GFSAnalysisWorkflow = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC" %}
 [cylc]
   UTC mode = False
   [[environment]]
 [scheduling]
+  initial cycle point = {{initialCyclePoint}}
+  final cycle point   = {{finalCyclePoint}}
+
   # Maximum number of simultaneous active dates;
   # useful for constraining non-blocking flows
   # and to avoid over-utilization of login nodes
   # hint: execute 'ps aux | grep $USER' to check your login node overhead
   # default: 3
-{% if CriticalPathType == "Bypass" %}
+{% if CriticalPathType != "Normal" %}
   max active cycle points = 20
 {% else %}
   max active cycle points = 4
 {% endif %}
-  initial cycle point = {{initialCyclePoint}}
-  final cycle point   = {{finalCyclePoint}}
+
   [[dependencies]]
+## (1) Pre-critical path for firstCyclePoint
 {% if initialCyclePoint == firstCyclePoint %}
-  {% if InitializationType == "ColdStart" %}
     [[[R1]]]
-      graph = {{GFSAnalysisWorkflow}} => ColdStartFC => CyclingFCFinished
-  {% elif InitializationType == "WarmStart" %}
-    [[[R1]]]
-      graph = GetWarmStartIC => CyclingFCFinished
-  {% endif %}
+      graph = '''{{firstCycleFC}}'''
 {% endif %}
-## Critical path for cycling
-    [[[${cyclingCycles}]]]
-      graph = '''{{PrimaryCPGraph}}{{SecondaryCPGraph}}
-  # critical path tasks that are independent of the previous forecast
-  {% if InitializationType == "ColdStart" %}
-      # ensure that there is a GFS analysis file valid at the analysis time
-      # from which to pull sea-surface fields
-      {{GFSAnalysisWorkflow}} => CyclingFC
-      # get observations and convert them to IODA
-      GetObs => ObsToIODA
-      ObsToIODA => InitCyclingDA
-  {% endif %}
-      '''
-## Many kinds of verification
-{% if CriticalPathType == "Normal" and VerifyDeterministicDA and nEnsDAMembers < 2 %}
+
+## (2) Critical path
+    [[[${AnalysisTimes}]]]
+      graph = '''{{CriticalPath}}'''
+
+## (3) Verification of deterministic DA with observations (OMB+OMA together)
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
-## Verification of deterministic DA with observations (BG+AN together)
-    [[[${cyclingCycles}]]]
+{% if CriticalPathType in ["Normal", "Reanalysis"] and VerifyDeterministicDA and nEnsDAMembers < 2 %}
+    [[[${AnalysisTimes}]]]
       graph = '''
-        CyclingDAFinished => VerifyObsDA
-        VerifyObsDA => CleanCyclingDA
+        DataAssimFinished => VerifyObsDA
+        VerifyObsDA => CleanDataAssim
   {% if CompareDA2Benchmark %}
         VerifyObsDA => CompareObsDA
   {% endif %}
       '''
 {% endif %}
-{% if VerifyExtendedMeanFC %}
-## Extended forecast and verification from mean of analysis states
+
+## (4) Ensemble and deterministic background-duration forecast verification
+{% if VerifyBGMembers or (VerifyEnsMeanBG and nEnsDAMembers == 1)%}
+    [[[${AnalysisTimes}]]]
+      graph = '''
+        ForecastFinished[-PT${CyclingWindowHR}H] => HofXBG
+        ForecastFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
+        {{PrepareObservations}} => HofXBG
+        {{PrepareExternalAnalysis}} => VerifyModelBG
+  {% for mem in EnsVerifyMembers %}
+        HofXBG{{mem}} => VerifyObsBG{{mem}}
+        VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
+    {% if CompareBG2Benchmark %}
+        VerifyModelBG{{mem}} => CompareModelBG{{mem}}
+        VerifyObsBG{{mem}} => CompareObsBG{{mem}}
+    {% endif %}
+  {% endfor %}
+      '''
+{% endif %}
+
+## (5) Ensemble mean background-duration forecast verification
+{% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
+    [[[${AnalysisTimes}]]]
+      graph = '''
+        ForecastFinished[-PT${CyclingWindowHR}H] => MeanBackground
+        MeanBackground => HofXEnsMeanBG
+        MeanBackground => VerifyModelEnsMeanBG
+        {{PrepareObservations}} => HofXEnsMeanBG
+        {{PrepareExternalAnalysis}} => VerifyModelEnsMeanBG
+        HofXEnsMeanBG => VerifyObsEnsMeanBG
+        VerifyObsEnsMeanBG => CleanHofXEnsMeanBG
+  {% if DiagnoseEnsSpreadBG %}
+        ForecastFinished[-PT${CyclingWindowHR}H] => HofXBG
+        HofXBG:succeed-all => VerifyObsEnsMeanBG
+        VerifyObsEnsMeanBG => CleanHofXBG
+  {% endif %}
+      '''
+{% endif %}
+
+## (6) Ensemble analysis verification
+{% if VerifyANMembers %}
+    [[[${AnalysisTimes}]]]
+      graph = '''
+        {{PrepareExternalAnalysis}} => VerifyModelAN
+  {% for mem in EnsVerifyMembers %}
+        DataAssimFinished => VerifyModelAN{{mem}}
+        DataAssimFinished => HofXAN{{mem}}
+        HofXAN{{mem}} => VerifyObsAN{{mem}}
+        VerifyObsAN{{mem}} => CleanHofXAN{{mem}}
+  {% endfor %}
+      '''
+{% endif %}
+
+## (7) Extended forecast and verification from mean of analysis states
+#      note: requires obs and verifying analyses to be available at extended forecast times
+{% if VerifyExtendedMeanFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
     [[[${ExtendedMeanFCTimes}]]]
       graph = '''
-        CyclingDAFinished => MeanAnalysis => ExtendedMeanFC
+        DataAssimFinished => MeanAnalysis => ExtendedMeanFC
         ExtendedMeanFC => HofXMeanFC
         ExtendedMeanFC => VerifyModelMeanFC
   {% for dt in ExtendedFCLengths %}
@@ -190,77 +294,13 @@ cat >! suite.rc << EOF
   {% endfor %}
       '''
 {% endif %}
-{% if VerifyBGMembers %}
-## Ensemble BG verification
-    [[[${cyclingCycles}]]]
-      graph = '''
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
-  {% if InitializationType == "ColdStart" %}
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => {{GFSAnalysisWorkflow}} => VerifyModelBG
-  {% else %}
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
-  {% endif %}
-  {% for mem in EnsVerifyMembers %}
-        HofXBG{{mem}} => VerifyObsBG{{mem}}
-        VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
-    {% if CompareBG2Benchmark %}
-        VerifyModelBG{{mem}} => CompareModelBG{{mem}}
-        VerifyObsBG{{mem}} => CompareObsBG{{mem}}
-    {% endif %}
-  {% endfor %}
-      '''
-{% elif VerifyEnsMeanBG and nEnsDAMembers == 1 %}
-    [[[${cyclingCycles}]]]
-      graph = '''
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => VerifyModelBG
-  {% if InitializationType == "ColdStart" %}
-        ObsToIODA => HofXBG
-        {{GFSAnalysisWorkflow}} => VerifyModelBG
-  {% endif %}
-  {% for mem in [1] %}
-        HofXBG{{mem}} => VerifyObsBG{{mem}}
-        VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
-    {% if CompareBG2Benchmark %}
-        VerifyModelBG{{mem}} => CompareModelBG{{mem}}
-        VerifyObsBG{{mem}} => CompareObsBG{{mem}}
-    {% endif %}
-  {% endfor %}
-      '''
-{% endif %}
-{% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
-## Ensemble Mean BG verification
-    [[[${cyclingCycles}]]]
-      graph = '''
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => MeanBackground
-        MeanBackground => HofXEnsMeanBG
-        MeanBackground => VerifyModelEnsMeanBG
-        HofXEnsMeanBG => VerifyObsEnsMeanBG
-        VerifyObsEnsMeanBG => CleanHofXEnsMeanBG
-  {% if DiagnoseEnsSpreadBG %}
-        CyclingFCFinished[-PT${CyclingWindowHR}H] => HofXBG
-        HofXBG:succeed-all => VerifyObsEnsMeanBG
-        VerifyObsEnsMeanBG => CleanHofXBG
-  {% endif %}
-      '''
-{% endif %}
-{% if VerifyANMembers %}
-## Ensemble AN verification
-    [[[${cyclingCycles}]]]
-      graph = '''
-  {% for mem in EnsVerifyMembers %}
-        CyclingDAFinished => VerifyModelAN{{mem}}
-        CyclingDAFinished => HofXAN{{mem}}
-        HofXAN{{mem}} => VerifyObsAN{{mem}}
-        VerifyObsAN{{mem}} => CleanHofXAN{{mem}}
-  {% endfor %}
-      '''
-{% endif %}
-{% if VerifyExtendedEnsFC %}
-## Extended forecast and verification from ensemble of analysis states
+
+## (8) Extended forecast and verification from ensemble of analysis states
+#      note: requires obs and verifying analyses to be available at extended forecast times
+{% if VerifyExtendedEnsFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
     [[[${ExtendedEnsFCTimes}]]]
       graph = '''
-        CyclingDAFinished => ExtendedEnsFC
+        DataAssimFinished => ExtendedEnsFC
   {% for mem in EnsVerifyMembers %}
         ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}
         ExtendedFC{{mem}} => HofXEnsFC{{mem}}
@@ -271,6 +311,7 @@ cat >! suite.rc << EOF
   {% endfor %}
       '''
 {% endif %}
+
 [runtime]
 #Base components
   [[root]] # suite defaults
@@ -299,7 +340,7 @@ cat >! suite.rc << EOF
 #      --ntasks = 1
 #      --cpus-per-task = 36
 #      --partition = dav
-  [[CyclingFCBase]]
+  [[ForecastBase]]
     [[[job]]]
       execution time limit = PT${CyclingFCJobMinutes}M
     [[[directives]]]
@@ -318,6 +359,7 @@ cat >! suite.rc << EOF
   [[HofXBase]]
     [[[job]]]
       execution time limit = PT${HofXJobMinutes}M
+      execution retry delays = ${HofXRetry}
     [[[directives]]]
       -q = ${NCPQueueName}
       -A = ${NCPAccountNumber}
@@ -325,6 +367,7 @@ cat >! suite.rc << EOF
   [[VerifyModelBase]]
     [[[job]]]
       execution time limit = PT${VerifyModelJobMinutes}M
+      execution retry delays = ${HofXRetry}
     [[[directives]]]
       -q = ${NCPQueueName}
       -A = ${NCPAccountNumber}
@@ -379,17 +422,17 @@ cat >! suite.rc << EOF
       -A = ${CPAccountNumber}
       -l = select=1:ncpus=1:mem=10GB
   # variational-related components
-  [[InitCyclingDA]]
+  [[InitDataAssim]]
     env-script = cd ${mainScriptDir}; ./PrepJEDIVariational.csh "1" "0" "DA"
     script = \$origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = ${VariationalRetry}
-  [[CyclingDA]]
+  [[DataAssim]]
 {% if EDASize > 1 %}
   {% for inst in DAInstances %}
   [[EDAInstance{{inst}}]]
-    inherit = CyclingDA
+    inherit = DataAssim
     script = \$origin/EnsembleOfVariational.csh "{{inst}}"
     [[[job]]]
       execution time limit = PT${EnsOfVariationalJobMinutes}M
@@ -403,7 +446,7 @@ cat >! suite.rc << EOF
 {% else %}
   {% for mem in EnsDAMembers %}
   [[DAMember{{mem}}]]
-    inherit = CyclingDA
+    inherit = DataAssim
     script = \$origin/Variational.csh "{{mem}}"
     [[[job]]]
       execution time limit = PT${VariationalJobMinutes}M
@@ -433,7 +476,7 @@ cat >! suite.rc << EOF
       -q = ${CPQueueName}
       -A = ${CPAccountNumber}
       -l = select=1:ncpus=36:mpiprocs=36
-  [[CyclingDAFinished]]
+  [[DataAssimFinished]]
     [[[job]]]
       batch system = background
   [[VerifyObsDA]]
@@ -442,7 +485,7 @@ cat >! suite.rc << EOF
   [[CompareObsDA]]
     inherit = CompareBase
     script = \$origin/CompareObsDA.csh "1" "0" "DA" "0"
-  [[CleanCyclingDA]]
+  [[CleanDataAssim]]
     inherit = CleanBase
     script = \$origin/CleanVariational.csh
   # forecast-related components
@@ -470,21 +513,17 @@ cat >! suite.rc << EOF
       -q = ${CPQueueName}
       -A = ${CPAccountNumber}
       -l = select=${InitICNodes}:ncpus=${InitICPEPerNode}:mpiprocs=${InitICPEPerNode}
-  [[ColdStartFC]]
-    inherit = CyclingFCBase
-    script = \$origin/CyclingFC.csh "1"
-    [[[job]]]
-      execution retry delays = ${CyclingFCRetry}
-  [[CyclingFC]]
-    inherit = CyclingFCBase
+  [[ColdStartAvailable]]
+  [[Forecast]]
+    inherit = ForecastBase
 {% for mem in EnsDAMembers %}
-  [[CyclingFCMember{{mem}}]]
-    inherit = CyclingFC
-    script = \$origin/CyclingFC.csh "{{mem}}"
+  [[ForecastMember{{mem}}]]
+    inherit = Forecast
+    script = \$origin/Forecast.csh "{{mem}}"
     [[[job]]]
       execution retry delays = ${CyclingFCRetry}
 {% endfor %}
-  [[CyclingFCFinished]]
+  [[ForecastFinished]]
     [[[job]]]
       batch system = background
 ## Extended mean analysis, forecast, and verification
@@ -509,8 +548,6 @@ cat >! suite.rc << EOF
     inherit = HofXMeanFC
     env-script = cd ${mainScriptDir}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
     script = \$origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
-    [[[job]]]
-      execution retry delays = ${HofXRetry}
   [[CleanHofXMeanFC{{dt}}hr]]
     inherit = CleanBase
     script = \$origin/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
@@ -544,8 +581,6 @@ cat >! suite.rc << EOF
     inherit = HofX{{state}}
     env-script = cd ${mainScriptDir}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
     script = \$origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
-    [[[job]]]
-      execution retry delays = ${HofXRetry}
   [[VerifyModel{{state}}{{mem}}]]
     inherit = VerifyModel{{state}}
     script = \$origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
@@ -575,8 +610,6 @@ cat >! suite.rc << EOF
     inherit = HofXEnsFC{{mem}}
     env-script = cd ${mainScriptDir}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
     script = \$origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
-    [[[job]]]
-      execution retry delays = ${HofXRetry}
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyModelEnsFC{{mem}}
     script = \$origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
@@ -605,8 +638,6 @@ cat >! suite.rc << EOF
     [[[directives]]]
       -q = ${EnsMeanBGQueueName}
       -A = ${EnsMeanBGAccountNumber}
-    [[[job]]]
-      execution retry delays = ${HofXRetry}
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
     script = \$origin/VerifyModelEnsMeanBG.csh "1" "0" "BG"
@@ -629,7 +660,7 @@ cat >! suite.rc << EOF
   default node attributes = "style=filled", "fillcolor=grey"
 EOF
 
-cylc poll $SuiteName
+cylc poll $SuiteName >& /dev/null
 if ( $status == 0 ) then
   echo "$0 (INFO): a cylc suite named $SuiteName is already running!"
   echo "$0 (INFO): stopping the suite, then starting a new one"
@@ -643,7 +674,7 @@ endif
 rm -rf ${cylcWorkDir}/${SuiteName}
 
 cylc register ${SuiteName} ${mainScriptDir}
-cylc validate ${SuiteName}
+cylc validate --strict ${SuiteName}
 cylc run ${SuiteName}
 
 exit 0

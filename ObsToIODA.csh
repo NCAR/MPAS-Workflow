@@ -24,6 +24,11 @@ cd ${WorkDir}
 
 # ================================================================================================
 
+if ( "${observations__resource}" == "PANDACArchive" ) then
+  echo "$0 (INFO): PANDACArchive observations are already in IODA format, exiting"
+  exit 0
+endif
+
 # write out hourly files for IASI
 setenv SPLIThourly "-split"
 
@@ -71,7 +76,7 @@ foreach gdasfile ( *"gdas"* )
    # ============
    grep "all done!" log_${gdasfile}
    if ( $status != 0 ) then
-     echo "ERROR in $0 : Pre-processing observations to IODA-v2 failed" > ./FAIL-converter
+     echo "$0 (ERROR): Pre-processing observations to IODA-v2 failed" > ./FAIL-converter
      exit 1
    endif
   # remove BURF/PrepBUFR files
@@ -96,7 +101,7 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
       # ============
       grep "Success!" log_${ty}_upgrade
       if ( $status != 0 ) then
-        echo "ERROR in $0 : ioda-upgrade failed for $ty" > ./FAIL-${ty}_upgrade
+        echo "$0 (ERROR): ioda-upgrade failed for $ty" > ./FAIL-${ty}_upgrade
         exit 1
       endif
     endif
