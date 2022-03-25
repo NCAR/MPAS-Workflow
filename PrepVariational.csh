@@ -95,15 +95,13 @@ set prevYAML = prevPrep.yaml
 
 # Satellite bias correction directory
 # ==================
-if ( $variational__satbias__type == GDASDynamic ) then
+if ( $satelliteBias == GDASDynamic ) then
   set satBiasDir = ${satelliteBiasDir}
-else if ( $variational__satbias__type == GDASFixed ) then
+else if ( $satelliteBias == GDASFixed ) then
   set yyyy = `echo ${FirstCycleDate} | cut -c 1-4`
-  set satBiasDir = $variational__satbias__fixedCoeff/${yyyy}
-else if ( $variational__satbias__type == None ) then
-  set satBiasDir = None
+  set satBiasDir = $fixedCoeff/${yyyy}
 else
-  echo "ERROR: $variational__satbias__type option NOT available" > ./FAIL
+  echo "ERROR: $satelliteBias option NOT available" > ./FAIL
   exit 1
 endif
 sed -i 's@satelliteBiasDir@'${satBiasDir}'@g' $prevYAML

@@ -13,4 +13,3 @@ variational:
   LeaveOneOutEDA: False
   RTPPInflationFactor: 0.0
   nInnerIterations: [,]
-  satelliteBias: GDASFixed

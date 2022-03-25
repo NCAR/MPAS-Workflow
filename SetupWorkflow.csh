@@ -28,6 +28,8 @@ set workflowParts = ( \
   GetWarmStartIC.csh \
   GetObs.csh \
   ObsToIODA.csh \
+  GetSatelliteBiasCoeff.csh \
+  SatelliteBiasCoeff.csh \
   getCycleVars.csh \
   tools \
   config \
@@ -38,7 +40,6 @@ set workflowParts = ( \
   GenerateABEInflation.csh \
   PrepVariational.csh \
   EnsembleOfVariational.csh \
-  SatelliteBiasCoeff.csh \
 )
 foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/

@@ -79,7 +79,7 @@ endif
 
 setenv variationalYAMLPrefix variational_
 
-setenv setNestedVariational "source $setNestedConfig $baseConfig $scenarioConfig variational"
-$setNestedVariational satelliteBias.type
-$setNestedVariational satelliteBias.fixedCoeff
-$setNestedVariational satelliteBias.initialVarBCCoeff
+$setLocal satelliteBias
+$setLocal fixedCoeff
+$setLocal initialVarBCCoeff
+$setLocal satelliteBiasSource

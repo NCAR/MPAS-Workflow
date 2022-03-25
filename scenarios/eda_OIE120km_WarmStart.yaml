@@ -10,4 +10,3 @@ variational:
   nDAInstances: 20
   LeaveOneOutEDA: True
   RTPPInflationFactor: 0.80
-  satelliteBias: GDASFixed

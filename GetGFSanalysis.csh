@@ -5,7 +5,6 @@ date
 
 # Setup environment
 # =================
-source config/workflow.csh
 source config/model.csh
 source config/filestructure.csh
 source config/builds.csh
@@ -55,8 +54,6 @@ else if ( ${model__AnalysisSource} == "GFSfromNCEPFTPOnline" ) then
      echo "$gfs_file not available yet -- exiting"
      exit 1
     endif
-  else
-    echo "$gfs_file is already in ${WorkDir}"
   endif
   # link ungribbed GFS
   ./${linkWPS} $gfs_file

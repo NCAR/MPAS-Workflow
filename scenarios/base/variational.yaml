@@ -10,11 +10,15 @@ variational:
 
 ## satelliteBias
 # Use GDAS satellite bias coefficients created for specific dates or at each cycle
-# OPTIONS: None, GDASDynamic, GDASFixed, VarBC
+# OPTIONS: GDASDynamic, GDASFixed, VarBC (later)
 # TODO: the default option should be None for observations.observationSource==PANDACArchive, not GDASFixed
-  satelliteBias: None
+  satelliteBias: GDASFixed
   fixedCoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
   initialVarBCCoeff: /glade/work/guerrett/pandac/fixed_input/satbias/satbias_crtm_in
+
+## satelliteBiasSource
+# OPTIONS: BiasCoefffromRDAOnline, BiasCoefffromNCEPFTPOnline
+  satelliteBiasSource: BiasCoefffromRDAOnline
 
 ##ensembleCovarianceWeight and staticCovarianceWeight
 # weights of ensemble and static components of the background errorcovariance

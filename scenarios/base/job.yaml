@@ -31,6 +31,7 @@ job:
   InitializationRetry: '2*PT30S'
   GFSAnalysisRetry: '80*PT5M'
   GetObsRetry: '80*PT5M'
+  GetSatelliteBiasCoeffRetry: '80*PT5M'
   VariationalRetry: '2*PT30S'
   EnsOfVariationalRetry: '1*PT30S'
   CyclingFCRetry: '2*PT30S'

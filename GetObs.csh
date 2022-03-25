@@ -145,8 +145,6 @@ foreach inst ( ${convertToIODAObservations} )
        echo "$ftp_file not available yet -- exiting"
        exit 1
       endif
-    else
-      echo "$THIS_FILE is already in ${WorkDir}"
     endif
   endif
 end

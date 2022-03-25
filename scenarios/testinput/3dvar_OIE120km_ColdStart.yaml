@@ -1,22 +1,23 @@
 workflow:
   # test a recent date
-  firstCyclePoint: 20220201T00
-  initialCyclePoint: 20220201T00
-  finalCyclePoint: 20220201T12
+  firstCyclePoint: 20220316T00
+  initialCyclePoint: 20220316T00
+  finalCyclePoint: 20220316T12
   InitializationType: ColdStart
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
 observations:
   resource: GladeRDAOnline
 experiment:
-  ExperimentName: '3dvar_OIE120km_ColdStart_TEST'
+  ExperimentName: '3dvar_OIE120km_ColdStart_TEST_NCEPsatbias'
 model:
   MPASGridDescriptor: OIE120km
   AnalysisSource: GFSfromRDAOnline
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]
-  satelliteBias: GDASFixed
+  satelliteBias: GDASDynamic
+  satelliteBiasSource: BiasCoefffromNCEPFTPOnline
 job:
   CPQueueName: economy
   NCPQueueName: economy
