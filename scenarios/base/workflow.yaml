@@ -37,7 +37,7 @@ workflow:
   InitializationType: WarmStart
 
 ## CriticalPathType: controls dependencies between and chilrdren of
-#                   `da` and `forecast` cycling components
+#                   `da` and `forecast` mini-workflows
 # OPTIONS:
 # + Normal - run both the `da` and `forecast` mini-workflows, each with a dependency on the
 #            previous instance of the other
