@@ -107,17 +107,18 @@
 
 
 ## Data assimilation (critical path)
+  # directory/file preparation
   [[InitDataAssim]]
     env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA"
     script = $origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = {{VariationalRetry}}
-  [[DataAssim]]
-{% if EDASize > 1 %}
+  # single instance or ensemble of EDA(s)
+  [[EnsDataAssim]]
   {% for inst in DAInstances %}
   [[EDAInstance{{inst}}]]
-    inherit = DataAssim
+    inherit = EnsDataAssim
     script = $origin/EnsembleOfVariational.csh "{{inst}}"
     [[[job]]]
       execution time limit = PT{{EnsOfVariationalJobMinutes}}M
@@ -128,7 +129,8 @@
       -A = {{CPAccountNumber}}
       -l = select={{EnsOfVariationalNodes}}:ncpus={{EnsOfVariationalPEPerNode}}:mpiprocs={{EnsOfVariationalPEPerNode}}:mem={{EnsOfVariationalMemory}}GB
   {% endfor %}
-{% else %}
+  # single instance or ensemble of Variational(s)
+  [[DataAssim]]
   {% for mem in EnsDAMembers %}
   [[DAMember{{mem}}]]
     inherit = DataAssim
@@ -142,7 +144,15 @@
       -A = {{CPAccountNumber}}
       -l = select={{VariationalNodes}}:ncpus={{VariationalPEPerNode}}:mpiprocs={{VariationalPEPerNode}}:mem={{VariationalMemory}}GB
   {% endfor %}
-{% endif %}
+  # inflation (pre and post)
+  [[GenerateABEInflation]]
+    script = $origin/GenerateABEInflation.csh
+    [[[job]]]
+      execution time limit = PT20M
+    [[[directives]]]
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select=1:ncpus=36:mpiprocs=36
   [[RTPPInflation]]
     script = $origin/RTPPInflation.csh
     [[[job]]]
@@ -153,26 +163,24 @@
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select={{CyclingInflationNodes}}:ncpus={{CyclingInflationPEPerNode}}:mpiprocs={{CyclingInflationPEPerNode}}:mem={{CyclingInflationMemory}}GB
-  [[GenerateABEInflation]]
-    script = $origin/GenerateABEInflation.csh
+  # post => finished => clean
+  [[DataAssimPost]]
     [[[job]]]
-      execution time limit = PT20M
-    [[[directives]]]
-      -q = {{CPQueueName}}
-      -A = {{CPAccountNumber}}
-      -l = select=1:ncpus=36:mpiprocs=36
+      batch system = background
   [[DataAssimFinished]]
     [[[job]]]
       batch system = background
+  [[CleanDataAssim]]
+    inherit = CleanBase
+    script = $origin/CleanVariational.csh
+
+  # verification
   [[VerifyObsDA]]
     inherit = VerifyObsBase
     script = $origin/VerifyObsDA.csh "1" "0" "DA" "0"
   [[CompareObsDA]]
     inherit = CompareBase
     script = $origin/CompareObsDA.csh "1" "0" "DA" "0"
-  [[CleanDataAssim]]
-    inherit = CleanBase
-    script = $origin/CleanVariational.csh
 
 
 ## Forecast (critical path)

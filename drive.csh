@@ -70,7 +70,7 @@ mkdir -p ${cylcWorkDir}
 echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
-## Import environment variables as Jinja2 settings
+## Import relevant environment variables as Jinja2 variables
 # main suite directory
 {% set mainScriptDir = "${mainScriptDir}" %}
 
