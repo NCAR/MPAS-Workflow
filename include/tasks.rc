@@ -3,7 +3,7 @@
     pre-script = "cd  $origin/"
     [[[environment]]]
       origin = {{mainScriptDir}}
-## PBS
+    # PBS
     [[[job]]]
       batch system = pbs
       execution time limit = PT60M
@@ -15,7 +15,7 @@
       -q = {{SingleProcQueueName}}
       -A = {{SingleProcAccountNumber}}
       -l = select=1:ncpus=1
-## SLURM
+# TODO: enable SLURM
 #    [[[job]]]
 #      batch system = slurm
 #      execution time limit = PT60M
