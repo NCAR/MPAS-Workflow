@@ -17,15 +17,13 @@ hofx:
 # MW satellite-based
   - amsua_aqua
   - amsua_metop-a
-#TODO: re-enable amsua_metop-b, coefficient file reading broken
-#  - amsua_metop-b
+  - amsua_metop-b
   - amsua_n15
   - amsua_n18
   - amsua_n19
   - amsua-cld_aqua
   - amsua-cld_metop-a
-#TODO: re-enable amsua_metop-b, coefficient file reading broken
-#  - amsua-cld_metop-b
+  - amsua-cld_metop-b
   - amsua-cld_n15
   - amsua-cld_n18
   - amsua-cld_n19

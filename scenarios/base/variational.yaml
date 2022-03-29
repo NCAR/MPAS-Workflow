@@ -78,8 +78,7 @@ variational:
 # MW satellite-based
   - amsua_aqua
   - amsua_metop-a
-#TODO: re-enable amsua_metop-b, coefficient file reading broken
-#  - amsua_metop-b
+  - amsua_metop-b
   - amsua_n15
   - amsua_n18
   - amsua_n19
