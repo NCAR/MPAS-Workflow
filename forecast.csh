@@ -189,7 +189,7 @@ else
   if ( ${InitializationType} == "WarmStart" ) then
     rm ${localStaticFieldsFile}
     mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
-  endid
+  endif
 endif
 
 if ( "$deleteZerothForecast" == "True" ) then
