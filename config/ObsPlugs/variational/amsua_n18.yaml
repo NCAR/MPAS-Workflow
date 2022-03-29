@@ -16,14 +16,14 @@
   get values:
     <<: *GetValues
   obs bias:
-    input file: satelliteBiasDir/satbias_amsua_n18.h5
-#      output file: satelliteBiasDir/satbias_amsua_n18_out.h5
+    input file: {{satelliteBiasDir}}/satbias_amsua_n18.h5
+    output file: {{OutDBDir}}{{MemberDir}}/satbias_amsua_n18.h5
     variational bc:
       predictors: &predictors3
       - name: constant
       - name: lapse_rate
         order: 2
-        tlapse: &amsua18tlap satelliteBiasDir/amsua_n18_tlapmean.txt
+        tlapse: &amsua18tlap {{fixedTlapmeanCov}}/amsua_n18_tlapmean.txt
       - name: lapse_rate
         tlapse: *amsua18tlap
       - name: emissivity
@@ -40,11 +40,11 @@
       step size: 1.0e-4
       largest analysis variance: 10000.0
       prior:
-        input file: satelliteBiasDir/satbias_cov_amsua_n18.h5
+        input file: {{fixedTlapmeanCov}}/satbias_cov_amsua_n18.h5
         inflation:
           ratio: 1.1
           ratio for small dataset: 2.0
-#        output file: satelliteBiasDir/satbias_cov_amsua_n18_out.h5
+      output file: {{OutDBDir}}{{MemberDir}}/satbias_cov_amsua_n18.h5
   obs filters:
   - filter: PreQC
     maxvalue: 0

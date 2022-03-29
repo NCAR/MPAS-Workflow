@@ -95,16 +95,20 @@ set prevYAML = prevPrep.yaml
 
 # Satellite bias correction directory
 # ==================
-if ( $satelliteBias == GDASDynamic ) then
-  set satBiasDir = ${satelliteBiasDir}
-else if ( $satelliteBias == GDASFixed ) then
+if ( $satelliteBias == GDASFixed ) then
   set yyyy = `echo ${FirstCycleDate} | cut -c 1-4`
   set satBiasDir = $fixedCoeff/${yyyy}
-else
-  echo "ERROR: $satelliteBias option NOT available" > ./FAIL
-  exit 1
+else if ( $satelliteBias == VarBC ) then
+  # next cycle after FirstCycleDate
+  set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
+  if ( ${thisValidDate} == ${nextFirstDate} ) then
+    set satBiasDir = $fixedCoeff/2018
+  else
+    set satBiasDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
+  endif
 endif
-sed -i 's@satelliteBiasDir@'${satBiasDir}'@g' $prevYAML
+sed -i 's@{{satelliteBiasDir}}@'${satBiasDir}'@g' $prevYAML
+sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 
 # Outer iterations configuration elements
 # ===========================================

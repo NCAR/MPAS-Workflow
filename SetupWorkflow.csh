@@ -28,8 +28,6 @@ set workflowParts = ( \
   GetWarmStartIC.csh \
   GetObs.csh \
   ObsToIODA.csh \
-  GetSatelliteBiasCoeff.csh \
-  SatelliteBiasCoeff.csh \
   getCycleVars.csh \
   tools \
   config \

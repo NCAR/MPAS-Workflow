@@ -161,9 +161,6 @@ cat >! suite.rc << EOF
       # get observations and convert them to IODA
       GetObs => ObsToIODA
       ObsToIODA => InitCyclingDA
-      # get and create satellite bias correction coefficients
-      GetSatelliteBiasCoeff => SatelliteBiasCoeff => InitCyclingDA
-      SatelliteBiasCoeff => InitCyclingDA
   {% endif %}
       '''
 ## Many kinds of verification
@@ -367,21 +364,6 @@ cat >! suite.rc << EOF
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = ${GetObsRetry}
-  [[GetSatelliteBiasCoeff]]
-    script = \$origin/GetSatelliteBiasCoeff.csh
-    [[[job]]]
-      execution time limit = PT10M
-      execution retry delays = ${GetSatelliteBiasCoeffRetry}
-  [[SatelliteBiasCoeff]]
-    script = \$origin/SatelliteBiasCoeff.csh
-    [[[job]]]
-      execution time limit = PT10M
-      execution retry delays = ${InitializationRetry}
-    [[[directives]]]
-      -m = ae
-      -q = ${CPQueueName}
-      -A = ${CPAccountNumber}
-      -l = select=1:ncpus=1
   [[ObsToIODA]]
     script = \$origin/ObsToIODA.csh
     [[[job]]]

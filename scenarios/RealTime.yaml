@@ -16,8 +16,7 @@ model:
 variational:
   DAType: 3dvar
   nInnerIterations: [60,]
-  satelliteBias: GDASDynamic
-  satelliteBiasSource: BiasCoefffromNCEPFTPOnline
+  satelliteBias: VarBC
 job:
   CPQueueName: premium
   NCPQueueName: economy

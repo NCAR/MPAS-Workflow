@@ -81,5 +81,4 @@ setenv variationalYAMLPrefix variational_
 
 $setLocal satelliteBias
 $setLocal fixedCoeff
-$setLocal initialVarBCCoeff
-$setLocal satelliteBiasSource
+$setLocal fixedTlapmeanCov

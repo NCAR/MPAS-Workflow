@@ -10,4 +10,4 @@ model:
   MPASGridDescriptor: OIE120km
 variational:
   DAType: 3dvar
-  satelliteBias: GDASDynamic
+  satelliteBias: VarBC

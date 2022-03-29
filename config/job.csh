@@ -22,7 +22,6 @@ $setLocal EnsMeanBGAccountNumber
 $setLocal InitializationRetry
 $setLocal GFSAnalysisRetry
 $setLocal GetObsRetry
-$setLocal GetSatelliteBiasCoeffRetry
 $setLocal VariationalRetry
 $setLocal EnsOfVariationalRetry
 $setLocal CyclingFCRetry
