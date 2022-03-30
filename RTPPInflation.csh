@@ -206,8 +206,8 @@ EOF
     set filename = $ensPDirs[$member]/${ensPFilePrefix}.${thisMPASFileDate}.nc
     ## optionally copy original analysis files for diagnosing RTPP behavior
     if ($PMatrix == Pa && ${storeOriginalRTPPAnalyses} == True) then
-      set memDir = "."`${memberDir} ensemble $member "${flowMemFmt}"`
-      set anmemberDir = ${anDir}0/${memDir}
+      set memDir = `${memberDir} ensemble $member "${flowMemFmt}"`
+      set anmemberDir = ${anDir}0${memDir}
       rm -r ${anmemberDir}
       mkdir -p ${anmemberDir}
       cp ${filename} ${anmemberDir}/
@@ -233,7 +233,7 @@ mv $prevYAML $appyaml
 # Run the executable
 # ==================
 ln -sfv ${myBuildDir}/${myEXE} ./
-mpiexec ./${myEXE} $myYAML >& jedi.log
+mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
 
 
 # Check status
