@@ -1,0 +1,55 @@
+# firstCyclePoint
+{% if initialCyclePoint == firstCyclePoint %}
+    [[[R1]]]
+      graph = '''
+  {% if InitializationType == "WarmStart" %}
+        GetWarmStartIC => ForecastFinished
+  {% else %}
+%include include/forecast.rc
+  {% endif %}
+      '''
+{% endif %}
+
+# all other cycles
+{% if CriticalPathType == "Normal" %}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+%include include/da.rc
+        # depends on previous Forecast
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => InitDataAssim
+      '''
+
+# TODO: add IAU graph
+
+    [[[{{ForecastTimes}}]]]
+      graph = '''
+%include include/forecast.rc
+        # depends on previous DataAssim
+        DataAssimFinished[-PT{{DA2FCOffsetHR}}H] => Forecast
+      '''
+
+{% elif CriticalPathType == "Bypass" %}
+    [[[{{AnalysisTimes}}]]]
+      graph = DataAssimFinished
+    [[[{{ForecastTimes}}]]]
+      graph = ForecastFinished
+
+{% elif CriticalPathType == "Reanalysis" %}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+%include include/da.rc
+      '''
+    [[[{{ForecastTimes}}]]]
+      graph = ForecastFinished
+
+{% elif CriticalPathType == "Reforecast" %}
+    [[[{{AnalysisTimes}}]]]
+      graph = DataAssimFinished
+    [[[{{ForecastTimes}}]]]
+      graph = '''
+%include include/forecast.rc
+      '''
+
+{# else #}
+  {{ raise('CriticalPathType is not valid') }}
+{% endif %}

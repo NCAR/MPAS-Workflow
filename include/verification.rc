@@ -1,0 +1,106 @@
+{% set ExtendedFCLengths = range(0, ExtendedFCWindowHR+ExtendedFC_DT_HR, ExtendedFC_DT_HR) %}
+{% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
+
+
+  # ... for deterministic DA in observation space only (OMB+OMA together)
+#TODO: enable VerifyObsDA to handle more than one ensemble member
+#      and use feedback files from EDA for VerifyEnsMeanBG
+{% if CriticalPathType in ["Normal", "Reanalysis"] and VerifyDeterministicDA and nEnsDAMembers < 2 %}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+        DataAssimFinished => VerifyObsDA
+        VerifyObsDA => CleanDataAssim
+  {% if CompareDA2Benchmark %}
+        VerifyObsDA => CompareObsDA
+  {% endif %}
+      '''
+{% endif %}
+
+
+  # ... for background-duration forecast from deterministic analysis or ensemble of analyses
+{% if VerifyBGMembers or (VerifyEnsMeanBG and nEnsDAMembers == 1)%}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => VerifyModelBG
+        {{PrepareObservations}} => HofXBG
+        {{PrepareExternalAnalysis}} => VerifyModelBG
+  {% for mem in EnsVerifyMembers %}
+        HofXBG{{mem}} => VerifyObsBG{{mem}}
+        VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
+    {% if CompareBG2Benchmark %}
+        VerifyModelBG{{mem}} => CompareModelBG{{mem}}
+        VerifyObsBG{{mem}} => CompareObsBG{{mem}}
+    {% endif %}
+  {% endfor %}
+      '''
+{% endif %}
+
+
+  # ... for mean of ensemble of backgrounds and ensemble spread
+{% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => MeanBackground
+        MeanBackground => HofXEnsMeanBG
+        MeanBackground => VerifyModelEnsMeanBG
+        {{PrepareObservations}} => HofXEnsMeanBG
+        {{PrepareExternalAnalysis}} => VerifyModelEnsMeanBG
+        HofXEnsMeanBG => VerifyObsEnsMeanBG
+        VerifyObsEnsMeanBG => CleanHofXEnsMeanBG
+  {% if DiagnoseEnsSpreadBG %}
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
+        HofXBG:succeed-all => VerifyObsEnsMeanBG
+        VerifyObsEnsMeanBG => CleanHofXBG
+  {% endif %}
+      '''
+{% endif %}
+
+
+  # ... for ensemble of analyses
+{% if VerifyANMembers %}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+        {{PrepareExternalAnalysis}} => VerifyModelAN
+  {% for mem in EnsVerifyMembers %}
+        DataAssimFinished => VerifyModelAN{{mem}}
+        DataAssimFinished => HofXAN{{mem}}
+        HofXAN{{mem}} => VerifyObsAN{{mem}}
+        VerifyObsAN{{mem}} => CleanHofXAN{{mem}}
+  {% endfor %}
+      '''
+{% endif %}
+
+
+  # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
+  # note: assumes that obs and verifying analyses are available at extended forecast times
+{% if VerifyExtendedMeanFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
+    [[[{{ExtendedMeanFCTimes}}]]]
+      graph = '''
+        DataAssimFinished => MeanAnalysis => ExtendedMeanFC
+        ExtendedMeanFC => HofXMeanFC
+        ExtendedMeanFC => VerifyModelMeanFC
+  {% for dt in ExtendedFCLengths %}
+        HofXMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
+        VerifyObsMeanFC{{dt}}hr => CleanHofXMeanFC{{dt}}hr
+  {% endfor %}
+      '''
+{% endif %}
+
+
+  # ... for extended forecast from ensemble of analyses
+  # note: assumes that obs and verifying analyses are available at extended forecast times
+{% if VerifyExtendedEnsFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
+    [[[{{ExtendedEnsFCTimes}}]]]
+      graph = '''
+        DataAssimFinished => ExtendedEnsFC
+  {% for mem in EnsVerifyMembers %}
+        ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}
+        ExtendedFC{{mem}} => HofXEnsFC{{mem}}
+    {% for dt in ExtendedFCLengths %}
+        HofXEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
+        VerifyObsEnsFC{{mem}}-{{dt}}hr => CleanHofXEnsFC{{mem}}-{{dt}}hr
+    {% endfor %}
+  {% endfor %}
+      '''
+{% endif %}
