@@ -1,0 +1,38 @@
+        ## Pre-DA
+        # observation processing
+        {{PrepareObservations}} => InitDataAssim
+
+        # inflation
+{% if ABEInflation %}
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] =>
+        MeanBackground =>
+        HofXEnsMeanBG =>
+        GenerateABEInflation => InitDataAssim
+        GenerateABEInflation => CleanHofXEnsMeanBG
+{% endif %}
+
+        ## Data assimilation
+{% if EDASize > 1 %}
+        # prepare the working directory, then run
+        InitDataAssim => EnsDataAssim
+
+        # all EnsDataAssim members must succeed in order to start post
+        EnsDataAssim:succeed-all => DataAssimPost
+
+{% else %}
+        # prepare the working directory, then run
+        InitDataAssim => DataAssim
+
+        # all DataAssim members must succeed in order to start post
+        DataAssim:succeed-all => DataAssimPost
+
+{% endif %}
+
+        ## Post-DA
+        # inflation
+{% if (RTPPInflationFactor > 0.0 and nEnsDAMembers > 1) %}
+        DataAssimPost => RTPPInflation => DataAssimFinished
+{% endif %}
+
+        # clean after finished
+        DataAssimPost => DataAssimFinished => CleanDataAssim

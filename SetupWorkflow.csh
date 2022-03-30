@@ -38,6 +38,7 @@ set workflowParts = ( \
   GenerateABEInflation.csh \
   PrepVariational.csh \
   EnsembleOfVariational.csh \
+  include \
 )
 foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
@@ -66,9 +67,9 @@ ${WrapperScript}
 rm ${WrapperScript}
 
 
-## CyclingFC
-echo "Making CyclingFC job script"
-set JobScript=${mainScriptDir}/CyclingFC.csh
+## Forecast
+echo "Making Forecast job script"
+set JobScript=${mainScriptDir}/Forecast.csh
 sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
     -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
     -e 's@fcLengthHRTEMPLATE@'${CyclingWindowHR}'@' \
