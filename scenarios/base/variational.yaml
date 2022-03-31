@@ -9,10 +9,9 @@ variational:
   nInnerIterations: [60,]
 
 ## satelliteBias
-# Use GDAS satellite bias coefficients created for specific dates or at each cycle
-# OPTIONS: GDASFixed, VarBC
-# TODO: the default option should be None for observations.observationSource==PANDACArchive, not GDASFixed
-  satelliteBias: GDASFixed
+# Use GDAS satellite bias coefficients created for specific dates or variational bias correction coefficients
+# OPTIONS: None, VarBC
+  satelliteBias: None
   fixedCoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
   fixedTlapmeanCov: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
 
@@ -117,3 +116,10 @@ variational:
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML
   nObsIndent: 2
+
+## Directories for YAML stubs
+  DirsYamlBase: base
+  DirsYamlBiasFilters:
+  - base
+  - filters
+  - bias

@@ -59,15 +59,6 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
-# templated work directory
-set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
-if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
-  set self_WorkDir = $self_WorkDir/${ArgDT}hr
-endif
-echo "WorkDir = ${self_WorkDir}"
-mkdir -p ${self_WorkDir}
-cd ${self_WorkDir}
-
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
 set self_AppName = AppNameTEMPLATE
@@ -77,7 +68,16 @@ set MeshList = (${AppTypeTEMPLATEMeshList})
 set MPASnCellsList = (${AppTypeTEMPLATEMPASnCellsList})
 set StreamsFileList = (${AppTypeTEMPLATEStreamsFileList})
 set NamelistFileList = (${AppTypeTEMPLATENamelistFileList})
+source config/${self_AppType}.csh
 
+# templated work directory
+set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
+if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
+  set self_WorkDir = $self_WorkDir/${ArgDT}hr
+endif
+echo "WorkDir = ${self_WorkDir}"
+mkdir -p ${self_WorkDir}
+cd ${self_WorkDir}
 
 # ================================================================================================
 
@@ -218,7 +218,32 @@ foreach instrument ($observations)
   date
 end
 
+# =========================
+# Satellite bias correction
+# =========================
+echo 'Setting satellite bias directories'
+echo '$satelliteBias===' $satelliteBias
+echo 'self_AppType===' ${self_AppType}
+if ( $satelliteBias == None ) then
+  set AppYamlDir = ${DirsYamlBase}
+  set satBiasDir = None
+else if ( $satelliteBias == VarBC ) then
+  set AppYamlDir = ${DirsYamlBiasFilters}
+  # next cycle after FirstCycleDate
+  set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
+  if ( ${thisValidDate} == ${nextFirstDate} ) then
+    set satBiasDir = $fixedCoeff/2018
+  else
+    set satBiasDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
+  endif
+else
+  echo "ERROR: $satelliteBias option NOT available" > ./FAIL
+  exit 1
+endif
+sed -i 's@{{satelliteBiasDir}}@'${satBiasDir}'@g' $prevYAML
+sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 
+echo 'AppYamlDir= ' ${AppYamlDir}
 # =============
 # Generate yaml
 # =============
@@ -251,15 +276,16 @@ set found = 0
 foreach instrument ($observations)
   echo "Preparing YAML for ${instrument} observations"
   set missing=0
-  set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${instrument}
-  if ( "$instrument" =~ *"sondes"* ) then
-    #KLUDGE to handle missing qv for sondes at single time
-    if ( ${thisValidDate} == 2018043006 ) then
-      set SUBYAML=${SUBYAML}-2018043006
+  foreach subdir (${AppYamlDir})
+    set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${subdir}/${instrument}
+    if ( "$instrument" =~ *"sondes"* ) then
+      #KLUDGE to handle missing qv for sondes at single time
+      if ( ${thisValidDate} == 2018043006 ) then
+        set SUBYAML=${SUBYAML}-2018043006
+      endif
     endif
-  endif
-  # check that instrument string matches at least one non-broken observation file link
-  find ${InDBDir}/${instrument}_obs_*.h5 -mindepth 0 -maxdepth 0
+    # check that instrument string matches at least one non-broken observation file link
+    find ${InDBDir}/${instrument}_obs_*.h5 -mindepth 0 -maxdepth 0
     if ($? > 0) then
       @ missing++
     else
@@ -269,13 +295,14 @@ foreach instrument ($observations)
       end
     endif
 
-  if ($missing == 0) then
-    echo "${instrument} data is present and selected; adding ${instrument} to the YAML"
-    sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsYAML
-    @ found++
-  else
-    echo "${instrument} data is selected, but missing; NOT adding ${instrument} to the YAML"
-  endif
+    if ($missing == 0) then
+      echo "${instrument} data is present and selected; adding ${instrument} to the YAML"
+      sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsYAML
+      @ found++
+    else
+      echo "${instrument} data is selected, but missing; NOT adding ${instrument} to the YAML"
+    endif
+  end
 end
 if ($found == 0) then
   echo "ERROR in $0 : no observation data is available for this date" > ./FAIL

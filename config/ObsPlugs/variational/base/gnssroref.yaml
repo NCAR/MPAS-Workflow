@@ -1,0 +1,15 @@
+- obs space:
+    <<: *ObsSpace
+    name: GnssroRef
+    obsdatain:
+      obsfile: {{InDBDir}}/gnssroref_obs_{{thisValidDate}}.h5
+    obsdataout:
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssroref.h5
+    simulated variables: [refractivity]
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    name: GnssroRef
+    obs options:
+      use_compress: 0
+  get values:
+    <<: *GetValues

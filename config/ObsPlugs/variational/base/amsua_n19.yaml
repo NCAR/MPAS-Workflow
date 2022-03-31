@@ -1,0 +1,25 @@
+- obs space:
+    <<: *ObsSpace
+    name: amsua_n19
+    obsdatain:
+      obsfile: {{InDBDir}}/amsua_n19_obs_{{thisValidDate}}.h5
+    obsdataout:
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua_n19.h5
+    simulated variables: [brightness_temperature]
+    channels: &amsua_n19_channels 5-7,9
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *clearCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: amsua_n19
+  get values:
+    <<: *GetValues
+  obs filters:
+  - filter: PreQC
+    maxvalue: 0
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n19.nc4
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter

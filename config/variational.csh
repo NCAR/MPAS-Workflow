@@ -82,3 +82,5 @@ setenv variationalYAMLPrefix variational_
 $setLocal satelliteBias
 $setLocal fixedCoeff
 $setLocal fixedTlapmeanCov
+$setLocal DirsYamlBase
+$setLocal DirsYamlBiasFilters

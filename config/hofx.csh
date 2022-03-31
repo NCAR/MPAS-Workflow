@@ -15,3 +15,5 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig hofx"
 
 $setLocal observations
 $setLocal nObsIndent
+$setLocal DirsYamlBase
+$setLocal DirsYamlBiasFilters

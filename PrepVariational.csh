@@ -93,23 +93,6 @@ rm prevPrep.yaml
 mv $appyaml prevPrep.yaml
 set prevYAML = prevPrep.yaml
 
-# Satellite bias correction directory
-# ==================
-if ( $satelliteBias == GDASFixed ) then
-  set yyyy = `echo ${FirstCycleDate} | cut -c 1-4`
-  set satBiasDir = $fixedCoeff/${yyyy}
-else if ( $satelliteBias == VarBC ) then
-  # next cycle after FirstCycleDate
-  set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
-  if ( ${thisValidDate} == ${nextFirstDate} ) then
-    set satBiasDir = $fixedCoeff/2018
-  else
-    set satBiasDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
-  endif
-endif
-sed -i 's@{{satelliteBiasDir}}@'${satBiasDir}'@g' $prevYAML
-sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
-
 # Outer iterations configuration elements
 # ===========================================
 # performs sed substitution for VariationalIterations

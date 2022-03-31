@@ -1,0 +1,17 @@
+- obs space:
+    <<: *ObsSpace
+    name: amsua-cld_n15
+    obsdatain:
+      obsfile: {{InDBDir}}/amsua_n15_obs_{{thisValidDate}}.h5
+    obsdataout:
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua-cld_n15.h5
+    simulated variables: [brightness_temperature]
+    channels: &amsua-cld_n15_channels 1-5,15
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: amsua_n15
+  get values:
+    <<: *GetValues
