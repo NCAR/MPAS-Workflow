@@ -14,6 +14,5 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig model"
 setenv setNestedModel "source $setNestedConfig $baseConfig $scenarioConfig model"
 
 $setNestedModel AnalysisSource
-
 $setLocal MPASGridDescriptor
-$setLocal forecastPrecision single
+$setLocal GraphInfoDir

@@ -5,6 +5,7 @@ date
 # Setup environment
 # =================
 source config/variational.csh
+source config/forecast.csh
 source config/model.csh
 source config/filestructure.csh
 source config/tools.csh
@@ -91,7 +92,7 @@ cp -v $self_ModelConfigDir/${StreamsFile} .
 sed -i 's@nCells@'${MPASnCellsEnsemble}'@' ${StreamsFile}
 sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
-sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile}
+sed -i 's@forecastPrecision@'${forecast__precision}'@' ${StreamsFile}
 
 # determine analysis output precision
 ncdump -h ${firstANFile} | grep uReconstruct | grep double
