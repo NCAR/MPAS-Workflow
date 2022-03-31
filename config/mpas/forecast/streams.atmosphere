@@ -47,10 +47,10 @@
 
 <stream name="surface"
         type="input"
-        precision="forecastPrecision"
-        filename_template="x1.nCells.sfc_update.nc"
+        precision="{{surfacePrecision}}"
+        filename_template="{{surfaceUpdateFile}}"
         filename_interval="none"
-        input_interval="none" >
+        input_interval="{{surfaceInputInterval}}" >
 	<file name="stream_list.atmosphere.surface"/>
 </stream>
 
