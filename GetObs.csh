@@ -31,7 +31,7 @@ set satwndBUFRDirectory = /gpfs/fs1/collections/rda/data/ds351.0
 set PrepBUFRDirectory = /gpfs/fs1/collections/rda/data/ds337.0
 
 foreach inst ( ${convertToIODAObservations} )
-  if ( ${observations__resource} == "GladeRDAOnline" ) then
+  if ( "${observations__resource}" == "GladeRDAOnline" ) then
     echo "Getting ${inst} from RDA"
     # for satwnd observations
     if ( ${inst} == satwnd ) then
@@ -118,7 +118,7 @@ foreach inst ( ${convertToIODAObservations} )
           endif
        endif # others
     endif # satwnd, prepbufr or others
-  else if ( ${observations__resource} == "NCEPFTPOnline" ) then
+  else if ( "${observations__resource}" == "NCEPFTPOnline" ) then
     echo "Getting ${inst} from the NCEP FTP"
     # url for GDAS data
     set gdas_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gdas.${yymmdd}/${hh}/atmos
@@ -146,6 +146,13 @@ foreach inst ( ${convertToIODAObservations} )
        exit 1
       endif
     endif
+  else if ( "${observations__resource}" == "PANDACArchive" ) then
+    echo "$0 (INFO): ${observations__resource} must be stored locally and fully described in the YAML"
+    echo "$0 (INFO): File retrieval is not supported; exiting with success"
+    exit 0
+  else
+    echo "$0 (ERROR): ${observations__resource} is not supported; exiting with failure"
+    exit 1
   endif
 end
 

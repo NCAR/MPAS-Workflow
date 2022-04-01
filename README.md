@@ -178,29 +178,22 @@ further populated by scripts templated on `PrepJEDA.csh` and/or `PrepVariational
 Main driver: drive.csh
 ----------------------
 Creates a new cylc suite file, then runs it. Users need not modify this file. Developers who wish
-to add new cylc tasks, or modify the relationships between tasks, will modify `drive.csh`.
-The tasks that are selected in `drive.csh` and the bounding dates of the experiment are
-controlled in the `workflow` section of the scenario configuration. Full descriptions of
-all options are available in `scenarios/base/workflow.yaml`.  Here we describe only the
-`CriticalPathType`, which is integral to running experiments and post-processing.
+to add new cylc tasks, or modify the relationships between tasks, will modify `drive.csh` and/or
+the files in the `include` directory:
+- `include/criticalpath.rc`: controls all elements of the critical path for all 4 `CriticalPathType` options
+and 2 `InitializationType` options.  Allows for re-use of `include/forecast.rc` and `include/da.rc`
+according to the user selections.  Those latter two scripts describe all the intra-forecast and
+intra-da dependencies, respectively, independent of tasks in other categories.
+- `include/verification.rc`: describes the dependencies between `HofX`, `Verify*`, `Compare*`, and other
+kinds of tasks that produce verification statistics files.  It includes dependencies on
+`forecast` and `da` tasks that produce the data to be verified.  Multiple aspects of verification
+are controlled via the `workflow` section of the scenario configuration. Full descriptions of all
+verification options are available in `scenarios/base/workflow.yaml`.
+- `include/tasks.rc`: describes all cylc tasks that can be selected under the `[[dependencies]]` node of
+`drive.csh`, all of which are described in either `criticalpath.rc`, `verification.rc`, or files
+included therein.
 
-The `CriticalPathType` determines whether the verification is performed concurrently with and
-depends on the critical path (`Normal`) tasks, or as an independent post-processing diagnostic step
-(`Bypass`). `Normal` and `Bypass` cover most use-cases for "continuous cycling" experiments.
-
-Setting `CriticalPathType` to either `Reanalysis` or `Reforecast` gives two variations of
-"partial cycling", where each cycle is independent and does not depende on any of the previous
-cycles. `Reanalysis` is used to perform the `CyclingDA` task on each cycle without re-running
-forecasts.  This requires the `CyclingFC` forecast files to already be present in the experiment
-directory.  If the user wishes to do this for independently-generated forecasts (i.e., from a
-previous separate experiment or a set of forecasts generated outside `MPAS-Workflow`), they
-must manually create an experiment directory, then either link or copy the forecast files into the
-`CyclingFC` directory following the usual directory structure and file-naming conventions.
-`Reforecast` is used to perform forecasts from an existing set of analysis states, which similarly
-must be already stored or linked in the `CyclingDA` directory following normal directory structures
-and file naming conventions.  It is recommended to run at least one `Normal` experiment to
-demonstrate the correct directory structure before trying either of the `Reanalysis` or
-`Reforecast` options.
+See `scenarios/base/workflow.yaml` for user-selectable options that control `drive.csh`.
 
 
 Super driver: run.csh
