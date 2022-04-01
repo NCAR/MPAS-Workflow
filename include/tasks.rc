@@ -157,7 +157,7 @@
     script = $origin/RTPPInflation.csh
     [[[job]]]
       execution time limit = PT{{CyclingInflationJobMinutes}}M
-      execution retry delays = {{RTPPInflationRetry}}
+      #execution retry delays = {{RTPPInflationRetry}}
     [[[directives]]]
       -m = ae
       -q = {{CPQueueName}}
