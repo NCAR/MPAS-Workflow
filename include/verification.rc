@@ -37,7 +37,7 @@
 {% endif %}
 
 
-  # ... for mean of ensemble of backgrounds and ensemble spread
+  # ... for mean of ensemble of backgrounds and ensemble spread (bg only for obs, bg+an for model)
 {% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
@@ -49,6 +49,7 @@
         HofXEnsMeanBG => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanHofXEnsMeanBG
   {% if DiagnoseEnsSpreadBG %}
+        DataAssimFinished => VerifyModelEnsMeanBG
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
         HofXBG:succeed-all => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanHofXBG

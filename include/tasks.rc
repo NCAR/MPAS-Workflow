@@ -266,7 +266,7 @@
     script = $origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0"
   [[VerifyModelMeanFC{{dt}}hr]]
     inherit = VerifyModelMeanFC
-    script = $origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC"
+    script = $origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC" "0"
 {% endfor %}
 
 
@@ -287,18 +287,25 @@
     [[[directives]]]
       -q = {{EnsMeanBGQueueName}}
       -A = {{EnsMeanBGAccountNumber}}
+{% if DiagnoseEnsSpreadBG %}
+  {% set nMem = nEnsDAMembers %}
+  {% set modelMinutes = VerifyObsEnsMeanJobMinutes %}
+  {% set obsMinutes = VerifyObsEnsMeanJobMinutes %}
+{% else %}
+  {% set nMem = 0 %}
+  {% set modelMinutes = VerifyModelJobMinutes %}
+  {% set obsMinutes = VerifyObsJobMinutes %}
+{% endif %}
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
-    script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG"
+    script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG" "{{nMem}}"
+    [[[job]]]
+      execution time limit = PT{{modelMinutes}}M
   [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
-{% if DiagnoseEnsSpreadBG %}
-    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsDAMembers}}"
+    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nMem}}"
     [[[job]]]
-      execution time limit = PT{{VerifyObsEnsMeanJobMinutes}}M
-{% else %}
-    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "0"
-{% endif %}
+      execution time limit = PT{{obsMinutes}}M
   [[CleanHofXEnsMeanBG]]
     inherit = CleanBase
     script = $origin/CleanHofXEnsMeanBG.csh "1" "0" "BG"
@@ -331,7 +338,7 @@
     script = $origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
   [[VerifyModel{{state}}{{mem}}]]
     inherit = VerifyModel{{state}}
-    script = $origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
+    script = $origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
   [[CompareModel{{state}}{{mem}}]]
     inherit = CompareModel{{state}}
     script = $origin/CompareModel{{state}}.csh "{{mem}}" "0" "{{state}}"
@@ -362,7 +369,7 @@
     script = $origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyModelEnsFC{{mem}}
-    script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
   [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyObsBase
     script = $origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
