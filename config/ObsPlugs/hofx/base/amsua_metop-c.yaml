@@ -15,8 +15,3 @@
       Sensor_ID: amsua_metop-c
   get values:
     <<: *GetValues
-  obs filters:
-  - filter: PreQC
-    maxvalue: 0
-  - filter: GOMsaver
-    filename: {{OutDBDir}}/{{geoPrefix}}_amsua_metop-c.nc4

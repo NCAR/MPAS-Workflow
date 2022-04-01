@@ -1,3 +1,4 @@
+  obs filters:
   - filter: Domain Check
     where:
     - variable:
@@ -77,7 +78,7 @@
     action:
       name: reject
 #  Topography check
-  - filter: Perform action
+  - filter: Perform Action
     filter variables:
     - name: brightness_temperature
       channels: *amsua_n18_channels
@@ -90,7 +91,7 @@
           sensor: amsua_n18
           channels: *amsua_n18_channels
 #  Transmittnace Top Check
-  - filter: Perform action
+  - filter: Perform Action
     filter variables:
     - name: brightness_temperature
       channels: *amsua_n18_channels
@@ -102,7 +103,7 @@
         options:
           channels: *amsua_n18_channels
 #  Surface Jacobian check
-  - filter: Perform action
+  - filter: Perform Action
     filter variables:
     - name: brightness_temperature
       channels: *amsua_n18_channels
@@ -116,7 +117,7 @@
           obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
           obserr_dtempf: [0.500, 2.000, 1.000, 2.000, 4.500]
 #  Situation dependent Check
-  - filter: Perform action
+  - filter: Perform Action
     filter variables:
     - name: brightness_temperature
       channels: *amsua_n18_channels
@@ -263,3 +264,8 @@
       name: reject
   - filter: Gaussian_Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n18.nc4
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter

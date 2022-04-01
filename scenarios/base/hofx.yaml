@@ -42,5 +42,9 @@ hofx:
   nObsIndent: 0
 
 ## Directories for YAML stubs
-  DirsYamlBase: base
-  DirsYamlBiasFilters: base
+  DirsYamlBase:
+  - base
+  - filtersBase
+  DirsYamlBiasFilters:
+  - base
+  - filtersBase

@@ -9,7 +9,7 @@ observations:
   - prepbufr
   - satwnd
   - gpsro
-  #- 1bamua
+  - 1bamua
   #- 1bmhs
   #- airsev
   #- cris

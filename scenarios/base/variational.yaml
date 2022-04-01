@@ -118,8 +118,10 @@ variational:
   nObsIndent: 2
 
 ## Directories for YAML stubs
-  DirsYamlBase: base
+  DirsYamlBase:
+  - base
+  - filtersBase
   DirsYamlBiasFilters:
   - base
-  - filters
   - bias
+  - filtersBias

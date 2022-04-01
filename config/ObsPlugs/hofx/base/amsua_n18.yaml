@@ -15,8 +15,3 @@
       Sensor_ID: amsua_n18
   get values:
     <<: *GetValues
-  obs filters:
-  - filter: PreQC
-    maxvalue: 0
-  - filter: GOMsaver
-    filename: {{OutDBDir}}/{{geoPrefix}}_amsua_n18.nc4

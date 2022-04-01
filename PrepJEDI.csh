@@ -59,7 +59,7 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
-# other templated variables
+# templated variables
 set self_WindowHR = WindowHRTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
@@ -221,14 +221,11 @@ end
 # =========================
 # Satellite bias correction
 # =========================
-echo 'Setting satellite bias directories'
-echo '$satelliteBias===' $satelliteBias
-echo 'self_AppType===' ${self_AppType}
 if ( $satelliteBias == None ) then
-  set AppYamlDir = ${DirsYamlBase}
+  set AppYamlDirs = ($DirsYamlBase)
   set satBiasDir = None
 else if ( $satelliteBias == VarBC ) then
-  set AppYamlDir = ${DirsYamlBiasFilters}
+  set AppYamlDirs = ($DirsYamlBiasFilters)
   # next cycle after FirstCycleDate
   set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
   if ( ${thisValidDate} == ${nextFirstDate} ) then
@@ -237,13 +234,10 @@ else if ( $satelliteBias == VarBC ) then
     set satBiasDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
   endif
 else
-  echo "ERROR: $satelliteBias option NOT available" > ./FAIL
+  echo "$0 (ERROR): $satelliteBias is not supported; exiting with failure"
   exit 1
 endif
-sed -i 's@{{satelliteBiasDir}}@'${satBiasDir}'@g' $prevYAML
-sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 
-echo 'AppYamlDir= ' ${AppYamlDir}
 # =============
 # Generate yaml
 # =============
@@ -276,7 +270,7 @@ set found = 0
 foreach instrument ($observations)
   echo "Preparing YAML for ${instrument} observations"
   set missing=0
-  foreach subdir (${AppYamlDir})
+  foreach subdir (${AppYamlDirs})
     set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${subdir}/${instrument}
     if ( "$instrument" =~ *"sondes"* ) then
       #KLUDGE to handle missing qv for sondes at single time
@@ -393,6 +387,9 @@ sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
 sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
 sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
 
+# satellite bias correction directories
+sed -i 's@{{satelliteBiasDir}}@'${satBiasDir}'@g' $prevYAML
+sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 
 # (3) model-related substitutions
 # ===============================

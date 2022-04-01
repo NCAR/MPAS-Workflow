@@ -11,6 +11,3 @@
     name: VertInterp
   get values:
     <<: *GetValues
-  obs filters:
-  - filter: PreQC
-    maxvalue: 3
