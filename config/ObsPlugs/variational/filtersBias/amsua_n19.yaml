@@ -90,7 +90,7 @@
         options:
           sensor: amsua_n19
           channels: *amsua_n19_channels
-#  Transmittnace Top Check
+#  Transmittance Top Check
   - filter: Perform Action
     filter variables:
     - name: brightness_temperature

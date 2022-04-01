@@ -90,7 +90,7 @@
         options:
           sensor: amsua_metop-b
           channels: *amsua_metop-b_channels
-#  Transmittnace Top Check
+#  Transmittance Top Check
   - filter: Perform Action
     filter variables:
     - name: brightness_temperature

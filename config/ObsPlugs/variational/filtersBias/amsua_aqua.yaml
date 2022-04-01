@@ -90,7 +90,7 @@
         options:
           sensor: amsua_aqua
           channels: *amsua_aqua_channels
-#  Transmittnace Top Check
+#  Transmittance Top Check
   - filter: Perform Action
     filter variables:
     - name: brightness_temperature
