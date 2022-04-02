@@ -9,7 +9,7 @@
     [[[{{AnalysisTimes}}]]]
       graph = '''
         DataAssimFinished => VerifyObsDA
-        VerifyObsDA => CleanDataAssim
+        VerifyObsDA => {{CleanDataAssim}}
   {% if CompareDA2Benchmark %}
         VerifyObsDA => CompareObsDA
   {% endif %}
@@ -50,6 +50,7 @@
         VerifyObsEnsMeanBG => CleanHofXEnsMeanBG
   {% if DiagnoseEnsSpreadBG %}
         DataAssimFinished => VerifyModelEnsMeanBG
+        VerifyModelEnsMeanBG => {{CleanDataAssim}}
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
         HofXBG:succeed-all => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanHofXBG

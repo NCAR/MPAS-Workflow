@@ -99,7 +99,7 @@ cat >! suite.rc << EOF
 {% set DAInstances = range(1, nDAInstances+1, 1) %}
 
 # inflation
-{% set RTPPInflationFactor = ${RTPPInflationFactor} %}
+{% set RTPPRelaxationFactor = ${rtpp__relaxationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
 
 # common job controls
@@ -118,7 +118,7 @@ cat >! suite.rc << EOF
 {% set VariationalRetry = "${VariationalRetry}" %}
 {% set EnsOfVariationalRetry = "${EnsOfVariationalRetry}" %}
 {% set CyclingFCRetry = "${CyclingFCRetry}" %}
-{% set RTPPInflationRetry = "${RTPPInflationRetry}" %}
+{% set RTPPRetry = "${RTPPRetry}" %}
 {% set HofXRetry = "${HofXRetry}" %}
 {% set CleanRetry = "${CleanRetry}" %}
 

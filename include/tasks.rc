@@ -106,7 +106,15 @@
       batch system = background
 
 
-## Data assimilation (critical path)
+## Data assimilation and supporting tasks (critical path)
+  # (Ens)DataAssim => Post => Finished => Clean
+  [[DataAssimPost]]
+    [[[job]]]
+      batch system = background
+  [[DataAssimFinished]]
+    [[[job]]]
+      batch system = background
+
   # directory/file preparation
   [[InitDataAssim]]
     env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA"
@@ -144,6 +152,10 @@
       -A = {{CPAccountNumber}}
       -l = select={{VariationalNodes}}:ncpus={{VariationalPEPerNode}}:mpiprocs={{VariationalPEPerNode}}:mem={{VariationalMemory}}GB
   {% endfor %}
+  [[CleanVariational]]
+    inherit = CleanBase
+    script = $origin/CleanVariational.csh
+
   # inflation (pre and post)
   [[GenerateABEInflation]]
     script = $origin/GenerateABEInflation.csh
@@ -153,26 +165,24 @@
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
-  [[RTPPInflation]]
-    script = $origin/RTPPInflation.csh
+  [[PrepRTPP]]
+    script = $origin/PrepRTPP.csh
+    [[[job]]]
+      execution time limit = PT1M
+      execution retry delays = {{RTPPRetry}}
+  [[RTPP]]
+    script = $origin/RTPP.csh
     [[[job]]]
       execution time limit = PT{{CyclingInflationJobMinutes}}M
-      execution retry delays = {{RTPPInflationRetry}}
+      execution retry delays = {{RTPPRetry}}
     [[[directives]]]
       -m = ae
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select={{CyclingInflationNodes}}:ncpus={{CyclingInflationPEPerNode}}:mpiprocs={{CyclingInflationPEPerNode}}:mem={{CyclingInflationMemory}}GB
-  # post => finished => clean
-  [[DataAssimPost]]
-    [[[job]]]
-      batch system = background
-  [[DataAssimFinished]]
-    [[[job]]]
-      batch system = background
-  [[CleanDataAssim]]
+  [[CleanRTPP]]
     inherit = CleanBase
-    script = $origin/CleanVariational.csh
+    script = $origin/CleanRTPP.csh
 
   # verification
   [[VerifyObsDA]]

@@ -45,8 +45,6 @@ if ($nDAInstances == None) then
 endif
 
 $setLocal LeaveOneOutEDA
-$setLocal RTPPInflationFactor
-$setLocal storeOriginalRTPPAnalyses
 
 # ensemble inflation settings
 $setLocal ABEInflation

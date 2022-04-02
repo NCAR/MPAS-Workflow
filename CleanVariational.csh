@@ -5,8 +5,6 @@ date
 # Setup environment
 # =================
 source config/filestructure.csh
-source config/model.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/tools.csh
 source config/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -36,7 +34,8 @@ end
 # Remove netcdf lock files
 rm *.nc*.lock
 
-if ($MPASnCellsOuter != $MPASnCellsInner) then
+# Remove copies of templated fields files for inner loop
+if ("${TemplateFieldsFileInner}" != "${TemplateFieldsFileOuter}") then
   rm ${TemplateFieldsFileInner}*
 endif
 
