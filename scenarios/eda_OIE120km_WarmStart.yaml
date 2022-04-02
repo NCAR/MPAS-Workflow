@@ -9,4 +9,5 @@ variational:
   EDASize: 1
   nDAInstances: 20
   LeaveOneOutEDA: True
-  RTPPInflationFactor: 0.80
+rtpp:
+  relaxationFactor: 0.80

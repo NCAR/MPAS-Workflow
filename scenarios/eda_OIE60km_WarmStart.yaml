@@ -14,7 +14,8 @@ variational:
   EDASize: 1
   nDAInstances: 20
   LeaveOneOutEDA: True
-  RTPPInflationFactor: 0.4
+rtpp:
+  relaxationFactor: 0.40
 observations:
   resource: PANDACArchive
   PANDACArchive:
