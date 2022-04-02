@@ -1,9 +1,9 @@
 workflow:
   InitializationType: WarmStart
   firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180417T00
-  CriticalPathType: Normal
+  initialCyclePoint: 20180415T00
+  finalCyclePoint: 20180415T00
+  CriticalPathType: Bypass
   VerifyDeterministicDA: False
   VerifyEnsMeanBG: True
   DiagnoseEnsSpreadBG: True
@@ -15,7 +15,8 @@ variational:
   nDAInstances: 20
   LeaveOneOutEDA: True
 rtpp:
-  relaxationFactor: 0.40
+  relaxationFactor: 0.70
+  storeOriginalAnalyses: True
 observations:
   resource: PANDACArchive
   PANDACArchive:
