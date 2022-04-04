@@ -45,6 +45,7 @@ endif
 # =================
 source config/environment.csh
 source config/filestructure.csh
+source config/forecast.csh
 source config/model.csh
 source config/observations.csh
 source config/tools.csh
@@ -147,7 +148,7 @@ foreach StreamsFile_ ($StreamsFileList)
   sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${StreamsFile_}
   sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
-  sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile_}
+  sed -i 's@forecastPrecision@'${forecast__precision}'@' ${StreamsFile_}
 end
 
 ## copy/modify dynamic namelist file

@@ -76,6 +76,8 @@ the default values for all settings.  Those `base` configurations are as follows
 
 `scenarios/base/hofx.yaml`: settings specific to the hofx application
 
+`scenarios/base/forecast.yaml`: settings specific to the forecast application
+
 `scenarios/base/job.yaml`: account and queue selection
 
 
