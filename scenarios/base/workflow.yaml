@@ -52,6 +52,12 @@ workflow:
 # + Reforecast
 #   - run only the `forecast` mini-workflow in the critical path, and also verification
 #   - requires CyclingDA analysis files or links to already be present in ExperimentDirectory
+# + GenerateExternalAnalyses
+#   - runs only the PrepareExternalAnalysis mini-workflow
+#   - no dependencies between cycles
+# + GenerateObs
+#   - runs only the PrepareObservations mini-workflow
+#   - no dependencies between cycles
 #
 # Users may choose whether to run the verification concurrently with and
 # dependent on the critical path tasks (`Normal`), or as an independent post-processing step

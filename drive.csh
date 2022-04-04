@@ -80,6 +80,7 @@ cat >! suite.rc << EOF
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
 {% set AnalysisTimes = "${AnalysisTimes}" %}
 {% set ForecastTimes = "${ForecastTimes}" %}
+{% set CyclingWindowHR = "${CyclingWindowHR}" %}
 {% set DA2FCOffsetHR = "${DA2FCOffsetHR}" %}
 {% set FC2DAOffsetHR = "${FC2DAOffsetHR}" %}
 {% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
@@ -90,6 +91,7 @@ cat >! suite.rc << EOF
 # initialization type
 {% set InitializationType = "${InitializationType}" %}
 {% set observationsResource = "${observations__resource}" %}
+{% set modelAnalysisSource = "${model__AnalysisSource}" %}
 
 # eda
 {% set EDASize = ${EDASize} %} #integer
@@ -181,11 +183,14 @@ cat >! suite.rc << EOF
 {% endif %}
 
 ## Mini-workflow that prepares a cold-start initial condition file from a GFS analysis
-{% if InitializationType == "WarmStart" %}
-  # assume that cold-start IC files are already available for WarmStart case
+{% if "Archive" in modelAnalysisSource %}
+  # assume that external analysis files are already available for Archive cases
   {% set PrepareExternalAnalysis = "ExternalAnalysisReady" %}
-{% else %}
+{% elif "GFS" in modelAnalysisSource %}
+  # other GFS analysis file sources must be generated online
   {% set PrepareExternalAnalysis = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady" %}
+{% else %}
+  {{ raise('modelAnalysisSource is not valid') }}
 {% endif %}
 # Use GFS analysis for sea surface updating
 {% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysis %}

@@ -180,7 +180,7 @@ Main driver: drive.csh
 Creates a new cylc suite file, then runs it. Users need not modify this file. Developers who wish
 to add new cylc tasks, or modify the relationships between tasks, will modify `drive.csh` and/or
 the files in the `include` directory:
-- `include/criticalpath.rc`: controls all elements of the critical path for all 4 `CriticalPathType` options
+- `include/criticalpath.rc`: controls all elements of the critical path for all `CriticalPathType` options
 and 2 `InitializationType` options.  Allows for re-use of `include/forecast.rc` and `include/da.rc`
 according to the user selections.  Those latter two scripts describe all the intra-forecast and
 intra-da dependencies, respectively, independent of tasks in other categories.

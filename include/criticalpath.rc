@@ -1,17 +1,29 @@
-# firstCyclePoint
-{% if initialCyclePoint == firstCyclePoint %}
+{% set GenerateTimes = "PT"+CyclingWindowHR+"H" %}
+
+{% if CriticalPathType == "GenerateExternalAnalyses" %}
+    [[[{{GenerateTimes}}]]]
+      graph = {{PrepareExternalAnalysis}}
+
+{% elif CriticalPathType == "GenerateObs" %}
+    [[[{{GenerateTimes}}]]]
+      graph = {{PrepareObservations}}
+
+{% else %}
+
+  # firstCyclePoint
+  {% if initialCyclePoint == firstCyclePoint %}
     [[[R1]]]
       graph = '''
-  {% if InitializationType == "WarmStart" %}
+    {% if InitializationType == "WarmStart" %}
         GetWarmStartIC => ForecastFinished
-  {% else %}
+    {% else %}
 %include include/forecast.rc
-  {% endif %}
+    {% endif %}
       '''
-{% endif %}
+  {% endif %}
 
-# all other cycles
-{% if CriticalPathType == "Normal" %}
+  # all other cycles
+  {% if CriticalPathType == "Normal" %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
 %include include/da.rc
@@ -28,15 +40,15 @@
         DataAssimFinished[-PT{{DA2FCOffsetHR}}H] => Forecast
       '''
 
-{% elif CriticalPathType == "Bypass" %}
-  {% set CleanDataAssim = 'Null' %}
+  {% elif CriticalPathType == "Bypass" %}
+    {% set CleanDataAssim = 'Null' %}
     [[[{{AnalysisTimes}}]]]
       graph = DataAssimFinished
 
     [[[{{ForecastTimes}}]]]
       graph = ForecastFinished
 
-{% elif CriticalPathType == "Reanalysis" %}
+  {% elif CriticalPathType == "Reanalysis" %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
 %include include/da.rc
@@ -44,8 +56,8 @@
     [[[{{ForecastTimes}}]]]
       graph = ForecastFinished
 
-{% elif CriticalPathType == "Reforecast" %}
-  {% set CleanDataAssim = 'Null' %}
+  {% elif CriticalPathType == "Reforecast" %}
+    {% set CleanDataAssim = 'Null' %}
     [[[{{AnalysisTimes}}]]]
       graph = DataAssimFinished
     [[[{{ForecastTimes}}]]]
@@ -53,6 +65,7 @@
 %include include/forecast.rc
       '''
 
-{% else %}
-  {{ raise('CriticalPathType is not valid') }}
+  {% else %}
+    {{ raise('CriticalPathType is not valid') }}
+  {% endif %}
 {% endif %}

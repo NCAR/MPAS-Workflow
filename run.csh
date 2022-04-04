@@ -24,6 +24,8 @@ set ValidRunConfigs = ( \
   60kmEDA \
   30km-60km3denvar \
   RealTime \
+  GenerateObs \
+  GenerateGFSAnalyses \
 )
 set ArgRunConfig = $1
 
@@ -74,7 +76,7 @@ $setRun scenarioDirectory
 sed -i 's@^set\ scenarioDirectory\ =\ .*@set\ scenarioDirectory\ =\ '$scenarioDirectory'@' config/scenario.csh
 
 foreach thisScenario ($scenarios)
-  if ($thisScenario == InvalidScenario) then
+  if ($thisScenario == None) then
     continue
   endif
   echo ""
