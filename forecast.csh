@@ -23,6 +23,7 @@ endif
 # Setup environment
 # =================
 source config/workflow.csh
+source config/forecast.csh
 source config/model.csh
 source config/filestructure.csh
 source config/tools.csh
@@ -79,27 +80,6 @@ else
 endif
 ln -sfv ${initialState} ./${icFile}
 
-## Update MPASSeaVariables from GFS/GEFS analyses for DA
-if ( ${updateSea} ) then
-  # first try member-specific state file (central GFS state when ArgMember==0)
-  set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
-  set SeaFile = ${SeaAnaDir}/${thisValidDate}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
-  ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}
-  if ( $status != 0 ) then
-    echo "WARNING in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}" > ./WARNING
-    echo "WARNING in $0 : ncks could not add (${MPASSeaVariables}) to $icFile" >> ./WARNING
-
-    # otherwise try central GFS state file
-    set SeaFile = ${deterministicSeaAnaDir}/${thisValidDate}/${SeaFilePrefix}.${icFileExt}
-    ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}
-    if ( $status != 0 ) then
-      echo "ERROR in $0 : ncks -A -v ${MPASSeaVariables} ${SeaFile} ${icFile}" > ./FAIL
-      echo "ERROR in $0 : ncks could not add (${MPASSeaVariables}) to $icFile" >> ./FAIL
-      exit 1
-    endif
-  endif
-endif
-
 ## link MPAS mesh graph info
 rm ./x1.${MPASnCellsOuter}.graph.info*
 ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .
@@ -127,7 +107,62 @@ sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${StreamsFile}
 sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${StreamsFile}
-sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile}
+sed -i 's@forecast__precision@'${forecast__precision}'@' ${StreamsFile}
+
+## Update sea-surface variables from GFS/GEFS analyses
+set localSeaUpdateFile = x1.${MPASnCellsOuter}.sfc_update.nc
+sed -i 's@{{surfaceUpdateFile}}@'${localSeaUpdateFile}'@' ${StreamsFile}
+
+if ( "${updateSea}" == "True" ) then
+  # first try member-specific state file (central GFS state when ArgMember==0)
+  set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
+  set SeaFile = ${SeaAnaDir}/${thisValidDate}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
+  ln -sf ${SeaFile} ./${localSeaUpdateFile}
+  set brokenLinks=( `find ${localSeaUpdateFile} -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
+  set broken=0
+  foreach l ($brokenLinks)
+    @ broken++
+  end
+
+  #if link broken
+  if ( $broken > 0 ) then
+    echo "$0 (WARNING): file link broken to ${SeaFile}" >> ./WARNING
+
+    # otherwise try central GFS state file
+    set SeaFile = ${deterministicSeaAnaDir}/${thisValidDate}/${SeaFilePrefix}.${icFileExt}
+    ln -sf ${SeaFile} ./${localSeaUpdateFile}
+    set brokenLinks=( `find ${localSeaUpdateFile} -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
+    set broken=0
+    foreach l ($brokenLinks)
+      @ broken++
+    end
+
+    #if link broken
+    if ( $broken > 0 ) then
+      echo "$0 (ERROR): file link broken to ${SeaFile}" >> ./FAIL
+      exit 1
+    endif
+  endif
+
+  # determine sea-update precision
+  ncdump -h ${localSeaUpdateFile} | grep sst | grep double
+  if ($status == 0) then
+    set surfacePrecision=double
+  else
+    ncdump -h ${localSeaUpdateFile} | grep sst | grep float
+    if ($status == 0) then
+      set surfacePrecision=single
+    else
+      echo "$0 (ERROR): cannot determine surface input precision (${localSeaUpdateFile})" > ./FAIL
+      exit 1
+    endif
+  endif
+  sed -i 's@{{surfacePrecision}}@'${surfacePrecision}'@' ${StreamsFile}
+  sed -i 's@{{surfaceInputInterval}}@initial_only@' ${StreamsFile}
+else
+  sed -i 's@{{surfacePrecision}}@'${forecast__precision}'@' ${StreamsFile}
+  sed -i 's@{{surfaceInputInterval}}@none@' ${StreamsFile}
+endif
 
 ## copy/modify dynamic namelist
 rm ${NamelistFile}

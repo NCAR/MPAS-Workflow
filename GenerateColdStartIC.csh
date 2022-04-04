@@ -4,6 +4,7 @@ date
 
 # Setup environment
 # =================
+source config/forecast.csh
 source config/model.csh
 source config/filestructure.csh
 source config/modeldata.csh
@@ -39,7 +40,7 @@ end
 rm ${StreamsFileInit}
 cp -v ${initModelConfigDir}/${StreamsFileInit} .
 sed -i 's@nCells@'${MPASnCellsOuter}'@' ${StreamsFileInit}
-sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFileInit}
+sed -i 's@forecastPrecision@'${forecast__precision}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}

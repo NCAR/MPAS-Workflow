@@ -90,6 +90,7 @@ cat >! suite.rc << EOF
 # initialization type
 {% set InitializationType = "${InitializationType}" %}
 {% set observationsResource = "${observations__resource}" %}
+{% set modelAnalysisSource = "${model__AnalysisSource}" %}
 
 # eda
 {% set EDASize = ${EDASize} %} #integer
@@ -173,17 +174,20 @@ cat >! suite.rc << EOF
 
 ## Mini-workflow that prepares observations for IODA ingest
 {% if observationsResource == "PANDACArchive" %}
+  # assume that IODA observation files are already available for PANDACArchive case
   {% set PrepareObservations = "ObsReady" %}
 {% else %}
   {% set PrepareObservations = "GetObs => ObsToIODA => ObsReady" %}
 {% endif %}
 
 ## Mini-workflow that prepares a cold-start initial condition file from a GFS analysis
-{% if InitializationType == "WarmStart" %}
-  # assume that cold-start IC files are already available for WarmStart case
+{% if "PANDACArchive" in modelAnalysisSource %}
+  # assume that external analysis files are already available for GFSfromPANDACArchive case
   {% set PrepareExternalAnalysis = "ExternalAnalysisReady" %}
-{% else %}
+{% elif modelAnalysisSource in ["GFSfromRDAOnline", "GFSfromNCEPFTPOnline"] %}
   {% set PrepareExternalAnalysis = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady" %}
+{% else %}
+  {{ raise('modelAnalysisSource is not valid') }}
 {% endif %}
 # Use GFS analysis for sea surface updating
 {% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysis %}
