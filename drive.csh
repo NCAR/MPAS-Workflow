@@ -189,10 +189,10 @@ cat >! suite.rc << EOF
 
 ## Mini-workflow that prepares a cold-start initial condition file from a GFS analysis
 {% if "Archive" in modelAnalysisSource %}
-  # assume that external analysis files are already available for Archive cases
+  # assume that external analysis files are already available for "*Archive*" sources
   {% set PrepareExternalAnalysis = "ExternalAnalysisReady" %}
 {% elif "GFS" in modelAnalysisSource %}
-  # other GFS analysis file sources must be generated online
+  # non-archived GFS analysis sources are generated online
   {% set PrepareExternalAnalysis = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady" %}
 {% else %}
   {{ raise('modelAnalysisSource is not valid') }}
