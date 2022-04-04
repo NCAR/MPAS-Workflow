@@ -3,10 +3,7 @@ workflow:
   firstCyclePoint: 20180415T00
   initialCyclePoint: 20180415T00
   finalCyclePoint: 20180524T18
-  InitializationType: WarmStart
   CriticalPathType: GenerateObs
-  VerifyDeterministicDA: False
-  VerifyEnsMeanBG: False
 #TODO: make it so that model and variational are not necessary
 observations:
   resource: RDAOnline

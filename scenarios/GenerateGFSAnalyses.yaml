@@ -5,8 +5,6 @@ workflow:
   finalCyclePoint: 20180524T18
   InitializationType: ColdStart
   CriticalPathType: GenerateExternalAnalyses
-  VerifyDeterministicDA: False
-  VerifyEnsMeanBG: False
 #TODO: make it so that observations and variational are not necessary
 observations:
   resource: PANDACArchive

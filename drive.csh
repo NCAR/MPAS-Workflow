@@ -14,8 +14,11 @@ echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
 source config/filestructure.csh
 source config/workflow.csh
+#TODO: observations not required for GenerateExternalAnalyses
 source config/observations.csh
+#TODO: model not required for GenerateObs
 source config/model.csh
+#TODO: variational not required for GenerateExternalAnalyses or GenerateObs
 source config/variational.csh
 source config/job.csh
 source config/mpas/${MPASGridDescriptor}/job.csh
@@ -60,6 +63,7 @@ else
   # initialCyclePoint
   set ForecastTimes = +PT${DA2FCOffsetHR}H/PT${CyclingWindowHR}H
 endif
+set GenerateTimes = PT${CyclingWindowHR}H
 
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
@@ -80,7 +84,7 @@ cat >! suite.rc << EOF
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
 {% set AnalysisTimes = "${AnalysisTimes}" %}
 {% set ForecastTimes = "${ForecastTimes}" %}
-{% set CyclingWindowHR = "${CyclingWindowHR}" %}
+{% set GenerateTimes = "${GenerateTimes}" %}
 {% set DA2FCOffsetHR = "${DA2FCOffsetHR}" %}
 {% set FC2DAOffsetHR = "${FC2DAOffsetHR}" %}
 {% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
@@ -218,11 +222,26 @@ cat >! suite.rc << EOF
 {% endif %}
 
   [[dependencies]]
-## (1) Critical Path
+
+{% if CriticalPathType == "GenerateExternalAnalyses" %}
+## (i) External analyses generation for a historical period
+    [[[{{GenerateTimes}}]]]
+      graph = {{PrepareExternalAnalysis}}
+
+{% elif CriticalPathType == "GenerateObs" %}
+## (ii) Observation generation for a historical period
+    [[[{{GenerateTimes}}]]]
+      graph = {{PrepareObservations}}
+
+{% else %}
+
+## (iii.a) Critical path
 %include include/criticalpath.rc
 
-## (2) Verification
+## (iii.b) Verification
 %include include/verification.rc
+
+{% endif %}
 
 [runtime]
 %include include/tasks.rc
