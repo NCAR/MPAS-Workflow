@@ -5,6 +5,7 @@ set config_modeldata = 1
 
 source config/workflow.csh
 source config/model.csh
+source config/forecast.csh
 source config/variational.csh
 source config/filestructure.csh
 set wd = `pwd`
@@ -125,17 +126,13 @@ endif
 
 # MPAS-Model
 # ----------
-## directory containing x1.${MPASnCells}.graph.info* files
-setenv GraphInfoDir /glade/work/duda/static_moved_to_campaign
-
 ## sea/ocean surface files
 setenv seaMaxMembers ${nGEFSMembers}
 setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
-setenv updateSea 1
 if ( "$DAType" =~ *"eda"* ) then
   # using member-specific sst/xice data from GEFS
   # 60km and 120km
-  setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr/${forecastPrecision}
+  setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr/${forecast__precision}
   setenv seaMemFmt "${gefsMemFmt}"
 else
   # deterministic

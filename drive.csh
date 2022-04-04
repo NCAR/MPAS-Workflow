@@ -177,6 +177,7 @@ cat >! suite.rc << EOF
 
 ## Mini-workflow that prepares observations for IODA ingest
 {% if observationsResource == "PANDACArchive" %}
+  # assume that IODA observation files are already available for PANDACArchive case
   {% set PrepareObservations = "ObsReady" %}
 {% else %}
   {% set PrepareObservations = "GetObs => ObsToIODA => ObsReady" %}

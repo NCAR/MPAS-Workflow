@@ -18,10 +18,10 @@ model:
 #   + TODO: "O30kmIE60km" dual-resolution 4denvar
   MPASGridDescriptor: None
 
-## forecastPrecision
-# floating-point precision of forecast output; options: [single, double]
-  forecastPrecision: single
-
 ## Analysis source
 # OPTIONS: GFSfromPANDACArchive, GFSfromRDAOnline, GFSfromNCEPFTPOnline
   AnalysisSource: GFSfromPANDACArchive
+
+## GraphInfoDir
+# directory containing x1.{{nCells}}.graph.info* files
+  GraphInfoDir: /glade/work/duda/static_moved_to_campaign
