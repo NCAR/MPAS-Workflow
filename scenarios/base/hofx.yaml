@@ -40,11 +40,3 @@ hofx:
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML
   nObsIndent: 0
-
-## Directories for YAML stubs
-  DirsYamlBase:
-  - base
-  - filtersBase
-  DirsYamlBiasFilters:
-  - base
-  - filtersBase

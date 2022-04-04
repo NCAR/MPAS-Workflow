@@ -1,11 +1,12 @@
 workflow:
   # test a recent date
   firstCyclePoint: 20220316T00
-  initialCyclePoint: 20220316T00
+  initialCyclePoint: 20220404T12
   finalCyclePoint: 20250320T00
   InitializationType: ColdStart
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
+  maxActiveCyclePoints: 1
 observations:
   resource: NCEPFTPOnline
 experiment:

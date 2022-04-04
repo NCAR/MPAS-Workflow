@@ -15,5 +15,8 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig hofx"
 
 $setLocal observations
 $setLocal nObsIndent
-$setLocal DirsYamlBase
-$setLocal DirsYamlBiasFilters
+
+set satelliteBias = None
+
+## Directories for YAML stubs
+set AppYamlDirs = (base filtersBase)

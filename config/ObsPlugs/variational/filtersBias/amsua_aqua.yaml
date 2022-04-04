@@ -175,8 +175,6 @@
                             0.400, 0.500, 0.300, 0.350, 0.350,
                             0.450, 1.000, 1.500, 2.500, 2.500]
 #  Gross check
-#  - filter: Background Check
-#    threshold: 3
   - filter: Background Check
     filter variables:
     - name: brightness_temperature
@@ -231,6 +229,7 @@
                            2.5, 3.5, 4.5, 4.5, 4.5]
     action:
       name: reject
+    <<: *multiIterationFilter
 #  Inter-channel check
   - filter: Bounds Check
     filter variables:
@@ -268,6 +267,3 @@
     horizontal_mesh: {{RADTHINDISTANCE}}
   - filter: GOMsaver
     filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_aqua.nc4
-  - filter: Background Check
-    threshold: 3.0
-    <<: *multiIterationFilter

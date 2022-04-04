@@ -144,3 +144,7 @@ workflow:
 
   # window of observations included in forecast verification
   FCVFWindowHR: 6
+
+  # maximum consecutive cycle points to be active at any time
+  # for CriticalPathType == normal
+  maxActiveCyclePoints: 4

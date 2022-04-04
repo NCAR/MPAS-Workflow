@@ -79,8 +79,14 @@ endif
 
 setenv variationalYAMLPrefix variational_
 
+$setLocal initialVARBCcoeff
 $setLocal satelliteBias
 $setLocal fixedCoeff
 $setLocal fixedTlapmeanCov
-$setLocal DirsYamlBase
-$setLocal DirsYamlBiasFilters
+
+## Directories for YAML stubs
+if ($satelliteBias == None) then
+  set AppYamlDirs = (base filtersBase)
+else
+  set AppYamlDirs = (base bias filtersBias)
+endif

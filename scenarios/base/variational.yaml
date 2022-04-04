@@ -14,6 +14,7 @@ variational:
   satelliteBias: None
   fixedCoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
   fixedTlapmeanCov: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
+  initialVARBCcoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
 
 ##ensembleCovarianceWeight and staticCovarianceWeight
 # weights of ensemble and static components of the background errorcovariance
@@ -116,12 +117,3 @@ variational:
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML
   nObsIndent: 2
-
-## Directories for YAML stubs
-  DirsYamlBase:
-  - base
-  - filtersBase
-  DirsYamlBiasFilters:
-  - base
-  - bias
-  - filtersBias
