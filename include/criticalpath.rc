@@ -29,8 +29,10 @@
       '''
 
 {% elif CriticalPathType == "Bypass" %}
+  {% set CleanDataAssim = 'Null' %}
     [[[{{AnalysisTimes}}]]]
       graph = DataAssimFinished
+
     [[[{{ForecastTimes}}]]]
       graph = ForecastFinished
 
@@ -43,6 +45,7 @@
       graph = ForecastFinished
 
 {% elif CriticalPathType == "Reforecast" %}
+  {% set CleanDataAssim = 'Null' %}
     [[[{{AnalysisTimes}}]]]
       graph = DataAssimFinished
     [[[{{ForecastTimes}}]]]
@@ -50,6 +53,6 @@
 %include include/forecast.rc
       '''
 
-{# else #}
+{% else %}
   {{ raise('CriticalPathType is not valid') }}
 {% endif %}

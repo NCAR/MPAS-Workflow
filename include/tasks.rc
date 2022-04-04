@@ -26,6 +26,10 @@
 #      --cpus-per-task = 36
 #      --partition = dav
 
+## Null parent or child
+  [[Null]]
+    [[[job]]]
+      batch system = background
 
 ## Base
   [[ForecastBase]]
