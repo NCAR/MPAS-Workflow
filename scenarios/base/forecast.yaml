@@ -1,0 +1,10 @@
+forecast:
+## updateSea
+# whether to update surface fields before a forecast (e.g., sst, xice)
+# OPTIONS: True/False
+  updateSea: True
+
+## forecastPrecision
+# floating-point precision of forecast output
+# OPTIONS: single, double
+  precision: single
