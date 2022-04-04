@@ -122,6 +122,8 @@ cat >! suite.rc << EOF
 {% set RTPPRetry = "${RTPPRetry}" %}
 {% set HofXRetry = "${HofXRetry}" %}
 {% set CleanRetry = "${CleanRetry}" %}
+{% set VerifyObsRetry = "${VerifyObsRetry}" %}
+{% set VerifyModelRetry = "${VerifyModelRetry}" %}
 
 # mesh-specific job controls
 {% set CyclingFCJobMinutes = "${CyclingFCJobMinutes}" %}
@@ -181,10 +183,11 @@ cat >! suite.rc << EOF
 {% endif %}
 
 ## Mini-workflow that prepares a cold-start initial condition file from a GFS analysis
-{% if "PANDACArchive" in modelAnalysisSource %}
-  # assume that external analysis files are already available for GFSfromPANDACArchive case
+{% if "Archive" in modelAnalysisSource %}
+  # assume that external analysis files are already available for "*Archive*" sources
   {% set PrepareExternalAnalysis = "ExternalAnalysisReady" %}
-{% elif modelAnalysisSource in ["GFSfromRDAOnline", "GFSfromNCEPFTPOnline"] %}
+{% elif "GFS" in modelAnalysisSource %}
+  # non-archived GFS analysis sources are generated online
   {% set PrepareExternalAnalysis = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady" %}
 {% else %}
   {{ raise('modelAnalysisSource is not valid') }}

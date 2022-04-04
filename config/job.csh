@@ -28,5 +28,5 @@ $setLocal CyclingFCRetry
 $setLocal RTPPRetry
 $setLocal HofXRetry
 $setLocal CleanRetry
-#$setLocal VerifyObsRetry
-#$setLocal VerifyModelRetry
+$setLocal VerifyObsRetry
+$setLocal VerifyModelRetry

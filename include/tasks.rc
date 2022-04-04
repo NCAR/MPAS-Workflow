@@ -26,6 +26,10 @@
 #      --cpus-per-task = 36
 #      --partition = dav
 
+## Null parent or child
+  [[Null]]
+    [[[job]]]
+      batch system = background
 
 ## Base
   [[ForecastBase]]
@@ -55,7 +59,7 @@
   [[VerifyModelBase]]
     [[[job]]]
       execution time limit = PT{{VerifyModelJobMinutes}}M
-      execution retry delays = {{HofXRetry}}
+      execution retry delays = {{VerifyModelRetry}}
     [[[directives]]]
       -q = {{NCPQueueName}}
       -A = {{NCPAccountNumber}}
@@ -63,7 +67,7 @@
   [[VerifyObsBase]]
     [[[job]]]
       execution time limit = PT{{VerifyObsJobMinutes}}M
-      execution retry delays = {{HofXRetry}}
+      execution retry delays = {{VerifyObsRetry}}
     [[[directives]]]
       -q = {{NCPQueueName}}
       -A = {{NCPAccountNumber}}
