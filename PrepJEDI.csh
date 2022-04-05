@@ -80,9 +80,6 @@ set StreamsFileList = (${AppTypeTEMPLATEStreamsFileList})
 set NamelistFileList = (${AppTypeTEMPLATENamelistFileList})
 
 
-
-echo 'satelliteBias in PrepPJEDI===' $satelliteBias
-
 # ================================================================================================
 
 # Previous time info for yaml entries
@@ -225,19 +222,28 @@ end
 # =========================
 # Satellite bias correction
 # =========================
-if ( $satelliteBias == None ) then
-  set satBiasDir = None
-else if ( $satelliteBias == VarBC ) then
-  # next cycle after FirstCycleDate
-  set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
-  if ( ${thisValidDate} == ${nextFirstDate} ) then
-    set satBiasDir = $initialVARBCcoeff
+if ( ${observations__resource} == "PANDACArchive" ) then
+  if ( $satelliteBias == None ) then
+    set satBiasDir = None
   else
-    set satBiasDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
+    echo "$0 (ERROR): $satelliteBias is not supported for ${observations__resource}; exiting with failure"
+    exit 1
   endif
-else
-  echo "$0 (ERROR): $satelliteBias is not supported; exiting with failure"
-  exit 1
+else if ( ${observations__resource} =~ *"Online"* ) then
+  if ( $satelliteBias == None ) then
+    set satBiasDir = None
+  else if ( $satelliteBias == VarBC ) then
+    # next cycle after FirstCycleDate
+    set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
+    if ( ${thisValidDate} == ${nextFirstDate} ) then
+      set satBiasDir = $initialVARBCcoeff
+    else
+      set satBiasDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
+    endif
+  else
+    echo "$0 (ERROR): $satelliteBias is not supported; exiting with failure"
+    exit 1
+  endif
 endif
 
 # =============
