@@ -80,6 +80,9 @@ set StreamsFileList = (${AppTypeTEMPLATEStreamsFileList})
 set NamelistFileList = (${AppTypeTEMPLATENamelistFileList})
 
 
+
+echo 'satelliteBias in PrepPJEDI===' $satelliteBias
+
 # ================================================================================================
 
 # Previous time info for yaml entries

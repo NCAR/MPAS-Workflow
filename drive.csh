@@ -172,8 +172,8 @@ cat >! suite.rc << EOF
 {% set VerifyANMembers = ${VerifyANMembers} %} #bool
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %} #bool
 
-+# Active cycle points
-+{% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
+# Active cycle points
+{% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
 
 ## Mini-workflow that prepares observations for IODA ingest
 {% if observationsResource == "PANDACArchive" %}

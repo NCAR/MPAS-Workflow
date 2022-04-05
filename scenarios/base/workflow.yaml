@@ -146,5 +146,5 @@ workflow:
   FCVFWindowHR: 6
 
   # maximum consecutive cycle points to be active at any time
-  # for CriticalPathType == normal
+  # for CriticalPathType == Normal
   maxActiveCyclePoints: 4

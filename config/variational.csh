@@ -23,7 +23,6 @@ $setLocal nInnerIterations
 # nOuterIterations, automatically determined from length of nInnerIterations
 setenv nOuterIterations ${#nInnerIterations}
 
-set satelliteBias = "`$getLocalOrNone satelliteBias`"
 
 $setLocal benchmarkObservations
 $setLocal experimentalObservations
@@ -79,8 +78,8 @@ endif
 
 setenv variationalYAMLPrefix variational_
 
+set satelliteBias = "`$getLocalOrNone satelliteBias`"
 $setLocal initialVARBCcoeff
-$setLocal satelliteBias
 $setLocal fixedCoeff
 $setLocal fixedTlapmeanCov
 
