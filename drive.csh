@@ -91,6 +91,7 @@ cat >! suite.rc << EOF
 {% set ExtendedEnsFCTimes = "${ExtendedEnsFCTimes}" %}
 {% set ExtendedFCWindowHR = ${ExtendedFCWindowHR} %} #integer
 {% set ExtendedFC_DT_HR = ${ExtendedFC_DT_HR} %} #integer
+{% set ExtendedFCLengths = range(0, ExtendedFCWindowHR+ExtendedFC_DT_HR, ExtendedFC_DT_HR) %}
 
 # initialization type
 {% set InitializationType = "${InitializationType}" %}
@@ -103,6 +104,7 @@ cat >! suite.rc << EOF
 {% set nEnsDAMembers = ${nEnsDAMembers} %} #integer
 {% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
 {% set DAInstances = range(1, nDAInstances+1, 1) %}
+{% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 
 # inflation
 {% set RTPPRelaxationFactor = ${rtpp__relaxationFactor} %}

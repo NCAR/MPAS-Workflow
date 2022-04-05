@@ -1,7 +1,3 @@
-{% set ExtendedFCLengths = range(0, ExtendedFCWindowHR+ExtendedFC_DT_HR, ExtendedFC_DT_HR) %}
-{% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
-
-
   # ... for deterministic DA in observation space only (OMB+OMA together)
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
