@@ -78,6 +78,16 @@ workflow:
 # `Reforecast` options.
   CriticalPathType: Normal
 
+## VerifyAgainstObservations: whether to verify against observations using
+#    HofX applications evaluated at model forecasts or analysis states
+# OPTIONS: True/False
+  VerifyAgainstObservations: True
+
+## VerifyAgainstExternalAnalyses: whether to verify against external model analysis states
+#    Note: only enabled for GFS analyses
+# OPTIONS: True/False
+  VerifyAgainstExternalAnalyses: True
+
 ## VerifyDeterministicDA: whether to run verification scripts for
 #    obs feedback files produced by DA.  Does not work for ensemble DA.
 #    Only works when CriticalPathType == Normal.

@@ -40,13 +40,13 @@ date
 # example: ${ExperimentName}_verify for a simultaneous suite running only Verification
 set SuiteName = ${ExperimentName}
 
+# Create/overwrite the experiment directory and cylc task scripts
+echo "$0 (INFO): Initializing ${PackageBaseName} in the experiment directory"
+./SetupWorkflow.csh
+
 # Differentiate between creating the workflow suite for the first time
 # and restarting (i.e., when initialCyclePoint > firstCyclePoint)
 if ($initialCyclePoint == $firstCyclePoint) then
-  echo "$0 (INFO): Initializing ${PackageBaseName} in the experiment directory"
-  # Create the experiment directory and cylc task scripts
-  ./SetupWorkflow.csh
-
   # The analysis will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
   # initialCyclePoint
   set AnalysisTimes = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
@@ -171,6 +171,8 @@ cat >! suite.rc << EOF
 
 # task selection controls
 {% set CriticalPathType = "${CriticalPathType}" %}
+{% set VerifyAgainstObservations = ${VerifyAgainstObservations} %} #bool
+{% set VerifyAgainstExternalAnalyses = ${VerifyAgainstExternalAnalyses} %} #bool
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %} #bool
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %} #bool
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %} #bool
@@ -241,7 +243,13 @@ cat >! suite.rc << EOF
 %include include/criticalpath.rc
 
 ## (iii.b) Verification
-%include include/verification.rc
+  {% if VerifyAgainstExternalAnalyses %}
+%include include/verifymodel.rc
+  {% endif %}
+
+  {% if VerifyAgainstObservations %}
+%include include/verifyobs.rc
+  {% endif %}
 
 {% endif %}
 

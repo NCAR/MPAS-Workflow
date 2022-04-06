@@ -2,6 +2,7 @@
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
 {% if CriticalPathType in ["Normal", "Reanalysis"] and VerifyDeterministicDA and nEnsDAMembers < 2 %}
+    # observation-space
     [[[{{AnalysisTimes}}]]]
       graph = '''
         DataAssimFinished => VerifyObsDA
@@ -18,17 +19,12 @@
     [[[{{AnalysisTimes}}]]]
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
-        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => VerifyModelBG
         {{PrepareObservations}} => HofXBG
-        {{PrepareExternalAnalysis}} => VerifyModelBG
-  {% for mem in EnsVerifyMembers %}
-        HofXBG{{mem}} => VerifyObsBG{{mem}}
-        VerifyObsBG{{mem}} => CleanHofXBG{{mem}}
+        HofXBG:succeed-all => VerifyObsBG
+        VerifyObsBG:succeed-all => CleanHofXBG
     {% if CompareBG2Benchmark %}
-        VerifyModelBG{{mem}} => CompareModelBG{{mem}}
-        VerifyObsBG{{mem}} => CompareObsBG{{mem}}
+        VerifyObsBG:succeed-all => CompareObsBG
     {% endif %}
-  {% endfor %}
       '''
 {% endif %}
 
@@ -37,16 +33,11 @@
 {% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
-        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => MeanBackground
         MeanBackground => HofXEnsMeanBG
-        MeanBackground => VerifyModelEnsMeanBG
         {{PrepareObservations}} => HofXEnsMeanBG
-        {{PrepareExternalAnalysis}} => VerifyModelEnsMeanBG
         HofXEnsMeanBG => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanHofXEnsMeanBG
   {% if DiagnoseEnsSpreadBG %}
-        DataAssimFinished => VerifyModelEnsMeanBG
-        VerifyModelEnsMeanBG => {{CleanDataAssim}}
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
         HofXBG:succeed-all => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanHofXBG
@@ -59,13 +50,9 @@
 {% if VerifyANMembers %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
-        {{PrepareExternalAnalysis}} => VerifyModelAN
-  {% for mem in EnsVerifyMembers %}
-        DataAssimFinished => VerifyModelAN{{mem}}
-        DataAssimFinished => HofXAN{{mem}}
-        HofXAN{{mem}} => VerifyObsAN{{mem}}
-        VerifyObsAN{{mem}} => CleanHofXAN{{mem}}
-  {% endfor %}
+        DataAssimFinished => HofXAN
+        HofXAN:succeed-all => VerifyObsAN
+        VerifyObsAN:succeed-all => CleanHofXAN
       '''
 {% endif %}
 
@@ -77,11 +64,8 @@
       graph = '''
         DataAssimFinished => MeanAnalysis => ExtendedMeanFC
         ExtendedMeanFC => HofXMeanFC
-        ExtendedMeanFC => VerifyModelMeanFC
-  {% for dt in ExtendedFCLengths %}
-        HofXMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
-        VerifyObsMeanFC{{dt}}hr => CleanHofXMeanFC{{dt}}hr
-  {% endfor %}
+        HofXMeanFC:succeed-all => VerifyObsMeanFC
+        VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
       '''
 {% endif %}
 
@@ -92,13 +76,8 @@
     [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
         DataAssimFinished => ExtendedEnsFC
-  {% for mem in EnsVerifyMembers %}
-        ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}
-        ExtendedFC{{mem}} => HofXEnsFC{{mem}}
-    {% for dt in ExtendedFCLengths %}
-        HofXEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
-        VerifyObsEnsFC{{mem}}-{{dt}}hr => CleanHofXEnsFC{{mem}}-{{dt}}hr
-    {% endfor %}
-  {% endfor %}
+        ExtendedEnsFC:succeed-all => HofXEnsFC
+        HofXEnsFC:succeed-all => VerifyObsEnsFC
+        VerifyObsEnsFC:succeed-all => CleanHofXEnsFC
       '''
 {% endif %}
