@@ -17,8 +17,4 @@ setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig hofx"
 $setLocal observations
 $setLocal nObsIndent
 
-set satelliteBias = None
-set satelliteBias = "`$getLocalOrNone satelliteBias`"
-
-## Directories for YAML stubs
-set AppYamlDirs = (base filtersBase)
+$setLocal biasCorrection

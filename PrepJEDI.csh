@@ -191,23 +191,23 @@ foreach instrument ($observations)
   set key = IODADirectory
   set address = "${observations__resource}.${key}.${self_AppType}.${instrument}"
   # TODO: this is somewhat slow with lots of redundant loads of the entire observations.yaml config
-  set IODADirectory = "`$getObservationsOrNone ${address}`"
+  set $key = "`$getObservationsOrNone ${address}`"
   if ("$IODADirectory" == None) then
     # Fall back on "common" directory, if present
     set address_ = "${observations__resource}.${key}.${self_AppType}.common"
-    set IODADirectory = "`$getObservationsOrNone ${address_}`"
+    set $key = "`$getObservationsOrNone ${address_}`"
     if ("$IODADirectory" == None) then
       echo "$0 (WARNING): skipping ${instrument} due to missing value at ${address} and ${address_}"
       continue
     endif
   endif
   # substitute $ObsWorkDir for {{ObsWorkDir}}
-  set IODADirectory = `echo "$IODADirectory" | sed 's@{{ObsWorkDir}}@'$ObsWorkDir'@'`
+  set $key = `echo "$IODADirectory" | sed 's@{{ObsWorkDir}}@'$ObsWorkDir'@'`
 
   # prefix
   set key = IODAPrefix
   set address = "${observations__resource}.${key}.${instrument}"
-  set IODAPrefix = "`$getObservationsOrNone ${address}`"
+  set $key = "`$getObservationsOrNone ${address}`"
   if ("$IODAPrefix" == None) then
     set IODAPrefix = ${instrument}
   endif
@@ -222,27 +222,14 @@ end
 # =========================
 # Satellite bias correction
 # =========================
-if ( ${observations__resource} == "PANDACArchive" ) then
-  if ( $satelliteBias == None ) then
-    set satBiasDir = None
+set satBiasDir = None
+if ( $biasCorrection == True ) then
+  # next cycle after FirstCycleDate
+  set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
+  if ( ${thisValidDate} == ${nextFirstDate} ) then
+    set satBiasDir = $initialVARBCcoeff
   else
-    echo "$0 (ERROR): $satelliteBias is not supported for ${observations__resource}; exiting with failure"
-    exit 1
-  endif
-else if ( ${observations__resource} =~ *"Online"* ) then
-  if ( $satelliteBias == None ) then
-    set satBiasDir = None
-  else if ( $satelliteBias == VarBC ) then
-    # next cycle after FirstCycleDate
-    set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
-    if ( ${thisValidDate} == ${nextFirstDate} ) then
-      set satBiasDir = $initialVARBCcoeff
-    else
-      set satBiasDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
-    endif
-  else
-    echo "$0 (ERROR): $satelliteBias is not supported; exiting with failure"
-    exit 1
+    set satBiasDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
   endif
 endif
 
@@ -274,6 +261,12 @@ set observationsYAML = observations.yaml
 rm $observationsYAML
 touch $observationsYAML
 
+# need to change to mainScriptDir for getObservationsOrNone to work
+cd ${mainScriptDir}
+set key = instrumentsAllowingBiasCorrection
+set $key = "`$getObservationsOrNone ${observations__resource}.${key}`"
+cd ${self_WorkDir}
+
 set found = 0
 foreach instrument ($observations)
   echo "Preparing YAML for ${instrument} observations"
@@ -288,6 +281,18 @@ foreach instrument ($observations)
         @ missing++
       end
     endif
+  set allowsBiasCorrection = False
+  foreach i ($instrumentsAllowingBiasCorrection)
+    if ("$instrument" == "$i") then
+      set allowsBiasCorrection = True
+    endif
+  end
+  ## Directories for YAML stubs
+  if ($biasCorrection == True && $allowsBiasCorrection == True) then
+    set AppYamlDirs = (base bias filtersWithBias)
+  else
+    set AppYamlDirs = (base filters)
+  endif
 
   foreach subdir (${AppYamlDirs})
     set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${subdir}/${instrument}

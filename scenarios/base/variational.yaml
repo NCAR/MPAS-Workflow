@@ -8,10 +8,10 @@ variational:
 # list of inner iteration counts across all outer iterations
   nInnerIterations: [60,]
 
-## satelliteBias
+## biasCorrection
 # Use GDAS satellite bias coefficients created for specific dates or variational bias correction coefficients
 # OPTIONS: None, VarBC
-  satelliteBias: None
+  biasCorrection: False
   fixedCoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
   fixedTlapmeanCov: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
   initialVARBCcoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018

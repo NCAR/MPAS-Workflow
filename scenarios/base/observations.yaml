@@ -25,6 +25,14 @@ observations:
 # locations of raw bufr and prepbufr observation data, separated by resource
 
   NCEPFTPOnline:
+    instrumentsAllowingBiasCorrection:
+    - amsua_aqua
+    - amsua_metop-a
+    - amsua_metop-b
+    - amsua_n15
+    - amsua_n18
+    - amsua_n19
+
     IODAPrefix:
       gnssroref: gnssro
 
@@ -36,6 +44,14 @@ observations:
         common: "{{ObsWorkDir}}"
 
   GladeRDAOnline:
+    instrumentsAllowingBiasCorrection:
+    - amsua_aqua
+    - amsua_metop-a
+    - amsua_metop-b
+    - amsua_n15
+    - amsua_n18
+    - amsua_n19
+
     IODAPrefix:
       gnssroref: gnssro
       amsua-cld_aqua: amsua_aqua
@@ -53,6 +69,8 @@ observations:
         common: "{{ObsWorkDir}}"
 
   PANDACArchive:
+    instrumentsAllowingBiasCorrection: [None]
+
     IODAPrefix:
       gnssroref: gnssro
       amsua-cld_aqua: amsua_aqua

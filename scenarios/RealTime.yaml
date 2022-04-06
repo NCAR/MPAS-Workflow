@@ -17,7 +17,7 @@ model:
 variational:
   DAType: 3dvar
   nInnerIterations: [60,]
-  satelliteBias: VarBC
+  biasCorrection: True
 job:
   CPQueueName: premium
   NCPQueueName: economy
