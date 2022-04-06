@@ -75,8 +75,7 @@ variational:
   - aircraft
   - gnssroref
   - satwind
-#TODO: add satwnd, used in ColdStart and will not break WarmStart
-# - satwnd
+  - satwnd
   - sfc
   - sondes
 # MW satellite-based
