@@ -40,3 +40,8 @@ hofx:
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML
   nObsIndent: 0
+
+## biasCorrection
+# whether to use bias correction coefficients from VarBC
+# OPTIONS: False (not enabled yet)
+  biasCorrection: False

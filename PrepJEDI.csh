@@ -222,15 +222,12 @@ end
 # =========================
 # Satellite bias correction
 # =========================
-set satBiasDir = None
-if ( $biasCorrection == True ) then
-  # next cycle after FirstCycleDate
-  set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
-  if ( ${thisValidDate} == ${nextFirstDate} ) then
-    set satBiasDir = $initialVARBCcoeff
-  else
-    set satBiasDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
-  endif
+# next cycle after FirstCycleDate
+set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
+if ( ${thisValidDate} == ${nextFirstDate} ) then
+  set biasCorrectionDir = $initialVARBCcoeff
+else
+  set biasCorrectionDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
 endif
 
 # =============
@@ -261,37 +258,39 @@ set observationsYAML = observations.yaml
 rm $observationsYAML
 touch $observationsYAML
 
+# parse observations__resource for instruments that allow bias correction
 # need to change to mainScriptDir for getObservationsOrNone to work
 cd ${mainScriptDir}
 set key = instrumentsAllowingBiasCorrection
-set $key = "`$getObservationsOrNone ${observations__resource}.${key}`"
+set $key = (`$getObservationsOrNone ${observations__resource}.${key}`)
 cd ${self_WorkDir}
 
 set found = 0
 foreach instrument ($observations)
   echo "Preparing YAML for ${instrument} observations"
-  set missing=0
+  set obsFileMissingCount=0
   # check that instrument string matches at least one non-broken observation file link
-  find ${InDBDir}/${instrument}_obs_*.h5 -mindepth 0 -maxdepth 0
-    if ($? > 0) then
-      @ missing++
-    else
-      set brokenLinks=( `find ${InDBDir}/${instrument}_obs_*.h5 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
-      foreach link ($brokenLinks)
-        @ missing++
-      end
-    endif
+  find ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 -mindepth 0 -maxdepth 0
+  if ($? > 0) then
+    @ obsFileMissingCount++
+  else
+    set brokenLinks=( `find ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
+    foreach link ($brokenLinks)
+      @ obsFileMissingCount++
+    end
+  endif
+
   set allowsBiasCorrection = False
   foreach i ($instrumentsAllowingBiasCorrection)
     if ("$instrument" == "$i") then
       set allowsBiasCorrection = True
     endif
   end
-  ## Directories for YAML stubs
+
+  # declare subdirectories for YAML stubs, which depends on whether bias correction is applied
+  set AppYamlDirs = (base filters)
   if ($biasCorrection == True && $allowsBiasCorrection == True) then
     set AppYamlDirs = (base bias filtersWithBias)
-  else
-    set AppYamlDirs = (base filters)
   endif
 
   foreach subdir (${AppYamlDirs})
@@ -302,7 +301,7 @@ foreach instrument ($observations)
         set SUBYAML=${SUBYAML}-2018043006
       endif
     endif
-    if ($missing == 0) then
+    if ($obsFileMissingCount == 0) then
       echo "${instrument} data is present and selected; adding ${instrument} to the YAML"
       sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsYAML
       @ found++
@@ -401,7 +400,7 @@ sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
 sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
 
 # satellite bias correction directories
-sed -i 's@{{satelliteBiasDir}}@'${satBiasDir}'@g' $prevYAML
+sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $prevYAML
 sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 
 # (3) model-related substitutions

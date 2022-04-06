@@ -9,12 +9,9 @@ variational:
   nInnerIterations: [60,]
 
 ## biasCorrection
-# Use GDAS satellite bias coefficients created for specific dates or variational bias correction coefficients
-# OPTIONS: None, VarBC
+# whether to use variational bias correction
+# OPTIONS: True/False
   biasCorrection: False
-  fixedCoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
-  fixedTlapmeanCov: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
-  initialVARBCcoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
 
 ##ensembleCovarianceWeight and staticCovarianceWeight
 # weights of ensemble and static components of the background errorcovariance

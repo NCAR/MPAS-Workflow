@@ -79,6 +79,3 @@ endif
 setenv variationalYAMLPrefix variational_
 
 $setLocal biasCorrection
-$setLocal initialVARBCcoeff
-$setLocal fixedCoeff
-$setLocal fixedTlapmeanCov

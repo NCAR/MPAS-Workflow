@@ -1,5 +1,5 @@
   obs bias:
-    input file: {{satelliteBiasDir}}/satbias_amsua_metop-a.h5
+    input file: {{biasCorrectionDir}}/satbias_amsua_metop-a.h5
     output file: {{OutDBDir}}{{MemberDir}}/satbias_amsua_metop-a.h5
     variational bc:
       predictors: &predictors4
