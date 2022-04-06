@@ -1,6 +1,7 @@
 #!/bin/csh -f
 
 source config/experiment.csh
+source config/workflow.csh
 
 # job length and node/pe requirements
 # ===================================
@@ -23,9 +24,10 @@ setenv HofXNodes 32
 setenv HofXPEPerNode 16
 setenv HofXMemory 109
 
-set DeterministicVerifyObsJobMinutes = 5
+set DeterministicVerifyObsJobMinutes = 10
 set VerifyObsJobMinutes = ${DeterministicVerifyObsJobMinutes}
-set EnsembleVerifyObsEnsMeanMembersPerJobMinute = 10
+
+set EnsembleVerifyObsEnsMeanMembersPerJobMinute = 120
 @ VerifyObsEnsMeanJobMinutes = ${nEnsDAMembers} / ${EnsembleVerifyObsEnsMeanMembersPerJobMinute}
 @ VerifyObsEnsMeanJobMinutes = ${VerifyObsEnsMeanJobMinutes} + ${DeterministicVerifyObsJobMinutes}
 

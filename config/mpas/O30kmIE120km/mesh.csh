@@ -11,23 +11,34 @@ setenv MPASnCellsInner 40962
 setenv MPASnCellsEnsemble ${MPASnCellsInner}
 setenv MPASTimeStep 180.0
 setenv MPASDiffusionLengthScale 30000.0
-setenv RADTHINDISTANCE    "60.0"
+setenv RADTHINDISTANCE    "145.0"
 setenv RADTHINAMOUNT      "0.75"
 
-## ABI super-obbing footprint, set independently
-#  for variational and hofx
-#OPTIONS: 15X15, 59X59
-set variationalABISuperOb = 15X15
-set hofxABISuperOb = 15X15
-
-## AHI super-obbing footprint set independently
-#  for variational and hofx
-#OPTIONS: 15X15, 101X101
-set variationalAHISuperOb = 15X15
-set hofxAHISuperOb = 15X15
-
 ## Background Error
-# Last updated 08 Feb 2021
-# works for 36pe/128pe and 120km domain
-setenv bumpLocDir /glade/p/mmm/parc/bjung/pandac_common/bumploc/20210811
-setenv bumpLocPrefix bumploc_2000_5
+
+### Static B
+# TODO: should static B correspond to the inner or outer loop mesh?
+
+#### control variables: [stream_function, velocity_potential, temperature, spechum, surface_pressure]
+#### strategy: specific_univariate
+set bumpCovControlVariables = ( \
+  stream_function \
+  velocity_potential \
+  temperature \
+  spechum \
+  surface_pressure \
+)
+setenv bumpCovPrefix mpas_parametersbump_cov
+setenv bumpCovDir /glade/scratch/bjung/pandac/20220307_develop/bumpcov_tune
+setenv bumpCovStdDevFile /glade/scratch/bjung/pandac/20220307_develop/CMAT_00.tune/mpas.stddev.2018-04-15_00.00.00.nc
+setenv bumpCovVBalPrefix mpas_vbal
+setenv bumpCovVBalDir /glade/scratch/bjung/pandac/20220307_develop/bumpcov_tune
+
+### Ensemble localization
+
+#### strategy: common
+
+#### 1200km horizontal loc
+#### 6km height vertical loc
+setenv bumpLocPrefix bumploc_1200.0km_6.0km
+setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_16MAR2022code

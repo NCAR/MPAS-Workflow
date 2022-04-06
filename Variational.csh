@@ -26,10 +26,11 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
+source config/variational.csh
 source config/builds.csh
 source config/environment.csh
 source config/mpas/variables.csh
+source config/filestructure.csh
 source config/tools.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -38,14 +39,14 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-set self_WorkDir = $CyclingDADirs[1]
+set self_WorkDir = $CyclingDADir
 echo "WorkDir = ${self_WorkDir}"
 cd ${self_WorkDir}
 
 # build, executable, yaml
 set myBuildDir = ${VariationalBuildDir}
 set myEXE = ${VariationalEXE}
-set myYAML = ${self_WorkDir}/variational_${ArgMember}.yaml
+set myYAML = ${self_WorkDir}/${variationalYAMLPrefix}${ArgMember}.yaml
 
 if ( $ArgMember > $nEnsDAMembers ) then
   echo "ERROR in $0 : ArgMember ($ArgMember) must be <= nEnsDAMembers ($nEnsDAMembers)" > ./FAIL

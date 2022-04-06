@@ -1,5 +1,8 @@
 #!/bin/csh -f
 
+if ( $?config_builds ) exit 0
+set config_builds = 1
+
 #############################
 ## build directory structures
 #############################
@@ -13,7 +16,7 @@ setenv BuildCompiler 'gnu-openmpi'
 # Note: at this time, all executables should be built in the same environment, one that is
 # consistent with config/environmentForJedi.csh
 
-set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_09JAN2022
+set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_16MAR2022
 
 # Ungrib
 setenv ungribEXE ungrib.exe
@@ -48,9 +51,19 @@ setenv RTPPBuildDir ${commonBuild}/bin
 setenv MPASCore atmosphere
 setenv InitEXE mpas_init_${MPASCore}
 setenv InitBuildDir ${commonBuild}/bin
-setenv ForecastEXE mpas_${MPASCore}
 setenv ForecastTopBuildDir ${commonBuild}
-setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
+
+# Use a static single-precision build of MPAS-A to conserve resources
+setenv ForecastBuildDir /glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single
+setenv ForecastEXE ${MPASCore}_model
+
+# TODO: enable single-precision MPAS-A build in mpas-bundle, then use bundle-built executables
+# Note to developers: it is easier to use the ForecastBuildDir and ForecastEXE settings below when
+# modifying MPAS-Model source code.  The added expense is minimal for short-range cycling tests.
+# This also requires modifying the mpiexec executable in forecast.csh.
+#setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
+#setenv ForecastEXE mpas_${MPASCore}
+
 
 setenv MPASLookupDir ${ForecastTopBuildDir}/MPAS/core_${MPASCore}
 set MPASLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)

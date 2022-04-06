@@ -4,6 +4,8 @@ date
 
 # Setup environment
 # =================
+source config/forecast.csh
+source config/model.csh
 source config/filestructure.csh
 source config/modeldata.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
@@ -16,9 +18,10 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-echo "WorkDir = ${InitICDir}"
-mkdir -p ${InitICDir}
-cd ${InitICDir}
+set WorkDir = ${InitICWorkDir}/${thisValidDate}
+echo "WorkDir = ${WorkDir}"
+mkdir -p ${WorkDir}
+cd ${WorkDir}
 
 # ================================================================================================
 
@@ -37,12 +40,12 @@ end
 rm ${StreamsFileInit}
 cp -v ${initModelConfigDir}/${StreamsFileInit} .
 sed -i 's@nCells@'${MPASnCellsOuter}'@' ${StreamsFileInit}
-sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFileInit}
+sed -i 's@forecastPrecision@'${forecast__precision}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}
 cp -v ${initModelConfigDir}/${NamelistFileInit} .
-sed -i 's@startTime@'${NMLDate}'@' $NamelistFileInit
+sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFileInit
 
 # Run the executable

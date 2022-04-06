@@ -16,28 +16,21 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-echo "WorkDir = ${InitICDir}"
-mkdir -p ${InitICDir}
-cd ${InitICDir}
+set WorkDir = ${InitICWorkDir}/${thisValidDate}
+echo "WorkDir = ${WorkDir}"
+mkdir -p ${WorkDir}
+cd ${WorkDir}
 
 # ================================================================================================
 
-## link ungribbed GFS
-set fhour = 000
+## link Vtable
 set Vtable = Vtable.GFS_FV3
-set linkWPS = link_grib.csh
-set GFSprefix = gfs.0p25
-rm -rf GRIBFILE.*
-ln -sfv ${WPSBuildDir}/${linkWPS} .
-./${linkWPS} ${GFSgribdirRDA}/${yy}/${yymmdd}/${GFSprefix}.${yymmdd}${hh}.f${fhour}.grib2
-
-## copy Vtable
 ln -sfv ${VtableDir}/${Vtable} Vtable
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}
 cp -v ${initModelConfigDir}/${NamelistFileWPS} .
-sed -i 's@startTime@'${NMLDate}'@' $NamelistFileWPS
+sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
 
 # Run the executable
 # ==================

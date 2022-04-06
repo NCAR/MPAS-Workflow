@@ -1,0 +1,27 @@
+- obs space:
+    <<: *ObsSpace
+    name: amsua_metop-c
+    obsdatain:
+      obsfile: {{InDBDir}}/amsua_metop-c_obs_{{thisValidDate}}.h5
+    obsdataout:
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua_metop-c.h5
+    simulated variables: [brightness_temperature]
+    channels: &amsua_metop-c_channels 5,6,9
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *clearCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: amsua_metop-c
+  get values:
+    <<: *GetValues
+  obs filters:
+  - filter: PreQC
+    maxvalue: 0
+#  - filter: Gaussian Thinning
+#    horizontal_mesh: {{RADTHINDISTANCE}}
+  - filter: GOMsaver
+    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua_metop-c.nc4
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter

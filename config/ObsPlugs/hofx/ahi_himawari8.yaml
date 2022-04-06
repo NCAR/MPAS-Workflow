@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: ahi_himawari8
     obsdatain:
-      obsfile: InDBDir/ahi_himawari8_obs_2018041500.h5
+      obsfile: {{InDBDir}}/ahi_himawari8_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_ahi_himawari8.h5
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_ahi_himawari8.h5
     simulated variables: [brightness_temperature]
     channels: &ahi_channels 7-16
   obs error: *ObsErrorDiagonal
@@ -54,7 +54,7 @@
         name: ObsErrorModelRamp@ObsFunction
         channels: *ahi_channels
         options:
-          <<: *ahi_himawari8_SymmCldFitsAHISUPEROBGRID-HofXMeshDescriptor
+          <<: *ahi_himawari8_SymmCldFits{{AHISUPEROBGRID}}-{{HofXMeshDescriptor}}
           channels: *ahi_channels
           xvar:
             name: SymmCldImpactIR@ObsFunction
@@ -62,9 +62,9 @@
             options:
               channels: *ahi_channels
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_ahi_himawari8.nc4
+    filename: {{OutDBDir}}/{{geoPrefix}}_ahi_himawari8.nc4
   - filter: YDIAGsaver
-    filename: OutDBDir/diagPrefix_ahi_himawari8.nc4
+    filename: {{OutDBDir}}/{{diagPrefix}}_ahi_himawari8.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *ahi_channels

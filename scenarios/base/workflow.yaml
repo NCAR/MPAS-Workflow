@@ -1,0 +1,146 @@
+####################################################################################################
+workflow:
+#############
+# date bounds
+#############
+## firstCyclePoint
+# initial date of this experiment
+# OPTIONS:
+#   + 20180414T18
+#   + 20200722T18
+#   + any other date for ColdStart
+  firstCyclePoint: 20180414T18
+
+## initialCyclePoint
+# OPTIONS: >= FirstCycleDate (see config/experiment.csh)
+# Either:
+# + initialCyclePoint must be equal to FirstCycleDate
+# OR:
+# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate
+#   to automatically restart from a previously completed cycle.
+  initialCyclePoint: 20180414T18
+
+## finalCyclePoint
+# OPTIONS: >= initialCyclePoint
+# + ancillary model and/or observation data must be available between initialCyclePoint and
+#   finalCyclePoint
+  finalCyclePoint: 20180514T18
+
+################
+# task selection
+################
+## InitializationType
+# Indicates the type of initialization in the R1 cylc task of the first cycle: cold or warm start
+# OPTIONS:
+#   ColdStart - generate first forecast online from an external GFS analysis
+#   WarmStart - copy a pre-generated forecast
+  InitializationType: WarmStart
+
+## CriticalPathType: controls dependencies between and chilrdren of
+#                   `da` and `forecast` mini-workflows
+# OPTIONS:
+# + Normal - run both the `da` and `forecast` mini-workflows, each with a dependency on the
+#            previous instance of the other
+#          - run selected verification elements with dependence on the `da` and `forecast`
+#            mini-workflow sub-tasks
+# + Bypass - do not run either `da` or `forecast` mini-workflows
+#          - only run `verification` mini-workflows, including non-critical path forecasts, e.g.,
+#            VerifyExtendedMeanFC
+# + Reanalysis
+#   - run only the `da` mini-workflow in the critical path, and also verification
+#   - requires CyclingFC forecast files or links to already be present in ExperimentDirectory
+# + Reforecast
+#   - run only the `forecast` mini-workflow in the critical path, and also verification
+#   - requires CyclingDA analysis files or links to already be present in ExperimentDirectory
+#
+# Users may choose whether to run the verification concurrently with and
+# dependent on the critical path tasks (`Normal`), or as an independent post-processing step
+# (`Bypass`). `Normal` and `Bypass` cover most use-cases for "continuous cycling" experiments.
+#
+# Setting `CriticalPathType` to either `Reanalysis` or `Reforecast` gives two variations of
+# "partial cycling", where each cycle is independent and does not depend on any of the previous
+# cycles. `Reanalysis` is used to perform the `da` task on each cycle without re-running
+# forecasts.  This requires the `forecast` output files to already be present in the experiment
+# directory.  If the user wishes to do this for independently-generated forecasts (i.e., from a
+# previous separate experiment or a set of forecasts generated outside `MPAS-Workflow`), they
+# must manually create an experiment directory, then either link or copy the forecast files into the
+# `CyclingFC` directory following the usual directory structure and file-naming conventions.
+# `Reforecast` is used to perform forecasts from an existing set of analysis states, which similarly
+# must be already stored or linked in the `CyclingDA` directory following normal directory structures
+# and file naming conventions.  It is recommended to run at least one `Normal` experiment to
+# demonstrate the correct directory structure before trying either of the `Reanalysis` or
+# `Reforecast` options.
+  CriticalPathType: Normal
+
+## VerifyDeterministicDA: whether to run verification scripts for
+#    obs feedback files produced by DA.  Does not work for ensemble DA.
+#    Only works when CriticalPathType == Normal.
+# OPTIONS: True/False
+  VerifyDeterministicDA: True
+
+## CompareDA2Benchmark: compare verification statistics files between two experiments
+#    after the DA verification completes
+# OPTIONS: True/False
+  CompareDA2Benchmark: False
+
+## VerifyExtendedMeanFC: whether to run verification scripts across
+#    extended forecast states, first intialized at mean analysis
+# OPTIONS: True/False
+  VerifyExtendedMeanFC: False
+
+## VerifyBGMembers: whether to run verification scripts for CyclingWindowHR
+#    forecast length. Runs HofXBG, VerifyObsBG, and VerifyModelBG on critical
+#    path forecasts that are initialized from ensemble member analyses.
+# OPTIONS: True/False
+  VerifyBGMembers: False
+
+## CompareBG2Benchmark: compare verification statistics files between two experiments
+#    after the BGMembers verification completes
+# OPTIONS: True/False
+  CompareBG2Benchmark: False
+
+## VerifyEnsMeanBG: whether to run verification scripts for ensemble mean
+#    background (nEnsDAMembers > 1) or deterministic background (nEnsDAMembers == 1)
+# OPTIONS: True/False
+  VerifyEnsMeanBG: True
+
+## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
+#    space while VerifyEnsMeanBG is True.  Automatically triggers HofXBG
+#    for all ensemble members.
+# OPTIONS: True/False
+  DiagnoseEnsSpreadBG: True
+
+## VerifyEnsMeanAN: whether to run verification scripts for ensemble
+#    mean analysis state.
+# OPTIONS: True/False
+  VerifyANMembers: False
+
+## VerifyExtendedEnsBG: whether to run verification scripts across
+#    extended forecast states, first intialized at ensemble of analysis
+#    states.
+# OPTIONS: True/False
+  VerifyExtendedEnsFC: False
+
+##################################
+## analysis and forecast intervals
+##################################
+  # interval between `da` analyses
+  CyclingWindowHR: 6
+
+  # length of verification forecasts
+  ExtendedFCWindowHR: 240
+
+  # interval between OMF verification times of an individual forecast
+  ExtendedFC_DT_HR: 12
+
+  # times of the day to run extended forecast from mean analysis
+  ExtendedMeanFCTimes: T00,T12
+
+  # times of the day to run ensemble of extended forecasts
+  ExtendedEnsFCTimes: T00
+
+  # window of observations included in AN/BG verification
+  DAVFWindowHR: 6
+
+  # window of observations included in forecast verification
+  FCVFWindowHR: 6

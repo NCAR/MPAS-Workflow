@@ -1,0 +1,27 @@
+model:
+## MPASGridDescriptor [Required Parameter]
+# used to distinguish betwen MPAS meshes across experiments
+# O = variational Outer loop, forecast, HofX
+# I = variational Inner loop
+# E = variational Ensemble
+# OPTIONS:
+#   + OIE120km -- 3dvar, 3denvar, eda_3denvar
+#   + O30kmIE120km -- dual-resolution 3denvar
+#   + OIE60km -- eda_3denvar only
+#   + TODO: OIE60km -- 3denvar, requires generating MPASSeaVariables update files from GFS analyses
+#   + O30kmIE60km -- dual-resolution 3denvar
+#   + TODO: "OIE30km" 3denvar
+#   + TODO: "O30kmIE60km" dual-resolution eda_3denvar with 60km ensemble, 30km deterministic
+#   + TODO: "OE30kmI60km" dual-resolution eda_3denvar with 30km ensemble, no deterministic?
+#   + TODO: "OIE120km" 4denvar
+#   + TODO: "OIE60km" 4denvar
+#   + TODO: "O30kmIE60km" dual-resolution 4denvar
+  MPASGridDescriptor: None
+
+## Analysis source
+# OPTIONS: GFSfromPANDACArchive, GFSfromRDAOnline, GFSfromNCEPFTPOnline
+  AnalysisSource: GFSfromPANDACArchive
+
+## GraphInfoDir
+# directory containing x1.{{nCells}}.graph.info* files
+  GraphInfoDir: /glade/work/duda/static_moved_to_campaign

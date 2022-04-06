@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: mhs_metop-b
     obsdatain:
-      obsfile: InDBDir/mhs_metop-b_obs_2018041500.h5
+      obsfile: {{InDBDir}}/mhs_metop-b_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDir/obsPrefix_mhs_metop-b.h5
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_mhs_metop-b.h5
     simulated variables: [brightness_temperature]
     channels: &mhs_metop-b_channels 1-5
   obs error: *ObsErrorDiagonal
@@ -18,18 +18,10 @@
   obs filters:
   - filter: PreQC
     maxvalue: 0
-#  - filter: Domain Check
-#    filter variables:
-#    - name: brightness_temperature
-#      channels: *mhs_metop-b_channels
-#    where:
-#    - variable:
-#        name: water_area_fraction@GeoVaLs
-#      minvalue: 1.0
   - filter: GOMsaver
-    filename: OutDBDir/geoPrefix_mhs_metop-b.nc4
+    filename: {{OutDBDir}}/{{geoPrefix}}_mhs_metop-b.nc4
   - filter: YDIAGsaver 
-    filename: OutDBDir/diagPrefix_mhs_metop-b.nc4
+    filename: {{OutDBDir}}/{{diagPrefix}}_mhs_metop-b.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *mhs_metop-b_channels

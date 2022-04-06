@@ -2,9 +2,9 @@
     <<: *ObsSpace
     name: amsua-cld_n15
     obsdatain:
-      obsfile: InDBDir/amsua_n15_obs_2018041500.h5
+      obsfile: {{InDBDir}}/amsua_n15_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: OutDBDirOOPSMemberDir/obsPrefix_amsua-cld_n15.h5
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua-cld_n15.h5
     simulated variables: [brightness_temperature]
     channels: &amsua-cld_n15_channels 1-5,15
   obs error: *ObsErrorDiagonal
@@ -20,8 +20,8 @@
     maxvalue: 0
   - filter: Background Check
     threshold: 3
-    apply at iterations: 0, 1
+    <<: *multiIterationFilter
 #  - filter: Gaussian Thinning
-#    horizontal_mesh: RADTHINDISTANCE #km
+#    horizontal_mesh: {{RADTHINDISTANCE}}
   - filter: GOMsaver
-    filename: OutDBDirOOPSMemberDir/geoPrefix_amsua-cld_n15.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_n15.nc4

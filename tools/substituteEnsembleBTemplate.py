@@ -15,17 +15,48 @@ def substituteEnsembleB():
   ap = argparse.ArgumentParser()
 
   ap.add_argument(
-    'stateFiles',
+    'Directory0',
     type=str,
-    help='Plain text file with list of ensemble state files'
+    help='first part of directory name, before member directory'
   )
+
+  ap.add_argument(
+    'memberPrefix',
+    type=str,
+    help='prefix of the member directory; if None, will be left blank'
+  )
+
+  ap.add_argument(
+    'Directory1',
+    type=str,
+    help='second part of directory name, after member directory'
+  )
+
+  ap.add_argument(
+    'File',
+    type=str,
+    help='common file name for all members'
+  )
+
+  ap.add_argument(
+    'nDigits',
+    type=int,
+    help='number of digits, including padded zeros, in member directory name'
+  )
+
+  ap.add_argument(
+    'nMembers',
+    type=int,
+    help='number of members'
+  )
+
   ap.add_argument(
     'yamlFiles',
     type=str,
     help=textwrap.dedent(
       '''
       Plain text file with list of YAML files that will be modified. When len(yamlFiles) > 1,
-      the order is assumed to correspond to stateFiles.
+      the order is assumed to correspond to the order of background states.
       ''')
   )
   ap.add_argument(
@@ -54,7 +85,16 @@ def substituteEnsembleB():
   # parse the arguments
   args = ap.parse_args()
 
-  stateFiles = args.stateFiles
+  memberPrefix = args.memberPrefix
+  if memberPrefix == 'None':
+    memberPrefix = ''
+
+  Directory1 = args.Directory1
+  if Directory1 == 'None':
+    Directory1 = ''
+  else:
+    Directory1 += '/'
+
   yamlFiles = args.yamlFiles
 
   substitutionString = args.substitutionString
@@ -62,45 +102,53 @@ def substituteEnsembleB():
   SelfExclusion = bool(strtobool(args.SelfExclusion))
   shuffle = args.shuffle
 
-  # create ensemble member state yaml stubs
-  with open(stateFiles) as f:
-    filedata = f.read()
-
-  states = OrderedDict()
-  for member, file in enumerate(filedata.split('\n')[:-1]):
-    stub = indent+'- <<: *memberConfig\n'
-    stub = stub+indent+'  filename: '+file+'\n'
-    states[str(member)] = stub
-
   # variational yaml files
   with open(yamlFiles) as f:
     filedata = f.read()
 
   yamls = OrderedDict()
   for member, file in enumerate(filedata.split('\n')[:-1]):
-    yamls[str(member)] = file
+    yamls[str(member+1)] = file
 
-  # substitute all relevant ensemble state stubs into all yaml files
+  membersTemplate = \
+'''
+members from template:
+  template:
+    <<: *memberConfig
+    filename: '''+args.Directory0+'/'+memberPrefix+'%iMember%/'+Directory1+args.File+'''
+  pattern: %iMember%
+  start: 1
+  zero padding: '''+str(args.nDigits)+'''
+'''
+
+  # substitute members template into all yaml files
   for yamlMember, yamlFile in yamls.items():
-    # first shuffle the stub order so that file reading order is diverse
-    # across variational application instances
-    stateMembers = list(states.keys())
-    if shuffle: random.shuffle(stateMembers)
+    nonIndented = membersTemplate
 
-    # populate replacementString with yaml stubs
+    # nmembers and except depends on the SelfExclusion argument
+    if SelfExclusion and len(yamls) > 1:
+      nonIndented += \
+'''
+  nmembers: '''+str(args.nMembers-1)+'''
+  except: ['''+yamlMember+''']
+'''
+    else:
+      nonIndented += \
+'''
+  nmembers: '''+str(args.nMembers)+'''
+'''
+
     replacementString = ''
-
-    for stateMember in stateMembers:
-      if SelfExclusion and yamlMember==stateMember and len(yamls) > 1: continue
-      replacementString += states[stateMember]
-
+    for s in nonIndented.split('\n'):
+      if s == '': continue
+      replacementString+=indent+s+'\n'
 
     # read yamlFile
     with open(yamlFile) as f:
       filedata = f.read()
 
     # replace for substitutionString
-    filedata = filedata.replace(substitutionString+'\n', replacementString)
+    filedata = filedata.replace('{{'+substitutionString+'}}\n', replacementString)
 
     # replace yamlFile with new version
     f = open(yamlFile, 'w')

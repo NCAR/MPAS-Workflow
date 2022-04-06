@@ -1,7 +1,5 @@
 #!/bin/csh -f
 
-#TODO: move this script functionality and relevent control's to python + maybe yaml
-
 # Prepares a directory for mpas-jedi hofx and variational applications
 # + namelist.atmosphere, streams.atmosphere, stream_list.atmosphere.*
 # + links observation data
@@ -46,14 +44,16 @@ endif
 # Setup environment
 # =================
 source config/environment.csh
-source config/experiment.csh
 source config/filestructure.csh
+source config/forecast.csh
+source config/model.csh
+source config/observations.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/modeldata.csh
-source config/obsdata.csh
 source config/mpas/variables.csh
 source config/builds.csh
+source config/AppTypeTEMPLATE.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -71,8 +71,6 @@ cd ${self_WorkDir}
 
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
-set self_ObsList = (${AppTypeTEMPLATEObsList})
-set self_VARBCTable = VARBCTableTEMPLATE
 set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
 set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
@@ -91,9 +89,6 @@ set yy = `echo ${prevValidDate} | cut -c 1-4`
 set mm = `echo ${prevValidDate} | cut -c 5-6`
 set dd = `echo ${prevValidDate} | cut -c 7-8`
 set hh = `echo ${prevValidDate} | cut -c 9-10`
-set prevFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
-set prevNMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
-set prevConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
 #TODO: HALF STEP ONLY WORKS FOR INTEGER VALUES OF self_WindowHR
 @ HALF_DT_HR = ${self_WindowHR} / 2
@@ -111,7 +106,7 @@ set yy = `echo ${halfprevValidDate} | cut -c 1-4`
 set mm = `echo ${halfprevValidDate} | cut -c 5-6`
 set dd = `echo ${halfprevValidDate} | cut -c 7-8`
 set hh = `echo ${halfprevValidDate} | cut -c 9-10`
-set halfprevConfDate = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
+set halfprevISO8601Date = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 
 # =========================================
 # =========================================
@@ -153,7 +148,7 @@ foreach StreamsFile_ ($StreamsFileList)
   sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${StreamsFile_}
   sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
-  sed -i 's@forecastPrecision@'${forecastPrecision}'@' ${StreamsFile_}
+  sed -i 's@forecastPrecision@'${forecast__precision}'@' ${StreamsFile_}
 end
 
 ## copy/modify dynamic namelist file
@@ -162,7 +157,7 @@ foreach NamelistFile_ ($NamelistFileList)
   @ iMesh++
   rm ${NamelistFile_}
   cp -v ${self_ModelConfigDir}/${NamelistFile} ./${NamelistFile_}
-  sed -i 's@startTime@'${NMLDate}'@' ${NamelistFile_}
+  sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
   sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'${MPASTimeStep}'@' ${NamelistFile_}
@@ -174,88 +169,56 @@ foreach file ($MPASJEDIVariablesFiles)
   ln -sfv ${ModelConfigDir}/${file} .
 end
 
-# ================
-# Observation data
-# ================
 
-# get application index
-# =====================
-set index = 0
-foreach application (${applicationIndex})
-  @ index++
-  if ( $application == ${self_AppType} ) then
-    set myAppIndex = $index
-  endif
-end
+# ======================
+# Link observations data
+# ======================
 
-# setup directories
-# =================
 rm -r ${InDBDir}
 mkdir -p ${InDBDir}
+
 rm -r ${OutDBDir}
-set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $self_AppName $member`
-  mkdir -p ${OutDBDir}${memDir}
-  @ member++
+mkdir -p ${OutDBDir}
+
+date
+
+foreach instrument ($observations)
+  echo "Retrieving data for ${instrument} observations"
+  # need to change to mainScriptDir for getObservationsOrNone to work
+  cd ${mainScriptDir}
+
+  # Check for instrument-specific directory first
+  set key = IODADirectory
+  set address = "${observations__resource}.${key}.${self_AppType}.${instrument}"
+  # TODO: this is somewhat slow with lots of redundant loads of the entire observations.yaml config
+  set IODADirectory = "`$getObservationsOrNone ${address}`"
+  if ("$IODADirectory" == None) then
+    # Fall back on "common" directory, if present
+    set address_ = "${observations__resource}.${key}.${self_AppType}.common"
+    set IODADirectory = "`$getObservationsOrNone ${address_}`"
+    if ("$IODADirectory" == None) then
+      echo "$0 (WARNING): skipping ${instrument} due to missing value at ${address} and ${address_}"
+      continue
+    endif
+  endif
+  # substitute $ObsWorkDir for {{ObsWorkDir}}
+  set IODADirectory = `echo "$IODADirectory" | sed 's@{{ObsWorkDir}}@'$ObsWorkDir'@'`
+
+  # prefix
+  set key = IODAPrefix
+  set address = "${observations__resource}.${key}.${instrument}"
+  set IODAPrefix = "`$getObservationsOrNone ${address}`"
+  if ("$IODAPrefix" == None) then
+    set IODAPrefix = ${instrument}
+  endif
+  cd ${self_WorkDir}
+
+  # link the data
+  ln -sfv ${IODADirectory}/${thisValidDate}/${IODAPrefix}_obs_${thisValidDate}.h5 \
+          ${InDBDir}/${instrument}_obs_${thisValidDate}.h5
+  date
 end
 
-if ( $PreprocessObs == True ) then
-  # conventional
-  # ============
-  ln -sfv ${ObsDir}/aircraft_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/ascat_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/gnssro_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/satwind_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/satwnd_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/sfc_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/sondes_obs*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/profiler_obs*.h5 ${InDBDir}/
-
-  # AMSUA+MHS+IASI
-  # =========
-  ln -sfv ${ObsDir}/amsua*_obs_*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/mhs*_obs_*.h5 ${InDBDir}/
-  ln -sfv ${ObsDir}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
-
-  # Fixed satbias
-  # ===========
-  set SatbiasDir = ${SatbiascoeffDir}
-
-else
-  # conventional
-  # ============
-  ln -sfv $ConventionalObsDir/${thisValidDate}/aircraft_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/gnssro_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/satwind_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/sfc_obs*.h5 ${InDBDir}/
-  ln -sfv $ConventionalObsDir/${thisValidDate}/sondes_obs*.h5 ${InDBDir}/
-
-  # AMSUA+MHS
-  # =========
-  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/amsua*_obs_*.h5 ${InDBDir}/
-  ln -sfv $PolarMWObsDir[$myAppIndex]/${thisValidDate}/mhs*_obs_*.h5 ${InDBDir}/
-
-  # ABI+AHI
-  # =======
-  ln -sfv $ABIObsDir[$myAppIndex]/${thisValidDate}/abi*_obs_*.h5 ${InDBDir}/
-  ln -sfv $AHIObsDir[$myAppIndex]/${thisValidDate}/ahi*_obs_*.h5 ${InDBDir}/
-
-  # IASI
-  # =======
-  ln -sfv ${IASIobsDir}/${thisValidDate}/iasi*_obs_${thisValidDate}.h5 ${InDBDir}/
-
-  # Fixed satbias
-  # ===========
-  set SatbiasDir = ${SatbiasFixcoeff}/${yyyy}
-endif
-
-# VarBC prior
-# ===========
-ln -sfv ${self_VARBCTable} ${InDBDir}/satbias_crtm_bak
-
-set ABISUPEROBGRID = $ABISuperOb[$myAppIndex]
-set AHISUPEROBGRID = $AHISuperOb[$myAppIndex]
 
 # =============
 # Generate yaml
@@ -276,44 +239,43 @@ endif
 # (2) obs-related substitutions
 # =============================
 
-## indentation of observations array members
-set nIndent = $applicationObsIndent[$myAppIndex]
-set obsIndent = "`${nSpaces} $nIndent`"
+## indentation of observations vector members, specified in config/AppTypeTEMPLATE.csh
+set obsIndent = "`${nSpaces} $nObsIndent`"
 
-## Add selected observations (see experiment.csh)
+## Add selected observations (see config/AppTypeTEMPLATE.csh)
 # (i) combine the observation YAML stubs into single file
 set observationsYAML = observations.yaml
 rm $observationsYAML
 touch $observationsYAML
 
 set found = 0
-foreach obs ($self_ObsList)
-  echo "Preparing YAML for ${obs} observations"
+foreach instrument ($observations)
+  echo "Preparing YAML for ${instrument} observations"
   set missing=0
-  set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${obs}
-  if ( "$obs" =~ *"sondes"* ) then
+  set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${instrument}
+  if ( "$instrument" =~ *"sondes"* ) then
     #KLUDGE to handle missing qv for sondes at single time
     if ( ${thisValidDate} == 2018043006 ) then
       set SUBYAML=${SUBYAML}-2018043006
     endif
   endif
-  # check that obs string matches at least one non-broken observation file link
-  find ${InDBDir}/${obs}_obs_*.h5 -mindepth 0 -maxdepth 0
+  # check that instrument string matches at least one non-broken observation file link
+  find ${InDBDir}/${instrument}_obs_*.h5 -mindepth 0 -maxdepth 0
     if ($? > 0) then
       @ missing++
     else
-      set brokenLinks=( `find ${InDBDir}/${obs}_obs_*.h5 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
+      set brokenLinks=( `find ${InDBDir}/${instrument}_obs_*.h5 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
       foreach link ($brokenLinks)
         @ missing++
       end
     endif
 
   if ($missing == 0) then
-    echo "${obs} data is present and selected; adding ${obs} to the YAML"
+    echo "${instrument} data is present and selected; adding ${instrument} to the YAML"
     sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsYAML
     @ found++
   else
-    echo "${obs} data is selected, but missing; NOT adding ${obs} to the YAML"
+    echo "${instrument} data is selected, but missing; NOT adding ${instrument} to the YAML"
   endif
 end
 if ($found == 0) then
@@ -321,92 +283,107 @@ if ($found == 0) then
   exit 1
 endif
 
-# (ii) concatenate all observations to thisYAML
-cat $observationsYAML >> $thisYAML
-
-# (iii) add re-usable YAML anchors
-set obsanchorssed = ObsAnchors
-set thisSEDF = ${obsanchorssed}SEDF.yaml
+# (ii) insert Observations
+set sedstring = Observations
+set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
-/${obsanchorssed}/c\
+/{{${sedstring}}}/c\
 EOF
 
 # substitute with line breaks
-set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${obsanchorssed}.yaml
+sed 's@$@\\@' ${observationsYAML} >> ${thisSEDF}
+
+# insert into prevYAML
+set thisYAML = insert${sedstring}.yaml
+sed -f ${thisSEDF} $prevYAML >! $thisYAML
+rm ${thisSEDF}
+set prevYAML = $thisYAML
+
+# (iii) insert re-usable YAML anchors
+set sedstring = ObsAnchors
+set thisSEDF = ${sedstring}SEDF.yaml
+cat >! ${thisSEDF} << EOF
+/{{${sedstring}}}/c\
+EOF
+
+# substitute with line breaks
+set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${sedstring}.yaml
 sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 echo '_blank: null' >> ${thisSEDF}
 
 # insert into prevYAML
-set thisYAML = insertObsAnchors.yaml
+set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
 
 
 ## Horizontal interpolation type
-sed -i 's@InterpolationType@'${InterpolationType}'@g' $thisYAML
+sed -i 's@{{InterpolationType}}@'${InterpolationType}'@g' $thisYAML
 
 
 ## QC characteristics
-sed -i 's@RADTHINDISTANCE@'${RADTHINDISTANCE}'@g' $thisYAML
-sed -i 's@RADTHINAMOUNT@'${RADTHINAMOUNT}'@g' $thisYAML
-sed -i 's@ABISUPEROBGRID@'${ABISUPEROBGRID}'@g' $thisYAML
-sed -i 's@AHISUPEROBGRID@'${AHISUPEROBGRID}'@g' $thisYAML
-sed -i 's@HofXMeshDescriptor@'${HofXMeshDescriptor}'@' $thisYAML
+sed -i 's@{{RADTHINDISTANCE}}@'${RADTHINDISTANCE}'@g' $thisYAML
+
+# need to change to mainScriptDir for getObservationsOrNone to work
+cd ${mainScriptDir}
+set ABISuperObGrid = "`$getObservationsOrNone ${observations__resource}.IODASuperObGrid.abi_g16`"
+set AHISuperObGrid = "`$getObservationsOrNone ${observations__resource}.IODASuperObGrid.ahi_himawari8`"
+cd ${self_WorkDir}
+
+if ("$ABISuperObGrid" != None) then
+  sed -i 's@{{ABISUPEROBGRID}}@'${ABISuperObGrid}'@g' $thisYAML
+endif
+if ("$AHISuperObGrid" != None) then
+  sed -i 's@{{AHISUPEROBGRID}}@'${AHISuperObGrid}'@g' $thisYAML
+endif
+
+sed -i 's@{{HofXMeshDescriptor}}@'${HofXMeshDescriptor}'@' $thisYAML
 
 
 ## date-time information
-# TODO(JJG): revise these date replacements to loop over
-#            all dates relevant to this application (e.g., 4DEnVar?)
-# previous date
-sed -i 's@2018-04-14_18.00.00@'${prevFileDate}'@g' $thisYAML
-sed -i 's@2018041418@'${prevValidDate}'@g' $thisYAML
-sed -i 's@2018-04-14T18:00:00Z@'${prevConfDate}'@g'  $thisYAML
-
 # current date
-sed -i 's@2018-04-15_00.00.00@'${fileDate}'@g' $thisYAML
-sed -i 's@2018041500@'${thisValidDate}'@g' $thisYAML
-sed -i 's@2018-04-15T00:00:00Z@'${ConfDate}'@g' $thisYAML
+sed -i 's@{{thisValidDate}}@'${thisValidDate}'@g' $thisYAML
+sed -i 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@g' $thisYAML
+sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $thisYAML
 
 # window length
-sed -i 's@PT6H@PT'${self_WindowHR}'H@g' $thisYAML
+sed -i 's@{{windowLength}}@PT'${self_WindowHR}'H@g' $thisYAML
 
 # window beginning
-sed -i 's@WindowBegin@'${halfprevConfDate}'@' $thisYAML
+sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
 
 
 ## obs-related file naming
 # crtm tables
-sed -i 's@CRTMTABLES@'${CRTMTABLES}'@g' $thisYAML
+sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 
 # input and output IODA DB directories
-sed -i 's@InDBDir@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
-sed -i 's@OutDBDir@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
+sed -i 's@{{InDBDir}}@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
+sed -i 's@{{OutDBDir}}@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
 
 # Satbias correction
 sed -i 's@SatbiasDir@'${SatbiasDir}'@g' $thisYAML
 
 # obs, geo, and diag files with self_AppType suffixes
-sed -i 's@obsPrefix@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
-sed -i 's@geoPrefix@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
-sed -i 's@diagPrefix@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
+sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
+sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
+sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
 
 
 # (3) model-related substitutions
 # ===============================
 
-# bg and an files
-sed -i 's@bgStatePrefix@'${BGFilePrefix}'@g' $thisYAML
-sed -i 's@bgStateDir@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
-sed -i 's@anStatePrefix@'${ANFilePrefix}'@g' $thisYAML
-sed -i 's@anStateDir@'${self_WorkDir}'/'${anDir}'@g' $thisYAML
+# bg file
+sed -i 's@{{bgStatePrefix}}@'${BGFilePrefix}'@g' $thisYAML
+sed -i 's@{{bgStateDir}}@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
 
 # streams+namelist
 set iMesh = 0
 foreach mesh ($MeshList)
   @ iMesh++
-  sed -i 's@'$mesh'StreamsFile@'${self_WorkDir}'/'$StreamsFileList[$iMesh]'@' $thisYAML
-  sed -i 's@'$mesh'NamelistFile@'${self_WorkDir}'/'$NamelistFileList[$iMesh]'@' $thisYAML
+  sed -i 's@{{'$mesh'StreamsFile}}@'${self_WorkDir}'/'$StreamsFileList[$iMesh]'@' $thisYAML
+  sed -i 's@{{'$mesh'NamelistFile}}@'${self_WorkDir}'/'$NamelistFileList[$iMesh]'@' $thisYAML
 end
 
 ## model and analysis variables
@@ -440,7 +417,7 @@ foreach VarGroup (Analysis Model State)
   end
   # remove trailing comma
   set VarSub = `echo "$VarSub" | sed 's/.$//'`
-  sed -i 's@'$VarGroup'Variables@'$VarSub'@' $thisYAML
+  sed -i 's@{{'$VarGroup'Variables}}@'$VarSub'@' $thisYAML
 end
 
 cp $thisYAML $appyaml

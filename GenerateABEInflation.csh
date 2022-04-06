@@ -4,7 +4,6 @@ date
 
 # Setup environment
 # =================
-source config/experiment.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
@@ -42,7 +41,7 @@ set gridTemplateFile = ${self_WorkDir}/${localStaticFieldsFile}
 
 # could use mean state, but not guaranteed to have all required fields
 #set meanStatePrefix = ${FCFilePrefix}
-#set meanName = ${meanStatePrefix}.$fileDate.nc
+#set meanName = ${meanStatePrefix}.$thisMPASFileDate.nc
 #set gridTemplateFile = $MeanBackgroundDirs[1]/$meanName
 
 

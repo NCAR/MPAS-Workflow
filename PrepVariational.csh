@@ -30,8 +30,10 @@ endif
 
 # Setup environment
 # =================
+source config/workflow.csh
 source config/environment.csh
-source config/experiment.csh
+source config/variational.csh
+source config/model.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
@@ -44,7 +46,7 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-set self_WorkDir = $CyclingDADirs[1]
+set self_WorkDir = $CyclingDADir
 echo "WorkDir = ${self_WorkDir}"
 cd ${self_WorkDir}
 
@@ -61,6 +63,19 @@ rm *.nc*.lock
 rm ${localStaticFieldsPrefix}*.nc*
 
 # ==================================================================================================
+
+# ========================================
+# Member-dependent Observation Directories
+# ========================================
+#TODO: Change behavior to always using member-specific directories
+#      instead of only for EDA.  Will make EDA omb/oma verification easier.
+set member = 1
+while ( $member <= ${nEnsDAMembers} )
+  set memDir = `${memberDir} $DAType $member`
+  mkdir -p ${OutDBDir}${memDir}
+  @ member++
+end
+
 
 # ============================
 # Variational YAML preparation
@@ -81,10 +96,10 @@ set prevYAML = prevPrep.yaml
 # Outer iterations configuration elements
 # ===========================================
 # performs sed substitution for VariationalIterations
-set iterationssed = VariationalIterations
-set thisSEDF = ${iterationssed}SEDF.yaml
+set sedstring = VariationalIterations
+set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
-/${iterationssed}/c\
+/${sedstring}/c\
 EOF
 
 set nIterationsIndent = 2
@@ -113,7 +128,7 @@ EOF
 
 end
 
-set thisYAML = insertIterations.yaml
+set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
@@ -122,10 +137,10 @@ set prevYAML = $thisYAML
 # Minimization algorithm configuration element
 # ================================================
 # performs sed substitution for VariationalMinimizer
-set algorithmsed = VariationalMinimizer
-set thisSEDF = ${algorithmsed}SEDF.yaml
+set sedstring = VariationalMinimizer
+set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
-/${algorithmsed}/c\
+/${sedstring}/c\
 EOF
 
 set nAlgorithmIndent = 4
@@ -143,126 +158,183 @@ EOF
 
 endif
 
-set thisYAML = insertAlgorithm.yaml
+set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
 
 
+# Analysis directory
+# ==================
+sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $prevYAML
+sed -i 's@{{anStateDir}}@'${self_WorkDir}'/'${anDir}'@g' $prevYAML
+
+
+# Hybrid Jb weights
+# =================
+if ( "$DAType" =~ *"hybrid"* ) then
+  sed -i 's@{{staticCovarianceWeight}}@'${staticCovarianceWeight}'@' $prevYAML
+  sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
+endif
+
+
+# Static Jb term
+# ==============
+if ( "$DAType" =~ *"3dvar"* || "$DAType" =~ *"hybrid"* ) then
+  # bumpCovControlVariables
+  set Variables = ($bumpCovControlVariables)
+#TODO: turn on hydrometeors in static B when applicable by uncommenting below
+# This requires the bumpCov* files to include hydrometeors
+#  # if any CRTM yaml section includes the *cloudyCRTMObsOperator alias, then hydrometeors
+#  # must be included in both the Analysis and State variables
+#  grep '*cloudyCRTMObsOperator' $prevYAML
+#  if ( $status == 0 ) then
+#    foreach hydro ($MPASHydroStateVariables)
+#      set Variables = ($Variables $hydro)
+#    end
+#  endif
+  set VarSub = ""
+  foreach var ($Variables)
+    set VarSub = "$VarSub$var,"
+  end
+  # remove trailing comma
+  set VarSub = `echo "$VarSub" | sed 's/.$//'`
+  sed -i 's@{{bumpCovControlVariables}}@'$VarSub'@' $prevYAML
+
+  # substitute bumpCov* file descriptors
+  sed -i 's@{{bumpCovPrefix}}@'${bumpCovPrefix}'@' $prevYAML
+  sed -i 's@{{bumpCovDir}}@'${bumpCovDir}'@' $prevYAML
+  sed -i 's@{{bumpCovStdDevFile}}@'${bumpCovStdDevFile}'@' $prevYAML
+  sed -i 's@{{bumpCovVBalPrefix}}@'${bumpCovVBalPrefix}'@' $prevYAML
+  sed -i 's@{{bumpCovVBalDir}}@'${bumpCovVBalDir}'@' $prevYAML
+endif # 3dvar || hybrid
+
+
 # Ensemble Jb term
 # ================
 
-## ensemble Jb yaml indentation
-if ( "$DAType" =~ *"envar"* ) then
-  set nEnsPbIndent = 4
-else if ( "$DAType" =~ *"hybrid"* ) then
-  set nEnsPbIndent = 8
-else
-  set nEnsPbIndent = 0
-endif
-set indentPb = "`${nSpaces} $nEnsPbIndent`"
-
-## ensemble Jb localization
-sed -i 's@bumpLocDir@'${bumpLocDir}'@g' $prevYAML
-sed -i 's@bumpLocPrefix@'${bumpLocPrefix}'@g' $prevYAML
-
-## ensemble Jb inflation
-# performs sed substitution for EnsemblePbInflation
-set enspbinfsed = EnsemblePbInflation
-set thisSEDF = ${enspbinfsed}SEDF.yaml
-set removeInflation = 0
-if ( "$DAType" =~ *"eda"* && ${ABEInflation} == True ) then
-  set inflationFields = ${CyclingABEInflationDir}/BT${ABEIChannel}_ABEIlambda.nc
-  find ${inflationFields} -mindepth 0 -maxdepth 0
-  if ($? > 0) then
-    ## inflation file not generated because all instruments (abi, ahi?) missing at this cylce date
-    #TODO: use last valid inflation factors?
-    set removeInflation = 1
+if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
+  ## yaml indentation
+  if ( "$DAType" =~ *"envar"* ) then
+    set nEnsPbIndent = 4
+  else if ( "$DAType" =~ *"hybrid"* ) then
+    set nEnsPbIndent = 8
   else
-    set thisYAML = insertInflation.yaml
-#NOTE: 'stream name: control' allows for spechum and temperature inflation values to be read
-#      read directly from inflationFields without a variable transform. Also requires spechum and
-#      temperature to be in stream_list.atmosphere.control.
+    set nEnsPbIndent = 0
+  endif
+  set indentPb = "`${nSpaces} $nEnsPbIndent`"
 
-cat >! ${thisSEDF} << EOF
-/${enspbinfsed}/c\
+  ## localization
+  sed -i 's@{{bumpLocDir}}@'${bumpLocDir}'@g' $prevYAML
+  sed -i 's@{{bumpLocPrefix}}@'${bumpLocPrefix}'@g' $prevYAML
+
+  ## inflation
+  # performs sed substitution for EnsemblePbInflation
+  set sedstring = EnsemblePbInflation
+  set thisSEDF = ${sedstring}SEDF.yaml
+  set removeInflation = 0
+  if ( ${ABEInflation} == True ) then
+    set inflationFields = ${CyclingABEInflationDir}/BT${ABEIChannel}_ABEIlambda.nc
+    find ${inflationFields} -mindepth 0 -maxdepth 0
+    if ($? > 0) then
+      ## inflation file not generated because all instruments (abi, ahi?) missing at this cylce date
+      #TODO: use last valid inflation factors?
+      set removeInflation = 1
+    else
+      set thisYAML = insert${sedstring}.yaml
+  #NOTE: 'stream name: control' allows for spechum and temperature inflation values to be read
+  #      read directly from inflationFields without a variable transform. Also requires spechum and
+  #      temperature to be in stream_list.atmosphere.control.
+
+  cat >! ${thisSEDF} << EOF
+/{{${sedstring}}}/c\
 ${indentPb}inflation field:\
 ${indentPb}  date: *analysisDate\
 ${indentPb}  filename: ${inflationFields}\
 ${indentPb}  stream name: control
 EOF
 
-    sed -f ${thisSEDF} $prevYAML >! $thisYAML
-    set prevYAML = $thisYAML
+      sed -f ${thisSEDF} $prevYAML >! $thisYAML
+      set prevYAML = $thisYAML
+    endif
+  else
+    set removeInflation = 1
   endif
-else
-  set removeInflation = 1
-endif
-if ($removeInflation > 0) then
-  # delete the line containing $enspbinfsed
-  sed -i '/^'${enspbinfsed}'/d' $prevYAML
+  if ($removeInflation > 0) then
+    # delete the line containing $sedstring
+    sed -i '/^{{'${sedstring}'}}/d' $prevYAML
+  endif
 endif
 
-## ensemble Jb members
-# + pure envar: background error.members
-# + hybrid envar: background error.components[iEnsemble].covariance.members
-#   where iEnsemble is the ensemble component index of the hybrid B
 
-# performs sed substitution for EnsemblePbMembers
-set enspbmemsed = EnsemblePbMembers
+# Generate individual background member yamls
+# ===========================================
 
-# established file lists
-set ensPbFiles = ${enspbmemsed}.txt
-rm $ensPbFiles
+# Note: all yaml prep before this point must be common across EDA members
+
 set yamlFiles = variationals.txt
+set yamlFileList = ()
+
 rm $yamlFiles
-
-# establish ensemble Pb member states
-set member = 1
-while ( $member <= ${ensPbNMembers} )
-  set memDir = `${memberDir} ensemble $member "${ensPbMemFmt}"`
-
-  set filename = ${ensPbDir}/${prevValidDate}${memDir}/${ensPbFilePrefix}.${fileDate}.nc
-  echo $filename >> $ensPbFiles
-  @ member++
-end
-
-# initialize variational member yamls
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set memberyaml = variational_${member}.yaml
+  set memberyaml = ${variationalYAMLPrefix}${member}.yaml
   echo $memberyaml >> $yamlFiles
+  set yamlFileList = ($yamlFileList $memberyaml)
   cp $prevYAML $memberyaml
 
   @ member++
 end
 
-# substitute Jb members
-setenv myCommand "${substituteEnsembleB} $ensPbFiles $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
-echo "$myCommand"
-${myCommand}
 
-rm $ensPbFiles $yamlFiles
+# Ensemble Jb term (member dependent)
+# ===================================
+
+if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
+  ## members
+  # + pure envar: 'background error.members from template'
+  # + hybrid envar: 'background error.components[iEnsemble].covariance.members from template'
+  #   where iEnsemble is the ensemble component index of the hybrid B
+
+  # performs sed substitution for EnsemblePbMembers
+  set enspbmemsed = EnsemblePbMembers
+
+  # substitute Jb members
+  setenv myCommand "${substituteEnsembleBTemplate} ${ensPbDir}/${prevValidDate} ${ensPbMemPrefix} None ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
+
+  echo "$myCommand"
+  ${myCommand}
+
+  if ($status != 0) then
+    echo "$0 (ERROR): failed to substitute ${enspbmemsed}" > ./FAIL
+    exit 1
+  endif
+
+endif # envar || hybrid
+
+rm $yamlFiles
 
 
-# Jo term
-# =======
+# Jo term (member dependent)
+# ==========================
 
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set memberyaml = variational_${member}.yaml
+  set memberyaml = $yamlFileList[$member]
 
   # member-specific state I/O and observation file output directory
   set memDir = `${memberDir} $DAType $member`
-  sed -i 's@OOPSMemberDir@'${memDir}'@g' $memberyaml
+  sed -i 's@{{MemberDir}}@'${memDir}'@g' $memberyaml
 
-  # first EDA member and deterministic EnVar do not perturb observations
-  if ($member == 1) then
-    sed -i 's@ObsPerturbations@false@g' $memberyaml
+  # deterministic EnVar does not perturb observations
+  if ($nEnsDAMembers == 1) then
+    sed -i 's@{{ObsPerturbations}}@false@g' $memberyaml
   else
-    sed -i 's@ObsPerturbations@true@g' $memberyaml
+    sed -i 's@{{ObsPerturbations}}@true@g' $memberyaml
   endif
-  sed -i 's@MemberSeed@'$member'@g' $memberyaml
+
+  sed -i 's@{{MemberNumber}}@'$member'@g' $memberyaml
+  sed -i 's@{{TotalMemberCount}}@'${nEnsDAMembers}'@g' $memberyaml
 
   @ member++
 end
@@ -308,8 +380,8 @@ while ( $member <= ${nEnsDAMembers} )
 
   # Link bg from StateDirs, ensuring that MPASJEDIDiagVariables are present
   # ============================================================================
-  set bgFileOther = ${other}/${self_StatePrefix}.$fileDate.nc
-  set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
+  set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
+  set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
   rm ${bgFile}${OrigFileSuffix} ${bgFile}
   ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
@@ -348,7 +420,7 @@ while ( $member <= ${nEnsDAMembers} )
     cp -v ${bgFileOther} ${bgFile}
 
     # add diagnostic variables
-    set diagFile = ${other}/${DIAGFilePrefix}.$fileDate.nc
+    set diagFile = ${other}/${DIAGFilePrefix}.$thisMPASFileDate.nc
     ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
   endif
 
@@ -369,6 +441,11 @@ while ( $member <= ${nEnsDAMembers} )
     set FirstCyclingFCDir = ${CyclingFCWorkDir}/${FirstCycleDate}${memDir}/Inner
     cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
     # modify xtime
+    # TODO: handle errors from python executions, e.g.:
+    # '''
+    #     import netCDF4 as nc
+    # ImportError: No module named netCDF4
+    # '''
     echo "${updateXTIME} $tFile ${thisCycleDate}"
     ${updateXTIME} $tFile ${thisCycleDate}
   endif
@@ -380,13 +457,13 @@ while ( $member <= ${nEnsDAMembers} )
     sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
     sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
   end
-  sed -i 's@StreamsFileMember@'${memSuffix}'@' variational_${member}.yaml
+  sed -i 's@{{StreamsFileMember}}@'${memSuffix}'@' $yamlFileList[$member]
 
   # Remove existing analysis file, make full copy from bg file
   # ==========================================================
   set an = $CyclingDAOutDirs[$member]
   mkdir -p ${an}
-  set anFile = ${an}/${ANFilePrefix}.$fileDate.nc
+  set anFile = ${an}/${ANFilePrefix}.$thisMPASFileDate.nc
   rm ${anFile}
   cp -v ${bgFile} ${anFile}
 

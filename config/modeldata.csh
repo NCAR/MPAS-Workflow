@@ -1,36 +1,17 @@
 #!/bin/csh -f
 
-source config/experiment.csh
+if ( $?config_modeldata ) exit 0
+set config_modeldata = 1
+
+source config/workflow.csh
+source config/model.csh
+source config/forecast.csh
+source config/variational.csh
 source config/filestructure.csh
-source config/tools.csh
+set wd = `pwd`
+source config/tools.csh $wd
 source config/mpas/${MPASGridDescriptor}/mesh.csh
-
-####################
-## static data files
-####################
-set ModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input
-set EnsembleModelData = ${ModelData}/${MPASGridDescriptorEnsemble}
-set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
-if ( ${InitializationType} == "ColdStart" ) then
-  set OuterModelData = ${ExpDir}/${MPASGridDescriptorOuter}
-  set InnerModelData = ${ExpDir}/${MPASGridDescriptorInner}
-  set GFSAnaDirOuter = ${OuterModelData}/GFSAna
-  set GFSAnaDirInner = ${InnerModelData}/GFSAna
-  setenv InitICWorkDir ${GFSAnaDirOuter}
-  # When ColdStart is fully functioning GFSAnaDirVerify will
-  # be equal to GFSAnaDirOuter for both initialization types
-  setenv GFSAnaDirVerify ${GFSAnaDirEnsemble}
-  # TODO(IHB): enable sea surface updating for ColdStart and set updateSea to 1 below
-  setenv updateSea 0
-else if ( ${InitializationType} == "WarmStart" ) then
-  set OuterModelData = ${ModelData}/${MPASGridDescriptorOuter}
-  set InnerModelData = ${ModelData}/${MPASGridDescriptorInner}
-  set GFSAnaDirOuter = ${OuterModelData}/GFSAna
-  set GFSAnaDirInner = ${InnerModelData}/GFSAna
-  setenv GFSAnaDirVerify ${GFSAnaDirOuter}
-  setenv updateSea 1  
-endif
-
+source config/${InitializationType}ModelData.csh
 
 ## file date for first background
 set yy = `echo ${FirstCycleDate} | cut -c 1-4`
@@ -68,7 +49,9 @@ setenv firstDetermFCDirOuter ${GFS6hfcFORFirstCycleOuter}
 setenv firstDetermFCDirInner ${GFS6hfcFORFirstCycleInner}
 
 ## stochastic - GEFS
-set gefsMemFmt = "/{:02d}"
+set gefsMemPrefix = "None"
+set gefsMemNDigits = 2
+set gefsMemFmt = "/{:0${gefsMemNDigits}d}"
 set nGEFSMembers = 20
 set GEFS6hfcFOREnsBDir = ${EnsembleModelData}/EnsForCov
 set GEFS6hfcFOREnsBFilePrefix = EnsForCov
@@ -99,7 +82,8 @@ endif
 # background covariance
 # ---------------------
 ## stochastic analysis (dynamic directory structure, depends on $nEnsDAMembers)
-set dynamicEnsBMemFmt = "${flowMemFmt}"
+set dynamicEnsBMemPrefix = "${flowMemPrefix}"
+set dynamicEnsBMemNDigits = ${flowMemNDigits}
 set dynamicEnsBFilePrefix = ${FCFilePrefix}
 
 ## select the ensPb settings based on DAType
@@ -109,18 +93,21 @@ if ( "$DAType" =~ *"eda"* ) then
 
   setenv ensPbDir ${dynamicEnsBDir}
   setenv ensPbFilePrefix ${dynamicEnsBFilePrefix}
-  setenv ensPbMemFmt "${dynamicEnsBMemFmt}"
+  setenv ensPbMemPrefix ${dynamicEnsBMemPrefix}
+  setenv ensPbMemNDigits ${dynamicEnsBMemNDigits}
   setenv ensPbNMembers ${dynamicEnsBNMembers}
 else
   ## deterministic analysis (static directory structure)
   # parse selections
   if ("$fixedEnsBType" == "GEFS") then
-    set fixedEnsBMemFmt = "${gefsMemFmt}"
+    set fixedEnsBMemPrefix = "${gefsMemPrefix}"
+    set fixedEnsBMemNDigits = ${gefsMemNDigits}
     set fixedEnsBNMembers = ${nGEFSMembers}
     set fixedEnsBDir = ${GEFS6hfcFOREnsBDir}
     set fixedEnsBFilePrefix = ${GEFS6hfcFOREnsBFilePrefix}
   else if ("$fixedEnsBType" == "PreviousEDA") then
-    set fixedEnsBMemFmt = "${dynamicEnsBMemFmt}"
+    set fixedEnsBMemPrefix = "${dynamicEnsBMemPrefix}"
+    set fixedEnsBMemNDigits = ${dynamicEnsBMemNDigits}
     set fixedEnsBNMembers = ${nPreviousEnsDAMembers}
     set fixedEnsBDir = ${PreviousEDAForecastDir}
     set fixedEnsBFilePrefix = ${dynamicEnsBFilePrefix}
@@ -131,24 +118,21 @@ else
 
   setenv ensPbDir ${fixedEnsBDir}
   setenv ensPbFilePrefix ${fixedEnsBFilePrefix}
-  setenv ensPbMemFmt "${fixedEnsBMemFmt}"
+  setenv ensPbMemPrefix "${fixedEnsBMemPrefix}"
+  setenv ensPbMemNDigits "${fixedEnsBMemNDigits}"
   setenv ensPbNMembers ${fixedEnsBNMembers}
 endif
 
 
 # MPAS-Model
 # ----------
-## directory containing x1.${MPASnCells}.graph.info* files
-setenv GraphInfoDir /glade/work/duda/static_moved_to_campaign
-
 ## sea/ocean surface files
 setenv seaMaxMembers ${nGEFSMembers}
-setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
 setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
 if ( "$DAType" =~ *"eda"* ) then
   # using member-specific sst/xice data from GEFS
   # 60km and 120km
-  setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr/${forecastPrecision}
+  setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr/${forecast__precision}
   setenv seaMemFmt "${gefsMemFmt}"
 else
   # deterministic
@@ -173,16 +157,6 @@ if ( "$DAType" =~ *"eda"* ) then
 else
   # deterministic
   # 30km, 60km, and 120km
-  if ( ${InitializationType} == "ColdStart" ) then
-    setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${FirstCycleDate}
-    setenv StaticFieldsDirInner ${GFSAnaDirInner}/${FirstCycleDate}
-    # TODO(IHB): modify InitICDir to use valid date instead of FirstCycleDate
-    # for verification purposes (remove it from here)
-    setenv InitICDir ${InitICWorkDir}/${FirstCycleDate}
-  else if ( ${InitializationType} == "WarmStart" ) then
-    setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
-    setenv StaticFieldsDirInner ${GFSAnaDirInner}
-  endif
   setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
   setenv staticMemFmt " "
   setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc

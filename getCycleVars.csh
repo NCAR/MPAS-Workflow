@@ -2,6 +2,9 @@
 
 source config/filestructure.csh
 source config/tools.csh
+source config/workflow.csh
+source config/variational.csh
+source config/${InitializationType}ModelData.csh
 
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 #set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`
@@ -10,10 +13,11 @@ setenv prevCycleDate ${prevCycleDate}
 
 ## setup cycle directory names
 set ObsDir = ${ObsWorkDir}/${thisValidDate}
-set CyclingDADirs = (${CyclingDAWorkDir}/${thisCycleDate})
+set CyclingDADir = ${CyclingDAWorkDir}/${thisCycleDate}
+set CyclingDAInDir = $CyclingDADir/${bgDir}
+set CyclingDAOutDir = $CyclingDADir/${anDir}
+set CyclingDADirs = (${CyclingDADir})
 set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})
-set CyclingDAInDir = $CyclingDADirs[1]/${bgDir}
-set CyclingDAOutDir = $CyclingDADirs[1]/${anDir}
 
 set prevCyclingDADir = ${CyclingDAWorkDir}/${prevCycleDate}
 set CyclingFCDir = ${CyclingFCWorkDir}/${thisCycleDate}
@@ -89,7 +93,11 @@ set yy = `echo ${thisValidDate} | cut -c 1-4`
 set mm = `echo ${thisValidDate} | cut -c 5-6`
 set dd = `echo ${thisValidDate} | cut -c 7-8`
 set hh = `echo ${thisValidDate} | cut -c 9-10`
-set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
-set NMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
-set ConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
+set thisMPASFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
+set thisMPASNamelistDate = ${yy}-${mm}-${dd}_${hh}:00:00
+set thisISO8601Date = ${yy}-${mm}-${dd}T${hh}:00:00Z
 set ICfileDate = ${yy}-${mm}-${dd}_${hh}
+
+if ( ${InitializationType} == "ColdStart" ) then
+  setenv GFSAnaDirVerify ${GFSAnaDirOuter}/${thisValidDate}
+endif

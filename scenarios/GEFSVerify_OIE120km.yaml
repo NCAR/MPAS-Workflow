@@ -1,0 +1,15 @@
+workflow:
+  InitializationType: WarmStart
+observations:
+  resource: PANDACArchive
+experiment:
+  ExpSuffix: _GEFSVerify
+model:
+  MPASGridDescriptor: OIE120km
+variational:
+  DAType: eda_3denvar
+  EDASize: 1
+  nDAInstances: 20
+  LeaveOneOutEDA: False
+  RTPPInflationFactor: 0.0
+  nInnerIterations: [,]

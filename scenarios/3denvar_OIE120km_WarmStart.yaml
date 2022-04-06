@@ -1,0 +1,8 @@
+workflow:
+  InitializationType: WarmStart
+observations:
+  resource: PANDACArchive
+model:
+  MPASGridDescriptor: OIE120km
+variational:
+  DAType: 3denvar
