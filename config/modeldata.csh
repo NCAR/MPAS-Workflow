@@ -29,15 +29,6 @@ set Ndd = `echo ${nextFirstCycleDate} | cut -c 7-8`
 set Nhh = `echo ${nextFirstCycleDate} | cut -c 9-10`
 set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
 
-## RDA data on Cheyenne
-setenv RDAdataDir /gpfs/fs1/collections/rda/data
-
-## RDA GFS forecasts
-setenv GFSgribdirRDA ${RDAdataDir}/ds084.1
-
-## linkWPS and Vtable files paths
-setenv VtableDir /glade/u/home/schwartz/MPAS_scripts
-
 # externally sourced model states
 # -------------------------------
 ## deterministic - GFS
