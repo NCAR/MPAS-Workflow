@@ -36,7 +36,7 @@ jobs:
           ls
           ls config
           pwd
-          sed -i 's@^set\ commonBuild\ =\ .*@set\ commonBuild\ =\ '${MPASBUNDLECodeBuildDirectory}'@' config/build.csh
+          sed -i 's@^set\ commonBuild\ =\ .*@set\ commonBuild\ =\ '${MPASBUNDLECodeBuildDirectory}'@' config/builds.csh 
           cat config/build.csh
           source env-setup/cheyenne.sh
           ./run.csh
