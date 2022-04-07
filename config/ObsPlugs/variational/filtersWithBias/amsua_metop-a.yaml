@@ -241,7 +241,7 @@
       options:
         channels: *amsua_metop-a_channels
         sensor: amsua_metop-a
-        use_flag: [ -1, -1, -1,  1,  1,
+        use_flag: [ -1, -1, -1, -1,  1,
                      1, -1, -1,  1, -1,
                     -1, -1, -1, -1, -1 ]
     maxvalue: 1.0e-12
@@ -257,7 +257,7 @@
       channels: *amsua_metop-a_channels
       options:
         channels: *amsua_metop-a_channels
-        use_flag: [ -1, -1, -1,  1,  1,
+        use_flag: [ -1, -1, -1, -1,  1,
                      1, -1, -1,  1, -1,
                     -1, -1, -1, -1, -1 ]
     minvalue: 1.0e-12
