@@ -33,6 +33,9 @@ jobs:
           module load jedi/gnu-openmpi
           module list
           export MPASBUNDLECodeBuildDirectory=/glade/work/maryamao/nightly_build/MPAS/GNU/build_Nightly
+          ls
+          ls config
+          pwd
           sed -i 's@^set\ commonBuild\ =\ .*@set\ commonBuild\ =\ '${MPASBUNDLECodeBuildDirectory}'@' config/build.csh
           cat config/build.csh
           source env-setup/cheyenne.sh
