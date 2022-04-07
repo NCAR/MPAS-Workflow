@@ -242,8 +242,8 @@
         channels: *amsua_aqua_channels
         sensor: amsua_aqua
         use_flag: [ -1, -1, -1, -1, -1,
-                    -1, -1,  1,  1,  1,
-                     1,  1,  1, -1, -1 ]
+                    -1, -1,  1,  1, -1,
+                    -1, -1, -1, -1, -1 ]
     maxvalue: 1.0e-12
     action:
       name: reject
@@ -258,8 +258,8 @@
       options:
         channels: *amsua_aqua_channels
         use_flag: [ -1, -1, -1, -1, -1,
-                    -1, -1,  1,  1,  1,
-                     1,  1,  1, -1, -1 ]
+                    -1, -1,  1,  1, -1,
+                    -1, -1, -1, -1, -1 ]
     minvalue: 1.0e-12
     action:
       name: reject
