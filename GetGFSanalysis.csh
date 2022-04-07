@@ -5,7 +5,6 @@ date
 
 # Setup environment
 # =================
-source config/workflow.csh
 source config/model.csh
 source config/filestructure.csh
 source config/builds.csh
@@ -36,7 +35,6 @@ if ( ${model__AnalysisSource} == "GFSfromRDAOnline" ) then
   set GFSgribdirRDA = /gpfs/fs1/collections/rda/data/ds084.1
   # link ungribbed GFS
   ./${linkWPS} ${GFSgribdirRDA}/${yy}/${yymmdd}/gfs.${res}.${yymmdd}${hh}.f${fhour}.grib2
-
 else if ( ${model__AnalysisSource} == "GFSfromNCEPFTPOnline" ) then
   echo "Getting GFS analysis from the NCEP FTP"
   # url for GFS data
@@ -56,8 +54,6 @@ else if ( ${model__AnalysisSource} == "GFSfromNCEPFTPOnline" ) then
      echo "$gfs_file not available yet -- exiting"
      exit 1
     endif
-  else
-    echo "$gfs_file is already in ${WorkDir}"
   endif
   # link ungribbed GFS
   ./${linkWPS} $gfs_file

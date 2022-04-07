@@ -191,23 +191,23 @@ foreach instrument ($observations)
   set key = IODADirectory
   set address = "${observations__resource}.${key}.${self_AppType}.${instrument}"
   # TODO: this is somewhat slow with lots of redundant loads of the entire observations.yaml config
-  set IODADirectory = "`$getObservationsOrNone ${address}`"
+  set $key = "`$getObservationsOrNone ${address}`"
   if ("$IODADirectory" == None) then
     # Fall back on "common" directory, if present
     set address_ = "${observations__resource}.${key}.${self_AppType}.common"
-    set IODADirectory = "`$getObservationsOrNone ${address_}`"
+    set $key = "`$getObservationsOrNone ${address_}`"
     if ("$IODADirectory" == None) then
       echo "$0 (WARNING): skipping ${instrument} due to missing value at ${address} and ${address_}"
       continue
     endif
   endif
   # substitute $ObsWorkDir for {{ObsWorkDir}}
-  set IODADirectory = `echo "$IODADirectory" | sed 's@{{ObsWorkDir}}@'$ObsWorkDir'@'`
+  set $key = `echo "$IODADirectory" | sed 's@{{ObsWorkDir}}@'$ObsWorkDir'@'`
 
   # prefix
   set key = IODAPrefix
   set address = "${observations__resource}.${key}.${instrument}"
-  set IODAPrefix = "`$getObservationsOrNone ${address}`"
+  set $key = "`$getObservationsOrNone ${address}`"
   if ("$IODAPrefix" == None) then
     set IODAPrefix = ${instrument}
   endif
@@ -219,6 +219,16 @@ foreach instrument ($observations)
   date
 end
 
+# =========================
+# Satellite bias correction
+# =========================
+# next cycle after FirstCycleDate
+set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
+if ( ${thisValidDate} == ${nextFirstDate} ) then
+  set biasCorrectionDir = $initialVARBCcoeff
+else
+  set biasCorrectionDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
+endif
 
 # =============
 # Generate yaml
@@ -248,35 +258,57 @@ set observationsYAML = observations.yaml
 rm $observationsYAML
 touch $observationsYAML
 
+# parse observations__resource for instruments that allow bias correction
+# need to change to mainScriptDir for getObservationsOrNone to work
+cd ${mainScriptDir}
+set key = instrumentsAllowingBiasCorrection
+set $key = (`$getObservationsOrNone ${observations__resource}.${key}`)
+cd ${self_WorkDir}
+
 set found = 0
 foreach instrument ($observations)
   echo "Preparing YAML for ${instrument} observations"
-  set missing=0
-  set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${instrument}
-  if ( "$instrument" =~ *"sondes"* ) then
-    #KLUDGE to handle missing qv for sondes at single time
-    if ( ${thisValidDate} == 2018043006 ) then
-      set SUBYAML=${SUBYAML}-2018043006
-    endif
-  endif
+  set obsFileMissingCount=0
   # check that instrument string matches at least one non-broken observation file link
-  find ${InDBDir}/${instrument}_obs_*.h5 -mindepth 0 -maxdepth 0
-    if ($? > 0) then
-      @ missing++
-    else
-      set brokenLinks=( `find ${InDBDir}/${instrument}_obs_*.h5 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
-      foreach link ($brokenLinks)
-        @ missing++
-      end
-    endif
-
-  if ($missing == 0) then
-    echo "${instrument} data is present and selected; adding ${instrument} to the YAML"
-    sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsYAML
-    @ found++
+  find ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 -mindepth 0 -maxdepth 0
+  if ($? > 0) then
+    @ obsFileMissingCount++
   else
-    echo "${instrument} data is selected, but missing; NOT adding ${instrument} to the YAML"
+    set brokenLinks=( `find ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
+    foreach link ($brokenLinks)
+      @ obsFileMissingCount++
+    end
   endif
+
+  set allowsBiasCorrection = False
+  foreach i ($instrumentsAllowingBiasCorrection)
+    if ("$instrument" == "$i") then
+      set allowsBiasCorrection = True
+    endif
+  end
+
+  # declare subdirectories for YAML stubs, which depends on whether bias correction is applied
+  set AppYamlDirs = (base filters)
+  if ($biasCorrection == True && $allowsBiasCorrection == True) then
+    set AppYamlDirs = (base bias filtersWithBias)
+  endif
+
+  foreach subdir (${AppYamlDirs})
+    set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${subdir}/${instrument}
+    if ( "$instrument" =~ *"sondes"* ) then
+      #KLUDGE to handle missing qv for sondes at single time
+      if ( ${thisValidDate} == 2018043006 ) then
+        set SUBYAML=${SUBYAML}-2018043006
+      endif
+    endif
+    if ($obsFileMissingCount == 0) then
+      echo "${instrument} data is present and selected; adding ${instrument} to the YAML"
+      sed 's@^@'"$obsIndent"'@' ${SUBYAML}.yaml >> $observationsYAML
+      @ found++
+    else
+      echo "${instrument} data is selected, but missing; NOT adding ${instrument} to the YAML"
+    endif
+  end
 end
 if ($found == 0) then
   echo "ERROR in $0 : no observation data is available for this date" > ./FAIL
@@ -367,6 +399,9 @@ sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
 sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
 sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
 
+# satellite bias correction directories
+sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $prevYAML
+sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 
 # (3) model-related substitutions
 # ===============================

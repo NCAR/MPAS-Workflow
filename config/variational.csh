@@ -23,6 +23,7 @@ $setLocal nInnerIterations
 # nOuterIterations, automatically determined from length of nInnerIterations
 setenv nOuterIterations ${#nInnerIterations}
 
+
 $setLocal benchmarkObservations
 $setLocal experimentalObservations
 # observations, automatically combine two parent ObsList's
@@ -75,5 +76,4 @@ endif
 
 setenv variationalYAMLPrefix variational_
 
-# VARBC
-$setLocal initialVARBCtable
+$setLocal biasCorrection
