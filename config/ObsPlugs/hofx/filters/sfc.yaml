@@ -1,0 +1,7 @@
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
+  - filter: Difference Check
+    reference: station_elevation@MetaData
+    value: surface_altitude@GeoVaLs
+    threshold: 200.0

@@ -1,0 +1,3 @@
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
