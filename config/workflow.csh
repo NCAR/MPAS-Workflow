@@ -48,6 +48,9 @@ $setLocal ExtendedEnsFCTimes
 $setLocal DAVFWindowHR
 $setLocal FCVFWindowHR
 
+# maximum active cycle points
+$setLocal maxActiveCyclePoints
+
 ## DA2FCOffsetHR and FC2DAOffsetHR: control the offsets between DataAssim and Forecast
 # tasks in the critical path
 # TODO: set DA2FCOffsetHR and FC2DAOffsetHR based on IAU controls

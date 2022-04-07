@@ -1,0 +1,31 @@
+  obs filters:
+  - filter: Domain Check
+    where:
+    - variable:
+        name: sensor_zenith_angle@MetaData
+      maxvalue: 65.0
+  - filter: Gaussian Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}
+PerformActionFilters_abi_g16
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_abi_g16.nc4
+  - filter: YDIAGsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_abi_g16.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *abi_g16_channels
+    - name: weightingfunction_of_atmosphere_layer
+      channels: *abi_g16_channels
+    - name: pressure_level_at_peak_of_weightingfunction
+      channels: *abi_g16_channels
+    - name: brightness_temperature_jacobian_air_temperature
+      channels: *abi_g16_channels
+    - name: brightness_temperature_jacobian_humidity_mixing_ratio
+      channels: *abi_g16_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *abi_g16_channels
+    - name: brightness_temperature_jacobian_surface_temperature
+      channels: *abi_g16_channels

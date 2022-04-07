@@ -1,0 +1,15 @@
+- obs space:
+    <<: *ObsSpace
+    name: Satwnd
+    obsdatain:
+      obsfile: {{InDBDir}}/satwnd_obs_{{thisValidDate}}.h5
+      max frame size: 80000
+    obsdataout:
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_satwnd.h5
+      max frame size: 80000
+    simulated variables: [eastward_wind, northward_wind]
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    name: VertInterp
+  get values:
+    <<: *GetValues

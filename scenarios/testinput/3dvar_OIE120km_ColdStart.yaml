@@ -16,6 +16,7 @@ model:
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]
+  biasCorrection: True
 job:
   CPQueueName: economy
   NCPQueueName: economy

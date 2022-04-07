@@ -1,0 +1,17 @@
+- obs space:
+    <<: *ObsSpace
+    name: ahi_himawari8
+    obsdatain:
+      obsfile: {{InDBDir}}/ahi_himawari8_obs_{{thisValidDate}}.h5
+    obsdataout:
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_ahi_himawari8.h5
+    simulated variables: [brightness_temperature]
+    channels: *ahi_himawari8_channels
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: ahi_himawari8
+  get values:
+    <<: *GetValues

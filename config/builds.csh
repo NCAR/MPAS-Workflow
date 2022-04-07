@@ -24,7 +24,7 @@ setenv WPSBuildDir /glade/work/guerrett/pandac/data/GEFS
 
 # Obs2IODA-v2
 setenv obs2iodaEXEC obs2ioda-v2.x
-setenv obs2iodaBuildDir /glade/scratch/ivette/NRT-MPAS-JEDI/preprocessing/fork_obs2ioda/obs2ioda/obs2ioda-v2/src
+setenv obs2iodaBuildDir /glade/p/mmm/parc/ivette/pandac/fork_obs2ioda/obs2ioda/obs2ioda-v2/src
 setenv iodaupgradeEXEC ioda-upgrade.x
 setenv iodaupgradeBuildDir ${commonBuild}/bin
 

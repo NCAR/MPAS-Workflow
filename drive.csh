@@ -183,6 +183,9 @@ cat >! suite.rc << EOF
 {% set VerifyANMembers = ${VerifyANMembers} %} #bool
 {% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %} #bool
 
+# Active cycle points
+{% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
+
 ## Mini-workflow that prepares observations for IODA ingest
 {% if observationsResource == "PANDACArchive" %}
   # assume that IODA observation files are already available for PANDACArchive case
@@ -222,7 +225,7 @@ cat >! suite.rc << EOF
 {% if CriticalPathType != "Normal" %}
   max active cycle points = 20
 {% else %}
-  max active cycle points = 4
+  max active cycle points = {{maxActiveCyclePoints}}
 {% endif %}
 
   [[dependencies]]

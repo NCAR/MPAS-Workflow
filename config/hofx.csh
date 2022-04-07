@@ -12,6 +12,9 @@ source config/scenario.csh
 # under the "hofx" key of scenarioConfig
 setenv baseConfig scenarios/base/hofx.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig hofx"
+setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig hofx"
 
 $setLocal observations
 $setLocal nObsIndent
+
+$setLocal biasCorrection

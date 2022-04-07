@@ -1,0 +1,16 @@
+- obs space:
+    <<: *ObsSpace
+    name: SfcPCorrected
+    obsdatain:
+      obsfile: {{InDBDir}}/sfc_obs_{{thisValidDate}}.h5
+    obsdataout:
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_sfc.h5
+    simulated variables: [surface_pressure]
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    name: SfcPCorrected
+    da_psfc_scheme: UKMO   # or WRFDA
+  linear obs operator:
+    name: Identity
+  get values:
+    <<: *GetValues

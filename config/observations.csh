@@ -19,3 +19,8 @@ $setObservations convertToIODAObservations
 $setObservations GDASObsErrtable
 $setObservations CRTMTABLES
 $setObservations InterpolationType
+
+# static directories for bias correction files
+set fixedCoeff = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
+set fixedTlapmeanCov = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
+set initialVARBCcoeff = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018

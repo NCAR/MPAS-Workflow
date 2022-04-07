@@ -1,0 +1,17 @@
+- obs space:
+    <<: *ObsSpace
+    name: amsua-cld_metop-b
+    obsdatain:
+      obsfile: {{InDBDir}}/amsua_metop-b_obs_{{thisValidDate}}.h5
+    obsdataout:
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_amsua-cld_metop-b.h5
+    simulated variables: [brightness_temperature]
+    channels: &amsua-cld_metop-b_channels 1-4,15
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: amsua_metop-b
+  get values:
+    <<: *GetValues

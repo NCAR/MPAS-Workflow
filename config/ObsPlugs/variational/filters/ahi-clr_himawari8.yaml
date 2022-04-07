@@ -1,0 +1,33 @@
+  obs filters:
+  - filter: Domain Check
+    where:
+    - variable:
+        name: sensor_zenith_angle@MetaData
+      maxvalue: 65.0
+    - variable:
+        name: cloud_area_fraction@MetaData
+      maxvalue: 0.05
+  - filter: Gaussian Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi-clr_himawari8.nc4
+  - filter: YDIAGsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_ahi-clr_himawari8.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *clrahi_channels
+    - name: weightingfunction_of_atmosphere_layer
+      channels: *clrahi_channels
+    - name: pressure_level_at_peak_of_weightingfunction
+      channels: *clrahi_channels
+    - name: brightness_temperature_jacobian_air_temperature
+      channels: *clrahi_channels
+    - name: brightness_temperature_jacobian_humidity_mixing_ratio
+      channels: *clrahi_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *clrahi_channels
+    - name: brightness_temperature_jacobian_surface_temperature
+      channels: *clrahi_channels

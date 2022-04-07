@@ -30,3 +30,5 @@ _get values: &GetValues
   interpolation type: {{InterpolationType}}
 _multi iteration filter: &multiIterationFilter
   apply at iterations: 0,1,2,3,4,5
+_abi_g16 channels: &abi_g16_channels 8-10
+_ahi_himawari8 channels: &ahi_himawari8_channels 8-10

@@ -1,0 +1,17 @@
+- obs space:
+    <<: *ObsSpace
+    name: abi_g16
+    obsdatain:
+      obsfile: {{InDBDir}}/abi_g16_obs_{{thisValidDate}}.h5
+    obsdataout:
+      obsfile: {{OutDBDir}}/{{obsPrefix}}_abi_g16.h5
+    simulated variables: [brightness_temperature]
+    channels: *abi_g16_channels
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: abi_g16
+  get values:
+    <<: *GetValues

@@ -21,3 +21,5 @@ _get values: &GetValues
   interpolation type: {{InterpolationType}}
 _multi iteration filter: &multiIterationFilter
   _blank: null
+_abi_g16 channels: &abi_g16_channels 7-16
+_ahi_himawari8 channels: &ahi_himawari8_channels 7-16

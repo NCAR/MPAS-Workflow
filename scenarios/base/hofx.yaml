@@ -10,8 +10,7 @@ hofx:
   - aircraft
   - gnssroref
   - satwind
-#TODO: add satwnd, used in ColdStart and will not break WarmStart
-# - satwnd
+  - satwnd
   - sfc
   - sondes
 # MW satellite-based
@@ -40,3 +39,8 @@ hofx:
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML
   nObsIndent: 0
+
+## biasCorrection
+# whether to use bias correction coefficients from VarBC
+# OPTIONS: False (not enabled yet)
+  biasCorrection: False
