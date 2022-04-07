@@ -1,36 +1,39 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: test-mpas-workflow
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the develop branch
   push:
-    branches: [ develop ]
+    ## merges to develop branch
+    branches: [develop]
   pull_request:
-    branches: [ develop ]
+    # pull request to develop with a label
+    types: [labeled]
+    branches: [develop]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+defaults:
+  run:
+    shell: bash
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  Run-mpas-workflow:
+    if: ${{ github.event.label.name == 'run-cycle' }}
+    runs-on: self-hosted
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - name: checkout
+        uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: run-mpas-workflow
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          source /etc/profile.d/modules.sh
+          source ~/.bashrc
+          export JEDI_OPT=/glade/work/jedipara/cheyenne/opt/modules
+          module use $JEDI_OPT/modulefiles/core
+          module load jedi/gnu-openmpi
+          module list
+          export MPASBUNDLECodeBuildDirectory=/glade/work/maryamao/nightly_build/MPAS/GNU/build_Nightly
+          sed -i 's@^set\ commonBuild\ =\ .*@set\ commonBuild\ =\ '${MPASBUNDLECodeBuildDirectory}'@' config/build.csh
+          cat config/build.csh
+          source env-setup/cheyenne.sh
+          ./run.csh
