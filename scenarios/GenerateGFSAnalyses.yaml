@@ -13,6 +13,7 @@ experiment:
 model:
   MPASGridDescriptor: OIE60km
   AnalysisSource: GFSfromRDAOnline
+  GraphInfoDir: /glade/p/mmm/parc/liuz/pandac_common/static_from_duda
 variational:
   DAType: 3dvar
   nInnerIterations: [0,]
