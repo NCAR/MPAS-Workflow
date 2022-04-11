@@ -48,6 +48,7 @@ source config/filestructure.csh
 source config/forecast.csh
 source config/model.csh
 source config/observations.csh
+source config/workflow.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/modeldata.csh
@@ -224,7 +225,13 @@ end
 # =========================
 # next cycle after FirstCycleDate
 set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
+set initialCycle = ${initialCyclePoint}
+set iyymmdd = `echo ${initialCycle} | cut -c 1-8`
+set ihh = `echo ${initialCycle} | cut -c 10-11`
+set expInitialCycle = ${iyymmdd}${ihh}
 if ( ${thisValidDate} == ${nextFirstDate} ) then
+  set biasCorrectionDir = $initialVARBCcoeff
+else if ( ${thisValidDate} == ${expInitialCycle} ) then
   set biasCorrectionDir = $initialVARBCcoeff
 else
   set biasCorrectionDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
