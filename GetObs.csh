@@ -145,8 +145,6 @@ foreach inst ( ${convertToIODAObservations} )
        echo "$ftp_file not available yet -- exiting"
        exit 1
       endif
-    else
-      echo "$THIS_FILE is already in ${WorkDir}"
     endif
   else if ( "${observations__resource}" == "PANDACArchive" ) then
     echo "$0 (INFO): ${observations__resource} must be stored locally and fully described in the YAML"

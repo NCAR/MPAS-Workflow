@@ -8,6 +8,10 @@ variational:
 # list of inner iteration counts across all outer iterations
   nInnerIterations: [60,]
 
+## biasCorrection
+# whether to use variational bias correction
+# OPTIONS: True/False
+  biasCorrection: False
 
 ##ensembleCovarianceWeight and staticCovarianceWeight
 # weights of ensemble and static components of the background errorcovariance
@@ -71,8 +75,7 @@ variational:
   - aircraft
   - gnssroref
   - satwind
-#TODO: add satwnd, used in ColdStart and will not break WarmStart
-# - satwnd
+  - satwnd
   - sfc
   - sondes
 # MW satellite-based
@@ -110,6 +113,3 @@ variational:
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML
   nObsIndent: 2
-
-## Initial table for VARBC
-  initialVARBCtable: /glade/work/guerrett/pandac/fixed_input/satbias/satbias_crtm_in
