@@ -10,4 +10,4 @@ variational:
   nDAInstances: 20
   LeaveOneOutEDA: True
 rtpp:
-  relaxationFactor: 0.80
+  relaxationFactor: 0.8

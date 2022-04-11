@@ -164,7 +164,7 @@ set AnalysisVariables = ( \
   u \
   qv \
 )
-foreach hydro ($MPASHydroStateVariables)
+foreach hydro ($MPASHydroIncrementVariables)
   set AnalysisVariables = ($AnalysisVariables $hydro)
 end
 set StateVariables = ( \
@@ -250,7 +250,7 @@ mv $prevYAML $appyaml
 # Run the executable
 # ==================
 ln -sfv ${myBuildDir}/${myEXE} ./
-mpiexec ./${myEXE} $myYAML >& jedi.log
+mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
 
 
 # Check status

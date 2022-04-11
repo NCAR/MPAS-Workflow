@@ -87,14 +87,19 @@ while ( $success != 0 )
   setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $GFSAnaDirVerify/$InitFilePrefixOuter"
 
   if ($ArgNMembers > 1) then
-    #Note: this only works for BG verifcation, not extended ensemble forecasts
-    #echo "${baseCommand} -m $ArgNMembers -b ${VerificationWorkDir}/${bgDir}${flowMemFmt}/${thisCycleDate}/${bgDir}" | tee ./myCommand
-    #${baseCommand} -m $ArgNMembers -b "${VerificationWorkDir}/${bgDir}${flowMemFmt}/${thisCycleDate}/${bgDir}" >& log.${mainScript}
+    #Note: this only works for BG/AN verification, not extended ensemble forecasts
+    # legacy file structure (deprecated)
+    #echo "${baseCommand} -m $ArgNMembers -a ../../../../../../CyclingInflation/RTPP/YYYYMMDDHH/an0/mem{:03d}/an" | tee ./myCommand
+    #${baseCommand} -m $ArgNMembers -a "../../../../../../CyclingInflation/RTPP/YYYYMMDDHH/an0/mem{:03d}/an" >& log.${mainScript}
+
+    # feature/modelEnsembleDiags file structure
     echo "${baseCommand} -m $ArgNMembers" | tee ./myCommand
     ${baseCommand} -m $ArgNMembers >& log.${mainScript}
+
   else
     echo "${baseCommand}" | tee ./myCommand
     ${baseCommand} >& log.${mainScript}
+
   endif
 
   set success = $?
