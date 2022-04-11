@@ -394,9 +394,6 @@ sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 sed -i 's@{{InDBDir}}@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
 sed -i 's@{{OutDBDir}}@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
 
-# Satbias correction
-sed -i 's@SatbiasDir@'${SatbiasDir}'@g' $thisYAML
-
 # obs, geo, and diag files with self_AppType suffixes
 sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
 sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML

@@ -35,6 +35,7 @@ hofx:
   - ahi_himawari8
   #- abi-clr_g16
   #- ahi-clr_himawari8
+  - iasi_metop-b
 
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML

@@ -13,7 +13,7 @@ observations:
   #- 1bmhs
   #- airsev
   #- cris
-  #- mtiasi
+  - mtiasi
 
 ## GDAS observations error table
 # This file provides observation errors for all types of conventional and satwnd data
@@ -32,6 +32,7 @@ observations:
     - amsua_n15
     - amsua_n18
     - amsua_n19
+    - iasi_metop-b
 
     IODAPrefix:
       gnssroref: gnssro
@@ -51,6 +52,7 @@ observations:
     - amsua_n15
     - amsua_n18
     - amsua_n19
+    - iasi_metop-b
 
     IODAPrefix:
       gnssroref: gnssro
