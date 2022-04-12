@@ -11,12 +11,13 @@ set config_builds = 1
 # {compiler}-{mpi-implementation} combination that selects the JEDI module to be loaded in
 # config/environmentForJedi.csh
 # OPTIONS: gnu-openmpi, intel-impi
-setenv BuildCompiler 'gnu-openmpi'
+setenv BuildCompiler 'intel-impi'
+
 
 # Note: at this time, all executables should be built in the same environment, one that is
 # consistent with config/environmentForJedi.csh
 
-set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_16MAR2022
+set commonBuild =  /glade/scratch/yonggangyu/br_mpasjedi_intel/build
 
 # Ungrib
 setenv ungribEXE ungrib.exe
