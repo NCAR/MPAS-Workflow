@@ -12,4 +12,4 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig rtpp"
 setenv setNestedRTPP "source $setNestedConfig $baseConfig $scenarioConfig rtpp"
 
 $setNestedRTPP relaxationFactor
-$setLocal storeOriginalAnalyses
+$setLocal retainOriginalAnalyses
