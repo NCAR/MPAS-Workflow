@@ -21,7 +21,7 @@ hofx:
   retainObsFeedback: False
 rtpp:
   relaxationFactor: 0.7
-  storeOriginalAnalyses: True
+  retainOriginalAnalyses: True
 observations:
   resource: PANDACArchive
   PANDACArchive:
