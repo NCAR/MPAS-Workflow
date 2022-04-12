@@ -17,6 +17,9 @@ variational:
   EDASize: 1
   nDAInstances: 5
   LeaveOneOutEDA: True
+  retainObsFeedback: False
+hofx:
+  retainObsFeedback: False
 rtpp:
   relaxationFactor: 0.8
 job:

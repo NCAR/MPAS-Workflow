@@ -102,3 +102,8 @@ variational:
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML
   nObsIndent: 2
+
+## retainObsFeedback
+# whether to retain the observation feedback files (obs, geovals, ydiag)
+# OPTIONS: True/False
+  retainObsFeedback: True

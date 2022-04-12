@@ -5,7 +5,7 @@ rtpp:
 # Typical Values: 0.0 to 0.90
   relaxationFactor: 0.80
 
-## storeOriginalRTPPAnalyses
-# whether to keep/store the analyses taken as inputs to RTPP for diagnostic purposes
+## retainOriginalAnalyses
+# whether to retain the analyses taken as inputs to RTPP
 # OPTIONS: True/False
-  storeOriginalAnalyses: False
+  retainOriginalAnalyses: False

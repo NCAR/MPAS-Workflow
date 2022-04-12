@@ -37,6 +37,7 @@ endif
 # =================
 source config/filestructure.csh
 source config/tools.csh
+source config/hofx.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -60,9 +61,11 @@ rm ${self_WorkDir}/${anDir}/${ANFilePrefix}.$thisMPASFileDate.nc
 
 # Remove obs-database output files
 # ================================
-rm ${self_WorkDir}/${OutDBDir}/${obsPrefix}*.h5
-rm ${self_WorkDir}/${OutDBDir}/${geoPrefix}*.nc4
-rm ${self_WorkDir}/${OutDBDir}/${diagPrefix}*.nc4
+if ("$retainObsFeedback" != True) then
+  rm ${self_WorkDir}/${OutDBDir}/${obsPrefix}*.h5
+  rm ${self_WorkDir}/${OutDBDir}/${geoPrefix}*.nc4
+  rm ${self_WorkDir}/${OutDBDir}/${diagPrefix}*.nc4
+endif
 
 date
 

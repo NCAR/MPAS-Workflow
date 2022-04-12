@@ -21,7 +21,7 @@ cd ${self_WorkDir}
 
 # Remove original analyses before RTPP
 # ====================================
-if ("${storeOriginalAnalyses}" == False) then
+if ("${retainOriginalAnalyses}" == False) then
   rm -r ${anDir}BeforeRTPP
 endif
 
