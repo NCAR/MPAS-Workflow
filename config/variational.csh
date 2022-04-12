@@ -77,3 +77,5 @@ endif
 setenv variationalYAMLPrefix variational_
 
 $setLocal biasCorrection
+
+$setLocal retainObsFeedback

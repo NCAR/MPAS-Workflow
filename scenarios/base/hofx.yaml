@@ -44,3 +44,8 @@ hofx:
 # whether to use bias correction coefficients from VarBC
 # OPTIONS: False (not enabled yet)
   biasCorrection: False
+
+## retainObsFeedback
+# whether to retain the observation feedback files (obs, geovals, ydiag)
+# OPTIONS: True/False
+  retainObsFeedback: True
