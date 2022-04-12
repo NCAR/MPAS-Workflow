@@ -4,7 +4,7 @@ name: test-mpas-workflow
 
 # Controls when the workflow will run
 on:
-  # uncomment if we decide to run tests when merging to develeop branch
+  # uncomment if we decide to run tests when merging to develop branch
   #push:
     ## merges to develop branch
     #branches: [develop]
