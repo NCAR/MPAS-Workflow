@@ -4,9 +4,9 @@ name: test-mpas-workflow
 
 # Controls when the workflow will run
 on:
-  push:
+  #push:
     ## merges to develop branch
-    branches: [develop]
+    #branches: [develop]
   pull_request:
     # pull request to develop with a label
     types: [labeled]
@@ -39,4 +39,3 @@ jobs:
           sed -i 's@^set\ commonBuild\ =\ .*@set\ commonBuild\ =\ '${MPASBUNDLECodeBuildDirectory}'@' config/builds.csh
           cat config/builds.csh
           source env-setup/cheyenne.sh
-          ./run.csh
