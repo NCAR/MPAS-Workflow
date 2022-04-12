@@ -302,22 +302,22 @@
       -q = {{EnsMeanBGQueueName}}
       -A = {{EnsMeanBGAccountNumber}}
 {% if DiagnoseEnsSpreadBG %}
-  {% set nMem = nEnsDAMembers %}
+  {% set nEnsSpreadMem = nEnsDAMembers %}
   {% set modelMinutes = VerifyObsEnsMeanJobMinutes %}
   {% set obsMinutes = VerifyObsEnsMeanJobMinutes %}
 {% else %}
-  {% set nMem = 0 %}
+  {% set nEnsSpreadMem = 0 %}
   {% set modelMinutes = VerifyModelJobMinutes %}
   {% set obsMinutes = VerifyObsJobMinutes %}
 {% endif %}
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
-    script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG" "{{nMem}}"
+    script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
     [[[job]]]
       execution time limit = PT{{modelMinutes}}M
   [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
-    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nMem}}"
+    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
     [[[job]]]
       execution time limit = PT{{obsMinutes}}M
   [[CleanHofXEnsMeanBG]]
