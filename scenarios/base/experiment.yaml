@@ -1,7 +1,7 @@
 experiment:
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-  ExpSuffix: ''
+  ExpSuffix: '_X0_intel_debug_newfeature_Apr_12'
 
 ## ExperimentName
 # leave as None to be automatically generated from critical config elements
