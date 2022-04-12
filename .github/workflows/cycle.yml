@@ -4,6 +4,7 @@ name: test-mpas-workflow
 
 # Controls when the workflow will run
 on:
+  # uncomment if we decide to run tests when merging to develeop branch
   #push:
     ## merges to develop branch
     #branches: [develop]
@@ -18,7 +19,7 @@ defaults:
 
 jobs:
   Run-mpas-workflow:
-    if: ${{ github.event.label.name == 'run-cycle' }}
+    if: ${{ github.event.label.name == 'run-test' }}
     runs-on: self-hosted
     steps:
       - name: checkout
@@ -27,15 +28,7 @@ jobs:
       - name: run-mpas-workflow
         run: |
           source /etc/profile.d/modules.sh
-          source ~/.bashrc
-          export JEDI_OPT=/glade/work/jedipara/cheyenne/opt/modules
-          module use $JEDI_OPT/modulefiles/core
-          module load jedi/gnu-openmpi
-          module list
+          ## temporarily set to nightly build directory
           export MPASBUNDLECodeBuildDirectory=/glade/work/maryamao/nightly_build/MPAS/GNU/build_Nightly
-          ls
-          ls config
-          pwd
           sed -i 's@^set\ commonBuild\ =\ .*@set\ commonBuild\ =\ '${MPASBUNDLECodeBuildDirectory}'@' config/builds.csh
-          cat config/builds.csh
           source env-setup/cheyenne.sh
