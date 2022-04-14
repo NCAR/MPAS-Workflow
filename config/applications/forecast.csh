@@ -18,9 +18,6 @@ setenv nCells "$nCellsOuter"
 
 $setLocal updateSea
 
-$setLocal ${mesh}.TimeStep
-$setLocal ${mesh}.DiffusionLengthScale
-
 # job
 $setLocal job.${mesh}.baseSeconds
 $setLocal job.${mesh}.secondsPerForecastHR

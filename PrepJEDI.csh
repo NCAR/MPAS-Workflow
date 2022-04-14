@@ -158,8 +158,8 @@ foreach NamelistFile_ ($NamelistFileList)
   sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
   sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$nCellsList[$iMesh]'@' ${NamelistFile_}
-  sed -i 's@modelDT@'${MPASTimeStep}'@' ${NamelistFile_}
-  sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' ${NamelistFile_}
+  sed -i 's@modelDT@'${TimeStep}'@' ${NamelistFile_}
+  sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' ${NamelistFile_}
 end
 
 ## MPASJEDI variable configs
@@ -292,7 +292,7 @@ foreach instrument ($observations)
   endif
 
   foreach subdir (${AppYamlDirs})
-    set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${subdir}/${instrument}
+    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${self_AppType}/${subdir}/${instrument}
     if ( "$instrument" =~ *"sondes"* ) then
       #KLUDGE to handle missing qv for sondes at single time
       if ( ${thisValidDate} == 2018043006 ) then
@@ -337,7 +337,7 @@ cat >! ${thisSEDF} << EOF
 EOF
 
 # substitute with line breaks
-set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${sedstring}.yaml
+set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${self_AppType}/${sedstring}.yaml
 sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 echo '_blank: null' >> ${thisSEDF}
 

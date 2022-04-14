@@ -13,26 +13,31 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig model"
 setenv setNestedModel "source $setNestedConfig $baseConfig $scenarioConfig model"
 setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig model"
 
-$setNestedModel AnalysisSource
 $setLocal outerMesh
 $setLocal innerMesh
 $setLocal ensembleMesh
 
 setenv MeshesDescriptor O
 if ("$outerMesh" != "$innerMesh") then
-  setenv MeshesDescriptors ${MeshesDescriptor}${outerMesh}
+  setenv MeshesDescriptor ${MeshesDescriptor}${outerMesh}
 endif
-setenv MeshesDescriptors ${MeshesDescriptor}IE${innerMesh}
-
+setenv MeshesDescriptor ${MeshesDescriptor}I
 if ("$innerMesh" != "$ensembleMesh") then
   #TODO: remove when this is no longer a limitation
   echo "$0 (ERROR): innerMesh ($innerMesh) must equal ensembleMesh($ensembleMesh)"
   exit 1
+  #setenv MeshesDescriptor ${MeshesDescriptor}${innerMesh}
 endif
+setenv MeshesDescriptor ${MeshesDescriptor}E${ensembleMesh}
 
 setenv nCellsOuter "`$getLocalOrNone nCells.$outerMesh`"
 setenv nCellsInner "`$getLocalOrNone nCells.$innerMesh`"
 setenv nCellsEnsemble "`$getLocalOrNone nCells.$ensembleMesh`"
+
+$setLocal ${outerMesh}.TimeStep
+$setLocal ${outerMesh}.DiffusionLengthScale
+
+$setNestedModel AnalysisSource
 
 $setLocal GraphInfoDir
 

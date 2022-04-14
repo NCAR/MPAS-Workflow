@@ -13,9 +13,8 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig verifyobs"
 
 #job
 $setLocal job.baseSeconds
-$setLocal job.secondsPerEDAMember
-
 setenv verifyobs__seconds $baseSeconds
 
-@ seconds = $secondsPerEDAMember*$nEnsDAMembers + $baseSeconds
+$setLocal job.secondsPerEDAMember
+@ seconds = $secondsPerEDAMember * $nEnsDAMembers + $baseSeconds
 setenv verifyobsens__seconds $seconds

@@ -14,9 +14,8 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig verifymodel"
 
 #job
 $setLocal job.${outerMesh}.baseSeconds
-$setLocal job.${outerMesh}.secondsPerEDAMember
-
 setenv verifymodel__seconds $baseSeconds
 
-@ seconds = $secondsPerEDAMember*$nEnsDAMembers + $baseSeconds
+$setLocal job.${outerMesh}.secondsPerEDAMember
+@ seconds = $secondsPerEDAMember * $nEnsDAMembers + $baseSeconds
 setenv verifymodelens__seconds $seconds

@@ -113,8 +113,8 @@ rm $NamelistFile
 cp -v ${self_ModelConfigDir}/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${nCellsEnsemble}'@' ${NamelistFile}
-sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
-sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
+sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
+sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)

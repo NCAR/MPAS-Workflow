@@ -1,9 +1,9 @@
 #!/bin/csh -f
-source config/applications/variational.csh
 source config/filestructure.csh
-source confif/model.csh
+source config/model.csh
 source config/modeldata.csh
 source config/workflow.csh
+source config/applications/variational.csh
 
 set thisCycleDate = $FirstCycleDate
 set thisValidDate = $thisCycleDate
