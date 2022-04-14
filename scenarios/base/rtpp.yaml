@@ -1,4 +1,6 @@
 rtpp:
+## mesh-specific settings
+  # resource requirements
   job:
     #{{ensembleMesh}}:
     #  baseSeconds: int

@@ -4,6 +4,8 @@ forecast:
 # OPTIONS: True/False
   updateSea: True
 
+## mesh-specific settings
+  # resource requirements
   job:
     #{{outerMesh}}:
     #  baseSeconds: int

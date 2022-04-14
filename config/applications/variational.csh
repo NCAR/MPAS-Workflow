@@ -102,9 +102,9 @@ endif
 
 # covariance
 if ($baseDAType == 3dvar || $baseDAType == 3dhybrid) then
-  $setLocal covariance.${innerMesh}.bumpCovControlVariables
-  $setLocal covariance.${innerMesh}.bumpCovPrefix
-  $setLocal covariance.${innerMesh}.bumpCovVBalPrefix
+  $setLocal covariance.bumpCovControlVariables
+  $setLocal covariance.bumpCovPrefix
+  $setLocal covariance.bumpCovVBalPrefix
   $setLocal covariance.${innerMesh}.bumpCovDir
   $setLocal covariance.${innerMesh}.bumpCovStdDevFile
   $setLocal covariance.${innerMesh}.bumpCovVBalDir

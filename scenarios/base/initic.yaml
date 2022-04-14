@@ -1,4 +1,6 @@
 initic:
+## mesh-specific settings
+  # resource requirements
   job:
     #{{outerMesh}}:
     #  seconds: int

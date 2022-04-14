@@ -49,6 +49,8 @@ hofx:
 # distance (km) used for the Gaussian Thinning filter for all radiance-based observations
   radianceThinningDistance: "145.0"
 
+## mesh-specific settings
+  # resource requirements
   job:
     #{{outerMesh}}:
     #  seconds: int
