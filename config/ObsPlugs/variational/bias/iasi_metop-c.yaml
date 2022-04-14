@@ -6,9 +6,9 @@
       - name: constant
       - name: lapse_rate
         order: 2
-        tlapse: &amsuametopctlap {{fixedTlapmeanCov}}/iasi_metop-c_tlapmean.txt
+        tlapse: &iasimetopctlap {{fixedTlapmeanCov}}/iasi_metop-c_tlapmean.txt
       - name: lapse_rate
-        tlapse: *amsuametopctlap
+        tlapse: *iasimetopctlap
       - name: emissivity
       - name: scan_angle
         order: 4

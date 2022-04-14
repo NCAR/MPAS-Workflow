@@ -108,7 +108,7 @@ variational:
 #    amsua-cld_n15,
 #    amsua-cld_n18,
 #    amsua-cld_n19,
-    iasi_metop-b,
+#    iasi_metop-b,
   ]
 
 ## nObsIndent

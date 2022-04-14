@@ -26,7 +26,7 @@ setenv HofXPEPerNode 36
 setenv HofXMemory 109
 
 # HofX resource settings for IASI
-#setenv HofXJobMinutes 5
+#setenv HofXJobMinutes 10
 #setenv HofXNodes 8
 #setenv HofXPEPerNode 16
 #setenv HofXMemory 109
@@ -45,7 +45,8 @@ setenv VerifyModelJobMinutes 2
 ## Variational+EnsOfVariational
 # benchmark: < 3 minutes
 # longer duration with more observations
-set DeterministicDABaseMinutes = 6 #develop
+set DeterministicDABaseMinutes = 10  #develop
+#set DeterministicDABaseMinutes = 29 #IASI
 #set DeterministicDABaseMinutes = 30 #feature/getvals_upd
 
 # Variational
@@ -66,9 +67,8 @@ else
 
   # variational resource settings for IASI
   #setenv VariationalMemory 109
-  #setenv VariationalNodesPerMember 16
-  #setenv VariationalPEPerNode 8
-  #set ThreeDEnVarJobSecondsPerMember = 10
+  #setenv VariationalNodesPerMember 8
+  #setenv VariationalPEPerNode 16
 
   # time per member (mostly localization multiplication, some IO)
   # 60 inner x 1 outer, CONV+AMSUA obs; 20OCT2021

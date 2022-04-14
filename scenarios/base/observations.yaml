@@ -10,10 +10,10 @@ observations:
   - satwnd
   - gpsro
   - 1bamua
+  - mtiasi
   #- 1bmhs
   #- airsev
   #- cris
-  - mtiasi
 
 ## GDAS observations error table
 # This file provides observation errors for all types of conventional and satwnd data
@@ -32,7 +32,7 @@ observations:
     - amsua_n15
     - amsua_n18
     - amsua_n19
-    - iasi_metop-b
+    #- iasi_metop-b
 
     IODAPrefix:
       gnssroref: gnssro
@@ -52,7 +52,7 @@ observations:
     - amsua_n15
     - amsua_n18
     - amsua_n19
-    - iasi_metop-b
+    #- iasi_metop-b
 
     IODAPrefix:
       gnssroref: gnssro
@@ -71,7 +71,10 @@ observations:
         common: "{{ObsWorkDir}}"
 
   PANDACArchive:
-    instrumentsAllowingBiasCorrection: [None]
+    instrumentsAllowingBiasCorrection:
+    - iasi_metop-a
+    - iasi_metop-b
+    - iasi_metop-c
 
     IODAPrefix:
       gnssroref: gnssro
@@ -122,6 +125,11 @@ observations:
         ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
         ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
 
+        ## iasi
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations
+        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations
+
       hofx:
         ## anchor
         aircraft: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
@@ -157,6 +165,11 @@ observations:
         ## ahi
         ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
         ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
+
+        ## iasi
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations
+        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations
 
     IODASuperObGrid:
       abi_g16: 59X59
