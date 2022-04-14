@@ -36,7 +36,6 @@ source config/model.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
-source config/mpas/variables.csh
 source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -377,8 +376,8 @@ while ( $member <= ${nEnsDAMembers} )
   set bg = $CyclingDAInDirs[$member]
   mkdir -p ${bg}
 
-  # Link bg from StateDirs, ensuring that MPASJEDIDiagVariables are present
-  # ============================================================================
+  # Link bg from StateDirs
+  # ======================
   set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
   set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
@@ -398,29 +397,6 @@ while ( $member <= ${nEnsDAMembers} )
       echo "ERROR in $0 : cannot determine analysis precision" > ./FAIL
       exit 1
     endif
-  endif
-
-  # Copy diagnostic variables used in DA to bg (if needed)
-  # ======================================================
-  set copyDiags = 0
-  foreach var ({$MPASJEDIDiagVariables})
-    echo "Checking for presence of variable ($var) in ${bgFile}"
-    ncdump -h ${bgFile} | grep $var
-    if ( $status != 0 ) then
-      @ copyDiags++
-      echo "variable ($var) not present"
-    endif
-  end
-  if ( $copyDiags > 0 ) then
-    # remove link
-    rm ${bgFile}
-
-    # create copy instead
-    cp -v ${bgFileOther} ${bgFile}
-
-    # add diagnostic variables
-    set diagFile = ${other}/${DIAGFilePrefix}.$thisMPASFileDate.nc
-    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
   endif
 
   # use the member-specific background as the TemplateFieldsFileOuter for this member

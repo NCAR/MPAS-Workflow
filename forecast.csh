@@ -27,7 +27,6 @@ source config/model.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
-source config/mpas/variables.csh
 source config/builds.csh
 source config/environmentMPT.csh
 source config/applications/forecast.csh
@@ -239,40 +238,6 @@ if ( "$deleteZerothForecast" == "True" ) then
   set diagFile = ${DIAGFilePrefix}.${fcFileExt}
   rm ${diagFile}
 endif
-
-# Update/add fields to output for DA
-# ==================================
-#TODO: do this in a separate post-processing script
-#      either in parallel or using only single processor
-#      instead of full set of job processors
-set fcDate = `$advanceCYMDH ${thisValidDate} ${self_fcIntervalHR}`
-set finalFCDate = `$advanceCYMDH ${thisValidDate} ${self_fcLengthHR}`
-while ( ${fcDate} <= ${finalFCDate} )
-  set yy = `echo ${fcDate} | cut -c 1-4`
-  set mm = `echo ${fcDate} | cut -c 5-6`
-  set dd = `echo ${fcDate} | cut -c 7-8`
-  set hh = `echo ${fcDate} | cut -c 9-10`
-  set fcFileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
-  set fcFileExt = ${fcFileDate}.nc
-  set fcFile = ${FCFilePrefix}.${fcFileExt}
-
-  ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
-  set copyDiags = 0
-  foreach var ({$MPASJEDIDiagVariables})
-    ncdump -h ${fcFile} | grep $var
-    if ( $status != 0 ) then
-      @ copyDiags++
-    endif
-  end
-  set diagFile = ${DIAGFilePrefix}.${fcFileExt}
-  if ( $copyDiags > 0 ) then
-    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${fcFile}
-  endif
-  # rm ${diagFile}
-
-  set fcDate = `$advanceCYMDH ${fcDate} ${self_fcIntervalHR}`
-  setenv fcDate ${fcDate}
-end
 
 date
 
