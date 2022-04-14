@@ -7,12 +7,14 @@ if ( $?config_variational ) exit 0
 set config_variational = 1
 
 source config/scenario.csh
+source config/model.csh
 
 # setLocal is a helper function that picks out a configuration node
 # under the "variational" key of scenarioConfig
 setenv baseConfig scenarios/base/variational.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig variational"
 setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig variational"
+setenv setNestedVariational "source $setNestedConfig $baseConfig $scenarioConfig variational"
 
 $setLocal DAType
 
@@ -29,6 +31,7 @@ $setLocal experimentalObservations
 # observations, automatically combine two parent ObsList's
 set observations = ($benchmarkObservations $experimentalObservations)
 $setLocal nObsIndent
+$setLocal radianceThinningDistance
 
 # deterministic settings
 $setLocal fixedEnsBType
@@ -79,3 +82,51 @@ endif
 setenv variationalYAMLPrefix variational_
 
 $setLocal biasCorrection
+
+# localization
+$setLocal localization.${ensembleMesh}.bumpLocPrefix
+$setLocal localization.${ensembleMesh}.bumpLocDir
+
+# covariance
+$setLocal covariance.${innerMesh}.bumpCovControlVariables
+$setLocal covariance.${innerMesh}.bumpCovPrefix
+$setLocal covariance.${innerMesh}.bumpCovVBalPrefix
+$setLocal covariance.${innerMesh}.bumpCovDir
+$setLocal covariance.${innerMesh}.bumpCovStdDevFile
+$setLocal covariance.${innerMesh}.bumpCovVBalDir
+
+# job
+## nEnVarMembers
+# OPTIONS: integer
+# ensemble size for "envar" applications; only used for job timings
+# defaults to 20 for GEFS-ensemble retrospective experiments
+setenv nEnVarMembers 20
+if ($nEnsDAMembers > 1) then
+  setenv nEnVarMembers $nEnsDAMembers
+endif
+if ($DAType == 3dvar) then
+  setenv nEnVarMembers 0
+  #TODO: add extra time/memory for covariance multiplication
+endif
+
+# TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
+set baseDAType = 3denvar
+if ( "$DAType" =~ *"3dvar"* ) then
+  set baseDAType = 3dvar
+else if ( "$DAType" =~ *"3denvar"* ) then
+  set baseDAType = 3denvar
+else if ( "$DAType" =~ *"3dhybrid"* ) then
+  set baseDAType = 3dhybrid
+endif
+
+$setLocal job.${outerMesh}.${innerMesh}.$baseDAType.baseSeconds
+set secondsPerEnVarMember = "`$getLocalOrNone job.${outerMesh}.${innerMesh}.$baseDAType.secondsPerEnVarMember`"
+if ("$secondsPerEnVarMember" == None) then
+  set secondsPerEnVarMember = 0
+endif
+@ seconds = $secondsPerEnVarMember * $nEnVarMembers + $baseSeconds
+setenv variational__seconds $seconds
+
+$setNestedVariational job.${outerMesh}.${innerMesh}.$baseDAType.nodes
+$setNestedVariational job.${outerMesh}.${innerMesh}.$baseDAType.PEPerNode
+$setNestedVariational job.${outerMesh}.${innerMesh}.$baseDAType.memory

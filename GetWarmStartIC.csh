@@ -1,6 +1,7 @@
 #!/bin/csh -f
-source config/variational.csh
+source config/applications/variational.csh
 source config/filestructure.csh
+source confif/model.csh
 source config/modeldata.csh
 source config/workflow.csh
 
@@ -26,7 +27,7 @@ while ( $member <= ${nEnsDAMembers} )
       cp ${fcFile}${OrigFileSuffix} ${fcFile}
 
       # Inner loop mesh
-      if ($MPASnCellsOuter != $MPASnCellsInner) then
+      if ($nCellsOuter != $nCellsInner) then
         echo ""
         set innerFCDir = $CyclingFCDirs[$member]/Inner
         mkdir -p ${innerFCDir}

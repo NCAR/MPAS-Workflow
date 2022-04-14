@@ -16,9 +16,17 @@ source config/filestructure.csh
 source config/workflow.csh
 source config/observations.csh
 source config/model.csh
-source config/variational.csh
 source config/job.csh
-source config/mpas/${MPASGridDescriptor}/job.csh
+
+# application settings, including resource requests
+source config/applications/ensvariational.csh
+source config/applications/forecast.csh
+source config/applications/hofx.csh
+source config/applications/initic.csh
+source config/applications/rtpp.csh
+source config/applications/variational.csh
+source config/applications/verifyobs.csh
+source config/applications/verifymodel.csh
 
 echo "$0 (INFO):  ExperimentName = ${ExperimentName}"
 
@@ -124,41 +132,43 @@ cat >! suite.rc << EOF
 {% set CleanRetry = "${CleanRetry}" %}
 
 # mesh-specific job controls
-{% set CyclingFCJobMinutes = "${CyclingFCJobMinutes}" %}
-{% set CyclingFCNodes = "${CyclingFCNodes}" %}
-{% set CyclingFCPEPerNode = "${CyclingFCPEPerNode}" %}
+{% set CyclingFCSeconds = "${forecast__seconds}" %}
+{% set CyclingFCNodes = "${forecast__nodes}" %}
+{% set CyclingFCPEPerNode = "${forecast__PEPerNode}" %}
 
-{% set CyclingInflationJobMinutes = "${CyclingInflationJobMinutes}" %}
-{% set CyclingInflationNodes = "${CyclingInflationNodes}" %}
-{% set CyclingInflationPEPerNode = "${CyclingInflationPEPerNode}" %}
-{% set CyclingInflationMemory = "${CyclingInflationMemory}" %}
+{% set RTPPSeconds = "${rtpp__seconds}" %}
+{% set RTPPNodes = "${rtpp__nodes}" %}
+{% set RTPPPEPerNode = "${rtpp__PEPerNode}" %}
+{% set RTPPMemory = "${rtpp__memory}" %}
 
-{% set EnsOfVariationalJobMinutes = "${EnsOfVariationalJobMinutes}" %}
-{% set EnsOfVariationalNodes = "${EnsOfVariationalNodes}" %}
-{% set EnsOfVariationalPEPerNode = "${EnsOfVariationalPEPerNode}" %}
-{% set EnsOfVariationalMemory = "${EnsOfVariationalMemory}" %}
+{% set EnsOfVariationalSeconds = "${ensvariational__seconds}" %}
+{% set EnsOfVariationalNodes = "${ensvariational__nodes}" %}
+{% set EnsOfVariationalPEPerNode = "${ensvariational__PEPerNode}" %}
+{% set EnsOfVariationalMemory = "${ensvariational__memory}" %}
 
-{% set ExtendedFCJobMinutes = "${ExtendedFCJobMinutes}" %}
-{% set ExtendedFCNodes = "${ExtendedFCNodes}" %}
-{% set ExtendedFCPEPerNode = "${ExtendedFCPEPerNode}" %}
+{% set ExtendedFCSeconds = "${extendedforecast__seconds}" %}
+{% set ExtendedFCNodes = "${forecast__nodes}" %}
+{% set ExtendedFCPEPerNode = "${forecast__PEPerNode}" %}
 
-{% set HofXJobMinutes = "${HofXJobMinutes}" %}
-{% set HofXNodes = "${HofXNodes}" %}
-{% set HofXPEPerNode = "${HofXPEPerNode}" %}
-{% set HofXMemory = "${HofXMemory}" %}
+{% set HofXSeconds = "${hofx__seconds}" %}
+{% set HofXNodes = "${hofx__nodes}" %}
+{% set HofXPEPerNode = "${hofx__PEPerNode}" %}
+{% set HofXMemory = "${hofx__memory}" %}
 
-{% set InitICJobMinutes = "${InitICJobMinutes}" %}
-{% set InitICNodes = "${InitICNodes}" %}
-{% set InitICPEPerNode = "${InitICPEPerNode}" %}
+{% set InitICSeconds = "${initic__seconds}" %}
+{% set InitICNodes = "${initic__nodes}" %}
+{% set InitICPEPerNode = "${initic__PEPerNode}" %}
 
-{% set VariationalJobMinutes = "${VariationalJobMinutes}" %}
-{% set VariationalNodes = "${VariationalNodes}" %}
-{% set VariationalPEPerNode = "${VariationalPEPerNode}" %}
-{% set VariationalMemory = "${VariationalMemory}" %}
+{% set VariationalSeconds = "${variational__seconds}" %}
+{% set VariationalNodes = "${variational__nodes}" %}
+{% set VariationalPEPerNode = "${variational__PEPerNode}" %}
+{% set VariationalMemory = "${variational__memory}" %}
 
-{% set VerifyModelJobMinutes = "${VerifyModelJobMinutes}" %}
-{% set VerifyObsJobMinutes = "${VerifyObsJobMinutes}" %}
-{% set VerifyObsEnsMeanJobMinutes = "${VerifyObsEnsMeanJobMinutes}" %}
+{% set VerifyModelSeconds = "${verifymodel__seconds}" %}
+{% set VerifyModelEnsMeanSeconds = "${verifymodelens__seconds}" %}
+
+{% set VerifyObsSeconds = "${verifyobs__seconds}" %}
+{% set VerifyObsEnsMeanSeconds = "${verifyobsens__seconds}" %}
 
 # task selection controls
 {% set CriticalPathType = "${CriticalPathType}" %}

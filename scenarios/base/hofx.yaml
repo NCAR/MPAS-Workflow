@@ -44,3 +44,29 @@ hofx:
 # whether to use bias correction coefficients from VarBC
 # OPTIONS: False (not enabled yet)
   biasCorrection: False
+
+## radianceThinningDistance
+# distance (km) used for the Gaussian Thinning filter for all radiance-based observations
+  radianceThinningDistance: "145.0"
+
+  job:
+    #{{outerMesh}}:
+    #  seconds: int
+    #  nodes: int
+    #  PEPerNode: int
+    #  memory: int
+    30km:
+      seconds: 600
+      nodes: 2
+      PEPerNode: 36
+      memory: 109
+    60km:
+      seconds: 300
+      nodes: 1
+      PEPerNode: 36
+      memory: 109
+    120km:
+      seconds: 300
+      nodes: 1
+      PEPerNode: 36
+      memory: 109

@@ -5,7 +5,6 @@ set config_filestructure = 1
 
 source config/experiment.csh
 source config/model.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/benchmark.csh
 
@@ -63,9 +62,9 @@ setenv appyaml jedi.yaml
 #############################################
 setenv RSTFilePrefix restart
 setenv ICFilePrefix mpasin
-setenv InitFilePrefixOuter x1.${MPASnCellsOuter}.init
-setenv InitFilePrefixInner x1.${MPASnCellsInner}.init
-setenv InitFilePrefixEnsemble x1.${MPASnCellsEnsemble}.init
+setenv InitFilePrefixOuter x1.${nCellsOuter}.init
+setenv InitFilePrefixInner x1.${nCellsInner}.init
+setenv InitFilePrefixEnsemble x1.${nCellsEnsemble}.init
 
 setenv FCFilePrefix mpasout
 setenv fcDir fc
@@ -84,14 +83,14 @@ setenv NamelistFileInit namelist.init_${MPASCore}
 setenv NamelistFileWPS namelist.wps
 
 setenv TemplateFieldsPrefix templateFields
-setenv TemplateFieldsFileOuter ${TemplateFieldsPrefix}.${MPASnCellsOuter}.nc
-setenv TemplateFieldsFileInner ${TemplateFieldsPrefix}.${MPASnCellsInner}.nc
-setenv TemplateFieldsFileEnsemble ${TemplateFieldsPrefix}.${MPASnCellsEnsemble}.nc
+setenv TemplateFieldsFileOuter ${TemplateFieldsPrefix}.${nCellsOuter}.nc
+setenv TemplateFieldsFileInner ${TemplateFieldsPrefix}.${nCellsInner}.nc
+setenv TemplateFieldsFileEnsemble ${TemplateFieldsPrefix}.${nCellsEnsemble}.nc
 
 setenv localStaticFieldsPrefix static
-setenv localStaticFieldsFileOuter ${localStaticFieldsPrefix}.${MPASnCellsOuter}.nc
-setenv localStaticFieldsFileInner ${localStaticFieldsPrefix}.${MPASnCellsInner}.nc
-setenv localStaticFieldsFileEnsemble ${localStaticFieldsPrefix}.${MPASnCellsEnsemble}.nc
+setenv localStaticFieldsFileOuter ${localStaticFieldsPrefix}.${nCellsOuter}.nc
+setenv localStaticFieldsFileInner ${localStaticFieldsPrefix}.${nCellsInner}.nc
+setenv localStaticFieldsFileEnsemble ${localStaticFieldsPrefix}.${nCellsEnsemble}.nc
 
 setenv OrigFileSuffix _orig
 
@@ -122,31 +121,24 @@ setenv VarBCAnalysis ${OutDBDir}/satbias_crtm_ana
 ##################################
 setenv ModelConfigDir ${ConfigDir}/mpas
 
-set OuterStreamsFile = ${StreamsFile}_${MPASGridDescriptorOuter}
-set OuterNamelistFile = ${NamelistFile}_${MPASGridDescriptorOuter}
+set OuterStreamsFile = ${StreamsFile}_${outerMesh}
+set OuterNamelistFile = ${NamelistFile}_${outerMesh}
 
-set InnerStreamsFile = ${StreamsFile}_${MPASGridDescriptorInner}
-set InnerNamelistFile = ${NamelistFile}_${MPASGridDescriptorInner}
+set InnerStreamsFile = ${StreamsFile}_${innerMesh}
+set InnerNamelistFile = ${NamelistFile}_${innerMesh}
 
-#set EnsembleStreamsFile = ${StreamsFile}_${MPASGridDescriptorEnsemble}
-#set EnsembleNamelistFile = ${NamelistFile}_${MPASGridDescriptorEnsemble}
+#set EnsembleStreamsFile = ${StreamsFile}_${ensembleMesh}
+#set EnsembleNamelistFile = ${NamelistFile}_${ensembleMesh}
 
 # initial IC
 setenv initModelConfigDir ${ModelConfigDir}/init
 
 # forecast
 setenv forecastModelConfigDir ${ModelConfigDir}/forecast
-##set forecastMeshList = (Forecast)
-#set forecastMPASnCellsList = ($MPASnCellsOuter)
-#set forecastlocalStaticFieldsFileList = ( \
-#$localStaticFieldsFileOuter \
-#)
-#set forecastStreamsFileList = ($OuterStreamsFile)
-#set forecastNamelistFileList = ($OuterNamelistFile)
 
 setenv variationalModelConfigDir ${ModelConfigDir}/variational
 set variationalMeshList = (Outer Inner)
-set variationalMPASnCellsList = ($MPASnCellsOuter $MPASnCellsInner)
+set variationalnCellsList = ($nCellsOuter $nCellsInner)
 set variationallocalStaticFieldsFileList = ( \
 $localStaticFieldsFileOuter \
 $localStaticFieldsFileInner \
@@ -157,22 +149,11 @@ set variationalNamelistFileList = ($OuterNamelistFile $InnerNamelistFile)
 # hofx
 setenv hofxModelConfigDir ${ModelConfigDir}/hofx
 set hofxMeshList = (HofX)
-set hofxMPASnCellsList = ($MPASnCellsOuter)
-#set hofxlocalStaticFieldsFileList = ( \
-#$localStaticFieldsFileOuter \
-#)
+set hofxnCellsList = ($nCellsOuter)
 set hofxStreamsFileList = ($OuterStreamsFile)
 set hofxNamelistFileList = ($OuterNamelistFile)
 
-set HofXMeshDescriptor = ${MPASGridDescriptorOuter}
+set HofXMeshDescriptor = ${outerMesh}
 
 # rtpp
 setenv rtppModelConfigDir ${ModelConfigDir}/rtpp
-#set rtppMeshList = (Ensemble)
-#set rtppMPASnCellsList = ($MPASnCellsEnsemble)
-#set rtpplocalStaticFieldsFileList = ( \
-#$localStaticFieldsFileEnsemble \
-#)
-#set rtppStreamsFileList = ($EnsembleStreamsFile)
-#set rtppNamelistFileList = ($EnsembleNamelistFile)
-

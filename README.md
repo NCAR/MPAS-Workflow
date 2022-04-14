@@ -120,7 +120,6 @@ are referred to the many existing examples and it is recommended to discuss addi
 to be merged back into the GitHub repository via GitHub issues.
 
 
-
 #### MPAS (`config/mpas/`)
 Configuration aspects that are unique to `MPAS-Atmosphere`
 
@@ -129,19 +128,6 @@ provide to UFO; identical to `mpas-jedi/test/testinput/namelists/geovars.yaml`, 
 so that users modify it at run-time as needed.
 
 `config/mpas/variables.csh`: model/analysis variables used to generate `yaml` files for MPAS-JEDI applications
-
-
-##### Mesh-specific controls
-Mesh-dependent aspects of the configuration; in time, this functionality will migrate to the
-scenario `yaml` files
-
-`config/mpas/$MPASGridDescriptor/mesh.csh`: mesh-specific options for multiple applications
-that affect the workflow and application behaviors
-
-`config/mpas/$MPASGridDescriptor/job.csh`: job durations and processor usages
-
-In the above, MPASGridDescriptor describes the mesh selected in the `model` part of the
-scenario configuration.  See `scenarios/base/model.yaml` for more information.
 
 
 ##### Application-specific MPAS-Atmosphere controls

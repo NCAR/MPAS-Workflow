@@ -32,13 +32,12 @@ endif
 # =================
 source config/workflow.csh
 source config/environment.csh
-source config/variational.csh
 source config/model.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
+source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -431,7 +430,7 @@ while ( $member <= ${nEnsDAMembers} )
   # use localStaticFieldsFileInner as the TemplateFieldsFileInner
   # NOTE: not perfect for EDA if static fields differ between members,
   #       but dual-res EDA not working yet anyway
-  if ($MPASnCellsOuter != $MPASnCellsInner) then
+  if ($nCellsOuter != $nCellsInner) then
     set tFile = ${TemplateFieldsFileInner}${memSuffix}
     rm $tFile
 
@@ -455,7 +454,7 @@ while ( $member <= ${nEnsDAMembers} )
       cp ${StreamsFile_} ${StreamsFile_}${memSuffix}
     endif
     sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
-    sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
+    sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
   end
   sed -i 's@{{StreamsFileMember}}@'${memSuffix}'@' $yamlFileList[$member]
 

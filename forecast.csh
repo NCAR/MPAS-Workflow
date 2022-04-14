@@ -23,15 +23,14 @@ endif
 # Setup environment
 # =================
 source config/workflow.csh
-source config/forecast.csh
 source config/model.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/environmentMPT.csh
+source config/applications/forecast.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -81,8 +80,8 @@ endif
 ln -sfv ${initialState} ./${icFile}
 
 ## link MPAS mesh graph info
-rm ./x1.${MPASnCellsOuter}.graph.info*
-ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .
+rm ./x1.${nCells}.graph.info*
+ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -102,15 +101,15 @@ end
 ## copy/modify dynamic streams file
 rm ${StreamsFile}
 cp -v $self_ModelConfigDir/${StreamsFile} .
-sed -i 's@nCells@'${MPASnCellsOuter}'@' ${StreamsFile}
+sed -i 's@nCells@'${nCells}'@' ${StreamsFile}
 sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${StreamsFile}
 sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${StreamsFile}
-sed -i 's@forecast__precision@'${forecast__precision}'@' ${StreamsFile}
+sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 ## Update sea-surface variables from GFS/GEFS analyses
-set localSeaUpdateFile = x1.${MPASnCellsOuter}.sfc_update.nc
+set localSeaUpdateFile = x1.${nCells}.sfc_update.nc
 sed -i 's@{{surfaceUpdateFile}}@'${localSeaUpdateFile}'@' ${StreamsFile}
 
 if ( "${updateSea}" == "True" ) then
@@ -160,7 +159,7 @@ if ( "${updateSea}" == "True" ) then
   sed -i 's@{{surfacePrecision}}@'${surfacePrecision}'@' ${StreamsFile}
   sed -i 's@{{surfaceInputInterval}}@initial_only@' ${StreamsFile}
 else
-  sed -i 's@{{surfacePrecision}}@'${forecast__precision}'@' ${StreamsFile}
+  sed -i 's@{{surfacePrecision}}@'${model__precision}'@' ${StreamsFile}
   sed -i 's@{{surfaceInputInterval}}@none@' ${StreamsFile}
 endif
 
@@ -169,9 +168,9 @@ rm ${NamelistFile}
 cp -v ${self_ModelConfigDir}/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
-sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFile
-sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
-sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
+sed -i 's@nCells@'${nCells}'@' $NamelistFile
+sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
+sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 sed -i 's@configDODACycling@'${do_DAcycling}'@' $NamelistFile
 
 if ( ${self_fcLengthHR} == 0 ) then

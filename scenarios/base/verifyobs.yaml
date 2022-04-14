@@ -1,0 +1,4 @@
+verifyobs:
+  job:
+    baseSeconds: 900
+    secondsPerEDAMember: 120

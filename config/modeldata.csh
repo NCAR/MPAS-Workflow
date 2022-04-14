@@ -5,12 +5,10 @@ set config_modeldata = 1
 
 source config/workflow.csh
 source config/model.csh
-source config/forecast.csh
-source config/variational.csh
+source config/applications/variational.csh
 source config/filestructure.csh
 set wd = `pwd`
 source config/tools.csh $wd
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/${InitializationType}ModelData.csh
 
 ## file date for first background
@@ -132,7 +130,7 @@ setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
 if ( "$DAType" =~ *"eda"* ) then
   # using member-specific sst/xice data from GEFS
   # 60km and 120km
-  setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr/${forecast__precision}
+  setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr/${model__precision}
   setenv seaMemFmt "${gefsMemFmt}"
 else
   # deterministic

@@ -4,7 +4,7 @@ if ( $?config_experiment ) exit 0
 setenv config_experiment 1
 
 source config/workflow.csh
-source config/variational.csh
+source config/applications/variational.csh
 source config/model.csh
 
 source config/scenario.csh
@@ -83,7 +83,7 @@ if ($ExperimentName == None) then
     if (${ABEInflation} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_ABEI_BT${ABEIChannel}
   endif
   setenv ExperimentName ${ExperimentName}${ExpEnsSuffix}
-  setenv ExperimentName ${ExperimentName}_${MPASGridDescriptor}
+  setenv ExperimentName ${ExperimentName}_${MeshesDescriptor}
   setenv ExperimentName ${ExperimentName}_${InitializationType}
 endif
 setenv ExperimentName ${ExperimentUser}_${ExperimentName}

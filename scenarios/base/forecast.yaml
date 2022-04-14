@@ -4,7 +4,37 @@ forecast:
 # OPTIONS: True/False
   updateSea: True
 
-## forecastPrecision
-# floating-point precision of forecast output
-# OPTIONS: single, double
-  precision: single
+  #{{outerMesh}}:
+  #  TimeStep: float
+  #  DiffusionLengthScale: float
+  30km:
+    TimeStep: 180.0
+    DiffusionLengthScale: 30000.0
+  60km:
+    TimeStep: 360.0
+    DiffusionLengthScale: 60000.0
+  120km:
+    TimeStep: 720.0
+    DiffusionLengthScale: 120000.0
+
+  job:
+    #{{outerMesh}}:
+    #  baseSeconds: int
+    #  secondsPerForecastHR: int
+    #  nodes: int
+    #  PEPerNode: int
+    30km:
+      baseSeconds: 120
+      secondsPerForecastHR: 420
+      nodes: 16
+      PEPerNode: 32
+    60km:
+      baseSeconds: 60
+      secondsPerForecastHR: 120
+      nodes: 4
+      PEPerNode: 36
+    120km:
+      baseSeconds: 60
+      secondsPerForecastHR: 60
+      nodes: 4
+      PEPerNode: 32

@@ -1,16 +1,15 @@
 #!/bin/csh -f
 
 source config/filestructure.csh
-source config/tools.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
+source config/model.csh
 
 ####################
 ## static data files
 ####################
 ## common directories
-set OuterModelData = ${ExperimentDirectory}/${MPASGridDescriptorOuter}
-set InnerModelData = ${ExperimentDirectory}/${MPASGridDescriptorInner}
-set EnsembleModelData = ${ExperimentDirectory}/${MPASGridDescriptorEnsemble}
+set OuterModelData = ${ExperimentDirectory}/${outerMesh}
+set InnerModelData = ${ExperimentDirectory}/${innerMesh}
+set EnsembleModelData = ${ExperimentDirectory}/${ensembleMesh}
 
 set GFSAnaDirOuter = ${OuterModelData}/GFSAna
 set GFSAnaDirInner = ${InnerModelData}/GFSAna

@@ -4,16 +4,15 @@ date
 
 # Setup environment
 # =================
-source config/variational.csh
-source config/forecast.csh
 source config/model.csh
 source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/environment.csh
+source config/applications/variational.csh
+#source config/applications/rtpp.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -70,7 +69,7 @@ cp ${firstANFile} ${meanDir}
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sfv $GraphInfoDir/x1.${MPASnCellsEnsemble}.graph.info* .
+ln -sfv $GraphInfoDir/x1.${nCellsEnsemble}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -89,10 +88,10 @@ end
 
 rm ${StreamsFile}
 cp -v $self_ModelConfigDir/${StreamsFile} .
-sed -i 's@nCells@'${MPASnCellsEnsemble}'@' ${StreamsFile}
+sed -i 's@nCells@'${nCellsEnsemble}'@' ${StreamsFile}
 sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
-sed -i 's@forecastPrecision@'${forecast__precision}'@' ${StreamsFile}
+sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 # determine analysis output precision
 ncdump -h ${firstANFile} | grep uReconstruct | grep double
@@ -107,13 +106,13 @@ else
     exit 1
   endif
 endif
-sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile}
+sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
 rm $NamelistFile
 cp -v ${self_ModelConfigDir}/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
-sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${MPASnCellsEnsemble}'@' ${NamelistFile}
+sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${nCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
 

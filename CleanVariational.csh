@@ -6,9 +6,8 @@ date
 # =================
 source config/filestructure.csh
 source config/model.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/tools.csh
-source config/variational.csh
+source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -36,7 +35,7 @@ end
 # Remove netcdf lock files
 rm *.nc*.lock
 
-if ($MPASnCellsOuter != $MPASnCellsInner) then
+if ($nCellsOuter != $nCellsInner) then
   rm ${TemplateFieldsFileInner}*
 endif
 

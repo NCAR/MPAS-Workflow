@@ -7,14 +7,24 @@ if ( $?config_hofx ) exit 0
 set config_hofx = 1
 
 source config/scenario.csh
+source config/model.csh
 
 # setLocal is a helper function that picks out a configuration node
 # under the "hofx" key of scenarioConfig
 setenv baseConfig scenarios/base/hofx.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig hofx"
 setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig hofx"
+setenv setNestedHofX "source $setNestedConfig $baseConfig $scenarioConfig hofx"
 
 $setLocal observations
 $setLocal nObsIndent
 
 $setLocal biasCorrection
+
+$setLocal radianceThinningDistance
+
+# job
+$setNestedHofX job.${outerMesh}.seconds
+$setNestedHofX job.${outerMesh}.nodes
+$setNestedHofX job.${outerMesh}.PEPerNode
+$setNestedHofX job.${outerMesh}.memory

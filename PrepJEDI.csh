@@ -45,15 +45,13 @@ endif
 # =================
 source config/environment.csh
 source config/filestructure.csh
-source config/forecast.csh
 source config/model.csh
 source config/observations.csh
 source config/tools.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
 source config/builds.csh
-source config/AppTypeTEMPLATE.csh
+source config/applications/AppTypeTEMPLATE.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -75,7 +73,7 @@ set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
 set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
 set MeshList = (${AppTypeTEMPLATEMeshList})
-set MPASnCellsList = (${AppTypeTEMPLATEMPASnCellsList})
+set nCellsList = (${AppTypeTEMPLATEnCellsList})
 set StreamsFileList = (${AppTypeTEMPLATEStreamsFileList})
 set NamelistFileList = (${AppTypeTEMPLATENamelistFileList})
 
@@ -119,8 +117,8 @@ set halfprevISO8601Date = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 # ====================
 
 ## link MPAS mesh graph info
-foreach MPASnCells ($MPASnCellsList)
-  ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+foreach nCells ($nCellsList)
+  ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
 end
 
 ## link MPAS-Atmosphere lookup tables
@@ -145,10 +143,10 @@ foreach StreamsFile_ ($StreamsFileList)
   @ iMesh++
   rm ${StreamsFile_}
   cp -v $self_ModelConfigDir/${StreamsFile} ./${StreamsFile_}
-  sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${StreamsFile_}
+  sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${StreamsFile_}
   sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
-  sed -i 's@forecastPrecision@'${forecast__precision}'@' ${StreamsFile_}
+  sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile_}
 end
 
 ## copy/modify dynamic namelist file
@@ -158,8 +156,8 @@ foreach NamelistFile_ ($NamelistFileList)
   rm ${NamelistFile_}
   cp -v ${self_ModelConfigDir}/${NamelistFile} ./${NamelistFile_}
   sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
-  sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
-  sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'${MPASTimeStep}'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' ${NamelistFile_}
 end
@@ -355,7 +353,7 @@ sed -i 's@{{InterpolationType}}@'${InterpolationType}'@g' $thisYAML
 
 
 ## QC characteristics
-sed -i 's@{{RADTHINDISTANCE}}@'${RADTHINDISTANCE}'@g' $thisYAML
+sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $thisYAML
 
 # need to change to mainScriptDir for getObservationsOrNone to work
 cd ${mainScriptDir}

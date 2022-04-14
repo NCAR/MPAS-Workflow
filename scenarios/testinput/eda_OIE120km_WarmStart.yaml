@@ -10,7 +10,9 @@ observations:
 experiment:
   ExperimentName: 'eda_OIE120km_WarmStart_TEST'
 model:
-  MPASGridDescriptor: OIE120km
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
 variational:
   DAType: eda_3denvar
   nInnerIterations: [15,]

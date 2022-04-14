@@ -30,7 +30,7 @@
 ## Base
   [[ForecastBase]]
     [[[job]]]
-      execution time limit = PT{{CyclingFCJobMinutes}}M
+      execution time limit = PT{{CyclingFCSeconds}}S
     [[[directives]]]
       -m = ae
       -q = {{CPQueueName}}
@@ -38,7 +38,7 @@
       -l = select={{CyclingFCNodes}}:ncpus={{CyclingFCPEPerNode}}:mpiprocs={{CyclingFCPEPerNode}}
   [[ExtendedFCBase]]
     [[[job]]]
-      execution time limit = PT{{ExtendedFCJobMinutes}}M
+      execution time limit = PT{{ExtendedFCSeconds}}S
     [[[directives]]]
       -m = ae
       -q = {{NCPQueueName}}
@@ -46,7 +46,7 @@
       -l = select={{ExtendedFCNodes}}:ncpus={{ExtendedFCPEPerNode}}:mpiprocs={{ExtendedFCPEPerNode}}
   [[HofXBase]]
     [[[job]]]
-      execution time limit = PT{{HofXJobMinutes}}M
+      execution time limit = PT{{HofXSeconds}}S
       execution retry delays = {{HofXRetry}}
     [[[directives]]]
       -q = {{NCPQueueName}}
@@ -54,7 +54,7 @@
       -l = select={{HofXNodes}}:ncpus={{HofXPEPerNode}}:mpiprocs={{HofXPEPerNode}}:mem={{HofXMemory}}GB
   [[VerifyModelBase]]
     [[[job]]]
-      execution time limit = PT{{VerifyModelJobMinutes}}M
+      execution time limit = PT{{VerifyModelSeconds}}S
       execution retry delays = {{HofXRetry}}
     [[[directives]]]
       -q = {{NCPQueueName}}
@@ -62,7 +62,7 @@
       -l = select=1:ncpus=36:mpiprocs=36
   [[VerifyObsBase]]
     [[[job]]]
-      execution time limit = PT{{VerifyObsJobMinutes}}M
+      execution time limit = PT{{VerifyObsSeconds}}S
       execution retry delays = {{HofXRetry}}
     [[[directives]]]
       -q = {{NCPQueueName}}
@@ -121,7 +121,7 @@
     inherit = EnsDataAssim
     script = $origin/EnsembleOfVariational.csh "{{inst}}"
     [[[job]]]
-      execution time limit = PT{{EnsOfVariationalJobMinutes}}M
+      execution time limit = PT{{EnsOfVariationalSeconds}}S
       execution retry delays = {{EnsOfVariationalRetry}}
     [[[directives]]]
       -m = ae
@@ -136,7 +136,7 @@
     inherit = DataAssim
     script = $origin/Variational.csh "{{mem}}"
     [[[job]]]
-      execution time limit = PT{{VariationalJobMinutes}}M
+      execution time limit = PT{{VariationalSeconds}}S
       execution retry delays = {{VariationalRetry}}
     [[[directives]]]
       -m = ae
@@ -156,13 +156,13 @@
   [[RTPPInflation]]
     script = $origin/RTPPInflation.csh
     [[[job]]]
-      execution time limit = PT{{CyclingInflationJobMinutes}}M
+      execution time limit = PT{{RTPPSeconds}}S
       execution retry delays = {{RTPPInflationRetry}}
     [[[directives]]]
       -m = ae
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
-      -l = select={{CyclingInflationNodes}}:ncpus={{CyclingInflationPEPerNode}}:mpiprocs={{CyclingInflationPEPerNode}}:mem={{CyclingInflationMemory}}GB
+      -l = select={{RTPPNodes}}:ncpus={{RTPPPEPerNode}}:mpiprocs={{RTPPPEPerNode}}:mem={{RTPPMemory}}GB
   # post => finished => clean
   [[DataAssimPost]]
     [[[job]]]
@@ -203,8 +203,8 @@
     script = $origin/GetWarmStartIC.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members
-      # TODO: set time limit based on outer mesh AND (number of members OR
-      #       independent task for each member) under "config/mpas/*/job.csh"
+      # TODO: set time limit based on outerMesh AND (number of members OR
+      #       independent task for each member)
       execution time limit = PT10M
       execution retry delays = {{InitializationRetry}}
   [[GetGFSanalysis]]
@@ -225,7 +225,7 @@
   [[GenerateColdStartIC]]
     script = $origin/GenerateColdStartIC.csh
     [[[job]]]
-      execution time limit = PT{{InitICJobMinutes}}M
+      execution time limit = PT{{InitICSeconds}}S
       execution retry delays = {{InitializationRetry}}
     [[[directives]]]
       -q = {{CPQueueName}}
@@ -295,7 +295,7 @@
 {% if DiagnoseEnsSpreadBG %}
     script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsDAMembers}}"
     [[[job]]]
-      execution time limit = PT{{VerifyObsEnsMeanJobMinutes}}M
+      execution time limit = PT{{VerifyObsEnsMeanSeconds}}S
 {% else %}
     script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "0"
 {% endif %}

@@ -113,3 +113,131 @@ variational:
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML
   nObsIndent: 2
+
+## radianceThinningDistance
+# distance (km) used for the Gaussian Thinning filter for all radiance-based observations
+  radianceThinningDistance: "145.0"
+
+## mesh-specific settings
+  localization:
+    #{{ensembleMesh}}:
+    #  bumpLocPrefix: str
+    #  bumpLocDir: str
+    30km:
+      bumpLocPrefix: bumploc_1200.0km_6.0km
+      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_16MAR2022code
+    60km:
+      bumpLocPrefix: bumploc_1200.0km_6.0km
+      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_16MAR2022code
+    120km:
+      bumpLocPrefix: bumploc_1200.0km_6.0km
+      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_16MAR2022code
+
+  covariance:
+    #{{innerMesh}}:
+    #  bumpCovControlVariables: list(str)
+    #  bumpCovPrefix: str
+    #  bumpCovVBalPrefix: str
+    #  bumpCovDir: str
+    #  bumpCovStdDevFile: str
+    #  bumpCovVBalDir: str
+    30km:
+      bumpCovControlVariables:
+      - stream_function
+      - velocity_potential
+      - temperature
+      - spechum
+      - surface_pressure
+      bumpCovPrefix: mpas_parametersbump_cov
+      bumpCovVBalPrefix: mpas_vbal
+      bumpCovDir: None
+      bumpCovStdDevFile: None
+      bumpCovVBalDir: None
+    60km:
+      bumpCovControlVariables:
+      - stream_function
+      - velocity_potential
+      - temperature
+      - spechum
+      - surface_pressure
+      bumpCovPrefix: mpas_parametersbump_cov
+      bumpCovVBalPrefix: mpas_vbal
+      bumpCovDir: None
+      bumpCovStdDevFile: None
+      bumpCovVBalDir: None
+    120km:
+      bumpCovControlVariables:
+      - stream_function
+      - velocity_potential
+      - temperature
+      - spechum
+      - surface_pressure
+      bumpCovPrefix: mpas_parametersbump_cov
+      bumpCovVBalPrefix: mpas_vbal
+      bumpCovDir: /glade/scratch/bjung/pandac/20220307_develop/bumpcov_tune
+      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220307_develop/CMAT_00.tune/mpas.stddev.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/scratch/bjung/pandac/20220307_develop/bumpcov_tune
+
+  job:
+    # TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
+    # TODO: update with latest resource requirements following GetValues refactoring
+    #{{outerMesh}}:
+    #  {{innerMesh}}:
+    #    {{baseDAType}}: # i.e., 3dvar, 3denvar, 3dhybrid, 4denvar, etc...
+    #      baseSeconds: int
+    #      secondsPerEnVarMember: int, default is 0
+    #      #@ seconds = $secondsPerEnVarMember * $nEnVarMembers + $baseSeconds
+    #      nodes: int
+    #      PEPerNode: int
+    #      memory: int
+    30km:
+      30km:
+        3denvar:
+          baseSeconds: 1500
+          secondsPerEnVarMember: 5
+          nodes: 64
+          PEPerNode: 8
+          memory: 45
+        3dvar:
+          baseSeconds: 1500
+          nodes: 64
+          PEPerNode: 8
+          memory: 45
+      60km:
+        3denvar:
+          baseSeconds: 1200
+          secondsPerEnVarMember: 10
+          nodes: 6
+          PEPerNode: 32
+          memory: 109
+        3dvar:
+          baseSeconds: 1200
+          nodes: 6
+          PEPerNode: 32
+          memory: 109
+    60km:
+      60km:
+        3denvar:
+          baseSeconds: 500
+          secondsPerEnVarMember: 7
+          nodes: 6
+          PEPerNode: 32
+          memory: 109
+        3dvar:
+          baseSeconds: 500
+          nodes: 6
+          PEPerNode: 32
+          memory: 109
+    120km:
+      120km:
+        3denvar:
+          baseSeconds: 360
+          secondsPerEnVarMember: 5
+          nodes: 4
+          PEPerNode: 32
+          memory: 45
+        3dvar:
+          baseSeconds: 360
+          nodes: 4
+          PEPerNode: 32
+          memory: 45

@@ -7,7 +7,9 @@ workflow:
 observations:
   resource: GladeRDAOnline
 model:
-  MPASGridDescriptor: OIE120km
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
 variational:
   DAType: 3dvar
   biasCorrection: True

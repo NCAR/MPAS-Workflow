@@ -11,7 +11,9 @@ workflow:
 experiment:
   ExperimentName: '3denvar_O30kmIE60km_WarmStart_TEST'
 model:
-  MPASGridDescriptor: O30kmIE60km
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
 variational:
   DAType: 3denvar
   # only use 15 inner iterations to reduce cost
