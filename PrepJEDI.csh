@@ -232,13 +232,13 @@ endif
 # Generate yaml
 # =============
 
-# (1) copy applicationBase yaml
-# =============================
+# (1) copy jedi/applications yaml
+# ===============================
 
 set thisYAML = orig.yaml
 set prevYAML = ${thisYAML}
 
-cp -v ${ConfigDir}/applicationBase/${self_AppName}.yaml $thisYAML
+cp -v ${ConfigDir}/jedi/applications/${self_AppName}.yaml $thisYAML
 if ( $status != 0 ) then
   echo "ERROR in $0 : application YAML not available --> ${self_AppName}.yaml" > ./FAIL
   exit 1

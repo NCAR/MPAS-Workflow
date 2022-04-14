@@ -124,9 +124,9 @@ end
 # =============
 # Generate yaml
 # =============
-## Copy applicationBase yaml
+## Copy jedi/applications yaml
 set thisYAML = orig.yaml
-cp -v ${ConfigDir}/applicationBase/rtpp.yaml $thisYAML
+cp -v ${ConfigDir}/jedi/applications/rtpp.yaml $thisYAML
 
 ## RTPP inflation factor
 sed -i 's@{{RTPPInflationFactor}}@'${RTPPInflationFactor}'@g' $thisYAML

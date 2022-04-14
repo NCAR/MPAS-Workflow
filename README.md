@@ -152,14 +152,13 @@ experiments.  Parts of those stubs are automatically populated via the workflow.
 users or developers are encouraged to modify the application-specific yamls directly to suit
 their needs.
 
-`config/applicationBase/*.yaml`: MPAS-JEDI application-specific `yaml` templates.  These will be
-further populated by scripts templated on `PrepJEDA.csh` and/or `PrepVariational.csh`.
+`config/jedi/applications/*.yaml`: MPAS-JEDI application-specific `yaml` templates.  These will be
+further populated by scripts templated on `PrepJEDI.csh` and/or `PrepVariational.csh`.
 
-`config/ObsPlugs/variational/*.yaml`: observation `yaml` stubs that get plugged into `Variational`
-`applicationBase` yamls, e.g., `3dvar.yaml`, `3denvar.yaml`, `3dhybrid.yaml`, and
-`eda_3denvar.yaml`
+`config/jedi/ObsPlugs/variational/*.yaml`: observation `yaml` stubs that get plugged into `Variational`
+`jedi/applications` yamls, e.g., `3dvar.yaml`, `3denvar.yaml`, and `3dhybrid.yaml`
 
-`config/ObsPlugs/hofx/*.yaml`: same, but for the `HofX` `applicationBase` `yaml`, `hofx.yaml`
+`config/jedi/ObsPlugs/hofx/*.yaml`: same, but for `jedi/applications/hofx.yaml`
 
 
 
