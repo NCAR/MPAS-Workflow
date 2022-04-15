@@ -6,8 +6,6 @@ set self_taskBaseScript = taskBaseScriptTEMPLATE
 set self_inStateDirs = wrapStateDirsTEMPLATE
 set self_inStatePrefix = wrapStatePrefixTEMPLATE
 set self_StateType = wrapStateTypeTEMPLATE
-set self_AppName = wrapAppNameTEMPLATE
-set self_nOuter = wrapnOuterTEMPLATE
 
 set preparationName = PrepJEDI
 
@@ -17,7 +15,6 @@ echo "Making task scripts for ${self_StateType} state"
 set PreparationScript=${mainScriptDir}/${preparationName}${self_taskBaseScript}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
     -e 's@WindowHRTEMPLATE@wrapWindowHRTEMPLATE@' \
-    -e 's@AppNameTEMPLATE@'${self_AppName}'@' \
     -e 's@AppTypeTEMPLATE@wrapAppTypeTEMPLATE@' \
     ${preparationName}.csh > ${PreparationScript}
 chmod 744 ${PreparationScript}
@@ -31,39 +28,29 @@ sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
 chmod 744 ${JobScript}
 
 #Application verification
-if ( "$self_AppName" =~ *"eda"* ) then
-  #NOTE: verification not set up for multiple states yet
-  #TODO: enable VerifyObsDA for ensemble DA; only works for deterministic DA
-  set VFOBSScript=None
-  set VFMODELScript=None
-else
-  set VFObsScript=${mainScriptDir}/VerifyObs${self_StateType}.csh
-  sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
-      -e 's@nOuterTEMPLATE@'${self_nOuter}'@' \
-      -e 's@jediAppNameTEMPLATE@wrapjediAppNameTEMPLATE@' \
-      verifyobs.csh > ${VFObsScript}
-  chmod 744 ${VFObsScript}
+set VFObsScript=${mainScriptDir}/VerifyObs${self_StateType}.csh
+sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
+    verifyobs.csh > ${VFObsScript}
+chmod 744 ${VFObsScript}
 
-  set CompareObsScript=${mainScriptDir}/CompareObs${self_StateType}.csh
-  sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
-      -e 's@jediAppNameTEMPLATE@wrapjediAppNameTEMPLATE@' \
-      -e 's@WorkDirsBenchmarkTEMPLATE@'${benchmark_WorkDirs}'@' \
-      compareobs.csh > ${CompareObsScript}
-  chmod 744 ${CompareObsScript}
+set CompareObsScript=${mainScriptDir}/CompareObs${self_StateType}.csh
+sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
+    -e 's@WorkDirsBenchmarkTEMPLATE@'${benchmark_WorkDirs}'@' \
+    compareobs.csh > ${CompareObsScript}
+chmod 744 ${CompareObsScript}
 
-  set VFModelScript=${mainScriptDir}/VerifyModel${self_StateType}.csh
-  sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
-      -e 's@inStateDirsTEMPLATE@'${self_inStateDirs}'@' \
-      -e 's@inStatePrefixTEMPLATE@'${self_inStatePrefix}'@' \
-      verifymodel.csh > ${VFModelScript}
-  chmod 744 ${VFModelScript}
+set VFModelScript=${mainScriptDir}/VerifyModel${self_StateType}.csh
+sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
+    -e 's@inStateDirsTEMPLATE@'${self_inStateDirs}'@' \
+    -e 's@inStatePrefixTEMPLATE@'${self_inStatePrefix}'@' \
+    verifymodel.csh > ${VFModelScript}
+chmod 744 ${VFModelScript}
 
-  set CompareModelScript=${mainScriptDir}/CompareModel${self_StateType}.csh
-  sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
-      -e 's@WorkDirsBenchmarkTEMPLATE@'${benchmark_WorkDirs}'@' \
-      comparemodel.csh > ${CompareModelScript}
-  chmod 744 ${CompareModelScript}
-endif
+set CompareModelScript=${mainScriptDir}/CompareModel${self_StateType}.csh
+sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
+    -e 's@WorkDirsBenchmarkTEMPLATE@'${benchmark_WorkDirs}'@' \
+    comparemodel.csh > ${CompareModelScript}
+chmod 744 ${CompareModelScript}
 
 #Application cleanup
 set JobScript=${mainScriptDir}/Clean${self_taskBaseScript}.csh

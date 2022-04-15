@@ -22,6 +22,10 @@ set ArgDT = "$2"
 # ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
 
+# ArgAppName: str, one of the jedi application names with configuration under config/jedi/applicationBase
+# E.g., hofx, 3dvar, 3denvar, etc...
+set ArgAppName = "$4"
+
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isNotInt = ($status)
@@ -69,7 +73,6 @@ cd ${self_WorkDir}
 
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
-set self_AppName = AppNameTEMPLATE
 set self_AppType = AppTypeTEMPLATE
 set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
 set MeshList = (${AppTypeTEMPLATEMeshList})
@@ -238,9 +241,9 @@ endif
 set thisYAML = orig.yaml
 set prevYAML = ${thisYAML}
 
-cp -v ${ConfigDir}/jedi/applications/${self_AppName}.yaml $thisYAML
+cp -v ${ConfigDir}/jedi/applications/${ArgAppName}.yaml $thisYAML
 if ( $status != 0 ) then
-  echo "ERROR in $0 : application YAML not available --> ${self_AppName}.yaml" > ./FAIL
+  echo "ERROR in $0 : application YAML not available --> ${ArgAppName}.yaml" > ./FAIL
   exit 1
 endif
 

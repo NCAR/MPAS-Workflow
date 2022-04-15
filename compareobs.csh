@@ -17,6 +17,9 @@ set ArgStateType = "$3"
 # ArgNMembers: int, set > 1 to activate ensemble spread diagnostics
 set ArgNMembers = "$4"
 
+# ArgAppType: str, type of application being verified (hofx or variational)
+set ArgAppType = "$5"
+
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isNotInt = ($status)
@@ -57,9 +60,6 @@ echo "WorkDir = ${self_WorkDir}"
 
 set benchmark_WorkDir = $WorkDirsBenchmarkTEMPLATE[$ArgMember]
 
-# other templated variables
-set self_jediAppName = jediAppNameTEMPLATE
-
 # ================================================================================================
 
 # collect obs-space diagnostic statistics into DB files
@@ -83,8 +83,8 @@ set ObsTypeList = ( \
 
 rm compare.txt
 foreach obstype ($ObsTypeList)
-  set self_StatisticsFile = "${self_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
-  set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
+  set self_StatisticsFile = "${self_WorkDir}/${ObsDiagnosticsDir}/stats_${ArgAppType}_${obstype}.nc"
+  set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ObsDiagnosticsDir}/stats_${ArgAppType}_${obstype}.nc"
 
   echo "nccmp -dfFmSN -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile}" | tee -a compare.txt
   nccmp -d -N -S -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} | tee -a compare.txt

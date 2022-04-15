@@ -7,7 +7,7 @@ source config/filestructure.csh
 source config/workflow.csh
 
 ## load the variational settings
-source config/applications/variational.csh
+#source config/applications/variational.csh
 
 set AppAndVerify = AppAndVerify
 
@@ -59,9 +59,6 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeTEMPLATE@DA@' \
     -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
-    -e 's@wrapAppNameTEMPLATE@'${DAType}'@g' \
-    -e 's@wrapjediAppNameTEMPLATE@variational@g' \
-    -e 's@wrapnOuterTEMPLATE@'${nOuterIterations}'@g' \
     -e 's@wrapAppTypeTEMPLATE@variational@g' \
     ${AppAndVerify}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}
@@ -130,9 +127,6 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
       -e 's@wrapStatePrefixTEMPLATE@'$TemplateVariables[2]'@' \
       -e 's@wrapStateTypeTEMPLATE@'${state}'@' \
       -e 's@wrapWindowHRTEMPLATE@'$TemplateVariables[3]'@' \
-      -e 's@wrapAppNameTEMPLATE@hofx@g' \
-      -e 's@wrapjediAppNameTEMPLATE@hofx@g' \
-      -e 's@wrapnOuterTEMPLATE@0@g' \
       -e 's@wrapAppTypeTEMPLATE@hofx@g' \
       ${AppAndVerify}.csh > ${WrapperScript}
   chmod 744 ${WrapperScript}

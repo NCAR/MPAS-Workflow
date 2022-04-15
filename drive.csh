@@ -100,7 +100,8 @@ cat >! suite.rc << EOF
 {% set observationsResource = "${observations__resource}" %}
 {% set modelAnalysisSource = "${model__AnalysisSource}" %}
 
-# eda
+# variational
+{% set DAType = "${DAType}" %}
 {% set EDASize = ${EDASize} %} #integer
 {% set nDAInstances = ${nDAInstances} %} #integer
 {% set nEnsDAMembers = ${nEnsDAMembers} %} #integer

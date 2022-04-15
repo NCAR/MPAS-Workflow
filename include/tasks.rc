@@ -121,7 +121,7 @@
 
   # directory/file preparation
   [[InitDataAssim]]
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA" "{{DAType}}"
     script = $origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
@@ -191,10 +191,10 @@
   # verification
   [[VerifyObsDA]]
     inherit = VerifyObsBase
-    script = $origin/VerifyObsDA.csh "1" "0" "DA" "0"
+    script = $origin/VerifyObsDA.csh "1" "0" "DA" "0" "variational"
   [[CompareObsDA]]
     inherit = CompareBase
-    script = $origin/CompareObsDA.csh "1" "0" "DA" "0"
+    script = $origin/CompareObsDA.csh "1" "0" "DA" "0" "variational"
 
 
 ## Forecast (critical path)
@@ -270,14 +270,14 @@
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "hofx"
     script = $origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
   [[CleanHofXMeanFC{{dt}}hr]]
     inherit = CleanBase
     script = $origin/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
   [[VerifyObsMeanFC{{dt}}hr]]
     inherit = VerifyObsBase
-    script = $origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0"
+    script = $origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0" "hofx"
   [[VerifyModelMeanFC{{dt}}hr]]
     inherit = VerifyModelMeanFC
     script = $origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC" "0"
@@ -296,7 +296,7 @@
       -l = select=1:ncpus=36:mpiprocs=36
   [[HofXEnsMeanBG]]
     inherit = HofXBase
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG" "hofx"
     script = $origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = {{EnsMeanBGQueueName}}
@@ -317,7 +317,7 @@
       execution time limit = PT{{modelSeconds}}M
   [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
-    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
+    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}" "hofx"
     [[[job]]]
       execution time limit = PT{{obsSeconds}}S
   [[CleanHofXEnsMeanBG]]
@@ -348,7 +348,7 @@
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
     inherit = HofX{{state}}
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}" "hofx"
     script = $origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
   [[VerifyModel{{state}}{{mem}}]]
     inherit = VerifyModel{{state}}
@@ -358,10 +358,10 @@
     script = $origin/CompareModel{{state}}.csh "{{mem}}" "0" "{{state}}"
   [[VerifyObs{{state}}{{mem}}]]
     inherit = VerifyObs{{state}}
-    script = $origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
+    script = $origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0" "hofx"
   [[CompareObs{{state}}{{mem}}]]
     inherit = CompareObs{{state}}
-    script = $origin/CompareObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
+    script = $origin/CompareObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0" "hofx"
   [[CleanHofX{{state}}{{mem}}]]
     inherit = CleanHofX{{state}}
     script = $origin/CleanHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
@@ -379,14 +379,14 @@
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC{{mem}}
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC" "hofx"
     script = $origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyModelEnsFC{{mem}}
     script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
   [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyObsBase
-    script = $origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
+    script = $origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0" "hofx"
   [[CleanHofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = CleanBase
     script = $origin/CleanHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
