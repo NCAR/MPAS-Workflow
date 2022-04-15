@@ -61,7 +61,7 @@ set BenchmarkVerifyEnsFCDirs = ()
 
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $DAType $member`
+  set memDir = `${memberDir} $nEnsDAMembers $member`
   set CyclingDAInDirs = ($CyclingDAInDirs ${CyclingDAInDir}${memDir})
   set CyclingDAOutDirs = ($CyclingDAOutDirs ${CyclingDAOutDir}${memDir})
 

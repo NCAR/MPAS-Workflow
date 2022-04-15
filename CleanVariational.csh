@@ -25,7 +25,7 @@ cd ${self_WorkDir}
 if ("$retainObsFeedback" != True) then
   set member = 1
   while ( $member <= ${nEnsDAMembers} )
-    set memDir = `${memberDir} $DAType $member`
+    set memDir = `${memberDir} $nEnsDAMembers $member`
     rm ${self_WorkDir}/${OutDBDir}${memDir}/${obsPrefix}*.h5
     rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.nc4
     rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.nc4

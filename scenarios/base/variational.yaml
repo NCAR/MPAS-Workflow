@@ -1,9 +1,8 @@
 variational:
-## baseDAType [Required Parameter]
+## DAType [Required Parameter]
 # OPTIONS: 3dvar, 3denvar, 3dhybrid
 # Note: 3dvar and 3dhybrid currently only work for OIE120km
-# When nEnsDAMembers>1, DAType='eda_'+baseDAType; otherwise DAType=baseDAType
-  baseDAType: None
+  DAType: None
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
@@ -35,7 +34,7 @@ variational:
 # optionally carry out an ensemble of variational data assimilations (EDA) by modifying nDAInstances
 # and EDASize, where nEnsDAMembers=(EDASize * nDAInstances)
 # nEnsDAMembers is also the number of forecasts used to represent the flow-dependent background
-# error covariance when baseDAType is 3denvar or 3dhybrid
+# error covariance when DAType is 3denvar or 3dhybrid
 
 ## nDAInstances:
 # number of instances of Variational or EnsembleOfVariational applications
@@ -170,7 +169,7 @@ variational:
     # TODO: update with latest resource requirements following GetValues refactoring
     #{{outerMesh}}:
     #  {{innerMesh}}:
-    #    {{baseDAType}}: # i.e., 3dvar, 3denvar, 3dhybrid, 4denvar, etc...
+    #    {{DAType}}: # i.e., 3dvar, 3denvar, 3dhybrid, 4denvar, etc...
     #      baseSeconds: int
     #      secondsPerEnVarMember: int, default is 0
     #      #@ seconds = $secondsPerEnVarMember * $nEnVarMembers + $baseSeconds

@@ -17,7 +17,7 @@ model:
   ensembleMesh: 120km
   AnalysisSource: GFSfromNCEPFTPOnline
 variational:
-  baseDAType: 3dvar
+  DAType: 3dvar
   nInnerIterations: [60,]
   biasCorrection: True
 job:

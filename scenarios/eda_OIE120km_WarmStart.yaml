@@ -7,7 +7,7 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 variational:
-  baseDAType: 3denvar
+  DAType: 3denvar
   nDAInstances: 20
   LeaveOneOutEDA: True
   # delete observation feedback files of all members to save space

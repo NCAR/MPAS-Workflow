@@ -16,7 +16,7 @@ model:
   ensembleMesh: 120km
   AnalysisSource: GFSfromRDAOnline
 variational:
-  baseDAType: 3dvar
+  DAType: 3dvar
   nInnerIterations: [15,]
   biasCorrection: True
 job:

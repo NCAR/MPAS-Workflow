@@ -15,7 +15,7 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 variational:
-  baseDAType: 3dvar
+  DAType: 3dvar
   nInnerIterations: [15,]
 job:
   CPQueueName: economy

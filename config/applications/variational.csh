@@ -16,7 +16,7 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig variational"
 setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig variational"
 setenv setNestedVariational "source $setNestedConfig $baseConfig $scenarioConfig variational"
 
-$setLocal baseDAType
+$setLocal DAType
 
 set ensembleCovarianceWeight = "`$getLocalOrNone ensembleCovarianceWeight`"
 set staticCovarianceWeight = "`$getLocalOrNone staticCovarianceWeight`"
@@ -56,11 +56,6 @@ $setLocal LeaveOneOutEDA
 @ nEnsDAMembers = $EDASize * $nDAInstances
 setenv nEnsDAMembers $nEnsDAMembers
 
-setenv DAType $baseDAType
-if ($nEnsDAMembers > 1) then
-  setenv DAType eda_$DAType
-endif
-
 # ensemble inflation settings
 $setLocal ABEInflation
 $setLocal ABEIChannel
@@ -90,13 +85,13 @@ $setLocal retainObsFeedback
 
 # TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
 # localization
-if ($baseDAType == 3denvar || $baseDAType == 3dhybrid) then
+if ($DAType == 3denvar || $DAType == 3dhybrid) then
   $setLocal localization.${ensembleMesh}.bumpLocPrefix
   $setLocal localization.${ensembleMesh}.bumpLocDir
 endif
 
 # covariance
-if ($baseDAType == 3dvar || $baseDAType == 3dhybrid) then
+if ($DAType == 3dvar || $DAType == 3dhybrid) then
   $setLocal covariance.bumpCovControlVariables
   $setLocal covariance.bumpCovPrefix
   $setLocal covariance.bumpCovVBalPrefix
@@ -114,19 +109,19 @@ setenv nEnVarMembers 20
 if ($nEnsDAMembers > 1) then
   setenv nEnVarMembers $nEnsDAMembers
 endif
-if ($baseDAType == 3dvar) then
+if ($DAType == 3dvar) then
   setenv nEnVarMembers 0
   #TODO: add extra time/memory for covariance multiplication
 endif
 
-$setLocal job.${outerMesh}.${innerMesh}.$baseDAType.baseSeconds
-set secondsPerEnVarMember = "`$getLocalOrNone job.${outerMesh}.${innerMesh}.$baseDAType.secondsPerEnVarMember`"
+$setLocal job.${outerMesh}.${innerMesh}.$DAType.baseSeconds
+set secondsPerEnVarMember = "`$getLocalOrNone job.${outerMesh}.${innerMesh}.$DAType.secondsPerEnVarMember`"
 if ("$secondsPerEnVarMember" == None) then
   set secondsPerEnVarMember = 0
 endif
 @ seconds = $secondsPerEnVarMember * $nEnVarMembers + $baseSeconds
 setenv variational__seconds $seconds
 
-$setNestedVariational job.${outerMesh}.${innerMesh}.$baseDAType.nodes
-$setNestedVariational job.${outerMesh}.${innerMesh}.$baseDAType.PEPerNode
-$setNestedVariational job.${outerMesh}.${innerMesh}.$baseDAType.memory
+$setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.nodes
+$setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.PEPerNode
+$setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.memory

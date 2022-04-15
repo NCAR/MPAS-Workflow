@@ -5,7 +5,7 @@ model:
   innerMesh: 60km
   ensembleMesh: 60km
 variational:
-  baseDAType: 3denvar
+  DAType: 3denvar
   nInnerIterations: [60,60,]
   ABEInflation: True
   ABEIChannel: 10

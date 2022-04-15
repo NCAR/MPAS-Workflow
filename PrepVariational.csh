@@ -69,7 +69,7 @@ rm ${localStaticFieldsPrefix}*.nc*
 #      instead of only for EDA.  Will make EDA omb/oma verification easier.
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $DAType $member`
+  set memDir = `${memberDir} $nEnsDAMembers $member`
   mkdir -p ${OutDBDir}${memDir}
   @ member++
 end
@@ -170,7 +170,7 @@ sed -i 's@{{anStateDir}}@'${self_WorkDir}'/'${anDir}'@g' $prevYAML
 
 # Hybrid Jb weights
 # =================
-if ( "$baseDAType" == "3dhybrid" ) then
+if ( "$DAType" == "3dhybrid" ) then
   sed -i 's@{{staticCovarianceWeight}}@'${staticCovarianceWeight}'@' $prevYAML
   sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
 endif
@@ -178,7 +178,7 @@ endif
 
 # Static Jb term
 # ==============
-if ( "$baseDAType" == "3dvar" || "$baseDAType" == "3dhybrid" ) then
+if ( "$DAType" == "3dvar" || "$DAType" == "3dhybrid" ) then
   # bumpCovControlVariables
   set Variables = ($bumpCovControlVariables)
 #TODO: turn on hydrometeors in static B when applicable by uncommenting below
@@ -211,11 +211,11 @@ endif # 3dvar || 3dhybrid
 # Ensemble Jb term
 # ================
 
-if ( "$baseDAType" == "3denvar" || "$baseDAType" == "3dhybrid" ) then
+if ( "$DAType" == "3denvar" || "$DAType" == "3dhybrid" ) then
   ## yaml indentation
-  if ( "$baseDAType" == "3denvar" ) then
+  if ( "$DAType" == "3denvar" ) then
     set nEnsPbIndent = 4
-  else if ( "$baseDAType" == "3dhybrid" ) then
+  else if ( "$DAType" == "3dhybrid" ) then
     set nEnsPbIndent = 8
   endif
   set indentPb = "`${nSpaces} $nEnsPbIndent`"
@@ -286,7 +286,7 @@ end
 # Ensemble Jb term (member dependent)
 # ===================================
 
-if ( "$baseDAType" == "3denvar" || "$baseDAType" == "3dhybrid" ) then
+if ( "$DAType" == "3denvar" || "$DAType" == "3dhybrid" ) then
   ## members
   # + pure envar: 'background error.members from template'
   # + hybrid envar: 'background error.components[iEnsemble].covariance.members from template'
@@ -319,7 +319,7 @@ while ( $member <= ${nEnsDAMembers} )
   set memberyaml = $yamlFileList[$member]
 
   # member-specific state I/O and observation file output directory
-  set memDir = `${memberDir} $DAType $member`
+  set memDir = `${memberDir} $nEnsDAMembers $member`
   sed -i 's@{{MemberDir}}@'${memDir}'@g' $memberyaml
 
   # deterministic EnVar does not perturb observations
@@ -351,7 +351,7 @@ set StaticFieldsFileList = ($StaticFieldsFileOuter $StaticFieldsFileInner)
 
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set memSuffix = `${memberDir} $DAType $member "${flowMemFileFmt}"`
+  set memSuffix = `${memberDir} $nEnsDAMembers $member "${flowMemFileFmt}"`
 
   ## copy static fields
   # unique StaticFieldsDir and StaticFieldsFile for each ensemble member
@@ -410,7 +410,7 @@ while ( $member <= ${nEnsDAMembers} )
 
     #modify "Inner" initial forecast file
     # TODO: capture the naming convention for FirstCyclingFCDir somewhere else
-    set memDir = `${memberDir} $DAType 1`
+    set memDir = `${memberDir} $nEnsDAMembers 1`
     set FirstCyclingFCDir = ${CyclingFCWorkDir}/${FirstCycleDate}${memDir}/Inner
     cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
     # modify xtime

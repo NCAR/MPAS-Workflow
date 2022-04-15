@@ -31,7 +31,7 @@ set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 ## copy static fields
 rm static.nc
 
-set StaticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
+set StaticMemDir = `${memberDir} 2 1 "${staticMemFmt}"`
 set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}

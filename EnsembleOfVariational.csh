@@ -75,7 +75,7 @@ end
 
 
 ## create then move to single run directory
-set instDir = `${memberDir} ens ${ArgInstance} "${flowInstFmt}"`
+set instDir = `${memberDir} 2 ${ArgInstance} "${flowInstFmt}"`
 set runDir = run${instDir}
 rm -r ${runDir}
 mkdir -p ${runDir}

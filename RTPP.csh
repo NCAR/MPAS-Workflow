@@ -53,13 +53,13 @@ rm ${localStaticFieldsPrefix}*.nc
 rm ${localStaticFieldsPrefix}*.nc-lock
 set localStaticFieldsFile = ${localStaticFieldsFileEnsemble}
 rm ${localStaticFieldsFile}
-set StaticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
+set StaticMemDir = `${memberDir} 2 1 "${staticMemFmt}"`
 set memberStaticFieldsFile = ${StaticFieldsDirEnsemble}${StaticMemDir}/${StaticFieldsFileEnsemble}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 ## create RTPP mean output file to be overwritten by MPAS-JEDI RTPPEXE application
-set memDir = `${memberDir} ensemble 0 "${flowMemFmt}"`
+set memDir = `${memberDir} 2 0 "${flowMemFmt}"`
 set meanDir = ${CyclingDAOutDir}${memDir}
 mkdir -p ${meanDir}
 set firstANFile = $anDirs[1]/${anPrefix}.$thisMPASFileDate.nc
@@ -213,7 +213,7 @@ EOF
 
     ## copy original analysis files for diagnosing RTPP behavior
     if ($PMatrix == Pa) then
-      set memDir = "."`${memberDir} ensemble $member "${flowMemFmt}"`
+      set memDir = "."`${memberDir} 2 $member "${flowMemFmt}"`
       set tempAnalysisCopyDir = ${anDir}/${memDir}
 
       # Restore ${ensPFileBeforeRTPP} with original files if ${tempAnalysisCopyDir}/${ensPFile} already exists

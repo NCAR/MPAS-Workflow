@@ -71,7 +71,7 @@ if ( ${InitializationType} == "ColdStart" && ${thisValidDate} == ${FirstCycleDat
 else
   set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
   set do_DAcycling = "true"
-  set StaticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
+  set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
   set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
   ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
   cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
@@ -113,7 +113,7 @@ sed -i 's@{{surfaceUpdateFile}}@'${localSeaUpdateFile}'@' ${StreamsFile}
 
 if ( "${updateSea}" == "True" ) then
   # first try member-specific state file (central GFS state when ArgMember==0)
-  set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
+  set seaMemDir = `${memberDir} 2 $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
   set SeaFile = ${SeaAnaDir}/${thisValidDate}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
   ln -sf ${SeaFile} ./${localSeaUpdateFile}
   set brokenLinks=( `find ${localSeaUpdateFile} -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )

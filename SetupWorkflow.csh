@@ -59,7 +59,7 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeTEMPLATE@DA@' \
     -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
-    -e 's@wrapAppNameTEMPLATE@'${baseDAType}'@g' \
+    -e 's@wrapAppNameTEMPLATE@'${DAType}'@g' \
     -e 's@wrapjediAppNameTEMPLATE@variational@g' \
     -e 's@wrapnOuterTEMPLATE@'${nOuterIterations}'@g' \
     -e 's@wrapAppTypeTEMPLATE@variational@g' \

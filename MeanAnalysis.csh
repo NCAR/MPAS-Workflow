@@ -34,7 +34,7 @@ set varianceName = ${self_StatePrefix}.$thisMPASFileDate.variance.nc
 ## link analysis members
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set appMember = `${memberDir} ensemble $member "{:03d}"`
+  set appMember = `${memberDir} 2 $member "{:03d}"`
 # set appMember = printf "%03d" $member`
   ln -sfv $self_StateDirs[$member]/${meanName} ./${memberPrefix}${appMember}
   @ member++

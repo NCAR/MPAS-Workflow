@@ -78,7 +78,7 @@ rm ${localStaticFieldsPrefix}*.nc*
 ## copy static fields
 set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
-set StaticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
+set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
 set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
