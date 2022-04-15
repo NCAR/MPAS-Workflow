@@ -1,0 +1,11 @@
+rtpp:
+## relaxationFactor
+# parameter for the relaxation to prior perturbation (RTPP) mechanism; only
+# applies to EDA cycling
+# Typical Values: 0.0 to 0.90
+  relaxationFactor: 0.80
+
+## retainOriginalAnalyses
+# whether to retain the analyses taken as inputs to RTPP
+# OPTIONS: True/False
+  retainOriginalAnalyses: False

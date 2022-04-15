@@ -14,6 +14,9 @@ set ArgDT = "$2"
 # ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
 
+# ArgNMembers: int, set > 1 to activate ensemble spread diagnostics
+set ArgNMembers = "$4"
+
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isNotInt = ($status)
@@ -82,8 +85,23 @@ set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
   setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $GFSAnaDirVerify/$InitFilePrefixOuter"
-  echo "${baseCommand}" | tee ./myCommand
-  ${baseCommand} >& log.$mainScript
+
+  if ($ArgNMembers > 1) then
+    #Note: ensemble diagnostics only work for BG/AN verification, not extended ensemble forecasts
+    # legacy file structure (deprecated)
+    #echo "${baseCommand} -m $ArgNMembers -a ../../../../../../CyclingInflation/RTPP/YYYYMMDDHH/an0/mem{:03d}/an" | tee ./myCommand
+    #${baseCommand} -m $ArgNMembers -a "../../../../../../CyclingInflation/RTPP/YYYYMMDDHH/an0/mem{:03d}/an" >& log.${mainScript}
+
+    # latest file structure
+    echo "${baseCommand} -m $ArgNMembers" | tee ./myCommand
+    ${baseCommand} -m $ArgNMembers >& log.${mainScript}
+
+  else
+    echo "${baseCommand}" | tee ./myCommand
+    ${baseCommand} >& log.${mainScript}
+
+  endif
+
   set success = $?
   if ( $success != 0 ) then
     source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh default
@@ -91,7 +109,11 @@ while ( $success != 0 )
   endif
 end
 
-cd -
+grep "Finished __main__ successfully" log.${mainScript}
+if ( $status != 0 ) then
+  echo "ERROR in $0 : ${mainScript} failed" > ./FAIL
+  exit 1
+endif
 
 date
 

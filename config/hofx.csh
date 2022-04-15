@@ -18,3 +18,5 @@ $setLocal observations
 $setLocal nObsIndent
 
 $setLocal biasCorrection
+
+$setLocal retainObsFeedback

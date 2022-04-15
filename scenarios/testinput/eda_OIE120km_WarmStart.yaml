@@ -17,7 +17,11 @@ variational:
   EDASize: 1
   nDAInstances: 5
   LeaveOneOutEDA: True
-  RTPPInflationFactor: 0.80
+  retainObsFeedback: False
+hofx:
+  retainObsFeedback: False
+rtpp:
+  relaxationFactor: 0.8
 job:
   CPQueueName: economy
   NCPQueueName: economy

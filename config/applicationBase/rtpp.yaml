@@ -16,4 +16,4 @@ background:
 analysis:
   members:
 {{EnsemblePaMembers}}
-factor: {{RTPPInflationFactor}}
+factor: {{relaxationFactor}}

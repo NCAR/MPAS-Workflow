@@ -46,8 +46,6 @@ if ($nDAInstances == None) then
 endif
 
 $setLocal LeaveOneOutEDA
-$setLocal RTPPInflationFactor
-$setLocal storeOriginalRTPPAnalyses
 
 # ensemble inflation settings
 $setLocal ABEInflation
@@ -79,3 +77,5 @@ endif
 setenv variationalYAMLPrefix variational_
 
 $setLocal biasCorrection
+
+$setLocal retainObsFeedback

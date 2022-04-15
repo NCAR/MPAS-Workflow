@@ -9,4 +9,10 @@ variational:
   EDASize: 1
   nDAInstances: 20
   LeaveOneOutEDA: True
-  RTPPInflationFactor: 0.80
+  # delete observation feedback files of all members to save space
+  retainObsFeedback: False
+hofx:
+  # delete observation feedback files of all members to save space
+  retainObsFeedback: False
+rtpp:
+  relaxationFactor: 0.8

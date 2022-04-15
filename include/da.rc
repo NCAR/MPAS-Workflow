@@ -29,10 +29,14 @@
 {% endif %}
 
         ## Post-DA
-        # inflation
-{% if (RTPPInflationFactor > 0.0 and nEnsDAMembers > 1) %}
-        DataAssimPost => RTPPInflation => DataAssimFinished
+        # inflation+relaxation
+{% if (RTPPRelaxationFactor > 0.0 and nEnsDAMembers > 1) %}
+        PrepRTPP => RTPP
+        DataAssimPost => RTPP => DataAssimFinished
+  {% set CleanDataAssim = 'CleanVariational & CleanRTPP' %}
+{% else %}
+  {% set CleanDataAssim = 'CleanVariational' %}
 {% endif %}
 
         # clean after finished
-        DataAssimPost => DataAssimFinished => CleanDataAssim
+        DataAssimPost => DataAssimFinished => {{CleanDataAssim}}

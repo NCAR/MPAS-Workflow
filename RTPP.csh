@@ -5,6 +5,7 @@ date
 # Setup environment
 # =================
 source config/variational.csh
+source config/rtpp.csh
 source config/forecast.csh
 source config/model.csh
 source config/filestructure.csh
@@ -25,7 +26,7 @@ if (${nEnsDAMembers} < 2) then
 endif
 
 # static work directory
-set self_WorkDir = $CyclingRTPPInflationDir
+set self_WorkDir = $CyclingRTPPDir
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
@@ -130,7 +131,7 @@ set thisYAML = orig.yaml
 cp -v ${ConfigDir}/applicationBase/rtpp.yaml $thisYAML
 
 ## RTPP inflation factor
-sed -i 's@{{RTPPInflationFactor}}@'${RTPPInflationFactor}'@g' $thisYAML
+sed -i 's@{{relaxationFactor}}@'${rtpp__relaxationFactor}'@g' $thisYAML
 
 ## streams
 sed -i 's@{{EnsembleStreamsFile}}@'${self_WorkDir}'/'${StreamsFile}'@' $thisYAML
@@ -163,7 +164,7 @@ set AnalysisVariables = ( \
   u \
   qv \
 )
-foreach hydro ($MPASHydroStateVariables)
+foreach hydro ($MPASHydroIncrementVariables)
   set AnalysisVariables = ($AnalysisVariables $hydro)
 end
 set StateVariables = ( \
@@ -202,17 +203,32 @@ cat >! ${enspsed}SEDF.yaml << EOF
 /{{${enspsed}}}/c\
 EOF
 
+  set ensPFile = ${ensPFilePrefix}.${thisMPASFileDate}.nc
+  set anBeforeRTPPDir = ${anDir}BeforeRTPP
+  mkdir ${anBeforeRTPPDir}
+  rm ${anDir}
+  ln -sf ${anBeforeRTPPDir} ${anDir}
   set member = 1
   while ( $member <= ${nEnsDAMembers} )
-    set filename = $ensPDirs[$member]/${ensPFilePrefix}.${thisMPASFileDate}.nc
-    ## optionally copy original analysis files for diagnosing RTPP behavior
-    if ($PMatrix == Pa && ${storeOriginalRTPPAnalyses} == True) then
+    set ensPDir = $ensPDirs[$member]
+    set ensPFileBeforeRTPP = ${ensPDir}/${ensPFile}
+
+    ## copy original analysis files for diagnosing RTPP behavior
+    if ($PMatrix == Pa) then
       set memDir = "."`${memberDir} ensemble $member "${flowMemFmt}"`
-      set anmemberDir = ${anDir}0/${memDir}
-      rm -r ${anmemberDir}
-      mkdir -p ${anmemberDir}
-      cp ${filename} ${anmemberDir}/
+      set tempAnalysisCopyDir = ${anDir}/${memDir}
+
+      # Restore ${ensPFileBeforeRTPP} with original files if ${tempAnalysisCopyDir}/${ensPFile} already exists
+      if ( -f "${tempAnalysisCopyDir}/${ensPFile}" ) then
+        rm ${ensPFileBeforeRTPP}
+        cp -v ${tempAnalysisCopyDir}/${ensPFile} ${ensPFileBeforeRTPP}
+      else
+        rm -r ${tempAnalysisCopyDir}
+        mkdir -p ${tempAnalysisCopyDir}
+        cp -v ${ensPFileBeforeRTPP} ${tempAnalysisCopyDir}/
+      endif
     endif
+    set filename = ${ensPFileBeforeRTPP}
     if ( $member < ${nEnsDAMembers} ) then
       set filename = ${filename}\\
     endif
@@ -234,7 +250,7 @@ mv $prevYAML $appyaml
 # Run the executable
 # ==================
 ln -sfv ${myBuildDir}/${myEXE} ./
-mpiexec ./${myEXE} $myYAML >& jedi.log
+mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
 
 
 # Check status
