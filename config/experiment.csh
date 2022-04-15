@@ -4,6 +4,7 @@ if ( $?config_experiment ) exit 0
 setenv config_experiment 1
 
 source config/workflow.csh
+source config/applications/rtpp.csh
 source config/applications/variational.csh
 source config/model.csh
 
@@ -78,7 +79,7 @@ if ($ExperimentName == None) then
     else
       set ExpEnsSuffix = '_NMEM'${nEnsDAMembers}
     endif
-    if (${RTPPInflationFactor} != "0.0") set ExpEnsSuffix = ${ExpEnsSuffix}_RTPP${RTPPInflationFactor}
+    if (${rtpp__relaxationFactor} != "0.0") set ExpEnsSuffix = ${ExpEnsSuffix}_RTPP${rtpp__relaxationFactor}
     if (${LeaveOneOutEDA} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_LeaveOneOut
     if (${ABEInflation} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_ABEI_BT${ABEIChannel}
   endif

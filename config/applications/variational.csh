@@ -49,8 +49,6 @@ if ($nDAInstances == None) then
 endif
 
 $setLocal LeaveOneOutEDA
-$setLocal RTPPInflationFactor
-$setLocal storeOriginalRTPPAnalyses
 
 # ensemble inflation settings
 $setLocal ABEInflation
@@ -83,6 +81,9 @@ setenv variationalYAMLPrefix variational_
 
 $setLocal biasCorrection
 
+$setLocal retainObsFeedback
+
+
 # TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
 set baseDAType = 3denvar
 if ( "$DAType" =~ *"3dvar"* ) then
@@ -92,7 +93,6 @@ else if ( "$DAType" =~ *"3denvar"* ) then
 else if ( "$DAType" =~ *"3dhybrid"* ) then
   set baseDAType = 3dhybrid
 endif
-
 
 # localization
 if ($baseDAType == 3denvar || $baseDAType == 3dhybrid) then

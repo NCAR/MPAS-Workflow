@@ -36,7 +36,7 @@ set VerifyMeanFCDirs = (${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate
 #set BenchmarkVerifyMeanANDirs = (${BenchmarkVerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
 #set BenchmarkVerifyMeanFCDirs = (${BenchmarkVerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
 
-set CyclingRTPPInflationDir = ${RTPPInflationWorkDir}/${thisCycleDate}
+set CyclingRTPPDir = ${RTPPWorkDir}/${thisCycleDate}
 set CyclingABEInflationDir = ${ABEInflationWorkDir}/${thisCycleDate}
 
 set CyclingDAInDirs = ()

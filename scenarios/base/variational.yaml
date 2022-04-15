@@ -46,17 +46,6 @@ variational:
 # OPTIONS: True/False
   LeaveOneOutEDA: True
 
-## RTPPInflationFactor
-# relaxation parameter for the relaxation to prior perturbation (RTPP) inflation mechanism; only
-# applies to EDA cycling
-# Typical Values: 0.0 or 0.50 to 0.90
-  RTPPInflationFactor: 0.80
-
-## storeOriginalRTPPAnalyses
-# whether to keep/store the analyses taken as inputs to RTPP for diagnostic purposes
-# OPTIONS: True/False
-  storeOriginalRTPPAnalyses: False
-
 ## ABEIInflation
 # whether to utilize adaptive background error inflation (ABEI) in cloud-affected scenes
 # as measured by ABI and AHI observations
@@ -113,6 +102,11 @@ variational:
 ## nObsIndent
 # number of spaces to precede members of the 'observations' list in the JEDI YAML
   nObsIndent: 2
+
+## retainObsFeedback
+# whether to retain the observation feedback files (obs, geovals, ydiag)
+# OPTIONS: True/False
+  retainObsFeedback: True
 
 ## radianceThinningDistance
 # distance (km) used for the Gaussian Thinning filter for all radiance-based observations

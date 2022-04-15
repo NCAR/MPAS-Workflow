@@ -5,7 +5,6 @@ date
 # Setup environment
 # =================
 source config/filestructure.csh
-source config/model.csh
 source config/tools.csh
 source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -23,19 +22,22 @@ cd ${self_WorkDir}
 
 # Remove obs-database output files
 # ================================
-set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $DAType $member`
-  rm ${self_WorkDir}/${OutDBDir}${memDir}/${obsPrefix}*.h5
-  rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.nc4
-  rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.nc4
-  @ member++
-end
+if ("$retainObsFeedback" != True) then
+  set member = 1
+  while ( $member <= ${nEnsDAMembers} )
+    set memDir = `${memberDir} $DAType $member`
+    rm ${self_WorkDir}/${OutDBDir}${memDir}/${obsPrefix}*.h5
+    rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.nc4
+    rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.nc4
+    @ member++
+  end
+endif
 
 # Remove netcdf lock files
 rm *.nc*.lock
 
-if ($nCellsOuter != $nCellsInner) then
+# Remove copies of templated fields files for inner loop
+if ("${TemplateFieldsFileInner}" != "${TemplateFieldsFileOuter}") then
   rm ${TemplateFieldsFileInner}*
 endif
 

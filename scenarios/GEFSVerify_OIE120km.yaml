@@ -13,5 +13,6 @@ variational:
   EDASize: 1
   nDAInstances: 20
   LeaveOneOutEDA: False
-  RTPPInflationFactor: 0.0
   nInnerIterations: [,]
+rtpp:
+  relaxationFactor: 0.0

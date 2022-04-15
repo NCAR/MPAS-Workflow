@@ -23,6 +23,8 @@ $setLocal biasCorrection
 
 $setLocal radianceThinningDistance
 
+$setLocal retainObsFeedback
+
 # job
 $setNestedHofX job.${outerMesh}.seconds
 $setNestedHofX job.${outerMesh}.nodes

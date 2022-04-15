@@ -31,7 +31,7 @@ setenv ObsWorkDir ${ExperimentDirectory}/Observations
 setenv CyclingDAWorkDir ${ExperimentDirectory}/CyclingDA
 setenv CyclingFCWorkDir ${ExperimentDirectory}/CyclingFC
 setenv CyclingInflationWorkDir ${ExperimentDirectory}/CyclingInflation
-setenv RTPPInflationWorkDir ${CyclingInflationWorkDir}/RTPP
+setenv RTPPWorkDir ${CyclingInflationWorkDir}/RTPP
 setenv ABEInflationWorkDir ${CyclingInflationWorkDir}/ABEI
 
 setenv ExtendedFCWorkDir ${ExperimentDirectory}/ExtendedFC

@@ -34,7 +34,9 @@ set workflowParts = ( \
   scenarios \
   MeanAnalysis.csh \
   MeanBackground.csh \
-  RTPPInflation.csh \
+  PrepRTPP.csh \
+  RTPP.csh \
+  CleanRTPP.csh \
   GenerateABEInflation.csh \
   PrepVariational.csh \
   EnsembleOfVariational.csh \
@@ -45,7 +47,7 @@ foreach part ($workflowParts)
 end
 
 
-## PrepJEDICyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA
+## PrepJEDIVariational, Variational, VerifyObsDA, VerifyModelDA*, CleanVariational
 # *VerifyModelDA is non-functional and unused
 set taskBaseScript = Variational
 set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh

@@ -6,8 +6,6 @@ workflow:
   VerifyDeterministicDA: False
   VerifyEnsMeanBG: False
   DiagnoseEnsSpreadBG: False
-observations:
-  resource: PANDACArchive
 model:
   outerMesh: 60km
   innerMesh: 60km
@@ -17,4 +15,27 @@ variational:
   EDASize: 1
   nDAInstances: 20
   LeaveOneOutEDA: True
-  RTPPInflationFactor: 0.0
+  # delete observation feedback files of all members to save space
+  retainObsFeedback: False
+hofx:
+  # delete observation feedback files of all members to save space
+  retainObsFeedback: False
+rtpp:
+  relaxationFactor: 0.7
+observations:
+  resource: PANDACArchive
+  PANDACArchive:
+    IODADirectory:
+      variational:
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+      hofx:
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+    IODASuperObGrid:
+      abi_g16: 15X15
+      ahi_himawari8: 15X15

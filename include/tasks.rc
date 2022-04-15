@@ -26,6 +26,10 @@
 #      --cpus-per-task = 36
 #      --partition = dav
 
+## Null parent or child
+  [[Null]]
+    [[[job]]]
+      batch system = background
 
 ## Base
   [[ForecastBase]]
@@ -55,7 +59,7 @@
   [[VerifyModelBase]]
     [[[job]]]
       execution time limit = PT{{VerifyModelSeconds}}S
-      execution retry delays = {{HofXRetry}}
+      execution retry delays = {{VerifyModelRetry}}
     [[[directives]]]
       -q = {{NCPQueueName}}
       -A = {{NCPAccountNumber}}
@@ -63,7 +67,7 @@
   [[VerifyObsBase]]
     [[[job]]]
       execution time limit = PT{{VerifyObsSeconds}}S
-      execution retry delays = {{HofXRetry}}
+      execution retry delays = {{VerifyObsRetry}}
     [[[directives]]]
       -q = {{NCPQueueName}}
       -A = {{NCPAccountNumber}}
@@ -106,7 +110,15 @@
       batch system = background
 
 
-## Data assimilation (critical path)
+## Data assimilation and supporting tasks (critical path)
+  # (Ens)DataAssim => Post => Finished => Clean
+  [[DataAssimPost]]
+    [[[job]]]
+      batch system = background
+  [[DataAssimFinished]]
+    [[[job]]]
+      batch system = background
+
   # directory/file preparation
   [[InitDataAssim]]
     env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA"
@@ -144,6 +156,10 @@
       -A = {{CPAccountNumber}}
       -l = select={{VariationalNodes}}:ncpus={{VariationalPEPerNode}}:mpiprocs={{VariationalPEPerNode}}:mem={{VariationalMemory}}GB
   {% endfor %}
+  [[CleanVariational]]
+    inherit = CleanBase
+    script = $origin/CleanVariational.csh
+
   # inflation (pre and post)
   [[GenerateABEInflation]]
     script = $origin/GenerateABEInflation.csh
@@ -153,26 +169,24 @@
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
-  [[RTPPInflation]]
-    script = $origin/RTPPInflation.csh
+  [[PrepRTPP]]
+    script = $origin/PrepRTPP.csh
+    [[[job]]]
+      execution time limit = PT1M
+      execution retry delays = {{RTPPRetry}}
+  [[RTPP]]
+    script = $origin/RTPP.csh
     [[[job]]]
       execution time limit = PT{{RTPPSeconds}}S
-      execution retry delays = {{RTPPInflationRetry}}
+      execution retry delays = {{RTPPRetry}}
     [[[directives]]]
       -m = ae
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select={{RTPPNodes}}:ncpus={{RTPPPEPerNode}}:mpiprocs={{RTPPPEPerNode}}:mem={{RTPPMemory}}GB
-  # post => finished => clean
-  [[DataAssimPost]]
-    [[[job]]]
-      batch system = background
-  [[DataAssimFinished]]
-    [[[job]]]
-      batch system = background
-  [[CleanDataAssim]]
+  [[CleanRTPP]]
     inherit = CleanBase
-    script = $origin/CleanVariational.csh
+    script = $origin/CleanRTPP.csh
 
   # verification
   [[VerifyObsDA]]
@@ -266,7 +280,7 @@
     script = $origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0"
   [[VerifyModelMeanFC{{dt}}hr]]
     inherit = VerifyModelMeanFC
-    script = $origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC"
+    script = $origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC" "0"
 {% endfor %}
 
 
@@ -287,18 +301,25 @@
     [[[directives]]]
       -q = {{EnsMeanBGQueueName}}
       -A = {{EnsMeanBGAccountNumber}}
+{% if DiagnoseEnsSpreadBG %}
+  {% set nEnsSpreadMem = nEnsDAMembers %}
+  {% set modelSeconds = VerifyModelEnsMeanSeconds %}
+  {% set obsSeconds = VerifyObsEnsMeanSeconds %}
+{% else %}
+  {% set nEnsSpreadMem = 0 %}
+  {% set modelSeconds = VerifyModelSeconds %}
+  {% set obsSeconds = VerifyObsSeconds %}
+{% endif %}
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
-    script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG"
+    script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
+    [[[job]]]
+      execution time limit = PT{{modelSeconds}}M
   [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
-{% if DiagnoseEnsSpreadBG %}
-    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsDAMembers}}"
+    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
     [[[job]]]
-      execution time limit = PT{{VerifyObsEnsMeanSeconds}}S
-{% else %}
-    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "0"
-{% endif %}
+      execution time limit = PT{{obsSeconds}}S
   [[CleanHofXEnsMeanBG]]
     inherit = CleanBase
     script = $origin/CleanHofXEnsMeanBG.csh "1" "0" "BG"
@@ -331,7 +352,7 @@
     script = $origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
   [[VerifyModel{{state}}{{mem}}]]
     inherit = VerifyModel{{state}}
-    script = $origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
+    script = $origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
   [[CompareModel{{state}}{{mem}}]]
     inherit = CompareModel{{state}}
     script = $origin/CompareModel{{state}}.csh "{{mem}}" "0" "{{state}}"
@@ -362,7 +383,7 @@
     script = $origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyModelEnsFC{{mem}}
-    script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
   [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyObsBase
     script = $origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
