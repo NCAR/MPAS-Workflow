@@ -7,4 +7,4 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 variational:
-  DAType: 3denvar
+  baseDAType: 3denvar

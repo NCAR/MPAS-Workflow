@@ -7,6 +7,6 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 variational:
-  DAType: 3dhybrid
+  baseDAType: 3dhybrid
   ensembleCovarianceWeight: 0.5
   staticCovarianceWeight: 0.5

@@ -2,6 +2,7 @@
 
 source config/filestructure.csh
 source config/model.csh
+source config/applications/variational.csh
 
 ####################
 ## static data files
@@ -18,7 +19,7 @@ set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
 setenv InitICWorkDir ${GFSAnaDirOuter}
 setenv SeaFilePrefix ${InitFilePrefixOuter}
 
-if ( "$DAType" !~ *"eda"* ) then
+if ($nEnsDAMembers == 1) then
   setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${FirstCycleDate}
   setenv StaticFieldsDirInner ${GFSAnaDirInner}/${FirstCycleDate}
 endif

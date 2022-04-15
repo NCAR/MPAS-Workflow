@@ -65,7 +65,7 @@ if ( $nEnsDAMembers > $firstEnsFCNMembers ) then
 endif
 
 
-if ( "$DAType" =~ *"eda"* ) then
+if ( $nEnsDAMembers > 1 ) then
   setenv firstFCMemFmt "${gefsMemFmt}"
   setenv firstFCDirOuter ${firstEnsFCDir}
   setenv firstFCDirInner ${firstEnsFCDir}
@@ -84,41 +84,35 @@ set dynamicEnsBMemPrefix = "${flowMemPrefix}"
 set dynamicEnsBMemNDigits = ${flowMemNDigits}
 set dynamicEnsBFilePrefix = ${FCFilePrefix}
 
-## select the ensPb settings based on DAType
-if ( "$DAType" =~ *"eda"* ) then
-  set dynamicEnsBNMembers = ${nEnsDAMembers}
-  set dynamicEnsBDir = ${CyclingFCWorkDir}
-
-  setenv ensPbDir ${dynamicEnsBDir}
-  setenv ensPbFilePrefix ${dynamicEnsBFilePrefix}
+## select the ensPb settings based on nEnsDAMembers
+if ( $nEnsDAMembers > 1 ) then
   setenv ensPbMemPrefix ${dynamicEnsBMemPrefix}
   setenv ensPbMemNDigits ${dynamicEnsBMemNDigits}
-  setenv ensPbNMembers ${dynamicEnsBNMembers}
+  setenv ensPbFilePrefix ${dynamicEnsBFilePrefix}
+
+  setenv ensPbDir ${CyclingFCWorkDir}
+  setenv ensPbNMembers ${nEnsDAMembers}
 else
   ## deterministic analysis (static directory structure)
   # parse selections
   if ("$fixedEnsBType" == "GEFS") then
-    set fixedEnsBMemPrefix = "${gefsMemPrefix}"
-    set fixedEnsBMemNDigits = ${gefsMemNDigits}
-    set fixedEnsBNMembers = ${nGEFSMembers}
-    set fixedEnsBDir = ${GEFS6hfcFOREnsBDir}
-    set fixedEnsBFilePrefix = ${GEFS6hfcFOREnsBFilePrefix}
+    set ensPbMemPrefix = "${gefsMemPrefix}"
+    set ensPbMemNDigits = ${gefsMemNDigits}
+    set ensPbFilePrefix = ${GEFS6hfcFOREnsBFilePrefix}
+
+    set ensPbDir = ${GEFS6hfcFOREnsBDir}
+    set ensPbNMembers = ${nGEFSMembers}
   else if ("$fixedEnsBType" == "PreviousEDA") then
-    set fixedEnsBMemPrefix = "${dynamicEnsBMemPrefix}"
-    set fixedEnsBMemNDigits = ${dynamicEnsBMemNDigits}
-    set fixedEnsBNMembers = ${nPreviousEnsDAMembers}
-    set fixedEnsBDir = ${PreviousEDAForecastDir}
-    set fixedEnsBFilePrefix = ${dynamicEnsBFilePrefix}
+    set ensPbMemPrefix = "${dynamicEnsBMemPrefix}"
+    set ensPbMemNDigits = ${dynamicEnsBMemNDigits}
+    set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
+
+    set ensPbDir = ${PreviousEDAForecastDir}
+    set ensPbNMembers = ${nPreviousEnsDAMembers}
   else
     echo "ERROR in $0 : unrecognized value for fixedEnsBType --> ${fixedEnsBType}" >> ./FAIL
     exit 1
   endif
-
-  setenv ensPbDir ${fixedEnsBDir}
-  setenv ensPbFilePrefix ${fixedEnsBFilePrefix}
-  setenv ensPbMemPrefix "${fixedEnsBMemPrefix}"
-  setenv ensPbMemNDigits "${fixedEnsBMemNDigits}"
-  setenv ensPbNMembers ${fixedEnsBNMembers}
 endif
 
 
@@ -127,7 +121,7 @@ endif
 ## sea/ocean surface files
 setenv seaMaxMembers ${nGEFSMembers}
 setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
-if ( "$DAType" =~ *"eda"* ) then
+if ( $nEnsDAMembers > 1 ) then
   # using member-specific sst/xice data from GEFS
   # 60km and 120km
   setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr/${model__precision}
@@ -140,7 +134,7 @@ else
 endif
 
 ## static stream data
-if ( "$DAType" =~ *"eda"* ) then
+if ( $nEnsDAMembers > 1 ) then
   # stochastic
   # 60km and 120km
   setenv StaticFieldsDirOuter ${ModelData}/GEFS/init/000hr/${FirstCycleDate}

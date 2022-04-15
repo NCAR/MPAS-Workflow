@@ -9,8 +9,7 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 variational:
-  DAType: eda_3denvar
-  EDASize: 1
+  baseDAType: 3denvar
   nDAInstances: 20
   LeaveOneOutEDA: False
   nInnerIterations: [,]

@@ -2,6 +2,7 @@
 
 source config/filestructure.csh
 source config/model.csh
+source config/applications/variational.csh
 
 ####################
 ## static data files
@@ -20,7 +21,7 @@ setenv GFSAnaDirVerify ${GFSAnaDirOuter}
 setenv InitICWorkDir  ${GFSAnaDirOuter}
 setenv SeaFilePrefix x1.${nCellsOuter}.sfc_update
 
-if ( "$DAType" !~ *"eda"* ) then
+if ($nEnsDAMembers == 1) then
   setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
   setenv StaticFieldsDirInner ${GFSAnaDirInner}
 endif

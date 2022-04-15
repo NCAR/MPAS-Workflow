@@ -16,7 +16,7 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig variational"
 setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig variational"
 setenv setNestedVariational "source $setNestedConfig $baseConfig $scenarioConfig variational"
 
-$setLocal DAType
+$setLocal baseDAType
 
 set ensembleCovarianceWeight = "`$getLocalOrNone ensembleCovarianceWeight`"
 set staticCovarianceWeight = "`$getLocalOrNone staticCovarianceWeight`"
@@ -50,6 +50,17 @@ endif
 
 $setLocal LeaveOneOutEDA
 
+## nEnsDAMembers
+# total number of ensemble DA members, product of EDASize and nDAInstances
+# Should be in range (1, $firstEnsFCNMembers), depends on data source in config/modeldata.csh
+@ nEnsDAMembers = $EDASize * $nDAInstances
+setenv nEnsDAMembers $nEnsDAMembers
+
+setenv DAType $baseDAType
+if ($nEnsDAMembers > 1) then
+  setenv DAType eda_$DAType
+endif
+
 # ensemble inflation settings
 $setLocal ABEInflation
 $setLocal ABEIChannel
@@ -66,12 +77,6 @@ $setLocal ABEIChannel
 setenv BlockEDA DRPBlockLanczos
 setenv MinimizerAlgorithm DRIPCG
 
-## nEnsDAMembers
-# total number of ensemble DA members, product of EDASize and nDAInstances
-# Should be in range (1, $firstEnsFCNMembers), depends on data source in config/modeldata.csh
-@ nEnsDAMembers = $EDASize * $nDAInstances
-setenv nEnsDAMembers $nEnsDAMembers
-
 if ($EDASize == 1 && $MinimizerAlgorithm == $BlockEDA) then
   echo "WARNING: MinimizerAlgorithm cannot be $BlockEDA when EDASize is 1, re-setting to DRPLanczos"
   setenv MinimizerAlgorithm DRPLanczos
@@ -83,17 +88,7 @@ $setLocal biasCorrection
 
 $setLocal retainObsFeedback
 
-
 # TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
-set baseDAType = 3denvar
-if ( "$DAType" =~ *"3dvar"* ) then
-  set baseDAType = 3dvar
-else if ( "$DAType" =~ *"3denvar"* ) then
-  set baseDAType = 3denvar
-else if ( "$DAType" =~ *"3dhybrid"* ) then
-  set baseDAType = 3dhybrid
-endif
-
 # localization
 if ($baseDAType == 3denvar || $baseDAType == 3dhybrid) then
   $setLocal localization.${ensembleMesh}.bumpLocPrefix
