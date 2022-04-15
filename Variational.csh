@@ -56,7 +56,7 @@ endif
 # ================================================================================================
 
 ## create then move to member-specific run directory
-set memDir = `${memberDir} ens ${ArgMember} "${flowMemFmt}"`
+set memDir = `${memberDir} 2 ${ArgMember} "${flowMemFmt}"`
 set runDir = run${memDir}
 rm -r ${runDir}
 mkdir -p ${runDir}
