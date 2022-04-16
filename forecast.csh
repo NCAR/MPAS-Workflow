@@ -52,7 +52,6 @@ set deleteZerothForecast = deleteZerothForecastTEMPLATE
 
 # static variables
 set self_icStatePrefix = ${ANFilePrefix}
-set self_ModelConfigDir = $forecastModelConfigDir
 
 # ================================================================================================
 
@@ -94,12 +93,12 @@ stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 )
   rm ./$staticfile
-  ln -sfv $self_ModelConfigDir/$staticfile .
+  ln -sfv $AppMPASConfigDir/$staticfile .
 end
 
 ## copy/modify dynamic streams file
 rm ${StreamsFile}
-cp -v $self_ModelConfigDir/${StreamsFile} .
+cp -v $AppMPASConfigDir/${StreamsFile} .
 sed -i 's@nCells@'${nCells}'@' ${StreamsFile}
 sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
@@ -164,7 +163,7 @@ endif
 
 ## copy/modify dynamic namelist
 rm ${NamelistFile}
-cp -v ${self_ModelConfigDir}/${NamelistFile} .
+cp -v ${AppMPASConfigDir}/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile

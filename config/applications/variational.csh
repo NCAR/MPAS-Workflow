@@ -16,74 +16,13 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig variational"
 setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig variational"
 setenv setNestedVariational "source $setNestedConfig $baseConfig $scenarioConfig variational"
 
+## variational settings
 $setLocal DAType
-
-set ensembleCovarianceWeight = "`$getLocalOrNone ensembleCovarianceWeight`"
-set staticCovarianceWeight = "`$getLocalOrNone staticCovarianceWeight`"
 
 $setLocal nInnerIterations
 # nOuterIterations, automatically determined from length of nInnerIterations
 setenv nOuterIterations ${#nInnerIterations}
 
-
-$setLocal benchmarkObservations
-$setLocal experimentalObservations
-# observations, automatically combine two parent ObsList's
-set observations = ($benchmarkObservations $experimentalObservations)
-$setLocal nObsIndent
-$setLocal radianceThinningDistance
-
-# deterministic settings
-$setLocal fixedEnsBType
-$setLocal nPreviousEnsDAMembers
-$setLocal PreviousEDAForecastDir
-
-# stochastic settings
-set EDASize = "`$getLocalOrNone EDASize`"
-if ($EDASize == None) then
-  set EDASize = 1
-endif
-set nDAInstances = "`$getLocalOrNone nDAInstances`"
-if ($nDAInstances == None) then
-  set nDAInstances = 1
-endif
-
-$setLocal LeaveOneOutEDA
-
-## nEnsDAMembers
-# total number of ensemble DA members, product of EDASize and nDAInstances
-# Should be in range (1, $firstEnsFCNMembers), depends on data source in config/modeldata.csh
-@ nEnsDAMembers = $EDASize * $nDAInstances
-setenv nEnsDAMembers $nEnsDAMembers
-
-# ensemble inflation settings
-$setLocal ABEInflation
-$setLocal ABEIChannel
-
-#########################
-## non-YAML-fied settings
-#########################
-## MinimizerAlgorithm
-# OPTIONS: DRIPCG, DRPLanczos, DRPBlockLanczos
-# see classes derived from oops/src/oops/assimilation/Minimizer.h for all options
-# Notes about DRPBlockLanczos:
-# + still experimental, and not reliable for this experiment
-# + only available when EDASize > 1
-setenv BlockEDA DRPBlockLanczos
-setenv MinimizerAlgorithm DRIPCG
-
-if ($EDASize == 1 && $MinimizerAlgorithm == $BlockEDA) then
-  echo "WARNING: MinimizerAlgorithm cannot be $BlockEDA when EDASize is 1, re-setting to DRPLanczos"
-  setenv MinimizerAlgorithm DRPLanczos
-endif
-
-setenv variationalYAMLPrefix variational_
-
-$setLocal biasCorrection
-
-$setLocal retainObsFeedback
-
-# TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
 # localization
 if ($DAType == 3denvar || $DAType == 3dhybrid) then
   $setLocal localization.${ensembleMesh}.bumpLocPrefix
@@ -100,9 +39,59 @@ if ($DAType == 3dvar || $DAType == 3dhybrid) then
   $setLocal covariance.${innerMesh}.bumpCovVBalDir
 endif
 
-# job
-## nEnVarMembers
-# OPTIONS: integer
+set ensembleCovarianceWeight = "`$getLocalOrNone ensembleCovarianceWeight`"
+set staticCovarianceWeight = "`$getLocalOrNone staticCovarianceWeight`"
+
+# deterministic settings
+$setLocal fixedEnsBType
+$setLocal nPreviousEnsDAMembers
+$setLocal PreviousEDAForecastDir
+
+# stochastic settings
+set EDASize = "`$getLocalOrNone EDASize`"
+if ($EDASize == None) then
+  set EDASize = 1
+endif
+set nDAInstances = "`$getLocalOrNone nDAInstances`"
+if ($nDAInstances == None) then
+  set nDAInstances = 1
+endif
+$setLocal LeaveOneOutEDA
+
+# nEnsDAMembers is the total number of ensemble DA members, product of EDASize and nDAInstances
+# Should be in range (1, $firstEnsFCNMembers); affects data source in config/modeldata.csh
+@ nEnsDAMembers = $EDASize * $nDAInstances
+setenv nEnsDAMembers $nEnsDAMembers
+
+# ensemble inflation settings
+$setLocal ABEInflation
+$setLocal ABEIChannel
+
+## required settings for PrepJEDI.csh
+# observations, automatically combine two parent ObsList's
+$setLocal benchmarkObservations
+$setLocal experimentalObservations
+set observations = ($benchmarkObservations $experimentalObservations)
+
+setenv AppMPASConfigDir config/mpas/variational
+set MeshList = (Outer Inner)
+set nCellsList = ($nCellsOuter $nCellsInner)
+set localStaticFieldsFileList = ( \
+$localStaticFieldsFileOuter \
+$localStaticFieldsFileInner \
+)
+set StreamsFileList = ($OuterStreamsFile $InnerStreamsFile)
+set NamelistFileList = ($OuterNamelistFile $InnerNamelistFile)
+$setLocal nObsIndent
+$setLocal radianceThinningDistance
+$setLocal biasCorrection
+
+## clean
+$setLocal retainObsFeedback
+
+## job
+# TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
+## nEnVarMembers (int)
 # ensemble size for "envar" applications; only used for job timings
 # defaults to 20 for GEFS-ensemble retrospective experiments
 setenv nEnVarMembers 20
@@ -125,3 +114,22 @@ setenv variational__seconds $seconds
 $setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.nodes
 $setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.PEPerNode
 $setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.memory
+
+##############################
+## more non-YAML-fied settings
+##############################
+## MinimizerAlgorithm
+# OPTIONS: DRIPCG, DRPLanczos, DRPBlockLanczos
+# see classes derived from oops/src/oops/assimilation/Minimizer.h for all options
+# Notes about DRPBlockLanczos:
+# + still experimental, and not reliable for this experiment
+# + only available when EDASize > 1
+setenv BlockEDA DRPBlockLanczos
+setenv MinimizerAlgorithm DRIPCG
+
+if ($EDASize == 1 && $MinimizerAlgorithm == $BlockEDA) then
+  echo "WARNING: MinimizerAlgorithm cannot be $BlockEDA when EDASize is 1, re-setting to DRPLanczos"
+  setenv MinimizerAlgorithm DRPLanczos
+endif
+
+setenv variationalYAMLPrefix variational_

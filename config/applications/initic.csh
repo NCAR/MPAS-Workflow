@@ -12,7 +12,9 @@ setenv baseConfig scenarios/base/initic.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig initic"
 setenv setNestedInitIC "source $setNestedConfig $baseConfig $scenarioConfig initic"
 
-#job
+setenv AppMPASConfigDir config/mpas/init
+
+## job
 $setNestedInitIC job.${outerMesh}.seconds
 $setNestedInitIC job.${outerMesh}.nodes
 $setNestedInitIC job.${outerMesh}.PEPerNode

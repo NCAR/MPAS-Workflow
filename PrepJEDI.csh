@@ -74,12 +74,6 @@ cd ${self_WorkDir}
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
 set self_AppType = AppTypeTEMPLATE
-set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
-set MeshList = (${AppTypeTEMPLATEMeshList})
-set nCellsList = (${AppTypeTEMPLATEnCellsList})
-set StreamsFileList = (${AppTypeTEMPLATEStreamsFileList})
-set NamelistFileList = (${AppTypeTEMPLATENamelistFileList})
-
 
 # ================================================================================================
 
@@ -137,7 +131,7 @@ stream_list.${MPASCore}.ensemble \
 stream_list.${MPASCore}.control \
 )
   rm ./$staticfile
-  ln -sfv $self_ModelConfigDir/$staticfile .
+  ln -sfv $AppMPASConfigDir/$staticfile .
 end
 
 ## copy/modify dynamic streams file
@@ -145,7 +139,7 @@ set iMesh = 0
 foreach StreamsFile_ ($StreamsFileList)
   @ iMesh++
   rm ${StreamsFile_}
-  cp -v $self_ModelConfigDir/${StreamsFile} ./${StreamsFile_}
+  cp -v $AppMPASConfigDir/${StreamsFile} ./${StreamsFile_}
   sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${StreamsFile_}
   sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
@@ -157,7 +151,7 @@ set iMesh = 0
 foreach NamelistFile_ ($NamelistFileList)
   @ iMesh++
   rm ${NamelistFile_}
-  cp -v ${self_ModelConfigDir}/${NamelistFile} ./${NamelistFile_}
+  cp -v ${AppMPASConfigDir}/${NamelistFile} ./${NamelistFile_}
   sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
   sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$nCellsList[$iMesh]'@' ${NamelistFile_}
@@ -371,7 +365,7 @@ if ("$AHISuperObGrid" != None) then
   sed -i 's@{{AHISUPEROBGRID}}@'${AHISuperObGrid}'@g' $thisYAML
 endif
 
-sed -i 's@{{HofXMeshDescriptor}}@'${HofXMeshDescriptor}'@' $thisYAML
+sed -i 's@{{HofXMeshDescriptor}}@'${outerMesh}'@' $thisYAML
 
 
 ## date-time information

@@ -11,7 +11,7 @@ source config/applications/variational.csh
 setenv baseConfig scenarios/base/verifyobs.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig verifyobs"
 
-#job
+## job
 $setLocal job.baseSeconds
 setenv verifyobs__seconds $baseSeconds
 

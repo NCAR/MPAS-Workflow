@@ -6,9 +6,6 @@ source config/filestructure.csh
 ## load the workflow settings
 source config/workflow.csh
 
-## load the variational settings
-#source config/applications/variational.csh
-
 set AppAndVerify = AppAndVerify
 
 echo ""

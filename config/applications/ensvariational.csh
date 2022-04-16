@@ -13,7 +13,7 @@ setenv baseConfig scenarios/base/ensvariational.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig ensvariational"
 setenv setNestedEnsOfVariational "source $setNestedConfig $baseConfig $scenarioConfig ensvariational"
 
-#job
+## job
 $setLocal job.${outerMesh}.baseSeconds
 $setLocal job.${outerMesh}.secondsPerEnVarMember
 

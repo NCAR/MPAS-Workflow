@@ -12,7 +12,7 @@ source config/mpas/variables.csh
 source config/builds.csh
 source config/environment.csh
 source config/applications/variational.csh
-#source config/applications/rtpp.csh
+source config/applications/rtpp.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -41,7 +41,6 @@ set bgPrefix = $BGFilePrefix
 set bgDirs = ($CyclingDAInDirs)
 set anPrefix = $ANFilePrefix
 set anDirs = ($CyclingDAOutDirs)
-set self_ModelConfigDir = $rtppModelConfigDir
 
 # Remove old logs
 rm jedi.log*
@@ -83,11 +82,11 @@ stream_list.${MPASCore}.analysis \
 stream_list.${MPASCore}.ensemble \
 stream_list.${MPASCore}.control \
 )
-  ln -sfv $self_ModelConfigDir/$staticfile .
+  ln -sfv $AppMPASConfigDir/$staticfile .
 end
 
 rm ${StreamsFile}
-cp -v $self_ModelConfigDir/${StreamsFile} .
+cp -v $AppMPASConfigDir/${StreamsFile} .
 sed -i 's@nCells@'${nCellsEnsemble}'@' ${StreamsFile}
 sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
@@ -110,7 +109,7 @@ sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
 rm $NamelistFile
-cp -v ${self_ModelConfigDir}/${NamelistFile} .
+cp -v ${AppMPASConfigDir}/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${nCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile

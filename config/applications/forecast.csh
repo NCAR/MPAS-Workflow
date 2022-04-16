@@ -18,7 +18,9 @@ setenv nCells "$nCellsOuter"
 
 $setLocal updateSea
 
-# job
+setenv AppMPASConfigDir config/mpas/forecast
+
+## job
 $setLocal job.${mesh}.baseSeconds
 $setLocal job.${mesh}.secondsPerForecastHR
 

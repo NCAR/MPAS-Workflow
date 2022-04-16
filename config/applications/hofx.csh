@@ -16,16 +16,25 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig hofx"
 setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig hofx"
 setenv setNestedHofX "source $setNestedConfig $baseConfig $scenarioConfig hofx"
 
+## required settings for PrepJEDI.csh
 $setLocal observations
+
+setenv AppMPASConfigDir config/mpas/hofx
+set MeshList = (HofX)
+set nCellsList = ($nCellsOuter)
+set StreamsFileList = ($OuterStreamsFile)
+set NamelistFileList = ($OuterNamelistFile)
+
 $setLocal nObsIndent
 
 $setLocal biasCorrection
 
 $setLocal radianceThinningDistance
 
+## clean
 $setLocal retainObsFeedback
 
-# job
+## job
 $setNestedHofX job.${outerMesh}.seconds
 $setNestedHofX job.${outerMesh}.nodes
 $setNestedHofX job.${outerMesh}.PEPerNode

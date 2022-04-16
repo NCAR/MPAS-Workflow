@@ -40,6 +40,7 @@ endif
 # =================
 source config/filestructure.csh
 source config/tools.csh
+source config/model.csh
 source config/modeldata.csh
 source config/verification.csh
 source config/environmentPython.csh

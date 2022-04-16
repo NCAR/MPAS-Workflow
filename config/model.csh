@@ -13,6 +13,9 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig model"
 setenv setNestedModel "source $setNestedConfig $baseConfig $scenarioConfig model"
 setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig model"
 
+## MPASCore - must be atmosphere
+setenv MPASCore atmosphere
+
 $setLocal outerMesh
 $setLocal innerMesh
 $setLocal ensembleMesh
@@ -42,3 +45,35 @@ $setNestedModel AnalysisSource
 $setLocal GraphInfoDir
 
 $setNestedModel precision
+
+
+setenv ModelConfigDir config/mpas
+
+# MPAS-Model file-naming conventions
+setenv InitFilePrefixOuter x1.${nCellsOuter}.init
+setenv InitFilePrefixInner x1.${nCellsInner}.init
+setenv InitFilePrefixEnsemble x1.${nCellsEnsemble}.init
+
+setenv StreamsFile streams.${MPASCore}
+setenv NamelistFile namelist.${MPASCore}
+set OuterStreamsFile = ${StreamsFile}_${outerMesh}
+set OuterNamelistFile = ${NamelistFile}_${outerMesh}
+set InnerStreamsFile = ${StreamsFile}_${innerMesh}
+set InnerNamelistFile = ${NamelistFile}_${innerMesh}
+
+#set EnsembleStreamsFile = ${StreamsFile}_${ensembleMesh}
+#set EnsembleNamelistFile = ${NamelistFile}_${ensembleMesh}
+
+setenv StreamsFileInit streams.init_${MPASCore}
+setenv NamelistFileInit namelist.init_${MPASCore}
+setenv NamelistFileWPS namelist.wps
+
+setenv TemplateFieldsPrefix templateFields
+setenv TemplateFieldsFileOuter ${TemplateFieldsPrefix}.${nCellsOuter}.nc
+setenv TemplateFieldsFileInner ${TemplateFieldsPrefix}.${nCellsInner}.nc
+setenv TemplateFieldsFileEnsemble ${TemplateFieldsPrefix}.${nCellsEnsemble}.nc
+
+setenv localStaticFieldsPrefix static
+setenv localStaticFieldsFileOuter ${localStaticFieldsPrefix}.${nCellsOuter}.nc
+setenv localStaticFieldsFileInner ${localStaticFieldsPrefix}.${nCellsInner}.nc
+setenv localStaticFieldsFileEnsemble ${localStaticFieldsPrefix}.${nCellsEnsemble}.nc

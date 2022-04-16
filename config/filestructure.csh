@@ -4,8 +4,6 @@ if ( $?config_filestructure ) exit 0
 set config_filestructure = 1
 
 source config/experiment.csh
-source config/model.csh
-source config/builds.csh
 source config/benchmark.csh
 
 ## controls the workflow file structure of all experiments
@@ -62,9 +60,6 @@ setenv appyaml jedi.yaml
 #############################################
 setenv RSTFilePrefix restart
 setenv ICFilePrefix mpasin
-setenv InitFilePrefixOuter x1.${nCellsOuter}.init
-setenv InitFilePrefixInner x1.${nCellsInner}.init
-setenv InitFilePrefixEnsemble x1.${nCellsEnsemble}.init
 
 setenv FCFilePrefix mpasout
 setenv fcDir fc
@@ -74,23 +69,6 @@ setenv ANFilePrefix an
 setenv anDir ${ANFilePrefix}
 setenv BGFilePrefix bg
 setenv bgDir ${BGFilePrefix}
-
-setenv StreamsFile streams.${MPASCore}
-setenv NamelistFile namelist.${MPASCore}
-
-setenv StreamsFileInit streams.init_${MPASCore}
-setenv NamelistFileInit namelist.init_${MPASCore}
-setenv NamelistFileWPS namelist.wps
-
-setenv TemplateFieldsPrefix templateFields
-setenv TemplateFieldsFileOuter ${TemplateFieldsPrefix}.${nCellsOuter}.nc
-setenv TemplateFieldsFileInner ${TemplateFieldsPrefix}.${nCellsInner}.nc
-setenv TemplateFieldsFileEnsemble ${TemplateFieldsPrefix}.${nCellsEnsemble}.nc
-
-setenv localStaticFieldsPrefix static
-setenv localStaticFieldsFileOuter ${localStaticFieldsPrefix}.${nCellsOuter}.nc
-setenv localStaticFieldsFileInner ${localStaticFieldsPrefix}.${nCellsInner}.nc
-setenv localStaticFieldsFileEnsemble ${localStaticFieldsPrefix}.${nCellsEnsemble}.nc
 
 setenv OrigFileSuffix _orig
 
@@ -115,45 +93,3 @@ setenv OutDBDir dbOut
 # TODO: enable VarBC updating
 # -----
 setenv VarBCAnalysis ${OutDBDir}/satbias_crtm_ana
-
-##################################
-## application-specific templating
-##################################
-setenv ModelConfigDir ${ConfigDir}/mpas
-
-set OuterStreamsFile = ${StreamsFile}_${outerMesh}
-set OuterNamelistFile = ${NamelistFile}_${outerMesh}
-
-set InnerStreamsFile = ${StreamsFile}_${innerMesh}
-set InnerNamelistFile = ${NamelistFile}_${innerMesh}
-
-#set EnsembleStreamsFile = ${StreamsFile}_${ensembleMesh}
-#set EnsembleNamelistFile = ${NamelistFile}_${ensembleMesh}
-
-# initial IC
-setenv initModelConfigDir ${ModelConfigDir}/init
-
-# forecast
-setenv forecastModelConfigDir ${ModelConfigDir}/forecast
-
-setenv variationalModelConfigDir ${ModelConfigDir}/variational
-set variationalMeshList = (Outer Inner)
-set variationalnCellsList = ($nCellsOuter $nCellsInner)
-set variationallocalStaticFieldsFileList = ( \
-$localStaticFieldsFileOuter \
-$localStaticFieldsFileInner \
-)
-set variationalStreamsFileList = ($OuterStreamsFile $InnerStreamsFile)
-set variationalNamelistFileList = ($OuterNamelistFile $InnerNamelistFile)
-
-# hofx
-setenv hofxModelConfigDir ${ModelConfigDir}/hofx
-set hofxMeshList = (HofX)
-set hofxnCellsList = ($nCellsOuter)
-set hofxStreamsFileList = ($OuterStreamsFile)
-set hofxNamelistFileList = ($OuterNamelistFile)
-
-set HofXMeshDescriptor = ${outerMesh}
-
-# rtpp
-setenv rtppModelConfigDir ${ModelConfigDir}/rtpp

@@ -13,7 +13,9 @@ setenv baseConfig scenarios/base/rtpp.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig rtpp"
 setenv setNestedRTPP "source $setNestedConfig $baseConfig $scenarioConfig rtpp"
 
-#job
+setenv AppMPASConfigDir config/mpas/rtpp
+
+## job
 $setLocal job.${ensembleMesh}.baseSeconds
 $setLocal job.${ensembleMesh}.secondsPerEDAMember
 

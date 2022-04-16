@@ -9,7 +9,7 @@ source config/filestructure.csh
 source config/modeldata.csh
 source config/builds.csh
 source config/environment.csh
-#source config/applications/initic.csh
+source config/applications/initic.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -37,13 +37,13 @@ end
 
 ## copy/modify dynamic streams file
 rm ${StreamsFileInit}
-cp -v ${initModelConfigDir}/${StreamsFileInit} .
+cp -v ${AppMPASConfigDir}/${StreamsFileInit} .
 sed -i 's@nCells@'${nCellsOuter}'@' ${StreamsFileInit}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}
-cp -v ${initModelConfigDir}/${NamelistFileInit} .
+cp -v ${AppMPASConfigDir}/${NamelistFileInit} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@nCells@'${nCellsOuter}'@' $NamelistFileInit
 
