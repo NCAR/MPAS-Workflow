@@ -19,13 +19,14 @@ cd ${mainScriptDir}
 
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
+# cross-application settings
 source config/experiment.csh
-source config/workflow.csh
-source config/observations.csh
-source config/model.csh
 source config/job.csh
+source config/model.csh
+source config/observations.csh
+source config/workflow.csh
 
-# application settings, including resource requests
+# application-specific settings, including resource requests
 source config/applications/ensvariational.csh
 source config/applications/forecast.csh
 source config/applications/hofx.csh
