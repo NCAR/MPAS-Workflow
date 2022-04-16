@@ -93,3 +93,32 @@ if ($ExperimentName == None) then
 endif
 setenv ExperimentName ${ExperimentUser}_${ExperimentName}
 setenv ExperimentName ${ExperimentName}${ExpSuffix}
+
+## absolute experiment directory
+setenv ExperimentDirectory ${ParentDirectory}/${ExperimentName}
+setenv PackageBaseName MPAS-Workflow
+setenv mainScriptDir ${ExperimentDirectory}/${PackageBaseName}
+
+echo ""
+echo "======================================================================"
+echo "Setting up a new workflow"
+echo "  ExperimentName: ${ExperimentName}"
+echo "  mainScriptDir: ${mainScriptDir}"
+echo "======================================================================"
+echo ""
+
+rm -rf ${mainScriptDir}
+mkdir -p $mainScriptDir/config
+
+cat >! $mainScriptDir/config/experiment.csh << EOF
+#!/bin/csh -f
+setenv ParentDirectory ${ParentDirectory}
+setenv ExperimentName ${ExperimentName}
+setenv ExperimentDirectory ${ExperimentDirectory}
+setenv PackageBaseName ${PackageBaseName}
+setenv mainScriptDir ${mainScriptDir}
+setenv ConfigDir ${mainScriptDir}/config
+setenv ModelConfigDir ${mainScriptDir}/config/mpas
+setenv nEnsDAMembers ${nEnsDAMembers}
+EOF
+

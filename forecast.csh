@@ -23,9 +23,10 @@ endif
 # Setup environment
 # =================
 source config/workflow.csh
-source config/model.csh
 source config/filestructure.csh
+source config/experiment.csh
 source config/tools.csh
+source config/model.csh
 source config/modeldata.csh
 source config/builds.csh
 source config/environmentMPT.csh
@@ -93,12 +94,12 @@ stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 )
   rm ./$staticfile
-  ln -sfv $AppMPASConfigDir/$staticfile .
+  ln -sfv $ModelConfigDir/$AppName/$staticfile .
 end
 
 ## copy/modify dynamic streams file
 rm ${StreamsFile}
-cp -v $AppMPASConfigDir/${StreamsFile} .
+cp -v $ModelConfigDir/$AppName/${StreamsFile} .
 sed -i 's@nCells@'${nCells}'@' ${StreamsFile}
 sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
@@ -163,7 +164,7 @@ endif
 
 ## copy/modify dynamic namelist
 rm ${NamelistFile}
-cp -v ${AppMPASConfigDir}/${NamelistFile} .
+cp -v $ModelConfigDir/$AppName/$NamelistFile .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile

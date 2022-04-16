@@ -29,6 +29,7 @@ endif
 # =================
 source config/builds.csh
 source config/environment.csh
+source config/experiment.csh
 source config/mpas/variables.csh
 source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -63,7 +64,7 @@ while ( $instance <= ${nDAInstances} )
   while ( $myMember <= ${EDASize} )
     if ( $instance == ${ArgInstance} ) then
       # add eda-member yaml name to list of member yamls
-      set memberyaml = variational_${member}.yaml
+      set memberyaml = ${YAMLPrefix}${member}.yaml
       echo "  - ${self_WorkDir}/$memberyaml" >> $myYAML
     endif
 
@@ -91,7 +92,7 @@ ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)
-  ln -sfv ${ModelConfigDir}/${file} .
+  ln -sfv $ModelConfigDir/$file .
 end
 
 # Link+Run the executable

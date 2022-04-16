@@ -121,7 +121,7 @@
 
   # directory/file preparation
   [[InitDataAssim]]
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA" "{{DAType}}"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA" "variational"
     script = $origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M

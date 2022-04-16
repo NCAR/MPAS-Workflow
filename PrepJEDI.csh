@@ -22,26 +22,30 @@ set ArgDT = "$2"
 # ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
 
-# ArgAppName: str, one of the jedi application names with configuration under config/jedi/applicationBase
-# E.g., hofx, 3dvar, 3denvar, etc...
-set ArgAppName = "$4"
+# ArgAppType: str, either hofx or variational
+set ArgAppType = "$4"
 
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isNotInt = ($status)
 if ( $isNotInt ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
+  echo "$0 (ERROR): ArgMember ($ArgMember) must be an integer" > ./FAIL
   exit 1
 endif
 if ( $ArgMember < 1 ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
+  echo "$0 (ERROR): ArgMember ($ArgMember) must be > 0" > ./FAIL
   exit 1
 endif
 
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isNotInt = ($status)
 if ( $isNotInt ) then
-  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  echo "$0 (ERROR): ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
+
+if ("$ArgAppType" != hofx && "$ArgAppType" != variational) then
+  echo "$0 (ERROR): ArgAppType must be hofx or variational, not $ArgAppType"
   exit 1
 endif
 
@@ -49,18 +53,20 @@ endif
 # =================
 source config/environment.csh
 source config/filestructure.csh
+source config/experiment.csh
 source config/model.csh
 source config/observations.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
 source config/builds.csh
-source config/applications/AppTypeTEMPLATE.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
+
+source config/applications/$ArgAppType.csh
 
 # templated work directory
 set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
@@ -73,7 +79,6 @@ cd ${self_WorkDir}
 
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
-set self_AppType = AppTypeTEMPLATE
 
 # ================================================================================================
 
@@ -131,7 +136,7 @@ stream_list.${MPASCore}.ensemble \
 stream_list.${MPASCore}.control \
 )
   rm ./$staticfile
-  ln -sfv $AppMPASConfigDir/$staticfile .
+  ln -sfv $ModelConfigDir/$ArgAppType/$staticfile .
 end
 
 ## copy/modify dynamic streams file
@@ -139,7 +144,7 @@ set iMesh = 0
 foreach StreamsFile_ ($StreamsFileList)
   @ iMesh++
   rm ${StreamsFile_}
-  cp -v $AppMPASConfigDir/${StreamsFile} ./${StreamsFile_}
+  cp -v $ModelConfigDir/$ArgAppType/${StreamsFile} ./${StreamsFile_}
   sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${StreamsFile_}
   sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
@@ -151,7 +156,7 @@ set iMesh = 0
 foreach NamelistFile_ ($NamelistFileList)
   @ iMesh++
   rm ${NamelistFile_}
-  cp -v ${AppMPASConfigDir}/${NamelistFile} ./${NamelistFile_}
+  cp -v $ModelConfigDir/$ArgAppType/${NamelistFile} ./${NamelistFile_}
   sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
   sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$nCellsList[$iMesh]'@' ${NamelistFile_}
@@ -161,7 +166,7 @@ end
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)
-  ln -sfv ${ModelConfigDir}/${file} .
+  ln -sfv $ModelConfigDir/$file .
 end
 
 
@@ -184,12 +189,12 @@ foreach instrument ($observations)
 
   # Check for instrument-specific directory first
   set key = IODADirectory
-  set address = "${observations__resource}.${key}.${self_AppType}.${instrument}"
+  set address = "${observations__resource}.${key}.${ArgAppType}.${instrument}"
   # TODO: this is somewhat slow with lots of redundant loads of the entire observations.yaml config
   set $key = "`$getObservationsOrNone ${address}`"
   if ("$IODADirectory" == None) then
     # Fall back on "common" directory, if present
-    set address_ = "${observations__resource}.${key}.${self_AppType}.common"
+    set address_ = "${observations__resource}.${key}.${ArgAppType}.common"
     set $key = "`$getObservationsOrNone ${address_}`"
     if ("$IODADirectory" == None) then
       echo "$0 (WARNING): skipping ${instrument} due to missing value at ${address} and ${address_}"
@@ -235,19 +240,19 @@ endif
 set thisYAML = orig.yaml
 set prevYAML = ${thisYAML}
 
-cp -v ${ConfigDir}/jedi/applications/${ArgAppName}.yaml $thisYAML
+cp -v ${ConfigDir}/jedi/applications/${AppName}.yaml $thisYAML
 if ( $status != 0 ) then
-  echo "ERROR in $0 : application YAML not available --> ${ArgAppName}.yaml" > ./FAIL
+  echo "ERROR in $0 : application YAML not available --> ${AppName}.yaml" > ./FAIL
   exit 1
 endif
 
 # (2) obs-related substitutions
 # =============================
 
-## indentation of observations vector members, specified in config/AppTypeTEMPLATE.csh
+## indentation of observations vector members, specified in config/$ArgAppType.csh
 set obsIndent = "`${nSpaces} $nObsIndent`"
 
-## Add selected observations (see config/AppTypeTEMPLATE.csh)
+## Add selected observations (see config/$ArgAppType.csh)
 # (i) combine the observation YAML stubs into single file
 set observationsYAML = observations.yaml
 rm $observationsYAML
@@ -289,7 +294,7 @@ foreach instrument ($observations)
   endif
 
   foreach subdir (${AppYamlDirs})
-    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${self_AppType}/${subdir}/${instrument}
+    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${subdir}/${instrument}
     if ( "$instrument" =~ *"sondes"* ) then
       #KLUDGE to handle missing qv for sondes at single time
       if ( ${thisValidDate} == 2018043006 ) then
@@ -334,7 +339,7 @@ cat >! ${thisSEDF} << EOF
 EOF
 
 # substitute with line breaks
-set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${self_AppType}/${sedstring}.yaml
+set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${sedstring}.yaml
 sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 echo '_blank: null' >> ${thisSEDF}
 
@@ -389,10 +394,10 @@ sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 sed -i 's@{{InDBDir}}@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
 sed -i 's@{{OutDBDir}}@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
 
-# obs, geo, and diag files with self_AppType suffixes
-sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
-sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
-sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
+# obs, geo, and diag files with ArgAppType suffixes
+sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${ArgAppType}'@g' $thisYAML
+sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${ArgAppType}'@g' $thisYAML
+sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${ArgAppType}'@g' $thisYAML
 
 # satellite bias correction directories
 sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $prevYAML

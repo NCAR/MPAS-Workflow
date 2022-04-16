@@ -6,6 +6,7 @@ date
 # =================
 source config/model.csh
 source config/filestructure.csh
+source config/experiment.csh
 source config/modeldata.csh
 source config/builds.csh
 source config/environment.csh
@@ -37,13 +38,13 @@ end
 
 ## copy/modify dynamic streams file
 rm ${StreamsFileInit}
-cp -v ${AppMPASConfigDir}/${StreamsFileInit} .
+cp -v $ModelConfigDir/$AppName/${StreamsFileInit} .
 sed -i 's@nCells@'${nCellsOuter}'@' ${StreamsFileInit}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}
-cp -v ${AppMPASConfigDir}/${NamelistFileInit} .
+cp -v $ModelConfigDir/$AppName/${NamelistFileInit} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@nCells@'${nCellsOuter}'@' $NamelistFileInit
 

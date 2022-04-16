@@ -5,8 +5,8 @@ set config_modeldata = 1
 
 source config/workflow.csh
 source config/model.csh
-source config/applications/variational.csh
 source config/filestructure.csh
+source config/experiment.csh
 set wd = `pwd`
 source config/tools.csh $wd
 source config/${InitializationType}ModelData.csh
@@ -95,14 +95,14 @@ if ( $nEnsDAMembers > 1 ) then
 else
   ## deterministic analysis (static directory structure)
   # parse selections
-  if ("$fixedEnsBType" == "GEFS") then
+  if ("$fixedEnsBSource" == "GEFS") then
     set ensPbMemPrefix = "${gefsMemPrefix}"
     set ensPbMemNDigits = ${gefsMemNDigits}
     set ensPbFilePrefix = ${GEFS6hfcFOREnsBFilePrefix}
 
     set ensPbDir = ${GEFS6hfcFOREnsBDir}
     set ensPbNMembers = ${nGEFSMembers}
-  else if ("$fixedEnsBType" == "PreviousEDA") then
+  else if ("$fixedEnsBSource" == "PreviousEDA") then
     set ensPbMemPrefix = "${dynamicEnsBMemPrefix}"
     set ensPbMemNDigits = ${dynamicEnsBMemNDigits}
     set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
@@ -110,7 +110,7 @@ else
     set ensPbDir = ${PreviousEDAForecastDir}
     set ensPbNMembers = ${nPreviousEnsDAMembers}
   else
-    echo "ERROR in $0 : unrecognized value for fixedEnsBType --> ${fixedEnsBType}" >> ./FAIL
+    echo "ERROR in $0 : unrecognized value for fixedEnsBSource --> ${fixedEnsBSource}" >> ./FAIL
     exit 1
   endif
 endif
@@ -124,7 +124,7 @@ setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
 if ( $nEnsDAMembers > 1 ) then
   # using member-specific sst/xice data from GEFS
   # 60km and 120km
-  setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr/${model__precision}
+  setenv SeaAnaDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/surface/000hr/${model__precision}
   setenv seaMemFmt "${gefsMemFmt}"
 else
   # deterministic
@@ -137,21 +137,16 @@ endif
 if ( $nEnsDAMembers > 1 ) then
   # stochastic
   # 60km and 120km
-  setenv StaticFieldsDirOuter ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
-  setenv StaticFieldsDirInner ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
-  setenv StaticFieldsDirEnsemble ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
+  setenv StaticFieldsDirOuter /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/${FirstCycleDate}
+  setenv StaticFieldsDirInner /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/${FirstCycleDate}
+  setenv StaticFieldsDirEnsemble /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/${FirstCycleDate}
   setenv staticMemFmt "${gefsMemFmt}"
-
-  #TODO: switch to using FirstFileDate static files for GEFS
-  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
-  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
 else
   # deterministic
   # 30km, 60km, and 120km
   setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
   setenv staticMemFmt " "
-  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
-  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
 endif
+setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
+setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
+setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc

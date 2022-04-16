@@ -19,11 +19,13 @@ setenv setNestedHofX "source $setNestedConfig $baseConfig $scenarioConfig hofx"
 ## required settings for PrepJEDI.csh
 $setLocal observations
 
-setenv AppMPASConfigDir config/mpas/hofx
+setenv AppName hofx
+setenv appyaml ${AppName}.yaml
+
 set MeshList = (HofX)
 set nCellsList = ($nCellsOuter)
-set StreamsFileList = ($OuterStreamsFile)
-set NamelistFileList = ($OuterNamelistFile)
+set StreamsFileList = ($outerStreamsFile)
+set NamelistFileList = ($outerNamelistFile)
 
 $setLocal nObsIndent
 

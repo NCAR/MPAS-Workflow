@@ -10,9 +10,16 @@ echo "$0 (INFO): generating a new cylc suite"
 
 date
 
+echo "$0 (INFO): Initializing the MPAS-Workflow experiment directory"
+# Create the experiment directory and cylc task scripts
+source SetupWorkflow.csh
+
+## Change to the cylc suite directory
+cd ${mainScriptDir}
+
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
-source config/filestructure.csh
+source config/experiment.csh
 source config/workflow.csh
 source config/observations.csh
 source config/model.csh
@@ -48,10 +55,6 @@ set SuiteName = ${ExperimentName}
 # Differentiate between creating the workflow suite for the first time
 # and restarting (i.e., when initialCyclePoint > firstCyclePoint)
 if ($initialCyclePoint == $firstCyclePoint) then
-  echo "$0 (INFO): Initializing ${PackageBaseName} in the experiment directory"
-  # Create the experiment directory and cylc task scripts
-  ./SetupWorkflow.csh
-
   # The analysis will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
   # initialCyclePoint
   set AnalysisTimes = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
@@ -68,9 +71,6 @@ else
   # initialCyclePoint
   set ForecastTimes = +PT${DA2FCOffsetHR}H/PT${CyclingWindowHR}H
 endif
-
-## Change to the cylc suite directory
-cd ${mainScriptDir}
 
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
 mkdir -p ${cylcWorkDir}
@@ -101,7 +101,6 @@ cat >! suite.rc << EOF
 {% set modelAnalysisSource = "${model__AnalysisSource}" %}
 
 # variational
-{% set DAType = "${DAType}" %}
 {% set EDASize = ${EDASize} %} #integer
 {% set nDAInstances = ${nDAInstances} %} #integer
 {% set nEnsDAMembers = ${nEnsDAMembers} %} #integer

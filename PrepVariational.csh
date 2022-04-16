@@ -33,9 +33,9 @@ endif
 source config/workflow.csh
 source config/environment.csh
 source config/model.csh
+source config/modeldata.csh
 source config/filestructure.csh
 source config/tools.csh
-source config/modeldata.csh
 source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -52,7 +52,6 @@ cd ${self_WorkDir}
 set self_WindowHR = ${CyclingWindowHR}
 set self_StateDirs = ($prevCyclingFCDirs)
 set self_StatePrefix = ${FCFilePrefix}
-set StreamsFileList = (${variationalStreamsFileList})
 
 # Remove old netcdf lock files
 rm *.nc*.lock
@@ -274,7 +273,7 @@ set yamlFileList = ()
 rm $yamlFiles
 set member = 1
 while ( $member <= ${nEnsDAMembers} )
-  set memberyaml = ${variationalYAMLPrefix}${member}.yaml
+  set memberyaml = ${YAMLPrefix}${member}.yaml
   echo $memberyaml >> $yamlFiles
   set yamlFileList = ($yamlFileList $memberyaml)
   cp $prevYAML $memberyaml
@@ -358,13 +357,13 @@ while ( $member <= ${nEnsDAMembers} )
   # + ensures independent ivgtyp, isltyp, etc...
   # + avoids concurrent reading of StaticFieldsFile by all members
   set iMesh = 0
-  foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
+  foreach localStaticFieldsFile ($localStaticFieldsFileList)
     @ iMesh++
 
     set StaticFieldsFile = ${localStaticFieldsFile}${memSuffix}
     rm ${StaticFieldsFile}
 
-    set StaticMemDir = `${memberDir} ens $member "${staticMemFmt}"`
+    set StaticMemDir = `${memberDir} 2 $member "${staticMemFmt}"`
     set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
     ln -sfv ${memberStaticFieldsFile} ${StaticFieldsFile}
   end

@@ -15,7 +15,6 @@ echo "Making task scripts for ${self_StateType} state"
 set PreparationScript=${mainScriptDir}/${preparationName}${self_taskBaseScript}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
     -e 's@WindowHRTEMPLATE@wrapWindowHRTEMPLATE@' \
-    -e 's@AppTypeTEMPLATE@wrapAppTypeTEMPLATE@' \
     ${preparationName}.csh > ${PreparationScript}
 chmod 744 ${PreparationScript}
 

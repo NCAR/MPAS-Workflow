@@ -40,14 +40,19 @@ setenv nCellsEnsemble "`$getLocalOrNone nCells.$ensembleMesh`"
 $setLocal ${outerMesh}.TimeStep
 $setLocal ${outerMesh}.DiffusionLengthScale
 
+# deterministic analysis source
 $setNestedModel AnalysisSource
+
+# stochastic cycle window duration forecast source
+# only applicable to 3denvar when nEnsDAMembers<2
+$setLocal fixedEnsBSource
+$setLocal nPreviousEnsDAMembers
+$setLocal PreviousEDAForecastDir
 
 $setLocal GraphInfoDir
 
 $setNestedModel precision
 
-
-setenv ModelConfigDir config/mpas
 
 # MPAS-Model file-naming conventions
 setenv InitFilePrefixOuter x1.${nCellsOuter}.init
@@ -56,13 +61,12 @@ setenv InitFilePrefixEnsemble x1.${nCellsEnsemble}.init
 
 setenv StreamsFile streams.${MPASCore}
 setenv NamelistFile namelist.${MPASCore}
-set OuterStreamsFile = ${StreamsFile}_${outerMesh}
-set OuterNamelistFile = ${NamelistFile}_${outerMesh}
-set InnerStreamsFile = ${StreamsFile}_${innerMesh}
-set InnerNamelistFile = ${NamelistFile}_${innerMesh}
-
-#set EnsembleStreamsFile = ${StreamsFile}_${ensembleMesh}
-#set EnsembleNamelistFile = ${NamelistFile}_${ensembleMesh}
+setenv outerStreamsFile ${StreamsFile}_${outerMesh}
+setenv outerNamelistFile ${NamelistFile}_${outerMesh}
+setenv innerStreamsFile ${StreamsFile}_${innerMesh}
+setenv innerNamelistFile ${NamelistFile}_${innerMesh}
+#setenv ensembleStreamsFile ${StreamsFile}_${ensembleMesh}
+#setenv ensembleNamelistFile ${NamelistFile}_${ensembleMesh}
 
 setenv StreamsFileInit streams.init_${MPASCore}
 setenv NamelistFileInit namelist.init_${MPASCore}

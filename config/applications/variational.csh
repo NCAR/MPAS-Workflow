@@ -42,11 +42,6 @@ endif
 set ensembleCovarianceWeight = "`$getLocalOrNone ensembleCovarianceWeight`"
 set staticCovarianceWeight = "`$getLocalOrNone staticCovarianceWeight`"
 
-# deterministic settings
-$setLocal fixedEnsBType
-$setLocal nPreviousEnsDAMembers
-$setLocal PreviousEDAForecastDir
-
 # stochastic settings
 set EDASize = "`$getLocalOrNone EDASize`"
 if ($EDASize == None) then
@@ -68,20 +63,22 @@ $setLocal ABEInflation
 $setLocal ABEIChannel
 
 ## required settings for PrepJEDI.csh
+setenv AppName $DAType
+setenv appyaml ${AppName}.yaml
+
 # observations, automatically combine two parent ObsList's
 $setLocal benchmarkObservations
 $setLocal experimentalObservations
 set observations = ($benchmarkObservations $experimentalObservations)
 
-setenv AppMPASConfigDir config/mpas/variational
 set MeshList = (Outer Inner)
 set nCellsList = ($nCellsOuter $nCellsInner)
 set localStaticFieldsFileList = ( \
 $localStaticFieldsFileOuter \
 $localStaticFieldsFileInner \
 )
-set StreamsFileList = ($OuterStreamsFile $InnerStreamsFile)
-set NamelistFileList = ($OuterNamelistFile $InnerNamelistFile)
+set StreamsFileList = ($outerStreamsFile $innerStreamsFile)
+set NamelistFileList = ($outerNamelistFile $innerNamelistFile)
 $setLocal nObsIndent
 $setLocal radianceThinningDistance
 $setLocal biasCorrection
@@ -132,4 +129,4 @@ if ($EDASize == 1 && $MinimizerAlgorithm == $BlockEDA) then
   setenv MinimizerAlgorithm DRPLanczos
 endif
 
-setenv variationalYAMLPrefix variational_
+setenv YAMLPrefix ${AppName}_

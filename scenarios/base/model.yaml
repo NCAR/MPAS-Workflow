@@ -43,6 +43,16 @@ model:
 # OPTIONS: GFSfromPANDACArchive, GFSfromRDAOnline, GFSfromNCEPFTPOnline
   AnalysisSource: GFSfromPANDACArchive
 
+## fixedEnsBSource
+# selection of data source for fixed ensemble background covariance members when
+# EDASize==nDAInstances==1 and DAType is either 3denvar or 3dhybrid
+# OPTIONS: GEFS (default), PreviousEDA
+  fixedEnsBSource: GEFS
+
+# tertiary settings that only apply when fixedEnsBSource is set to PreviousEDA
+  nPreviousEnsDAMembers: 20
+  PreviousEDAForecastDir: /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_RTPP0.80_LeaveOneOut_OIE120km_memberSpecificTemplate_GEFSSeaUpdate/CyclingFC
+
 ## GraphInfoDir
 # directory containing x1.{{nCells}}.graph.info* files
   GraphInfoDir: /glade/work/duda/static_moved_to_campaign

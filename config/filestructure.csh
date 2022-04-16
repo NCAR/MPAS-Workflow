@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 if ( $?config_filestructure ) exit 0
-set config_filestructure = 1
+setenv config_filestructure 1
 
 source config/experiment.csh
 source config/benchmark.csh
@@ -19,11 +19,6 @@ mkdir -p $TMPDIR
 ##########################
 ## run directory structure
 ##########################
-setenv PackageBaseName MPAS-Workflow
-
-## absolute experiment directory
-setenv ExperimentDirectory ${ParentDirectory}/${ExperimentName}
-
 ## immediate subdirectories
 setenv ObsWorkDir ${ExperimentDirectory}/Observations
 setenv CyclingDAWorkDir ${ExperimentDirectory}/CyclingDA
@@ -39,10 +34,6 @@ setenv VerificationWorkDir ${ExperimentDirectory}/Verification
 setenv BenchmarkCyclingDAWorkDir ${BenchmarkExperimentDirectory}/CyclingDA
 setenv BenchmarkVerificationWorkDir ${BenchmarkExperimentDirectory}/Verification
 
-## directories copied from PackageBaseName
-setenv mainScriptDir ${ExperimentDirectory}/${PackageBaseName}
-setenv ConfigDir ${mainScriptDir}/config
-
 ## directory string formatter for EDA members
 # third argument to memberDir.py
 setenv flowMemPrefix "mem"
@@ -50,9 +41,6 @@ setenv flowMemNDigits 3
 setenv flowMemFmt "/${flowMemPrefix}{:0${flowMemNDigits}d}"
 setenv flowInstFmt "/instance{:0${flowMemNDigits}d}"
 setenv flowMemFileFmt "_{:0${flowMemNDigits}d}"
-
-## appyaml: universal yaml file name for all jedi applications
-setenv appyaml jedi.yaml
 
 
 #############################################

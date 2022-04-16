@@ -13,7 +13,11 @@ setenv baseConfig scenarios/base/rtpp.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig rtpp"
 setenv setNestedRTPP "source $setNestedConfig $baseConfig $scenarioConfig rtpp"
 
-setenv AppMPASConfigDir config/mpas/rtpp
+$setNestedRTPP relaxationFactor
+$setLocal retainOriginalAnalyses
+
+setenv AppName rtpp
+setenv appyaml ${AppName}.yaml
 
 ## job
 $setLocal job.${ensembleMesh}.baseSeconds

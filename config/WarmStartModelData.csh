@@ -1,17 +1,15 @@
 #!/bin/csh -f
 
-source config/filestructure.csh
 source config/model.csh
-source config/applications/variational.csh
+source config/experiment.csh
 
 ####################
 ## static data files
 ####################
 ## common directories
-set ModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input
-set OuterModelData = ${ModelData}/${outerMesh}
-set InnerModelData = ${ModelData}/${innerMesh}
-set EnsembleModelData = ${ModelData}/${ensembleMesh}
+set OuterModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input/${outerMesh}
+set InnerModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input/${innerMesh}
+set EnsembleModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input/${ensembleMesh}
 
 set GFSAnaDirOuter = ${OuterModelData}/GFSAna
 set GFSAnaDirInner = ${InnerModelData}/GFSAna

@@ -1,8 +1,8 @@
 #!/bin/csh -f
 
-source config/filestructure.csh
 source config/model.csh
-source config/applications/variational.csh
+source config/workflow.csh
+source config/experiment.csh
 
 ####################
 ## static data files

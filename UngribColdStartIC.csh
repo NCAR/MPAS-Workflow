@@ -6,6 +6,7 @@ date
 # =================
 source config/environment.csh
 source config/filestructure.csh
+source config/experiment.csh
 source config/modeldata.csh
 source config/builds.csh
 source config/applications/initic.csh
@@ -30,7 +31,7 @@ ln -sfv ${VtableDir}/${Vtable} Vtable
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}
-cp -v ${AppMPASConfigDir}/${NamelistFileWPS} .
+cp -v $ModelConfigDir/$AppName/${NamelistFileWPS} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
 
 # Run the executable

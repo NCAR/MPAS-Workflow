@@ -28,8 +28,8 @@ endif
 # =================
 source config/builds.csh
 source config/environment.csh
+source config/experiment.csh
 source config/mpas/variables.csh
-source config/filestructure.csh
 source config/tools.csh
 source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -46,7 +46,7 @@ cd ${self_WorkDir}
 # build, executable, yaml
 set myBuildDir = ${VariationalBuildDir}
 set myEXE = ${VariationalEXE}
-set myYAML = ${self_WorkDir}/${variationalYAMLPrefix}${ArgMember}.yaml
+set myYAML = ${self_WorkDir}/${YAMLPrefix}${ArgMember}.yaml
 
 if ( $ArgMember > $nEnsDAMembers ) then
   echo "ERROR in $0 : ArgMember ($ArgMember) must be <= nEnsDAMembers ($nEnsDAMembers)" > ./FAIL
@@ -72,7 +72,7 @@ ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)
-  ln -sfv ${ModelConfigDir}/${file} .
+  ln -sfv $ModelConfigDir/$file .
 end
 
 # Link+Run the executable
