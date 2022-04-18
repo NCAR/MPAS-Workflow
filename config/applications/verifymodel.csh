@@ -12,6 +12,8 @@ source config/applications/variational.csh
 setenv baseConfig scenarios/base/verifymodel.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig verifymodel"
 
+$setLocal pyVerifyDir
+
 ## job
 $setLocal job.${outerMesh}.baseSeconds
 setenv verifymodel__seconds $baseSeconds

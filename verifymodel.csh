@@ -42,9 +42,8 @@ source config/filestructure.csh
 source config/tools.csh
 source config/model.csh
 source config/modeldata.csh
-source config/verification.csh
 source config/environmentPython.csh
-#source config/applications/verifymodel.csh
+source config/applications/verifymodel.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -76,11 +75,11 @@ set other = $self_StateDir
 set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
 ln -sf ${bgFileOther} ../restart.$thisMPASFileDate.nc
 
-ln -fs ${pyModelDir}/*.py ./
+ln -fs ${pyVerifyDir}/*.py ./
 
 set mainScript = DiagnoseModelStatistics
 
-ln -fs ${pyModelDir}/${mainScript}.py ./
+ln -fs ${pyVerifyDir}/${mainScript}.py ./
 set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 
 set success = 1

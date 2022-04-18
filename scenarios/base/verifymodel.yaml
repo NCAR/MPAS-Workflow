@@ -1,4 +1,6 @@
 verifymodel:
+  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics
+
 ## mesh-specific settings
   # resource requirements
   job:

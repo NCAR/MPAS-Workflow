@@ -1,4 +1,6 @@
 verifyobs:
+  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics
+
   # resource requirements
   job:
     baseSeconds: 900

@@ -59,59 +59,71 @@ entire workflow.  Some files are designed to be modified by users, and others mo
 
 `config/scenario.csh`: selection of a particular experiment scenario
 
-For many `config/*.csh` files, there is a one-to-one correspondance with `scenarios/base/*.yaml`.
-For those configuration components, the `csh` script is used to parse the `yaml` the
-identically named portion of the scenario `yaml` file. The `base` scenario `yaml`'s contain
-the default values for all settings.  Those `base` configurations are as follows:
+For many `csh` scripts located under `config/` and `config/applications`, there is a one-to-one
+correspondance with yaml files located under `scenarios/base/`. For those configuration components,
+the `csh` script is used to parse the `yaml` and/or the identically named section of the scenario
+`yaml` file (e.g., `scenarios/3dvar_OIE120km_WarmStart.yaml`). The `base` scenario `yaml`'s contain
+the default values and documentation for each user-configurable setting.  Those `base`
+configuration sections are as follows:
 
-`scenarios/base/workflow.yaml`: cylc task selection and date bounds
+#### cross-application settings
 
 `scenarios/base/experiment.yaml`: experiment naming conventions
+
+`scenarios/base/job.yaml`: account and queue selection
 
 `scenarios/base/model.yaml`: model mesh settings
 
 `scenarios/base/observations.yaml`: observation source data
 
-`scenarios/base/variational.yaml`: settings specific to the variational application
+`scenarios/base/workflow.yaml`: cylc task selection and date bounds
 
-`scenarios/base/hofx.yaml`: settings specific to the hofx application
+#### application-specific settings
 
-`scenarios/base/forecast.yaml`: settings specific to the forecast application
+`scenarios/base/ensvariational.yaml`
 
-`scenarios/base/job.yaml`: account and queue selection
+`scenarios/base/forecast.yaml`
 
+`scenarios/base/hofx.yaml`
+
+`scenarios/base/initic.yaml`
+
+`scenarios/base/rtpp.yaml`
+
+`scenarios/base/variational.yaml`
+
+`scenarios/base/verifyobs.yaml`
+
+`scenarios/base/verifymodel.yaml`
 
 While users can directly modify those `base` `yaml`'s to achieve their desired configuration,
-it is recommended to modify or create a particular scenario `yaml`, i.e.,
-`scenarios/{{ScenarioName}}.yaml` to allow for easy distinction between their own experimental
-setups and the GitHub HEAD branch.  Users are referred to the pre-canned scenario configurations
-located in `scenarios/*.yaml` and `scenarios/testinput/*.yaml`.  A particular scenario is selected
-within `config/scenario.csh`. Users may add new scenarios by copying one of the `yaml` files in the
-scenarios directory to a new file, modifying the entries, and then selecting the new scenario in
-`config/scenario.csh`.
+it is recommended to modify one of the existing full scenarios located directly under `scenarios/`
+or create a new scenario by copying one of the default scenarios to a new file.  Doing so allows
+each user to easily distinguish their custom experimental settings from the the GitHub HEAD branch,
+while being able to merge recent repository changes without conflict.  Users may select a
+particular scenario, including a custom one of their own making, within `config/scenario.csh`.
+
 
 ### Developer-modifiable configuration
 
 Modifications to these scripts are not necessary for typical users.  However, there are edge cases
 outside the design envelope of MPAS-Workflow for which they will need to be extended and/or
 refactored.  It is best practice to discuss such modifications that benefit multiple users via
-GitHub issues, and to submit pull requests when appropriate.
+GitHub issues, and then submit pull requests.
 
 `config/environment.csh`: run-time environment used across compiled executables and python scripts
 
 `config/filestructure.csh`: global description of the workflow file structure
 
-`config/modeldata.csh`: static model-space data file structure, including mesh-specific partition files,
-fixed ensemble forecast members for deterministic experiments, first guess files for the first cycle
-of an experiment, surface variable update files (sst and xice), and common static.nc file(s) to be
+`config/modeldata.csh`: static model-space data files, including fixed ensemble forecast members
+for deterministic experiments, first guess files for the first cycle
+of an experiment, surface variable update files (sst and xice), and common static.nc files to be
 used across all cycles.
 
 `config/obsdata.csh`: static observation-space data file structure; soon to be replaced by
 the `observations` configuration section and `observations.csh`
 
 `config/tools.csh`: initializes python tools for workflow task management
-
-`config/verification.csh`: post-processing and verification script descriptions
 
 If a developer wishes to add a new configuration key beyond the current available options, the
 recommended procedure is to add the key, default value, and description in one of the `base`
@@ -138,7 +150,7 @@ E.g., `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*
 
 `config/mpas/hofx/*`: tasks derived from `HofX.csh`
 
-`config/mpas/init/*.csh`: `GenerateColdStartIC.csh`
+`config/mpas/initic/*.csh`: `GenerateColdStartIC.csh` and `UngribColdStartIC.csh`
 
 `config/mpas/rtpp/*`: `RTPPInflation.csh`
 

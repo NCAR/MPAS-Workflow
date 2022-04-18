@@ -43,10 +43,9 @@ endif
 # =================
 source config/filestructure.csh
 source config/tools.csh
-source config/verification.csh
 source config/environmentPython.csh
 source config/applications/$ArgAppType.csh
-#source config/applications/verifyobs.csh
+source config/applications/verifyobs.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -71,8 +70,8 @@ mkdir -p ${self_WorkDir}/${ObsDiagnosticsDir}
 cd ${self_WorkDir}/${ObsDiagnosticsDir}
 
 set mainScript="DiagnoseObsStatistics"
-ln -fs ${pyObsDir}/*.py ./
-ln -fs ${pyObsDir}/${mainScript}.py ./
+ln -fs ${pyVerifyDir}/*.py ./
+ln -fs ${pyVerifyDir}/${mainScript}.py ./
 set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 
 set success = 1
