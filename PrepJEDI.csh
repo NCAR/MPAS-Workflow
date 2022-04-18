@@ -52,7 +52,6 @@ endif
 # Setup environment
 # =================
 source config/environment.csh
-source config/filestructure.csh
 source config/experiment.csh
 source config/model.csh
 source config/observations.csh

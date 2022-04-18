@@ -5,7 +5,6 @@ set config_modeldata = 1
 
 source config/workflow.csh
 source config/model.csh
-source config/filestructure.csh
 source config/experiment.csh
 set wd = `pwd`
 source config/tools.csh $wd
@@ -59,13 +58,13 @@ set GEFS6hfcFORFirstCycle = ${EnsembleModelData}/EnsFCFirstCycle/${FirstCycleDat
 # TODO: determine firstEnsFCNMembers from source data
 setenv firstEnsFCNMembers 80
 setenv firstEnsFCDir ${GEFS6hfcFORFirstCycle}
-if ( $nEnsDAMembers > $firstEnsFCNMembers ) then
-  echo "WARNING: nEnsDAMembers must be <= firstEnsFCNMembers, changing ensemble size"
-  setenv nEnsDAMembers ${firstEnsFCNMembers}
+if ( $nMembers > $firstEnsFCNMembers ) then
+  echo "WARNING: nMembers must be <= firstEnsFCNMembers, changing ensemble size"
+  setenv nMembers ${firstEnsFCNMembers}
 endif
 
 
-if ( $nEnsDAMembers > 1 ) then
+if ( $nMembers > 1 ) then
   setenv firstFCMemFmt "${gefsMemFmt}"
   setenv firstFCDirOuter ${firstEnsFCDir}
   setenv firstFCDirInner ${firstEnsFCDir}
@@ -79,19 +78,19 @@ endif
 
 # background covariance
 # ---------------------
-## stochastic analysis (dynamic directory structure, depends on $nEnsDAMembers)
+## stochastic analysis (dynamic directory structure, depends on $nMembers)
 set dynamicEnsBMemPrefix = "${flowMemPrefix}"
 set dynamicEnsBMemNDigits = ${flowMemNDigits}
 set dynamicEnsBFilePrefix = ${FCFilePrefix}
 
-## select the ensPb settings based on nEnsDAMembers
-if ( $nEnsDAMembers > 1 ) then
+## select the ensPb settings based on nMembers
+if ( $nMembers > 1 ) then
   setenv ensPbMemPrefix ${dynamicEnsBMemPrefix}
   setenv ensPbMemNDigits ${dynamicEnsBMemNDigits}
   setenv ensPbFilePrefix ${dynamicEnsBFilePrefix}
 
   setenv ensPbDir ${CyclingFCWorkDir}
-  setenv ensPbNMembers ${nEnsDAMembers}
+  setenv ensPbNMembers ${nMembers}
 else
   ## deterministic analysis (static directory structure)
   # parse selections
@@ -121,7 +120,7 @@ endif
 ## sea/ocean surface files
 setenv seaMaxMembers ${nGEFSMembers}
 setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
-if ( $nEnsDAMembers > 1 ) then
+if ( $nMembers > 1 ) then
   # using member-specific sst/xice data from GEFS
   # 60km and 120km
   setenv SeaAnaDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/surface/000hr/${model__precision}
@@ -134,7 +133,7 @@ else
 endif
 
 ## static stream data
-if ( $nEnsDAMembers > 1 ) then
+if ( $nMembers > 1 ) then
   # stochastic
   # 60km and 120km
   setenv StaticFieldsDirOuter /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/${FirstCycleDate}

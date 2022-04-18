@@ -111,9 +111,10 @@ outside the design envelope of MPAS-Workflow for which they will need to be exte
 refactored.  It is best practice to discuss such modifications that benefit multiple users via
 GitHub issues, and then submit pull requests.
 
-`config/environment.csh`: run-time environment used across compiled executables and python scripts
+`generateExperiment.csh`: produces `cofig/experiment.csh`, which is a global description of the
+workflow file structure and file-naming conventions used across multiple applications
 
-`config/filestructure.csh`: global description of the workflow file structure
+`config/environment.csh`: run-time environment used across compiled executables and python scripts
 
 `config/modeldata.csh`: static model-space data files, including fixed ensemble forecast members
 for deterministic experiments, first guess files for the first cycle

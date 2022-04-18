@@ -5,7 +5,7 @@ setenv config_verifymodel 1
 
 source config/scenario.csh
 source config/model.csh
-source config/applications/variational.csh
+source config/experiment.csh
 
 # setLocal is a helper function that picks out a configuration node
 # under the "verifymodel" key of scenarioConfig
@@ -19,5 +19,5 @@ $setLocal job.${outerMesh}.baseSeconds
 setenv verifymodel__seconds $baseSeconds
 
 $setLocal job.${outerMesh}.secondsPerEDAMember
-@ seconds = $secondsPerEDAMember * $nEnsDAMembers + $baseSeconds
+@ seconds = $secondsPerEDAMember * $nMembers + $baseSeconds
 setenv verifymodelens__seconds $seconds

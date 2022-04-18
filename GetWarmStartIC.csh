@@ -1,5 +1,4 @@
 #!/bin/csh -f
-source config/filestructure.csh
 source config/model.csh
 source config/modeldata.csh
 source config/workflow.csh
@@ -10,7 +9,7 @@ set thisValidDate = $thisCycleDate
 source ./getCycleVars.csh
 
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
+while ( $member <= $nMembers )
   echo ""
   echo ""
       find $CyclingFCDirs[$member] -mindepth 0 -maxdepth 0 > /dev/null

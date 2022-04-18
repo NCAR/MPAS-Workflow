@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
-## initialize experiment.csh
-source generateExperiment.csh
+## create experiment environment
+source generateExperimentConfig.csh
 
 set workflowParts = ( \
   GetGFSanalysis.csh \
@@ -29,9 +29,6 @@ foreach part ($workflowParts)
 end
 
 cd ${mainScriptDir}
-
-## load the file structure
-source config/filestructure.csh
 
 ## load the workflow settings
 source config/workflow.csh

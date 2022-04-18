@@ -5,7 +5,6 @@ date
 # Setup environment
 # =================
 source config/environment.csh
-source config/filestructure.csh
 source config/experiment.csh
 source config/modeldata.csh
 source config/builds.csh

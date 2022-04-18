@@ -19,7 +19,7 @@ set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
 setenv InitICWorkDir ${GFSAnaDirOuter}
 setenv SeaFilePrefix ${InitFilePrefixOuter}
 
-if ($nEnsDAMembers == 1) then
+if ($nMembers == 1) then
   setenv StaticFieldsDirOuter ${GFSAnaDirOuter}/${FirstCycleDate}
   setenv StaticFieldsDirInner ${GFSAnaDirInner}/${FirstCycleDate}
 endif

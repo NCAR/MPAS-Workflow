@@ -2,7 +2,7 @@
 
 # Carry out variational minimization for single first guess state
 # ARGUMENTS:
-# ArgMember - member index among nEnsDAMembers
+# ArgMember - member index among nMembers
 
 date
 
@@ -48,8 +48,8 @@ set myBuildDir = ${VariationalBuildDir}
 set myEXE = ${VariationalEXE}
 set myYAML = ${self_WorkDir}/${YAMLPrefix}${ArgMember}.yaml
 
-if ( $ArgMember > $nEnsDAMembers ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be <= nEnsDAMembers ($nEnsDAMembers)" > ./FAIL
+if ( $ArgMember > $nMembers ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be <= nMembers ($nMembers)" > ./FAIL
   exit 1
 endif
 

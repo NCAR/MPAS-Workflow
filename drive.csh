@@ -101,11 +101,13 @@ cat >! suite.rc << EOF
 {% set observationsResource = "${observations__resource}" %}
 {% set modelAnalysisSource = "${model__AnalysisSource}" %}
 
+# members
+{% set nMembers = ${nMembers} %} #integer
+{% set allMembers = range(1, nMembers+1, 1) %}
+
 # variational
 {% set EDASize = ${EDASize} %} #integer
 {% set nDAInstances = ${nDAInstances} %} #integer
-{% set nEnsDAMembers = ${nEnsDAMembers} %} #integer
-{% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
 {% set DAInstances = range(1, nDAInstances+1, 1) %}
 
 # inflation

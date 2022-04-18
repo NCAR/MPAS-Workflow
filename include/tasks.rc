@@ -143,7 +143,7 @@
   {% endfor %}
   # single instance or ensemble of Variational(s)
   [[DataAssim]]
-  {% for mem in EnsDAMembers %}
+  {% for mem in allMembers %}
   [[DAMember{{mem}}]]
     inherit = DataAssim
     script = $origin/Variational.csh "{{mem}}"
@@ -200,7 +200,7 @@
 ## Forecast (critical path)
   [[Forecast]]
     inherit = ForecastBase
-{% for mem in EnsDAMembers %}
+{% for mem in allMembers %}
   [[ForecastMember{{mem}}]]
     inherit = Forecast
     script = $origin/Forecast.csh "{{mem}}"
@@ -302,7 +302,7 @@
       -q = {{EnsMeanBGQueueName}}
       -A = {{EnsMeanBGAccountNumber}}
 {% if DiagnoseEnsSpreadBG %}
-  {% set nEnsSpreadMem = nEnsDAMembers %}
+  {% set nEnsSpreadMem = nMembers %}
   {% set modelSeconds = VerifyModelEnsMeanSeconds %}
   {% set obsSeconds = VerifyObsEnsMeanSeconds %}
 {% else %}

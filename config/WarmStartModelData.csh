@@ -19,7 +19,7 @@ setenv GFSAnaDirVerify ${GFSAnaDirOuter}
 setenv InitICWorkDir ${GFSAnaDirOuter}
 setenv SeaFilePrefix x1.${nCellsOuter}.sfc_update
 
-if ($nEnsDAMembers == 1) then
+if ($nMembers == 1) then
   setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
   setenv StaticFieldsDirInner ${GFSAnaDirInner}
 endif

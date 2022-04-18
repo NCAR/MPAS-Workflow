@@ -35,7 +35,7 @@ endif
 
 # Setup environment
 # =================
-source config/filestructure.csh
+source config/experiment.csh
 source config/tools.csh
 source config/applications/hofx.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`

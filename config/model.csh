@@ -44,7 +44,7 @@ $setLocal ${outerMesh}.DiffusionLengthScale
 $setNestedModel AnalysisSource
 
 # stochastic cycle window duration forecast source
-# only applicable to 3denvar when nEnsDAMembers<2
+# only applicable to 3denvar when nMembers<2
 $setLocal fixedEnsBSource
 $setLocal nPreviousEnsDAMembers
 $setLocal PreviousEDAForecastDir

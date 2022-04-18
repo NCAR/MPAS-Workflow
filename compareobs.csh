@@ -41,7 +41,7 @@ endif
 
 # Setup environment
 # =================
-source config/filestructure.csh
+source config/experiment.csh
 source config/tools.csh
 source config/verification.csh
 source config/environment.csh

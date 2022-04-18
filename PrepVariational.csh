@@ -30,11 +30,11 @@ endif
 
 # Setup environment
 # =================
+source config/experiment.csh
 source config/workflow.csh
 source config/environment.csh
 source config/model.csh
 source config/modeldata.csh
-source config/filestructure.csh
 source config/tools.csh
 source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -67,8 +67,8 @@ rm ${localStaticFieldsPrefix}*.nc*
 #TODO: Change behavior to always using member-specific directories
 #      instead of only for EDA.  Will make EDA omb/oma verification easier.
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $nEnsDAMembers $member`
+while ( $member <= ${nMembers} )
+  set memDir = `${memberDir} $nMembers $member`
   mkdir -p ${OutDBDir}${memDir}
   @ member++
 end
@@ -272,7 +272,7 @@ set yamlFileList = ()
 
 rm $yamlFiles
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
+while ( $member <= ${nMembers} )
   set memberyaml = ${YAMLPrefix}${member}.yaml
   echo $memberyaml >> $yamlFiles
   set yamlFileList = ($yamlFileList $memberyaml)
@@ -314,22 +314,22 @@ rm $yamlFiles
 # ==========================
 
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
+while ( $member <= ${nMembers} )
   set memberyaml = $yamlFileList[$member]
 
   # member-specific state I/O and observation file output directory
-  set memDir = `${memberDir} $nEnsDAMembers $member`
+  set memDir = `${memberDir} $nMembers $member`
   sed -i 's@{{MemberDir}}@'${memDir}'@g' $memberyaml
 
   # deterministic EnVar does not perturb observations
-  if ($nEnsDAMembers == 1) then
+  if ($nMembers == 1) then
     sed -i 's@{{ObsPerturbations}}@false@g' $memberyaml
   else
     sed -i 's@{{ObsPerturbations}}@true@g' $memberyaml
   endif
 
   sed -i 's@{{MemberNumber}}@'$member'@g' $memberyaml
-  sed -i 's@{{TotalMemberCount}}@'${nEnsDAMembers}'@g' $memberyaml
+  sed -i 's@{{TotalMemberCount}}@'${nMembers}'@g' $memberyaml
 
   @ member++
 end
@@ -349,8 +349,8 @@ set StaticFieldsDirList = ($StaticFieldsDirOuter $StaticFieldsDirInner)
 set StaticFieldsFileList = ($StaticFieldsFileOuter $StaticFieldsFileInner)
 
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memSuffix = `${memberDir} $nEnsDAMembers $member "${flowMemFileFmt}"`
+while ( $member <= ${nMembers} )
+  set memSuffix = `${memberDir} $nMembers $member "${flowMemFileFmt}"`
 
   ## copy static fields
   # unique StaticFieldsDir and StaticFieldsFile for each ensemble member
@@ -409,7 +409,7 @@ while ( $member <= ${nEnsDAMembers} )
 
     #modify "Inner" initial forecast file
     # TODO: capture the naming convention for FirstCyclingFCDir somewhere else
-    set memDir = `${memberDir} $nEnsDAMembers 1`
+    set memDir = `${memberDir} $nMembers 1`
     set FirstCyclingFCDir = ${CyclingFCWorkDir}/${FirstCycleDate}${memDir}/Inner
     cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
     # modify xtime

@@ -5,7 +5,6 @@ date
 # Setup environment
 # =================
 source config/model.csh
-source config/filestructure.csh
 source config/experiment.csh
 source config/tools.csh
 source config/modeldata.csh
@@ -19,7 +18,7 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-if (${nEnsDAMembers} < 2) then
+if (${nMembers} < 2) then
   exit 0
 endif
 
@@ -206,7 +205,7 @@ EOF
   rm ${anDir}
   ln -sf ${anBeforeRTPPDir} ${anDir}
   set member = 1
-  while ( $member <= ${nEnsDAMembers} )
+  while ( $member <= ${nMembers} )
     set ensPDir = $ensPDirs[$member]
     set ensPFileBeforeRTPP = ${ensPDir}/${ensPFile}
 
@@ -226,7 +225,7 @@ EOF
       endif
     endif
     set filename = ${ensPFileBeforeRTPP}
-    if ( $member < ${nEnsDAMembers} ) then
+    if ( $member < ${nMembers} ) then
       set filename = ${filename}\\
     endif
 cat >>! ${enspsed}SEDF.yaml << EOF
