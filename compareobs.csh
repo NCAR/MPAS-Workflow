@@ -14,11 +14,8 @@ set ArgDT = "$2"
 # ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
 
-# ArgNMembers: int, set > 1 to activate ensemble spread diagnostics
-set ArgNMembers = "$4"
-
 # ArgAppType: str, type of application being verified (hofx or variational)
-set ArgAppType = "$5"
+set ArgAppType = "$4"
 
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
@@ -36,6 +33,11 @@ set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isNotInt = ($status)
 if ( $isNotInt ) then
   echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
+
+if ("$ArgAppType" != hofx && "$ArgAppType" != variational) then
+  echo "$0 (ERROR): ArgAppType must be hofx or variational, not $ArgAppType"
   exit 1
 endif
 

@@ -194,7 +194,7 @@
     script = $origin/VerifyObsDA.csh "1" "0" "DA" "0" "variational"
   [[CompareObsDA]]
     inherit = CompareBase
-    script = $origin/CompareObsDA.csh "1" "0" "DA" "0" "variational"
+    script = $origin/CompareObsDA.csh "1" "0" "DA" "variational"
 
 
 ## Forecast (critical path)
@@ -361,7 +361,7 @@
     script = $origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0" "hofx"
   [[CompareObs{{state}}{{mem}}]]
     inherit = CompareObs{{state}}
-    script = $origin/CompareObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0" "hofx"
+    script = $origin/CompareObs{{state}}.csh "{{mem}}" "0" "{{state}}" "hofx"
   [[CleanHofX{{state}}{{mem}}]]
     inherit = CleanHofX{{state}}
     script = $origin/CleanHofX{{state}}.csh "{{mem}}" "0" "{{state}}"

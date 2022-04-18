@@ -39,6 +39,11 @@ if ( $isNotInt ) then
   exit 1
 endif
 
+if ("$ArgAppType" != hofx && "$ArgAppType" != variational) then
+  echo "$0 (ERROR): ArgAppType must be hofx or variational, not $ArgAppType"
+  exit 1
+endif
+
 # Setup environment
 # =================
 source config/experiment.csh
