@@ -27,11 +27,11 @@ set bumpCovControlVariables = ( \
   spechum \
   surface_pressure \
 )
-setenv bumpCovPrefix None
-setenv bumpCovDir None
-setenv bumpCovStdDevFile None
-setenv bumpCovVBalPrefix None
-setenv bumpCovVBalDir None
+setenv bumpCovPrefix mpas_parametersbump_cov
+setenv bumpCovDir /glade/scratch/bjung/pandac/20220425_develop/60km.NICAS_00
+setenv bumpCovStdDevFile /glade/scratch/bjung/pandac/20220425_develop/60km.CMAT_00/mpas.stddev.2018-04-15_00.00.00.nc
+setenv bumpCovVBalPrefix mpas_vbal
+setenv bumpCovVBalDir /glade/scratch/bjung/pandac/20220425_develop/60km.VBAL_00
 
 ### Ensemble localization
 
@@ -39,4 +39,4 @@ setenv bumpCovVBalDir None
 #### 1200km horizontal loc
 #### 6km height vertical loc
 setenv bumpLocPrefix bumploc_1200.0km_6.0km
-setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_16MAR2022code
+setenv bumpLocDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_25APR2022code
