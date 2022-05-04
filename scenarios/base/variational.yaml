@@ -117,13 +117,13 @@ variational:
     #  bumpLocDir: str
     30km:
       bumpLocPrefix: bumploc_1200.0km_6.0km
-      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_16MAR2022code
+      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_25APR2022code
     60km:
       bumpLocPrefix: bumploc_1200.0km_6.0km
-      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_16MAR2022code
+      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_25APR2022code
     120km:
       bumpLocPrefix: bumploc_1200.0km_6.0km
-      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_16MAR2022code
+      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_25APR2022code
 
   # externally-produced background covariance files (var or hybrid)
   covariance:
@@ -144,13 +144,13 @@ variational:
       bumpCovStdDevFile: None
       bumpCovVBalDir: None
     60km:
-      bumpCovDir: None
-      bumpCovStdDevFile: None
-      bumpCovVBalDir: None
+      bumpCovDir: /glade/scratch/bjung/pandac/20220425_develop/60km.NICAS_00
+      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220425_develop/60km.CMAT_00/mpas.stddev.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/scratch/bjung/pandac/20220425_develop/60km.VBAL_00
     120km:
-      bumpCovDir: /glade/scratch/bjung/pandac/20220307_develop/bumpcov_tune
-      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220307_develop/CMAT_00.tune/mpas.stddev.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/scratch/bjung/pandac/20220307_develop/bumpcov_tune
+      bumpCovDir: /glade/scratch/bjung/pandac/20220425_develop/NICAS_00
+      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220425_develop/CMAT_00/mpas.stddev.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/scratch/bjung/pandac/20220425_develop/VBAL_00
 
   # resource requirements
   job:
