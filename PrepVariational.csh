@@ -30,15 +30,13 @@ endif
 
 # Setup environment
 # =================
+source config/experiment.csh
 source config/workflow.csh
 source config/environment.csh
-source config/variational.csh
 source config/model.csh
-source config/filestructure.csh
-source config/tools.csh
 source config/modeldata.csh
-source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
+source config/tools.csh
+source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -54,7 +52,6 @@ cd ${self_WorkDir}
 set self_WindowHR = ${CyclingWindowHR}
 set self_StateDirs = ($prevCyclingFCDirs)
 set self_StatePrefix = ${FCFilePrefix}
-set StreamsFileList = (${variationalStreamsFileList})
 
 # Remove old netcdf lock files
 rm *.nc*.lock
@@ -70,8 +67,8 @@ rm ${localStaticFieldsPrefix}*.nc*
 #TODO: Change behavior to always using member-specific directories
 #      instead of only for EDA.  Will make EDA omb/oma verification easier.
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $DAType $member`
+while ( $member <= ${nMembers} )
+  set memDir = `${memberDir} $nMembers $member`
   mkdir -p ${OutDBDir}${memDir}
   @ member++
 end
@@ -172,7 +169,7 @@ sed -i 's@{{anStateDir}}@'${self_WorkDir}'/'${anDir}'@g' $prevYAML
 
 # Hybrid Jb weights
 # =================
-if ( "$DAType" =~ *"hybrid"* ) then
+if ( "$DAType" == "3dhybrid" ) then
   sed -i 's@{{staticCovarianceWeight}}@'${staticCovarianceWeight}'@' $prevYAML
   sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
 endif
@@ -180,7 +177,7 @@ endif
 
 # Static Jb term
 # ==============
-if ( "$DAType" =~ *"3dvar"* || "$DAType" =~ *"hybrid"* ) then
+if ( "$DAType" == "3dvar" || "$DAType" == "3dhybrid" ) then
   # bumpCovControlVariables
   set Variables = ($bumpCovControlVariables)
 #TODO: turn on hydrometeors in static B when applicable by uncommenting below
@@ -207,20 +204,18 @@ if ( "$DAType" =~ *"3dvar"* || "$DAType" =~ *"hybrid"* ) then
   sed -i 's@{{bumpCovStdDevFile}}@'${bumpCovStdDevFile}'@' $prevYAML
   sed -i 's@{{bumpCovVBalPrefix}}@'${bumpCovVBalPrefix}'@' $prevYAML
   sed -i 's@{{bumpCovVBalDir}}@'${bumpCovVBalDir}'@' $prevYAML
-endif # 3dvar || hybrid
+endif # 3dvar || 3dhybrid
 
 
 # Ensemble Jb term
 # ================
 
-if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
+if ( "$DAType" == "3denvar" || "$DAType" == "3dhybrid" ) then
   ## yaml indentation
-  if ( "$DAType" =~ *"envar"* ) then
+  if ( "$DAType" == "3denvar" ) then
     set nEnsPbIndent = 4
-  else if ( "$DAType" =~ *"hybrid"* ) then
+  else if ( "$DAType" == "3dhybrid" ) then
     set nEnsPbIndent = 8
-  else
-    set nEnsPbIndent = 0
   endif
   set indentPb = "`${nSpaces} $nEnsPbIndent`"
 
@@ -277,8 +272,8 @@ set yamlFileList = ()
 
 rm $yamlFiles
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memberyaml = ${variationalYAMLPrefix}${member}.yaml
+while ( $member <= ${nMembers} )
+  set memberyaml = ${YAMLPrefix}${member}.yaml
   echo $memberyaml >> $yamlFiles
   set yamlFileList = ($yamlFileList $memberyaml)
   cp $prevYAML $memberyaml
@@ -290,7 +285,7 @@ end
 # Ensemble Jb term (member dependent)
 # ===================================
 
-if ( "$DAType" =~ *"envar"* || "$DAType" =~ *"hybrid"* ) then
+if ( "$DAType" == "3denvar" || "$DAType" == "3dhybrid" ) then
   ## members
   # + pure envar: 'background error.members from template'
   # + hybrid envar: 'background error.components[iEnsemble].covariance.members from template'
@@ -319,22 +314,22 @@ rm $yamlFiles
 # ==========================
 
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
+while ( $member <= ${nMembers} )
   set memberyaml = $yamlFileList[$member]
 
   # member-specific state I/O and observation file output directory
-  set memDir = `${memberDir} $DAType $member`
+  set memDir = `${memberDir} $nMembers $member`
   sed -i 's@{{MemberDir}}@'${memDir}'@g' $memberyaml
 
   # deterministic EnVar does not perturb observations
-  if ($nEnsDAMembers == 1) then
+  if ($nMembers == 1) then
     sed -i 's@{{ObsPerturbations}}@false@g' $memberyaml
   else
     sed -i 's@{{ObsPerturbations}}@true@g' $memberyaml
   endif
 
   sed -i 's@{{MemberNumber}}@'$member'@g' $memberyaml
-  sed -i 's@{{TotalMemberCount}}@'${nEnsDAMembers}'@g' $memberyaml
+  sed -i 's@{{TotalMemberCount}}@'${nMembers}'@g' $memberyaml
 
   @ member++
 end
@@ -354,21 +349,21 @@ set StaticFieldsDirList = ($StaticFieldsDirOuter $StaticFieldsDirInner)
 set StaticFieldsFileList = ($StaticFieldsFileOuter $StaticFieldsFileInner)
 
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memSuffix = `${memberDir} $DAType $member "${flowMemFileFmt}"`
+while ( $member <= ${nMembers} )
+  set memSuffix = `${memberDir} $nMembers $member "${flowMemFileFmt}"`
 
   ## copy static fields
   # unique StaticFieldsDir and StaticFieldsFile for each ensemble member
   # + ensures independent ivgtyp, isltyp, etc...
   # + avoids concurrent reading of StaticFieldsFile by all members
   set iMesh = 0
-  foreach localStaticFieldsFile ($variationallocalStaticFieldsFileList)
+  foreach localStaticFieldsFile ($localStaticFieldsFileList)
     @ iMesh++
 
     set StaticFieldsFile = ${localStaticFieldsFile}${memSuffix}
     rm ${StaticFieldsFile}
 
-    set StaticMemDir = `${memberDir} ens $member "${staticMemFmt}"`
+    set StaticMemDir = `${memberDir} 2 $member "${staticMemFmt}"`
     set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
     ln -sfv ${memberStaticFieldsFile} ${StaticFieldsFile}
   end
@@ -378,8 +373,8 @@ while ( $member <= ${nEnsDAMembers} )
   set bg = $CyclingDAInDirs[$member]
   mkdir -p ${bg}
 
-  # Link bg from StateDirs, ensuring that MPASJEDIDiagVariables are present
-  # ============================================================================
+  # Link bg from StateDirs
+  # ======================
   set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
   set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
@@ -401,29 +396,6 @@ while ( $member <= ${nEnsDAMembers} )
     endif
   endif
 
-  # Copy diagnostic variables used in DA to bg (if needed)
-  # ======================================================
-  set copyDiags = 0
-  foreach var ({$MPASJEDIDiagVariables})
-    echo "Checking for presence of variable ($var) in ${bgFile}"
-    ncdump -h ${bgFile} | grep $var
-    if ( $status != 0 ) then
-      @ copyDiags++
-      echo "variable ($var) not present"
-    endif
-  end
-  if ( $copyDiags > 0 ) then
-    # remove link
-    rm ${bgFile}
-
-    # create copy instead
-    cp -v ${bgFileOther} ${bgFile}
-
-    # add diagnostic variables
-    set diagFile = ${other}/${DIAGFilePrefix}.$thisMPASFileDate.nc
-    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
-  endif
-
   # use the member-specific background as the TemplateFieldsFileOuter for this member
   rm ${TemplateFieldsFileOuter}${memSuffix}
   ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
@@ -431,13 +403,13 @@ while ( $member <= ${nEnsDAMembers} )
   # use localStaticFieldsFileInner as the TemplateFieldsFileInner
   # NOTE: not perfect for EDA if static fields differ between members,
   #       but dual-res EDA not working yet anyway
-  if ($MPASnCellsOuter != $MPASnCellsInner) then
+  if ($nCellsOuter != $nCellsInner) then
     set tFile = ${TemplateFieldsFileInner}${memSuffix}
     rm $tFile
 
     #modify "Inner" initial forecast file
     # TODO: capture the naming convention for FirstCyclingFCDir somewhere else
-    set memDir = `${memberDir} $DAType 1`
+    set memDir = `${memberDir} $nMembers 1`
     set FirstCyclingFCDir = ${CyclingFCWorkDir}/${FirstCycleDate}${memDir}/Inner
     cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
     # modify xtime
@@ -455,7 +427,7 @@ while ( $member <= ${nEnsDAMembers} )
       cp ${StreamsFile_} ${StreamsFile_}${memSuffix}
     endif
     sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
-    sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
+    sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
   end
   sed -i 's@{{StreamsFileMember}}@'${memSuffix}'@' $yamlFileList[$member]
 

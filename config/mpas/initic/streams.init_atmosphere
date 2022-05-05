@@ -1,14 +1,14 @@
 <streams>
 <immutable_stream name="input"
                   type="input"
-                  precision="forecastPrecision"
+                  precision="{{PRECISION}}"
                   filename_template="x1.nCells.static.nc"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="output"
                   type="output"
-                  precision="forecastPrecision"
+                  precision="{{PRECISION}}"
                   clobber_mode="truncate"
                   filename_template="x1.nCells.init.$Y-$M-$D_$h.$m.$s.nc"
                   io_type="pnetcdf,cdf5"

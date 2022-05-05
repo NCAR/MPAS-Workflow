@@ -1,9 +1,8 @@
 #!/bin/csh -f
 
-source config/filestructure.csh
 source config/tools.csh
 source config/workflow.csh
-source config/variational.csh
+source config/experiment.csh
 source config/${InitializationType}ModelData.csh
 
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
@@ -60,8 +59,8 @@ set BenchmarkVerifyANDirs = ()
 set BenchmarkVerifyEnsFCDirs = ()
 
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $DAType $member`
+while ( $member <= ${nMembers} )
+  set memDir = `${memberDir} $nMembers $member`
   set CyclingDAInDirs = ($CyclingDAInDirs ${CyclingDAInDir}${memDir})
   set CyclingDAOutDirs = ($CyclingDAOutDirs ${CyclingDAOutDir}${memDir})
 
@@ -80,12 +79,6 @@ while ( $member <= ${nEnsDAMembers} )
 
   @ member++
 end
-
-set ObsDiagnosticsDir = diagnostic_stats/obs
-set ModelDiagnosticsDir = diagnostic_stats/model
-
-set ObsCompareDir = Compare2Benchmark/obs
-set ModelCompareDir = Compare2Benchmark/model
 
 # Universal time info for namelist, yaml etc
 # ==========================================

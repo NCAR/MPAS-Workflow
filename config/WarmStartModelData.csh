@@ -1,28 +1,25 @@
 #!/bin/csh -f
 
-source config/workflow.csh
-source config/filestructure.csh
-source config/tools.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
+source config/model.csh
+source config/experiment.csh
 
 ####################
 ## static data files
 ####################
 ## common directories
-set ModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input
-set OuterModelData = ${ModelData}/${MPASGridDescriptorOuter}
-set InnerModelData = ${ModelData}/${MPASGridDescriptorInner}
-set EnsembleModelData = ${ModelData}/${MPASGridDescriptorEnsemble}
+set OuterModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input/${outerMesh}
+set InnerModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input/${innerMesh}
+set EnsembleModelData = /glade/p/mmm/parc/guerrett/pandac/fixed_input/${ensembleMesh}
 
 set GFSAnaDirOuter = ${OuterModelData}/GFSAna
 set GFSAnaDirInner = ${InnerModelData}/GFSAna
 set GFSAnaDirEnsemble = ${EnsembleModelData}/GFSAna
 
 setenv GFSAnaDirVerify ${GFSAnaDirOuter}
-setenv InitICWorkDir  ${GFSAnaDirOuter}
-setenv SeaFilePrefix x1.${MPASnCellsOuter}.sfc_update
+setenv InitICWorkDir ${GFSAnaDirOuter}
+setenv SeaFilePrefix x1.${nCellsOuter}.sfc_update
 
-if ( "$DAType" !~ *"eda"* ) then
+if ($nMembers == 1) then
   setenv StaticFieldsDirOuter ${GFSAnaDirOuter}
   setenv StaticFieldsDirInner ${GFSAnaDirInner}
 endif

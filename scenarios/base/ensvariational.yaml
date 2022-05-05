@@ -1,0 +1,30 @@
+ensvariational:
+## mesh-specific settings
+  # resource requirements
+  job:
+    #{{outerMesh}}:
+    #  baseSeconds: int
+    #  secondsPerEnVarMember: int
+    #  #@ seconds = $nEnsDAMembers * $secondsPerEnVarMember + $baseSeconds
+    #  nodesPerMember: int
+    #  #@ nodes = $nodesPerMember * $EDASize
+    #  PEPerNode: int
+    #  memory: int
+    30km:
+      baseSeconds: 1200
+      secondsPerEnVarMember: 10
+      nodesPerMember: 3
+      PEPerNode: 12
+      memory: 109
+    60km:
+      baseSeconds: 1200
+      secondsPerEnVarMember: 10
+      nodesPerMember: 3
+      PEPerNode: 12
+      memory: 109
+    120km:
+      baseSeconds: 1200
+      secondsPerEnVarMember: 10
+      nodesPerMember: 3
+      PEPerNode: 12
+      memory: 109

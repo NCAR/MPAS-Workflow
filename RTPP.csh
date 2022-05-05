@@ -4,24 +4,21 @@ date
 
 # Setup environment
 # =================
-source config/variational.csh
-source config/rtpp.csh
-source config/forecast.csh
 source config/model.csh
-source config/filestructure.csh
+source config/experiment.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/environment.csh
+source config/applications/rtpp.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-if (${nEnsDAMembers} < 2) then
+if (${nMembers} < 2) then
   exit 0
 endif
 
@@ -43,7 +40,6 @@ set bgPrefix = $BGFilePrefix
 set bgDirs = ($CyclingDAInDirs)
 set anPrefix = $ANFilePrefix
 set anDirs = ($CyclingDAOutDirs)
-set self_ModelConfigDir = $rtppModelConfigDir
 
 # Remove old logs
 rm jedi.log*
@@ -55,13 +51,13 @@ rm ${localStaticFieldsPrefix}*.nc
 rm ${localStaticFieldsPrefix}*.nc-lock
 set localStaticFieldsFile = ${localStaticFieldsFileEnsemble}
 rm ${localStaticFieldsFile}
-set StaticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
+set StaticMemDir = `${memberDir} 2 1 "${staticMemFmt}"`
 set memberStaticFieldsFile = ${StaticFieldsDirEnsemble}${StaticMemDir}/${StaticFieldsFileEnsemble}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 ## create RTPP mean output file to be overwritten by MPAS-JEDI RTPPEXE application
-set memDir = `${memberDir} ensemble 0 "${flowMemFmt}"`
+set memDir = `${memberDir} 2 0 "${flowMemFmt}"`
 set meanDir = ${CyclingDAOutDir}${memDir}
 mkdir -p ${meanDir}
 set firstANFile = $anDirs[1]/${anPrefix}.$thisMPASFileDate.nc
@@ -71,7 +67,7 @@ cp ${firstANFile} ${meanDir}
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sfv $GraphInfoDir/x1.${MPASnCellsEnsemble}.graph.info* .
+ln -sfv $GraphInfoDir/x1.${nCellsEnsemble}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -85,15 +81,15 @@ stream_list.${MPASCore}.analysis \
 stream_list.${MPASCore}.ensemble \
 stream_list.${MPASCore}.control \
 )
-  ln -sfv $self_ModelConfigDir/$staticfile .
+  ln -sfv $ModelConfigDir/${AppName}/$staticfile .
 end
 
 rm ${StreamsFile}
-cp -v $self_ModelConfigDir/${StreamsFile} .
-sed -i 's@nCells@'${MPASnCellsEnsemble}'@' ${StreamsFile}
+cp -v $ModelConfigDir/${AppName}/${StreamsFile} .
+sed -i 's@nCells@'${nCellsEnsemble}'@' ${StreamsFile}
 sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
-sed -i 's@forecastPrecision@'${forecast__precision}'@' ${StreamsFile}
+sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 # determine analysis output precision
 ncdump -h ${firstANFile} | grep uReconstruct | grep double
@@ -108,27 +104,27 @@ else
     exit 1
   endif
 endif
-sed -i 's@analysisPrecision@'${analysisPrecision}'@' ${StreamsFile}
+sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
 rm $NamelistFile
-cp -v ${self_ModelConfigDir}/${NamelistFile} .
+cp -v $ModelConfigDir/${AppName}/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
-sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${MPASnCellsEnsemble}'@' ${NamelistFile}
-sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
-sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
+sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${nCellsEnsemble}'@' ${NamelistFile}
+sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
+sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)
-  ln -sfv ${ModelConfigDir}/${file} .
+  ln -sfv $ModelConfigDir/$file .
 end
 
 # =============
 # Generate yaml
 # =============
-## Copy applicationBase yaml
+## Copy jedi/applications yaml
 set thisYAML = orig.yaml
-cp -v ${ConfigDir}/applicationBase/rtpp.yaml $thisYAML
+cp -v ${ConfigDir}/jedi/applications/${AppName}.yaml $thisYAML
 
 ## RTPP inflation factor
 sed -i 's@{{relaxationFactor}}@'${rtpp__relaxationFactor}'@g' $thisYAML
@@ -209,13 +205,13 @@ EOF
   rm ${anDir}
   ln -sf ${anBeforeRTPPDir} ${anDir}
   set member = 1
-  while ( $member <= ${nEnsDAMembers} )
+  while ( $member <= ${nMembers} )
     set ensPDir = $ensPDirs[$member]
     set ensPFileBeforeRTPP = ${ensPDir}/${ensPFile}
 
     ## copy original analysis files for diagnosing RTPP behavior
     if ($PMatrix == Pa) then
-      set memDir = "."`${memberDir} ensemble $member "${flowMemFmt}"`
+      set memDir = "."`${memberDir} 2 $member "${flowMemFmt}"`
       set tempAnalysisCopyDir = ${anDir}/${memDir}
 
       # Restore ${ensPFileBeforeRTPP} with original files if ${tempAnalysisCopyDir}/${ensPFile} already exists
@@ -229,7 +225,7 @@ EOF
       endif
     endif
     set filename = ${ensPFileBeforeRTPP}
-    if ( $member < ${nEnsDAMembers} ) then
+    if ( $member < ${nMembers} ) then
       set filename = ${filename}\\
     endif
 cat >>! ${enspsed}SEDF.yaml << EOF

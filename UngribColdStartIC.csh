@@ -5,9 +5,10 @@ date
 # Setup environment
 # =================
 source config/environment.csh
-source config/filestructure.csh
+source config/experiment.csh
 source config/modeldata.csh
 source config/builds.csh
+source config/applications/initic.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -29,7 +30,7 @@ ln -sfv ${VtableDir}/${Vtable} Vtable
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}
-cp -v ${initModelConfigDir}/${NamelistFileWPS} .
+cp -v $ModelConfigDir/$AppName/${NamelistFileWPS} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
 
 # Run the executable

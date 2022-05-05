@@ -3,6 +3,8 @@
 if ( $?config_builds ) exit 0
 set config_builds = 1
 
+source config/model.csh
+
 #############################
 ## build directory structures
 #############################
@@ -48,7 +50,6 @@ setenv RTPPBuildDir ${commonBuild}/bin
 
 # MPAS-Model
 # ----------
-setenv MPASCore atmosphere
 setenv InitEXE mpas_init_${MPASCore}
 setenv InitBuildDir ${commonBuild}/bin
 setenv ForecastTopBuildDir ${commonBuild}

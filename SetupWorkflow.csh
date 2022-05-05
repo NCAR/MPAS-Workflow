@@ -1,26 +1,8 @@
 #!/bin/csh -f
 
-## load the file structure
-source config/filestructure.csh
+## create experiment environment
+source generateExperimentConfig.csh
 
-## load the workflow settings
-source config/workflow.csh
-
-## load the variational settings
-source config/variational.csh
-
-set AppAndVerify = AppAndVerify
-
-echo ""
-echo "======================================================================"
-echo "Setting up a new workflow"
-echo "  ExperimentName: ${ExperimentName}"
-echo "  mainScriptDir: ${mainScriptDir}"
-echo "======================================================================"
-echo ""
-
-rm -rf ${mainScriptDir}
-mkdir -p ${mainScriptDir}
 set workflowParts = ( \
   GetGFSanalysis.csh \
   UngribColdStartIC.csh \
@@ -46,6 +28,14 @@ foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
 end
 
+cd ${mainScriptDir}
+
+## load the workflow settings
+source config/workflow.csh
+
+cd -
+
+set AppAndVerify = AppAndVerify
 
 ## PrepJEDIVariational, Variational, VerifyObsDA, VerifyModelDA*, CleanVariational
 # *VerifyModelDA is non-functional and unused
@@ -59,10 +49,6 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeTEMPLATE@DA@' \
     -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
-    -e 's@wrapAppNameTEMPLATE@'${DAType}'@g' \
-    -e 's@wrapjediAppNameTEMPLATE@variational@g' \
-    -e 's@wrapnOuterTEMPLATE@'${nOuterIterations}'@g' \
-    -e 's@wrapAppTypeTEMPLATE@variational@g' \
     ${AppAndVerify}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}
 ${WrapperScript}
@@ -130,10 +116,6 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
       -e 's@wrapStatePrefixTEMPLATE@'$TemplateVariables[2]'@' \
       -e 's@wrapStateTypeTEMPLATE@'${state}'@' \
       -e 's@wrapWindowHRTEMPLATE@'$TemplateVariables[3]'@' \
-      -e 's@wrapAppNameTEMPLATE@hofx@g' \
-      -e 's@wrapjediAppNameTEMPLATE@hofx@g' \
-      -e 's@wrapnOuterTEMPLATE@0@g' \
-      -e 's@wrapAppTypeTEMPLATE@hofx@g' \
       ${AppAndVerify}.csh > ${WrapperScript}
   chmod 744 ${WrapperScript}
   ${WrapperScript}
