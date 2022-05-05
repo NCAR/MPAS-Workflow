@@ -30,7 +30,7 @@
 
         ## Post-DA
         # inflation+relaxation
-{% if (RTPPRelaxationFactor > 0.0 and nEnsDAMembers > 1) %}
+{% if (RTPPRelaxationFactor > 0.0 and nMembers > 1) %}
         PrepRTPP => RTPP
         DataAssimPost => RTPP => DataAssimFinished
   {% set CleanDataAssim = 'CleanVariational & CleanRTPP' %}

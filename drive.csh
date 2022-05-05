@@ -10,15 +10,31 @@ echo "$0 (INFO): generating a new cylc suite"
 
 date
 
+echo "$0 (INFO): Initializing the MPAS-Workflow experiment directory"
+# Create the experiment directory and cylc task scripts
+source SetupWorkflow.csh
+
+## Change to the cylc suite directory
+cd ${mainScriptDir}
+
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
-source config/filestructure.csh
-source config/workflow.csh
-source config/observations.csh
-source config/model.csh
-source config/variational.csh
+# cross-application settings
+source config/experiment.csh
 source config/job.csh
-source config/mpas/${MPASGridDescriptor}/job.csh
+source config/model.csh
+source config/observations.csh
+source config/workflow.csh
+
+# application-specific settings, including resource requests
+source config/applications/ensvariational.csh
+source config/applications/forecast.csh
+source config/applications/hofx.csh
+source config/applications/initic.csh
+source config/applications/rtpp.csh
+source config/applications/variational.csh
+source config/applications/verifyobs.csh
+source config/applications/verifymodel.csh
 
 echo "$0 (INFO):  ExperimentName = ${ExperimentName}"
 
@@ -40,10 +56,6 @@ set SuiteName = ${ExperimentName}
 # Differentiate between creating the workflow suite for the first time
 # and restarting (i.e., when initialCyclePoint > firstCyclePoint)
 if ($initialCyclePoint == $firstCyclePoint) then
-  echo "$0 (INFO): Initializing ${PackageBaseName} in the experiment directory"
-  # Create the experiment directory and cylc task scripts
-  ./SetupWorkflow.csh
-
   # The analysis will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
   # initialCyclePoint
   set AnalysisTimes = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
@@ -60,9 +72,6 @@ else
   # initialCyclePoint
   set ForecastTimes = +PT${DA2FCOffsetHR}H/PT${CyclingWindowHR}H
 endif
-
-## Change to the cylc suite directory
-cd ${mainScriptDir}
 
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
 mkdir -p ${cylcWorkDir}
@@ -92,11 +101,13 @@ cat >! suite.rc << EOF
 {% set observationsResource = "${observations__resource}" %}
 {% set modelAnalysisSource = "${model__AnalysisSource}" %}
 
-# eda
+# members
+{% set nMembers = ${nMembers} %} #integer
+{% set allMembers = range(1, nMembers+1, 1) %}
+
+# variational
 {% set EDASize = ${EDASize} %} #integer
 {% set nDAInstances = ${nDAInstances} %} #integer
-{% set nEnsDAMembers = ${nEnsDAMembers} %} #integer
-{% set EnsDAMembers = range(1, nEnsDAMembers+1, 1) %}
 {% set DAInstances = range(1, nDAInstances+1, 1) %}
 
 # inflation
@@ -126,41 +137,43 @@ cat >! suite.rc << EOF
 {% set VerifyModelRetry = "${VerifyModelRetry}" %}
 
 # mesh-specific job controls
-{% set CyclingFCJobMinutes = "${CyclingFCJobMinutes}" %}
-{% set CyclingFCNodes = "${CyclingFCNodes}" %}
-{% set CyclingFCPEPerNode = "${CyclingFCPEPerNode}" %}
+{% set CyclingFCSeconds = "${forecast__seconds}" %}
+{% set CyclingFCNodes = "${forecast__nodes}" %}
+{% set CyclingFCPEPerNode = "${forecast__PEPerNode}" %}
 
-{% set CyclingInflationJobMinutes = "${CyclingInflationJobMinutes}" %}
-{% set CyclingInflationNodes = "${CyclingInflationNodes}" %}
-{% set CyclingInflationPEPerNode = "${CyclingInflationPEPerNode}" %}
-{% set CyclingInflationMemory = "${CyclingInflationMemory}" %}
+{% set RTPPSeconds = "${rtpp__seconds}" %}
+{% set RTPPNodes = "${rtpp__nodes}" %}
+{% set RTPPPEPerNode = "${rtpp__PEPerNode}" %}
+{% set RTPPMemory = "${rtpp__memory}" %}
 
-{% set EnsOfVariationalJobMinutes = "${EnsOfVariationalJobMinutes}" %}
-{% set EnsOfVariationalNodes = "${EnsOfVariationalNodes}" %}
-{% set EnsOfVariationalPEPerNode = "${EnsOfVariationalPEPerNode}" %}
-{% set EnsOfVariationalMemory = "${EnsOfVariationalMemory}" %}
+{% set EnsOfVariationalSeconds = "${ensvariational__seconds}" %}
+{% set EnsOfVariationalNodes = "${ensvariational__nodes}" %}
+{% set EnsOfVariationalPEPerNode = "${ensvariational__PEPerNode}" %}
+{% set EnsOfVariationalMemory = "${ensvariational__memory}" %}
 
-{% set ExtendedFCJobMinutes = "${ExtendedFCJobMinutes}" %}
-{% set ExtendedFCNodes = "${ExtendedFCNodes}" %}
-{% set ExtendedFCPEPerNode = "${ExtendedFCPEPerNode}" %}
+{% set ExtendedFCSeconds = "${extendedforecast__seconds}" %}
+{% set ExtendedFCNodes = "${forecast__nodes}" %}
+{% set ExtendedFCPEPerNode = "${forecast__PEPerNode}" %}
 
-{% set HofXJobMinutes = "${HofXJobMinutes}" %}
-{% set HofXNodes = "${HofXNodes}" %}
-{% set HofXPEPerNode = "${HofXPEPerNode}" %}
-{% set HofXMemory = "${HofXMemory}" %}
+{% set HofXSeconds = "${hofx__seconds}" %}
+{% set HofXNodes = "${hofx__nodes}" %}
+{% set HofXPEPerNode = "${hofx__PEPerNode}" %}
+{% set HofXMemory = "${hofx__memory}" %}
 
-{% set InitICJobMinutes = "${InitICJobMinutes}" %}
-{% set InitICNodes = "${InitICNodes}" %}
-{% set InitICPEPerNode = "${InitICPEPerNode}" %}
+{% set InitICSeconds = "${initic__seconds}" %}
+{% set InitICNodes = "${initic__nodes}" %}
+{% set InitICPEPerNode = "${initic__PEPerNode}" %}
 
-{% set VariationalJobMinutes = "${VariationalJobMinutes}" %}
-{% set VariationalNodes = "${VariationalNodes}" %}
-{% set VariationalPEPerNode = "${VariationalPEPerNode}" %}
-{% set VariationalMemory = "${VariationalMemory}" %}
+{% set VariationalSeconds = "${variational__seconds}" %}
+{% set VariationalNodes = "${variational__nodes}" %}
+{% set VariationalPEPerNode = "${variational__PEPerNode}" %}
+{% set VariationalMemory = "${variational__memory}" %}
 
-{% set VerifyModelJobMinutes = "${VerifyModelJobMinutes}" %}
-{% set VerifyObsJobMinutes = "${VerifyObsJobMinutes}" %}
-{% set VerifyObsEnsMeanJobMinutes = "${VerifyObsEnsMeanJobMinutes}" %}
+{% set VerifyModelSeconds = "${verifymodel__seconds}" %}
+{% set VerifyModelEnsMeanSeconds = "${verifymodelens__seconds}" %}
+
+{% set VerifyObsSeconds = "${verifyobs__seconds}" %}
+{% set VerifyObsEnsMeanSeconds = "${verifyobsens__seconds}" %}
 
 # task selection controls
 {% set CriticalPathType = "${CriticalPathType}" %}

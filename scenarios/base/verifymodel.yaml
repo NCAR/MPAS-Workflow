@@ -1,0 +1,18 @@
+verifymodel:
+  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics
+
+## mesh-specific settings
+  # resource requirements
+  job:
+    #{{outerMesh}}:
+    #  baseSeconds: int
+    #  secondsPerEDAMember: int
+    30km:
+      baseSeconds: 1200
+      secondsPerEDAMember: 120
+    60km:
+      baseSeconds: 480
+      secondsPerEDAMember: 40
+    120km:
+      baseSeconds: 120
+      secondsPerEDAMember: 10
