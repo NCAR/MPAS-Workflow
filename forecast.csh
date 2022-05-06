@@ -23,15 +23,13 @@ endif
 # Setup environment
 # =================
 source config/workflow.csh
-source config/forecast.csh
-source config/model.csh
-source config/filestructure.csh
+source config/experiment.csh
 source config/tools.csh
+source config/model.csh
 source config/modeldata.csh
-source config/mpas/variables.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/environmentMPT.csh
+source config/applications/forecast.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -54,7 +52,6 @@ set deleteZerothForecast = deleteZerothForecastTEMPLATE
 
 # static variables
 set self_icStatePrefix = ${ANFilePrefix}
-set self_ModelConfigDir = $forecastModelConfigDir
 
 # ================================================================================================
 
@@ -73,7 +70,7 @@ if ( ${InitializationType} == "ColdStart" && ${thisValidDate} == ${FirstCycleDat
 else
   set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
   set do_DAcycling = "true"
-  set StaticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
+  set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
   set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
   ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
   cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
@@ -81,8 +78,8 @@ endif
 ln -sfv ${initialState} ./${icFile}
 
 ## link MPAS mesh graph info
-rm ./x1.${MPASnCellsOuter}.graph.info*
-ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .
+rm ./x1.${nCells}.graph.info*
+ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -96,26 +93,26 @@ stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 )
   rm ./$staticfile
-  ln -sfv $self_ModelConfigDir/$staticfile .
+  ln -sfv $ModelConfigDir/$AppName/$staticfile .
 end
 
 ## copy/modify dynamic streams file
 rm ${StreamsFile}
-cp -v $self_ModelConfigDir/${StreamsFile} .
-sed -i 's@nCells@'${MPASnCellsOuter}'@' ${StreamsFile}
+cp -v $ModelConfigDir/$AppName/${StreamsFile} .
+sed -i 's@nCells@'${nCells}'@' ${StreamsFile}
 sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${StreamsFile}
 sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${StreamsFile}
-sed -i 's@forecast__precision@'${forecast__precision}'@' ${StreamsFile}
+sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 ## Update sea-surface variables from GFS/GEFS analyses
-set localSeaUpdateFile = x1.${MPASnCellsOuter}.sfc_update.nc
+set localSeaUpdateFile = x1.${nCells}.sfc_update.nc
 sed -i 's@{{surfaceUpdateFile}}@'${localSeaUpdateFile}'@' ${StreamsFile}
 
 if ( "${updateSea}" == "True" ) then
   # first try member-specific state file (central GFS state when ArgMember==0)
-  set seaMemDir = `${memberDir} ens $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
+  set seaMemDir = `${memberDir} 2 $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
   set SeaFile = ${SeaAnaDir}/${thisValidDate}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
   ln -sf ${SeaFile} ./${localSeaUpdateFile}
   set brokenLinks=( `find ${localSeaUpdateFile} -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
@@ -160,18 +157,18 @@ if ( "${updateSea}" == "True" ) then
   sed -i 's@{{surfacePrecision}}@'${surfacePrecision}'@' ${StreamsFile}
   sed -i 's@{{surfaceInputInterval}}@initial_only@' ${StreamsFile}
 else
-  sed -i 's@{{surfacePrecision}}@'${forecast__precision}'@' ${StreamsFile}
+  sed -i 's@{{surfacePrecision}}@'${model__precision}'@' ${StreamsFile}
   sed -i 's@{{surfaceInputInterval}}@none@' ${StreamsFile}
 endif
 
 ## copy/modify dynamic namelist
 rm ${NamelistFile}
-cp -v ${self_ModelConfigDir}/${NamelistFile} .
+cp -v $ModelConfigDir/$AppName/$NamelistFile .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
-sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFile
-sed -i 's@modelDT@'${MPASTimeStep}'@' $NamelistFile
-sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' $NamelistFile
+sed -i 's@nCells@'${nCells}'@' $NamelistFile
+sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
+sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 sed -i 's@configDODACycling@'${do_DAcycling}'@' $NamelistFile
 
 if ( ${self_fcLengthHR} == 0 ) then
@@ -240,40 +237,6 @@ if ( "$deleteZerothForecast" == "True" ) then
   set diagFile = ${DIAGFilePrefix}.${fcFileExt}
   rm ${diagFile}
 endif
-
-# Update/add fields to output for DA
-# ==================================
-#TODO: do this in a separate post-processing script
-#      either in parallel or using only single processor
-#      instead of full set of job processors
-set fcDate = `$advanceCYMDH ${thisValidDate} ${self_fcIntervalHR}`
-set finalFCDate = `$advanceCYMDH ${thisValidDate} ${self_fcLengthHR}`
-while ( ${fcDate} <= ${finalFCDate} )
-  set yy = `echo ${fcDate} | cut -c 1-4`
-  set mm = `echo ${fcDate} | cut -c 5-6`
-  set dd = `echo ${fcDate} | cut -c 7-8`
-  set hh = `echo ${fcDate} | cut -c 9-10`
-  set fcFileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
-  set fcFileExt = ${fcFileDate}.nc
-  set fcFile = ${FCFilePrefix}.${fcFileExt}
-
-  ## Add MPASJEDIDiagVariables to the next cycle bg file (if needed)
-  set copyDiags = 0
-  foreach var ({$MPASJEDIDiagVariables})
-    ncdump -h ${fcFile} | grep $var
-    if ( $status != 0 ) then
-      @ copyDiags++
-    endif
-  end
-  set diagFile = ${DIAGFilePrefix}.${fcFileExt}
-  if ( $copyDiags > 0 ) then
-    ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${fcFile}
-  endif
-  # rm ${diagFile}
-
-  set fcDate = `$advanceCYMDH ${fcDate} ${self_fcIntervalHR}`
-  setenv fcDate ${fcDate}
-end
 
 date
 

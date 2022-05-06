@@ -10,9 +10,10 @@ set key1 = "$4"
 
 # retrieve config value
 set value = "`${getYAMLNode} ${defaultYAML} ${thisYAML} ${rootKey}.${key1} -o value`"
+set key = "`${getYAMLNode} ${defaultYAML} ${thisYAML} ${rootKey}.${key1} -o key`"
 
 # substitute "__" for "." in nested key
-set key = "${rootKey}.${key1}"
+set key = "${rootKey}.${key}"
 set key = `echo "$key" | sed 's@\.@__@g'`
 
 if ("$value" =~ *"None"*) then

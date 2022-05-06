@@ -4,12 +4,12 @@ date
 
 # Setup environment
 # =================
-source config/filestructure.csh
+source config/experiment.csh
 source config/tools.csh
+source config/model.csh
 source config/modeldata.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
-source config/verification.csh
-source config/environment.csh
+source config/environmentPython.csh
+source config/applications/verifyobs.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -33,7 +33,7 @@ set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 ## copy static fields
 rm static.nc
 
-set StaticMemDir = `${memberDir} ensemble 1 "${staticMemFmt}"`
+set StaticMemDir = `${memberDir} 2 1 "${staticMemFmt}"`
 set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
@@ -84,8 +84,8 @@ endif
 # generate ABE Inflation Factors
 # ==============================
 set mainScript="GenerateABEIFactors"
-ln -fs ${pyObsDir}/*.py ./
-ln -fs ${pyObsDir}/${mainScript}.py ./
+ln -fs ${pyVerifyDir}/*.py ./
+ln -fs ${pyVerifyDir}/${mainScript}.py ./
 
 set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 

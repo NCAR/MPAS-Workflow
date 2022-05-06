@@ -1,0 +1,34 @@
+# This is a basic workflow to help you get started with Actions
+
+name: test-mpas-workflow
+
+# Controls when the workflow will run
+on:
+  # uncomment if we decide to run tests when merging to develop branch
+  #push:
+    ## merges to develop branch
+    #branches: [develop]
+  pull_request:
+    # pull request to develop with a label
+    types: [labeled]
+    branches: [develop]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  Run-mpas-workflow:
+    if: ${{ github.event.label.name == 'run-test' }}
+    runs-on: self-hosted
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: run-mpas-workflow
+        run: |
+          source /etc/profile.d/modules.sh
+          ## temporarily set to nightly build directory
+          export MPASBUNDLECodeBuildDirectory=/glade/work/maryamao/nightly_build/MPAS/GNU/build_Nightly
+          sed -i 's@^set\ commonBuild\ =\ .*@set\ commonBuild\ =\ '${MPASBUNDLECodeBuildDirectory}'@' config/builds.csh
+          source env-setup/cheyenne.sh

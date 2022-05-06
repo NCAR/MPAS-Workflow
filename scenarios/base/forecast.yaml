@@ -4,7 +4,26 @@ forecast:
 # OPTIONS: True/False
   updateSea: True
 
-## forecastPrecision
-# floating-point precision of forecast output
-# OPTIONS: single, double
-  precision: single
+## mesh-specific settings
+  # resource requirements
+  job:
+    #{{outerMesh}}:
+    #  baseSeconds: int
+    #  secondsPerForecastHR: int
+    #  nodes: int
+    #  PEPerNode: int
+    30km:
+      baseSeconds: 120
+      secondsPerForecastHR: 420
+      nodes: 16
+      PEPerNode: 32
+    60km:
+      baseSeconds: 60
+      secondsPerForecastHR: 120
+      nodes: 4
+      PEPerNode: 36
+    120km:
+      baseSeconds: 60
+      secondsPerForecastHR: 60
+      nodes: 4
+      PEPerNode: 32

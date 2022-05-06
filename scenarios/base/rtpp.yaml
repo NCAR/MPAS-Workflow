@@ -9,3 +9,25 @@ rtpp:
 # whether to retain the analyses taken as inputs to RTPP
 # OPTIONS: True/False
   retainOriginalAnalyses: False
+
+## mesh-specific settings
+  # resource requirements
+  job:
+    #{{ensembleMesh}}:
+    #  baseSeconds: int
+    #  secondsPerEDAMember: int
+    #  nodes: int
+    #  PEPerNode: int
+    #  memory: int
+    60km:
+      baseSeconds: 10
+      secondsPerEDAMember: 10
+      nodes: 3
+      PEPerNode: 12
+      memory: 45
+    120km:
+      baseSeconds: 10
+      secondsPerEDAMember: 6
+      nodes: 1
+      PEPerNode: 36
+      memory: 45

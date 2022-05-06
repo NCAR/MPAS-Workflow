@@ -5,12 +5,9 @@ set config_modeldata = 1
 
 source config/workflow.csh
 source config/model.csh
-source config/forecast.csh
-source config/variational.csh
-source config/filestructure.csh
+source config/experiment.csh
 set wd = `pwd`
 source config/tools.csh $wd
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/${InitializationType}ModelData.csh
 
 ## file date for first background
@@ -52,13 +49,13 @@ set GEFS6hfcFORFirstCycle = ${EnsembleModelData}/EnsFCFirstCycle/${FirstCycleDat
 # TODO: determine firstEnsFCNMembers from source data
 setenv firstEnsFCNMembers 80
 setenv firstEnsFCDir ${GEFS6hfcFORFirstCycle}
-if ( $nEnsDAMembers > $firstEnsFCNMembers ) then
-  echo "WARNING: nEnsDAMembers must be <= firstEnsFCNMembers, changing ensemble size"
-  setenv nEnsDAMembers ${firstEnsFCNMembers}
+if ( $nMembers > $firstEnsFCNMembers ) then
+  echo "WARNING: nMembers must be <= firstEnsFCNMembers, changing ensemble size"
+  setenv nMembers ${firstEnsFCNMembers}
 endif
 
 
-if ( "$DAType" =~ *"eda"* ) then
+if ( $nMembers > 1 ) then
   setenv firstFCMemFmt "${gefsMemFmt}"
   setenv firstFCDirOuter ${firstEnsFCDir}
   setenv firstFCDirInner ${firstEnsFCDir}
@@ -72,46 +69,40 @@ endif
 
 # background covariance
 # ---------------------
-## stochastic analysis (dynamic directory structure, depends on $nEnsDAMembers)
+## stochastic analysis (dynamic directory structure, depends on $nMembers)
 set dynamicEnsBMemPrefix = "${flowMemPrefix}"
 set dynamicEnsBMemNDigits = ${flowMemNDigits}
 set dynamicEnsBFilePrefix = ${FCFilePrefix}
 
-## select the ensPb settings based on DAType
-if ( "$DAType" =~ *"eda"* ) then
-  set dynamicEnsBNMembers = ${nEnsDAMembers}
-  set dynamicEnsBDir = ${CyclingFCWorkDir}
-
-  setenv ensPbDir ${dynamicEnsBDir}
-  setenv ensPbFilePrefix ${dynamicEnsBFilePrefix}
+## select the ensPb settings based on nMembers
+if ( $nMembers > 1 ) then
   setenv ensPbMemPrefix ${dynamicEnsBMemPrefix}
   setenv ensPbMemNDigits ${dynamicEnsBMemNDigits}
-  setenv ensPbNMembers ${dynamicEnsBNMembers}
+  setenv ensPbFilePrefix ${dynamicEnsBFilePrefix}
+
+  setenv ensPbDir ${CyclingFCWorkDir}
+  setenv ensPbNMembers ${nMembers}
 else
   ## deterministic analysis (static directory structure)
   # parse selections
-  if ("$fixedEnsBType" == "GEFS") then
-    set fixedEnsBMemPrefix = "${gefsMemPrefix}"
-    set fixedEnsBMemNDigits = ${gefsMemNDigits}
-    set fixedEnsBNMembers = ${nGEFSMembers}
-    set fixedEnsBDir = ${GEFS6hfcFOREnsBDir}
-    set fixedEnsBFilePrefix = ${GEFS6hfcFOREnsBFilePrefix}
-  else if ("$fixedEnsBType" == "PreviousEDA") then
-    set fixedEnsBMemPrefix = "${dynamicEnsBMemPrefix}"
-    set fixedEnsBMemNDigits = ${dynamicEnsBMemNDigits}
-    set fixedEnsBNMembers = ${nPreviousEnsDAMembers}
-    set fixedEnsBDir = ${PreviousEDAForecastDir}
-    set fixedEnsBFilePrefix = ${dynamicEnsBFilePrefix}
+  if ("$fixedEnsBSource" == "GEFS") then
+    set ensPbMemPrefix = "${gefsMemPrefix}"
+    set ensPbMemNDigits = ${gefsMemNDigits}
+    set ensPbFilePrefix = ${GEFS6hfcFOREnsBFilePrefix}
+
+    set ensPbDir = ${GEFS6hfcFOREnsBDir}
+    set ensPbNMembers = ${nGEFSMembers}
+  else if ("$fixedEnsBSource" == "PreviousEDA") then
+    set ensPbMemPrefix = "${dynamicEnsBMemPrefix}"
+    set ensPbMemNDigits = ${dynamicEnsBMemNDigits}
+    set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
+
+    set ensPbDir = ${PreviousEDAForecastDir}
+    set ensPbNMembers = ${nPreviousEnsDAMembers}
   else
-    echo "ERROR in $0 : unrecognized value for fixedEnsBType --> ${fixedEnsBType}" >> ./FAIL
+    echo "ERROR in $0 : unrecognized value for fixedEnsBSource --> ${fixedEnsBSource}" >> ./FAIL
     exit 1
   endif
-
-  setenv ensPbDir ${fixedEnsBDir}
-  setenv ensPbFilePrefix ${fixedEnsBFilePrefix}
-  setenv ensPbMemPrefix "${fixedEnsBMemPrefix}"
-  setenv ensPbMemNDigits "${fixedEnsBMemNDigits}"
-  setenv ensPbNMembers ${fixedEnsBNMembers}
 endif
 
 
@@ -120,10 +111,10 @@ endif
 ## sea/ocean surface files
 setenv seaMaxMembers ${nGEFSMembers}
 setenv deterministicSeaAnaDir ${GFSAnaDirOuter}
-if ( "$DAType" =~ *"eda"* ) then
+if ( $nMembers > 1 ) then
   # using member-specific sst/xice data from GEFS
   # 60km and 120km
-  setenv SeaAnaDir ${ModelData}/GEFS/surface/000hr/${forecast__precision}
+  setenv SeaAnaDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/surface/000hr/${model__precision}
   setenv seaMemFmt "${gefsMemFmt}"
 else
   # deterministic
@@ -133,24 +124,19 @@ else
 endif
 
 ## static stream data
-if ( "$DAType" =~ *"eda"* ) then
+if ( $nMembers > 1 ) then
   # stochastic
   # 60km and 120km
-  setenv StaticFieldsDirOuter ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
-  setenv StaticFieldsDirInner ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
-  setenv StaticFieldsDirEnsemble ${ModelData}/GEFS/init/000hr/${FirstCycleDate}
+  setenv StaticFieldsDirOuter /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/${FirstCycleDate}
+  setenv StaticFieldsDirInner /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/${FirstCycleDate}
+  setenv StaticFieldsDirEnsemble /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/${FirstCycleDate}
   setenv staticMemFmt "${gefsMemFmt}"
-
-  #TODO: switch to using FirstFileDate static files for GEFS
-  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
-  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
 else
   # deterministic
   # 30km, 60km, and 120km
   setenv StaticFieldsDirEnsemble ${GFSAnaDirEnsemble}
   setenv staticMemFmt " "
-  setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
-  setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc
 endif
+setenv StaticFieldsFileOuter ${InitFilePrefixOuter}.${FirstFileDate}.nc
+setenv StaticFieldsFileInner ${InitFilePrefixInner}.${FirstFileDate}.nc
+setenv StaticFieldsFileEnsemble ${InitFilePrefixEnsemble}.${FirstFileDate}.nc

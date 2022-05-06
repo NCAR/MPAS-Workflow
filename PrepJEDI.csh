@@ -22,43 +22,50 @@ set ArgDT = "$2"
 # ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
 
+# ArgAppType: str, either hofx or variational
+set ArgAppType = "$4"
+
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isNotInt = ($status)
 if ( $isNotInt ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
+  echo "$0 (ERROR): ArgMember ($ArgMember) must be an integer" > ./FAIL
   exit 1
 endif
 if ( $ArgMember < 1 ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
+  echo "$0 (ERROR): ArgMember ($ArgMember) must be > 0" > ./FAIL
   exit 1
 endif
 
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isNotInt = ($status)
 if ( $isNotInt ) then
-  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  echo "$0 (ERROR): ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
+
+if ("$ArgAppType" != hofx && "$ArgAppType" != variational) then
+  echo "$0 (ERROR): ArgAppType must be hofx or variational, not $ArgAppType"
   exit 1
 endif
 
 # Setup environment
 # =================
 source config/environment.csh
-source config/filestructure.csh
-source config/forecast.csh
+source config/experiment.csh
 source config/model.csh
 source config/observations.csh
 source config/tools.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
 source config/builds.csh
-source config/AppTypeTEMPLATE.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
+
+source config/applications/$ArgAppType.csh
 
 # templated work directory
 set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
@@ -71,14 +78,6 @@ cd ${self_WorkDir}
 
 # other templated variables
 set self_WindowHR = WindowHRTEMPLATE
-set self_AppName = AppNameTEMPLATE
-set self_AppType = AppTypeTEMPLATE
-set self_ModelConfigDir = $AppTypeTEMPLATEModelConfigDir
-set MeshList = (${AppTypeTEMPLATEMeshList})
-set MPASnCellsList = (${AppTypeTEMPLATEMPASnCellsList})
-set StreamsFileList = (${AppTypeTEMPLATEStreamsFileList})
-set NamelistFileList = (${AppTypeTEMPLATENamelistFileList})
-
 
 # ================================================================================================
 
@@ -119,8 +118,8 @@ set halfprevISO8601Date = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 # ====================
 
 ## link MPAS mesh graph info
-foreach MPASnCells ($MPASnCellsList)
-  ln -sfv $GraphInfoDir/x1.${MPASnCells}.graph.info* .
+foreach nCells ($nCellsList)
+  ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
 end
 
 ## link MPAS-Atmosphere lookup tables
@@ -136,7 +135,7 @@ stream_list.${MPASCore}.ensemble \
 stream_list.${MPASCore}.control \
 )
   rm ./$staticfile
-  ln -sfv $self_ModelConfigDir/$staticfile .
+  ln -sfv $ModelConfigDir/$ArgAppType/$staticfile .
 end
 
 ## copy/modify dynamic streams file
@@ -144,11 +143,11 @@ set iMesh = 0
 foreach StreamsFile_ ($StreamsFileList)
   @ iMesh++
   rm ${StreamsFile_}
-  cp -v $self_ModelConfigDir/${StreamsFile} ./${StreamsFile_}
-  sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${StreamsFile_}
+  cp -v $ModelConfigDir/$ArgAppType/${StreamsFile} ./${StreamsFile_}
+  sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${StreamsFile_}
   sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
-  sed -i 's@forecastPrecision@'${forecast__precision}'@' ${StreamsFile_}
+  sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile_}
 end
 
 ## copy/modify dynamic namelist file
@@ -156,17 +155,17 @@ set iMesh = 0
 foreach NamelistFile_ ($NamelistFileList)
   @ iMesh++
   rm ${NamelistFile_}
-  cp -v ${self_ModelConfigDir}/${NamelistFile} ./${NamelistFile_}
+  cp -v $ModelConfigDir/$ArgAppType/${NamelistFile} ./${NamelistFile_}
   sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
-  sed -i 's@nCells@'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
-  sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$MPASnCellsList[$iMesh]'@' ${NamelistFile_}
-  sed -i 's@modelDT@'${MPASTimeStep}'@' ${NamelistFile_}
-  sed -i 's@diffusionLengthScale@'${MPASDiffusionLengthScale}'@' ${NamelistFile_}
+  sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$nCellsList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@modelDT@'${TimeStep}'@' ${NamelistFile_}
+  sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' ${NamelistFile_}
 end
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)
-  ln -sfv ${ModelConfigDir}/${file} .
+  ln -sfv $ModelConfigDir/$file .
 end
 
 
@@ -189,12 +188,12 @@ foreach instrument ($observations)
 
   # Check for instrument-specific directory first
   set key = IODADirectory
-  set address = "${observations__resource}.${key}.${self_AppType}.${instrument}"
+  set address = "${observations__resource}.${key}.${ArgAppType}.${instrument}"
   # TODO: this is somewhat slow with lots of redundant loads of the entire observations.yaml config
   set $key = "`$getObservationsOrNone ${address}`"
   if ("$IODADirectory" == None) then
     # Fall back on "common" directory, if present
-    set address_ = "${observations__resource}.${key}.${self_AppType}.common"
+    set address_ = "${observations__resource}.${key}.${ArgAppType}.common"
     set $key = "`$getObservationsOrNone ${address_}`"
     if ("$IODADirectory" == None) then
       echo "$0 (WARNING): skipping ${instrument} due to missing value at ${address} and ${address_}"
@@ -234,25 +233,25 @@ endif
 # Generate yaml
 # =============
 
-# (1) copy applicationBase yaml
-# =============================
+# (1) copy jedi/applications yaml
+# ===============================
 
 set thisYAML = orig.yaml
 set prevYAML = ${thisYAML}
 
-cp -v ${ConfigDir}/applicationBase/${self_AppName}.yaml $thisYAML
+cp -v ${ConfigDir}/jedi/applications/${AppName}.yaml $thisYAML
 if ( $status != 0 ) then
-  echo "ERROR in $0 : application YAML not available --> ${self_AppName}.yaml" > ./FAIL
+  echo "ERROR in $0 : application YAML not available --> ${AppName}.yaml" > ./FAIL
   exit 1
 endif
 
 # (2) obs-related substitutions
 # =============================
 
-## indentation of observations vector members, specified in config/AppTypeTEMPLATE.csh
+## indentation of observations vector members, specified in config/$ArgAppType.csh
 set obsIndent = "`${nSpaces} $nObsIndent`"
 
-## Add selected observations (see config/AppTypeTEMPLATE.csh)
+## Add selected observations (see config/$ArgAppType.csh)
 # (i) combine the observation YAML stubs into single file
 set observationsYAML = observations.yaml
 rm $observationsYAML
@@ -294,7 +293,7 @@ foreach instrument ($observations)
   endif
 
   foreach subdir (${AppYamlDirs})
-    set SUBYAML=${ConfigDir}/ObsPlugs/${self_AppType}/${subdir}/${instrument}
+    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${subdir}/${instrument}
     if ( "$instrument" =~ *"sondes"* ) then
       #KLUDGE to handle missing qv for sondes at single time
       if ( ${thisValidDate} == 2018043006 ) then
@@ -338,20 +337,16 @@ cat >! ${thisSEDF} << EOF
 /{{${sedstring}}}/c\
 EOF
 
-# add base anchors
-foreach SUBYAML (${ConfigDir}/ObsPlugs/${self_AppType}/${sedstring}.yaml)
-  # concatenate with line breaks substituted
-  sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
-end
-
-# add anchors for allSkyIR ObsError fits
-
-# allSkyIR ObsAnchors (channel selection)
-set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${self_AppType}/${sedstring}.yaml
+# add base anchors with line breaks
+set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${sedstring}.yaml
 sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 
+# add multiple kinds of anchors for allSkyIR ObsError
+
+# (a) settings
+
 # allSkyIRErrorType
-# TODO: move to experiment.csh? maybe keep it here as a lower level control knob
+# TODO: move to config/applications/${ArgAppType}.csh
 # function used for the all-sky IR ObsError parameterization
 # Options: Okamoto, Polynomial2D, Polynomial2DByLatBand, Constant
 set allSkyIRErrorType = Constant
@@ -364,17 +359,22 @@ set POLYNOMIAL2DFITDEGREE = 12
 #Polynomial2DLatBands
 # + latitude bands for which individual fits are available for
 #   allSkyIRErrorType==Polynomial2DByLatBand
-# + see config/ObsPlugs/allSkyIR/Polynomial2DByLatBandAssignErrorFunction_InfraredInstrument.yaml
+# + see config/jedi/ObsPlugs/allSkyIR/Polynomial2DByLatBandAssignErrorFunction_InfraredInstrument.yaml
 set Polynomial2DLatBands = (NXTro NTro ITCZ STro SXTro Tro)
 
 #ConstantErrorValueAllChannels
 # constant observation error value across all channels when allSkyIRErrorType==Constant
 set ConstantErrorValueAllChannels = "3.0"
 
+# (b) allSkyIR ObsAnchors (channel selection)
+set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${self_AppType}/${sedstring}.yaml
+sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+
+# (c) more sub-anchor parts
 if ($allSkyIRErrorType == Constant) then
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # assign error parameter anchor
-    set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${allSkyIRErrorType}AssignErrorParameter_InfraredInstrument.yaml
+    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${allSkyIRErrorType}AssignErrorParameter_InfraredInstrument.yaml
     sed 's@{{InfraredInstrument}}@'${InfraredInstrument}'@g' ${SUBYAML} > tempYAML
     sed -i 's@{{ConstantErrorValueAllChannels}}@'${ConstantErrorValueAllChannels}'@g' tempYAML
     sed 's@$@\\@' tempYAML >> ${thisSEDF}
@@ -383,7 +383,7 @@ if ($allSkyIRErrorType == Constant) then
 else if ($allSkyIRErrorType == Okamoto) then
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # assign error function anchor
-    set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${self_AppType}/${allSkyIRErrorType}AssignErrorFunction_${InfraredInstrument}.yaml
+    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${self_AppType}/${allSkyIRErrorType}AssignErrorFunction_${InfraredInstrument}.yaml
     sed 's@{{HofXMeshDescriptor}}@'${HofXMeshDescriptor}'@g' ${SUBYAML} > tempYAML
 
     # need to change to mainScriptDir for getObservationsOrNone to work
@@ -405,11 +405,11 @@ else
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # polynomial2d fit parameters
     if ($allSkyIRErrorType == Polynomial2D) then
-      set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${InfraredInstrument}/MonitorCycle15daysTwice/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
+      set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/MonitorCycle15daysTwice/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
       sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
     else if ($allSkyIRErrorType == Polynomial2DByLatBand) then
       foreach LatBand ($Polynomial2DLatBands)
-        set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${InfraredInstrument}/MonitorCycle15daysTwice/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_${LatBand}_0min_${InfraredInstrument}.yaml
+        set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/MonitorCycle15daysTwice/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_${LatBand}_0min_${InfraredInstrument}.yaml
         sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
       end
     else
@@ -418,17 +418,15 @@ else
     endif
 
     # assign error function anchor (Polynomial2D depends on fit parameters being added first above)
-    set SUBYAML=${ConfigDir}/ObsPlugs/allSkyIR/${allSkyIRErrorType}AssignErrorFunction_InfraredInstrument.yaml
+    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${allSkyIRErrorType}AssignErrorFunction_InfraredInstrument.yaml
     sed 's@{{InfraredInstrument}}@'${InfraredInstrument}'@g' ${SUBYAML} > tempYAML
     sed -i 's@{{POLYNOMIAL2DFITDEGREE}}@'${POLYNOMIAL2DFITDEGREE}'@g' tempYAML
     sed 's@$@\\@' tempYAML >> ${thisSEDF}
     rm tempYAML
   end
 endif
-# add _blank key to account for extra line break above
-#echo '_blank: null' >> ${thisSEDF}
 
-# finally, insert into prevYAML
+# (d) finally, insert into prevYAML
 set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
@@ -447,15 +445,13 @@ cat >! ${thisSEDF} << EOF
 EOF
 
   # add base anchors
-  foreach SUBYAML (${ConfigDir}/ObsPlugs/allSkyIR/${allSkyIRErrorType}${performactiontemplate}.yaml)
+  foreach SUBYAML (${ConfigDir}/jedi/ObsPlugs/allSkyIR/${allSkyIRErrorType}${performactiontemplate}.yaml)
     # concatenate with line breaks substituted
     sed 's@$@\\@' ${SUBYAML} > tempYAML
     sed -i 's@{{InfraredInstrument}}@'${InfraredInstrument}'@g' tempYAML
     sed 's@^@'"$filtersIndent"'@' tempYAML >> ${thisSEDF}
     rm tempYAML
   end
-  # add _blank key to account for extra line break above
-  #echo ${filtersIndent}'      _blank: null' >> ${thisSEDF}
 
   # finally, insert into prevYAML
   set thisYAML = insert${allSkyIRErrorType}${performactionsed}.yaml
@@ -470,7 +466,7 @@ sed -i 's@{{InterpolationType}}@'${InterpolationType}'@g' $thisYAML
 
 
 ## QC characteristics
-sed -i 's@{{RADTHINDISTANCE}}@'${RADTHINDISTANCE}'@g' $thisYAML
+sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $thisYAML
 
 
 ## date-time information
@@ -494,10 +490,10 @@ sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 sed -i 's@{{InDBDir}}@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
 sed -i 's@{{OutDBDir}}@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
 
-# obs, geo, and diag files with self_AppType suffixes
-sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${self_AppType}'@g' $thisYAML
-sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${self_AppType}'@g' $thisYAML
-sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${self_AppType}'@g' $thisYAML
+# obs, geo, and diag files with ArgAppType suffixes
+sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${ArgAppType}'@g' $thisYAML
+sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${ArgAppType}'@g' $thisYAML
+sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${ArgAppType}'@g' $thisYAML
 
 # satellite bias correction directories
 sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $prevYAML

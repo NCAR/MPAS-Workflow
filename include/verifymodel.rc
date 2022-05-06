@@ -1,5 +1,5 @@
   # ... for background-duration forecast from deterministic analysis or ensemble of analyses
-{% if VerifyBGMembers or (VerifyEnsMeanBG and nEnsDAMembers == 1)%}
+{% if VerifyBGMembers or (VerifyEnsMeanBG and nMembers == 1)%}
       '''
     [[[{{AnalysisTimes}}]]]
       graph = '''
@@ -13,7 +13,7 @@
 
 
   # ... for mean of ensemble of backgrounds and ensemble spread (bg only for obs, bg+an for model)
-{% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
+{% if VerifyEnsMeanBG and nMembers > 1 %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => MeanBackground

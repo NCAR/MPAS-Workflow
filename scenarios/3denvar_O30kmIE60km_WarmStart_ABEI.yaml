@@ -1,7 +1,9 @@
 workflow:
   InitializationType: WarmStart
 model:
-  MPASGridDescriptor: O30kmIE60km
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
 variational:
   DAType: 3denvar
   nInnerIterations: [60,60,]
