@@ -315,7 +315,7 @@ if ($found == 0) then
 endif
 
 # (ii) insert Observations
-set sedstring = Observations
+set sedstring = Observers
 set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
 /{{${sedstring}}}/c\

@@ -71,4 +71,5 @@ cost function:
       input variables: *ctlvars
       output variables: *incvars
   observations:
-{{Observations}}
+    observers:
+{{Observers}}
