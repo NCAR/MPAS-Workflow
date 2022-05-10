@@ -106,5 +106,7 @@ cost function:
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:
+    get values:
+      nnearest: 3
     observers:
 {{Observers}}

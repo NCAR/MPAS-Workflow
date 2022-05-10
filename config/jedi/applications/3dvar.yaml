@@ -71,5 +71,7 @@ cost function:
       input variables: *ctlvars
       output variables: *incvars
   observations:
+    get values:
+      nnearest: 3
     observers:
 {{Observers}}
