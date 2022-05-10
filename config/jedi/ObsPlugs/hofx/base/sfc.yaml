@@ -10,5 +10,3 @@
   obs operator:
     name: SfcPCorrected
     da_psfc_scheme: UKMO   # or WRFDA
-  get values:
-    <<: *GetValues

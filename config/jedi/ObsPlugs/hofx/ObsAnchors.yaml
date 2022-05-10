@@ -18,7 +18,5 @@ _cloudy crtm: &cloudyCRTMObsOperator
   Clouds: [Water, Ice, Rain, Snow, Graupel]
   obs options:
     <<: *CRTMObsOptions
-_get values: &GetValues
-  interpolation type: {{InterpolationType}}
 _multi iteration filter: &multiIterationFilter
   _blank: null

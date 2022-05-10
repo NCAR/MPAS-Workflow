@@ -13,5 +13,3 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: ahi_himawari8
-  get values:
-    <<: *GetValues

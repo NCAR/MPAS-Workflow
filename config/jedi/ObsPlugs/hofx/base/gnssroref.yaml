@@ -11,5 +11,3 @@
     name: GnssroRef
     obs options:
       use_compress: 0
-  get values:
-    <<: *GetValues

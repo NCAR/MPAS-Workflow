@@ -12,5 +12,3 @@
     da_psfc_scheme: UKMO   # or WRFDA
   linear obs operator:
     name: Identity
-  get values:
-    <<: *GetValues

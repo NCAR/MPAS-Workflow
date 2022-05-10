@@ -13,5 +13,3 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: amsua_aqua
-  get values:
-    <<: *GetValues
