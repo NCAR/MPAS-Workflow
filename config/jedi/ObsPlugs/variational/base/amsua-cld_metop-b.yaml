@@ -13,3 +13,5 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: amsua_metop-b
+  get values:
+    <<: *GetValues

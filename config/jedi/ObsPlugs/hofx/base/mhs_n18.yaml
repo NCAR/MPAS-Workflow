@@ -13,3 +13,5 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: mhs_n18
+  get values:
+    <<: *GetValues

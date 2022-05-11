@@ -13,3 +13,5 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: abi_g16
+  get values:
+    <<: *GetValues
