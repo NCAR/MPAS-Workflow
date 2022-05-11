@@ -19,6 +19,6 @@ _cloudy crtm: &cloudyCRTMObsOperator
   obs options:
     <<: *CRTMObsOptions
 _get values: &GetValues
-  interpolation type: {{InterpolationType}}
+  nnearest: 3
 _multi iteration filter: &multiIterationFilter
   _blank: null

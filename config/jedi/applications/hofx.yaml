@@ -10,7 +10,5 @@ state:
   filename: {{bgStateDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
   date: {{thisISO8601Date}}
 observations:
-  get values:
-    nnearest: 3
   observers:
 {{Observers}}
