@@ -2,7 +2,7 @@ variational:
 ## DAType [Required Parameter]
 # OPTIONS: 3dvar, 3denvar, 3dhybrid
 # Note: 3dvar and 3dhybrid currently only work for OIE120km
-  DAType: None
+  DAType: 3dvar
 
 ## nInnerIterations
 # list of inner iteration counts across all outer iterations
