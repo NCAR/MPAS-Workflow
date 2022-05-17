@@ -13,12 +13,28 @@ model:
   outerMesh: 60km
   innerMesh: 60km
   ensembleMesh: 60km
+experiment:
+  ExpSuffix: ''
 variational:
   DAType: 3denvar
   nDAInstances: 80
   SelfExclusion: True
   # delete observation feedback files of all members to save space
   retainObsFeedback: True
+  benchmarkObservations:
+  - aircraft
+  - gnssroref
+  - satwind
+  - satwnd
+  - sfc
+  - sondes
+  - amsua_aqua
+  - amsua_metop-a
+  - amsua_metop-b
+  - amsua_n15
+  - amsua_n18
+  - amsua_n19
+  experimentalObservations: []
   job:
     60km:
       60km:
@@ -29,19 +45,28 @@ variational:
           memory: 45
           baseSeconds: 220
           secondsPerEnVarMember: 3
+          #nodes: 4
+          #PEPerNode: 36
+          #memory: 109
+          #baseSeconds: 220
+          #secondsPerEnVarMember: 5
 forecast:
   job:
     60km:
       nodes: 2
       PEPerNode: 36
-      baseSeconds: 60
-      secondsPerForecastHR: 240
+      baseSeconds: 30
+      secondsPerForecastHR: 40
 hofx:
   # delete observation feedback files of all members to save space
   retainObsFeedback: True
 rtpp:
   relaxationFactor: 0.7
   retainOriginalAnalyses: False
+verifyobs:
+  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics_noGeo_noYDiag
+verifymodel:
+  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics_noGeo_noYDiag
 observations:
   resource: PANDACArchive
   PANDACArchive:
