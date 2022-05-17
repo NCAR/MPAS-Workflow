@@ -11,7 +11,7 @@ model:
 variational:
   DAType: 3denvar
   nDAInstances: 20
-  LeaveOneOutEDA: False
+  SelfExclusion: False
   nInnerIterations: [,]
 rtpp:
   relaxationFactor: 0.0

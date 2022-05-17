@@ -17,7 +17,7 @@ variational:
   DAType: 3denvar
   nInnerIterations: [15,]
   nDAInstances: 5
-  LeaveOneOutEDA: True
+  SelfExclusion: True
   retainObsFeedback: False
 hofx:
   retainObsFeedback: False

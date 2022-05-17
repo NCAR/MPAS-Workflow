@@ -295,7 +295,7 @@ if ( "$DAType" == "3denvar" || "$DAType" == "3dhybrid" ) then
   set enspbmemsed = EnsemblePbMembers
 
   # substitute Jb members
-  setenv myCommand "${substituteEnsembleBTemplate} ${ensPbDir}/${prevValidDate} ${ensPbMemPrefix} None ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $LeaveOneOutEDA"
+  setenv myCommand "${substituteEnsembleBTemplate} ${ensPbDir}/${prevValidDate} ${ensPbMemPrefix} None ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $SelfExclusion"
 
   echo "$myCommand"
   ${myCommand}

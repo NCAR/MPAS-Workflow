@@ -51,7 +51,7 @@ set nDAInstances = "`$getLocalOrNone nDAInstances`"
 if ($nDAInstances == None) then
   set nDAInstances = 1
 endif
-$setLocal LeaveOneOutEDA
+$setLocal SelfExclusion
 
 # nEnsDAMembers is the total number of ensemble DA members, product of EDASize and nDAInstances
 # Should be in range (1, $firstEnsFCNMembers); affects data source in config/modeldata.csh

@@ -39,9 +39,9 @@ variational:
 #      background state members per DA job
   EDASize: None
 
-## LeaveOneOutEDA, whether to use self-exclusion in the EnVar ensemble B during EDA cycling
+## SelfExclusion, whether exclude own background from the ensemble B perturbations in EnVar during EDA cycling
 # OPTIONS: True/False
-  LeaveOneOutEDA: True
+  SelfExclusion: True
 
 ## ABEIInflation
 # whether to utilize adaptive background error inflation (ABEI) in cloud-affected scenes
