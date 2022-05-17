@@ -367,7 +367,7 @@ set Polynomial2DLatBands = (NXTro NTro ITCZ STro SXTro Tro)
 set ConstantErrorValueAllChannels = "3.0"
 
 # (b) allSkyIR ObsAnchors (channel selection)
-set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${self_AppType}/${sedstring}.yaml
+set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${ArgAppType}/${sedstring}.yaml
 sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 
 # (c) more sub-anchor parts
@@ -383,7 +383,7 @@ if ($allSkyIRErrorType == Constant) then
 else if ($allSkyIRErrorType == Okamoto) then
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # assign error function anchor
-    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${self_AppType}/${allSkyIRErrorType}AssignErrorFunction_${InfraredInstrument}.yaml
+    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${ArgAppType}/${allSkyIRErrorType}AssignErrorFunction_${InfraredInstrument}.yaml
     sed 's@{{HofXMeshDescriptor}}@'${HofXMeshDescriptor}'@g' ${SUBYAML} > tempYAML
 
     # need to change to mainScriptDir for getObservationsOrNone to work
