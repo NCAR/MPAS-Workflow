@@ -111,12 +111,12 @@ cat >! suite.rc << EOF
 # members
 {% set nMembers = ${nMembers} %} #integer
 {% set allMembers = range(1, nMembers+1, 1) %}
+{% set EnsVerifyMembers = allMembers %}
 
 # variational
 {% set EDASize = ${EDASize} %} #integer
 {% set nDAInstances = ${nDAInstances} %} #integer
 {% set DAInstances = range(1, nDAInstances+1, 1) %}
-{% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
 
 # inflation
 {% set RTPPRelaxationFactor = ${rtpp__relaxationFactor} %}
