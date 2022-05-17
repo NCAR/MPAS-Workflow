@@ -61,4 +61,5 @@ cost function:
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:
-{{Observations}}
+    observers:
+{{Observers}}

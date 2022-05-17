@@ -29,7 +29,7 @@ _cloudy crtm: &cloudyCRTMObsOperator
   obs options:
     <<: *CRTMObsOptions
 _get values: &GetValues
-  interpolation type: {{InterpolationType}}
+  nnearest: 3
 _multi iteration filter: &multiIterationFilter
   apply at iterations: 0,1,2,3,4,5
 _abi_g16 channels: &abi_g16_channels 8-10

@@ -21,13 +21,13 @@ rtpp:
     #  memory: int
     60km:
       baseSeconds: 10
-      secondsPerEDAMember: 10
+      secondsPerEDAMember: 30
       nodes: 3
       PEPerNode: 12
       memory: 45
     120km:
       baseSeconds: 10
-      secondsPerEDAMember: 6
+      secondsPerEDAMember: 15
       nodes: 1
       PEPerNode: 36
       memory: 45
