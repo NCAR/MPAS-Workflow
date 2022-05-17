@@ -1,8 +1,8 @@
   obs filters:
   - filter: PreQC
     maxvalue: 0
-  - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_metop-a.nc4
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_metop-a.nc4
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter

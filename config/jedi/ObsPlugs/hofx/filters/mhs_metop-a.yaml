@@ -1,22 +1,22 @@
   obs filters:
   - filter: PreQC
     maxvalue: 0
-  - filter: GOMsaver
-    filename: {{OutDBDir}}/{{geoPrefix}}_mhs_metop-a.nc4
-  - filter: YDIAGsaver 
-    filename: {{OutDBDir}}/{{diagPrefix}}_mhs_metop-a.nc4
-    filter variables:
-    - name: brightness_temperature_assuming_clear_sky
-      channels: *mhs_metop-a_channels
-    - name: brightness_temperature_jacobian_air_temperature
-      channels: *mhs_metop-a_channels
-    - name: brightness_temperature_jacobian_humidity_mixing_ratio
-      channels: *mhs_metop-a_channels
-    - name: brightness_temperature_jacobian_surface_emissivity
-      channels: *mhs_metop-a_channels
-    - name: brightness_temperature_jacobian_surface_temperature
-      channels: *mhs_metop-a_channels
-    - name: weightingfunction_of_atmosphere_layer
-      channels: *mhs_metop-a_channels
-    - name: pressure_level_at_peak_of_weightingfunction
-      channels: *mhs_metop-a_channels
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}/{{geoPrefix}}_mhs_metop-a.nc4
+#  - filter: YDIAGsaver 
+#    filename: {{OutDBDir}}/{{diagPrefix}}_mhs_metop-a.nc4
+#    filter variables:
+#    - name: brightness_temperature_assuming_clear_sky
+#      channels: *mhs_metop-a_channels
+#    - name: brightness_temperature_jacobian_air_temperature
+#      channels: *mhs_metop-a_channels
+#    - name: brightness_temperature_jacobian_humidity_mixing_ratio
+#      channels: *mhs_metop-a_channels
+#    - name: brightness_temperature_jacobian_surface_emissivity
+#      channels: *mhs_metop-a_channels
+#    - name: brightness_temperature_jacobian_surface_temperature
+#      channels: *mhs_metop-a_channels
+#    - name: weightingfunction_of_atmosphere_layer
+#      channels: *mhs_metop-a_channels
+#    - name: pressure_level_at_peak_of_weightingfunction
+#      channels: *mhs_metop-a_channels

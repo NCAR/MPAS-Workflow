@@ -1,7 +1,7 @@
 _obs space: &ObsSpace
   obs perturbations seed: 1
   io pool:
-    max pool size: 10
+    max pool size: 3
 _obs error diagonal: &ObsErrorDiagonal
   covariance model: diagonal
   # Note: the same 'obs perturbations seed' must be used for all members for the 'zero-mean perturbations' option to work

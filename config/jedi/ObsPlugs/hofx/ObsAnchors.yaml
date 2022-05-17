@@ -1,6 +1,6 @@
 _obs space: &ObsSpace
   io pool:
-    max pool size: 10
+    max pool size: 3
 _obs error diagonal: &ObsErrorDiagonal
   covariance model: diagonal
 _clear crtm: &clearCRTMObsOperator

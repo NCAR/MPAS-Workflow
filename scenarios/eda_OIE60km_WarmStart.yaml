@@ -18,7 +18,7 @@ variational:
   nDAInstances: 20
   LeaveOneOutEDA: True
   # delete observation feedback files of all members to save space
-  retainObsFeedback: False
+  retainObsFeedback: True
   job:
     60km:
       60km:
@@ -31,7 +31,7 @@ variational:
           secondsPerEnVarMember: 3
 hofx:
   # delete observation feedback files of all members to save space
-  retainObsFeedback: False
+  retainObsFeedback: True
 rtpp:
   relaxationFactor: 0.7
   retainOriginalAnalyses: False
