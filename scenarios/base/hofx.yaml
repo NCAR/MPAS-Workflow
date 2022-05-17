@@ -37,8 +37,8 @@ hofx:
   #- ahi-clr_himawari8
 
 ## nObsIndent
-# number of spaces to precede members of the 'observations' list in the JEDI YAML
-  nObsIndent: 0
+# number of spaces to precede members of the 'observers' list in the JEDI YAML
+  nObsIndent: 2
 
 ## biasCorrection
 # whether to use bias correction coefficients from VarBC
