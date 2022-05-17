@@ -1,5 +1,6 @@
 verifyobs:
-  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics
+  #pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics
+  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics_noGeo_noYDiag
 
   # resource requirements
   job:
