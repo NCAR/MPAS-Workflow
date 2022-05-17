@@ -1,9 +1,9 @@
 workflow:
   InitializationType: WarmStart
   firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180415T00
+  initialCyclePoint: 20180414T18
   finalCyclePoint: 20180422T00
-  CriticalPathType: Bypass
+  CriticalPathType: Normal
   VerifyDeterministicDA: False
   VerifyEnsMeanBG: True
   DiagnoseEnsSpreadBG: True
@@ -15,8 +15,8 @@ model:
   ensembleMesh: 60km
 variational:
   DAType: 3denvar
-  nDAInstances: 20
-  LeaveOneOutEDA: True
+  nDAInstances: 80
+  SelfExclusion: True
   # delete observation feedback files of all members to save space
   retainObsFeedback: True
   job:
@@ -29,6 +29,13 @@ variational:
           memory: 45
           baseSeconds: 220
           secondsPerEnVarMember: 3
+forecast:
+  job:
+    60km:
+      nodes: 2
+      PEPerNode: 36
+      baseSeconds: 60
+      secondsPerForecastHR: 240
 hofx:
   # delete observation feedback files of all members to save space
   retainObsFeedback: True
