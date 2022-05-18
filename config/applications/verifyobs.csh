@@ -17,6 +17,6 @@ $setLocal pyVerifyDir
 $setLocal job.baseSeconds
 setenv verifyobs__seconds $baseSeconds
 
-$setLocal job.secondsPerEDAMember
-@ seconds = $secondsPerEDAMember * $nMembers + $baseSeconds
+$setLocal job.secondsPerMember
+@ seconds = $secondsPerMember * $nMembers + $baseSeconds
 setenv verifyobsens__seconds $seconds

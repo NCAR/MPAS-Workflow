@@ -111,7 +111,10 @@
 
 
 ## Data assimilation and supporting tasks (critical path)
-  # (Ens)DataAssim => Post => Finished => Clean
+  # Pre => (Ens)DataAssim => Post => Finished => Clean
+  [[PreDataAssim]]
+    [[[job]]]
+      batch system = background
   [[DataAssimPost]]
     [[[job]]]
       batch system = background

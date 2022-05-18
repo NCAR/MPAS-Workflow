@@ -15,19 +15,19 @@ rtpp:
   job:
     #{{ensembleMesh}}:
     #  baseSeconds: int
-    #  secondsPerEDAMember: int
+    #  secondsPerMember: int
     #  nodes: int
     #  PEPerNode: int
     #  memory: int
     60km:
       baseSeconds: 10
-      secondsPerEDAMember: 30
+      secondsPerMember: 30
       nodes: 3
       PEPerNode: 12
       memory: 45
     120km:
       baseSeconds: 10
-      secondsPerEDAMember: 15
+      secondsPerMember: 15
       nodes: 1
       PEPerNode: 36
       memory: 45
