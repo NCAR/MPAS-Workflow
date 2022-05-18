@@ -43,8 +43,8 @@ variational:
           nodes: 6
           PEPerNode: 32
           memory: 45
-          baseSeconds: 220
-          secondsPerEnVarMember: 3
+          baseSeconds: 250
+          secondsPerEnVarMember: 4
           #nodes: 4
           #PEPerNode: 36
           #memory: 109
@@ -55,7 +55,7 @@ forecast:
     60km:
       nodes: 2
       PEPerNode: 36
-      baseSeconds: 30
+      baseSeconds: 60
       secondsPerForecastHR: 40
 hofx:
   # delete observation feedback files of all members to save space
@@ -63,6 +63,13 @@ hofx:
 rtpp:
   relaxationFactor: 0.7
   retainOriginalAnalyses: False
+  job:
+    60km:
+      baseSeconds: 10
+      secondsPerMember: 10
+      nodes: 4
+      PEPerNode: 24
+      memory: 109
 verifyobs:
   pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics_noGeo_noYDiag
 verifymodel:
