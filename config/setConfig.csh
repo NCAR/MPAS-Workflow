@@ -29,6 +29,11 @@ endif
 # if value contains spaces, assume it is a list
 if ( "$value" =~ *" "*) then
   set $key = ($value)
+  echo "\$key = (\$value)"
+  echo "$key = ($value)"
 else
   setenv $key "$value"
+  echo \$key "\$value"
+  echo "$key $value"
+
 endif
