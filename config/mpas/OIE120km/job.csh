@@ -20,7 +20,7 @@ setenv ExtendedFCNodes ${CyclingFCNodes}
 setenv ExtendedFCPEPerNode ${CyclingFCPEPerNode}
 
 # HofX
-setenv HofXJobMinutes 5
+setenv HofXJobMinutes 15
 setenv HofXNodes 1
 setenv HofXPEPerNode 36
 setenv HofXMemory 109
@@ -45,8 +45,8 @@ setenv VerifyModelJobMinutes 2
 ## Variational+EnsOfVariational
 # benchmark: < 3 minutes
 # longer duration with more observations
-set DeterministicDABaseMinutes = 10  #develop
-#set DeterministicDABaseMinutes = 29 #IASI
+#set DeterministicDABaseMinutes = 10  #develop
+set DeterministicDABaseMinutes = 36 #29 #IASI
 #set DeterministicDABaseMinutes = 30 #feature/getvals_upd
 
 # Variational

@@ -15,5 +15,6 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: &Sensor_ID iasi_metop-b
+      IRVISlandCoeff: {{IRVISlandCoeffIasi}}
   get values:
     <<: *GetValues

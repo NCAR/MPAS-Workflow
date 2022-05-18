@@ -48,6 +48,7 @@ source config/filestructure.csh
 source config/forecast.csh
 source config/model.csh
 source config/observations.csh
+source config/workflow.csh
 source config/tools.csh
 source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/modeldata.csh
@@ -214,8 +215,19 @@ foreach instrument ($observations)
   cd ${self_WorkDir}
 
   # link the data
-  ln -sfv ${IODADirectory}/${thisValidDate}/${IODAPrefix}_obs_${thisValidDate}.h5 \
-          ${InDBDir}/${instrument}_obs_${thisValidDate}.h5
+  set obsFile = ${IODADirectory}/${thisValidDate}/${IODAPrefix}_obs_${thisValidDate}.h5
+  ln -sfv ${obsFile} ${InDBDir}/${instrument}_obs_${thisValidDate}.h5
+
+  # for radiance observations (iasi for now)
+  # check if any channel index is missing (== -999)
+  if ( -e ${obsFile} && "${instrument}" =~ *"iasi"* ) then
+    set missingChannels = `$checkMissingChannels ${obsFile}`
+    if ( ${missingChannels} == True ) then
+      # remove the data
+      echo "WARNING: removing ${instrument} due to missing value in channel indices"
+      rm -rf ${InDBDir}/${instrument}_obs_${thisValidDate}.h5
+    endif
+  endif
   date
 end
 
@@ -284,6 +296,19 @@ foreach instrument ($observations)
   foreach i ($instrumentsAllowingBiasCorrection)
     if ("$instrument" == "$i") then
       set allowsBiasCorrection = True
+      if ( ${thisValidDate} != ${nextFirstDate} && ! -e ${CyclingDAWorkDir}/$prevValidDate/dbOut/satbias_${i}.h5 ) then
+          set dateListback = (`$dateList ${FirstCycleDate} ${thisCycleDate} ${self_WindowHR}`)
+          foreach dt (${dateListback})
+            if ( ! -e ${CyclingDAWorkDir}/${dt}/dbOut/satbias_${i}.h5 && ${dt} != ${thisValidDate}) then
+              continue
+            else if ( -e ${CyclingDAWorkDir}/${dt}/dbOut/satbias_${i}.h5 ) then
+              set biasCorrectionDir = ${CyclingDAWorkDir}/${dt}/dbOut
+              break
+            else
+              set biasCorrectionDir = $initialVARBCcoeff
+            endif
+          end
+      endif
     endif
   end
 
@@ -314,6 +339,8 @@ if ($found == 0) then
   echo "ERROR in $0 : no observation data is available for this date" > ./FAIL
   exit 1
 endif
+
+set landCoeffIasi = ${IRVISlandCoeffIasi}
 
 # (ii) insert Observations
 set sedstring = Observations
@@ -348,6 +375,9 @@ set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
+
+## land coefficients
+sed -i 's@{{IRVISlandCoeffIasi}}@'${landCoeffIasi}'@g' $thisYAML
 
 
 ## Horizontal interpolation type

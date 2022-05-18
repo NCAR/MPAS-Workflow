@@ -13,6 +13,10 @@ variational:
 # OPTIONS: True/False
   biasCorrection: False
 
+## land coefficient to use when assimilating IASI with ColdStart initialization
+# depending on the static files used
+  IRVISlandCoeffIasi:  USGS
+
 ##ensembleCovarianceWeight and staticCovarianceWeight
 # weights of ensemble and static components of the background errorcovariance
 # MUST be specified when DAType==3dhybrid in order to avoid an error
@@ -108,7 +112,9 @@ variational:
 #    amsua-cld_n15,
 #    amsua-cld_n18,
 #    amsua-cld_n19,
+#    iasi_metop-a,
 #    iasi_metop-b,
+#    iasi_metop-c,
   ]
 
 ## nObsIndent

@@ -16,8 +16,14 @@ setenv BuildCompiler 'gnu-openmpi'
 # Note: at this time, all executables should be built in the same environment, one that is
 # consistent with config/environmentForJedi.csh
 
-#set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_16MAR2022
-set commonBuild = /glade/scratch/ivette/jedi_tropopause/debug/build
+# default build directory
+set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_16MAR2022
+
+# build code for IASI
+# Thompson method
+#set commonBuild = /glade/p/mmm/parc/ivette/pandac/jedi/build_noFLIP
+# WMO method
+#set commonBuild = /glade/p/mmm/parc/ivette/pandac/jedi/build_wmo_tropo
 
 # Ungrib
 setenv ungribEXE ungrib.exe

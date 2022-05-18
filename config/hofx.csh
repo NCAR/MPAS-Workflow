@@ -18,3 +18,4 @@ $setLocal observations
 $setLocal nObsIndent
 
 $setLocal biasCorrection
+$setLocal IRVISlandCoeffIasi
