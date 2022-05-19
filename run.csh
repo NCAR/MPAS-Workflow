@@ -22,6 +22,7 @@ set ValidRunConfigs = ( \
   120km3denvar \
   120kmEDA \
   60kmEDA \
+  60kmDARTVerify \
   30km-60km3denvar \
   RealTime \
   GenerateObs \
