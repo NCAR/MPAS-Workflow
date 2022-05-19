@@ -53,10 +53,6 @@ date
 # example: ${ExperimentName}_verify for a simultaneous suite running only Verification
 set SuiteName = ${ExperimentName}
 
-# Create/overwrite the experiment directory and cylc task scripts
-echo "$0 (INFO): Initializing ${PackageBaseName} in the experiment directory"
-./SetupWorkflow.csh
-
 # Differentiate between creating the workflow suite for the first time
 # and restarting (i.e., when initialCyclePoint > firstCyclePoint)
 if ($initialCyclePoint == $firstCyclePoint) then
