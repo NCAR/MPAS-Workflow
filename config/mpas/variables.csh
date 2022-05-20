@@ -3,7 +3,6 @@
 ####################################
 ## workflow-relevant state variables
 ####################################
-setenv MPASJEDIDiagVariables cldfrac
 set MPASHydroIncrementVariables = (qc qi qg qr qs)
 set MPASHydroStateVariables = (${MPASHydroIncrementVariables} cldfrac)
 

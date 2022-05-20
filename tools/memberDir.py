@@ -5,8 +5,8 @@ import argparse
 def memberStr():
   # Parse command line
   ap = argparse.ArgumentParser()
-  ap.add_argument('datype', type=str,
-                  help='Type of DA algorithm')
+  ap.add_argument('nMembers', type=int,
+                  help='Total number of members; the member format is used when nMembers>1; otherwise an empty string is returned')
   ap.add_argument('member', type=int,
                   help='Member count')
 
@@ -19,8 +19,7 @@ def memberStr():
 
   args = ap.parse_args()
   out = ''
-  if ('eda' in args.datype or
-      args.datype in ['ens','ensemble']):
+  if args.nMembers > 1:
     member = args.member
     if args.maxMembers > 0:
       member = (member-1)%(args.maxMembers)+1

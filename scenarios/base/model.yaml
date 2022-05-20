@@ -1,27 +1,67 @@
 model:
-## MPASGridDescriptor [Required Parameter]
-# used to distinguish betwen MPAS meshes across experiments
-# O = variational Outer loop, forecast, HofX
-# I = variational Inner loop
-# E = variational Ensemble
-# OPTIONS:
-#   + OIE120km -- 3dvar, 3denvar, eda_3denvar
-#   + O30kmIE120km -- dual-resolution 3denvar
-#   + OIE60km -- eda_3denvar only
-#   + TODO: OIE60km -- 3denvar, requires generating MPASSeaVariables update files from GFS analyses
-#   + O30kmIE60km -- dual-resolution 3denvar
-#   + TODO: "OIE30km" 3denvar
-#   + TODO: "O30kmIE60km" dual-resolution eda_3denvar with 60km ensemble, 30km deterministic
-#   + TODO: "OE30kmI60km" dual-resolution eda_3denvar with 30km ensemble, no deterministic?
-#   + TODO: "OIE120km" 4denvar
-#   + TODO: "OIE60km" 4denvar
-#   + TODO: "O30kmIE60km" dual-resolution 4denvar
-  MPASGridDescriptor: None
+# mesh descriptors, e.g.:
+# uniform spacing: 30km, 60km, 120km
+# variable spacing: ?
+
+## outerMesh [Required Parameter]
+# variational outer loop, forecast, HofX, verification
+  outerMesh: None
+
+## innerMesh [Required Parameter]
+# variational inner loop
+  innerMesh: None
+
+## ensembleMesh [Required Parameter]
+# variational ensemble, rtpp
+# note: mpas-jedi requires innerMesh and ensembleMesh to be equal at this time
+  ensembleMesh: None
+
+## nCells
+# number of horizontal cells for each valid mesh descriptor
+# serves as a convenience for file naming when distinguishing between
+# multiple meshes, but does not affect any calculations
+  nCells:
+    30km: 655362
+    60km: 163842
+    120km: 40962
+
+## mesh-dependent model settings
+  #{{outerMesh}}:
+  #  TimeStep: float
+  #  DiffusionLengthScale: float
+  30km:
+    TimeStep: 180.0
+    DiffusionLengthScale: 30000.0
+  60km:
+    TimeStep: 360.0
+    DiffusionLengthScale: 60000.0
+  120km:
+    TimeStep: 720.0
+    DiffusionLengthScale: 120000.0
 
 ## Analysis source
 # OPTIONS: GFSfromPANDACArchive, GFSfromRDAOnline, GFSfromNCEPFTPOnline
   AnalysisSource: GFSfromPANDACArchive
 
+## fixedEnsBSource
+# selection of data source for fixed ensemble background covariance members when
+# EDASize==nDAInstances==1 and DAType is either 3denvar or 3dhybrid
+# OPTIONS: GEFS (default), PreviousEDA
+  fixedEnsBSource: GEFS
+
+# tertiary settings that only apply when fixedEnsBSource is set to PreviousEDA
+  nPreviousEnsDAMembers: 20
+  PreviousEDAForecastDir: /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_RTPP0.80_LeaveOneOut_OIE120km_memberSpecificTemplate_GEFSSeaUpdate/CyclingFC
+
 ## GraphInfoDir
 # directory containing x1.{{nCells}}.graph.info* files
   GraphInfoDir: /glade/work/duda/static_moved_to_campaign
+
+## precision
+# floating-point precision of all application output
+# OPTIONS: single, double
+  precision: single
+
+# default build directory
+  commonBuilddefault: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_16MAY2022
+

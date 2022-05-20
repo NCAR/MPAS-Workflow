@@ -40,14 +40,43 @@ hofx:
   #- iasi_metop-c
 
 ## nObsIndent
-# number of spaces to precede members of the 'observations' list in the JEDI YAML
-  nObsIndent: 0
+# number of spaces to precede members of the 'observers' list in the JEDI YAML
+  nObsIndent: 2
 
 ## biasCorrection
 # whether to use bias correction coefficients from VarBC
 # OPTIONS: False (not enabled yet)
   biasCorrection: False
 
-## land coefficient to use when assimilating IASI with ColdStart initialization
-# depending on the static files used
-  IRVISlandCoeffIasi:  USGS
+## radianceThinningDistance
+# distance (km) used for the Gaussian Thinning filter for all radiance-based observations
+  radianceThinningDistance: "145.0"
+
+## retainObsFeedback
+# whether to retain the observation feedback files (obs, geovals, ydiag)
+# OPTIONS: True/False
+  retainObsFeedback: True
+
+## mesh-specific settings
+  # resource requirements
+  job:
+    #{{outerMesh}}:
+    #  seconds: int
+    #  nodes: int
+    #  PEPerNode: int
+    #  memory: int
+    30km:
+      seconds: 600
+      nodes: 2
+      PEPerNode: 36
+      memory: 109
+    60km:
+      seconds: 300
+      nodes: 1
+      PEPerNode: 36
+      memory: 109
+    120km:
+      seconds: 300
+      nodes: 1
+      PEPerNode: 36
+      memory: 109

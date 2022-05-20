@@ -11,7 +11,9 @@ observations:
 experiment:
   ExperimentName: '3dvar_OIE120km_WarmStart_TEST'
 model:
-  MPASGridDescriptor: OIE120km
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]

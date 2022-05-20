@@ -1,0 +1,34 @@
+_obs space: &ObsSpace
+  obs perturbations seed: 1
+  io pool:
+    max pool size: 10
+_obs error diagonal: &ObsErrorDiagonal
+  covariance model: diagonal
+  # Note: the same 'obs perturbations seed' must be used for all members for the 'zero-mean perturbations' option to work
+  zero-mean perturbations: true
+  member: {{MemberNumber}}
+  number of members: {{TotalMemberCount}}
+_clear crtm: &clearCRTMObsOperator
+  name: CRTM
+  SurfaceWindGeoVars: uv
+  Absorbers: [H2O, O3]
+  linear obs operator:
+    Absorbers: [H2O]
+  obs options: &CRTMObsOptions
+    EndianType: little_endian
+    CoefficientPath: {{CRTMTABLES}}
+    IRVISlandCoeff: USGS
+_cloudy crtm: &cloudyCRTMObsOperator
+  name: CRTM
+  SurfaceWindGeoVars: uv
+  Absorbers: [H2O, O3]
+  Clouds: [Water, Ice, Rain, Snow, Graupel]
+  linear obs operator:
+    Absorbers: [H2O]
+    Clouds: [Water, Ice, Rain, Snow, Graupel]
+  obs options:
+    <<: *CRTMObsOptions
+_get values: &GetValues
+  nnearest: 3
+_multi iteration filter: &multiIterationFilter
+  apply at iterations: 0,1,2,3,4,5

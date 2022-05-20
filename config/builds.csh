@@ -3,6 +3,8 @@
 if ( $?config_builds ) exit 0
 set config_builds = 1
 
+source config/model.csh
+
 #############################
 ## build directory structures
 #############################
@@ -17,13 +19,7 @@ setenv BuildCompiler 'gnu-openmpi'
 # consistent with config/environmentForJedi.csh
 
 # default build directory
-set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_16MAR2022
-
-# build code for IASI
-# Thompson method
-#set commonBuild = /glade/p/mmm/parc/ivette/pandac/jedi/build_noFLIP
-# WMO method
-#set commonBuild = /glade/p/mmm/parc/ivette/pandac/jedi/build_wmo_tropo
+set commonBuild = ${commonBuilddefault}
 
 # Ungrib
 setenv ungribEXE ungrib.exe
@@ -55,7 +51,6 @@ setenv RTPPBuildDir ${commonBuild}/bin
 
 # MPAS-Model
 # ----------
-setenv MPASCore atmosphere
 setenv InitEXE mpas_init_${MPASCore}
 setenv InitBuildDir ${commonBuild}/bin
 setenv ForecastTopBuildDir ${commonBuild}

@@ -4,13 +4,12 @@ date
 
 # Setup environment
 # =================
-source config/forecast.csh
 source config/model.csh
-source config/filestructure.csh
+source config/experiment.csh
 source config/modeldata.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
 source config/builds.csh
 source config/environment.csh
+source config/applications/initic.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -26,9 +25,9 @@ cd ${WorkDir}
 # ================================================================================================
 
 ## link MPAS mesh graph info and static field
-rm ./x1.${MPASnCellsOuter}.graph.info*
-ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.graph.info* .
-ln -sfv $GraphInfoDir/x1.${MPASnCellsOuter}.static.nc .
+rm ./x1.${nCellsOuter}.graph.info*
+ln -sfv $GraphInfoDir/x1.${nCellsOuter}.graph.info* .
+ln -sfv $GraphInfoDir/x1.${nCellsOuter}.static.nc .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -38,15 +37,15 @@ end
 
 ## copy/modify dynamic streams file
 rm ${StreamsFileInit}
-cp -v ${initModelConfigDir}/${StreamsFileInit} .
-sed -i 's@nCells@'${MPASnCellsOuter}'@' ${StreamsFileInit}
-sed -i 's@forecastPrecision@'${forecast__precision}'@' ${StreamsFileInit}
+cp -v $ModelConfigDir/$AppName/${StreamsFileInit} .
+sed -i 's@nCells@'${nCellsOuter}'@' ${StreamsFileInit}
+sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}
-cp -v ${initModelConfigDir}/${NamelistFileInit} .
+cp -v $ModelConfigDir/$AppName/${NamelistFileInit} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
-sed -i 's@nCells@'${MPASnCellsOuter}'@' $NamelistFileInit
+sed -i 's@nCells@'${nCellsOuter}'@' $NamelistFileInit
 
 # Run the executable
 # ==================

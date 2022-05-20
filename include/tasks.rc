@@ -26,11 +26,15 @@
 #      --cpus-per-task = 36
 #      --partition = dav
 
+## Null parent or child
+  [[Null]]
+    [[[job]]]
+      batch system = background
 
 ## Base
   [[ForecastBase]]
     [[[job]]]
-      execution time limit = PT{{CyclingFCJobMinutes}}M
+      execution time limit = PT{{CyclingFCSeconds}}S
     [[[directives]]]
       -m = ae
       -q = {{CPQueueName}}
@@ -38,7 +42,7 @@
       -l = select={{CyclingFCNodes}}:ncpus={{CyclingFCPEPerNode}}:mpiprocs={{CyclingFCPEPerNode}}
   [[ExtendedFCBase]]
     [[[job]]]
-      execution time limit = PT{{ExtendedFCJobMinutes}}M
+      execution time limit = PT{{ExtendedFCSeconds}}S
     [[[directives]]]
       -m = ae
       -q = {{NCPQueueName}}
@@ -46,7 +50,7 @@
       -l = select={{ExtendedFCNodes}}:ncpus={{ExtendedFCPEPerNode}}:mpiprocs={{ExtendedFCPEPerNode}}
   [[HofXBase]]
     [[[job]]]
-      execution time limit = PT{{HofXJobMinutes}}M
+      execution time limit = PT{{HofXSeconds}}S
       execution retry delays = {{HofXRetry}}
     [[[directives]]]
       -q = {{NCPQueueName}}
@@ -54,16 +58,16 @@
       -l = select={{HofXNodes}}:ncpus={{HofXPEPerNode}}:mpiprocs={{HofXPEPerNode}}:mem={{HofXMemory}}GB
   [[VerifyModelBase]]
     [[[job]]]
-      execution time limit = PT{{VerifyModelJobMinutes}}M
-      execution retry delays = {{HofXRetry}}
+      execution time limit = PT{{VerifyModelSeconds}}S
+      execution retry delays = {{VerifyModelRetry}}
     [[[directives]]]
       -q = {{NCPQueueName}}
       -A = {{NCPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[VerifyObsBase]]
     [[[job]]]
-      execution time limit = PT{{VerifyObsJobMinutes}}M
-      execution retry delays = {{HofXRetry}}
+      execution time limit = PT{{VerifyObsSeconds}}S
+      execution retry delays = {{VerifyObsRetry}}
     [[[directives]]]
       -q = {{NCPQueueName}}
       -A = {{NCPAccountNumber}}
@@ -106,10 +110,18 @@
       batch system = background
 
 
-## Data assimilation (critical path)
+## Data assimilation and supporting tasks (critical path)
+  # (Ens)DataAssim => Post => Finished => Clean
+  [[DataAssimPost]]
+    [[[job]]]
+      batch system = background
+  [[DataAssimFinished]]
+    [[[job]]]
+      batch system = background
+
   # directory/file preparation
   [[InitDataAssim]]
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA" "variational"
     script = $origin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
@@ -121,7 +133,7 @@
     inherit = EnsDataAssim
     script = $origin/EnsembleOfVariational.csh "{{inst}}"
     [[[job]]]
-      execution time limit = PT{{EnsOfVariationalJobMinutes}}M
+      execution time limit = PT{{EnsOfVariationalSeconds}}S
       execution retry delays = {{EnsOfVariationalRetry}}
     [[[directives]]]
       -m = ae
@@ -131,12 +143,12 @@
   {% endfor %}
   # single instance or ensemble of Variational(s)
   [[DataAssim]]
-  {% for mem in EnsDAMembers %}
+  {% for mem in allMembers %}
   [[DAMember{{mem}}]]
     inherit = DataAssim
     script = $origin/Variational.csh "{{mem}}"
     [[[job]]]
-      execution time limit = PT{{VariationalJobMinutes}}M
+      execution time limit = PT{{VariationalSeconds}}S
       execution retry delays = {{VariationalRetry}}
     [[[directives]]]
       -m = ae
@@ -144,6 +156,10 @@
       -A = {{CPAccountNumber}}
       -l = select={{VariationalNodes}}:ncpus={{VariationalPEPerNode}}:mpiprocs={{VariationalPEPerNode}}:mem={{VariationalMemory}}GB
   {% endfor %}
+  [[CleanVariational]]
+    inherit = CleanBase
+    script = $origin/CleanVariational.csh
+
   # inflation (pre and post)
   [[GenerateABEInflation]]
     script = $origin/GenerateABEInflation.csh
@@ -153,40 +169,38 @@
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
-  [[RTPPInflation]]
-    script = $origin/RTPPInflation.csh
+  [[PrepRTPP]]
+    script = $origin/PrepRTPP.csh
     [[[job]]]
-      execution time limit = PT{{CyclingInflationJobMinutes}}M
-      execution retry delays = {{RTPPInflationRetry}}
+      execution time limit = PT1M
+      execution retry delays = {{RTPPRetry}}
+  [[RTPP]]
+    script = $origin/RTPP.csh
+    [[[job]]]
+      execution time limit = PT{{RTPPSeconds}}S
+      execution retry delays = {{RTPPRetry}}
     [[[directives]]]
       -m = ae
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
-      -l = select={{CyclingInflationNodes}}:ncpus={{CyclingInflationPEPerNode}}:mpiprocs={{CyclingInflationPEPerNode}}:mem={{CyclingInflationMemory}}GB
-  # post => finished => clean
-  [[DataAssimPost]]
-    [[[job]]]
-      batch system = background
-  [[DataAssimFinished]]
-    [[[job]]]
-      batch system = background
-  [[CleanDataAssim]]
+      -l = select={{RTPPNodes}}:ncpus={{RTPPPEPerNode}}:mpiprocs={{RTPPPEPerNode}}:mem={{RTPPMemory}}GB
+  [[CleanRTPP]]
     inherit = CleanBase
-    script = $origin/CleanVariational.csh
+    script = $origin/CleanRTPP.csh
 
   # verification
   [[VerifyObsDA]]
     inherit = VerifyObsBase
-    script = $origin/VerifyObsDA.csh "1" "0" "DA" "0"
+    script = $origin/VerifyObsDA.csh "1" "0" "DA" "0" "variational"
   [[CompareObsDA]]
     inherit = CompareBase
-    script = $origin/CompareObsDA.csh "1" "0" "DA" "0"
+    script = $origin/CompareObsDA.csh "1" "0" "DA" "variational"
 
 
 ## Forecast (critical path)
   [[Forecast]]
     inherit = ForecastBase
-{% for mem in EnsDAMembers %}
+{% for mem in allMembers %}
   [[ForecastMember{{mem}}]]
     inherit = Forecast
     script = $origin/Forecast.csh "{{mem}}"
@@ -203,8 +217,8 @@
     script = $origin/GetWarmStartIC.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members
-      # TODO: set time limit based on outer mesh AND (number of members OR
-      #       independent task for each member) under "config/mpas/*/job.csh"
+      # TODO: set time limit based on outerMesh AND (number of members OR
+      #       independent task for each member)
       execution time limit = PT10M
       execution retry delays = {{InitializationRetry}}
   [[GetGFSanalysis]]
@@ -225,7 +239,7 @@
   [[GenerateColdStartIC]]
     script = $origin/GenerateColdStartIC.csh
     [[[job]]]
-      execution time limit = PT{{InitICJobMinutes}}M
+      execution time limit = PT{{InitICSeconds}}S
       execution retry delays = {{InitializationRetry}}
     [[[directives]]]
       -q = {{CPQueueName}}
@@ -256,17 +270,17 @@
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "hofx"
     script = $origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
   [[CleanHofXMeanFC{{dt}}hr]]
     inherit = CleanBase
     script = $origin/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
   [[VerifyObsMeanFC{{dt}}hr]]
     inherit = VerifyObsBase
-    script = $origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0"
+    script = $origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0" "hofx"
   [[VerifyModelMeanFC{{dt}}hr]]
     inherit = VerifyModelMeanFC
-    script = $origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC"
+    script = $origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC" "0"
 {% endfor %}
 
 
@@ -282,23 +296,30 @@
       -l = select=1:ncpus=36:mpiprocs=36
   [[HofXEnsMeanBG]]
     inherit = HofXBase
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG" "hofx"
     script = $origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = {{EnsMeanBGQueueName}}
       -A = {{EnsMeanBGAccountNumber}}
+{% if DiagnoseEnsSpreadBG %}
+  {% set nEnsSpreadMem = nMembers %}
+  {% set modelSeconds = VerifyModelEnsMeanSeconds %}
+  {% set obsSeconds = VerifyObsEnsMeanSeconds %}
+{% else %}
+  {% set nEnsSpreadMem = 0 %}
+  {% set modelSeconds = VerifyModelSeconds %}
+  {% set obsSeconds = VerifyObsSeconds %}
+{% endif %}
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
-    script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG"
+    script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
+    [[[job]]]
+      execution time limit = PT{{modelSeconds}}M
   [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
-{% if DiagnoseEnsSpreadBG %}
-    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsDAMembers}}"
+    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}" "hofx"
     [[[job]]]
-      execution time limit = PT{{VerifyObsEnsMeanJobMinutes}}M
-{% else %}
-    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "0"
-{% endif %}
+      execution time limit = PT{{obsSeconds}}S
   [[CleanHofXEnsMeanBG]]
     inherit = CleanBase
     script = $origin/CleanHofXEnsMeanBG.csh "1" "0" "BG"
@@ -327,20 +348,20 @@
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
     inherit = HofX{{state}}
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}" "hofx"
     script = $origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
   [[VerifyModel{{state}}{{mem}}]]
     inherit = VerifyModel{{state}}
-    script = $origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}"
+    script = $origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
   [[CompareModel{{state}}{{mem}}]]
     inherit = CompareModel{{state}}
     script = $origin/CompareModel{{state}}.csh "{{mem}}" "0" "{{state}}"
   [[VerifyObs{{state}}{{mem}}]]
     inherit = VerifyObs{{state}}
-    script = $origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
+    script = $origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0" "hofx"
   [[CompareObs{{state}}{{mem}}]]
     inherit = CompareObs{{state}}
-    script = $origin/CompareObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
+    script = $origin/CompareObs{{state}}.csh "{{mem}}" "0" "{{state}}" "hofx"
   [[CleanHofX{{state}}{{mem}}]]
     inherit = CleanHofX{{state}}
     script = $origin/CleanHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
@@ -358,14 +379,14 @@
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC{{mem}}
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC" "hofx"
     script = $origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyModelEnsFC{{mem}}
-    script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+    script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
   [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
     inherit = VerifyObsBase
-    script = $origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
+    script = $origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0" "hofx"
   [[CleanHofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = CleanBase
     script = $origin/CleanHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"

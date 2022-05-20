@@ -1,6 +1,6 @@
 variational:
 ## DAType [Required Parameter]
-# OPTIONS: 3dvar, 3denvar, 3dhybrid, eda_3denvar
+# OPTIONS: 3dvar, 3denvar, 3dhybrid
 # Note: 3dvar and 3dhybrid currently only work for OIE120km
   DAType: None
 
@@ -13,53 +13,35 @@ variational:
 # OPTIONS: True/False
   biasCorrection: False
 
-## land coefficient to use when assimilating IASI with ColdStart initialization
-# depending on the static files used
-  IRVISlandCoeffIasi:  USGS
-
 ##ensembleCovarianceWeight and staticCovarianceWeight
 # weights of ensemble and static components of the background errorcovariance
 # MUST be specified when DAType==3dhybrid in order to avoid an error
   ensembleCovarianceWeight: None
   staticCovarianceWeight: None
 
-## fixedEnsBType
-# selection of data source for fixed ensemble background covariance members when
-# EDASize==nDAInstances==1
-# OPTIONS: GEFS (default), PreviousEDA
-  fixedEnsBType: GEFS
+### EDA
+# optionally carry out an ensemble of variational data assimilations (EDA) by modifying nDAInstances
+# and EDASize, where nEnsDAMembers=(EDASize * nDAInstances)
+# nEnsDAMembers is also the number of forecasts used to represent the flow-dependent background
+# error covariance when DAType is 3denvar or 3dhybrid
 
-# tertiary settings that only apply when fixedEnsBType is set to PreviousEDA
-  nPreviousEnsDAMembers: 20
-  PreviousEDAForecastDir: /glade/scratch/guerrett/pandac/guerrett_eda_3denvar_NMEM${nPreviousEnsDAMembers}_RTPP0.80_LeaveOneOut_OIE120km_memberSpecificTemplate_GEFSSeaUpdate/CyclingFC
+## nDAInstances:
+# number of instances of Variational or EnsembleOfVariational applications
+# DEFAULT: 1
+  nDAInstances: None
 
-## EDASize and nDAInstances
+## EDASize
 # ensemble size of each DA instance
-# DEFAULTS: 1
-# OPTIONS:
-#   1: ensemble of nDAInstances independent Variational applications (nEnsDAMembers jobs), each
-#      with 1 background state member per DA job
+# DEFAULT: 1
+#   1: ensemble of nDAInstances independent Variational applications (nEnsDAMembers independent
+#      jobs), each with 1 background state member per DA job
 # > 1: ensemble of nDAInstances independent EnsembleOfVariational applications, each with EDASize
 #      background state members per DA job
-# In both cases, nEnsDAMembers=(EDASize * nDAInstances) forecasts are used for the flow-dependent
-# background error
   EDASize: None
-  nDAInstances: None
 
 ## LeaveOneOutEDA, whether to use self-exclusion in the EnVar ensemble B during EDA cycling
 # OPTIONS: True/False
   LeaveOneOutEDA: True
-
-## RTPPInflationFactor
-# relaxation parameter for the relaxation to prior perturbation (RTPP) inflation mechanism; only
-# applies to EDA cycling
-# Typical Values: 0.0 or 0.50 to 0.90
-  RTPPInflationFactor: 0.80
-
-## storeOriginalRTPPAnalyses
-# whether to keep/store the analyses taken as inputs to RTPP for diagnostic purposes
-# OPTIONS: True/False
-  storeOriginalRTPPAnalyses: False
 
 ## ABEIInflation
 # whether to utilize adaptive background error inflation (ABEI) in cloud-affected scenes
@@ -118,5 +100,122 @@ variational:
   ]
 
 ## nObsIndent
-# number of spaces to precede members of the 'observations' list in the JEDI YAML
-  nObsIndent: 2
+# number of spaces to precede members of the 'observers' list in the JEDI YAML
+  nObsIndent: 4
+
+## retainObsFeedback
+# whether to retain the observation feedback files (obs, geovals, ydiag)
+# OPTIONS: True/False
+  retainObsFeedback: True
+
+## radianceThinningDistance
+# distance (km) used for the Gaussian Thinning filter for all radiance-based observations
+  radianceThinningDistance: "145.0"
+
+## mesh-specific settings
+  # externally-produced localization files (envar or hybrid)
+  localization:
+    #{{ensembleMesh}}:
+    #  bumpLocPrefix: str
+    #  bumpLocDir: str
+    30km:
+      bumpLocPrefix: bumploc_1200.0km_6.0km
+      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_25APR2022code
+    60km:
+      bumpLocPrefix: bumploc_1200.0km_6.0km
+      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_25APR2022code
+    120km:
+      bumpLocPrefix: bumploc_1200.0km_6.0km
+      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_25APR2022code
+
+  # externally-produced background covariance files (var or hybrid)
+  covariance:
+    bumpCovControlVariables:
+    - stream_function
+    - velocity_potential
+    - temperature
+    - spechum
+    - surface_pressure
+    bumpCovPrefix: mpas_parametersbump_cov
+    bumpCovVBalPrefix: mpas_vbal
+    #{{innerMesh}}:
+    #  bumpCovDir: str
+    #  bumpCovStdDevFile: str
+    #  bumpCovVBalDir: str
+    30km:
+      bumpCovDir: None
+      bumpCovStdDevFile: None
+      bumpCovVBalDir: None
+    60km:
+      bumpCovDir: /glade/scratch/bjung/pandac/20220425_develop/60km.NICAS_00
+      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220425_develop/60km.CMAT_00/mpas.stddev.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/scratch/bjung/pandac/20220425_develop/60km.VBAL_00
+    120km:
+      bumpCovDir: /glade/scratch/bjung/pandac/20220425_develop/NICAS_00
+      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220425_develop/CMAT_00/mpas.stddev.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/scratch/bjung/pandac/20220425_develop/VBAL_00
+
+  # resource requirements
+  job:
+    # TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
+    # TODO: update with latest resource requirements following GetValues refactoring
+    #{{outerMesh}}:
+    #  {{innerMesh}}:
+    #    {{DAType}}: # i.e., 3dvar, 3denvar, 3dhybrid, 4denvar, etc...
+    #      baseSeconds: int
+    #      secondsPerEnVarMember: int, default is 0
+    #      #@ seconds = $secondsPerEnVarMember * $nEnVarMembers + $baseSeconds
+    #      nodes: int
+    #      PEPerNode: int
+    #      memory: int
+    30km:
+      30km:
+        3denvar:
+          baseSeconds: 1500
+          secondsPerEnVarMember: 5
+          nodes: 64
+          PEPerNode: 8
+          memory: 45
+        3dvar:
+          baseSeconds: 1500
+          nodes: 64
+          PEPerNode: 8
+          memory: 45
+      60km:
+        3denvar:
+          baseSeconds: 1200
+          secondsPerEnVarMember: 10
+          nodes: 6
+          PEPerNode: 32
+          memory: 109
+        3dvar:
+          baseSeconds: 1200
+          nodes: 6
+          PEPerNode: 32
+          memory: 109
+    60km:
+      60km:
+        3denvar:
+          baseSeconds: 500
+          secondsPerEnVarMember: 7
+          nodes: 6
+          PEPerNode: 32
+          memory: 109
+        3dvar:
+          baseSeconds: 500
+          nodes: 6
+          PEPerNode: 32
+          memory: 109
+    120km:
+      120km:
+        3denvar:
+          baseSeconds: 360
+          secondsPerEnVarMember: 5
+          nodes: 4
+          PEPerNode: 32
+          memory: 45
+        3dvar:
+          baseSeconds: 360
+          nodes: 4
+          PEPerNode: 32
+          memory: 45

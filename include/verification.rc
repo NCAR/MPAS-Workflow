@@ -1,15 +1,15 @@
 {% set ExtendedFCLengths = range(0, ExtendedFCWindowHR+ExtendedFC_DT_HR, ExtendedFC_DT_HR) %}
-{% set EnsVerifyMembers = range(1, nEnsDAMembers+1, 1) %}
+{% set EnsVerifyMembers = range(1, nMembers+1, 1) %}
 
 
   # ... for deterministic DA in observation space only (OMB+OMA together)
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
-{% if CriticalPathType in ["Normal", "Reanalysis"] and VerifyDeterministicDA and nEnsDAMembers < 2 %}
+{% if CriticalPathType in ["Normal", "Reanalysis"] and VerifyDeterministicDA and nMembers < 2 %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         DataAssimFinished => VerifyObsDA
-        VerifyObsDA => CleanDataAssim
+        VerifyObsDA => {{CleanDataAssim}}
   {% if CompareDA2Benchmark %}
         VerifyObsDA => CompareObsDA
   {% endif %}
@@ -18,7 +18,7 @@
 
 
   # ... for background-duration forecast from deterministic analysis or ensemble of analyses
-{% if VerifyBGMembers or (VerifyEnsMeanBG and nEnsDAMembers == 1)%}
+{% if VerifyBGMembers or (VerifyEnsMeanBG and nMembers == 1)%}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
@@ -37,8 +37,8 @@
 {% endif %}
 
 
-  # ... for mean of ensemble of backgrounds and ensemble spread
-{% if VerifyEnsMeanBG and nEnsDAMembers > 1 %}
+  # ... for mean of ensemble of backgrounds and ensemble spread (bg only for obs, bg+an for model)
+{% if VerifyEnsMeanBG and nMembers > 1 %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => MeanBackground
@@ -49,6 +49,8 @@
         HofXEnsMeanBG => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanHofXEnsMeanBG
   {% if DiagnoseEnsSpreadBG %}
+        DataAssimFinished => VerifyModelEnsMeanBG
+        VerifyModelEnsMeanBG => {{CleanDataAssim}}
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
         HofXBG:succeed-all => VerifyObsEnsMeanBG
         VerifyObsEnsMeanBG => CleanHofXBG

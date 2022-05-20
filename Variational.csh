@@ -2,7 +2,7 @@
 
 # Carry out variational minimization for single first guess state
 # ARGUMENTS:
-# ArgMember - member index among nEnsDAMembers
+# ArgMember - member index among nMembers
 
 date
 
@@ -26,12 +26,12 @@ endif
 
 # Setup environment
 # =================
-source config/variational.csh
 source config/builds.csh
 source config/environment.csh
+source config/experiment.csh
 source config/mpas/variables.csh
-source config/filestructure.csh
 source config/tools.csh
+source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -46,17 +46,17 @@ cd ${self_WorkDir}
 # build, executable, yaml
 set myBuildDir = ${VariationalBuildDir}
 set myEXE = ${VariationalEXE}
-set myYAML = ${self_WorkDir}/${variationalYAMLPrefix}${ArgMember}.yaml
+set myYAML = ${self_WorkDir}/${YAMLPrefix}${ArgMember}.yaml
 
-if ( $ArgMember > $nEnsDAMembers ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be <= nEnsDAMembers ($nEnsDAMembers)" > ./FAIL
+if ( $ArgMember > $nMembers ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be <= nMembers ($nMembers)" > ./FAIL
   exit 1
 endif
 
 # ================================================================================================
 
 ## create then move to member-specific run directory
-set memDir = `${memberDir} ens ${ArgMember} "${flowMemFmt}"`
+set memDir = `${memberDir} 2 ${ArgMember} "${flowMemFmt}"`
 set runDir = run${memDir}
 rm -r ${runDir}
 mkdir -p ${runDir}
@@ -72,7 +72,7 @@ ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)
-  ln -sfv ${ModelConfigDir}/${file} .
+  ln -sfv $ModelConfigDir/$file .
 end
 
 # Link+Run the executable

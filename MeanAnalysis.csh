@@ -4,8 +4,7 @@ date
 
 # Setup environment
 # =================
-source config/variational.csh
-source config/filestructure.csh
+source config/experiment.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/builds.csh
@@ -33,14 +32,14 @@ set varianceName = ${self_StatePrefix}.$thisMPASFileDate.variance.nc
 
 ## link analysis members
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set appMember = `${memberDir} ensemble $member "{:03d}"`
+while ( $member <= ${nMembers} )
+  set appMember = `${memberDir} 2 $member "{:03d}"`
 # set appMember = printf "%03d" $member`
   ln -sfv $self_StateDirs[$member]/${meanName} ./${memberPrefix}${appMember}
   @ member++
 end
 
-if (${nEnsDAMembers} == 1) then
+if (${nMembers} == 1) then
   ## pass-through for mean
   ln -sfv $self_StateDirs[1]/${meanName} ./
 else
@@ -57,7 +56,7 @@ else
   set arg2 = ${meanName}
   set arg3 = ${varianceName}
   set arg4 = ${memberPrefix}
-  set arg5 = ${nEnsDAMembers}
+  set arg5 = ${nMembers}
 
   ln -sfv ${meanStateBuildDir}/${meanStateExe} ./
   mpiexec ./${meanStateExe} "$arg1" "$arg2" "$arg3" "$arg4" "$arg5" >& log

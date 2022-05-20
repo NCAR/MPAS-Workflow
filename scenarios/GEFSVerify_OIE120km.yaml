@@ -5,11 +5,13 @@ observations:
 experiment:
   ExpSuffix: _GEFSVerify
 model:
-  MPASGridDescriptor: OIE120km
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
 variational:
-  DAType: eda_3denvar
-  EDASize: 1
+  DAType: 3denvar
   nDAInstances: 20
   LeaveOneOutEDA: False
-  RTPPInflationFactor: 0.0
   nInnerIterations: [,]
+rtpp:
+  relaxationFactor: 0.0

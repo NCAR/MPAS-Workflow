@@ -1,0 +1,33 @@
+rtpp:
+## relaxationFactor
+# parameter for the relaxation to prior perturbation (RTPP) mechanism; only
+# applies to EDA cycling
+# Typical Values: 0.0 to 0.90
+  relaxationFactor: 0.80
+
+## retainOriginalAnalyses
+# whether to retain the analyses taken as inputs to RTPP
+# OPTIONS: True/False
+  retainOriginalAnalyses: False
+
+## mesh-specific settings
+  # resource requirements
+  job:
+    #{{ensembleMesh}}:
+    #  baseSeconds: int
+    #  secondsPerEDAMember: int
+    #  nodes: int
+    #  PEPerNode: int
+    #  memory: int
+    60km:
+      baseSeconds: 10
+      secondsPerEDAMember: 30
+      nodes: 3
+      PEPerNode: 12
+      memory: 45
+    120km:
+      baseSeconds: 10
+      secondsPerEDAMember: 15
+      nodes: 1
+      PEPerNode: 36
+      memory: 45

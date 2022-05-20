@@ -10,14 +10,19 @@ observations:
 experiment:
   ExperimentName: 'eda_OIE120km_WarmStart_TEST'
 model:
-  MPASGridDescriptor: OIE120km
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
 variational:
-  DAType: eda_3denvar
+  DAType: 3denvar
   nInnerIterations: [15,]
-  EDASize: 1
   nDAInstances: 5
   LeaveOneOutEDA: True
-  RTPPInflationFactor: 0.80
+  retainObsFeedback: False
+hofx:
+  retainObsFeedback: False
+rtpp:
+  relaxationFactor: 0.8
 job:
   CPQueueName: economy
   NCPQueueName: economy

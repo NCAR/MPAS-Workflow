@@ -14,8 +14,8 @@ set ArgDT = "$2"
 # ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
 set ArgStateType = "$3"
 
-# ArgNMembers: int, set > 1 to activate ensemble spread diagnostics
-set ArgNMembers = "$4"
+# ArgAppType: str, type of application being verified (hofx or variational)
+set ArgAppType = "$4"
 
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
@@ -36,9 +36,14 @@ if ( $isNotInt ) then
   exit 1
 endif
 
+if ("$ArgAppType" != hofx && "$ArgAppType" != variational) then
+  echo "$0 (ERROR): ArgAppType must be hofx or variational, not $ArgAppType"
+  exit 1
+endif
+
 # Setup environment
 # =================
-source config/filestructure.csh
+source config/experiment.csh
 source config/tools.csh
 source config/verification.csh
 source config/environment.csh
@@ -56,9 +61,6 @@ endif
 echo "WorkDir = ${self_WorkDir}"
 
 set benchmark_WorkDir = $WorkDirsBenchmarkTEMPLATE[$ArgMember]
-
-# other templated variables
-set self_jediAppName = jediAppNameTEMPLATE
 
 # ================================================================================================
 
@@ -83,8 +85,8 @@ set ObsTypeList = ( \
 
 rm compare.txt
 foreach obstype ($ObsTypeList)
-  set self_StatisticsFile = "${self_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
-  set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ObsDiagnosticsDir}/stats_${self_jediAppName}_${obstype}.nc"
+  set self_StatisticsFile = "${self_WorkDir}/${ObsDiagnosticsDir}/stats_${ArgAppType}_${obstype}.nc"
+  set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ObsDiagnosticsDir}/stats_${ArgAppType}_${obstype}.nc"
 
   echo "nccmp -dfFmSN -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile}" | tee -a compare.txt
   nccmp -d -N -S -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} | tee -a compare.txt

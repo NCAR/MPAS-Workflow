@@ -10,7 +10,7 @@ observations:
   - satwnd
   - gpsro
   - 1bamua
-  - mtiasi
+  #- mtiasi
   #- 1bmhs
   #- airsev
   #- cris
@@ -32,9 +32,9 @@ observations:
     - amsua_n15
     - amsua_n18
     - amsua_n19
-    - iasi_metop-a
-    - iasi_metop-b
-    - iasi_metop-c
+    #- iasi_metop-a
+    #- iasi_metop-b
+    #- iasi_metop-c
 
     IODAPrefix:
       gnssroref: gnssro
@@ -54,9 +54,9 @@ observations:
     - amsua_n15
     - amsua_n18
     - amsua_n19
-    - iasi_metop-a
-    - iasi_metop-b
-    - iasi_metop-c
+    #- iasi_metop-a
+    #- iasi_metop-b
+    #- iasi_metop-c
 
     IODAPrefix:
       gnssroref: gnssro
@@ -75,10 +75,7 @@ observations:
         common: "{{ObsWorkDir}}"
 
   PANDACArchive:
-    instrumentsAllowingBiasCorrection:
-    - iasi_metop-a
-    - iasi_metop-b
-    - iasi_metop-c
+    instrumentsAllowingBiasCorrection: [None]
 
     IODAPrefix:
       gnssroref: gnssro
@@ -130,10 +127,9 @@ observations:
         ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
 
         ## iasi
-        # 1h IASI observations at /glade/p/mmm/parc/ivette/pandac/Observations/iasi
-        iasi_metop-a: /glade/p/mmm/parc/ivette/Observations_whole_file
-        iasi_metop-b: /glade/p/mmm/parc/ivette/Observations_whole_file
-        iasi_metop-c: /glade/p/mmm/parc/ivette/Observations_whole_file
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
 
       hofx:
         ## anchor
@@ -172,9 +168,9 @@ observations:
         ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
 
         ## iasi
-        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi
-        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi
-        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
 
     IODASuperObGrid:
       abi_g16: 59X59

@@ -1,0 +1,68 @@
+_iteration: &iterationConfig
+  geometry:
+    nml_file: {{InnerNamelistFile}}
+    streams_file: {{InnerStreamsFile}}{{StreamsFileMember}}
+    deallocate non-da fields: true
+    interpolation type: unstructured
+  gradient norm reduction: 1e-3
+  obs perturbations: {{ObsPerturbations}}
+  #Several 'online diagnostics' are useful for checking the H correctness and Hessian symmetry
+#  online diagnostics:
+#    tlm taylor test: true
+#    tlm approx test: true
+#    adj tlm test: true
+#    adj obs test: true
+#    online adj test: true
+_member: &memberConfig
+  date: &analysisDate {{thisISO8601Date}}
+  state variables: &incvars [{{AnalysisVariables}}]
+  stream name: ensemble
+{{ObsAnchors}}
+output:
+  filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis
+variational:
+  minimizer:
+{{VariationalMinimizer}}
+  iterations:
+{{VariationalIterations}}
+final:
+  diagnostics:
+    departures: depan
+cost function:
+  cost type: 3D-Var
+  window begin: {{windowBegin}}
+  window length: {{windowLength}}
+  jb evaluation: false
+  geometry:
+    nml_file: {{OuterNamelistFile}}
+    streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
+    deallocate non-da fields: true
+    interpolation type: unstructured
+  analysis variables: *incvars
+  background:
+    state variables: [{{StateVariables}}]
+    filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
+    date: *analysisDate
+  background error:
+    covariance model: ensemble
+    localization:
+      localization method: SABER
+      saber block:
+        saber block name: BUMP_NICAS
+        input variables: *incvars
+        output variables: *incvars
+        bump:
+          datadir: {{bumpLocDir}}
+          prefix: {{bumpLocPrefix}}
+          strategy: specific_multivariate
+          load_nicas_local: true
+          io_keys: [temperature-temperature,spechum-spechum,uReconstructZonal-uReconstructZonal,uReconstructMeridional-uReconstructMeridional,surface_pressure-surface_pressure,qc-qc,qi-qi,qr-qr,qs-qs,qg-qg]
+          #io_values: [dynamic,dynamic,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
+          io_values: [dynamic,cloud,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
+          verbosity: main
+{{EnsemblePbMembers}}
+{{EnsemblePbInflation}}
+  observations:
+    observers:
+{{Observers}}
