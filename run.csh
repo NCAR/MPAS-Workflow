@@ -24,6 +24,7 @@ set ValidRunConfigs = ( \
   60kmEDA \
   60kmDARTVerify \
   30km-60km3denvar \
+  30km-60km3denvarSpecifiedEnsemble \
   RealTime \
   GenerateObs \
   GenerateGFSAnalyses \

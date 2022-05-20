@@ -94,6 +94,8 @@ $setLocal retainObsFeedback
 setenv nEnVarMembers 20
 if ($nEnsDAMembers > 1) then
   setenv nEnVarMembers $nEnsDAMembers
+else if ("$fixedEnsBSource" == "PreviousEDA") then
+  setenv nEnVarMembers $nPreviousEnsDAMembers
 endif
 if ($DAType == 3dvar) then
   setenv nEnVarMembers 0
