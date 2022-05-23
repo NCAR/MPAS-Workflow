@@ -87,19 +87,22 @@ $setLocal biasCorrection
 $setLocal retainObsFeedback
 
 ## job
-# TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
 ## nEnVarMembers (int)
 # ensemble size for "envar" applications; only used for job timings
-# defaults to 20 for GEFS-ensemble retrospective experiments
-setenv nEnVarMembers 20
-if ($nEnsDAMembers > 1) then
-  setenv nEnVarMembers $nEnsDAMembers
-else if ("$fixedEnsBSource" == "PreviousEDA") then
-  setenv nEnVarMembers $nPreviousEnsDAMembers
-endif
 if ($DAType == 3dvar) then
   setenv nEnVarMembers 0
-  #TODO: add extra time/memory for covariance multiplication
+else
+  if ($nEnsDAMembers > 1) then
+    setenv nEnVarMembers $nEnsDAMembers
+  else if ("$fixedEnsBSource" == "GEFS") then
+    # 20 for GEFS-ensemble retrospective experiments
+    setenv nEnVarMembers 20
+  else if ("$fixedEnsBSource" == "PreviousEDA") then
+    setenv nEnVarMembers $nPreviousEnsDAMembers
+  else
+    echo "$0 (ERROR): nEnVarMembers is not defined for this fixedEnsBSource ($fixedEnsBSource)"
+    exit 1
+  endif
 endif
 
 $setLocal job.${outerMesh}.${innerMesh}.$DAType.baseSeconds
