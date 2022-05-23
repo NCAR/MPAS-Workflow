@@ -2,7 +2,7 @@ workflow:
   InitializationType: WarmStart
   firstCyclePoint: 20180414T18
   initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180422T00
+  finalCyclePoint: 20180429T18
   CriticalPathType: Normal
   VerifyDeterministicDA: False
   VerifyEnsMeanBG: True
@@ -47,9 +47,10 @@ variational:
           secondsPerEnVarMember: 4
           #nodes: 4
           #PEPerNode: 36
-          #memory: 109
-          #baseSeconds: 220
-          #secondsPerEnVarMember: 5
+          ##memory: 109 #develop, double-precision
+          #memory: 45 #single-precision
+          #baseSeconds: 250
+          #secondsPerEnVarMember: 4
 forecast:
   job:
     60km:
