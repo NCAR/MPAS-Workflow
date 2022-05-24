@@ -16,7 +16,6 @@ setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig model
 ## MPASCore - must be atmosphere
 setenv MPASCore atmosphere
 
-$setLocal commonBuilddefault
 $setLocal outerMesh
 $setLocal innerMesh
 $setLocal ensembleMesh

@@ -13,6 +13,10 @@ variational:
 # OPTIONS: True/False
   biasCorrection: False
 
+# method for the tropopause pressure determination used in the
+# cloud detection filter for infrared observations
+  tropprsMethod: thompson
+
 ##ensembleCovarianceWeight and staticCovarianceWeight
 # weights of ensemble and static components of the background errorcovariance
 # MUST be specified when DAType==3dhybrid in order to avoid an error

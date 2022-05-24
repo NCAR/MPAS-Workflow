@@ -427,6 +427,9 @@ sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${ArgAppType}'@g' $thisYAML
 sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $prevYAML
 sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 
+# method for the tropopause pressure determination
+sed -i 's@{{tropprsMethod}}@'${tropprsMethod}'@g' $prevYAML
+
 # (3) model-related substitutions
 # ===============================
 

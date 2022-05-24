@@ -48,6 +48,10 @@ hofx:
 # OPTIONS: False (not enabled yet)
   biasCorrection: False
 
+# method for the tropopause pressure determination used in the
+# cloud detection filter for infrared observations
+  tropprsMethod: thompson
+
 ## radianceThinningDistance
 # distance (km) used for the Gaussian Thinning filter for all radiance-based observations
   radianceThinningDistance: "145.0"

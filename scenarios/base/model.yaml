@@ -61,7 +61,3 @@ model:
 # floating-point precision of all application output
 # OPTIONS: single, double
   precision: single
-
-# default build directory
-  commonBuilddefault: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_16MAY2022
-
