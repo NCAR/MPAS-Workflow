@@ -1,8 +1,8 @@
 workflow:
   InitializationType: WarmStart
   firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180415T18
-  finalCyclePoint: 20180422T00
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180430T00
   CriticalPathType: Normal
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
@@ -37,7 +37,7 @@ forecast:
       nodes: 4
       PEPerNode: 36
       baseSeconds: 60
-      secondsPerForecastHR: 220
+      secondsPerForecastHR: 150
 verifyobs:
   pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics_noGeo_noYDiag
 verifymodel:

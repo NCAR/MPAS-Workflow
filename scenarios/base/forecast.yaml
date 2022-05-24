@@ -22,7 +22,7 @@ forecast:
       #nodes: 4
       #PEPerNode: 36
       #baseSeconds: 60
-      #secondsPerForecastHR: 220
+      #secondsPerForecastHR: 150
     60km:
       nodes: 4
       PEPerNode: 36
