@@ -75,10 +75,8 @@ observations:
         common: "{{ObsWorkDir}}"
 
   PANDACArchive:
-    instrumentsAllowingBiasCorrection:
-      - iasi_metop-a
-      - iasi_metop-b
-      - iasi_metop-c
+    instrumentsAllowingBiasCorrection: [None]
+
     IODAPrefix:
       gnssroref: gnssro
       amsua-cld_aqua: amsua_aqua

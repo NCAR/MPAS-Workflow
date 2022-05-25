@@ -13,28 +13,9 @@ model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-builds:
-  commonBuild: /glade/p/mmm/parc/ivette/pandac/jedi/build22MAY_th
 variational:
   DAType: 3denvar
   nInnerIterations: [15,]
-  biasCorrection: True
-  tropprsMethod: thompson
-  experimentalObservations: [
-    iasi_metop-b,
-  ]
-  job:
-    120km:
-      120km:
-        3denvar:
-          baseSeconds: 1200
-          memory: 109
 job:
   CPQueueName: economy
   NCPQueueName: economy
-verifyobs:
-  pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics
-hofx:
-  job:
-    120km:
-      seconds: 500
