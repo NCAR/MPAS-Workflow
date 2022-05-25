@@ -23,7 +23,7 @@ model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-build:
+builds:
   commonBuilddefault: /glade/p/mmm/parc/ivette/pandac/jedi/build22MAY_th
 variational:
   DAType: 3denvar
