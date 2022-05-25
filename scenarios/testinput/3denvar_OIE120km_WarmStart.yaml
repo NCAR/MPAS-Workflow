@@ -40,8 +40,8 @@ variational:
           baseSeconds: 1200
           memory: 109
 job:
-  CPQueueName: premium
-  NCPQueueName: premium
+  CPQueueName: economy
+  NCPQueueName: economy
 verifyobs:
   pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics
 hofx:

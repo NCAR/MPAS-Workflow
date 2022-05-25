@@ -18,7 +18,7 @@ observations:
         iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
         iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
 experiment:
-  ExperimentName: '3denvar_OIE120km_WarmStart_IASI_1htessss'
+  ExperimentName: '3denvar_OIE120km_WarmStart_IASI'
 model:
   outerMesh: 120km
   innerMesh: 120km
