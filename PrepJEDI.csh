@@ -223,8 +223,8 @@ foreach instrument ($observations)
     set missingChannels = `$checkMissingChannels ${obsFile}`
     if ( ${missingChannels} == True ) then
       # remove the data
-      echo "WARNING: removing ${instrument} due to missing value in channel indices"
-      rm -rf ${InDBDir}/${instrument}_obs_${thisValidDate}.h5
+      echo "$0 (WARNING): removing ${instrument} due to missing value in channel indices"
+      rm ${InDBDir}/${instrument}_obs_${thisValidDate}.h5
     endif
   endif
   date
@@ -295,18 +295,19 @@ foreach instrument ($observations)
   foreach i ($instrumentsAllowingBiasCorrection)
     if ("$instrument" == "$i") then
       set allowsBiasCorrection = True
-      if ( ${thisValidDate} != ${nextFirstDate} && ! -e ${CyclingDAWorkDir}/$prevValidDate/dbOut/satbias_${i}.h5 ) then
-          set dateListback = (`$dateList ${FirstCycleDate} ${thisCycleDate} ${self_WindowHR}`)
-          foreach dt (${dateListback})
-            if ( ! -e ${CyclingDAWorkDir}/${dt}/dbOut/satbias_${i}.h5 && ${dt} != ${thisValidDate}) then
-              continue
-            else if ( -e ${CyclingDAWorkDir}/${dt}/dbOut/satbias_${i}.h5 ) then
-              set biasCorrectionDir = ${CyclingDAWorkDir}/${dt}/dbOut
-              break
-            else
-              set biasCorrectionDir = $initialVARBCcoeff
-            endif
-          end
+      set dateListback = (`$dateList ${FirstCycleDate} ${thisCycleDate} ${self_WindowHR}`)
+      set foundsatbias = False
+      foreach dt (${dateListback})
+        # check for satbias file at dt
+        if ( -e ${CyclingDAWorkDir}/${dt}/dbOut/satbias_${i}.h5 ) then
+          set biasCorrectionDir = ${CyclingDAWorkDir}/${dt}/dbOut
+          set foundsatbias = True
+          break
+        endif
+      end
+      # if no online updated satbias files exist, use first cycle's satbias file
+      if ($foundsatbias == False) then
+        set biasCorrectionDir = $initialVARBCcoeff
       endif
     endif
   end

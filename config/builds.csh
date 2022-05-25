@@ -9,7 +9,6 @@ source config/model.csh
 # under the "model" key of scenarioConfig
 setenv baseConfig scenarios/base/builds.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig builds"
-$setLocal commonBuilddefault
 
 #############################
 ## build directory structures
@@ -25,7 +24,7 @@ setenv BuildCompiler 'gnu-openmpi'
 # consistent with config/environmentForJedi.csh
 
 # default build directory
-set commonBuild = ${commonBuilddefault}
+$setLocal commonBuild
 
 # Ungrib
 setenv ungribEXE ungrib.exe
