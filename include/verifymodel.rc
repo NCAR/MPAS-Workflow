@@ -1,6 +1,5 @@
   # ... for background-duration forecast from deterministic analysis or ensemble of analyses
 {% if VerifyBGMembers or (VerifyEnsMeanBG and nMembers == 1)%}
-      '''
     [[[{{AnalysisTimes}}]]]
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => VerifyModelBG
