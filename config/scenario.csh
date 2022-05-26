@@ -28,6 +28,7 @@ set scenarioDirectory = scenarios
 # + eda_OIE120km_WarmStart
 # + eda_OIE60km_WarmStart (experimental)
 # + RealTime
+# + IASI_3denvar_OIE120km_WarmStart
 
 set scenario = 3dvar_OIE120km_WarmStart
 

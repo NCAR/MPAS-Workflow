@@ -13,6 +13,8 @@ set pyTools = ( \
   substituteEnsembleBMembers \
   substituteEnsembleBTemplate \
   updateXTIME \
+  dateList \
+  checkMissingChannels \
 )
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"

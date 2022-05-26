@@ -55,6 +55,7 @@ source config/environment.csh
 source config/experiment.csh
 source config/model.csh
 source config/observations.csh
+source config/workflow.csh
 source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
@@ -213,8 +214,19 @@ foreach instrument ($observations)
   cd ${self_WorkDir}
 
   # link the data
-  ln -sfv ${IODADirectory}/${thisValidDate}/${IODAPrefix}_obs_${thisValidDate}.h5 \
-          ${InDBDir}/${instrument}_obs_${thisValidDate}.h5
+  set obsFile = ${IODADirectory}/${thisValidDate}/${IODAPrefix}_obs_${thisValidDate}.h5
+  ln -sfv ${obsFile} ${InDBDir}/${instrument}_obs_${thisValidDate}.h5
+
+  # for radiance observations (iasi for now)
+  # check if any channel index is missing (== -999)
+  if ( -e ${obsFile} && "${instrument}" =~ *"iasi"* ) then
+    set missingChannels = `$checkMissingChannels ${obsFile}`
+    if ( ${missingChannels} == True ) then
+      # remove the data
+      echo "$0 (WARNING): removing ${instrument} due to missing value in channel indices"
+      rm ${InDBDir}/${instrument}_obs_${thisValidDate}.h5
+    endif
+  endif
   date
 end
 
@@ -283,6 +295,20 @@ foreach instrument ($observations)
   foreach i ($instrumentsAllowingBiasCorrection)
     if ("$instrument" == "$i") then
       set allowsBiasCorrection = True
+      set dateListback = (`$dateList ${FirstCycleDate} ${thisCycleDate} ${self_WindowHR}`)
+      set foundsatbias = False
+      foreach dt (${dateListback})
+        # check for satbias file at dt
+        if ( -e ${CyclingDAWorkDir}/${dt}/dbOut/satbias_${i}.h5 ) then
+          set biasCorrectionDir = ${CyclingDAWorkDir}/${dt}/dbOut
+          set foundsatbias = True
+          break
+        endif
+      end
+      # if no online updated satbias files exist, use first cycle's satbias file
+      if ($foundsatbias == False) then
+        set biasCorrectionDir = $initialVARBCcoeff
+      endif
     endif
   end
 
@@ -401,6 +427,9 @@ sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${ArgAppType}'@g' $thisYAML
 # satellite bias correction directories
 sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $prevYAML
 sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
+
+# method for the tropopause pressure determination
+sed -i 's@{{tropprsMethod}}@'${tropprsMethod}'@g' $prevYAML
 
 # (3) model-related substitutions
 # ===============================
