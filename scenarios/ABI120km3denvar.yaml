@@ -1,0 +1,33 @@
+workflow:
+  firstCyclePoint: 20180414T18
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180415T06
+  InitializationType: WarmStart
+  VerifyDeterministicDA: True
+  VerifyEnsMeanBG: True
+observations:
+  resource: PANDACArchive
+  PANDACArchive:
+    instrumentsAllowingBiasCorrection:
+    - abi_g16
+    IODADirectory:
+      variational:
+        abi_g16: /glade/p/mmm/parc/ivette/pandac/Observations/abi/ioda
+experiment:
+  ExperimentName: '3denvar_OIE120km_WarmStart_ABI_G16_VarBC'
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+variational:
+  DAType: 3denvar
+  nInnerIterations: [60,]
+  biasCorrection: True
+  experimentalObservations: [
+    abi_g16,
+  ]
+job:
+  CPQueueName: economy
+  NCPQueueName: economy
+verifyobs:
+  pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics/graphics_for_new_abi
