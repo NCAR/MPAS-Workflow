@@ -7,7 +7,7 @@ if ( $?config_hofx ) exit 0
 set config_hofx = 1
 
 source config/model.csh
-source config/scenario.csh hofx setNestedHofx
+source config/scenario.csh hofx
 
 ## required settings for PrepJEDI.csh
 $setLocal observations
