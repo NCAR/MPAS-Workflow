@@ -7,11 +7,4 @@ setenv config_environment 1
 source config/builds.csh
 source config/environmentForJedi.csh ${BuildCompiler}
 
-# python
-source config/environmentPython.csh
-
-# netcdf tools
-module load nco
-module load nccmp
-
 module list

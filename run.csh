@@ -1,7 +1,5 @@
 #!/bin/csh -f
 
-source config/environmentPython.csh
-
 ####################################################################################################
 # This script runs a pre-configured set of cylc suites via MPAS-Workflow. If the user has
 # previously executed this script with the same "ArgRunConfig", and one or more of the scenarios is
