@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
-if ( $?config_environment ) exit 0
-setenv config_environment 1
+if ( $?config_environmentJEDI ) exit 0
+setenv config_environmentJEDI 1
 
 ## BuildCompiler
 # {compiler}-{mpi-implementation} combination that selects the JEDI module used to build
