@@ -3,7 +3,7 @@
 if ( $?config_job ) exit 0
 setenv config_job 1
 
-source config/scenario.csh job setNestedJob
+source config/scenario.csh job
 
 $setLocal CPAccountNumber
 $setLocal CPQueueName

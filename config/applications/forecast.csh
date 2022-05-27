@@ -5,7 +5,7 @@ setenv config_forecast 1
 
 source config/model.csh
 source config/workflow.csh
-source config/scenario.csh forecast setNestedForecast
+source config/scenario.csh forecast
 
 set mesh = "$outerMesh"
 setenv nCells "$nCellsOuter"

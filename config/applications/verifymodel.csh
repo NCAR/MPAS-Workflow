@@ -5,7 +5,7 @@ setenv config_verifymodel 1
 
 source config/model.csh
 source config/experiment.csh
-source config/scenario.csh verifymodel setNestedVerifyModel
+source config/scenario.csh verifymodel
 
 $setLocal pyVerifyDir
 

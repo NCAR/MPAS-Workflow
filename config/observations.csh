@@ -3,7 +3,7 @@
 if ( $?config_observations ) exit 0
 setenv config_observations 1
 
-source config/scenario.csh observations setNestedObservations
+source config/scenario.csh observations
 
 # getObservationsOrNone exposes the observations section of the config for run-time-dependent
 # behaviors

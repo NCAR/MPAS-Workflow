@@ -3,40 +3,63 @@
 #if ( $?config_scenario ) exit 0
 #set config_scenario = 1
 
-# This script sets up the environment needed to parse particular sections of the
-# scenario configuration YAML.
+# This script sets up the environment needed to parse a particular section of the
+# complete scenario configuration YAML.
 
-# It should be sourced after all other "config/*.csh" scripts are sourced as follows
+# It should be sourced in a section-specific configuration shell script after all
+# other "config/*.csh" dependencies are sourced as follows
 #
-#   source config/scenario.csh {{configSection}} {{nestedConfigFunctionName}}
+#   source config/scenario.csh {{configSection}}
 
-# Process arguments
-# =================
-## configSection (required 1st argument)
-# base configuration section defined in scenarios/base/ that is being referenced
-# by the sourcing script
+# Multiple functions are created automatically that can be used to parse the particular YAML
+# section. Consider the following example:
+
+## forecast.yaml:
+#forecast:
+#  updateSea: False
+#  job:
+#    nodes: 2
+#    pe: None
+
+# Executing the following command generates the functions described below.
+#
+#   source confing/scenario.csh forecast 
+#
+# (1) setLocal - uses setenv to create an environment variable with the same name as the lowest
+#     hierarchical level of the yaml key.  Missing or "None" values cause an error.
+#
+# ex:
+# $setLocal job.nodes # `setenv nodes 2`
+# $setLocal job.pe    # value is None, causes error
+# $setLocal nodes     # yaml node does not exist, causes error
+# $setLocal updateSea # `setenv updateSea False`
+#
+#
+# (2) getLocalOrNone - returns the value at the applicable YAML key, or None if undefined.  This
+#     function is particularly useful for optional entries where the parsing script will define
+#     the behavior when the value is undefined.
+#
+# ex:
+# $getLocalOrNone job.nodes # returns "2"
+# $getLocalOrNone job.pe    # returns "None"
+# $getLocalOrNone nodes     # returns "None"
+# $getLocalOrNone updateSea # returns "False"
+#
+# (3) setNested{{ConfigSection}} - generate "nested" environment variables with a prefix equal to
+#     "$configSection__".  The placeholder {{ConfigSection}} is always equal to $configSection, but
+#     with the first letter capitalized.  Thus, configSection=forecast becomes
+#     ConfigSection=Forecast.  Missing or "None" values cause an error.
+#
+# ex:    
+# $setNestedForecast job.nodes # `setenv forecast__nodes 2`
+# $setNestedForecast job.pe    # value is None, causes error
+# $setNestedForecast nodes     # yaml node does not exist, causes error
+# $setNestedForecast updateSea # `setenv forecast__updateSea False`
+
+## configSection (required argument)
+# base configuration section defined in scenarios/base/${configSection}.yaml that
+# is being parsed by the sourcing script
 set configSection = $1
-
-## nestedConfigFunctionName (required 2nd argument)
-# function name for extracting configSection-specific nested components of the configuration for
-# global use by external scripts.  This is usseful when multiple applications re-use similar configuration
-# elements.  E.g., variational__nodes must not conflict with hofx__nodes.
-set nestedConfigFunctionName = $2
-
-# E.g., for config/model.csh, the appropriate usage is
-#
-#   source config/scenario.csh model setNestedModel
-#
-# In this case, the $setNestedModel function will generate "nested" environment variables with the
-# "model__" prefix.  The following line would result in a new global environment variable named
-# "model__precision".
-# $setNestedModel precision
-#
-# This is akin to a public object member variable in OO programming.
-
-# Dependencies
-# ============
-source config/config.csh
 
 ## scenario
 # select from pre-defined scenarios or define your own
@@ -55,18 +78,22 @@ set scenario = 3dvar_OIE120km_WarmStart
 
 ## scenarioDirectory
 # The scenario must be described in a yaml file in the scenarioDirectory.  Users can create their
-# own unique scenarios be adding options in their scenario YAML that differ from the defaults in
+# own unique scenarios by adding options in their scenario YAML that differ from the defaults in
 # scenarios/base/*.yaml.  Redundant options with respect to the base YAMLS may also be included
-# in the user-defined scenario YAML as desired to improve clarity.
+# in the user-defined scenario YAML as desired in order to improve clarity. Note that the default
+# values of the base options may change.
 set scenarioDirectory = scenarios
 
 ## this config
 setenv scenarioConfig ${scenarioDirectory}/${scenario}.yaml
 
+source config/config.csh
+
 ## define local re-usable configuration parsing functions for this configSection
 setenv baseConfig scenarios/base/${configSection}.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig ${configSection}"
 setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig ${configSection}"
+set nestedConfigFunctionName = setNested"`echo "${configSection}" | sed 's/.*/\u&/'`"
 setenv ${nestedConfigFunctionName} "source $setNestedConfig $baseConfig $scenarioConfig ${configSection}"
 
 #TODO: possibly implement one of below options to reduce config overhead

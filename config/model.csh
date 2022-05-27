@@ -4,7 +4,7 @@
 if ( $?config_model ) exit 0
 setenv config_model 1
 
-source config/scenario.csh model setNestedModel
+source config/scenario.csh model
 
 ## MPASCore - must be atmosphere
 setenv MPASCore atmosphere

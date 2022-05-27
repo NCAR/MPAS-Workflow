@@ -5,7 +5,7 @@ setenv config_ensvariational 1
 
 source config/model.csh
 source config/applications/variational.csh
-source config/scenario.csh ensvariational setNestedEnsOfVariational
+source config/scenario.csh ensvariational
 
 ## job
 $setLocal job.${outerMesh}.baseSeconds
@@ -17,5 +17,5 @@ setenv ensvariational__seconds $seconds
 $setLocal job.${outerMesh}.nodesPerMember
 @ nodes = $nodesPerMember * $EDASize
 setenv ensvariational__nodes $nodes
-$setNestedEnsOfVariational job.${outerMesh}.PEPerNode
-$setNestedEnsOfVariational job.${outerMesh}.memory
+$setNestedEnsvariational job.${outerMesh}.PEPerNode
+$setNestedEnsvariational job.${outerMesh}.memory

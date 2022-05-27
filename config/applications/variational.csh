@@ -8,7 +8,7 @@ set config_variational = 1
 
 source config/model.csh
 
-source config/scenario.csh variational setNestedVariational
+source config/scenario.csh variational
 
 ## variational settings
 $setLocal DAType

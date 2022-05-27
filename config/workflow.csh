@@ -3,7 +3,7 @@
 if ( $?config_workflow ) exit 0
 setenv config_workflow 1
 
-source config/scenario.csh workflow setNestedWorkflow
+source config/scenario.csh workflow
 
 $setLocal firstCyclePoint
 

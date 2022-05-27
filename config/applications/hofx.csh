@@ -7,7 +7,7 @@ if ( $?config_hofx ) exit 0
 set config_hofx = 1
 
 source config/model.csh
-source config/scenario.csh hofx setNestedHofX
+source config/scenario.csh hofx setNestedHofx
 
 ## required settings for PrepJEDI.csh
 $setLocal observations
@@ -30,7 +30,7 @@ $setLocal tropprsMethod
 $setLocal retainObsFeedback
 
 ## job
-$setNestedHofX job.${outerMesh}.seconds
-$setNestedHofX job.${outerMesh}.nodes
-$setNestedHofX job.${outerMesh}.PEPerNode
-$setNestedHofX job.${outerMesh}.memory
+$setNestedHofx job.${outerMesh}.seconds
+$setNestedHofx job.${outerMesh}.nodes
+$setNestedHofx job.${outerMesh}.PEPerNode
+$setNestedHofx job.${outerMesh}.memory

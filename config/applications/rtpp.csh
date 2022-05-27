@@ -5,9 +5,9 @@ setenv config_rtpp 1
 
 source config/model.csh
 source config/applications/variational.csh
-source config/scenario.csh rtpp setNestedRTPP
+source config/scenario.csh rtpp
 
-$setNestedRTPP relaxationFactor
+$setNestedRtpp relaxationFactor
 $setLocal retainOriginalAnalyses
 
 setenv AppName rtpp
@@ -20,6 +20,6 @@ $setLocal job.${ensembleMesh}.secondsPerEDAMember
 @ seconds = $secondsPerEDAMember * $nEnsDAMembers + $baseSeconds
 setenv rtpp__seconds $seconds
 
-$setNestedRTPP job.${ensembleMesh}.nodes
-$setNestedRTPP job.${ensembleMesh}.PEPerNode
-$setNestedRTPP job.${ensembleMesh}.memory
+$setNestedRtpp job.${ensembleMesh}.nodes
+$setNestedRtpp job.${ensembleMesh}.PEPerNode
+$setNestedRtpp job.${ensembleMesh}.memory

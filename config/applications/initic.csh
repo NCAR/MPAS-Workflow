@@ -4,11 +4,11 @@ if ( $?config_initic ) exit 0
 setenv config_initic 1
 
 source config/model.csh
-source config/scenario.csh initic setNestedInitIC
+source config/scenario.csh initic
 
 setenv AppName initic
 
 ## job
-$setNestedInitIC job.${outerMesh}.seconds
-$setNestedInitIC job.${outerMesh}.nodes
-$setNestedInitIC job.${outerMesh}.PEPerNode
+$setNestedInitic job.${outerMesh}.seconds
+$setNestedInitic job.${outerMesh}.nodes
+$setNestedInitic job.${outerMesh}.PEPerNode
