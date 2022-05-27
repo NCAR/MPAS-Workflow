@@ -3,6 +3,7 @@
 if ( $?config_builds ) exit 0
 set config_builds = 1
 
+source config/model.csh
 source config/scenario.csh builds setNestedBuilds
 
 #############################
