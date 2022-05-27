@@ -3,12 +3,7 @@
 if ( $?config_builds ) exit 0
 set config_builds = 1
 
-source config/scenario.csh
-
-# setLocal is a helper function that picks out a configuration node
-# under the "model" key of scenarioConfig
-setenv baseConfig scenarios/base/builds.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig builds"
+source config/scenario.csh builds setNestedBuilds
 
 #############################
 ## build directory structures

@@ -3,13 +3,8 @@
 if ( $?config_verifyobs ) exit 0
 setenv config_verifyobs 1
 
-source config/scenario.csh
 source config/experiment.csh
-
-# setLocal is a helper function that picks out a configuration node
-# under the "verifyobs" key of scenarioConfig
-setenv baseConfig scenarios/base/verifyobs.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig verifyobs"
+source config/scenario.csh verifyobs setNestedVerifyObs
 
 $setLocal pyVerifyDir
 

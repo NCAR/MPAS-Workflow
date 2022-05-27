@@ -3,12 +3,7 @@
 if ( $?config_job ) exit 0
 setenv config_job 1
 
-source config/scenario.csh
-
-# setLocal is a helper function that picks out a configuration node
-# under the "job" key of scenarioConfig
-setenv baseConfig scenarios/base/job.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig job"
+source config/scenario.csh job setNestedJob
 
 $setLocal CPAccountNumber
 $setLocal CPQueueName

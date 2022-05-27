@@ -4,14 +4,7 @@
 if ( $?config_model ) exit 0
 setenv config_model 1
 
-source config/scenario.csh
-
-# setLocal is a helper function that picks out a configuration node
-# under the "model" key of scenarioConfig
-setenv baseConfig scenarios/base/model.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig model"
-setenv setNestedModel "source $setNestedConfig $baseConfig $scenarioConfig model"
-setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig model"
+source config/scenario.csh model setNestedModel
 
 ## MPASCore - must be atmosphere
 setenv MPASCore atmosphere
