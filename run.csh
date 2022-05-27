@@ -22,6 +22,7 @@ set ValidRunConfigs = ( \
   60kmEDA \
   30km-60km3denvar \
   RealTime \
+  IASI120km3denvar \
 )
 set ArgRunConfig = $1
 

@@ -30,8 +30,8 @@ set NamelistFileList = ($outerNamelistFile)
 $setLocal nObsIndent
 
 $setLocal biasCorrection
-
 $setLocal radianceThinningDistance
+$setLocal tropprsMethod
 
 ## clean
 $setLocal retainObsFeedback
