@@ -201,3 +201,6 @@ fields:
 
   - field name: soil_type
     mpas template field: isltyp
+
+  - field name: tropopause_pressure
+    mpas template field: u10

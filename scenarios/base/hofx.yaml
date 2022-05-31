@@ -35,6 +35,9 @@ hofx:
   - ahi_himawari8
   #- abi-clr_g16
   #- ahi-clr_himawari8
+  #- iasi_metop-a
+  #- iasi_metop-b
+  #- iasi_metop-c
 
 ## nObsIndent
 # number of spaces to precede members of the 'observers' list in the JEDI YAML
@@ -44,6 +47,11 @@ hofx:
 # whether to use bias correction coefficients from VarBC
 # OPTIONS: False (not enabled yet)
   biasCorrection: False
+
+# method for the tropopause pressure determination used in the
+# cloud detection filter for infrared observations
+# OPTIONS: thompson, wmo (currently the build code only works for thompson)
+  tropprsMethod: thompson
 
 ## radianceThinningDistance
 # distance (km) used for the Gaussian Thinning filter for all radiance-based observations

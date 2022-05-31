@@ -8,7 +8,7 @@ source config/model.csh
 source config/experiment.csh
 source config/modeldata.csh
 source config/builds.csh
-source config/environment.csh
+source config/environmentJEDI.csh
 source config/applications/initic.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
