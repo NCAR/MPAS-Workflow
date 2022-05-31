@@ -1,38 +1,44 @@
-## Root
-  [[root]] # suite defaults
+## All-task defaults
+  [[root]]
     pre-script = "cd  $origin/"
     [[[environment]]]
       origin = {{mainScriptDir}}
-    # PBS
+
+## Default settings for background and batch-submitted tasks. Currently
+## these are the only two task classifications used.  All new tasks
+## should inherit directly or indirectly from one of these two.
+  [[BACKGROUND]]
+    # These should be very small overhead and few in number; typically these
+    # only act as placeholders in the suite to facilitate transitions between
+    # complex combinations of BATCH tasks
+    [[[job]]]
+      batch system = background
+      execution time limit = PT30S
+
+  [[BATCH]]
+    # load conda + activate npl
+    init-script = '''
+source /etc/profile.d/modules.sh
+module load conda/latest
+conda activate npl
+'''
+    # default job
     [[[job]]]
       batch system = pbs
       execution time limit = PT60M
+
+    # default directives, to be overridden by individual tasks
     [[[directives]]]
       -j = oe
       -k = eod
       -S = /bin/tcsh
-      # default to using one processor
       -q = {{SingleProcQueueName}}
       -A = {{SingleProcAccountNumber}}
       -l = select=1:ncpus=1
-# TODO: enable SLURM
-#    [[[job]]]
-#      batch system = slurm
-#      execution time limit = PT60M
-#    [[[directives]]]
-#      --account = {{CPAccountNumber}}
-#      --mem = 45G
-#      --ntasks = 1
-#      --cpus-per-task = 36
-#      --partition = dav
-
-## Null parent or child
-  [[Null]]
-    [[[job]]]
-      batch system = background
 
 ## Base
   [[ForecastBase]]
+    inherit = BATCH
     [[[job]]]
       execution time limit = PT{{CyclingFCSeconds}}S
     [[[directives]]]
@@ -41,6 +47,7 @@
       -A = {{CPAccountNumber}}
       -l = select={{CyclingFCNodes}}:ncpus={{CyclingFCPEPerNode}}:mpiprocs={{CyclingFCPEPerNode}}
   [[ExtendedFCBase]]
+    inherit = BATCH
     [[[job]]]
       execution time limit = PT{{ExtendedFCSeconds}}S
     [[[directives]]]
@@ -49,6 +56,7 @@
       -A = {{NCPAccountNumber}}
       -l = select={{ExtendedFCNodes}}:ncpus={{ExtendedFCPEPerNode}}:mpiprocs={{ExtendedFCPEPerNode}}
   [[HofXBase]]
+    inherit = BATCH
     [[[job]]]
       execution time limit = PT{{HofXSeconds}}S
       execution retry delays = {{HofXRetry}}
@@ -57,6 +65,7 @@
       -A = {{NCPAccountNumber}}
       -l = select={{HofXNodes}}:ncpus={{HofXPEPerNode}}:mpiprocs={{HofXPEPerNode}}:mem={{HofXMemory}}GB
   [[VerifyModelBase]]
+    inherit = BATCH
     [[[job]]]
       execution time limit = PT{{VerifyModelSeconds}}S
       execution retry delays = {{VerifyModelRetry}}
@@ -65,6 +74,7 @@
       -A = {{NCPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[VerifyObsBase]]
+    inherit = BATCH
     [[[job]]]
       execution time limit = PT{{VerifyObsSeconds}}S
       execution retry delays = {{VerifyObsRetry}}
@@ -73,6 +83,7 @@
       -A = {{NCPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[CompareBase]]
+    inherit = BATCH
     [[[job]]]
       execution time limit = PT5M
     [[[directives]]]
@@ -80,18 +91,24 @@
       -A = {{NCPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[CleanBase]]
+    inherit = BATCH
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = {{CleanRetry}}
 
+## Null parent or child
+  [[Null]]
+    inherit = BACKGROUND
 
 ## Observations
   [[GetObs]]
+    inherit = BATCH
     script = $origin/GetObs.csh
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = {{GetObsRetry}}
   [[ObsToIODA]]
+    inherit = BATCH
     script = $origin/ObsToIODA.csh
     [[[job]]]
       execution time limit = PT10M
@@ -106,8 +123,7 @@
       -A = {{CPAccountNumber}}
       -l = select=1:ncpus=1:mem=10GB
   [[ObsReady]]
-    [[[job]]]
-      batch system = background
+    inherit = BACKGROUND
 
 
 ## Data assimilation and supporting tasks (critical path)
@@ -116,14 +132,13 @@
     [[[job]]]
       batch system = background
   [[DataAssimPost]]
-    [[[job]]]
-      batch system = background
+    inherit = BACKGROUND
   [[DataAssimFinished]]
-    [[[job]]]
-      batch system = background
+    inherit = BACKGROUND
 
   # directory/file preparation
   [[InitDataAssim]]
+    inherit = BATCH
     env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA" "variational"
     script = $origin/PrepVariational.csh "1"
     [[[job]]]
@@ -131,6 +146,7 @@
       execution retry delays = {{VariationalRetry}}
   # single instance or ensemble of EDA(s)
   [[EnsDataAssim]]
+    inherit = BATCH
   {% for inst in DAInstances %}
   [[EDAInstance{{inst}}]]
     inherit = EnsDataAssim
@@ -146,6 +162,7 @@
   {% endfor %}
   # single instance or ensemble of Variational(s)
   [[DataAssim]]
+    inherit = BATCH
   {% for mem in allMembers %}
   [[DAMember{{mem}}]]
     inherit = DataAssim
@@ -165,6 +182,7 @@
 
   # inflation (pre and post)
   [[GenerateABEInflation]]
+    inherit = BATCH
     script = $origin/GenerateABEInflation.csh
     [[[job]]]
       execution time limit = PT20M
@@ -173,11 +191,13 @@
       -A = {{CPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[PrepRTPP]]
+    inherit = BATCH
     script = $origin/PrepRTPP.csh
     [[[job]]]
       execution time limit = PT1M
       execution retry delays = {{RTPPRetry}}
   [[RTPP]]
+    inherit = BATCH
     script = $origin/RTPP.csh
     [[[job]]]
       execution time limit = PT{{RTPPSeconds}}S
@@ -211,12 +231,12 @@
       execution retry delays = {{CyclingFCRetry}}
 {% endfor %}
   [[ForecastFinished]]
-    [[[job]]]
-      batch system = background
+    inherit = BACKGROUND
 
 
 ## Forecasts and analyses generated outside MPAS-Workflow
   [[GetWarmStartIC]]
+    inherit = BATCH
     script = $origin/GetWarmStartIC.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members
@@ -225,11 +245,13 @@
       execution time limit = PT10M
       execution retry delays = {{InitializationRetry}}
   [[GetGFSanalysis]]
+    inherit = BATCH
     script = $origin/GetGFSanalysis.csh
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = {{GFSAnalysisRetry}}
   [[UngribColdStartIC]]
+    inherit = BATCH
     script = $origin/UngribColdStartIC.csh
     [[[job]]]
       execution time limit = PT5M
@@ -240,6 +262,7 @@
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
   [[GenerateColdStartIC]]
+    inherit = BATCH
     script = $origin/GenerateColdStartIC.csh
     [[[job]]]
       execution time limit = PT{{InitICSeconds}}S
@@ -249,12 +272,12 @@
       -A = {{CPAccountNumber}}
       -l = select={{InitICNodes}}:ncpus={{InitICPEPerNode}}:mpiprocs={{InitICPEPerNode}}
   [[ExternalAnalysisReady]]
-    [[[job]]]
-      batch system = background
+    inherit = BACKGROUND
 
 
 ## Verification: extended forecast from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
+    inherit = BATCH
     script = $origin/MeanAnalysis.csh
     [[[job]]]
       execution time limit = PT5M
@@ -293,6 +316,7 @@
 
 ## Verification: ensemble mean background
   [[MeanBackground]]
+    inherit = BATCH
     script = $origin/MeanBackground.csh
     [[[job]]]
       execution time limit = PT5M

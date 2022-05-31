@@ -32,7 +32,6 @@ endif
 # =================
 source config/experiment.csh
 source config/workflow.csh
-source config/environment.csh
 source config/model.csh
 source config/modeldata.csh
 source config/tools.csh

@@ -1,11 +1,6 @@
   obs filters:
   - filter: PreQC
     maxvalue: 0
-#  - filter: GOMsaver
-#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n18.nc4
-  - filter: Background Check
-    threshold: 3.0
-    <<: *multiIterationFilter
 #  Useflag check #amsua-n18
   - filter: Bounds Check
     filter variables:
@@ -22,3 +17,8 @@
     minvalue: 1.0e-12
     action:
       name: reject
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n18.nc4
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter
