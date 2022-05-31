@@ -3,9 +3,6 @@
 if ( $?config_scenario ) exit 0
 setenv config_scenario 1
 
-## python environment
-source config/environmentPython.csh
-
 ## config tools
 source config/config.csh
 

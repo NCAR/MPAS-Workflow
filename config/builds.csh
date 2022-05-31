@@ -4,6 +4,7 @@ if ( $?config_builds ) exit 0
 set config_builds = 1
 
 source config/model.csh
+source config/scenario.csh
 
 # setLocal is a helper function that picks out a configuration node
 # under the "model" key of scenarioConfig
@@ -13,12 +14,6 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig builds"
 #############################
 ## build directory structures
 #############################
-
-## BuildCompiler
-# {compiler}-{mpi-implementation} combination that selects the JEDI module to be loaded in
-# config/environmentForJedi.csh
-# OPTIONS: gnu-openmpi, intel-impi
-setenv BuildCompiler 'gnu-openmpi'
 
 # Note: at this time, all executables should be built in the same environment, one that is
 # consistent with config/environmentForJedi.csh
