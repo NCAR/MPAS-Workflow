@@ -16,9 +16,15 @@ experiment:
 ## ParentDirectoryPrefix
   ParentDirectoryPrefix: /glade/scratch
 
-## ExperimentUser
+## ExperimentUserDir
+# subdirectory within ParentDirectoryPrefix where experiments are located
 # leave as None to be assigned with 'set ExperimentUser = ${USER}'
-  ExperimentUser: None
+  ExperimentUserDir: None
+
+## ExperimentUserPrefix
+# prefix of experiment name
+# leave as None to be assigned with 'set ExperimentUser = ${USER}'
+  ExperimentUserPrefix: None
 
 ## ParentDirectorySuffix
   ParentDirectorySuffix: pandac

@@ -21,11 +21,18 @@ setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig exper
 $setLocal ParentDirectoryPrefix
 $setLocal ParentDirectorySuffix
 
-# ExperimentUser
-set get = "`$getLocalOrNone ExperimentUser`"
-setenv ExperimentUser $get
-if ($ExperimentUser == None) then
-  setenv ExperimentUser ${USER}
+# ExperimentUserDir
+set get = "`$getLocalOrNone ExperimentUserDir`"
+setenv ExperimentUserDir $get
+if ($ExperimentUserDir == None) then
+  setenv ExperimentUserDir ${USER}
+endif
+
+# ExperimentUserPrefix
+set get = "`$getLocalOrNone ExperimentUserPrefix`"
+setenv ExperimentUserPrefix $get
+if ($ExperimentUserPrefix == None) then
+  setenv ExperimentUserPrefix ${USER}_
 endif
 
 # ExperimentName
@@ -37,7 +44,7 @@ $setLocal ExpSuffix
 
 ## ParentDirectory
 # where this experiment is located
-setenv ParentDirectory ${ParentDirectoryPrefix}/${ExperimentUser}/${ParentDirectorySuffix}
+setenv ParentDirectory ${ParentDirectoryPrefix}/${ExperimentUserDir}/${ParentDirectorySuffix}
 
 ## total number of members
 # TODO: set nMembers explicitly via yaml instead of variational.nEnsDAMembers
@@ -63,7 +70,7 @@ if ($ExperimentName == None) then
       set ExpEnsSuffix = '_NMEM'${nMembers}
     endif
     if (${rtpp__relaxationFactor} != "0.0") set ExpEnsSuffix = ${ExpEnsSuffix}_RTPP${rtpp__relaxationFactor}
-    if (${LeaveOneOutEDA} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_LeaveOneOut
+    if (${SelfExclusion} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_SelfExclusion
     if (${ABEInflation} == True) set ExpEnsSuffix = ${ExpEnsSuffix}_ABEI_BT${ABEIChannel}
   endif
 
@@ -97,7 +104,7 @@ if ($ExperimentName == None) then
   setenv ExperimentName ${ExperimentName}_${MeshesDescriptor}
   setenv ExperimentName ${ExperimentName}_${InitializationType}
 endif
-setenv ExperimentName ${ExperimentUser}_${ExperimentName}
+setenv ExperimentName ${ExperimentUserPrefix}${ExperimentName}
 setenv ExperimentName ${ExperimentName}${ExpSuffix}
 
 ## absolute experiment directory

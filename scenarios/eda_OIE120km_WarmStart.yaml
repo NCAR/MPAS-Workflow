@@ -1,7 +1,14 @@
 workflow:
   InitializationType: WarmStart
-observations:
-  resource: PANDACArchive
+  firstCyclePoint: 20180414T18
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180422T00
+  CriticalPathType: Normal
+  VerifyDeterministicDA: False
+  VerifyEnsMeanBG: True
+  DiagnoseEnsSpreadBG: True
+  VerifyAgainstObservations: False
+  VerifyAgainstExternalAnalyses: True
 model:
   outerMesh: 120km
   innerMesh: 120km
@@ -9,7 +16,7 @@ model:
 variational:
   DAType: 3denvar
   nDAInstances: 20
-  LeaveOneOutEDA: True
+  SelfExclusion: True
   # delete observation feedback files of all members to save space
   retainObsFeedback: False
 hofx:
@@ -17,3 +24,5 @@ hofx:
   retainObsFeedback: False
 rtpp:
   relaxationFactor: 0.8
+observations:
+  resource: PANDACArchive

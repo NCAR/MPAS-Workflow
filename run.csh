@@ -22,6 +22,8 @@ set ValidRunConfigs = ( \
   60kmEDA \
   30km-60km3denvar \
   RealTime \
+  GenerateObs \
+  GenerateGFSAnalyses \
   IASI120km3denvar \
 )
 set ArgRunConfig = $1

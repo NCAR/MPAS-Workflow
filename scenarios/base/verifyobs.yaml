@@ -4,4 +4,4 @@ verifyobs:
   # resource requirements
   job:
     baseSeconds: 1100
-    secondsPerEDAMember: 120
+    secondsPerMember: 120
