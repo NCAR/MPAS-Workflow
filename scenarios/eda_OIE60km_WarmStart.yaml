@@ -43,14 +43,14 @@ variational:
           nodes: 6
           PEPerNode: 32
           memory: 45
-          baseSeconds: 250
-          secondsPerEnVarMember: 4
+          baseSeconds: 200
+          secondsPerEnVarMember: 6
           #nodes: 4
           #PEPerNode: 36
           ##memory: 109 #develop, double-precision
           #memory: 45 #single-precision
-          #baseSeconds: 250
-          #secondsPerEnVarMember: 4
+          #baseSeconds: 200
+          #secondsPerEnVarMember: 6
 forecast:
   job:
     60km:
