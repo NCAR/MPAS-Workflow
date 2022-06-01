@@ -17,8 +17,6 @@ variational:
   DAType: 3denvar
   nDAInstances: 80
   SelfExclusion: True
-  # delete observation feedback files of all members to save space
-  retainObsFeedback: False
   job:
     60km:
       60km:
@@ -27,14 +25,14 @@ variational:
           nodes: 6
           PEPerNode: 32
           memory: 45
-          baseSeconds: 250
-          secondsPerEnVarMember: 4
+          baseSeconds: 200
+          secondsPerEnVarMember: 6
           #if single-precision mpas-jedi
           #nodes: 4
           #PEPerNode: 36
           #memory: 45
-          #baseSeconds: 250
-          #secondsPerEnVarMember: 4
+          #baseSeconds: 200
+          #secondsPerEnVarMember: 6
 forecast:
   job:
     60km:
@@ -42,9 +40,6 @@ forecast:
       PEPerNode: 36
       baseSeconds: 60
       secondsPerForecastHR: 40
-hofx:
-  # delete observation feedback files of all members to save space
-  retainObsFeedback: False
 rtpp:
   relaxationFactor: 0.7
   job:
