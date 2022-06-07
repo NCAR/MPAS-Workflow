@@ -5,17 +5,20 @@ workflow:
   finalCyclePoint: 20180524T18
   InitializationType: ColdStart
   CriticalPathType: GenerateExternalAnalyses
-#TODO: make it so that observations and variational are not necessary
-observations:
-  resource: PANDACArchive
+  maxActiveCyclePoints: 60
 experiment:
   ExperimentName: 'GenerateGFSAnalyses'
 model:
-  MPASGridDescriptor: OIE60km
+  outerMesh: 60km
+  innerMesh: 60km
+  ensembleMesh: 60km
   AnalysisSource: GFSfromRDAOnline
-variational:
-  DAType: 3dvar
-  nInnerIterations: [0,]
 job:
   CPQueueName: economy
   NCPQueueName: economy
+#TODO: make it so that observations and variational are not necessary
+observations:
+  resource: PANDACArchive
+variational:
+  DAType: 3dvar
+  nInnerIterations: [0,]

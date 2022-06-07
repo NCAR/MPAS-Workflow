@@ -4,16 +4,20 @@ workflow:
   initialCyclePoint: 20180415T00
   finalCyclePoint: 20180524T18
   CriticalPathType: GenerateObs
-#TODO: make it so that model and variational are not necessary
+  maxActiveCyclePoints: 60
 observations:
-  resource: RDAOnline
+  resource: GladeRDAOnline
 experiment:
   ExperimentName: 'GenerateObs'
-model:
-  MPASGridDescriptor: OIE120km
-variational:
-  DAType: 3dvar
-  nInnerIterations: [0,]
+  ExperimentUserPrefix: ''
 job:
   CPQueueName: economy
   NCPQueueName: economy
+#TODO: make it so that model and variational are not necessary
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+variational:
+  DAType: 3dvar
+  nInnerIterations: [0,]
