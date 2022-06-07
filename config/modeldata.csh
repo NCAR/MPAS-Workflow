@@ -97,7 +97,7 @@ else
     set ensPbMemNDigits = ${dynamicEnsBMemNDigits}
     set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
 
-    set ensPbDir = ${PreviousEDAForecastDir}
+    set ensPbDir = ${PreviousEnsembleForecastDir}
     set ensPbNMembers = ${nPreviousEnsDAMembers}
   else
     echo "ERROR in $0 : unrecognized value for fixedEnsBSource --> ${fixedEnsBSource}" >> ./FAIL

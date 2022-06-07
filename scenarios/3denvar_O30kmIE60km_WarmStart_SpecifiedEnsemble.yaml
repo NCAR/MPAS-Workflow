@@ -1,0 +1,60 @@
+workflow:
+  InitializationType: WarmStart
+  firstCyclePoint: 20180414T18
+  initialCyclePoint: 20180418T00
+  finalCyclePoint: 20180504T00
+  CriticalPathType: Bypass
+  VerifyDeterministicDA: False
+  VerifyEnsMeanBG: False
+  VerifyAgainstObservations: True
+  VerifyAgainstExternalAnalyses: True
+
+  VerifyExtendedMeanFC: True
+  ExtendedFCWindowHR: 240
+  ExtendedFC_DT_HR: 24
+  ExtendedMeanFCTimes: T00
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+  fixedEnsBSource: PreviousEDA
+  nPreviousEnsDAMembers: 80
+
+## DART
+#  PreviousEnsembleForecastDir: /glade/scratch/guerrett/pandac/schwartz_dart_NMEM80_60km/CyclingFC
+#experiment:
+#  ExpSuffix: '_B-DART80'
+
+## EDA
+  PreviousEnsembleForecastDir: /glade/scratch/guerrett/pandac/guerrett_eda_3denvar-60-iter_NMEM80_RTPP0.7_SelfExclusion_OIE60km_WarmStart/CyclingFC
+experiment:
+  ExpSuffix: '_B-SE80+RTPP70'
+
+variational:
+  DAType: 3denvar
+  nInnerIterations: [60,60,]
+forecast:
+  job:
+    30km:
+      # more efficient
+      nodes: 4
+      PEPerNode: 36
+      baseSeconds: 60
+      secondsPerForecastHR: 150
+observations:
+  resource: PANDACArchive
+  PANDACArchive:
+    IODADirectory:
+      variational:
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+      hofx:
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+    IODASuperObGrid:
+      abi_g16: 15X15
+      ahi_himawari8: 15X15

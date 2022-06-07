@@ -47,7 +47,11 @@ $setNestedModel AnalysisSource
 # only applicable to 3denvar when nMembers<2
 $setLocal fixedEnsBSource
 $setLocal nPreviousEnsDAMembers
-$setLocal PreviousEDAForecastDir
+setenv PreviousEnsembleForecastDir "`$getLocalOrNone PreviousEnsembleForecastDir`"
+
+if ("$fixedEnsBSource" == "PreviousEDA" && "$PreviousEnsembleForecastDir" == None) then
+  echo "$0 (ERROR): model.PreviousEnsembleForecastDir must be set when fixedEnsBSource == PreviousEDA" >> ./FAIL
+endif
 
 $setLocal GraphInfoDir
 

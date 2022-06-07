@@ -23,21 +23,21 @@ $setLocal ParentDirectorySuffix
 
 # ExperimentUserDir
 set get = "`$getLocalOrNone ExperimentUserDir`"
-setenv ExperimentUserDir $get
-if ($ExperimentUserDir == None) then
+setenv ExperimentUserDir "$get"
+if ("$ExperimentUserDir" == None) then
   setenv ExperimentUserDir ${USER}
 endif
 
 # ExperimentUserPrefix
 set get = "`$getLocalOrNone ExperimentUserPrefix`"
-setenv ExperimentUserPrefix $get
-if ($ExperimentUserPrefix == None) then
+setenv ExperimentUserPrefix "$get"
+if ("$ExperimentUserPrefix" == None) then
   setenv ExperimentUserPrefix ${USER}_
 endif
 
 # ExperimentName
 set get = "`$getLocalOrNone ExperimentName`"
-setenv ExperimentName $get
+setenv ExperimentName "$get"
 
 # ExpSuffix
 $setLocal ExpSuffix
@@ -52,7 +52,7 @@ setenv nMembers $nEnsDAMembers
 
 
 ## experiment name
-if ($ExperimentName == None) then
+if ("$ExperimentName" == None) then
   # derive experiment title parts from critical config elements
   #(1) DAType
   set ExpBase = ${DAType}

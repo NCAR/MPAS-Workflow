@@ -95,14 +95,8 @@ if ($DAType == 3dvar) then
 else
   if ($nEnsDAMembers > 1) then
     setenv nEnVarMembers $nEnsDAMembers
-  else if ("$fixedEnsBSource" == "GEFS") then
-    # 20 for GEFS-ensemble retrospective experiments
-    setenv nEnVarMembers 20
-  else if ("$fixedEnsBSource" == "PreviousEDA") then
-    setenv nEnVarMembers $nPreviousEnsDAMembers
   else
-    echo "$0 (ERROR): nEnVarMembers is not defined for this fixedEnsBSource ($fixedEnsBSource)"
-    exit 1
+    setenv nEnVarMembers $nPreviousEnsDAMembers
   endif
 endif
 
