@@ -10,3 +10,15 @@ cldfrac_tot_UM_max
 cldfrac_tot_UM_rand
 cldht_top_UM
 cldht_base_UM
+height_250hPa
+height_500hPa
+height_850hPa
+temperature_250hPa
+temperature_500hPa
+temperature_850hPa
+umeridional_250hPa
+umeridional_500hPa
+umeridional_850hPa
+uzonal_250hPa
+uzonal_500hPa
+uzonal_850hPa
