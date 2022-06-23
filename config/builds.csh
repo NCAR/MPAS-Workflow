@@ -1,24 +1,35 @@
 #!/bin/csh -f
 
+if ( $?config_builds ) exit 0
+set config_builds = 1
+
+source config/model.csh
+source config/scenario.csh
+
+# setLocal is a helper function that picks out a configuration node
+# under the "model" key of scenarioConfig
+setenv baseConfig scenarios/base/builds.yaml
+setenv setLocal "source $setConfig $baseConfig $scenarioConfig builds"
+
 #############################
 ## build directory structures
 #############################
 
-## BuildCompiler
-# {compiler}-{mpi-implementation} combination that selects the JEDI module to be loaded in
-# config/environment.csh
-# OPTIONS: gnu-openmpi, intel-impi
-setenv BuildCompiler 'gnu-openmpi'
-
 # Note: at this time, all executables should be built in the same environment, one that is
-# consistent with config/environment.csh
+# consistent with config/environmentForJedi.csh
+
+# default build directory
+$setLocal commonBuild
 
 # Ungrib
 setenv ungribEXE ungrib.exe
 setenv WPSBuildDir /glade/work/guerrett/pandac/data/GEFS
 
-set commonBuild = /glade/scratch/syha/mpas-bundle-iaufix-build
-#set commonBuild = /glade/work/syha/mpas-bundle-build-gnu-openmpi #default
+# Obs2IODA-v2
+setenv obs2iodaEXEC obs2ioda-v2.x
+setenv obs2iodaBuildDir /glade/p/mmm/parc/ivette/pandac/fork_obs2ioda/obs2ioda/obs2ioda-v2/src
+setenv iodaupgradeEXEC ioda-upgrade.x
+setenv iodaupgradeBuildDir ${commonBuild}/bin
 
 # MPAS-JEDI
 # ---------
@@ -40,12 +51,21 @@ setenv RTPPBuildDir ${commonBuild}/bin
 
 # MPAS-Model
 # ----------
-setenv MPASCore atmosphere
 setenv InitEXE mpas_init_${MPASCore}
 setenv InitBuildDir ${commonBuild}/bin
-setenv ForecastEXE mpas_${MPASCore}
 setenv ForecastTopBuildDir ${commonBuild}
+
+# Use a static single-precision build of MPAS-A to conserve resources
+#setenv ForecastBuildDir /glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single
+#setenv ForecastEXE ${MPASCore}_model
+
+# TODO: enable single-precision MPAS-A build in mpas-bundle, then use bundle-built executables
+# Note to developers: it is easier to use the ForecastBuildDir and ForecastEXE settings below when
+# modifying MPAS-Model source code.  The added expense is minimal for short-range cycling tests.
+# This also requires modifying the mpiexec executable in forecast.csh.
 setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
+setenv ForecastEXE mpas_${MPASCore}
+
 
 setenv MPASLookupDir ${ForecastTopBuildDir}/MPAS/core_${MPASCore}
 set MPASLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)

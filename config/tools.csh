@@ -1,17 +1,22 @@
 #!/bin/csh -f
 
-source config/filestructure.csh
+if ( $?config_tools ) exit 0
+set config_tools = 1
 
 ## workflow tools
-set pyDir = ${mainScriptDir}/tools
+set wd = `pwd`
+set pyDir = $wd/tools
 set pyTools = ( \
-  memberDir \
   advanceCYMDH \
+  checkMissingChannels \
   create_amb_in_nc \
+  dateList \
+  memberDir \
   nSpaces \
-  updateXTIME \
-  substituteEnsembleB \
+  substituteEnsembleBMembers \
+  substituteEnsembleBTemplate \
   TimeFmtChange \
+  updateXTIME \
 )
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"

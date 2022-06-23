@@ -1,0 +1,418 @@
+## All-task defaults
+  [[root]]
+    pre-script = "cd  $origin/"
+    [[[environment]]]
+      origin = {{mainScriptDir}}
+
+## Default settings for background and batch-submitted tasks. Currently
+## these are the only two task classifications used.  All new tasks
+## should inherit directly or indirectly from one of these two.
+  [[BACKGROUND]]
+    # These should be very small overhead and few in number; typically these
+    # only act as placeholders in the suite to facilitate transitions between
+    # complex combinations of BATCH tasks
+    [[[job]]]
+      batch system = background
+      execution time limit = PT30S
+
+  [[BATCH]]
+    # load conda + activate npl
+    init-script = '''
+source /etc/profile.d/modules.sh
+module load conda/latest
+conda activate npl
+'''
+    # default job
+    [[[job]]]
+      batch system = pbs
+      execution time limit = PT60M
+
+    # default directives, to be overridden by individual tasks
+    [[[directives]]]
+      -j = oe
+      -k = eod
+      -S = /bin/tcsh
+      -q = {{SingleProcQueueName}}
+      -A = {{SingleProcAccountNumber}}
+      -l = select=1:ncpus=1
+
+## Base
+  [[ForecastBase]]
+    inherit = BATCH
+    [[[job]]]
+      execution time limit = PT{{CyclingFCSeconds}}S
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{CyclingFCNodes}}:ncpus={{CyclingFCPEPerNode}}:mpiprocs={{CyclingFCPEPerNode}}
+  [[ExtendedFCBase]]
+    inherit = BATCH
+    [[[job]]]
+      execution time limit = PT{{ExtendedFCSeconds}}S
+    [[[directives]]]
+      -m = ae
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select={{ExtendedFCNodes}}:ncpus={{ExtendedFCPEPerNode}}:mpiprocs={{ExtendedFCPEPerNode}}
+  [[HofXBase]]
+    inherit = BATCH
+    [[[job]]]
+      execution time limit = PT{{HofXSeconds}}S
+      execution retry delays = {{HofXRetry}}
+    [[[directives]]]
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select={{HofXNodes}}:ncpus={{HofXPEPerNode}}:mpiprocs={{HofXPEPerNode}}:mem={{HofXMemory}}GB
+  [[VerifyModelBase]]
+    inherit = BATCH
+    [[[job]]]
+      execution time limit = PT{{VerifyModelSeconds}}S
+      execution retry delays = {{VerifyModelRetry}}
+    [[[directives]]]
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select=1:ncpus=36:mpiprocs=36
+  [[VerifyObsBase]]
+    inherit = BATCH
+    [[[job]]]
+      execution time limit = PT{{VerifyObsSeconds}}S
+      execution retry delays = {{VerifyObsRetry}}
+    [[[directives]]]
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select=1:ncpus=36:mpiprocs=36
+  [[CompareBase]]
+    inherit = BATCH
+    [[[job]]]
+      execution time limit = PT5M
+    [[[directives]]]
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select=1:ncpus=36:mpiprocs=36
+  [[CleanBase]]
+    inherit = BATCH
+    [[[job]]]
+      execution time limit = PT5M
+      execution retry delays = {{CleanRetry}}
+
+## Null parent or child
+  [[Null]]
+    inherit = BACKGROUND
+
+## Observations
+  [[GetObs]]
+    inherit = BATCH
+    script = $origin/GetObs.csh
+    [[[job]]]
+      execution time limit = PT10M
+      execution retry delays = {{GetObsRetry}}
+  [[ObsToIODA]]
+    inherit = BATCH
+    script = $origin/ObsToIODA.csh
+    [[[job]]]
+      execution time limit = PT10M
+      execution retry delays = {{InitializationRetry}}
+    # currently ObsToIODA has to be on Cheyenne, because ioda-upgrade.x is built there
+    # TODO: build ioda-upgrade.x on casper, remove CP directives below
+    # Note: memory for ObsToIODA may need to be increased when hyperspectral and/or
+    #       geostationary instruments are added
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select=1:ncpus=1:mem=10GB
+  [[ObsReady]]
+    inherit = BACKGROUND
+
+
+## Data assimilation and supporting tasks (critical path)
+  # (Ens)DataAssim => Post => Finished => Clean
+  [[DataAssimPost]]
+    inherit = BACKGROUND
+  [[DataAssimFinished]]
+    inherit = BACKGROUND
+
+  # directory/file preparation
+  [[InitDataAssim]]
+    inherit = BATCH
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA" "variational"
+    script = $origin/PrepVariational.csh "1"
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = {{VariationalRetry}}
+  # single instance or ensemble of EDA(s)
+  [[EnsDataAssim]]
+    inherit = BATCH
+  {% for inst in DAInstances %}
+  [[EDAInstance{{inst}}]]
+    inherit = EnsDataAssim
+    script = $origin/EnsembleOfVariational.csh "{{inst}}"
+    [[[job]]]
+      execution time limit = PT{{EnsOfVariationalSeconds}}S
+      execution retry delays = {{EnsOfVariationalRetry}}
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{EnsOfVariationalNodes}}:ncpus={{EnsOfVariationalPEPerNode}}:mpiprocs={{EnsOfVariationalPEPerNode}}:mem={{EnsOfVariationalMemory}}GB
+  {% endfor %}
+  # single instance or ensemble of Variational(s)
+  [[DataAssim]]
+    inherit = BATCH
+  {% for mem in allMembers %}
+  [[DAMember{{mem}}]]
+    inherit = DataAssim
+    script = $origin/Variational.csh "{{mem}}"
+    [[[job]]]
+      execution time limit = PT{{VariationalSeconds}}S
+      execution retry delays = {{VariationalRetry}}
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{VariationalNodes}}:ncpus={{VariationalPEPerNode}}:mpiprocs={{VariationalPEPerNode}}:mem={{VariationalMemory}}GB
+  {% endfor %}
+  [[CleanVariational]]
+    inherit = CleanBase
+    script = $origin/CleanVariational.csh
+
+  # inflation (pre and post)
+  [[GenerateABEInflation]]
+    inherit = BATCH
+    script = $origin/GenerateABEInflation.csh
+    [[[job]]]
+      execution time limit = PT20M
+    [[[directives]]]
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select=1:ncpus=36:mpiprocs=36
+  [[PrepRTPP]]
+    inherit = BATCH
+    script = $origin/PrepRTPP.csh
+    [[[job]]]
+      execution time limit = PT1M
+      execution retry delays = {{RTPPRetry}}
+  [[RTPP]]
+    inherit = BATCH
+    script = $origin/RTPP.csh
+    [[[job]]]
+      execution time limit = PT{{RTPPSeconds}}S
+      execution retry delays = {{RTPPRetry}}
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{RTPPNodes}}:ncpus={{RTPPPEPerNode}}:mpiprocs={{RTPPPEPerNode}}:mem={{RTPPMemory}}GB
+  [[CleanRTPP]]
+    inherit = CleanBase
+    script = $origin/CleanRTPP.csh
+
+  # verification
+  [[VerifyObsDA]]
+    inherit = VerifyObsBase
+    script = $origin/VerifyObsDA.csh "1" "0" "DA" "0" "variational"
+  [[CompareObsDA]]
+    inherit = CompareBase
+    script = $origin/CompareObsDA.csh "1" "0" "DA" "variational"
+
+
+## Forecast (critical path)
+  [[Forecast]]
+    inherit = ForecastBase
+{% for mem in allMembers %}
+  [[ForecastMember{{mem}}]]
+    inherit = Forecast
+    script = $origin/Forecast.csh "{{mem}}" "{{FCOutIntervalHR}}" "{{FCLengthHR}}" "{{forecastIAU}}"
+    [[[job]]]
+      execution retry delays = {{CyclingFCRetry}}
+{% endfor %}
+  [[ForecastFinished]]
+    inherit = BACKGROUND
+
+
+## Forecasts and analyses generated outside MPAS-Workflow
+  [[GetWarmStartIC]]
+    inherit = BATCH
+    script = $origin/GetWarmStartIC.csh
+    [[[job]]]
+      # give longer for higher resolution and more EDA members
+      # TODO: set time limit based on outerMesh AND (number of members OR
+      #       independent task for each member)
+      execution time limit = PT10M
+      execution retry delays = {{InitializationRetry}}
+  [[GetGFSanalysis]]
+    inherit = BATCH
+    script = $origin/GetGFSanalysis.csh
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = {{GFSAnalysisRetry}}
+  [[UngribColdStartIC]]
+    inherit = BATCH
+    script = $origin/UngribColdStartIC.csh
+    [[[job]]]
+      execution time limit = PT5M
+      execution retry delays = {{InitializationRetry}}
+    # currently UngribColdStartIC has to be on Cheyenne, because ungrib.exe is built there
+    # TODO: build ungrib.exe on casper, remove CP directives below
+    [[[directives]]]
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+  [[GenerateColdStartIC]]
+    inherit = BATCH
+    script = $origin/GenerateColdStartIC.csh
+    [[[job]]]
+      execution time limit = PT{{InitICSeconds}}S
+      execution retry delays = {{InitializationRetry}}
+    [[[directives]]]
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{InitICNodes}}:ncpus={{InitICPEPerNode}}:mpiprocs={{InitICPEPerNode}}
+  [[ExternalAnalysisReady]]
+    inherit = BACKGROUND
+
+
+## Verification: extended forecast from mean analysis (including single-member deterministic)
+  [[MeanAnalysis]]
+    inherit = BATCH
+    script = $origin/MeanAnalysis.csh
+    [[[job]]]
+      execution time limit = PT5M
+    [[[directives]]]
+      -m = ae
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select=1:ncpus=36:mpiprocs=36
+  [[ExtendedMeanFC]]
+    inherit = ExtendedFCBase
+    script = $origin/ExtendedMeanFC.csh "1" "{{ExtendedFCOutIntervalHR}}" "{{ExtendedFCLengthHR}}" "False"
+  [[HofXMeanFC]]
+    inherit = HofXBase
+  [[VerifyModelMeanFC]]
+    inherit = VerifyModelBase
+{% for dt in ExtendedFCLengths %}
+  [[HofXMeanFC{{dt}}hr]]
+    inherit = HofXMeanFC
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "hofx"
+    script = $origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
+  [[CleanHofXMeanFC{{dt}}hr]]
+    inherit = CleanBase
+    script = $origin/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
+  [[VerifyObsMeanFC{{dt}}hr]]
+    inherit = VerifyObsBase
+    script = $origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0" "hofx"
+  [[VerifyModelMeanFC{{dt}}hr]]
+    inherit = VerifyModelMeanFC
+    script = $origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC" "0"
+{% endfor %}
+
+
+## Verification: ensemble mean background
+  [[MeanBackground]]
+    inherit = BATCH
+    script = $origin/MeanBackground.csh
+    [[[job]]]
+      execution time limit = PT5M
+    [[[directives]]]
+      -m = ae
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select=1:ncpus=36:mpiprocs=36
+  [[HofXEnsMeanBG]]
+    inherit = HofXBase
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG" "hofx"
+    script = $origin/HofXEnsMeanBG.csh "1" "0" "BG"
+    [[[directives]]]
+      -q = {{EnsMeanBGQueueName}}
+      -A = {{EnsMeanBGAccountNumber}}
+{% if DiagnoseEnsSpreadBG %}
+  {% set nEnsSpreadMem = nMembers %}
+  {% set modelSeconds = VerifyModelEnsMeanSeconds %}
+  {% set obsSeconds = VerifyObsEnsMeanSeconds %}
+{% else %}
+  {% set nEnsSpreadMem = 0 %}
+  {% set modelSeconds = VerifyModelSeconds %}
+  {% set obsSeconds = VerifyObsSeconds %}
+{% endif %}
+  [[VerifyModelEnsMeanBG]]
+    inherit = VerifyModelBase
+    script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
+    [[[job]]]
+      execution time limit = PT{{modelSeconds}}M
+  [[VerifyObsEnsMeanBG]]
+    inherit = VerifyObsBase
+    script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}" "hofx"
+    [[[job]]]
+      execution time limit = PT{{obsSeconds}}S
+  [[CleanHofXEnsMeanBG]]
+    inherit = CleanBase
+    script = $origin/CleanHofXEnsMeanBG.csh "1" "0" "BG"
+
+
+## Verification: various kinds of ensembles
+  [[ExtendedEnsFC]]
+    inherit = ExtendedFCBase
+{% for state in ['BG', 'AN']%}
+  [[HofX{{state}}]]
+    inherit = HofXBase
+  [[VerifyModel{{state}}]]
+    inherit = VerifyModelBase
+  [[CompareModel{{state}}]]
+    inherit = CompareBase
+  [[VerifyObs{{state}}]]
+    inherit = VerifyObsBase
+  [[CompareObs{{state}}]]
+    inherit = CompareBase
+  [[CleanHofX{{state}}]]
+    inherit = CleanBase
+{% endfor %}
+{% for mem in EnsVerifyMembers %}
+
+  # ensemble of backgrounds and analyses (including single-member deterministic)
+  {% for state in ['BG', 'AN']%}
+  [[HofX{{state}}{{mem}}]]
+    inherit = HofX{{state}}
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}" "hofx"
+    script = $origin/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+  [[VerifyModel{{state}}{{mem}}]]
+    inherit = VerifyModel{{state}}
+    script = $origin/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
+  [[CompareModel{{state}}{{mem}}]]
+    inherit = CompareModel{{state}}
+    script = $origin/CompareModel{{state}}.csh "{{mem}}" "0" "{{state}}"
+  [[VerifyObs{{state}}{{mem}}]]
+    inherit = VerifyObs{{state}}
+    script = $origin/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0" "hofx"
+  [[CompareObs{{state}}{{mem}}]]
+    inherit = CompareObs{{state}}
+    script = $origin/CompareObs{{state}}.csh "{{mem}}" "0" "{{state}}" "hofx"
+  [[CleanHofX{{state}}{{mem}}]]
+    inherit = CleanHofX{{state}}
+    script = $origin/CleanHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
+  {% endfor %}
+
+
+  # ensemble of extended forecasts from ensemble of analyses
+  [[ExtendedFC{{mem}}]]
+    inherit = ExtendedEnsFC
+    script = $origin/ExtendedEnsFC.csh "{{mem}}" "{{ExtendedFCOutIntervalHR}}" "{{ExtendedFCLengthHR}}" "False"
+  [[HofXEnsFC{{mem}}]]
+    inherit = HofXBase
+  [[VerifyModelEnsFC{{mem}}]]
+    inherit = VerifyModelBase
+  {% for dt in ExtendedFCLengths %}
+  [[HofXEnsFC{{mem}}-{{dt}}hr]]
+    inherit = HofXEnsFC{{mem}}
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC" "hofx"
+    script = $origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+  [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
+    inherit = VerifyModelEnsFC{{mem}}
+    script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
+  [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
+    inherit = VerifyObsBase
+    script = $origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0" "hofx"
+  [[CleanHofXEnsFC{{mem}}-{{dt}}hr]]
+    inherit = CleanBase
+    script = $origin/CleanHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
+  {% endfor %}
+{% endfor %}

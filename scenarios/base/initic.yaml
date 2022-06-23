@@ -1,0 +1,20 @@
+initic:
+## mesh-specific settings
+  # resource requirements
+  job:
+    #{{outerMesh}}:
+    #  seconds: int
+    #  nodes: int
+    #  PEPerNode: int
+    30km:
+      seconds: 60
+      nodes: 1
+      PEPerNode: 36
+    60km:
+      seconds: 60
+      nodes: 1
+      PEPerNode: 36
+    120km:
+      seconds: 60
+      nodes: 1
+      PEPerNode: 36

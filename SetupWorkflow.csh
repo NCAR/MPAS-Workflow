@@ -1,59 +1,44 @@
 #!/bin/csh -f
-source config/filestructure.csh
 
-set AppAndVerify = AppAndVerify
+## create experiment environment
+source generateExperimentConfig.csh
 
-echo ""
-echo "======================================================================"
-echo "Setting up a new workflow"
-echo "  ExperimentName: ${ExperimentName}"
-echo "  mainScriptDir: ${mainScriptDir}"
-echo "======================================================================"
-echo ""
-
-rm -rf ${mainScriptDir}
-mkdir -p ${mainScriptDir}
 set workflowParts = ( \
+  GetGFSanalysis.csh \
   UngribColdStartIC.csh \
   GenerateColdStartIC.csh \
   GetWarmStartIC.csh \
+  GetObs.csh \
+  ObsToIODA.csh \
   getCycleVars.csh \
   tools \
   config \
+  scenarios \
   MeanAnalysis.csh \
   MeanBackground.csh \
-  RTPPInflation.csh \
+  PrepRTPP.csh \
+  RTPP.csh \
+  CleanRTPP.csh \
   GenerateABEInflation.csh \
   PrepVariational.csh \
   EnsembleOfVariational.csh \
+  include \
 )
 foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
 end
 
-source config/tools.csh
-source config/modeldata.csh
-source config/obsdata.csh
-source config/mpas/variables.csh
-source config/experiment.csh
-source config/mpas/${MPASGridDescriptor}/mesh.csh
+cd ${mainScriptDir}
 
-## First cycle "forecast" established offline
-# TODO: Setup FirstCycleDate using a new fcinit job type and put in R1 cylc position
-set thisCycleDate = $FirstCycleDate
-set thisValidDate = $thisCycleDate
-source getCycleVars.csh
+## load the workflow settings
+source config/workflow.csh
 
-setenv VARBC_TABLE ${INITIAL_VARBC_TABLE}
+cd -
 
-#TODO: enable VARBC updating between cycles
-#  setenv VARBC_TABLE ${prevCyclingDADir}/${VarBCAnalysis}
+set AppAndVerify = AppAndVerify
 
-
-## PrepJEDICyclingDA, CyclingDA, VerifyObsDA, VerifyModelDA*, CleanCyclingDA
+## PrepJEDIVariational, Variational, VerifyObsDA, VerifyModelDA*, CleanVariational
 # *VerifyModelDA is non-functional and unused
-#TODO: enable VerifyObsDA for ensemble DA; only works for deterministic DA
-set WorkDir = $CyclingDADirs[1]
 set taskBaseScript = Variational
 set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
 sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
@@ -63,44 +48,21 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapStateDirsTEMPLATE@prevCyclingFCDirs@' \
     -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeTEMPLATE@DA@' \
-    -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \
     -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
-    -e 's@wrapAppNameTEMPLATE@'${DAType}'@g' \
-    -e 's@wrapjediAppNameTEMPLATE@variational@g' \
-    -e 's@wrapnOuterTEMPLATE@'${nOuterIterations}'@g' \
-    -e 's@wrapAppTypeTEMPLATE@variational@g' \
     ${AppAndVerify}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}
 ${WrapperScript}
 rm ${WrapperScript}
 
 
-## CyclingFC
-if (${IAU} == False) then
-
-echo "Making CyclingFC job script"
-set JobScript=${mainScriptDir}/CyclingFC.csh
+## Forecast
+echo "Making Forecast job script"
+set JobScript=${mainScriptDir}/Forecast.csh
 sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
     -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
-    -e 's@fcLengthHRTEMPLATE@'${CyclingWindowHR}'@' \
-    -e 's@fcIntervalHRTEMPLATE@'${CyclingWindowHR}'@' \
     -e 's@deleteZerothForecastTEMPLATE@True@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
-
-else ## CyclingFC for IAU
-
-echo "Making CyclingFC job script for IAU"
-set JobScript=${mainScriptDir}/CyclingFC.csh
-sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
-    -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
-    -e 's@CyclingFrequencyHR@'${CyclingWindowHR}'@' \
-    -e 's@fcLengthHRTEMPLATE@'${IAUfcLengthHR}'@' \
-    -e 's@fcIntervalHRTEMPLATE@'${IAUoutIntervalHR}'@' \
-    -e 's@deleteZerothForecastTEMPLATE@False@' \
-    forecast.csh > ${JobScript}
-chmod 744 ${JobScript}
-endif #(${IAU} == False) then
 
 
 ## ExtendedMeanFC
@@ -108,8 +70,6 @@ echo "Making ExtendedMeanFC job script"
 set JobScript=${mainScriptDir}/ExtendedMeanFC.csh
 sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
     -e 's@StateDirsTEMPLATE@MeanAnalysisDirs@' \
-    -e 's@fcLengthHRTEMPLATE@'${ExtendedFCWindowHR}'@' \
-    -e 's@fcIntervalHRTEMPLATE@'${ExtendedFC_DT_HR}'@' \
     -e 's@deleteZerothForecastTEMPLATE@False@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
@@ -120,8 +80,6 @@ echo "Making ExtendedEnsFC job script"
 set JobScript=${mainScriptDir}/ExtendedEnsFC.csh
 sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
     -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
-    -e 's@fcLengthHRTEMPLATE@'${ExtendedFCWindowHR}'@' \
-    -e 's@fcIntervalHRTEMPLATE@'${ExtendedFC_DT_HR}'@' \
     -e 's@deleteZerothForecastTEMPLATE@False@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
@@ -151,12 +109,7 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
       -e 's@wrapStateDirsTEMPLATE@'$TemplateVariables[1]'@' \
       -e 's@wrapStatePrefixTEMPLATE@'$TemplateVariables[2]'@' \
       -e 's@wrapStateTypeTEMPLATE@'${state}'@' \
-      -e 's@wrapVARBCTableTEMPLATE@'${VARBC_TABLE}'@' \
       -e 's@wrapWindowHRTEMPLATE@'$TemplateVariables[3]'@' \
-      -e 's@wrapAppNameTEMPLATE@hofx@g' \
-      -e 's@wrapjediAppNameTEMPLATE@hofx@g' \
-      -e 's@wrapnOuterTEMPLATE@0@g' \
-      -e 's@wrapAppTypeTEMPLATE@hofx@g' \
       ${AppAndVerify}.csh > ${WrapperScript}
   chmod 744 ${WrapperScript}
   ${WrapperScript}

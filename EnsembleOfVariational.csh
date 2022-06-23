@@ -27,10 +27,11 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
 source config/builds.csh
-source config/environment.csh
+source config/environmentJEDI.csh
+source config/experiment.csh
 source config/mpas/variables.csh
+source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -63,7 +64,7 @@ while ( $instance <= ${nDAInstances} )
   while ( $myMember <= ${EDASize} )
     if ( $instance == ${ArgInstance} ) then
       # add eda-member yaml name to list of member yamls
-      set memberyaml = variational_${member}.yaml
+      set memberyaml = ${YAMLPrefix}${member}.yaml
       echo "  - ${self_WorkDir}/$memberyaml" >> $myYAML
     endif
 
@@ -75,7 +76,7 @@ end
 
 
 ## create then move to single run directory
-set instDir = `${memberDir} ens ${ArgInstance} "${flowInstFmt}"`
+set instDir = `${memberDir} 2 ${ArgInstance} "${flowInstanceFmt}"`
 set runDir = run${instDir}
 rm -r ${runDir}
 mkdir -p ${runDir}
@@ -91,7 +92,7 @@ ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)
-  ln -sfv ${ModelConfigDir}/${file} .
+  ln -sfv $ModelConfigDir/$file .
 end
 
 # Link+Run the executable

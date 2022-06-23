@@ -1,35 +1,32 @@
 #!/bin/csh -f
 
-source config/experiment.csh
+if ( $?config_job ) exit 0
+setenv config_job 1
 
-#
-# static job submission settings
-# =============================================
+source config/scenario.csh
 
-## *AccountNumber
-# OPTIONS: NMMM0015, NMMM0043
-setenv StandardAccountNumber NMMM0013
-setenv CYAccountNumber ${StandardAccountNumber}
-setenv VFAccountNumber ${StandardAccountNumber}
+# setLocal is a helper function that picks out a configuration node
+# under the "job" key of scenarioConfig
+setenv baseConfig scenarios/base/job.yaml
+setenv setLocal "source $setConfig $baseConfig $scenarioConfig job"
 
-## *QueueName
-# OPTIONS: economy, regular, premium
-setenv CYQueueName regular
-setenv VFQueueName economy
+$setLocal CPAccountNumber
+$setLocal CPQueueName
+$setLocal NCPAccountNumber
+$setLocal NCPQueueName
+$setLocal SingleProcAccountNumber
+$setLocal SingleProcQueueName
+$setLocal EnsMeanBGQueueName
+$setLocal EnsMeanBGAccountNumber
 
-if ($ABEInflation == True) then
-  setenv EnsMeanBGQueueName ${CYQueueName}
-  setenv EnsMeanBGAccountNumber ${CYAccountNumber}
-else
-  setenv EnsMeanBGQueueName ${VFQueueName}
-  setenv EnsMeanBGAccountNumber ${VFAccountNumber}
-endif
-
-setenv InitializationRetry '2*PT30S'
-setenv VariationalRetry '2*PT30S'
-setenv EnsOfVariationalRetry '1*PT30S'
-setenv CyclingFCRetry '2*PT30S'
-setenv RTPPInflationRetry '2*PT30S'
-setenv HofXRetry '2*PT30S'
-#setenv VerifyObsRetry '1*PT30S'
-#setenv VerifyModelRetry '1*PT30S'
+$setLocal InitializationRetry
+$setLocal GFSAnalysisRetry
+$setLocal GetObsRetry
+$setLocal VariationalRetry
+$setLocal EnsOfVariationalRetry
+$setLocal CyclingFCRetry
+$setLocal RTPPRetry
+$setLocal HofXRetry
+$setLocal CleanRetry
+$setLocal VerifyObsRetry
+$setLocal VerifyModelRetry

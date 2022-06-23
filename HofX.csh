@@ -36,12 +36,11 @@ endif
 # Setup environment
 # =================
 source config/experiment.csh
-source config/filestructure.csh
 source config/tools.csh
 source config/modeldata.csh
-source config/mpas/variables.csh
 source config/builds.csh
-source config/environment.csh
+source config/environmentJEDI.csh
+source config/applications/hofx.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -79,39 +78,22 @@ rm ${localStaticFieldsPrefix}*.nc*
 ## copy static fields
 set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
-set StaticMemDir = `${memberDir} ensemble $ArgMember "${staticMemFmt}"`
+set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
 set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
-# Link/copy bg from other directory + ensure that MPASJEDIDiagVariables are present
-# =================================================================================
+# Link/copy bg from other directory
+# =================================
 set bg = ./${bgDir}
 mkdir -p ${bg}
 
-set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$fileDate.nc
-set bgFile = ${bg}/${BGFilePrefix}.$fileDate.nc
+set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$thisMPASFileDate.nc
+set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
 rm ${bgFile}${OrigFileSuffix} ${bgFile}
 ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
 ln -sfv ${bgFileOther} ${bgFile}
-
-set copyDiags = 0
-foreach var ({$MPASJEDIDiagVariables})
-  echo "Checking for presence of variable ($var) in ${bgFile}"
-  ncdump -h ${bgFile} | grep $var
-  if ( $status != 0 ) then
-    @ copyDiags++
-    echo "variable ($var) not present"
-  endif 
-end
-if ( $copyDiags > 0 ) then
-  echo "Copy diagnostic variables used in HofX to bg: $MPASJEDIDiagVariables"
-  rm ${bgFile}
-  cp -v ${bgFileOther} ${bgFile}
-  set diagFile = ${self_StateDir}/${DIAGFilePrefix}.$fileDate.nc
-  ncks -A -v ${MPASJEDIDiagVariables} ${diagFile} ${bgFile}
-endif
 
 # use the background as the TemplateFieldsFileOuter
 ln -sfv ${bgFile} ${TemplateFieldsFileOuter}

@@ -1,0 +1,19 @@
+_state read: &stateReadConfig
+  date: {{thisISO8601Date}}
+  state variables: [{{StateVariables}}]
+  stream name: background
+output:
+  filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis
+geometry:
+  nml_file: {{EnsembleNamelistFile}}
+  streams_file: {{EnsembleStreamsFile}}
+  deallocate non-da fields: true
+analysis variables: [{{AnalysisVariables}}]
+background:
+  members:
+{{EnsemblePbMembers}}
+analysis:
+  members:
+{{EnsemblePaMembers}}
+factor: {{relaxationFactor}}

@@ -1,0 +1,24 @@
+  obs filters:
+  - filter: PreQC
+#  Useflag check #amsua-n15
+  - filter: Bounds Check
+    filter variables:
+    - name: brightness_temperature
+      channels: *amsua_n15_channels
+    test variables:
+    - name: ChannelUseflagCheckRad@ObsFunction
+      channels: *amsua_n15_channels
+      options:
+        channels: *amsua_n15_channels
+        use_flag: [-1, -1, -1, -1,  1,
+                    1,  1,  1,  1, -1,
+                   -1, -1, -1, -1, -1 ]
+    minvalue: 1.0e-12
+    action:
+      name: reject
+    maxvalue: 0
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n15.nc4
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter

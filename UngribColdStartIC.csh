@@ -4,10 +4,11 @@ date
 
 # Setup environment
 # =================
-source config/environment.csh
-source config/filestructure.csh
+source config/environmentJEDI.csh
+source config/experiment.csh
 source config/modeldata.csh
 source config/builds.csh
+source config/applications/initic.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -16,28 +17,21 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-echo "WorkDir = ${InitICDir}"
-mkdir -p ${InitICDir}
-cd ${InitICDir}
+set WorkDir = ${InitICWorkDir}/${thisValidDate}
+echo "WorkDir = ${WorkDir}"
+mkdir -p ${WorkDir}
+cd ${WorkDir}
 
 # ================================================================================================
 
-## link ungribbed GFS
-set fhour = 000
+## link Vtable
 set Vtable = Vtable.GFS_FV3
-set linkWPS = link_grib.csh
-set GFSprefix = gfs.0p25
-rm -rf GRIBFILE.*
-ln -sfv ${WPSBuildDir}/${linkWPS} .
-./${linkWPS} ${GFSgribdirRDA}/${yy}/${yymmdd}/${GFSprefix}.${yymmdd}${hh}.f${fhour}.grib2
-
-## copy Vtable
 ln -sfv ${VtableDir}/${Vtable} Vtable
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}
-cp -v ${initModelConfigDir}/${NamelistFileWPS} .
-sed -i 's@startTime@'${NMLDate}'@' $NamelistFileWPS
+cp -v $ModelConfigDir/$AppName/${NamelistFileWPS} .
+sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
 
 # Run the executable
 # ==================

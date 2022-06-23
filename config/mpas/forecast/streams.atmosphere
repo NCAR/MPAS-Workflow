@@ -1,21 +1,21 @@
 <streams>
 <immutable_stream name="static"
                   type="input"
-                  precision="forecastPrecision"
+                  precision="{{PRECISION}}"
                   filename_template="StaticFieldsPrefix.nCells.nc"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="input"
                   type="input"
-                  precision="forecastPrecision"
+                  precision="{{PRECISION}}"
                   filename_template="ICFilePrefix.$Y-$M-$D_$h.$m.$s.nc"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="da_state"
                   type="output"
-                  precision="forecastPrecision"
+                  precision="{{PRECISION}}"
                   clobber_mode="truncate"
                   filename_template="FCFilePrefix.$Y-$M-$D_$h.$m.$s.nc"
                   io_type="pnetcdf,cdf5"
@@ -23,7 +23,7 @@
 
 <immutable_stream name="iau"
                   type="input"
-                  precision="forecastPrecision"
+                  precision="{{PRECISION}}"
                   filename_template="AmB.$Y-$M-$D_$h.$m.$s.nc"
                   filename_interval="none"
                   packages="iau"
@@ -38,7 +38,7 @@
 
 <stream name="diagnostics"
         type="output"
-        precision="forecastPrecision"
+        precision="{{PRECISION}}"
         filename_template="diag.$Y-$M-$D_$h.$m.$s.nc"
         io_type="pnetcdf,cdf5"
         clobber_mode="overwrite"
@@ -48,10 +48,10 @@
 
 <stream name="surface"
         type="input"
-        precision="forecastPrecision"
-        filename_template="x1.nCells.sfc_update.nc"
+        precision="{{surfacePrecision}}"
+        filename_template="{{surfaceUpdateFile}}"
         filename_interval="none"
-        input_interval="none" >
+        input_interval="{{surfaceInputInterval}}" >
 	<file name="stream_list.atmosphere.surface"/>
 </stream>
 

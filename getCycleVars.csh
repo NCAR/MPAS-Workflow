@@ -1,7 +1,9 @@
 #!/bin/csh -f
 
-source config/filestructure.csh
 source config/tools.csh
+source config/workflow.csh
+source config/experiment.csh
+source config/${InitializationType}ModelData.csh
 
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 #set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`
@@ -12,10 +14,12 @@ set IAUDate = `$advanceCYMDH ${thisCycleDate} -${IAUoutIntervalHR}`
 setenv IAUDate ${IAUDate}
 
 ## setup cycle directory names
-set CyclingDADirs = (${CyclingDAWorkDir}/${thisCycleDate})
+set ObsDir = ${ObsWorkDir}/${thisValidDate}
+set CyclingDADir = ${CyclingDAWorkDir}/${thisCycleDate}
+set CyclingDAInDir = $CyclingDADir/${bgDir}
+set CyclingDAOutDir = $CyclingDADir/${anDir}
+set CyclingDADirs = (${CyclingDADir})
 set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})
-set CyclingDAInDir = $CyclingDADirs[1]/${bgDir}
-set CyclingDAOutDir = $CyclingDADirs[1]/${anDir}
 
 set prevCyclingDADir = ${CyclingDAWorkDir}/${prevCycleDate}
 set CyclingFCDir = ${CyclingFCWorkDir}/${thisCycleDate}
@@ -34,7 +38,7 @@ set VerifyMeanFCDirs = (${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate
 #set BenchmarkVerifyMeanANDirs = (${BenchmarkVerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
 #set BenchmarkVerifyMeanFCDirs = (${BenchmarkVerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
 
-set CyclingRTPPInflationDir = ${RTPPInflationWorkDir}/${thisCycleDate}
+set CyclingRTPPDir = ${RTPPWorkDir}/${thisCycleDate}
 set CyclingABEInflationDir = ${ABEInflationWorkDir}/${thisCycleDate}
 
 set CyclingDAInDirs = ()
@@ -58,8 +62,8 @@ set BenchmarkVerifyANDirs = ()
 set BenchmarkVerifyEnsFCDirs = ()
 
 set member = 1
-while ( $member <= ${nEnsDAMembers} )
-  set memDir = `${memberDir} $DAType $member`
+while ( $member <= ${nMembers} )
+  set memDir = `${memberDir} $nMembers $member`
   set CyclingDAInDirs = ($CyclingDAInDirs ${CyclingDAInDir}${memDir})
   set CyclingDAOutDirs = ($CyclingDAOutDirs ${CyclingDAOutDir}${memDir})
 
@@ -79,19 +83,17 @@ while ( $member <= ${nEnsDAMembers} )
   @ member++
 end
 
-set ObsDiagnosticsDir = diagnostic_stats/obs
-set ModelDiagnosticsDir = diagnostic_stats/model
-
-set ObsCompareDir = Compare2Benchmark/obs
-set ModelCompareDir = Compare2Benchmark/model
-
 # Universal time info for namelist, yaml etc
 # ==========================================
 set yy = `echo ${thisValidDate} | cut -c 1-4`
 set mm = `echo ${thisValidDate} | cut -c 5-6`
 set dd = `echo ${thisValidDate} | cut -c 7-8`
 set hh = `echo ${thisValidDate} | cut -c 9-10`
-set fileDate = ${yy}-${mm}-${dd}_${hh}.00.00
-set NMLDate = ${yy}-${mm}-${dd}_${hh}:00:00
-set ConfDate = ${yy}-${mm}-${dd}T${hh}:00:00Z
+set thisMPASFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
+set thisMPASNamelistDate = ${yy}-${mm}-${dd}_${hh}:00:00
+set thisISO8601Date = ${yy}-${mm}-${dd}T${hh}:00:00Z
 set ICfileDate = ${yy}-${mm}-${dd}_${hh}
+
+if ( ${InitializationType} == "ColdStart" ) then
+  setenv GFSAnaDirVerify ${GFSAnaDirOuter}/${thisValidDate}
+endif
