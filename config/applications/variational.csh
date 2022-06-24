@@ -83,6 +83,7 @@ $setLocal nObsIndent
 $setLocal radianceThinningDistance
 $setLocal biasCorrection
 $setLocal tropprsMethod
+$setLocal maxIODAPoolSize
 
 ## clean
 $setLocal retainObsFeedback

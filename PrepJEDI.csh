@@ -430,6 +430,9 @@ sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 # method for the tropopause pressure determination
 sed -i 's@{{tropprsMethod}}@'${tropprsMethod}'@g' $prevYAML
 
+# number of IODA pool writers
+sed -i 's@{{maxIODAPoolSize}}@'${maxIODAPoolSize}'@g' $prevYAML
+
 # (3) model-related substitutions
 # ===============================
 
