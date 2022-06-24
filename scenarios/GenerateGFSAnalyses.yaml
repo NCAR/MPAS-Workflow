@@ -10,9 +10,10 @@ experiment:
   ExperimentName: 'GenerateGFSAnalyses'
 model:
   outerMesh: 60km
+  AnalysisSource: GFSfromRDAOnline
+#TODO: make it so that innerMesh and ensembleMesh are not needed
   innerMesh: 60km
   ensembleMesh: 60km
-  AnalysisSource: GFSfromRDAOnline
 job:
   CPQueueName: economy
   NCPQueueName: economy
