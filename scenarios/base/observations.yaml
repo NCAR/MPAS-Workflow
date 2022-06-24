@@ -197,10 +197,10 @@ observations:
 
     IODADirectory:
       variational:
-        common: /glade/scratch/guerrett/pandac/GenerateObs/Observations
+        common: /glade/p/mmm/parc/guerrett/pandac/fixed_input/GenerateObs/Observations
 
       hofx:
-        common: /glade/scratch/guerrett/pandac/GenerateObs/Observations
+        common: /glade/p/mmm/parc/guerrett/pandac/fixed_input/GenerateObs/Observations
 
 
 ## CRTM
