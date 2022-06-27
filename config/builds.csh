@@ -19,7 +19,10 @@ setenv BuildCompiler 'gnu-openmpi'
 # consistent with config/environmentForJedi.csh
 
 #set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_04MAY2022
-set commonBuild = /glade/scratch/yonggangyu/br_autotest/br_2022-05-16/build
+#set commonBuild = /glade/scratch/yonggangyu/br_autotest/br_2022-05-17/build
+#set commonBuild = /glade/scratch/yonggangyu/br_mpasjedi_sp_t2/build
+set commonBuild = /glade/scratch/yonggangyu/br_autotest/br_2022-05-19/build
+set commonBuild = /glade/scratch/yonggangyu/br_mpasjedi_sp_t2_new_build/build
 
 # Ungrib
 setenv ungribEXE ungrib.exe

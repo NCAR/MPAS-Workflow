@@ -1,7 +1,10 @@
 experiment:
 ## ExpSuffix
 # a unique suffix to distinguish this experiment from others
-  ExpSuffix: '_X0_dev_May_16'
+  ExpSuffix: '_X0_dev_May_17'
+  ExpSuffix: '_X1_sp_t2_May_18'
+  ExpSuffix: '_X0_dev_May_19'
+  ExpSuffix: '_X1_sp_t2_new_build_May_19'
 
 ## ExperimentName
 # leave as None to be automatically generated from critical config elements
