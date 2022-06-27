@@ -1,7 +1,5 @@
 #!/bin/csh -f
 
-source config/environmentPython.csh
-
 ####################################################################################################
 # This script runs a pre-configured set of cylc suites via MPAS-Workflow. If the user has
 # previously executed this script with the same "ArgRunConfig", and one or more of the scenarios is
@@ -24,6 +22,7 @@ set ValidRunConfigs = ( \
   60kmEDA \
   30km-60km3denvar \
   RealTime \
+  IASI120km3denvar \
 )
 set ArgRunConfig = $1
 

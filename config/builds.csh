@@ -4,25 +4,22 @@ if ( $?config_builds ) exit 0
 set config_builds = 1
 
 source config/model.csh
+source config/scenario.csh
+
+# setLocal is a helper function that picks out a configuration node
+# under the "model" key of scenarioConfig
+setenv baseConfig scenarios/base/builds.yaml
+setenv setLocal "source $setConfig $baseConfig $scenarioConfig builds"
 
 #############################
 ## build directory structures
 #############################
 
-## BuildCompiler
-# {compiler}-{mpi-implementation} combination that selects the JEDI module to be loaded in
-# config/environmentForJedi.csh
-# OPTIONS: gnu-openmpi, intel-impi
-setenv BuildCompiler 'gnu-openmpi'
-
 # Note: at this time, all executables should be built in the same environment, one that is
 # consistent with config/environmentForJedi.csh
 
-#set commonBuild = /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_04MAY2022
-#set commonBuild = /glade/scratch/yonggangyu/br_autotest/br_2022-05-17/build
-#set commonBuild = /glade/scratch/yonggangyu/br_mpasjedi_sp_t2/build
-set commonBuild = /glade/scratch/yonggangyu/br_autotest/br_2022-05-19/build
-set commonBuild = /glade/scratch/yonggangyu/br_mpasjedi_sp_t2_new_build/build
+# default build directory
+$setLocal commonBuild
 
 # Ungrib
 setenv ungribEXE ungrib.exe

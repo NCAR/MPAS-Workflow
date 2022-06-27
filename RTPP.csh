@@ -10,7 +10,7 @@ source config/tools.csh
 source config/modeldata.csh
 source config/mpas/variables.csh
 source config/builds.csh
-source config/environment.csh
+source config/environmentJEDI.csh
 source config/applications/rtpp.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`

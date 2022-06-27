@@ -28,7 +28,7 @@ endif
 # Setup environment
 # =================
 source config/builds.csh
-source config/environment.csh
+source config/environmentJEDI.csh
 source config/experiment.csh
 source config/mpas/variables.csh
 source config/applications/variational.csh

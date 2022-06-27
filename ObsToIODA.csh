@@ -86,7 +86,10 @@ end # gdasfile loop
 if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservations}" =~ *"satwnd"* ) then
   # Run the ioda-upgrade executable to upgrade to get string station_id and string variable_names
   # ==================
-  source ${ConfigDir}/environmentForJedi.csh ${BuildCompiler}
+  # need to change to mainScriptDir in order for environmentJEDI.csh to be sourced
+  cd ${mainScriptDir}
+  source config/environmentJEDI.csh
+  cd -
   rm ./${iodaupgradeEXEC}
   ln -sfv ${iodaupgradeBuildDir}/${iodaupgradeEXEC} ./
   set types = ( aircraft ascat profiler satwind sfc sondes satwnd )
