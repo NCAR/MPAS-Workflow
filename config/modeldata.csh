@@ -67,44 +67,6 @@ else
   setenv firstFCFilePrefix ${FCFilePrefix}
 endif
 
-# background covariance
-# ---------------------
-## stochastic analysis (dynamic directory structure, depends on $nMembers)
-set dynamicEnsBMemPrefix = "${flowMemPrefix}"
-set dynamicEnsBMemNDigits = ${flowMemNDigits}
-set dynamicEnsBFilePrefix = ${FCFilePrefix}
-
-## select the ensPb settings based on nMembers
-if ( $nMembers > 1 ) then
-  setenv ensPbMemPrefix ${dynamicEnsBMemPrefix}
-  setenv ensPbMemNDigits ${dynamicEnsBMemNDigits}
-  setenv ensPbFilePrefix ${dynamicEnsBFilePrefix}
-
-  setenv ensPbDir ${CyclingFCWorkDir}
-  setenv ensPbNMembers ${nMembers}
-else
-  ## deterministic analysis (static directory structure)
-  # parse selections
-  if ("$fixedEnsBSource" == "GEFS") then
-    set ensPbMemPrefix = "${gefsMemPrefix}"
-    set ensPbMemNDigits = ${gefsMemNDigits}
-    set ensPbFilePrefix = ${GEFS6hfcFOREnsBFilePrefix}
-
-    set ensPbDir = ${GEFS6hfcFOREnsBDir}
-    set ensPbNMembers = ${nGEFSMembers}
-  else if ("$fixedEnsBSource" == "PreviousEDA") then
-    set ensPbMemPrefix = "${dynamicEnsBMemPrefix}"
-    set ensPbMemNDigits = ${dynamicEnsBMemNDigits}
-    set ensPbFilePrefix = ${dynamicEnsBFilePrefix}
-
-    set ensPbDir = ${PreviousEnsembleForecastDir}
-    set ensPbNMembers = ${nPreviousEnsDAMembers}
-  else
-    echo "ERROR in $0 : unrecognized value for fixedEnsBSource --> ${fixedEnsBSource}" >> ./FAIL
-    exit 1
-  endif
-endif
-
 
 # MPAS-Model
 # ----------

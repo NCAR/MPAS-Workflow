@@ -43,22 +43,6 @@ model:
 # OPTIONS: GFSfromPANDACArchive, GFSfromRDAOnline, GFSfromNCEPFTPOnline
   AnalysisSource: GFSfromPANDACArchive
 
-## fixedEnsBSource
-# selection of data source for fixed ensemble background covariance members when
-# EDASize==nDAInstances==1 and DAType is either 3denvar or 3dhybrid
-# OPTIONS: GEFS (default), PreviousEDA
-  fixedEnsBSource: GEFS
-
-## nPreviousEnsDAMembers
-# number of previous ensemble forecast members to use in background covariance
-# Default is 20 for GEFS
-  nPreviousEnsDAMembers: 20
-
-## PreviousEnsembleForecastDir
-# directory where ensemble forecasts are located for envar/hybrid background covariance
-# only applies when fixedEnsBSource is set to PreviousEDA
-  PreviousEnsembleForecastDir: None
-
 ## GraphInfoDir
 # directory containing x1.{{nCells}}.graph.info* files
   GraphInfoDir: /glade/p/mmm/parc/liuz/pandac_common/static_from_duda

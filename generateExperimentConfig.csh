@@ -4,6 +4,7 @@ setenv TMPDIR /glade/scratch/${USER}/temp
 mkdir -p $TMPDIR
 
 source config/benchmark.csh
+source config/naming.csh
 source config/workflow.csh
 source config/applications/rtpp.csh
 source config/applications/variational.csh
@@ -123,26 +124,13 @@ echo ""
 rm -rf ${mainScriptDir}
 mkdir -p $mainScriptDir/config
 
-# cross-application file prefixes used by SetupWorkFlow.csh
-setenv FCFilePrefix mpasout
-setenv ANFilePrefix an
-
-# directory names that must be consistent across experiments in order to perform cross-experiment
-# verification and/or comparison
-set DataAssim = CyclingDA
-set Forecast = CyclingFC
-set Verification = Verification
-
-## directory string formatter for EDA members
-# used as third argument to memberDir.py
-setenv flowMemPrefix "mem"
-setenv flowMemNDigits 3
-
 
 cat >! $mainScriptDir/config/experiment.csh << EOF
 #!/bin/csh -f
 if ( \$?config_experiment ) exit 0
 setenv config_experiment 1
+
+source config/naming.csh # temporary, source directly in dependent scripts
 
 ###################
 # scratch directory
@@ -163,8 +151,8 @@ setenv mainScriptDir ${mainScriptDir}
 #############################
 ## config directory structure
 #############################
-setenv ConfigDir ${mainScriptDir}/config
-setenv ModelConfigDir ${mainScriptDir}/config/mpas
+setenv ConfigDir ${mainScriptDir}/\$configDir
+setenv ModelConfigDir ${mainScriptDir}/\$modelConfigDir
 
 
 ##########################
@@ -172,64 +160,22 @@ setenv ModelConfigDir ${mainScriptDir}/config/mpas
 ##########################
 
 ## immediate subdirectories
-setenv ObsWorkDir ${ExperimentDirectory}/Observations
+setenv ObsWorkDir ${ExperimentDirectory}/\$obsWorkDir
 
-setenv ${DataAssim}WorkDir ${ExperimentDirectory}/$DataAssim
+setenv ${DataAssim}WorkDir ${ExperimentDirectory}/\$dataAssimWorkDir
 
-setenv ${Forecast}WorkDir ${ExperimentDirectory}/$Forecast
+setenv ${Forecast}WorkDir ${ExperimentDirectory}/\$forecastWorkDir
 
-setenv CyclingInflationWorkDir ${ExperimentDirectory}/CyclingInflation
-setenv RTPPWorkDir \${CyclingInflationWorkDir}/RTPP
-setenv ABEInflationWorkDir \${CyclingInflationWorkDir}/ABEI
+setenv CyclingInflationWorkDir ${ExperimentDirectory}/\$cyclingInflationWorkDir
+setenv RTPPWorkDir ${ExperimentDirectory}/\$rTPPWorkDir
+setenv ABEInflationWorkDir ${ExperimentDirectory}/\$aBEInflationWorkDir
 
-setenv ExtendedFCWorkDir ${ExperimentDirectory}/ExtendedFC
-setenv VerificationWorkDir ${ExperimentDirectory}/$Verification
-
-## sub-subdirectories
-# InDBDir and OutDBDir control the names of the database directories
-# on input and output from jedi applications
-setenv InDBDir  dbIn
-setenv OutDBDir dbOut
-
-# verification and comparison
-set ObsDiagnosticsDir = diagnostic_stats/obs
-set ModelDiagnosticsDir = diagnostic_stats/model
-set ObsCompareDir = Compare2Benchmark/obs
-set ModelCompareDir = Compare2Benchmark/model
+setenv ExtendedFCWorkDir ${ExperimentDirectory}/\$extendedFCWorkDir
+setenv VerificationWorkDir ${ExperimentDirectory}/\$verificationWorkDir
 
 ## benchmark experiment archive
-setenv Benchmark${DataAssim}WorkDir ${benchmark__ExperimentDirectory}/$DataAssim
-setenv BenchmarkVerificationWorkDir ${benchmark__ExperimentDirectory}/$Verification
-
-
-#####################################
-## file names, prefixes, and suffixes
-#####################################
-## model-space
-setenv RSTFilePrefix restart
-setenv ICFilePrefix mpasin
-
-setenv FCFilePrefix $FCFilePrefix
-setenv fcDir fc
-setenv DIAGFilePrefix diag
-
-setenv ANFilePrefix $ANFilePrefix
-setenv anDir \$ANFilePrefix
-setenv BGFilePrefix bg
-setenv bgDir \$BGFilePrefix
-
-setenv OrigFileSuffix _orig
-
-## observation-space
-# for obs, geovals, and hofx-diagnostics
-setenv obsPrefix      obsout
-setenv geoPrefix      geoval
-setenv diagPrefix     ydiags
-
-## VarBCAnalysis is the analysis variational bias correction coefficient file
-# TODO: enable VarBC updating
-# -----
-setenv VarBCAnalysis \${OutDBDir}/satbias_crtm_ana
+setenv Benchmark${DataAssim}WorkDir ${benchmark__ExperimentDirectory}/\$dataAssimWorkDir
+setenv BenchmarkVerificationWorkDir ${benchmark__ExperimentDirectory}/\$verificationWorkDir
 
 
 #########################
@@ -240,10 +186,5 @@ setenv VarBCAnalysis \${OutDBDir}/satbias_crtm_ana
 ## number of ensemble members (currently from variational)
 setenv nMembers $nMembers
 
-setenv flowMemPrefix $flowMemPrefix
-setenv flowMemNDigits $flowMemNDigits
-setenv flowMemFmt "/${flowMemPrefix}{:0${flowMemNDigits}d}"
-setenv flowInstanceFmt "/instance{:0${flowMemNDigits}d}"
-setenv flowMemFileFmt "_{:0${flowMemNDigits}d}"
 EOF
 

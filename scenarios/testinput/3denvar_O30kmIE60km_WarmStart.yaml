@@ -18,6 +18,9 @@ variational:
   DAType: 3denvar
   # only use 15 inner iterations to reduce cost
   nInnerIterations: [15,]
+  ensemble:
+    forecasts:
+      resource: PANDAC.GEFS
 job:
   CPQueueName: economy
   NCPQueueName: economy

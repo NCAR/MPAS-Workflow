@@ -8,3 +8,6 @@ model:
   ensembleMesh: 120km
 variational:
   DAType: 3denvar
+  ensemble:
+    forecasts:
+      resource: PANDAC.GEFS

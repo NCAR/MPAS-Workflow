@@ -16,6 +16,9 @@ model:
 variational:
   DAType: 3denvar
   nInnerIterations: [15,]
+  ensemble:
+    forecasts:
+      resource: PANDAC.GEFS
 job:
   CPQueueName: economy
   NCPQueueName: economy

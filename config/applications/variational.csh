@@ -8,6 +8,7 @@ set config_variational = 1
 
 source config/scenario.csh
 source config/model.csh
+source config/naming.csh
 
 # setLocal is a helper function that picks out a configuration node
 # under the "variational" key of scenarioConfig
@@ -16,33 +17,14 @@ setenv setLocal "source $setConfig $baseConfig $scenarioConfig variational"
 setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig variational"
 setenv setNestedVariational "source $setNestedConfig $baseConfig $scenarioConfig variational"
 
-## variational settings
+# variational settings
 $setLocal DAType
 
 $setLocal nInnerIterations
 # nOuterIterations, automatically determined from length of nInnerIterations
 setenv nOuterIterations ${#nInnerIterations}
 
-# localization
-if ($DAType == 3denvar || $DAType == 3dhybrid) then
-  $setLocal localization.${ensembleMesh}.bumpLocPrefix
-  $setLocal localization.${ensembleMesh}.bumpLocDir
-endif
-
-# covariance
-if ($DAType == 3dvar || $DAType == 3dhybrid) then
-  $setLocal covariance.bumpCovControlVariables
-  $setLocal covariance.bumpCovPrefix
-  $setLocal covariance.bumpCovVBalPrefix
-  $setLocal covariance.${innerMesh}.bumpCovDir
-  $setLocal covariance.${innerMesh}.bumpCovStdDevFile
-  $setLocal covariance.${innerMesh}.bumpCovVBalDir
-endif
-
-set ensembleCovarianceWeight = "`$getLocalOrNone ensembleCovarianceWeight`"
-set staticCovarianceWeight = "`$getLocalOrNone staticCovarianceWeight`"
-
-# stochastic settings
+# stochastic DA settings
 set EDASize = "`$getLocalOrNone EDASize`"
 if ($EDASize == None) then
   set EDASize = 1
@@ -58,9 +40,62 @@ $setLocal SelfExclusion
 @ nEnsDAMembers = $EDASize * $nDAInstances
 setenv nEnsDAMembers $nEnsDAMembers
 
+# ensemble
+if ($DAType == 3denvar || $DAType == 3dhybrid) then
+  # localization
+  $setLocal ensemble.localization.${ensembleMesh}.bumpLocPrefix
+  $setLocal ensemble.localization.${ensembleMesh}.bumpLocDir
+
+  # forecasts
+  if ( $nEnsDAMembers > 1 ) then
+    # EDA uses online ensemble updating
+    setenv ensPbMemPrefix "${flowMemPrefix}"
+    setenv ensPbMemNDigits ${flowMemNDigits}
+    setenv ensPbFilePrefix ${FCFilePrefix}
+    setenv ensPbDir0 "{{ExperimentDirectory}}/${forecastWorkDir}/{{prevDateTime}}"
+    setenv ensPbDir1 None
+    setenv ensPbNMembers ${nEnsDAMembers}
+    # TODO: this needs to be non-zero for EDA workflows that use IAU
+    setenv ensPbOffsetHR 0
+  else
+    $setLocal ensemble.forecasts.resource
+
+    foreach parameter (maxMembers directory0 directory1 filePrefix memberPrefix memberNDigits forecastDateOffsetHR)
+      set p = "`$getLocalOrNone ensemble.forecasts.${resource}.${ensembleMesh}.${parameter}`"
+      if ( "$p" == None ) then
+        set p = "`$getLocalOrNone ensemble.forecasts.defaults.${parameter}`"
+      endif
+      set ${parameter}_ = "$p"
+    end
+
+    setenv ensPbMemPrefix "${memberPrefix_}"
+    setenv ensPbMemNDigits ${memberNDigits_}
+    setenv ensPbFilePrefix ${filePrefix_}
+    setenv ensPbDir0 "${directory0_}"
+    setenv ensPbDir1 "${directory1_}"
+    setenv ensPbNMembers ${maxMembers_}
+    setenv ensPbOffsetHR ${forecastDateOffsetHR_}
+  endif
+else
+  set ensPbNMembers = 0
+endif
+
 # ensemble inflation settings
 $setLocal ABEInflation
 $setLocal ABEIChannel
+
+# covariance
+if ($DAType == 3dvar || $DAType == 3dhybrid) then
+  $setLocal covariance.bumpCovControlVariables
+  $setLocal covariance.bumpCovPrefix
+  $setLocal covariance.bumpCovVBalPrefix
+  $setLocal covariance.${innerMesh}.bumpCovDir
+  $setLocal covariance.${innerMesh}.bumpCovStdDevFile
+  $setLocal covariance.${innerMesh}.bumpCovVBalDir
+endif
+
+set ensembleCovarianceWeight = "`$getLocalOrNone ensembleCovarianceWeight`"
+set staticCovarianceWeight = "`$getLocalOrNone staticCovarianceWeight`"
 
 ## required settings for PrepJEDI.csh
 setenv AppName $DAType
@@ -89,24 +124,12 @@ $setLocal maxIODAPoolSize
 $setLocal retainObsFeedback
 
 ## job
-## nEnVarMembers (int)
-# ensemble size for "envar" applications; only used for job timings
-if ($DAType == 3dvar) then
-  setenv nEnVarMembers 0
-else
-  if ($nEnsDAMembers > 1) then
-    setenv nEnVarMembers $nEnsDAMembers
-  else
-    setenv nEnVarMembers $nPreviousEnsDAMembers
-  endif
-endif
-
 $setLocal job.${outerMesh}.${innerMesh}.$DAType.baseSeconds
 set secondsPerEnVarMember = "`$getLocalOrNone job.${outerMesh}.${innerMesh}.$DAType.secondsPerEnVarMember`"
 if ("$secondsPerEnVarMember" == None) then
   set secondsPerEnVarMember = 0
 endif
-@ seconds = $secondsPerEnVarMember * $nEnVarMembers + $baseSeconds
+@ seconds = $secondsPerEnVarMember * $ensPbNMembers + $baseSeconds
 setenv variational__seconds $seconds
 
 $setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.nodes

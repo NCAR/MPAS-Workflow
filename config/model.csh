@@ -43,16 +43,6 @@ $setLocal ${outerMesh}.DiffusionLengthScale
 # deterministic analysis source
 $setNestedModel AnalysisSource
 
-# stochastic cycle window duration forecast source
-# only applicable to 3denvar when nMembers<2
-$setLocal fixedEnsBSource
-$setLocal nPreviousEnsDAMembers
-setenv PreviousEnsembleForecastDir "`$getLocalOrNone PreviousEnsembleForecastDir`"
-
-if ("$fixedEnsBSource" == "PreviousEDA" && "$PreviousEnsembleForecastDir" == None) then
-  echo "$0 (ERROR): model.PreviousEnsembleForecastDir must be set when fixedEnsBSource == PreviousEDA" >> ./FAIL
-endif
-
 $setLocal GraphInfoDir
 
 $setNestedModel precision

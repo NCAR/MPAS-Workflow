@@ -7,6 +7,9 @@ model:
 variational:
   DAType: 3denvar
   nInnerIterations: [60,60,]
+  ensemble:
+    forecasts:
+      resource: PANDAC.GEFS
 observations:
   resource: PANDACArchive
   PANDACArchive:
