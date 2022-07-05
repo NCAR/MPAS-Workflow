@@ -21,9 +21,9 @@ setenv appyaml ${AppName}.yaml
 
 ## job
 $setLocal job.${ensembleMesh}.baseSeconds
-$setLocal job.${ensembleMesh}.secondsPerEDAMember
+$setLocal job.${ensembleMesh}.secondsPerMember
 
-@ seconds = $secondsPerEDAMember * $nEnsDAMembers + $baseSeconds
+@ seconds = $secondsPerMember * $nEnsDAMembers + $baseSeconds
 setenv rtpp__seconds $seconds
 
 $setNestedRTPP job.${ensembleMesh}.nodes

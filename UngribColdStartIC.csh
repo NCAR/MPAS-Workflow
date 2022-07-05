@@ -24,9 +24,9 @@ cd ${WorkDir}
 
 # ================================================================================================
 
-## link Vtable
-set Vtable = Vtable.GFS_FV3
-ln -sfv ${VtableDir}/${Vtable} Vtable
+## link Vtable file
+set Vtable = /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
+ln -sfv ${Vtable} Vtable
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}

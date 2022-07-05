@@ -16,6 +16,7 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
   AnalysisSource: GFSfromNCEPFTPOnline
+  GraphInfoDir: /glade/work/duda/static_moved_to_campaign
 variational:
   DAType: 3dvar
   nInnerIterations: [60,]

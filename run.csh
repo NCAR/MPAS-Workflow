@@ -21,6 +21,7 @@ set ValidRunConfigs = ( \
   120kmEDA \
   60kmEDA \
   30km-60km3denvar \
+  30km-60km3denvarSpecifiedEnsemble \
   RealTime \
   IASI120km3denvar \
 )

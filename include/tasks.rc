@@ -338,7 +338,7 @@ conda activate npl
     inherit = VerifyModelBase
     script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
     [[[job]]]
-      execution time limit = PT{{modelSeconds}}M
+      execution time limit = PT{{modelSeconds}}S
   [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
     script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}" "hofx"

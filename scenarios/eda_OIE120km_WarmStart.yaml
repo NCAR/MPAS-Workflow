@@ -1,7 +1,5 @@
 workflow:
   InitializationType: WarmStart
-observations:
-  resource: PANDACArchive
 model:
   outerMesh: 120km
   innerMesh: 120km
@@ -9,11 +7,11 @@ model:
 variational:
   DAType: 3denvar
   nDAInstances: 20
-  LeaveOneOutEDA: True
-  # delete observation feedback files of all members to save space
-  retainObsFeedback: False
+  SelfExclusion: True
+  maxIODAPoolSize: 3
 hofx:
-  # delete observation feedback files of all members to save space
-  retainObsFeedback: False
+  maxIODAPoolSize: 3
 rtpp:
   relaxationFactor: 0.8
+observations:
+  resource: PANDACArchive
