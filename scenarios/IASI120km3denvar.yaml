@@ -25,15 +25,15 @@ model:
 builds:
   commonBuild: /glade/p/mmm/parc/ivette/pandac/jedi/build22MAY_th
 firstbackground:
-  resource: PANDAC.GFS
+  resource: "PANDAC.GFS"
 externalanalyses:
-  resource: PANDAC.GFS
+  resource: "PANDAC.GFS"
 variational:
   DAType: 3denvar
   nInnerIterations: [60,]
   ensemble:
     forecasts:
-      resource: PANDAC.GEFS
+      resource: "PANDAC.GEFS"
   biasCorrection: True
   tropprsMethod: thompson
   experimentalObservations: [

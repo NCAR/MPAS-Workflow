@@ -9,10 +9,10 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 firstbackground:
-  resource: PANDAC.LaggedGEFS
+  resource: "PANDAC.LaggedGEFS"
   nMembers: 20
 externalanalyses:
-  resource: PANDAC.GFS
+  resource: "PANDAC.GFS"
 variational:
   DAType: 3denvar
   SelfExclusion: False

@@ -13,15 +13,15 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 firstbackground:
-  resource: PANDAC.GFS
+  resource: "PANDAC.GFS"
 externalanalyses:
-  resource: PANDAC.GFS
+  resource: "PANDAC.GFS"
 variational:
   DAType: 3denvar
   nInnerIterations: [15,]
   ensemble:
     forecasts:
-      resource: PANDAC.GEFS
+      resource: "PANDAC.GEFS"
 job:
   CPQueueName: economy
   NCPQueueName: economy

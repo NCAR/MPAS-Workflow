@@ -1,5 +1,10 @@
 externalanalyses:
+
+  ## resource:
+  # used to select one of the options below (must be in quotes)
+  # e.g., "COLD.GFS.RDA", "COLD.GFS.FTP", "PANDAC.GFS"
   resource: None
+
   defaults:
     ## externalDirectory: where pre-generated analyses are stored
     externalDirectory: None

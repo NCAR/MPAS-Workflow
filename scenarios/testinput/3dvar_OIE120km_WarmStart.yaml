@@ -14,9 +14,9 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 firstbackground:
-  resource: PANDAC.GFS
+  resource: "PANDAC.GFS"
 externalanalyses:
-  resource: PANDAC.GFS
+  resource: "PANDAC.GFS"
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]

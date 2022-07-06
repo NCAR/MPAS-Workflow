@@ -14,9 +14,9 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 firstbackground:
-  resource: COLD.GFS
+  resource: "COLD.GFS"
 externalanalyses:
-  resource: COLD.GFS.RDA
+  resource: "COLD.GFS.RDA"
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]

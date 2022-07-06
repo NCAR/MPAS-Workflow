@@ -124,8 +124,8 @@ variational:
   ensemble: #(envar or hybrid)
     forecasts:
       ## resource (required)
-      # use the format {{project}}.{{source}}
-      # see below for options (e.g., PANDAC.GEFS)
+      # use the format "{{project}}.{{source}}"
+      # see below for options (e.g., "PANDAC.GEFS")
       resource: None
 
       #{{project}}:

@@ -16,9 +16,9 @@ model:
   ensembleMesh: 120km
   GraphInfoDir: /glade/work/duda/static_moved_to_campaign
 firstbackground:
-  resource: COLD.GFS
+  resource: "COLD.GFS"
 externalanalyses:
-  resource: COLD.GFS.FTP
+  resource: "COLD.GFS.FTP"
 variational:
   DAType: 3dvar
   nInnerIterations: [60,]

@@ -10,9 +10,9 @@ model:
   innerMesh: 60km
   ensembleMesh: 60km
 firstbackground:
-  resource: PANDAC.GFS
+  resource: "PANDAC.GFS"
 externalanalyses:
-  resource: PANDAC.GFS
+  resource: "PANDAC.GFS"
 variational:
   DAType: 3denvar
   nInnerIterations: [60,60,]
@@ -20,14 +20,14 @@ variational:
 ## DART
 #  ensemble:
 #    forecasts:
-#      resource: PANDAC.DART
+#      resource: "PANDAC.DART"
 #experiment:
 #  ExpSuffix: '_B-DART80'
 
 ## EDA
   ensemble:
     forecasts:
-      resource: PANDAC.EDA
+      resource: "PANDAC.EDA"
 experiment:
   ExpSuffix: '_B-SE80+RTPP70'
 

@@ -1,6 +1,8 @@
 firstbackground:
 
-  ## resource: used to select one of the options below (e.g., COLD.GFS, PANDAC.GFS, PANDAC.LaggedGEFS)
+  ## resource:
+  # used to select one of the options below (must be in quotes)
+  # e.g., "COLD.GFS", "PANDAC.GFS", "PANDAC.LaggedGEFS"
   resource: None
 
   ## nMembers: number of background, and thus DA and forecast members
