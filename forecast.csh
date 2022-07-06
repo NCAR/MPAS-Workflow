@@ -25,9 +25,9 @@ endif
 source config/workflow.csh
 source config/experiment.csh
 source config/externalanalyses.csh
+source config/firstbackground.csh
 source config/tools.csh
 source config/model.csh
-source config/modeldata.csh
 source config/builds.csh
 source config/environmentMPT.csh
 source config/applications/forecast.csh
@@ -64,7 +64,7 @@ rm ${localStaticFieldsFile}
 set icFileExt = ${thisMPASFileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
-if ( ${thisValidDate} == ${FirstCycleDate}) then
+if ( ${thisValidDate} == ${FirstCycleDate} ) then
   set initialState = ${ExternalAnalysisDir}/$externalanalyses_filePrefix.${icFileExt}
   set do_DAcycling = "false"
   set memberStaticFieldsFile = ${initialState}
@@ -112,14 +112,31 @@ set localSeaUpdateFile = x1.${nCells}.sfc_update.nc
 sed -i 's@{{surfaceUpdateFile}}@'${localSeaUpdateFile}'@' ${StreamsFile}
 
 if ( "${updateSea}" == "True" ) then
+  ## sea/ocean surface files
+  # TODO: move sea directory configuration to yamls
+  setenv seaMaxMembers 20
+  setenv deterministicSeaAnaDir ${ExternalAnalysisDir}
+  setenv deterministicSeaMemFmt " "
+  setenv deterministicSeaFilePrefix x1.${nCells}.init
+
+  if ( $nMembers > 1 && "$firstbackground__resource" == "PANDAC.LaggedGEFS" ) then
+    # using member-specific sst/xice data from GEFS, only works for this special case
+    # 60km and 120km
+    setenv SeaAnaDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/surface/000hr/${model__precision}/${thisValidDate}
+    setenv seaMemFmt "/{:02d}"
+    setenv SeaFilePrefix x1.${nCells}.sfc_update
+  else
+    # otherwise use deterministic analysis for all members
+    # 60km and 120km
+    setenv SeaAnaDir ${deterministicSeaAnaDir}
+    setenv seaMemFmt "${deterministicSeaMemFmt}"
+    setenv SeaFilePrefix ${deterministicSeaFilePrefix}
+  endif
+
   # first try member-specific state file (central GFS state when ArgMember==0)
   set seaMemDir = `${memberDir} 2 $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
-  set SeaAnaDirValid = `echo "$SeaAnaDir" \
-    | sed 's@{{ExternalAnalysisWorkDir}}@'$ExternalAnalysisWorkDir'@' \
-    | sed 's@{{thisValidDate}}@'$thisValidDate'@' \
-    `
-  set SeaFile = ${SeaAnaDirValid}/${thisValidDate}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
-  ln -sf ${SeaFile} ./${localSeaUpdateFile}
+  set SeaFile = ${SeaAnaDir}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
+  ln -sfv ${SeaFile} ./${localSeaUpdateFile}
   set brokenLinks=( `find ${localSeaUpdateFile} -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
   set broken=0
   foreach l ($brokenLinks)
@@ -131,12 +148,8 @@ if ( "${updateSea}" == "True" ) then
     echo "$0 (WARNING): file link broken to ${SeaFile}" >> ./WARNING
 
     # otherwise try deterministic state file
-    set SeaAnaDirValid = `echo "$deterministicSeaAnaDir" \
-      | sed 's@{{ExternalAnalysisWorkDir}}@'$ExternalAnalysisWorkDir'@' \
-      | sed 's@{{thisValidDate}}@'$thisValidDate'@' \
-      `
-    set SeaFile = ${SeaAnaDirValid}/${thisValidDate}/${SeaFilePrefix}.${icFileExt}
-    ln -sf ${SeaFile} ./${localSeaUpdateFile}
+    set SeaFile = ${deterministicSeaAnaDir}/${deterministicSeaFilePrefix}.${icFileExt}
+    ln -sfv ${SeaFile} ./${localSeaUpdateFile}
     set brokenLinks=( `find ${localSeaUpdateFile} -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
     set broken=0
     foreach l ($brokenLinks)

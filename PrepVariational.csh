@@ -33,7 +33,6 @@ endif
 source config/experiment.csh
 source config/workflow.csh
 source config/model.csh
-source config/modeldata.csh
 source config/tools.csh
 source config/applications/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -357,7 +356,7 @@ echo "Starting model state preparation stage"
 # Input/Output model state preparation
 # ====================================
 
-# get source static fields files (config/modeldata.csh)
+# get source static fields files (config/experiment.csh)
 set StaticFieldsDirList = ($StaticFieldsDirOuter $StaticFieldsDirInner)
 set StaticFieldsFileList = ($StaticFieldsFileOuter $StaticFieldsFileInner)
 

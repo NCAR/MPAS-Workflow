@@ -7,7 +7,6 @@ date
 source config/experiment.csh
 source config/tools.csh
 source config/model.csh
-source config/modeldata.csh
 source config/verifyobs.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`

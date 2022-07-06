@@ -183,8 +183,35 @@ setenv BenchmarkVerificationWorkDir ${benchmark__ExperimentDirectory}/\$verifica
 #########################
 # TODO: move these to a cross-application config/yaml combo
 
-## number of ensemble members (currently from variational)
+## number of ensemble members (currently from firstbackground)
 setenv nMembers $nMembers
 
+#############################
+# static stream file settings
+#############################
+## file date for first background
+set yy = `echo ${FirstCycleDate} | cut -c 1-4`
+set mm = `echo ${FirstCycleDate} | cut -c 5-6`
+set dd = `echo ${FirstCycleDate} | cut -c 7-8`
+set hh = `echo ${FirstCycleDate} | cut -c 9-10`
+setenv FirstFileDate \${yy}-\${mm}-\${dd}_\${hh}.00.00
+
+setenv StaticFieldsDirOuter \`echo "$firstbackground__staticDirectoryOuter" \
+  | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDir}'@' \
+  | sed 's@{{FirstCycleDate}}@'${FirstCycleDate}'@' \
+  \`
+setenv StaticFieldsDirInner \`echo "$firstbackground__staticDirectoryInner" \
+  | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirInner}'@' \
+  | sed 's@{{FirstCycleDate}}@'${FirstCycleDate}'@' \
+  \`
+setenv StaticFieldsDirEnsemble \`echo "$firstbackground__staticDirectoryEnsemble" \
+  | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirEnsemble}'@' \
+  | sed 's@{{FirstCycleDate}}@'${FirstCycleDate}'@' \
+  \`
+setenv staticMemFmt "${firstbackground__memberFormatOuter}"
+
+setenv StaticFieldsFileOuter ${firstbackground__staticPrefixOuter}.\${FirstFileDate}.nc
+setenv StaticFieldsFileInner ${firstbackground__staticPrefixInner}.\${FirstFileDate}.nc
+setenv StaticFieldsFileEnsemble ${firstbackground__staticPrefixEnsemble}.\${FirstFileDate}.nc
 EOF
 

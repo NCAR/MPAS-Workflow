@@ -6,7 +6,6 @@ date
 # =================
 source config/environmentJEDI.csh
 source config/experiment.csh
-source config/modeldata.csh
 source config/builds.csh
 source config/applications/initic.csh
 source config/externalanalyses.csh

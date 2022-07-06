@@ -112,16 +112,14 @@ refactored.  It is best practice to discuss such modifications that benefit mult
 GitHub issues, and then submit pull requests.
 
 `generateExperiment.csh`: produces `cofig/experiment.csh`, which is a global description of the
-workflow file structure and file-naming conventions used across multiple applications
+workflow file structure and file-naming conventions used across multiple applications, partially
+derived from `config/naming.csh`
 
 `config/environment.csh`: run-time environment used across compiled executables and python scripts
 
 `config/externalanalyses.csh`: controls how external DA system analysis files are produced,
 including online vs. offline.  External analyses are used for verification and for optionally
 initializing a cold-start forecast at the first cylce of an experiment.
-
-`config/modeldata.csh` (to be deprecated): static model-space data files, including surface
-variable update files (sst and xice), and common static.nc files to be used across all cycles.
 
 `config/firstbackground.csh`: controls how the first DA cycle background state is supplied,
 including online vs. offline and deterministic vs. ensemble
