@@ -1,0 +1,36 @@
+externalanalyses:
+  resource: None
+  defaults:
+    ## externalDirectory: where pre-generated analyses are stored
+    externalDirectory: None
+
+    ## filePrefix: prefix of analysis files
+    filePrefix: "x1.{{nCells}}.init"
+
+    ## Vtable: variable table for ungrib step
+    Vtable: None
+
+    ## PrepareExternalAnalysis
+    # a cylc dependency graph that generates analyses
+    # default behavior is to assume that analyses are already prepared offline
+    PrepareExternalAnalysis: "LinkExternalAnalysis => ExternalAnalysisReady"
+
+  COLD:
+    GFS:
+      RDA:
+        common:
+          PrepareExternalAnalysis: "GetGFSanalysisFromRDA => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady"
+          Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
+      NCEPFTP:
+        common:
+          PrepareExternalAnalysis: "GetGFSanalysisFromFTP => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady"
+          Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
+
+  PANDAC:
+    GFS:
+      120km:
+        externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/GFSAna"
+      60km:
+        externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/GFSAna"
+      30km:
+        externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAna"

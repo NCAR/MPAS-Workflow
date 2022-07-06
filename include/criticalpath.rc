@@ -1,13 +1,7 @@
 # firstCyclePoint
 {% if initialCyclePoint == firstCyclePoint %}
     [[[R1]]]
-      graph = '''
-  {% if InitializationType == "WarmStart" %}
-        GetWarmStartIC => ForecastFinished
-  {% else %}
-%include include/forecast.rc
-  {% endif %}
-      '''
+      graph = {{PrepareFirstBackground}}
 {% endif %}
 
 # all other cycles

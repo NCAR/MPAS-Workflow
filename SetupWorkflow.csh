@@ -4,7 +4,9 @@
 source generateExperimentConfig.csh
 
 set workflowParts = ( \
-  GetGFSanalysis.csh \
+  GetGFSAnalysisFromRDA.csh \
+  GetGFSAnalysisFromFTP.csh \
+  LinkExternalAnalysis.csh \
   UngribColdStartIC.csh \
   GenerateColdStartIC.csh \
   GetWarmStartIC.csh \

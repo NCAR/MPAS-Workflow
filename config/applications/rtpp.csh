@@ -5,7 +5,7 @@ setenv config_rtpp 1
 
 source config/scenario.csh
 source config/model.csh
-source config/applications/variational.csh
+source config/firstbackground.csh
 
 # setLocal is a helper function that picks out a configuration node
 # under the "rtpp" key of scenarioConfig
@@ -23,7 +23,7 @@ setenv appyaml ${AppName}.yaml
 $setLocal job.${ensembleMesh}.baseSeconds
 $setLocal job.${ensembleMesh}.secondsPerMember
 
-@ seconds = $secondsPerMember * $nEnsDAMembers + $baseSeconds
+@ seconds = $secondsPerMember * $nMembers + $baseSeconds
 setenv rtpp__seconds $seconds
 
 $setNestedRTPP job.${ensembleMesh}.nodes

@@ -40,9 +40,6 @@ setenv nCellsEnsemble "`$getLocalOrNone nCells.$ensembleMesh`"
 $setLocal ${outerMesh}.TimeStep
 $setLocal ${outerMesh}.DiffusionLengthScale
 
-# deterministic analysis source
-$setNestedModel AnalysisSource
-
 $setLocal GraphInfoDir
 
 $setNestedModel precision

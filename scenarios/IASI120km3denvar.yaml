@@ -2,7 +2,6 @@ workflow:
   firstCyclePoint: 20180414T18
   initialCyclePoint: 20180414T18
   finalCyclePoint: 20180415T06
-  InitializationType: WarmStart
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
 observations:
@@ -25,9 +24,16 @@ model:
   ensembleMesh: 120km
 builds:
   commonBuild: /glade/p/mmm/parc/ivette/pandac/jedi/build22MAY_th
+firstbackground:
+  resource: PANDAC.GFS
+externalanalyses:
+  resource: PANDAC.GFS
 variational:
   DAType: 3denvar
   nInnerIterations: [60,]
+  ensemble:
+    forecasts:
+      resource: PANDAC.GEFS
   biasCorrection: True
   tropprsMethod: thompson
   experimentalObservations: [

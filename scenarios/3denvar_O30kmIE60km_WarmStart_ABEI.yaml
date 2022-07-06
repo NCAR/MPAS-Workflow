@@ -1,9 +1,11 @@
-workflow:
-  InitializationType: WarmStart
 model:
   outerMesh: 30km
   innerMesh: 60km
   ensembleMesh: 60km
+firstbackground:
+  resource: PANDAC.GFS
+externalanalyses:
+  resource: PANDAC.GFS
 variational:
   DAType: 3denvar
   nInnerIterations: [60,60,]

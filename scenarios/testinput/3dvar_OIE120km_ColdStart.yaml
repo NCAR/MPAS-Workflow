@@ -3,7 +3,6 @@ workflow:
   firstCyclePoint: 20220201T00
   initialCyclePoint: 20220201T00
   finalCyclePoint: 20220201T12
-  InitializationType: ColdStart
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
 observations:
@@ -14,7 +13,10 @@ model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-  AnalysisSource: GFSfromRDAOnline
+firstbackground:
+  resource: COLD.GFS
+externalanalyses:
+  resource: COLD.GFS.RDA
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]

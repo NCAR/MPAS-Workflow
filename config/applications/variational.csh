@@ -7,6 +7,7 @@ if ( $?config_variational ) exit 0
 set config_variational = 1
 
 source config/scenario.csh
+source config/firstbackground.csh
 source config/model.csh
 source config/naming.csh
 
@@ -29,16 +30,18 @@ set EDASize = "`$getLocalOrNone EDASize`"
 if ($EDASize == None) then
   set EDASize = 1
 endif
-set nDAInstances = "`$getLocalOrNone nDAInstances`"
-if ($nDAInstances == None) then
-  set nDAInstances = 1
+
+@ nDAInstances = $nMembers / $EDASize
+@ nEnsDAMembers = $EDASize * $nDAInstances
+
+if ($nEnsDAMembers != $nMembers) then
+  echo "variational (ERROR): nMembers must be divisible by EDASize"
+  exit 1
 endif
+setenv nDAInstances $nDAInstances
+
 $setLocal SelfExclusion
 
-# nEnsDAMembers is the total number of ensemble DA members, product of EDASize and nDAInstances
-# Should be in range (1, $firstEnsFCNMembers); affects data source in config/modeldata.csh
-@ nEnsDAMembers = $EDASize * $nDAInstances
-setenv nEnsDAMembers $nEnsDAMembers
 
 # ensemble
 if ($DAType == 3denvar || $DAType == 3dhybrid) then
@@ -47,14 +50,14 @@ if ($DAType == 3denvar || $DAType == 3dhybrid) then
   $setLocal ensemble.localization.${ensembleMesh}.bumpLocDir
 
   # forecasts
-  if ( $nEnsDAMembers > 1 ) then
+  if ( $nMembers > 1 ) then
     # EDA uses online ensemble updating
     setenv ensPbMemPrefix "${flowMemPrefix}"
     setenv ensPbMemNDigits ${flowMemNDigits}
     setenv ensPbFilePrefix ${FCFilePrefix}
     setenv ensPbDir0 "{{ExperimentDirectory}}/${forecastWorkDir}/{{prevDateTime}}"
     setenv ensPbDir1 None
-    setenv ensPbNMembers ${nEnsDAMembers}
+    setenv ensPbNMembers ${nMembers}
     # TODO: this needs to be non-zero for EDA workflows that use IAU
     setenv ensPbOffsetHR 0
   else

@@ -21,6 +21,8 @@ echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
 # cross-application settings
 source config/experiment.csh
+source config/firstbackground.csh
+source config/externalanalyses.csh
 source config/job.csh
 source config/model.csh
 source config/observations.csh
@@ -96,10 +98,8 @@ cat >! suite.rc << EOF
 {% set ExtendedFCWindowHR = ${ExtendedFCWindowHR} %} #integer
 {% set ExtendedFC_DT_HR = ${ExtendedFC_DT_HR} %} #integer
 
-# initialization type
-{% set InitializationType = "${InitializationType}" %}
+# observation information
 {% set observationsResource = "${observations__resource}" %}
-{% set modelAnalysisSource = "${model__AnalysisSource}" %}
 
 # members
 {% set nMembers = ${nMembers} %} #integer
@@ -160,6 +160,11 @@ cat >! suite.rc << EOF
 {% set HofXPEPerNode = "${hofx__PEPerNode}" %}
 {% set HofXMemory = "${hofx__memory}" %}
 
+## Mini-workflow that prepares a cold-start initial condition file from an external analysis
+{% set PrepareExternalAnalysis = "${externalanalyses__PrepareExternalAnalysis}" %}
+
+{% set PrepareFirstBackground = PrepareExternalAnalysis+" => ${firstbackground__PrepareFirstBackgroundOuter}" %}
+
 {% set InitICSeconds = "${initic__seconds}" %}
 {% set InitICNodes = "${initic__nodes}" %}
 {% set InitICPEPerNode = "${initic__PEPerNode}" %}
@@ -198,18 +203,9 @@ cat >! suite.rc << EOF
   {% set PrepareObservations = "GetObs => ObsToIODA => ObsReady" %}
 {% endif %}
 
-## Mini-workflow that prepares a cold-start initial condition file from a GFS analysis
-{% if "Archive" in modelAnalysisSource %}
-  # assume that external analysis files are already available for "*Archive*" sources
-  {% set PrepareExternalAnalysis = "ExternalAnalysisReady" %}
-{% elif "GFS" in modelAnalysisSource %}
-  # non-archived GFS analysis sources are generated online
-  {% set PrepareExternalAnalysis = "GetGFSanalysis => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady" %}
-{% else %}
-  {{ raise('modelAnalysisSource is not valid') }}
-{% endif %}
-# Use GFS analysis for sea surface updating
+# Use external analysis for sea surface updating
 {% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysis %}
+
 
 [meta]
   title = "${PackageBaseName}--${SuiteName}"

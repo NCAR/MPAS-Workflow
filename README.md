@@ -116,10 +116,15 @@ workflow file structure and file-naming conventions used across multiple applica
 
 `config/environment.csh`: run-time environment used across compiled executables and python scripts
 
-`config/modeldata.csh`: static model-space data files, including fixed ensemble forecast members
-for deterministic experiments, first guess files for the first cycle
-of an experiment, surface variable update files (sst and xice), and common static.nc files to be
-used across all cycles.
+`config/externalanalyses.csh`: controls how external DA system analysis files are produced,
+including online vs. offline.  External analyses are used for verification and for optionally
+initializing a cold-start forecast at the first cylce of an experiment.
+
+`config/modeldata.csh` (to be deprecated): static model-space data files, including surface
+variable update files (sst and xice), and common static.nc files to be used across all cycles.
+
+`config/firstbackground.csh`: controls how the first DA cycle background state is supplied,
+including online vs. offline and deterministic vs. ensemble
 
 `config/obsdata.csh`: static observation-space data file structure; soon to be replaced by
 the `observations` configuration section and `observations.csh`
@@ -180,10 +185,10 @@ Main driver: drive.csh
 Creates a new cylc suite file, then runs it. Users need not modify this file. Developers who wish
 to add new cylc tasks, or modify the relationships between tasks, will modify `drive.csh` and/or
 the files in the `include` directory:
-- `include/criticalpath.rc`: controls all elements of the critical path for all 4 `CriticalPathType` options
-and 2 `InitializationType` options.  Allows for re-use of `include/forecast.rc` and `include/da.rc`
-according to the user selections.  Those latter two scripts describe all the intra-forecast and
-intra-da dependencies, respectively, independent of tasks in other categories.
+- `include/criticalpath.rc`: controls all elements of the critical path for all 4 `CriticalPathType`
+options.  Allows for re-use of `include/forecast.rc` and `include/da.rc` according to the user
+selections.  Those latter two scripts describe all the intra-forecast and intra-da dependencies,
+respectively, independent of tasks in other categories.
 - `include/verification.rc`: describes the dependencies between `HofX`, `Verify*`, `Compare*`, and other
 kinds of tasks that produce verification statistics files.  It includes dependencies on
 `forecast` and `da` tasks that produce the data to be verified.  Multiple aspects of verification

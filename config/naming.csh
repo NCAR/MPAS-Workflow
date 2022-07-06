@@ -32,6 +32,8 @@ setenv aBEInflationWorkDir ${cyclingInflationWorkDir}/ABEI
 setenv extendedFCWorkDir ExtendedFC
 setenv verificationWorkDir $Verification
 
+setenv externalAnalysisWorkDir ExternalAnalyses
+
 ## sub-subdirectories
 # InDBDir and OutDBDir control the names of the database directories
 # on input and output from jedi applications

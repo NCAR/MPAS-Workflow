@@ -24,6 +24,7 @@ endif
 # =================
 source config/workflow.csh
 source config/experiment.csh
+source config/externalanalyses.csh
 source config/tools.csh
 source config/model.csh
 source config/modeldata.csh
@@ -63,19 +64,19 @@ rm ${localStaticFieldsFile}
 set icFileExt = ${thisMPASFileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
-if ( ${InitializationType} == "ColdStart" && ${thisValidDate} == ${FirstCycleDate}) then
-  set initialState = ${InitICWorkDir}/${thisValidDate}/${InitFilePrefixOuter}.${icFileExt}
+if ( ${thisValidDate} == ${FirstCycleDate}) then
+  set initialState = ${ExternalAnalysisDir}/$externalanalyses_filePrefix.${icFileExt}
   set do_DAcycling = "false"
-  ln -sfv ${initialState} ${localStaticFieldsFile}
+  set memberStaticFieldsFile = ${initialState}
 else
   set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
   set do_DAcycling = "true"
   set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
   set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
-  ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-  cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 endif
 ln -sfv ${initialState} ./${icFile}
+ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 ## link MPAS mesh graph info
 rm ./x1.${nCells}.graph.info*
@@ -113,7 +114,11 @@ sed -i 's@{{surfaceUpdateFile}}@'${localSeaUpdateFile}'@' ${StreamsFile}
 if ( "${updateSea}" == "True" ) then
   # first try member-specific state file (central GFS state when ArgMember==0)
   set seaMemDir = `${memberDir} 2 $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
-  set SeaFile = ${SeaAnaDir}/${thisValidDate}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
+  set SeaAnaDirValid = `echo "$SeaAnaDir" \
+    | sed 's@{{ExternalAnalysisWorkDir}}@'$ExternalAnalysisWorkDir'@' \
+    | sed 's@{{thisValidDate}}@'$thisValidDate'@' \
+    `
+  set SeaFile = ${SeaAnaDirValid}/${thisValidDate}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
   ln -sf ${SeaFile} ./${localSeaUpdateFile}
   set brokenLinks=( `find ${localSeaUpdateFile} -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
   set broken=0
@@ -125,8 +130,12 @@ if ( "${updateSea}" == "True" ) then
   if ( $broken > 0 ) then
     echo "$0 (WARNING): file link broken to ${SeaFile}" >> ./WARNING
 
-    # otherwise try central GFS state file
-    set SeaFile = ${deterministicSeaAnaDir}/${thisValidDate}/${SeaFilePrefix}.${icFileExt}
+    # otherwise try deterministic state file
+    set SeaAnaDirValid = `echo "$deterministicSeaAnaDir" \
+      | sed 's@{{ExternalAnalysisWorkDir}}@'$ExternalAnalysisWorkDir'@' \
+      | sed 's@{{thisValidDate}}@'$thisValidDate'@' \
+      `
+    set SeaFile = ${SeaAnaDirValid}/${thisValidDate}/${SeaFilePrefix}.${icFileExt}
     ln -sf ${SeaFile} ./${localSeaUpdateFile}
     set brokenLinks=( `find ${localSeaUpdateFile} -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
     set broken=0
@@ -216,10 +225,8 @@ else
   endif
 
   ## change static fields to a link, keeping for transparency
-  if ( ${InitializationType} == "WarmStart" ) then
-    rm ${localStaticFieldsFile}
-    mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
-  endif
+  rm ${localStaticFieldsFile}
+  mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 endif
 
 if ( "$deleteZerothForecast" == "True" ) then

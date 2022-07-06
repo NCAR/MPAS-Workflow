@@ -29,13 +29,6 @@ workflow:
 ################
 # task selection
 ################
-## InitializationType
-# Indicates the type of initialization in the R1 cylc task of the first cycle: cold or warm start
-# OPTIONS:
-#   ColdStart - generate first forecast online from an external GFS analysis
-#   WarmStart - copy a pre-generated forecast
-  InitializationType: WarmStart
-
 ## CriticalPathType: controls dependencies between and chilrdren of
 #                   `da` and `forecast` mini-workflows
 # OPTIONS:
@@ -100,7 +93,7 @@ workflow:
   CompareBG2Benchmark: False
 
 ## VerifyEnsMeanBG: whether to run verification scripts for ensemble mean
-#    background (nEnsDAMembers > 1) or deterministic background (nEnsDAMembers == 1)
+#    background (nMembers > 1) or deterministic background (nMembers == 1)
 # OPTIONS: True/False
   VerifyEnsMeanBG: True
 

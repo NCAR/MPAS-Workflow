@@ -1,0 +1,64 @@
+firstbackground:
+
+  ## resource: used to select one of the options below (e.g., COLD.GFS, PANDAC.GFS, PANDAC.LaggedGEFS)
+  resource: None
+
+  ## nMembers: number of background, and thus DA and forecast members
+  nMembers: 1
+
+  defaults:
+    ## directory: where background state(s) is(are) stored, possibly including {{prevDateTime}} string
+    directory: None
+
+    ## filePrefix: prefix of the background files
+    filePrefix: mpasout
+
+    ## staticDirectory: location of static stream file
+    staticDirectory: None
+
+    ## staticPrefix: prefix of static stream file
+    staticPrefix: "x1.{{nCells}}.init"
+
+    ## maxMembers: maximum number of background members available
+    maxMembers: 1
+
+    ## memberFormat:
+    # python formatting string for memberDir function
+    # defaults to providing an empty member directory for non-ensemble scenarios
+    memberFormat: " "
+
+    ## PrepareFirstBackground: mini-workflow that executes the R1 forecast
+    PrepareFirstBackground: None
+
+  COLD:
+    GFS:
+      common:
+        PrepareFirstBackground: "Forecast:succeed-all => ForecastFinished" 
+        staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
+
+  PANDAC:
+    GFS:
+      common:
+        PrepareFirstBackground: "GetWarmStartIC => ForecastFinished"
+      120km:
+        directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/SingleFCFirstCycle/{{FirstCycleDate}}"
+        staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
+      60km:
+        directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/SingleFCFirstCycle/{{FirstCycleDate}}"
+        staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
+      30km:
+        directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/SingleFCFirstCycle/{{FirstCycleDate}}"
+        staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
+    LaggedGEFS:
+      common:
+        PrepareFirstBackground: "GetWarmStartIC => ForecastFinished"
+      120km:
+        directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/EnsFCFirstCycle/{{FirstCycleDate}}"
+        staticDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
+        maxMembers: 80
+        memberFormat: "/{:02d}"
+      60km:
+        directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/EnsFCFirstCycle/{{FirstCycleDate}}"
+        staticDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
+        maxMembers: 80
+        memberFormat: "/{:02d}"

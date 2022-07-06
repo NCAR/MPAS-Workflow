@@ -241,12 +241,24 @@ conda activate npl
       #       independent task for each member)
       execution time limit = PT10M
       execution retry delays = {{InitializationRetry}}
-  [[GetGFSanalysis]]
+  [[GetGFSAnalysisFromRDA]]
     inherit = BATCH
-    script = $origin/GetGFSanalysis.csh
+    script = $origin/GetGFSAnalysisFromRDA.csh
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = {{GFSAnalysisRetry}}
+  [[GetGFSanalysisFromFTP]]
+    inherit = BATCH
+    script = $origin/GetGFSAnalysisFromFTP.csh
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = {{GFSAnalysisRetry}}
+  [[LinkExternalAnalysis]]
+    inherit = BATCH
+    script = $origin/LinkExternalAnalysis.csh
+    [[[job]]]
+      execution time limit = PT30S
+
   [[UngribColdStartIC]]
     inherit = BATCH
     script = $origin/UngribColdStartIC.csh

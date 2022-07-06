@@ -420,6 +420,15 @@ while ( $member <= ${nMembers} )
     set tFile = ${TemplateFieldsFileInner}${memSuffix}
     rm $tFile
 
+    ## next date from which first background is initialized
+    set nextFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} +${CyclingWindowHR}`
+    setenv nextFirstCycleDate ${nextFirstCycleDate}
+    set Nyy = `echo ${nextFirstCycleDate} | cut -c 1-4`
+    set Nmm = `echo ${nextFirstCycleDate} | cut -c 5-6`
+    set Ndd = `echo ${nextFirstCycleDate} | cut -c 7-8`
+    set Nhh = `echo ${nextFirstCycleDate} | cut -c 9-10`
+    set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
+
     #modify "Inner" initial forecast file
     # TODO: capture the naming convention for FirstCyclingFCDir somewhere else
     set memDir = `${memberDir} $nMembers 1`

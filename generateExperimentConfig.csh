@@ -4,6 +4,7 @@ setenv TMPDIR /glade/scratch/${USER}/temp
 mkdir -p $TMPDIR
 
 source config/benchmark.csh
+source config/firstbackground.csh
 source config/naming.csh
 source config/workflow.csh
 source config/applications/rtpp.csh
@@ -46,11 +47,6 @@ $setLocal ExpSuffix
 ## ParentDirectory
 # where this experiment is located
 setenv ParentDirectory ${ParentDirectoryPrefix}/${ExperimentUserDir}/${ParentDirectorySuffix}
-
-## total number of members
-# TODO: set nMembers explicitly via yaml instead of variational.nEnsDAMembers
-setenv nMembers $nEnsDAMembers
-
 
 ## experiment name
 if ("$ExperimentName" == None) then
@@ -103,7 +99,7 @@ if ("$ExperimentName" == None) then
   setenv ExperimentName ${ExperimentName}${ExpObsSuffix}
   setenv ExperimentName ${ExperimentName}${ExpEnsSuffix}
   setenv ExperimentName ${ExperimentName}_${MeshesDescriptor}
-  setenv ExperimentName ${ExperimentName}_${InitializationType}
+  setenv ExperimentName ${ExperimentName}_${firstbackground__resource}
 endif
 setenv ExperimentName ${ExperimentUserPrefix}${ExperimentName}
 setenv ExperimentName ${ExperimentName}${ExpSuffix}
@@ -172,6 +168,10 @@ setenv ABEInflationWorkDir ${ExperimentDirectory}/\$aBEInflationWorkDir
 
 setenv ExtendedFCWorkDir ${ExperimentDirectory}/\$extendedFCWorkDir
 setenv VerificationWorkDir ${ExperimentDirectory}/\$verificationWorkDir
+
+setenv ExternalAnalysisWorkDir ${ExperimentDirectory}/${outerMesh}/\$externalAnalysisWorkDir
+setenv ExternalAnalysisWorkDirInner ${ExperimentDirectory}/${innerMesh}/\$externalAnalysisWorkDir
+setenv ExternalAnalysisWorkDirEnsemble ${ExperimentDirectory}/${ensembleMesh}/\$externalAnalysisWorkDir
 
 ## benchmark experiment archive
 setenv Benchmark${DataAssim}WorkDir ${benchmark__ExperimentDirectory}/\$dataAssimWorkDir

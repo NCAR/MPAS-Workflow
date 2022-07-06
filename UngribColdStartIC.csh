@@ -9,6 +9,7 @@ source config/experiment.csh
 source config/modeldata.csh
 source config/builds.csh
 source config/applications/initic.csh
+source config/externalanalyses.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -17,7 +18,7 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-set WorkDir = ${InitICWorkDir}/${thisValidDate}
+set WorkDir = ${ExternalAnalysisDir}
 echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
@@ -25,8 +26,7 @@ cd ${WorkDir}
 # ================================================================================================
 
 ## link Vtable file
-set Vtable = /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
-ln -sfv ${Vtable} Vtable
+ln -sfv ${externalanalyses__Vtable} Vtable
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}
