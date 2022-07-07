@@ -6,17 +6,11 @@
 if ( $?config_variational ) exit 0
 set config_variational = 1
 
-source config/scenario.csh
 source config/firstbackground.csh
 source config/model.csh
 source config/naming.csh
 
-# setLocal is a helper function that picks out a configuration node
-# under the "variational" key of scenarioConfig
-setenv baseConfig scenarios/base/variational.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig variational"
-setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig variational"
-setenv setNestedVariational "source $setNestedConfig $baseConfig $scenarioConfig variational"
+source config/scenario.csh variational
 
 # variational settings
 $setLocal DAType

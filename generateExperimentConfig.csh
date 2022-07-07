@@ -12,13 +12,7 @@ source config/applications/rtpp.csh
 source config/applications/variational.csh
 source config/model.csh
 
-source config/scenario.csh
-
-# setLocal is a helper function that picks out a configuration node
-# under the "experiment" key of scenarioConfig
-setenv baseConfig scenarios/base/experiment.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig experiment"
-setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig experiment"
+source config/scenario.csh experiment
 
 # ParentDirectory parts
 $setLocal ParentDirectoryPrefix
