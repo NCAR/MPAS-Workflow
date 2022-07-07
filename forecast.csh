@@ -65,7 +65,7 @@ set icFileExt = ${thisMPASFileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
 if ( ${thisValidDate} == ${FirstCycleDate} ) then
-  set initialState = ${ExternalAnalysisDir}/$externalanalyses_filePrefix.${icFileExt}
+  set initialState = ${ExternalAnalysisDir}/$externalanalyses__filePrefix.${icFileExt}
   set do_DAcycling = "false"
   set memberStaticFieldsFile = ${initialState}
 else

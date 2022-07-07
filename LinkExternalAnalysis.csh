@@ -15,20 +15,48 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-# static work directory
+# ================================================================================================
+
+# outer
 set WorkDir = ${ExternalAnalysisDir}
 echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
-
-# ================================================================================================
-
 
 set externalDirectory = `echo "$externalanalyses__externalDirectory" \
   | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
   `
 
 ln -sfv $externalDirectory/$externalanalyses__filePrefix.$thisMPASFileDate.nc ./
+
+
+# inner and ensemble analyses are only needed for static files to use in Geometry objects
+
+# inner
+set WorkDir = ${ExternalAnalysisWorkDirInner}/${thisValidDate}
+echo "WorkDir = ${WorkDir}"
+mkdir -p ${WorkDir}
+cd ${WorkDir}
+
+set externalDirectory = `echo "$externalanalyses__externalDirectoryInner" \
+  | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+  `
+
+ln -sfv $externalDirectory/$externalanalyses__filePrefixInner.$thisMPASFileDate.nc ./
+
+
+# ensemble
+set WorkDir = ${ExternalAnalysisWorkDirEnsemble}/${thisValidDate}
+echo "WorkDir = ${WorkDir}"
+mkdir -p ${WorkDir}
+cd ${WorkDir}
+
+set externalDirectory = `echo "$externalanalyses__externalDirectoryEnsemble" \
+  | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+  `
+
+ln -sfv $externalDirectory/$externalanalyses__filePrefixEnsemble.$thisMPASFileDate.nc ./
+
 
 date
 

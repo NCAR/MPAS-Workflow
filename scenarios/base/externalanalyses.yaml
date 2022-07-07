@@ -24,11 +24,11 @@ externalanalyses:
     GFS:
       RDA:
         common:
-          PrepareExternalAnalysis: "GetGFSanalysisFromRDA => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady"
+          PrepareExternalAnalysis: "GetGFSAnalysisFromRDA => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady"
           Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
       NCEPFTP:
         common:
-          PrepareExternalAnalysis: "GetGFSanalysisFromFTP => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady"
+          PrepareExternalAnalysis: "GetGFSAnalysisFromFTP => UngribColdStartIC => GenerateColdStartIC => ExternalAnalysisReady"
           Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
 
   PANDAC:
