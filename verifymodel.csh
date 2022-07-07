@@ -39,9 +39,9 @@ endif
 # Setup environment
 # =================
 source config/experiment.csh
+source config/externalanalyses.csh
 source config/tools.csh
 source config/model.csh
-source config/modeldata.csh
 source config/applications/verifymodel.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -84,7 +84,7 @@ set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $GFSAnaDirVerify/$InitFilePrefixOuter"
+  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $ExternalAnalysisDir/$externalanalyses__filePrefix"
 
   if ($ArgNMembers > 1) then
     #Note: ensemble diagnostics only work for BG/AN verification, not extended ensemble forecasts

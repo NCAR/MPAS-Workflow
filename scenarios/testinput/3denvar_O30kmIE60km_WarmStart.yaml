@@ -5,7 +5,6 @@ workflow:
   # Also required with only 15 inner iterations to avoid NaN in forecast
   # Can cycle for a full month when nInnerIterations==[60,60]
   finalCyclePoint: 20180415T00
-  InitializationType: WarmStart
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
 experiment:
@@ -14,10 +13,17 @@ model:
   outerMesh: 30km
   innerMesh: 60km
   ensembleMesh: 60km
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
 variational:
   DAType: 3denvar
   # only use 15 inner iterations to reduce cost
   nInnerIterations: [15,]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
 job:
   CPQueueName: economy
   NCPQueueName: economy

@@ -2,8 +2,11 @@
 MPAS-Workflow
 =============
 
-A tool for cycling forecast and data assimilation experiments with the MPAS-Atmosphere model and the
-MPAS-JEDI data assimilation package.
+A tool for cycling forecast and data assimilation experiments with the
+[MPAS-Atmosphere](https://mpas-dev.github.io/) model and the
+[JEDI-MPAS](https://jointcenterforsatellitedataassimilation-jedi-docs.readthedocs-hosted.com/en/latest/inside/jedi-components/mpas-jedi/index.html)
+data assimilation package. The workflow is orchestrated using the [Cylc](https://cylc.github.io/)
+general purpose workflow engine.
 
 Starting a cycling experiment on the Cheyenne HPC
 -------------------------------------------------
@@ -112,14 +115,17 @@ refactored.  It is best practice to discuss such modifications that benefit mult
 GitHub issues, and then submit pull requests.
 
 `generateExperiment.csh`: produces `cofig/experiment.csh`, which is a global description of the
-workflow file structure and file-naming conventions used across multiple applications
+workflow file structure and file-naming conventions used across multiple applications, partially
+derived from `config/naming.csh`
 
 `config/environment.csh`: run-time environment used across compiled executables and python scripts
 
-`config/modeldata.csh`: static model-space data files, including fixed ensemble forecast members
-for deterministic experiments, first guess files for the first cycle
-of an experiment, surface variable update files (sst and xice), and common static.nc files to be
-used across all cycles.
+`config/externalanalyses.csh`: controls how external DA system analysis files are produced,
+including online vs. offline.  External analyses are used for verification and for optionally
+initializing a cold-start forecast at the first cylce of an experiment.
+
+`config/firstbackground.csh`: controls how the first DA cycle background state is supplied,
+including online vs. offline and deterministic vs. ensemble
 
 `config/obsdata.csh`: static observation-space data file structure; soon to be replaced by
 the `observations` configuration section and `observations.csh`
@@ -151,7 +157,7 @@ E.g., `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*
 
 `config/mpas/hofx/*`: tasks derived from `HofX.csh`
 
-`config/mpas/initic/*.csh`: `GenerateColdStartIC.csh` and `UngribColdStartIC.csh`
+`config/mpas/initic/*.csh`: `ExternalAnalysisToMPAS.csh` and `UngribExternalAnalysis.csh`
 
 `config/mpas/rtpp/*`: `RTPPInflation.csh`
 
@@ -180,10 +186,10 @@ Main driver: drive.csh
 Creates a new cylc suite file, then runs it. Users need not modify this file. Developers who wish
 to add new cylc tasks, or modify the relationships between tasks, will modify `drive.csh` and/or
 the files in the `include` directory:
-- `include/criticalpath.rc`: controls all elements of the critical path for all `CriticalPathType` options
-and 2 `InitializationType` options.  Allows for re-use of `include/forecast.rc` and `include/da.rc`
-according to the user selections.  Those latter two scripts describe all the intra-forecast and
-intra-da dependencies, respectively, independent of tasks in other categories.
+- `include/criticalpath.rc`: controls all elements of the critical path for all `CriticalPathType`
+options.  Allows for re-use of `include/forecast.rc` and `include/da.rc` according to the user
+selections.  Those latter two scripts describe all the intra-forecast and intra-da dependencies,
+respectively, independent of tasks in other categories.
 - `include/verification.rc`: describes the dependencies between `HofX`, `Verify*`, `Compare*`, and other
 kinds of tasks that produce verification statistics files.  It includes dependencies on
 `forecast` and `da` tasks that produce the data to be verified.  Multiple aspects of verification
@@ -276,7 +282,7 @@ Non-templated workflow tasks
 These scripts are used as-is without sed substitution.  They are copied to the experiment
 workflow directory by `SetupWorkflow.csh`.
 
-`GenerateColdStartIC.csh`: generates cold-start IC files from GFS analyses
+`ExternalAnalysisToMPAS.csh`: generates cold-start IC files from GFS analyses
 
 `GenerateABEInflation.csh`: generates Adaptive Background Error Inflation (ABEI) factors based on
 all-sky IR brightness temperature `H(x_mean)` and `H_clear(x_mean)` from GOES-16 ABI and Himawari-8
@@ -331,7 +337,7 @@ controlling indentation of some `yaml` components
 
 `substituteEnsembleBTemplate`: generates and substitutes the ensemble background error
 covariance `members from template` configuration into application yamls that match `*envar*`
-and `*hybrid*`. See `Variational.csh` for the specific behavior.
+and `*hybrid*`. See `PrepVariational.csh` for the specific behavior.
 
 `updateXTIME`: updates the `xtime` variable in an `MPAS-Atmosphere` state file so that it can be read
 into the model as though it had the correct time stamp
@@ -345,8 +351,11 @@ those dealing with complex operations on model state data are often better-handl
 executables.
 
 
-Some useful cylc commands
--------------------------
+Notes on cylc
+-------------
+Full documentation on cylc can be found [here](https://cylc.github.io/documentation/). Below are
+some useful cylc commands to get new users started.
+
 1. Print a list of active suites
 ```shell
 cylc scan
@@ -360,7 +369,7 @@ cylc gscan
 Double-click an individual suite in order to see detailed information or navigate between suites
 using the drop-down menus.  From the GUI, it is easy to perform actions on the entire suite or
 individual tasks, e.g., hold, resume, kill, trigger.  It is also possible to interrogate the
-real-time progress the cylc tasks being executed and, in some cases, the next tasks that will be
+real-time progress of the cylc tasks being executed, and in some cases the next tasks that will be
 triggered. There are multiple views available, including a flow chart view that is useful for new
 users to learn the dependencies between tasks.
 
@@ -369,8 +378,7 @@ users to learn the dependencies between tasks.
 cylc stop --kill SUITENAME
 ```
 
-4. Trigger all tasks in a suite with a particular `STATUS` (e.g., failed,
-submit-failed)
+4. Trigger all tasks in a suite with a particular `STATUS` (e.g., failed, submit-failed)
 ```shell
 cylc trigger SUITENAME "*.*:STATUS"
 ```
@@ -392,8 +400,44 @@ cylctriggerstatus SUITENAME STATUS
 
 A note about disk management
 ----------------------------
-This workflow includes automated deletion of some intermediate files.  That behavior can be modified
-in scripts that look like `Clean{{Application}}.csh`.  If data storage is still a problem, it is
+This workflow includes capability for automated deletion of some intermediate files.  The default
+behavior is to keep all files, but that can be modified by setting the variational.retainObsFeedback
+and/or hofx.retainObsFeedback options to False.  If data storage is still a problem, it is
 recommended to remove the `Cycling*` directories of an experiment after all desired verification has
 completed. The model- and observation-space statistical summary files in the `Verification`
 directory are orders of magnitude smaller than the full model states and instrument feedback files.
+
+
+References
+----------
+
+Liu, Z., Snyder, C., Guerrette, J. J., Jung, B.-J., Ban, J., Vahl, S., Wu, Y., Trémolet, Y., Auligné, T., Ménétrier, B., Shlyaeva, A., Herbener, S., Liu, E., Holdaway, D., and Johnson, B. T.: Data Assimilation for the Model for Prediction Across Scales – Atmosphere with the Joint Effort for Data assimilation Integration (JEDI-MPAS 1.0.0): EnVar implementation and evaluation, Geosci. Model Dev. Discuss. [preprint], https://doi.org/10.5194/gmd-2022-133, in review, 2022
+
+Oliver, H., Shin, M., Matthews, D., Sanders, O., Bartholomew, S., Clark, A., Fitzpatrick, B., van Haren, R., Hut, R., and Drost, N.: Workflow Automation for Cycling Systems, Computing in Science & Engineering, 21, 7–21, https://doi.org/10.1109/mcse.2019.2906593, 2019.
+
+Skamarock, W. C., Klemp, J. B., Duda, M. G., Fowler, L. D., Park, S.-H., and Ringler, T. D.: A Multiscale Nonhydrostatic Atmospheric Model Using Centroidal Voronoi Tesselations and C-Grid Staggering, Monthly Weather Review, 140, 3090–3105, https://doi.org/10.1175/mwr-d-11-00215.1, 2012.
+
+
+Contributors to-date
+--------------------
+These people have contributed any of the following
+ - GitHub pull requests and review
+ - data
+ - scripts on which workflow tasks are templated
+ - source code
+ - critical consultation
+
+Junmei Ban
+Ivette Hernandez Banos+ (ivette@ucar.edu)
+Jamie Bresch
+JJ Guerrette+ (guerrett@ucar.edu)
+Soyoung Ha
+BJ Jung
+Zhiquan Liu
+Chris Snyder
+Craig Schwartz
+Steven Vahl
+Yali Wu
+Yonggang Yu
+
++ primary repository maintainers/developers

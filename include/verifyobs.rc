@@ -60,25 +60,33 @@
 
   # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
-{% if VerifyExtendedMeanFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
+{% if VerifyExtendedMeanFC %}
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
         DataAssimFinished => MeanAnalysis => ExtendedMeanFC
         ExtendedMeanFC => HofXMeanFC
         HofXMeanFC:succeed-all => VerifyObsMeanFC
         VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
+  {% for dt in ExtendedFCLengths %}
+        PrepareObservations[+PT{dt}H] => HofXMeanFC{{dt}}hr
+  {% endfor %}
       '''
 {% endif %}
 
 
   # ... for extended forecast from ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
-{% if VerifyExtendedEnsFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
+{% if VerifyExtendedEnsFC %}
     [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
         DataAssimFinished => ExtendedEnsFC
         ExtendedEnsFC:succeed-all => HofXEnsFC
         HofXEnsFC:succeed-all => VerifyObsEnsFC
         VerifyObsEnsFC:succeed-all => CleanHofXEnsFC
+  {% for mem in EnsVerifyMembers %}
+    {% for dt in ExtendedFCLengths %}
+        PrepareObservations[+PT{dt}H] => HofXEnsFC{{mem}}-{{dt}}hr
+    {% endfor %}
+  {% endfor %}
       '''
 {% endif %}

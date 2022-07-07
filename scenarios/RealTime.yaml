@@ -3,7 +3,6 @@ workflow:
   firstCyclePoint: 20220316T00
   initialCyclePoint: 20220404T12
   finalCyclePoint: 20250320T00
-  InitializationType: ColdStart
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
   maxActiveCyclePoints: 1
@@ -15,8 +14,11 @@ model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-  AnalysisSource: GFSfromNCEPFTPOnline
   GraphInfoDir: /glade/work/duda/static_moved_to_campaign
+firstbackground:
+  resource: "ForecastFromAnalysis"
+externalanalyses:
+  resource: "GFS.NCEPFTP"
 variational:
   DAType: 3dvar
   nInnerIterations: [60,]

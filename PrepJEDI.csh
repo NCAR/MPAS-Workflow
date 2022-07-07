@@ -56,7 +56,6 @@ source config/model.csh
 source config/observations.csh
 source config/workflow.csh
 source config/tools.csh
-source config/modeldata.csh
 source config/mpas/variables.csh
 source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`

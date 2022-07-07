@@ -6,7 +6,6 @@ date
 # =================
 source config/model.csh
 source config/experiment.csh
-source config/modeldata.csh
 source config/builds.csh
 source config/environmentJEDI.csh
 source config/applications/initic.csh
@@ -17,7 +16,7 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-set WorkDir = ${InitICWorkDir}/${thisValidDate}
+set WorkDir = ${ExternalAnalysisDir}
 echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}

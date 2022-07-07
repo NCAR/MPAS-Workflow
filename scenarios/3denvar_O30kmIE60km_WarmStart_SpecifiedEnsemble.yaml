@@ -1,5 +1,4 @@
 workflow:
-  InitializationType: WarmStart
   firstCyclePoint: 20180414T18
   initialCyclePoint: 20180414T18
   finalCyclePoint: 20180514T18
@@ -13,22 +12,28 @@ model:
   outerMesh: 30km
   innerMesh: 60km
   ensembleMesh: 60km
-  fixedEnsBSource: PreviousEDA
-  nPreviousEnsDAMembers: 80
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+variational:
+  DAType: 3denvar
+  nInnerIterations: [60,60,]
 
 ## DART
-#  PreviousEnsembleForecastDir: /glade/scratch/guerrett/pandac/schwartz_dart_NMEM80_60km/CyclingFC
+#  ensemble:
+#    forecasts:
+#      resource: "PANDAC.DART"
 #experiment:
 #  ExpSuffix: '_B-DART80'
 
 ## EDA
-  PreviousEnsembleForecastDir: /glade/scratch/guerrett/pandac/guerrett_eda_3denvar-60-iter_NMEM80_RTPP0.7_SelfExclusion_OIE60km_WarmStart/CyclingFC
+  ensemble:
+    forecasts:
+      resource: "PANDAC.EDA"
 experiment:
   ExpSuffix: '_B-SE80+RTPP70'
 
-variational:
-  DAType: 3denvar
-  nInnerIterations: [60,60,]
 forecast:
   job:
     30km:
