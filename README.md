@@ -411,19 +411,19 @@ Skamarock, W. C., Klemp, J. B., Duda, M. G., Fowler, L. D., Park, S.-H., and Rin
 
 Contributors to-date
 --------------------
-Maryam Abdi-Oskouei
-Junmei Ban
-Ivette Hernandez Banos[^+] (ivette@ucar.edu)
-Jamie Bresch
-JJ Guerrette[^+] (guerrett@ucar.edu)
-Soyoung Ha
-BJ Jung
-Zhiquan Liu
-Chris Snyder
-Craig Schwartz
-Steven Vahl
-Yali Wu
-Yonggang Yu
+ - Maryam Abdi-Oskouei
+ - Junmei Ban
+ - Ivette Hernandez Banos[^+] (ivette@ucar.edu)
+ - Jamie Bresch
+ - JJ Guerrette[^+] (guerrett@ucar.edu)
+ - Soyoung Ha
+ - BJ Jung
+ - Zhiquan Liu
+ - Chris Snyder
+ - Craig Schwartz
+ - Steven Vahl
+ - Yali Wu
+ - Yonggang Yu
 
 [^+]: primary repository maintainers/developers
 
