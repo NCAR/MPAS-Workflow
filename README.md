@@ -2,8 +2,11 @@
 MPAS-Workflow
 =============
 
-A tool for cycling forecast and data assimilation experiments with the MPAS-Atmosphere model and the
-MPAS-JEDI data assimilation package.
+A tool for cycling forecast and data assimilation experiments with the
+[MPAS-Atmosphere](https://mpas-dev.github.io/) model and the
+[JEDI-MPAS](https://jointcenterforsatellitedataassimilation-jedi-docs.readthedocs-hosted.com/en/latest/inside/jedi-components/mpas-jedi/index.html)
+data assimilation package. The workflow is orchestrated using the [Cylc](https://cylc.github.io/)
+general purpose workflow engine.
 
 Starting a cycling experiment on the Cheyenne HPC
 -------------------------------------------------
@@ -334,7 +337,7 @@ controlling indentation of some `yaml` components
 
 `substituteEnsembleBTemplate`: generates and substitutes the ensemble background error
 covariance `members from template` configuration into application yamls that match `*envar*`
-and `*hybrid*`. See `Variational.csh` for the specific behavior.
+and `*hybrid*`. See `PrepVariational.csh` for the specific behavior.
 
 `updateXTIME`: updates the `xtime` variable in an `MPAS-Atmosphere` state file so that it can be read
 into the model as though it had the correct time stamp
@@ -348,8 +351,11 @@ those dealing with complex operations on model state data are often better-handl
 executables.
 
 
-Some useful cylc commands
--------------------------
+Notes on cylc
+-------------
+Full documentation on cylc can be found [here](https://cylc.github.io/documentation/). Below are
+some useful cylc commands to get new users started.
+
 1. Print a list of active suites
 ```shell
 cylc scan
@@ -363,7 +369,7 @@ cylc gscan
 Double-click an individual suite in order to see detailed information or navigate between suites
 using the drop-down menus.  From the GUI, it is easy to perform actions on the entire suite or
 individual tasks, e.g., hold, resume, kill, trigger.  It is also possible to interrogate the
-real-time progress the cylc tasks being executed and, in some cases, the next tasks that will be
+real-time progress of the cylc tasks being executed, and in some cases the next tasks that will be
 triggered. There are multiple views available, including a flow chart view that is useful for new
 users to learn the dependencies between tasks.
 
@@ -372,8 +378,7 @@ users to learn the dependencies between tasks.
 cylc stop --kill SUITENAME
 ```
 
-4. Trigger all tasks in a suite with a particular `STATUS` (e.g., failed,
-submit-failed)
+4. Trigger all tasks in a suite with a particular `STATUS` (e.g., failed, submit-failed)
 ```shell
 cylc trigger SUITENAME "*.*:STATUS"
 ```
@@ -395,8 +400,37 @@ cylctriggerstatus SUITENAME STATUS
 
 A note about disk management
 ----------------------------
-This workflow includes automated deletion of some intermediate files.  That behavior can be modified
-in scripts that look like `Clean{{Application}}.csh`.  If data storage is still a problem, it is
+This workflow includes capability for automated deletion of some intermediate files.  The default
+behavior is to keep all files, but that can be modified by setting the variational.retainObsFeedback
+and/or hofx.retainObsFeedback options to False.  If data storage is still a problem, it is
 recommended to remove the `Cycling*` directories of an experiment after all desired verification has
 completed. The model- and observation-space statistical summary files in the `Verification`
 directory are orders of magnitude smaller than the full model states and instrument feedback files.
+
+
+References
+----------
+
+Liu, Z., Snyder, C., Guerrette, J. J., Jung, B.-J., Ban, J., Vahl, S., Wu, Y., Trémolet, Y., Auligné, T., Ménétrier, B., Shlyaeva, A., Herbener, S., Liu, E., Holdaway, D., and Johnson, B. T.: Data Assimilation for the Model for Prediction Across Scales – Atmosphere with the Joint Effort for Data assimilation Integration (JEDI-MPAS 1.0.0): EnVar implementation and evaluation, Geosci. Model Dev. Discuss. [preprint], https://doi.org/10.5194/gmd-2022-133, in review, 2022
+
+Oliver, H., Shin, M., Matthews, D., Sanders, O., Bartholomew, S., Clark, A., Fitzpatrick, B., van Haren, R., Hut, R., and Drost, N.: Workflow Automation for Cycling Systems, Computing in Science & Engineering, 21, 7–21, https://doi.org/10.1109/mcse.2019.2906593, 2019.
+
+Skamarock, W. C., Klemp, J. B., Duda, M. G., Fowler, L. D., Park, S.-H., and Ringler, T. D.: A Multiscale Nonhydrostatic Atmospheric Model Using Centroidal Voronoi Tesselations and C-Grid Staggering, Monthly Weather Review, 140, 3090–3105, https://doi.org/10.1175/mwr-d-11-00215.1, 2012.
+
+
+Contributors to-date
+--------------------
+
+Junmei Ban
+Ivette Hernandez Banos
+Jamie Bresch
+JJ Guerrette
+Soyoung Ha
+BJ Jung
+Zhiquan Liu
+Chris Snyder
+Steven Vahl
+Yali Wu
+Yonggang Yu
+
+**Correspondence**: JJ Guerrette (guerrett@ucar.edu)
