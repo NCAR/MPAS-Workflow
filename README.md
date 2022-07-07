@@ -397,3 +397,38 @@ in scripts that look like `Clean{{Application}}.csh`.  If data storage is still 
 recommended to remove the `Cycling*` directories of an experiment after all desired verification has
 completed. The model- and observation-space statistical summary files in the `Verification`
 directory are orders of magnitude smaller than the full model states and instrument feedback files.
+
+
+References
+----------
+
+Liu, Z., Snyder, C., Guerrette, J. J., Jung, B.-J., Ban, J., Vahl, S., Wu, Y., Trémolet, Y., Auligné, T., Ménétrier, B., Shlyaeva, A., Herbener, S., Liu, E., Holdaway, D., and Johnson, B. T.: Data Assimilation for the Model for Prediction Across Scales – Atmosphere with the Joint Effort for Data assimilation Integration (JEDI-MPAS 1.0.0): EnVar implementation and evaluation, Geosci. Model Dev. Discuss. [preprint], https://doi.org/10.5194/gmd-2022-133, in review, 2022
+
+Oliver, H., Shin, M., Matthews, D., Sanders, O., Bartholomew, S., Clark, A., Fitzpatrick, B., van Haren, R., Hut, R., and Drost, N.: Workflow Automation for Cycling Systems, Computing in Science & Engineering, 21, 7–21, https://doi.org/10.1109/mcse.2019.2906593, 2019.
+
+Skamarock, W. C., Klemp, J. B., Duda, M. G., Fowler, L. D., Park, S.-H., and Ringler, T. D.: A Multiscale Nonhydrostatic Atmospheric Model Using Centroidal Voronoi Tesselations and C-Grid Staggering, Monthly Weather Review, 140, 3090–3105, https://doi.org/10.1175/mwr-d-11-00215.1, 2012.
+
+
+Contributors to-date
+--------------------
+These people have contributed any of the following
+ - GitHub pull requests and review
+ - data
+ - scripts on which workflow tasks are templated
+ - source code
+ - critical consultation
+
+Junmei Ban
+Ivette Hernandez Banos+ (ivette@ucar.edu)
+Jamie Bresch
+JJ Guerrette+ (guerrett@ucar.edu)
+Soyoung Ha
+BJ Jung
+Zhiquan Liu
+Chris Snyder
+Craig Schwartz
+Steven Vahl
+Yali Wu
+Yonggang Yu
+
++ primary repository maintainers/developers
