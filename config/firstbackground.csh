@@ -3,15 +3,9 @@
 if ( $?config_firstbackground ) exit 0
 setenv config_firstbackground 1
 
-source config/scenario.csh
 source config/model.csh
 
-# setLocal is a helper function that picks out a configuration node
-# under the "firstbackground" key of scenarioConfig
-setenv baseConfig scenarios/base/firstbackground.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig firstbackground"
-setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig firstbackground"
-setenv setNestedFirstbackground "source $setNestedConfig $baseConfig $scenarioConfig firstbackground"
+source config/scenario.csh firstbackground
 
 $setNestedFirstbackground resource
 $setLocal nMembers
