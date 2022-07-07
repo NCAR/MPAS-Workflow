@@ -418,6 +418,7 @@ These people have contributed any of the following
  - source code
  - critical consultation
 
+Maryam Abdi-Oskouei
 Junmei Ban
 Ivette Hernandez Banos+ (ivette@ucar.edu)
 Jamie Bresch
