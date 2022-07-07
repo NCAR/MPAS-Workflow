@@ -3,17 +3,11 @@
 if ( $?config_externalanalyses ) exit 0
 setenv config_externalanalyses 1
 
-source config/scenario.csh
 source config/model.csh
 
-# setLocal is a helper function that picks out a configuration node
-# under the "externalanalyses" key of scenarioConfig
-setenv baseConfig scenarios/base/externalanalyses.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig externalanalyses"
-setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig externalanalyses"
-setenv setNestedExternalAnalyses "source $setNestedConfig $baseConfig $scenarioConfig externalanalyses"
+source config/scenario.csh externalanalyses
 
-$setNestedExternalAnalyses resource
+$setNestedExternalanalyses resource
 
 # outer
 foreach parameter (externalDirectory filePrefix Vtable PrepareExternalAnalysis)
