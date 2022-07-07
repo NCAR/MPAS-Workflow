@@ -157,7 +157,7 @@ E.g., `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*
 
 `config/mpas/hofx/*`: tasks derived from `HofX.csh`
 
-`config/mpas/initic/*.csh`: `GenerateColdStartIC.csh` and `UngribColdStartIC.csh`
+`config/mpas/initic/*.csh`: `ExternalAnalysisToMPAS.csh` and `UngribExternalAnalysis.csh`
 
 `config/mpas/rtpp/*`: `RTPPInflation.csh`
 
@@ -282,7 +282,7 @@ Non-templated workflow tasks
 These scripts are used as-is without sed substitution.  They are copied to the experiment
 workflow directory by `SetupWorkflow.csh`.
 
-`GenerateColdStartIC.csh`: generates cold-start IC files from GFS analyses
+`ExternalAnalysisToMPAS.csh`: generates cold-start IC files from GFS analyses
 
 `GenerateABEInflation.csh`: generates Adaptive Background Error Inflation (ABEI) factors based on
 all-sky IR brightness temperature `H(x_mean)` and `H_clear(x_mean)` from GOES-16 ABI and Himawari-8

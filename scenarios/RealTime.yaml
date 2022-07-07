@@ -16,9 +16,9 @@ model:
   ensembleMesh: 120km
   GraphInfoDir: /glade/work/duda/static_moved_to_campaign
 firstbackground:
-  resource: "COLD.GFS"
+  resource: "ForecastFromAnalysis"
 externalanalyses:
-  resource: "COLD.GFS.NCEPFTP"
+  resource: "GFS.NCEPFTP"
 variational:
   DAType: 3dvar
   nInnerIterations: [60,]

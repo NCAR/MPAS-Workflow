@@ -6,7 +6,7 @@ firstbackground:
   resource: "PANDAC.LaggedGEFS"
   nMembers: 20
 externalanalyses:
-  resource: "PANDAC.GFS"
+  resource: "GFS.PANDAC"
 variational:
   DAType: 3denvar
   SelfExclusion: True

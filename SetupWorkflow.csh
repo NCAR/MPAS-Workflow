@@ -7,9 +7,9 @@ set workflowParts = ( \
   GetGFSAnalysisFromRDA.csh \
   GetGFSAnalysisFromFTP.csh \
   LinkExternalAnalysis.csh \
-  UngribColdStartIC.csh \
-  GenerateColdStartIC.csh \
-  GetWarmStartIC.csh \
+  UngribExternalAnalysis.csh \
+  ExternalAnalysisToMPAS.csh \
+  LinkWarmStartBackgrounds.csh \
   GetObs.csh \
   ObsToIODA.csh \
   getCycleVars.csh \

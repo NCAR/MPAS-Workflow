@@ -232,9 +232,9 @@ conda activate npl
 
 
 ## Forecasts and analyses generated outside MPAS-Workflow
-  [[GetWarmStartIC]]
+  [[LinkWarmStartBackgrounds]]
     inherit = BATCH
-    script = $origin/GetWarmStartIC.csh
+    script = $origin/LinkWarmStartBackgrounds.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members
       # TODO: set time limit based on outerMesh AND (number of members OR
@@ -259,20 +259,20 @@ conda activate npl
     [[[job]]]
       execution time limit = PT30S
 
-  [[UngribColdStartIC]]
+  [[UngribExternalAnalysis]]
     inherit = BATCH
-    script = $origin/UngribColdStartIC.csh
+    script = $origin/UngribExternalAnalysis.csh
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = {{InitializationRetry}}
-    # currently UngribColdStartIC has to be on Cheyenne, because ungrib.exe is built there
+    # currently UngribExternalAnalysis has to be on Cheyenne, because ungrib.exe is built there
     # TODO: build ungrib.exe on casper, remove CP directives below
     [[[directives]]]
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
-  [[GenerateColdStartIC]]
+  [[ExternalAnalysisToMPAS]]
     inherit = BATCH
-    script = $origin/GenerateColdStartIC.csh
+    script = $origin/ExternalAnalysisToMPAS.csh
     [[[job]]]
       execution time limit = PT{{InitICSeconds}}S
       execution retry delays = {{InitializationRetry}}

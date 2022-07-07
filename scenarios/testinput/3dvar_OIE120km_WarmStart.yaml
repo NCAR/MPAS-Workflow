@@ -16,7 +16,7 @@ model:
 firstbackground:
   resource: "PANDAC.GFS"
 externalanalyses:
-  resource: "PANDAC.GFS"
+  resource: "GFS.PANDAC"
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]

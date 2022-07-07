@@ -2,12 +2,15 @@ firstbackground:
 
   ## resource:
   # used to select one of the options below (must be in quotes)
-  # e.g., "COLD.GFS", "PANDAC.GFS", "PANDAC.LaggedGEFS"
+  # e.g., "ForecastFromAnalysis", "PANDAC.GFS", "PANDAC.LaggedGEFS"
   resource: None
 
   ## nMembers: number of background, and thus DA and forecast members
   nMembers: 1
 
+  ## defaults:
+  # default resource values
+  # can be overridden in either a `common` or `{{mesh}}``-specific block
   defaults:
     ## directory: where background state(s) is(are) stored, possibly including {{prevDateTime}} string
     directory: None
@@ -21,27 +24,26 @@ firstbackground:
     ## staticPrefix: prefix of static stream file
     staticPrefix: "x1.{{nCells}}.init"
 
-    ## maxMembers: maximum number of background members available
+    ## maxMembers: maximum number of background members available for this resource
     maxMembers: 1
 
     ## memberFormat:
     # python formatting string for memberDir function
-    # defaults to providing an empty member directory for non-ensemble scenarios
+    # defaults to providing an empty member directory, i.e., for non-ensemble scenarios
     memberFormat: " "
 
     ## PrepareFirstBackground: mini-workflow that executes the R1 forecast
     PrepareFirstBackground: None
 
-  COLD:
-    GFS:
-      common:
-        PrepareFirstBackground: "Forecast:succeed-all => ForecastFinished"
-        staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
+  ForecastFromAnalysis:
+    common:
+      PrepareFirstBackground: "Forecast:succeed-all => ForecastFinished"
+      staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
 
   PANDAC:
     GFS:
       common:
-        PrepareFirstBackground: "GetWarmStartIC => ForecastFinished"
+        PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished"
       120km:
         directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/SingleFCFirstCycle/{{FirstCycleDate}}"
         staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
@@ -53,7 +55,7 @@ firstbackground:
         staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
     LaggedGEFS:
       common:
-        PrepareFirstBackground: "GetWarmStartIC => ForecastFinished"
+        PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished"
       120km:
         directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/EnsFCFirstCycle/{{FirstCycleDate}}"
         staticDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"

@@ -5,6 +5,7 @@ mkdir -p $TMPDIR
 
 source config/benchmark.csh
 source config/firstbackground.csh
+source config/externalanalyses.csh
 source config/naming.csh
 source config/workflow.csh
 source config/applications/rtpp.csh
@@ -99,7 +100,7 @@ if ("$ExperimentName" == None) then
   setenv ExperimentName ${ExperimentName}${ExpObsSuffix}
   setenv ExperimentName ${ExperimentName}${ExpEnsSuffix}
   setenv ExperimentName ${ExperimentName}_${MeshesDescriptor}
-  setenv ExperimentName ${ExperimentName}_${firstbackground__resource}
+  #setenv ExperimentName ${ExperimentName}_${firstbackground__resource}
 endif
 setenv ExperimentName ${ExperimentUserPrefix}${ExperimentName}
 setenv ExperimentName ${ExperimentName}${ExpSuffix}
@@ -169,9 +170,9 @@ setenv ABEInflationWorkDir ${ExperimentDirectory}/\$aBEInflationWorkDir
 setenv ExtendedFCWorkDir ${ExperimentDirectory}/\$extendedFCWorkDir
 setenv VerificationWorkDir ${ExperimentDirectory}/\$verificationWorkDir
 
-setenv ExternalAnalysisWorkDir ${ExperimentDirectory}/${outerMesh}/\$externalAnalysisWorkDir
-setenv ExternalAnalysisWorkDirInner ${ExperimentDirectory}/${innerMesh}/\$externalAnalysisWorkDir
-setenv ExternalAnalysisWorkDirEnsemble ${ExperimentDirectory}/${ensembleMesh}/\$externalAnalysisWorkDir
+setenv ExternalAnalysisWorkDir ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}/${outerMesh}
+setenv ExternalAnalysisWorkDirInner ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}/${innerMesh}
+setenv ExternalAnalysisWorkDirEnsemble ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}/${ensembleMesh}
 
 ## benchmark experiment archive
 setenv Benchmark${DataAssim}WorkDir ${benchmark__ExperimentDirectory}/\$dataAssimWorkDir

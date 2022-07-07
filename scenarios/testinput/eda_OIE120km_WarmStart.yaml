@@ -16,7 +16,7 @@ firstbackground:
   resource: "PANDAC.LaggedGEFS"
   nMembers: 5
 externalanalyses:
-  resource: "PANDAC.GFS"
+  resource: "GFS.PANDAC"
 variational:
   DAType: 3denvar
   nInnerIterations: [15,]
