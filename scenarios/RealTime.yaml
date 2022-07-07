@@ -18,7 +18,7 @@ model:
 firstbackground:
   resource: "COLD.GFS"
 externalanalyses:
-  resource: "COLD.GFS.FTP"
+  resource: "COLD.GFS.NCEPFTP"
 variational:
   DAType: 3dvar
   nInnerIterations: [60,]

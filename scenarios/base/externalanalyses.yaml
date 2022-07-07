@@ -2,7 +2,7 @@ externalanalyses:
 
   ## resource:
   # used to select one of the options below (must be in quotes)
-  # e.g., "COLD.GFS.RDA", "COLD.GFS.FTP", "PANDAC.GFS"
+  # e.g., "COLD.GFS.RDA", "COLD.GFS.NCEPFTP", "PANDAC.GFS"
   resource: None
 
   defaults:
