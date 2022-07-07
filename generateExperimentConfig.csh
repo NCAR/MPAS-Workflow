@@ -9,7 +9,7 @@ source config/applications/rtpp.csh
 source config/applications/variational.csh
 source config/model.csh
 
-source config/scenario.csh experiment setNestedExperiment
+source config/scenario.csh experiment
 
 # ParentDirectory parts
 $setLocal ParentDirectoryPrefix
