@@ -3,22 +3,19 @@
 if ( $?config_observations ) exit 0
 setenv config_observations 1
 
-source config/scenario.csh
+source config/scenario.csh observations
 
-# setObservations is a helper function that picks out a configuration node
-# under the "observations" key of scenarioConfig
-setenv baseConfig scenarios/base/observations.yaml
-setenv setObservations "source $setConfig $baseConfig $scenarioConfig observations"
-setenv setNestedObservations "source $setNestedConfig $baseConfig $scenarioConfig observations"
-setenv getObservationsOrNone "source $getConfigOrNone $baseConfig $scenarioConfig observations"
+# getObservationsOrNone exposes the observations section of the config for run-time-dependent
+# behaviors
+setenv getObservationsOrNone "${getLocalOrNone}"
 
 # nested observations__resource
 $setNestedObservations resource
 
-$setObservations convertToIODAObservations
-$setObservations GDASObsErrtable
-$setObservations CRTMTABLES
-$setObservations InterpolationType
+$setLocal convertToIODAObservations
+$setLocal GDASObsErrtable
+$setLocal CRTMTABLES
+$setLocal InterpolationType
 
 # static directories for bias correction files
 set fixedCoeff = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed

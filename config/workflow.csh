@@ -3,12 +3,7 @@
 if ( $?config_workflow ) exit 0
 setenv config_workflow 1
 
-source config/scenario.csh
-
-# setLocal is a helper function that picks out a configuration node
-# under the "workflow" key of scenarioConfig
-setenv baseConfig scenarios/base/workflow.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig workflow"
+source config/scenario.csh workflow
 
 $setLocal firstCyclePoint
 
