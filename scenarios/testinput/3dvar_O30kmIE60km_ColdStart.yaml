@@ -1,0 +1,26 @@
+workflow:
+  # test a recent date
+  firstCyclePoint: 20220201T00
+  initialCyclePoint: 20220201T00
+  finalCyclePoint: 20220201T12
+  VerifyDeterministicDA: True
+  VerifyEnsMeanBG: True
+observations:
+  resource: GladeRDAOnline
+experiment:
+  ExperimentName: '3dvar_O30kmIE60km_ColdStart_TEST'
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+firstbackground:
+  resource: "ForecastFromAnalysis"
+externalanalyses:
+  resource: "GFS.RDA"
+variational:
+  DAType: 3dvar
+  nInnerIterations: [15,]
+  biasCorrection: True
+job:
+  CPQueueName: economy
+  NCPQueueName: economy
