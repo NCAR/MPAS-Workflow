@@ -23,10 +23,10 @@
 
 # Executing the following command generates the functions described below.
 #
-#   source confing/scenario.csh forecast 
+#   source confing/scenario.csh forecast
 #
 # (1) setLocal - uses setenv to create an environment variable with the same name as the lowest
-#     hierarchical level of the yaml key.  Missing or "None" values cause an error.
+#     hierarchical level of the yaml key.  A missing or "None" value causes an error.
 #
 # ex:
 # $setLocal job.nodes # `setenv nodes 2`
@@ -46,11 +46,11 @@
 # $getLocalOrNone updateSea # returns "False"
 #
 # (3) setNested{{ConfigSection}} - generate "nested" environment variables with a prefix equal to
-#     "$configSection__".  The placeholder {{ConfigSection}} is always equal to $configSection, but
-#     with the first letter capitalized.  Thus, configSection=forecast becomes
-#     ConfigSection=Forecast.  Missing or "None" values cause an error.
+#     "$configSection__".  The {{ConfigSection}} placeholder is always equal to $configSection,
+#     except with the first letter capitalized.  Thus, configSection=forecast becomes
+#     ConfigSection=Forecast.  A missing or "None" value causes an error.
 #
-# ex:    
+# ex:
 # $setNestedForecast job.nodes # `setenv forecast__nodes 2`
 # $setNestedForecast job.pe    # value is None, causes error
 # $setNestedForecast nodes     # yaml node does not exist, causes error
@@ -62,18 +62,7 @@
 set configSection = $1
 
 ## scenario
-# select from pre-defined scenarios or define your own
-# canned options:
-# + 3dvar_OIE120km_WarmStart
-# + 3dvar_OIE120km_ColdStart
-# + 3denvar_OIE120km_WarmStart
-# + 3denvar_O30kmIE60km_WarmStart
-# + 3denvar_O30kmIE60km_WarmStart_ABEI
-# + 3dhybrid_OIE120km_WarmStart (experimental)
-# + eda_OIE120km_WarmStart
-# + eda_OIE60km_WarmStart (experimental)
-# + RealTime
-# + IASI_3denvar_OIE120km_WarmStart
+# select from pre-defined scenarios (scenarios/*.yaml) or define your own
 set scenario = 3dvar_OIE120km_WarmStart
 
 ## scenarioDirectory
