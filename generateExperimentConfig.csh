@@ -25,22 +25,19 @@ $setLocal ParentDirectoryPrefix
 $setLocal ParentDirectorySuffix
 
 # ExperimentUserDir
-set get = "`$getLocalOrNone ExperimentUserDir`"
-setenv ExperimentUserDir "$get"
+setenv ExperimentUserDir "`$getLocalOrNone ExperimentUserDir`"
 if ("$ExperimentUserDir" == None) then
   setenv ExperimentUserDir ${USER}
 endif
 
 # ExperimentUserPrefix
-set get = "`$getLocalOrNone ExperimentUserPrefix`"
-setenv ExperimentUserPrefix "$get"
+setenv ExperimentUserPrefix "`$getLocalOrNone ExperimentUserPrefix`"
 if ("$ExperimentUserPrefix" == None) then
   setenv ExperimentUserPrefix ${USER}_
 endif
 
 # ExperimentName
-set get = "`$getLocalOrNone ExperimentName`"
-setenv ExperimentName "$get"
+setenv ExperimentName "`$getLocalOrNone ExperimentName`"
 
 # ExpSuffix
 $setLocal ExpSuffix
