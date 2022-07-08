@@ -161,9 +161,10 @@ setenv ABEInflationWorkDir ${ExperimentDirectory}/\$aBEInflationWorkDir
 setenv ExtendedFCWorkDir ${ExperimentDirectory}/\$extendedFCWorkDir
 setenv VerificationWorkDir ${ExperimentDirectory}/\$verificationWorkDir
 
-setenv ExternalAnalysisWorkDir ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}/${outerMesh}
-setenv ExternalAnalysisWorkDirInner ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}/${innerMesh}
-setenv ExternalAnalysisWorkDirEnsemble ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}/${ensembleMesh}
+setenv ExternalAnalysisWorkDir ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}
+setenv ExternalAnalysisWorkDirOuter ${ExperimentDirectory}/\$externalAnalysisWorkDir/${outerMesh}
+setenv ExternalAnalysisWorkDirInner ${ExperimentDirectory}/\$externalAnalysisWorkDir/${innerMesh}
+setenv ExternalAnalysisWorkDirEnsemble ${ExperimentDirectory}/\$externalAnalysisWorkDir/${ensembleMesh}
 
 ## benchmark experiment archive
 setenv Benchmark${DataAssim}WorkDir ${benchmark__ExperimentDirectory}/\$dataAssimWorkDir
@@ -189,7 +190,7 @@ set hh = `echo ${FirstCycleDate} | cut -c 9-10`
 setenv FirstFileDate \${yy}-\${mm}-\${dd}_\${hh}.00.00
 
 setenv StaticFieldsDirOuter \`echo "$firstbackground__staticDirectoryOuter" \
-  | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDir}'@' \
+  | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirOuter}'@' \
   | sed 's@{{FirstCycleDate}}@'${FirstCycleDate}'@' \
   \`
 setenv StaticFieldsDirInner \`echo "$firstbackground__staticDirectoryInner" \

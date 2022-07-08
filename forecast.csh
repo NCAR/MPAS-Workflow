@@ -65,7 +65,7 @@ set icFileExt = ${thisMPASFileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
 if ( ${thisValidDate} == ${FirstCycleDate} ) then
-  set initialState = ${ExternalAnalysisDir}/$externalanalyses__filePrefix.${icFileExt}
+  set initialState = ${ExternalAnalysisDirOuter}/$externalanalyses__filePrefixOuter.${icFileExt}
   set do_DAcycling = "false"
   set memberStaticFieldsFile = ${initialState}
 else
@@ -79,8 +79,8 @@ ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 ## link MPAS mesh graph info
-rm ./x1.${nCells}.graph.info*
-ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
+rm ./x1.${forecast__nCells}.graph.info*
+ln -sfv $GraphInfoDir/x1.${forecast__nCells}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -100,7 +100,7 @@ end
 ## copy/modify dynamic streams file
 rm ${StreamsFile}
 cp -v $ModelConfigDir/$AppName/${StreamsFile} .
-sed -i 's@nCells@'${nCells}'@' ${StreamsFile}
+sed -i 's@nCells@'${forecast__nCells}'@' ${StreamsFile}
 sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${StreamsFile}
@@ -108,23 +108,23 @@ sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 ## Update sea-surface variables from GFS/GEFS analyses
-set localSeaUpdateFile = x1.${nCells}.sfc_update.nc
+set localSeaUpdateFile = x1.${forecast__nCells}.sfc_update.nc
 sed -i 's@{{surfaceUpdateFile}}@'${localSeaUpdateFile}'@' ${StreamsFile}
 
 if ( "${updateSea}" == "True" ) then
   ## sea/ocean surface files
   # TODO: move sea directory configuration to yamls
   setenv seaMaxMembers 20
-  setenv deterministicSeaAnaDir ${ExternalAnalysisDir}
+  setenv deterministicSeaAnaDir ${ExternalAnalysisDirOuter}
   setenv deterministicSeaMemFmt " "
-  setenv deterministicSeaFilePrefix x1.${nCells}.init
+  setenv deterministicSeaFilePrefix x1.${forecast__nCells}.init
 
   if ( $nMembers > 1 && "$firstbackground__resource" == "PANDAC.LaggedGEFS" ) then
     # using member-specific sst/xice data from GEFS, only works for this special case
     # 60km and 120km
     setenv SeaAnaDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/surface/000hr/${model__precision}/${thisValidDate}
     setenv seaMemFmt "/{:02d}"
-    setenv SeaFilePrefix x1.${nCells}.sfc_update
+    setenv SeaFilePrefix x1.${forecast__nCells}.sfc_update
   else
     # otherwise use deterministic analysis for all members
     # 60km and 120km
@@ -188,7 +188,7 @@ rm ${NamelistFile}
 cp -v $ModelConfigDir/$AppName/$NamelistFile .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
-sed -i 's@nCells@'${nCells}'@' $NamelistFile
+sed -i 's@nCells@'${forecast__nCells}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 sed -i 's@configDODACycling@'${do_DAcycling}'@' $NamelistFile

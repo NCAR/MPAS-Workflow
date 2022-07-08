@@ -256,11 +256,6 @@ conda activate npl
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = {{GFSAnalysisRetry}}
-  [[LinkExternalAnalysis]]
-    inherit = BATCH
-    script = $origin/LinkExternalAnalysis.csh
-    [[[job]]]
-      execution time limit = PT30S
 
   [[UngribExternalAnalysis]]
     inherit = BATCH
@@ -273,9 +268,17 @@ conda activate npl
     [[[directives]]]
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
-  [[ExternalAnalysisToMPAS]]
+
+{% for mesh in allMeshes %}
+  [[LinkExternalAnalysis-{{mesh}}]]
     inherit = BATCH
-    script = $origin/ExternalAnalysisToMPAS.csh
+    script = $origin/LinkExternalAnalysis.csh {{mesh}}
+    [[[job]]]
+      execution time limit = PT30S
+
+  [[ExternalAnalysisToMPAS-{{mesh}}]]
+    inherit = BATCH
+    script = $origin/ExternalAnalysisToMPAS.csh {{mesh}}
     [[[job]]]
       execution time limit = PT{{InitICSeconds}}S
       execution retry delays = {{InitializationRetry}}
@@ -283,6 +286,8 @@ conda activate npl
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select={{InitICNodes}}:ncpus={{InitICPEPerNode}}:mpiprocs={{InitICPEPerNode}}
+{% endfor %}
+
   [[ExternalAnalysisReady]]
     inherit = BACKGROUND
 

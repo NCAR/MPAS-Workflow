@@ -25,12 +25,13 @@ cd ${WorkDir}
 # ================================================================================================
 
 ## link Vtable file
-ln -sfv ${externalanalyses__Vtable} Vtable
+ln -sfv ${externalanalyses__VtableOuter} Vtable
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}
 cp -v $ModelConfigDir/$AppName/${NamelistFileWPS} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
+sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefixOuter}'@' $NamelistFileWPS
 
 # Run the executable
 # ==================

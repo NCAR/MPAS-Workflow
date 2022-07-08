@@ -9,7 +9,7 @@
 
 &ungrib
  out_format = 'WPS',
- prefix = 'GFS',
+ prefix = '{{UngribPrefix}}',
 /
 
 &metgrid

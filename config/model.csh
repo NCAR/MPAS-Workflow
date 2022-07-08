@@ -30,6 +30,15 @@ setenv nCellsOuter "`$getLocalOrNone nCells.$outerMesh`"
 setenv nCellsInner "`$getLocalOrNone nCells.$innerMesh`"
 setenv nCellsEnsemble "`$getLocalOrNone nCells.$ensembleMesh`"
 
+# lists of mesh characteristics useful for carrying out identical tasks on each one
+#set allMeshesJinja = '["Outer", "Inner", "Ensemble"]'
+set allMeshesJinja = '["'$outerMesh'", "'$innerMesh'", "'$ensembleMesh'"]'
+
+# not needed yet...much easier in python than csh
+#set allMeshNames = (Outer Inner Ensemble)
+#set allMeshes = ($outerMesh $innerMesh $ensembleMesh)
+#set allCells = ($nCellsOuter $nCellsInner $nCellsEnsemble)
+
 $setLocal ${outerMesh}.TimeStep
 $setLocal ${outerMesh}.DiffusionLengthScale
 

@@ -3,7 +3,7 @@
     [[[{{AnalysisTimes}}]]]
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => VerifyModelBG
-        {{PrepareExternalAnalysis}} => VerifyModelBG
+        {{PrepareExternalAnalysisOuter}} => VerifyModelBG
     {% if CompareBG2Benchmark %}
         VerifyModelBG:succeed-all => CompareModelBG
     {% endif %}
@@ -17,7 +17,7 @@
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => MeanBackground
         MeanBackground => VerifyModelEnsMeanBG
-        {{PrepareExternalAnalysis}} => VerifyModelEnsMeanBG
+        {{PrepareExternalAnalysisOuter}} => VerifyModelEnsMeanBG
   {% if DiagnoseEnsSpreadBG %}
         DataAssimFinished => VerifyModelEnsMeanBG
         VerifyModelEnsMeanBG => {{CleanDataAssim}}
@@ -31,28 +31,59 @@
     [[[{{AnalysisTimes}}]]]
       graph = '''
         DataAssimFinished => VerifyModelAN
-        {{PrepareExternalAnalysis}} => VerifyModelAN
+        {{PrepareExternalAnalysisOuter}} => VerifyModelAN
       '''
 {% endif %}
 
 
   # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
-{% if VerifyExtendedMeanFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
+{% if VerifyExtendedMeanFC %}
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
         DataAssimFinished => MeanAnalysis => ExtendedMeanFC
         ExtendedMeanFC => VerifyModelMeanFC
+
+        # need analyses at all verified forecast lengths
+{% for dt in ExtendedFCLengths %}
+  {% set prep = "[PT"+dt+"+H] => ".join(PrepareExternalAnalysisTasksOuter)+"[PT"+dt+"H]" %}
+
+  {# set prep = "" #}
+  {# for task in PrepareExternalAnalysisTasksOuter #}
+    {# set prep = prep+task+"[PT"+dt+"H]" #}
+    {# if task != PrepareExternalAnalysisTasksOuter[-1] #}
+      {# set prep = prep+" => " #}
+    {# endif #}
+  {# endfor #}
+
+        {{prep}} => VerifyModelMeanFC{{dt}}hr
+{% endfor %}
       '''
 {% endif %}
 
 
   # ... for extended forecast from ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
-{% if VerifyExtendedEnsFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
+{% if VerifyExtendedEnsFC %}
     [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
         DataAssimFinished => ExtendedEnsFC
         ExtendedEnsFC:succeed-all => VerifyModelEnsFC
+
+        # need analyses at all verified forecast lengths
+{% for dt in ExtendedFCLengths %}
+  {% set prep = "[PT"+dt+"+H] => ".join(PrepareExternalAnalysisTasksOuter)+"[PT"+dt+"H]" %}
+
+  {# set prep = "" #}
+  {# for task in PrepareExternalAnalysisTasksOuter #}
+    {# set prep = prep+task+"[PT"+dt+"H]" #}
+    {# if task != PrepareExternalAnalysisTasksOuter[-1] #}
+      {# set prep = prep+" => " #}
+    {# endif #}
+  {# endfor #}
+  {% for mem in EnsVerifyMembers %}
+        {{prep}} => VerifyModelEnsFC{{mem}}-{{dt}}hr
+  {% endfor %}
+{% endfor %}
       '''
 {% endif %}

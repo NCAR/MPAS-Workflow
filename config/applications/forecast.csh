@@ -8,7 +8,7 @@ source config/workflow.csh
 source config/scenario.csh forecast
 
 set mesh = "$outerMesh"
-setenv nCells "$nCellsOuter"
+setenv forecast__nCells "$nCellsOuter"
 
 $setLocal updateSea
 
