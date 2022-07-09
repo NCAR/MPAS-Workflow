@@ -5,10 +5,16 @@
         # prepare first DA background state
         {{PrepareExternalAnalysisOuter}} => {{PrepareFirstBackgroundOuter}}
 
-        # prepare analyses (init) files for reading to static stream in all cycles for
-        # inner and ensemble geometries
+        # prepare analyses (init) files and forecasts (for dual-mesh Variational) for reading to
+        # static and input stream in all cycles for inner and ensemble geometries
+  {# if "Forecast:succeed-all" in PrepareFirstBackgroundOuter #}
+#        {{PrepareExternalAnalysisInner}} => InitForecast-{{innerMesh}} => ForecastFinished
+#        {{PrepareExternalAnalysisEnsemble}} => InitForecast-{{ensembleMesh}} => ForecastFinished
+  {# else #}
         {{PrepareExternalAnalysisInner}}
         {{PrepareExternalAnalysisEnsemble}}
+  {# endif #}
+
       '''
 {% endif %}
 

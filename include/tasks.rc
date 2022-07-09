@@ -219,6 +219,22 @@ conda activate npl
     inherit = CompareBase
     script = $origin/CompareObsDA.csh "1" "0" "DA" "variational"
 
+## InitForecast used to produce templateFields files for all meshes
+{% for mesh in allMeshes %}
+  [[InitForecast-{{mesh}}]]
+    inherit = ForecastBase
+    script = $origin/Forecast.csh "1" "{{mesh}}"
+#    [[[job]]]
+#      execution retry delays = {{CyclingFCRetry}}
+#    [[[job]]]
+#      execution time limit = PT{{CyclingFCSeconds_MESH}}S
+#    [[[directives]]]
+#      -m = ae
+#      -q = {{CPQueueName}}
+#      -A = {{CPAccountNumber}}
+#      -l = select={{CyclingFCNodes_MESH}}:ncpus={{CyclingFCPEPerNode_MESH}}:mpiprocs={{CyclingFCPEPerNode_MESH}}
+
+{% endfor %}
 
 ## Forecast (critical path)
   [[Forecast]]
@@ -226,7 +242,7 @@ conda activate npl
 {% for mem in allMembers %}
   [[ForecastMember{{mem}}]]
     inherit = Forecast
-    script = $origin/Forecast.csh "{{mem}}"
+    script = $origin/Forecast.csh "{{mem}}" "{{outerMesh}}"
     [[[job]]]
       execution retry delays = {{CyclingFCRetry}}
 {% endfor %}
@@ -305,7 +321,7 @@ conda activate npl
       -l = select=1:ncpus=36:mpiprocs=36
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
-    script = $origin/ExtendedMeanFC.csh "1"
+    script = $origin/ExtendedMeanFC.csh "1" "{{outerMesh}}"
   [[HofXMeanFC]]
     inherit = HofXBase
   [[VerifyModelMeanFC]]
@@ -428,7 +444,7 @@ conda activate npl
   # ensemble of extended forecasts from ensemble of analyses
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
-    script = $origin/ExtendedEnsFC.csh "{{mem}}"
+    script = $origin/ExtendedEnsFC.csh "{{mem}}" "{{outerMesh}}"
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC

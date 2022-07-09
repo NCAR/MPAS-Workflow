@@ -4,9 +4,11 @@ date
 
 # Process arguments
 # =================
-## args
 # ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
+
+# ArgMesh: str, mesh name, one of allMeshesJinja, only applicable to FirstCycleDate
+set ArgMesh = "$2"
 
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
@@ -30,15 +32,55 @@ source config/tools.csh
 source config/model.csh
 source config/builds.csh
 source config/environmentMPT.csh
-source config/applications/forecast.csh
+source config/applications/forecast.csh "$ArgMesh"
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-# templated work directory
-set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
+if ( ${thisValidDate} == ${FirstCycleDate} ) then
+  set do_DAcycling = "false"
+  if ("$ArgMesh" == "$outerMesh") then
+    # templated work directory
+    set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
+    set self_icStateDir = $ExternalAnalysisDirOuter
+    set self_icStatePrefix = $externalanalyses__filePrefixOuter
+    set nCells = $nCellsOuter
+  else if ("$ArgMesh" == "$innerMesh") then
+    set self_WorkDir = ${FirstBackgroundDirInner}
+    set self_icStateDir = $ExternalAnalysisDirInner
+    set self_icStatePrefix = $externalanalyses__filePrefixInner
+    set nCells = $nCellsInner
+  else if ("$ArgMesh" == "$ensembleMesh") then
+    set self_WorkDir = ${FirstBackgroundDirEnsemble}
+    set self_icStateDir = $ExternalAnalysisDirEnsemble
+    set self_icStatePrefix = $externalanalyses__filePrefixEnsemble
+    set nCells = $nCellsEnsemble
+  endif
+
+  # use cold-start IC for static stream
+  set memberStaticFieldsFile = ${initialState}
+else
+  ## ALL forecasts after the first cycle date use this sub-branch (must be outerMesh)
+  set do_DAcycling = "true"
+
+  # templated work directory
+  set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
+
+  # other templated variables
+  set self_icStateDir = $StateDirsTEMPLATE[$ArgMember]
+
+  # static variables
+  set self_icStatePrefix = ${ANFilePrefix}
+
+  set nCells = $nCellsOuter
+
+  # use previously generated IC for static stream
+  set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
+  set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
+endif
+
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
@@ -51,36 +93,27 @@ set config_run_duration = 0_${self_fcLengthHR}:00:00
 set output_interval = 0_${self_fcIntervalHR}:00:00
 set deleteZerothForecast = deleteZerothForecastTEMPLATE
 
-# static variables
-set self_icStatePrefix = ${ANFilePrefix}
 
 # ================================================================================================
 
-## copy static fields and link initial forecast state
+## initial forecast file
+set icFileExt = ${thisMPASFileDate}.nc
+set icFile = ${ICFilePrefix}.${icFileExt}
+rm ./${icFile}
+set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
+ln -sfv ${initialState} ./${icFile}
+
+## static fields file
 rm ${localStaticFieldsPrefix}*.nc
 rm ${localStaticFieldsPrefix}*.nc-lock
 set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
-set icFileExt = ${thisMPASFileDate}.nc
-set icFile = ${ICFilePrefix}.${icFileExt}
-rm ./${icFile}
-if ( ${thisValidDate} == ${FirstCycleDate} ) then
-  set initialState = ${ExternalAnalysisDirOuter}/$externalanalyses__filePrefixOuter.${icFileExt}
-  set do_DAcycling = "false"
-  set memberStaticFieldsFile = ${initialState}
-else
-  set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
-  set do_DAcycling = "true"
-  set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
-  set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
-endif
-ln -sfv ${initialState} ./${icFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 ## link MPAS mesh graph info
-rm ./x1.${forecast__nCells}.graph.info*
-ln -sfv $GraphInfoDir/x1.${forecast__nCells}.graph.info* .
+rm ./x1.${nCells}.graph.info*
+ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -100,7 +133,7 @@ end
 ## copy/modify dynamic streams file
 rm ${StreamsFile}
 cp -v $ModelConfigDir/$AppName/${StreamsFile} .
-sed -i 's@nCells@'${forecast__nCells}'@' ${StreamsFile}
+sed -i 's@nCells@'${nCells}'@' ${StreamsFile}
 sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
 sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${StreamsFile}
@@ -108,7 +141,7 @@ sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 ## Update sea-surface variables from GFS/GEFS analyses
-set localSeaUpdateFile = x1.${forecast__nCells}.sfc_update.nc
+set localSeaUpdateFile = x1.${nCells}.sfc_update.nc
 sed -i 's@{{surfaceUpdateFile}}@'${localSeaUpdateFile}'@' ${StreamsFile}
 
 if ( "${updateSea}" == "True" ) then
@@ -117,14 +150,14 @@ if ( "${updateSea}" == "True" ) then
   setenv seaMaxMembers 20
   setenv deterministicSeaAnaDir ${ExternalAnalysisDirOuter}
   setenv deterministicSeaMemFmt " "
-  setenv deterministicSeaFilePrefix x1.${forecast__nCells}.init
+  setenv deterministicSeaFilePrefix x1.${nCells}.init
 
   if ( $nMembers > 1 && "$firstbackground__resource" == "PANDAC.LaggedGEFS" ) then
     # using member-specific sst/xice data from GEFS, only works for this special case
     # 60km and 120km
     setenv SeaAnaDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/surface/000hr/${model__precision}/${thisValidDate}
     setenv seaMemFmt "/{:02d}"
-    setenv SeaFilePrefix x1.${forecast__nCells}.sfc_update
+    setenv SeaFilePrefix x1.${nCells}.sfc_update
   else
     # otherwise use deterministic analysis for all members
     # 60km and 120km
@@ -188,7 +221,7 @@ rm ${NamelistFile}
 cp -v $ModelConfigDir/$AppName/$NamelistFile .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
-sed -i 's@nCells@'${forecast__nCells}'@' $NamelistFile
+sed -i 's@nCells@'${nCells}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 sed -i 's@configDODACycling@'${do_DAcycling}'@' $NamelistFile

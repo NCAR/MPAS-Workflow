@@ -30,7 +30,21 @@ source config/workflow.csh
 
 # application-specific settings, including resource requests
 source config/applications/ensvariational.csh
-source config/applications/forecast.csh
+source config/applications/forecast.csh $innerMesh
+set forecast__secondsInner = $forecast__seconds
+set forecast__nodesInner = $forecast__nodes
+set forecast__PEPerNodeInner = $forecast__PEPerNode
+
+source config/applications/forecast.csh $ensembleMesh
+set forecast__secondsEnsemble = $forecast__seconds
+set forecast__nodesEnsemble = $forecast__nodes
+set forecast__PEPerNodeEnsemble = $forecast__PEPerNode
+
+source config/applications/forecast.csh $outerMesh
+set forecast__secondsOuter = $forecast__seconds
+set forecast__nodesOuter = $forecast__nodes
+set forecast__PEPerNodeOuter = $forecast__PEPerNode
+
 source config/applications/hofx.csh
 source config/applications/initic.csh
 source config/applications/rtpp.csh
@@ -108,7 +122,10 @@ cat >! suite.rc << EOF
 {% set nMembers = ${nMembers} %} #integer
 {% set allMembers = range(1, nMembers+1, 1) %}
 {% set EnsVerifyMembers = allMembers %}
-{% set allMeshes = ${allMeshesJinja} %} #integer
+{% set allMeshes = ${allMeshesJinja} %} #list
+{% set outerMesh = "$outerMesh" %}
+{% set innerMesh = "$innerMesh" %}
+{% set ensembleMesh = "$ensembleMesh" %}
 
 # variational
 {% set EDASize = ${EDASize} %} #integer
@@ -142,9 +159,25 @@ cat >! suite.rc << EOF
 {% set VerifyModelRetry = "${VerifyModelRetry}" %}
 
 # mesh-specific job controls
-{% set CyclingFCSeconds = "${forecast__seconds}" %}
-{% set CyclingFCNodes = "${forecast__nodes}" %}
-{% set CyclingFCPEPerNode = "${forecast__PEPerNode}" %}
+{% set CyclingFCSeconds = "${forecast__secondsOuter}" %}
+{% set CyclingFCNodes = "${forecast__nodesOuter}" %}
+{% set CyclingFCPEPerNode = "${forecast__PEPerNodeOuter}" %}
+
+{% set CyclingFCSeconds_$outerMesh = "${forecast__secondsOuter}" %}
+{% set CyclingFCNodes_$outerMesh = "${forecast__nodesOuter}" %}
+{% set CyclingFCPEPerNode_$outerMesh = "${forecast__PEPerNodeOuter}" %}
+
+{% set CyclingFCSeconds_$innerMesh = "${forecast__secondsInner}" %}
+{% set CyclingFCNodes_$innerMesh = "${forecast__nodesInner}" %}
+{% set CyclingFCPEPerNode_$innerMesh = "${forecast__PEPerNodeInner}" %}
+
+{% set CyclingFCSeconds_MESH = "${forecast__secondsInner}" %}
+{% set CyclingFCNodes_MESH = "${forecast__nodesInner}" %}
+{% set CyclingFCPEPerNode_MESH = "${forecast__PEPerNodeInner}" %}
+
+{% set CyclingFCSeconds_$ensembleMesh = "${forecast__secondsEnsemble}" %}
+{% set CyclingFCNodes_$ensembleMesh = "${forecast__nodesEnsemble}" %}
+{% set CyclingFCPEPerNode_$ensembleMesh = "${forecast__PEPerNodeEnsemble}" %}
 
 {% set RTPPSeconds = "${rtpp__seconds}" %}
 {% set RTPPNodes = "${rtpp__nodes}" %}
