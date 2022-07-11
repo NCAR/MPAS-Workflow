@@ -1,6 +1,6 @@
 job:
 ## *AccountNumber
-# OPTIONS: NMMM0015, NMMM0043
+# OPTIONS: NMMM0015, NMMM0043, NMMM0035
 #Note: NMMM0043 is not available on casper
 
 ## *QueueName
@@ -8,15 +8,15 @@ job:
 # Casper Options: casper@casper-pbs
 
 # CP*: used for all critical path jobs, single or multi-node, multi-processor only
-  CPAccountNumber: NMMM0043
+  CPAccountNumber: NMMM0035
   CPQueueName: regular
 
 # NCP*: used non-critical path jobs, single or multi-node, multi-processor only
-  NCPAccountNumber: NMMM0043
+  NCPAccountNumber: NMMM0035
   NCPQueueName: economy
 
 # EnsMeanBG*: settings for ensemble mean BG calculation, useful when it becomes time-critical
-  EnsMeanBGAccountNumber: NMMM0043
+  EnsMeanBGAccountNumber: NMMM0035
   EnsMeanBGQueueName: economy
 
 # SingleProc*: used for single-processor jobs, both critical and non-critical paths
