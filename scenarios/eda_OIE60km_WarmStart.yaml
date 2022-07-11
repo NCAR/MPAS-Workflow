@@ -2,7 +2,6 @@ workflow:
   firstCyclePoint: 20180414T18
   initialCyclePoint: 20180414T18
   finalCyclePoint: 20180514T18
-  CriticalPathType: Normal
   VerifyDeterministicDA: False
   VerifyEnsMeanBG: True
   DiagnoseEnsSpreadBG: True
@@ -37,24 +36,10 @@ variational:
           #memory: 45
           #baseSeconds: 200
           #secondsPerEnVarMember: 6
-forecast:
-  job:
-    60km:
-      nodes: 2
-      PEPerNode: 36
-      baseSeconds: 60
-      secondsPerForecastHR: 40
 hofx:
   maxIODAPoolSize: 3
 rtpp:
   relaxationFactor: 0.7
-  job:
-    60km:
-      baseSeconds: 10
-      secondsPerMember: 10
-      nodes: 4
-      PEPerNode: 24
-      memory: 109
 observations:
   resource: PANDACArchive
   PANDACArchive:
