@@ -48,16 +48,17 @@ if ( ${thisValidDate} == ${FirstCycleDate} ) then
     set self_icStateDir = $ExternalAnalysisDirOuter
     set self_icStatePrefix = $externalanalyses__filePrefixOuter
     set nCells = $nCellsOuter
-  else if ("$ArgMesh" == "$innerMesh") then
-    set self_WorkDir = ${FirstBackgroundDirInner}
-    set self_icStateDir = $ExternalAnalysisDirInner
-    set self_icStatePrefix = $externalanalyses__filePrefixInner
-    set nCells = $nCellsInner
-  else if ("$ArgMesh" == "$ensembleMesh") then
-    set self_WorkDir = ${FirstBackgroundDirEnsemble}
-    set self_icStateDir = $ExternalAnalysisDirEnsemble
-    set self_icStatePrefix = $externalanalyses__filePrefixEnsemble
-    set nCells = $nCellsEnsemble
+# not used presently
+#  else if ("$ArgMesh" == "$innerMesh") then
+#    set self_WorkDir = ${FirstBackgroundDirInner}
+#    set self_icStateDir = $ExternalAnalysisDirInner
+#    set self_icStatePrefix = $externalanalyses__filePrefixInner
+#    set nCells = $nCellsInner
+#  else if ("$ArgMesh" == "$ensembleMesh") then
+#    set self_WorkDir = ${FirstBackgroundDirEnsemble}
+#    set self_icStateDir = $ExternalAnalysisDirEnsemble
+#    set self_icStatePrefix = $externalanalyses__filePrefixEnsemble
+#    set nCells = $nCellsEnsemble
   endif
 else
   ## ALL forecasts after the first cycle date use this sub-branch (must be outerMesh)
@@ -137,11 +138,11 @@ end
 ## copy/modify dynamic streams file
 rm ${StreamsFile}
 cp -v $ModelConfigDir/$AppName/${StreamsFile} .
-sed -i 's@nCells@'${nCells}'@' ${StreamsFile}
-sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
-sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
-sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${StreamsFile}
-sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${StreamsFile}
+sed -i 's@{{nCells}}@'${nCells}'@' ${StreamsFile}
+sed -i 's@{{outputInterval}}@'${output_interval}'@' ${StreamsFile}
+sed -i 's@{{StaticFieldsPrefix}}@'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@{{ICFilePrefix}}@'${ICFilePrefix}'@' ${StreamsFile}
+sed -i 's@{{FCFilePrefix}}@'${FCFilePrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 ## Update sea-surface variables from GFS/GEFS analyses

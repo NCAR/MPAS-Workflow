@@ -83,7 +83,7 @@ end
 ## copy/modify dynamic streams file
 rm ${StreamsFileInit}
 cp -v $ModelConfigDir/$AppName/${StreamsFileInit} .
-sed -i 's@nCells@'${nCells}'@' ${StreamsFileInit}
+sed -i 's@{{nCells}}@'${nCells}'@' ${StreamsFileInit}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist

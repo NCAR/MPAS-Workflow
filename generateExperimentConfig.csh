@@ -154,8 +154,8 @@ setenv ${DataAssim}WorkDir ${ExperimentDirectory}/\$dataAssimWorkDir
 
 setenv ${Forecast}WorkDir ${ExperimentDirectory}/\$forecastWorkDir
 #setenv FirstBackgroundDirOuter ${ExperimentDirectory}/\$forecastWorkDir/template-$outerMesh/${FirstCycleDate}
-setenv FirstBackgroundDirInner ${ExperimentDirectory}/\$forecastWorkDir/template-$innerMesh/${FirstCycleDate}
-setenv FirstBackgroundDirEnsemble ${ExperimentDirectory}/\$forecastWorkDir/template-$ensembleMesh/${FirstCycleDate}
+#setenv FirstBackgroundDirInner ${ExperimentDirectory}/\$forecastWorkDir/template-$innerMesh/${FirstCycleDate}
+#setenv FirstBackgroundDirEnsemble ${ExperimentDirectory}/\$forecastWorkDir/template-$ensembleMesh/${FirstCycleDate}
 
 setenv CyclingInflationWorkDir ${ExperimentDirectory}/\$cyclingInflationWorkDir
 setenv RTPPWorkDir ${ExperimentDirectory}/\$rTPPWorkDir

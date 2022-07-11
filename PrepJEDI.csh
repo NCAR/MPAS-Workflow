@@ -143,9 +143,9 @@ foreach StreamsFile_ ($StreamsFileList)
   @ iMesh++
   rm ${StreamsFile_}
   cp -v $ModelConfigDir/$ArgAppType/${StreamsFile} ./${StreamsFile_}
-  sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${StreamsFile_}
-  sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
-  sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@{{nCells}}@'$nCellsList[$iMesh]'@' ${StreamsFile_}
+  sed -i 's@{{TemplateFieldsPrefix}}@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@{{StaticFieldsPrefix}}@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile_}
 end
 

@@ -85,9 +85,9 @@ end
 
 rm ${StreamsFile}
 cp -v $ModelConfigDir/${AppName}/${StreamsFile} .
-sed -i 's@nCells@'${nCellsEnsemble}'@' ${StreamsFile}
-sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
-sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@{{nCells}}@'${nCellsEnsemble}'@' ${StreamsFile}
+sed -i 's@{{TemplateFieldsPrefix}}@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@{{StaticFieldsPrefix}}@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 # determine analysis output precision

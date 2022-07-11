@@ -416,14 +416,6 @@ while ( $member <= ${nMembers} )
     set tFile = ${TemplateFieldsFileInner}${memSuffix}
     rm $tFile
 
-    # requires extra forecasts, extra complexity, avoid if possible
-    # copy first background file from previous forecast on innerMesh
-    # use identical one for all members
-    #cp -v ${FirstBackgroundDirInner}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
-
-
-# may not work because static (init) file has fewer fields than are needed in "template" input
-# two cycles successful...need to run verification?
     # use localStaticFieldsFileInner as the TemplateFieldsFileInner
     # NOTE: not perfect for EDA if static fields differ between members,
     #       but dual-res EDA not working yet anyway
@@ -450,10 +442,6 @@ while ( $member <= ${nMembers} )
     set tFile = ${TemplateFieldsFileEnsemble}${memSuffix}
     rm $tFile
 
-    # copy first background file from previous forecast on ensembleMesh
-    # use identical one for all members
-    #cp -v ${FirstBackgroundDirEnsemble}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
-
     # use localStaticFieldsFileInner as the TemplateFieldsFileInner
     cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
 
@@ -471,7 +459,7 @@ while ( $member <= ${nMembers} )
     if (${memSuffix} != "") then
       cp ${StreamsFile_} ${StreamsFile_}${memSuffix}
     endif
-    sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
+    sed -i 's@{{TemplateFieldsMember}}@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
     sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
   end
   sed -i 's@{{StreamsFileMember}}@'${memSuffix}'@' $yamlFileList[$member]
