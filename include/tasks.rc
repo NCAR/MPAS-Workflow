@@ -219,23 +219,6 @@ conda activate npl
     inherit = CompareBase
     script = $origin/CompareObsDA.csh "1" "0" "DA" "variational"
 
-## InitForecast used to produce templateFields files for all meshes
-{% for mesh in allMeshes %}
-  [[InitForecast-{{mesh}}]]
-    inherit = ForecastBase
-    script = $origin/Forecast.csh "1" "{{mesh}}"
-#    [[[job]]]
-#      execution retry delays = {{CyclingFCRetry}}
-#    [[[job]]]
-#      execution time limit = PT{{CyclingFCSeconds_MESH}}S
-#    [[[directives]]]
-#      -m = ae
-#      -q = {{CPQueueName}}
-#      -A = {{CPAccountNumber}}
-#      -l = select={{CyclingFCNodes_MESH}}:ncpus={{CyclingFCPEPerNode_MESH}}:mpiprocs={{CyclingFCPEPerNode_MESH}}
-
-{% endfor %}
-
 ## Forecast (critical path)
   [[Forecast]]
     inherit = ForecastBase
