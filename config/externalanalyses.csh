@@ -54,7 +54,7 @@ foreach parameter (externalDirectory filePrefix PrepareExternalAnalysisTasks)
     set p = "`$getLocalOrNone defaults.${parameter}`"
   endif
   if ("$parameter" == filePrefix) then
-    set externalanalyses__${parameter}${name} = `echo "$p" | sed 's@{{Cells}}@'$ncells'@'`
+    set externalanalyses__${parameter}${name} = `echo "$p" | sed 's@{{nCells}}@'$ncells'@'`
   else if ("$parameter" == PrepareExternalAnalysisTasks) then
     set tmp = ""
     foreach task ($p)

@@ -32,6 +32,3 @@ variational:
 job:
   CPQueueName: economy
   NCPQueueName: economy
-
-  CPAccountNumber: NMMM0015
-  NCPAccountNumber: NMMM0015

@@ -271,13 +271,13 @@ conda activate npl
 {% for mesh in allMeshes %}
   [[LinkExternalAnalysis-{{mesh}}]]
     inherit = BATCH
-    script = $origin/LinkExternalAnalysis.csh {{mesh}}
+    script = $origin/LinkExternalAnalysis.csh "{{mesh}}"
     [[[job]]]
       execution time limit = PT30S
 
   [[ExternalAnalysisToMPAS-{{mesh}}]]
     inherit = BATCH
-    script = $origin/ExternalAnalysisToMPAS.csh {{mesh}}
+    script = $origin/ExternalAnalysisToMPAS.csh "{{mesh}}"
     [[[job]]]
       execution time limit = PT{{InitICSeconds}}S
       execution retry delays = {{InitializationRetry}}

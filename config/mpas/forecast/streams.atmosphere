@@ -42,7 +42,7 @@
         filename_template="diag.$Y-$M-$D_$h.$m.$s.nc"
         io_type="pnetcdf,cdf5"
         clobber_mode="overwrite"
-        output_interval="outputInterval" >
+        output_interval="{{outputInterval}}" >
         <file name="stream_list.atmosphere.diagnostics"/>
 </stream>
 

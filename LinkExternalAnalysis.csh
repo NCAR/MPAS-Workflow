@@ -22,26 +22,26 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-if ("$ArgMeshName" == "$outerMesh") then
+if ("$ArgMesh" == "$outerMesh") then
   set WorkDir = ${ExternalAnalysisDirOuter}
   set filePrefix = $externalanalyses__filePrefixOuter
   set externalDirectory = `echo "$externalanalyses__externalDirectoryOuter" \
     | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
     `
-else if ("$ArgMeshName" == "$innerMesh") then
+else if ("$ArgMesh" == "$innerMesh") then
   set WorkDir = ${ExternalAnalysisDirInner}
   set filePrefix = $externalanalyses__filePrefixInner
   set externalDirectory = `echo "$externalanalyses__externalDirectoryInner" \
     | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
     `
-else if ("$ArgMeshName" == "$ensembleMesh") then
+else if ("$ArgMesh" == "$ensembleMesh") then
   set WorkDir = ${ExternalAnalysisDirEnsemble}
   set filePrefix = $externalanalyses__filePrefixEnsemble
   set externalDirectory = `echo "$externalanalyses__externalDirectoryEnsemble" \
     | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
     `
 else
-  echo "$0 (ERROR): invalid ArgMeshName ($ArgMeshName)"
+  echo "$0 (ERROR): invalid ArgMesh ($ArgMesh)"
   exit 1
 endif
 

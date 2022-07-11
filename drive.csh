@@ -110,7 +110,7 @@ cat >! suite.rc << EOF
 {% set EnsVerifyMembers = allMembers %}
 {% set allMeshes = ${allMeshesJinja} %} #list
 {% set outerMesh = "$outerMesh" %}
-{
+
 # variational
 {% set EDASize = ${EDASize} %} #integer
 {% set nDAInstances = ${nDAInstances} %} #integer
