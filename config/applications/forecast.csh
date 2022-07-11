@@ -3,8 +3,8 @@
 # ArgMesh: str, mesh, one of allMeshesJinja
 set ArgMesh = "$1"
 
-if ( $?config_forecast ) exit 0
-setenv config_forecast 1
+#if ( $?config_forecast ) exit 0
+#set config_forecast = 1
 
 source config/model.csh
 source config/workflow.csh

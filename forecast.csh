@@ -39,6 +39,7 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
+# mesh-dependent and thisValidDate-dependent settings
 if ( ${thisValidDate} == ${FirstCycleDate} ) then
   set do_DAcycling = "false"
   if ("$ArgMesh" == "$outerMesh") then
@@ -58,9 +59,6 @@ if ( ${thisValidDate} == ${FirstCycleDate} ) then
     set self_icStatePrefix = $externalanalyses__filePrefixEnsemble
     set nCells = $nCellsEnsemble
   endif
-
-  # use cold-start IC for static stream
-  set memberStaticFieldsFile = ${initialState}
 else
   ## ALL forecasts after the first cycle date use this sub-branch (must be outerMesh)
   set do_DAcycling = "true"
@@ -75,7 +73,15 @@ else
   set self_icStatePrefix = ${ANFilePrefix}
 
   set nCells = $nCellsOuter
+endif
 
+set icFileExt = ${thisMPASFileDate}.nc
+set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
+
+if ( ${thisValidDate} == ${FirstCycleDate} ) then
+  # use cold-start IC for static stream
+  set memberStaticFieldsFile = ${initialState}
+else
   # use previously generated IC for static stream
   set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
   set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
@@ -97,10 +103,8 @@ set deleteZerothForecast = deleteZerothForecastTEMPLATE
 # ================================================================================================
 
 ## initial forecast file
-set icFileExt = ${thisMPASFileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
 rm ./${icFile}
-set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
 ln -sfv ${initialState} ./${icFile}
 
 ## static fields file

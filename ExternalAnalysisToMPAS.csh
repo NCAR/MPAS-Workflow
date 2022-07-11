@@ -67,7 +67,7 @@ endif
 # ================================================================================================
 
 ## link ungribbed files
-ln -sfv ${ExternalAnalysisDir}/${externalanalyses__UngribPrefixOuter}* ./
+ln -sfv ${ExternalAnalysisDir}/${externalanalyses__UngribPrefix}* ./
 
 ## link MPAS mesh graph info and static field
 rm ./x1.${nCells}.graph.info*
@@ -91,7 +91,7 @@ rm ${NamelistFileInit}
 cp -v $ModelConfigDir/$AppName/${NamelistFileInit} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@nCells@'${nCells}'@' $NamelistFileInit
-sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefixOuter}'@' $NamelistFileInit
+sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileInit
 
 # Run the executable
 # ==================

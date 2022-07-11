@@ -2,7 +2,7 @@ workflow:
   # test a recent date
   firstCyclePoint: 20220201T00
   initialCyclePoint: 20220201T00
-  finalCyclePoint: 20220201T12
+  finalCyclePoint: 20220201T06
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
 observations:
@@ -32,3 +32,6 @@ variational:
 job:
   CPQueueName: economy
   NCPQueueName: economy
+
+  CPAccountNumber: NMMM0015
+  NCPAccountNumber: NMMM0015

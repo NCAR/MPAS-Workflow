@@ -34,11 +34,18 @@ foreach parameter (externalDirectory filePrefix Vtable UngribPrefix PrepareExter
   endif
 end
 
+# assume UngribPrefix and Vtable are always identical across meshes
+set externalanalyses__UngribPrefix = "$externalanalyses__UngribPrefixOuter"
+unset externalanalyses__UngribPrefixOuter
+
+set externalanalyses__Vtable = "$externalanalyses__VtableOuter"
+unset externalanalyses__VtableOuter
+
 # inner
 set name = Inner
 set mesh = "$innerMesh"
 set ncells = "$nCellsInner"
-foreach parameter (externalDirectory filePrefix Vtable UngribPrefix PrepareExternalAnalysisTasks)
+foreach parameter (externalDirectory filePrefix PrepareExternalAnalysisTasks)
   set p = "`$getLocalOrNone $externalanalyses__resource.$mesh.${parameter}`"
   if ("$p" == None) then
     set p = "`$getLocalOrNone $externalanalyses__resource.common.${parameter}`"
@@ -63,7 +70,7 @@ end
 set name = Ensemble
 set mesh = "$ensembleMesh"
 set ncells = "$nCellsEnsemble"
-foreach parameter (externalDirectory filePrefix Vtable UngribPrefix PrepareExternalAnalysisTasks)
+foreach parameter (externalDirectory filePrefix PrepareExternalAnalysisTasks)
   set p = "`$getLocalOrNone $externalanalyses__resource.$mesh.${parameter}`"
   if ("$p" == None) then
     set p = "`$getLocalOrNone $externalanalyses__resource.common.${parameter}`"
