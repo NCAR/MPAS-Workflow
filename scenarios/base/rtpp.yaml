@@ -21,10 +21,10 @@ rtpp:
     #  memory: int
     60km:
       baseSeconds: 10
-      secondsPerMember: 30
-      nodes: 3
-      PEPerNode: 12
-      memory: 45
+      secondsPerMember: 10
+      nodes: 4
+      PEPerNode: 24
+      memory: 109
     120km:
       baseSeconds: 10
       secondsPerMember: 15
