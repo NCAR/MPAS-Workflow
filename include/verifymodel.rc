@@ -47,15 +47,6 @@
         # need analyses at all verified forecast lengths
 {% for dt in ExtendedFCLengths %}
   {% set prep = "[PT"+dt+"+H] => ".join(PrepareExternalAnalysisTasksOuter)+"[PT"+dt+"H]" %}
-
-  {# set prep = "" #}
-  {# for task in PrepareExternalAnalysisTasksOuter #}
-    {# set prep = prep+task+"[PT"+dt+"H]" #}
-    {# if task != PrepareExternalAnalysisTasksOuter[-1] #}
-      {# set prep = prep+" => " #}
-    {# endif #}
-  {# endfor #}
-
         {{prep}} => VerifyModelMeanFC{{dt}}hr
 {% endfor %}
       '''
@@ -73,14 +64,6 @@
         # need analyses at all verified forecast lengths
 {% for dt in ExtendedFCLengths %}
   {% set prep = "[PT"+dt+"+H] => ".join(PrepareExternalAnalysisTasksOuter)+"[PT"+dt+"H]" %}
-
-  {# set prep = "" #}
-  {# for task in PrepareExternalAnalysisTasksOuter #}
-    {# set prep = prep+task+"[PT"+dt+"H]" #}
-    {# if task != PrepareExternalAnalysisTasksOuter[-1] #}
-      {# set prep = prep+" => " #}
-    {# endif #}
-  {# endfor #}
   {% for mem in EnsVerifyMembers %}
         {{prep}} => VerifyModelEnsFC{{mem}}-{{dt}}hr
   {% endfor %}
