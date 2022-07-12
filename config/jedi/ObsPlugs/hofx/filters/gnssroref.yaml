@@ -15,4 +15,4 @@
       maxvalue: 200.0
   - filter: ROobserror
     variable: refractivity
-    errmodel: NBAM
+    errmodel: NCEP
