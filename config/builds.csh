@@ -10,21 +10,15 @@ source config/scenario.csh builds
 ## build directory structures
 #############################
 
-# Note: at this time, all executables should be built in the same environment, one that is
-# consistent with config/environmentForJedi.csh
+# mpas-bundle applications
+# ========================
+# + at this time, all mpas-bundle executables should be built in the same environment, one that is
+#   consistent with config/environmentJEDI.csh
+# + it is preferred to build mpas-bundle with a single-precision MPAS-Model, such that
+#   set(MPAS_DOUBLE_PRECISION "OFF") is used in mpas-bundle/CMakeLists.txt
 
-# default build directory
+# default mpas-bundle build directory
 $setLocal commonBuild
-
-# Ungrib
-setenv ungribEXE ungrib.exe
-setenv WPSBuildDir /glade/work/guerrett/pandac/data/GEFS
-
-# Obs2IODA-v2
-setenv obs2iodaEXEC obs2ioda-v2.x
-setenv obs2iodaBuildDir /glade/p/mmm/parc/ivette/pandac/fork_obs2ioda/obs2ioda/obs2ioda-v2/src
-setenv iodaupgradeEXEC ioda-upgrade.x
-setenv iodaupgradeBuildDir ${commonBuild}/bin
 
 # MPAS-JEDI
 # ---------
@@ -50,20 +44,51 @@ setenv InitEXE mpas_init_${MPASCore}
 setenv InitBuildDir ${commonBuild}/bin
 setenv ForecastTopBuildDir ${commonBuild}
 
-# Use a static single-precision build of MPAS-A to conserve resources
-setenv ForecastBuildDir /glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single
-setenv ForecastEXE ${MPASCore}_model
-
-# TODO: enable single-precision MPAS-A build in mpas-bundle, then use bundle-built executables
-# Note to developers: it is easier to use the ForecastBuildDir and ForecastEXE settings below when
-# modifying MPAS-Model source code.  The added expense is minimal for short-range cycling tests.
-# This also requires modifying the mpiexec executable in forecast.csh.
-#setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
-#setenv ForecastEXE mpas_${MPASCore}
-
+# use forecast executable built in the bundle
+setenv ForecastBuildDir ${ForecastTopBuildDir}/bin
+setenv ForecastEXE mpas_${MPASCore}
 
 setenv MPASLookupDir ${ForecastTopBuildDir}/MPAS/core_${MPASCore}
 set MPASLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
+
+# Alternatively, use a stand-alone single-precision build of MPAS-A with GNU-MPT
+#setenv ForecastBuildDir /glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single
+#setenv ForecastEXE ${MPASCore}_model
+
+# Note: this also requires modifying the following modifications to forecast.csh:
+#@@ -28,7 +28,7 @@ source config/tools.csh
+# source config/model.csh
+# source config/modeldata.csh
+# source config/builds.csh
+#-source config/environmentJEDI.csh
+#+source config/environmentMPT.csh
+# source config/applications/forecast.csh
+# set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
+# set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
+#@@ -203,8 +203,8 @@ else
+#   rm ./${ForecastEXE}
+#   ln -sfv ${ForecastBuildDir}/${ForecastEXE} ./
+#   # mpiexec is for Open MPI, mpiexec_mpt is for MPT
+#-  mpiexec ./${ForecastEXE}
+#-  #mpiexec_mpt ./${ForecastEXE}
+#+  #mpiexec ./${ForecastEXE}
+#+  mpiexec_mpt ./${ForecastEXE}
+
+
+# Non-bundle applications
+# =======================
+
+# Ungrib
+# ------
+setenv ungribEXE ungrib.exe
+setenv WPSBuildDir /glade/work/guerrett/pandac/data/GEFS
+
+# Obs2IODA-v2
+# -----------
+setenv obs2iodaEXEC obs2ioda-v2.x
+setenv obs2iodaBuildDir /glade/p/mmm/parc/ivette/pandac/fork_obs2ioda/obs2ioda/obs2ioda-v2/src
+setenv iodaupgradeEXEC ioda-upgrade.x
+setenv iodaupgradeBuildDir ${commonBuild}/bin
 
 # Mean state calculator
 # ---------------------
