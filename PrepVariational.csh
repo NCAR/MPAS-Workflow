@@ -421,13 +421,6 @@ while ( $member <= ${nMembers} )
     #       but dual-res EDA not working yet anyway
     cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
 
-# works for PANDAC non-EDA experiments, but not for cold-start experiments
-#    #modify "Inner" initial forecast file
-#    # TODO: capture the naming convention for FirstCyclingFCDir somewhere else
-#    set memDir = `${memberDir} $nMembers 1`
-#    set FirstCyclingFCDir = ${CyclingFCWorkDir}/${FirstCycleDate}${memDir}/Inner
-#    cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
-
     # modify xtime
     # TODO: handle errors from python executions, e.g.:
     # '''
