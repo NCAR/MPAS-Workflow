@@ -55,7 +55,7 @@ set MPASLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
 #setenv ForecastBuildDir /glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single
 #setenv ForecastEXE ${MPASCore}_model
 
-# Note: this also requires modifying the following modifications to forecast.csh:
+# Note: this also requires modifying forecast.csh:
 #@@ -28,7 +28,7 @@ source config/tools.csh
 # source config/model.csh
 # source config/modeldata.csh
