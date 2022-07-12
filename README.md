@@ -420,24 +420,21 @@ Skamarock, W. C., Klemp, J. B., Duda, M. G., Fowler, L. D., Park, S.-H., and Rin
 
 Contributors to-date
 --------------------
-These people have contributed any of the following
- - GitHub pull requests and review
- - data
- - scripts on which workflow tasks are templated
- - source code
- - critical consultation
+ - Maryam Abdi-Oskouei
+ - Junmei Ban
+ - Ivette Hernandez Banos[^+] (ivette@ucar.edu)
+ - Jamie Bresch
+ - JJ Guerrette[^+] (guerrett@ucar.edu)
+ - Soyoung Ha
+ - BJ Jung
+ - Zhiquan Liu
+ - Chris Snyder
+ - Craig Schwartz
+ - Steven Vahl
+ - Yali Wu
+ - Yonggang Yu
 
-Junmei Ban
-Ivette Hernandez Banos+ (ivette@ucar.edu)
-Jamie Bresch
-JJ Guerrette+ (guerrett@ucar.edu)
-Soyoung Ha
-BJ Jung
-Zhiquan Liu
-Chris Snyder
-Craig Schwartz
-Steven Vahl
-Yali Wu
-Yonggang Yu
+[^+]: primary repository maintainers/developers
 
-+ primary repository maintainers/developers
+These people have contributed any of the following: GitHub pull requests and review, data, scripts
+on which workflow tasks are templated, source code, or critical consultation.
