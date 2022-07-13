@@ -1,6 +1,6 @@
 - obs space:
     <<: *ObsSpace
-    name: GnssroRef
+    name: GnssroRefNCEP
     obsdatain:
       obsfile: {{InDBDir}}/gnssroref_obs_{{thisValidDate}}.h5
     obsdataout:
@@ -8,7 +8,7 @@
     simulated variables: [refractivity]
   obs error: *ObsErrorDiagonal
   obs operator:
-    name: GnssroRef
+    name: GnssroRefNCEP
     obs options:
       use_compress: 0
   get values:
