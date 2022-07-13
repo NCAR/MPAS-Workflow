@@ -29,7 +29,7 @@ source config/firstbackground.csh
 source config/tools.csh
 source config/model.csh
 source config/builds.csh
-source config/environmentMPT.csh
+source config/environmentJEDI.csh
 source config/applications/forecast.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -225,8 +225,8 @@ else
   rm ./${ForecastEXE}
   ln -sfv ${ForecastBuildDir}/${ForecastEXE} ./
   # mpiexec is for Open MPI, mpiexec_mpt is for MPT
-  #mpiexec ./${ForecastEXE}
-  mpiexec_mpt ./${ForecastEXE}
+  mpiexec ./${ForecastEXE}
+  #mpiexec_mpt ./${ForecastEXE}
 
 
   # Check status

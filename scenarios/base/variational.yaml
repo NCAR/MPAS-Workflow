@@ -234,13 +234,13 @@ variational:
       bumpCovStdDevFile: None
       bumpCovVBalDir: None
     60km:
-      bumpCovDir: /glade/scratch/bjung/pandac/20220425_develop/60km.NICAS_00
-      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220425_develop/60km.CMAT_00/mpas.stddev.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/scratch/bjung/pandac/20220425_develop/60km.VBAL_00
+      bumpCovDir: /glade/scratch/bjung/pandac/20220712_build/60km.NICAS_00
+      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220712_build/60km.CMAT_00/mpas.stddev.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/scratch/bjung/pandac/20220712_build/60km.VBAL_00
     120km:
-      bumpCovDir: /glade/scratch/bjung/pandac/20220425_develop/NICAS_00
-      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220425_develop/CMAT_00/mpas.stddev.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/scratch/bjung/pandac/20220425_develop/VBAL_00
+      bumpCovDir: /glade/scratch/bjung/pandac/20220712_build/NICAS_00
+      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220712_build/CMAT_00/mpas.stddev.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/scratch/bjung/pandac/20220712_build/VBAL_00
 
   # resource requirements
   job:
