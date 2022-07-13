@@ -19,6 +19,7 @@ set scenarioDirectory = scenarios
 # + 3dvar_OIE120km_WarmStart
 # + 3dvar_OIE120km_ColdStart
 # + 3denvar_OIE120km_WarmStart
+# + 3denvar_OIE120km_WarmStart_IAU
 # + 3denvar_O30kmIE60km_WarmStart
 # + 3denvar_O30kmIE60km_WarmStart_ABEI
 # + 3dhybrid_OIE120km_WarmStart (experimental)
