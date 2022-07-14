@@ -222,10 +222,17 @@ conda activate npl
 ## Forecast (critical path)
   [[Forecast]]
     inherit = ForecastBase
+  [[ColdForecast]]
+    inherit = ForecastBase
 {% for mem in allMembers %}
+  [[ColdForecastMember{{mem}}]]
+    inherit = ColdForecast
+    script = $origin/ColdForecast.csh "{{mem}}" "{{FCLengthHR}}" "{{FCOutIntervalHR}}" "False" "{{outerMesh}}" "False" "True"
+    [[[job]]]
+      execution retry delays = {{CyclingFCRetry}}
   [[ForecastMember{{mem}}]]
     inherit = Forecast
-    script = $origin/Forecast.csh "{{mem}}" "{{outerMesh}}"
+    script = $origin/Forecast.csh "{{mem}}" "{{FCLengthHR}}" "{{FCOutIntervalHR}}" "True" "{{outerMesh}}" "True" "True"
     [[[job]]]
       execution retry delays = {{CyclingFCRetry}}
 {% endfor %}
@@ -290,6 +297,11 @@ conda activate npl
   [[ExternalAnalysisReady]]
     inherit = BACKGROUND
 
+  [[ExtendedFCFromExternalAnalysis]]
+    inherit = ExtendedFCBase
+    script = $origin/ExtendedFCFromExternalAnalysis.csh "1" "{{ExtendedFCLengthHR}}" "{{ExtendedFCOutIntervalHR}}" "False" "{{outerMesh}}" "False" "False"
+  [[ExtendedForecastFinished]]
+    inherit = BACKGROUND
 
 ## Verification: extended forecast from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
@@ -304,7 +316,7 @@ conda activate npl
       -l = select=1:ncpus=36:mpiprocs=36
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
-    script = $origin/ExtendedMeanFC.csh "1" "{{outerMesh}}"
+    script = $origin/ExtendedMeanFC.csh "1" "{{ExtendedFCLengthHR}}" "{{ExtendedFCOutIntervalHR}}" "False" "{{outerMesh}}" "True" "False"
   [[HofXMeanFC]]
     inherit = HofXBase
   [[VerifyModelMeanFC]]
@@ -427,7 +439,7 @@ conda activate npl
   # ensemble of extended forecasts from ensemble of analyses
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
-    script = $origin/ExtendedEnsFC.csh "{{mem}}" "{{outerMesh}}"
+    script = $origin/ExtendedEnsFC.csh "{{mem}}" "{{ExtendedFCLengthHR}}" "{{ExtendedFCOutIntervalHR}}" "False" "{{outerMesh}}" "True" "False"
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC

@@ -1,5 +1,3 @@
-{% set ExtendedFCLengths = range(0, ExtendedFCWindowHR+ExtendedFC_DT_HR, ExtendedFC_DT_HR) %}
-
   # ... for deterministic DA in observation space only (OMB+OMA together)
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
@@ -63,8 +61,8 @@
 {% if VerifyExtendedMeanFC %}
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
-        DataAssimFinished => MeanAnalysis => ExtendedMeanFC
-        ExtendedMeanFC => HofXMeanFC
+        DataAssimFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
+        ExtendedForecastFinished => HofXMeanFC
         HofXMeanFC:succeed-all => VerifyObsMeanFC
         VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
   {% for dt in ExtendedFCLengths %}
@@ -79,8 +77,8 @@
 {% if VerifyExtendedEnsFC %}
     [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
-        DataAssimFinished => ExtendedEnsFC
-        ExtendedEnsFC:succeed-all => HofXEnsFC
+        DataAssimFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
+        ExtendedForecastFinished => HofXEnsFC
         HofXEnsFC:succeed-all => VerifyObsEnsFC
         VerifyObsEnsFC:succeed-all => CleanHofXEnsFC
   {% for mem in EnsVerifyMembers %}

@@ -14,14 +14,17 @@ $setLocal updateSea
 
 setenv AppName forecast
 
+setenv FCOutIntervalHR ${CyclingWindowHR}
+setenv FCLengthHR ${CyclingWindowHR}
+
 ## job
 $setLocal job.${ArgMesh}.baseSeconds
 $setLocal job.${ArgMesh}.secondsPerForecastHR
 
-@ seconds = $secondsPerForecastHR * $CyclingWindowHR + $baseSeconds
+@ seconds = $secondsPerForecastHR * $FCLengthHR + $baseSeconds
 setenv forecast__seconds $seconds
 
-@ seconds = $secondsPerForecastHR * $ExtendedFCWindowHR + $baseSeconds
+@ seconds = $secondsPerForecastHR * $ExtendedFCLengthHR + $baseSeconds
 setenv extendedforecast__seconds $seconds
 
 $setNestedForecast job.${ArgMesh}.nodes

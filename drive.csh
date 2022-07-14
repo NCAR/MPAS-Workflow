@@ -95,11 +95,15 @@ cat >! suite.rc << EOF
 {% set GenerateTimes = "${GenerateTimes}" %}
 {% set DA2FCOffsetHR = "${DA2FCOffsetHR}" %}
 {% set FC2DAOffsetHR = "${FC2DAOffsetHR}" %}
+
 {% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
 {% set ExtendedEnsFCTimes = "${ExtendedEnsFCTimes}" %}
-{% set ExtendedFCWindowHR = ${ExtendedFCWindowHR} %} #integer
-{% set ExtendedFC_DT_HR = ${ExtendedFC_DT_HR} %} #integer
-{% set ExtendedFCLengths = range(0, ExtendedFCWindowHR+ExtendedFC_DT_HR, ExtendedFC_DT_HR) %}
+
+{% set FCOutIntervalHR = ${FCOutIntervalHR} %} #integer
+{% set FCLengthHR = ${FCLengthHR} %} #integer
+{% set ExtendedFCOutIntervalHR = ${ExtendedFCOutIntervalHR} %} #integer
+{% set ExtendedFCLengthHR = ${ExtendedFCLengthHR} %} #integer
+{% set ExtendedFCLengths = range(0, ExtendedFCLengthHR+ExtendedFCOutIntervalHR, ExtendedFCOutIntervalHR) %}
 
 # observation information
 {% set observationsResource = "${observations__resource}" %}
@@ -250,17 +254,46 @@ cat >! suite.rc << EOF
     [[[{{GenerateTimes}}]]]
       graph = {{PrepareExternalAnalysisOuter}}
 
+{% elif CriticalPathType == "ForecastFromExternalAnalyses" %}
+## (ii) External analyses generation for a historical period
+    [[[{{ExtendedMeanFCTimes}}]]]
+      graph = {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
+
+{% if VerifyExtendedMeanFC %}
+    # obs-space
+    [[[{{ExtendedMeanFCTimes}}]]]
+      graph = '''
+        ExtendedForecastFinished => HofXMeanFC
+        HofXMeanFC:succeed-all => VerifyObsMeanFC
+        VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
+  {% for dt in ExtendedFCLengths %}
+        PrepareObservations[+PT{dt}H] => HofXMeanFC{{dt}}hr
+  {% endfor %}
+      '''
+
+    # model-space
+    [[[{{ExtendedMeanFCTimes}}]]]
+      graph = '''
+        ExtendedForecastFinished => VerifyModelMeanFC
+        # need analyses at all verified forecast lengths
+{% for dt in ExtendedFCLengths %}
+  {% set prep = "[PT"+dt+"+H] => ".join(PrepareExternalAnalysisTasksOuter)+"[PT"+dt+"H]" %}
+        {{prep}} => VerifyModelMeanFC{{dt}}hr
+{% endfor %}
+      '''
+{% endif %}
+
 {% elif CriticalPathType == "GenerateObs" %}
-## (ii) Observation generation for a historical period
+## (iii) Observation generation for a historical period
     [[[{{GenerateTimes}}]]]
       graph = {{PrepareObservations}}
 
 {% else %}
 
-## (iii.a) Critical path
+## (iv.a) Critical path
 %include include/criticalpath.rc
 
-## (iii.b) Verification
+## (iv.b) Verification
   {% if VerifyAgainstExternalAnalyses %}
 %include include/verifymodel.rc
   {% endif %}

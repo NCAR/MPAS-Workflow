@@ -51,6 +51,9 @@ workflow:
 # + GenerateObs
 #   - runs only the PrepareObservations mini-workflow
 #   - no dependencies between cycles
+# + ForecastFromExternalAnalyses
+#   - runs PrepareExternalAnalysis mini-workflow and ExtendedFCFromExternalAnalysis
+#   - no dependencies between cycles
 #
 # Users may choose whether to run the verification concurrently with and
 # dependent on the critical path tasks (`Normal`), or as an independent post-processing step
@@ -137,10 +140,10 @@ workflow:
   CyclingWindowHR: 6
 
   # length of verification forecasts
-  ExtendedFCWindowHR: 240
+  ExtendedFCLengthHR: 240
 
   # interval between OMF verification times of an individual forecast
-  ExtendedFC_DT_HR: 12
+  ExtendedFCOutIntervalHR: 12
 
   # times of the day to run extended forecast from mean analysis
   ExtendedMeanFCTimes: T00,T12
