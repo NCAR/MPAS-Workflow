@@ -1,21 +1,22 @@
 workflow:
   # test a recent date
   firstCyclePoint: 20220316T00
-  initialCyclePoint: 20220404T12
-  finalCyclePoint: 20250320T00
+  initialCyclePoint: 20220709T12
+  finalCyclePoint: 20220715T12
   InitializationType: ColdStart
   VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
+  VerifyEnsMeanBG: False
   maxActiveCyclePoints: 1
 observations:
-  resource: NCEPFTPOnline
+  resource:  GladeRDAOnline #NCEPFTPOnline
 experiment:
   ExperimentName: 'RealTime'
 model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-  AnalysisSource: GFSfromNCEPFTPOnline
+  AnalysisSource: GFSfromRDAOnline #GFSfromNCEPFTPOnline
+  GetGDASAnalysis: False
 variational:
   DAType: 3dvar
   nInnerIterations: [60,]

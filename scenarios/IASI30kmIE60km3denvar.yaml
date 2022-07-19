@@ -1,0 +1,60 @@
+workflow:
+  firstCyclePoint: 20180414T18
+  initialCyclePoint: 20180415T06
+  finalCyclePoint: 20180514T18
+  InitializationType: WarmStart
+  VerifyDeterministicDA: True
+  VerifyEnsMeanBG: True
+observations:
+  resource: PANDACArchive
+  PANDACArchive:
+    instrumentsAllowingBiasCorrection:
+    - iasi_metop-a
+    - iasi_metop-b
+    - iasi_metop-c
+    IODADirectory:
+      variational:
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+      hofx:
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+    IODASuperObGrid:
+      abi_g16: 15X15
+      ahi_himawari8: 15X15
+experiment:
+  ExperimentName: '3denvar_O30kmIE60km_WarmStart_IASI_6h_TEST_2-outer_60-inner'
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+builds:
+  commonBuild: /glade/p/mmm/parc/ivette/pandac/jedi/build22MAY_th
+variational:
+  DAType: 3denvar
+  nInnerIterations: [60,60]
+  biasCorrection: True
+  tropprsMethod: thompson
+  experimentalObservations: [
+    iasi_metop-b,
+  ]
+  job:
+    30km:
+      60km:
+        3denvar:
+          baseSeconds: 4500
+          nodes: 8
+          PEPerNode: 16
+          memory: 109
+job:
+  CPQueueName: premium
+  NCPQueueName: premium
+verifyobs:
+  pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics

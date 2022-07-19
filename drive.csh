@@ -100,6 +100,7 @@ cat >! suite.rc << EOF
 {% set InitializationType = "${InitializationType}" %}
 {% set observationsResource = "${observations__resource}" %}
 {% set modelAnalysisSource = "${model__AnalysisSource}" %}
+{% set GetGDASAnalysis = ${GetGDASAnalysis} %} #bool
 
 # members
 {% set nMembers = ${nMembers} %} #integer
