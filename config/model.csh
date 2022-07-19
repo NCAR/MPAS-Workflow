@@ -9,9 +9,12 @@ source config/scenario.csh model
 ## MPASCore - must be atmosphere
 setenv MPASCore atmosphere
 
+## meshes
+# outerMesh is mandatory for all drivers/*.csh
+# innerMesh and ensembleMesh are mandatory for driver/Cycle.csh
 $setLocal outerMesh
-$setLocal innerMesh
-$setLocal ensembleMesh
+setenv innerMesh "`$getLocalOrNone innerMesh`"
+setenv ensembleMesh "`$getLocalOrNone ensembleMesh`"
 
 setenv nCellsOuter "`$getLocalOrNone nCells.$outerMesh`"
 setenv nCellsInner "`$getLocalOrNone nCells.$innerMesh`"
@@ -19,20 +22,6 @@ setenv nCellsEnsemble "`$getLocalOrNone nCells.$ensembleMesh`"
 
 # list of all meshes formatted to be fed to a jinja2 command
 set allMeshesJinja = '["'$outerMesh'", "'$innerMesh'", "'$ensembleMesh'"]'
-
-# MeshesDescriptor used for automated experiment naming conventions
-setenv MeshesDescriptor O
-if ("$outerMesh" != "$innerMesh") then
-  setenv MeshesDescriptor ${MeshesDescriptor}${outerMesh}
-endif
-setenv MeshesDescriptor ${MeshesDescriptor}I
-if ("$innerMesh" != "$ensembleMesh") then
-  #TODO: remove when this is no longer a limitation
-  echo "$0 (ERROR): innerMesh ($innerMesh) must equal ensembleMesh($ensembleMesh)"
-  exit 1
-  #setenv MeshesDescriptor ${MeshesDescriptor}${innerMesh}
-endif
-setenv MeshesDescriptor ${MeshesDescriptor}E${ensembleMesh}
 
 $setLocal ${outerMesh}.TimeStep
 $setLocal ${outerMesh}.DiffusionLengthScale

@@ -1,0 +1,56 @@
+## All-task defaults
+  [[root]]
+    pre-script = "cd  $origin/"
+    [[[environment]]]
+      origin = {{mainScriptDir}}
+
+## Default settings for background and batch-submitted tasks. Currently
+## these are the only two task classifications used.  All new tasks
+## should inherit directly or indirectly from one of these two.
+  [[BACKGROUND]]
+    # These should be very small overhead and few in number; typically these
+    # only act as placeholders in the suite to facilitate transitions between
+    # complex combinations of BATCH tasks
+    [[[job]]]
+      batch system = background
+      execution time limit = PT30S
+
+  [[BATCH]]
+    # load conda + activate npl
+    init-script = '''
+source /etc/profile.d/modules.sh
+module load conda/latest
+conda activate npl
+'''
+    # default job
+    [[[job]]]
+      batch system = pbs
+      execution time limit = PT60M
+
+    # default directives, to be overridden by individual tasks
+    [[[directives]]]
+      -j = oe
+      -k = eod
+      -S = /bin/tcsh
+      -q = {{SingleProcQueueName}}
+      -A = {{SingleProcAccountNumber}}
+      -l = select=1:ncpus=1
+
+  [[CompareBase]]
+    inherit = BATCH
+    [[[job]]]
+      execution time limit = PT5M
+    [[[directives]]]
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select=1:ncpus=36:mpiprocs=36
+
+  [[CleanBase]]
+    inherit = BATCH
+    [[[job]]]
+      execution time limit = PT5M
+      execution retry delays = {{CleanRetry}}
+
+## Null parent or child
+  [[Null]]
+    inherit = BACKGROUND

@@ -37,16 +37,6 @@ else
   exit 1
 endif
 
-## stage
-# Choose which stage of the workflow to run for all scenarios.  It can be useful to run only the
-# SetupWorkflow stage in order to check that all scripts run correctly or to re-initialize
-# the MPAS-Worlfow config directories of all of the scenarios.  The latter is useful when a simple
-# update to the config directory will enable a workflow task to run, and avoids re-starting
-# the one or more cylc suites.  drive.csh automatically stops active scenario suites when the user
-# executes this script script.
-# OPTIONS: drive, SetupWorkflow
-set stage = drive
-
 ###################################################################################################
 # get the configuration (only developers should modify this)
 ###################################################################################################
@@ -63,12 +53,28 @@ set runConfig = runs/${ArgRunConfig}.yaml
 # setRun and setRestore are helper functions that pick out a configuration node
 # under the "run" and "restore" keys of runConfig
 setenv setRun "source $setConfig $baseConfig $runConfig run"
+setenv getRunOrNone "source $getConfigOrNone $baseConfig $runConfig run"
+
 setenv setRestore "source $setConfig $baseConfig $runConfig restore"
 
 # these values will be used during the run phase
 # see runs/baseConfig.yaml for configuration documentation
 $setRun scenarios
 $setRun scenarioDirectory
+
+## driver
+# Choose which driver of the workflow to run for all scenarios.  It can be useful to run only the
+# SetupWorkflow driver in order to check that all scripts run correctly or to re-initialize
+# the MPAS-Worlfow config directories of all of the scenarios.  The latter is useful when a simple
+# update to the config directory will enable a workflow task to run, and avoids re-starting
+# the one or more cylc suites.  driver scripts (except SetupWorkflow) automatically stop active
+# scenario suites when the user executes this script.
+# OPTIONS: Cycle, GenerateObs, GenerateGFSAnalyses, ForecastFromGFSAnalyses, SetupWorkflow
+setenv driver "`$getRunOrNone driver`"
+if ( "$driver" == None ) then
+  # useful to set below line to SetupWorkflow for override
+  setenv driver Cycle
+endif
 
 ###################################################################################################
 # run the scenarios (only developers should modify this)
@@ -82,10 +88,10 @@ foreach thisScenario ($scenarios)
   endif
   echo ""
   echo ""
-  echo "##################################################################"
-  echo "${0}: Executing ${stage}.csh for the $thisScenario scenario"
+  echo "#########################################################################"
+  echo "${0}: Executing drivers/${driver}.csh for the $thisScenario scenario"
   sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$thisScenario'@' config/scenario.csh
-  ./${stage}.csh
+  ./drivers/${driver}.csh
 
   if ( $status != 0 ) then
     echo "$0 (ERROR): error when setting up $thisScenario"

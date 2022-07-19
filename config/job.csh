@@ -15,8 +15,9 @@ $setLocal EnsMeanBGQueueName
 $setLocal EnsMeanBGAccountNumber
 
 $setLocal InitializationRetry
-$setLocal GFSAnalysisRetry
+$setLocal GetAnalysisRetry
 $setLocal GetObsRetry
+$setLocal ConvertObsRetry
 $setLocal VariationalRetry
 $setLocal EnsOfVariationalRetry
 $setLocal CyclingFCRetry

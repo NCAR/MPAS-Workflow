@@ -1,0 +1,114 @@
+  [[ForecastBase]]
+    inherit = BATCH
+    [[[job]]]
+      execution time limit = PT{{CyclingFCSeconds}}S
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{CyclingFCNodes}}:ncpus={{CyclingFCPEPerNode}}:mpiprocs={{CyclingFCPEPerNode}}
+
+## Data assimilation and supporting tasks (critical path)
+  # Pre => (Ens)DataAssim => Post => Finished => Clean
+  [[PreDataAssim]]
+    [[[job]]]
+      batch system = background
+  [[DataAssimPost]]
+    inherit = BACKGROUND
+  [[DataAssimFinished]]
+    inherit = BACKGROUND
+
+  # directory/file preparation
+  [[InitDataAssim]]
+    inherit = BATCH
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA" "variational"
+    script = $origin/PrepVariational.csh "1"
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = {{VariationalRetry}}
+  # single instance or ensemble of EDA(s)
+  [[EnsDataAssim]]
+    inherit = BATCH
+  {% for inst in DAInstances %}
+  [[EDAInstance{{inst}}]]
+    inherit = EnsDataAssim
+    script = $origin/EnsembleOfVariational.csh "{{inst}}"
+    [[[job]]]
+      execution time limit = PT{{EnsOfVariationalSeconds}}S
+      execution retry delays = {{EnsOfVariationalRetry}}
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{EnsOfVariationalNodes}}:ncpus={{EnsOfVariationalPEPerNode}}:mpiprocs={{EnsOfVariationalPEPerNode}}:mem={{EnsOfVariationalMemory}}GB
+  {% endfor %}
+  # single instance or ensemble of Variational(s)
+  [[DataAssim]]
+    inherit = BATCH
+  {% for mem in allMembers %}
+  [[DAMember{{mem}}]]
+    inherit = DataAssim
+    script = $origin/Variational.csh "{{mem}}"
+    [[[job]]]
+      execution time limit = PT{{VariationalSeconds}}S
+      execution retry delays = {{VariationalRetry}}
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{VariationalNodes}}:ncpus={{VariationalPEPerNode}}:mpiprocs={{VariationalPEPerNode}}:mem={{VariationalMemory}}GB
+  {% endfor %}
+  [[CleanVariational]]
+    inherit = CleanBase
+    script = $origin/CleanVariational.csh
+
+  # inflation (pre and post)
+  [[GenerateABEInflation]]
+    inherit = BATCH
+    script = $origin/GenerateABEInflation.csh
+    [[[job]]]
+      execution time limit = PT20M
+    [[[directives]]]
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select=1:ncpus=36:mpiprocs=36
+  [[PrepRTPP]]
+    inherit = BATCH
+    script = $origin/PrepRTPP.csh
+    [[[job]]]
+      execution time limit = PT1M
+      execution retry delays = {{RTPPRetry}}
+  [[RTPP]]
+    inherit = BATCH
+    script = $origin/RTPP.csh
+    [[[job]]]
+      execution time limit = PT{{RTPPSeconds}}S
+      execution retry delays = {{RTPPRetry}}
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select={{RTPPNodes}}:ncpus={{RTPPPEPerNode}}:mpiprocs={{RTPPPEPerNode}}:mem={{RTPPMemory}}GB
+  [[CleanRTPP]]
+    inherit = CleanBase
+    script = $origin/CleanRTPP.csh
+
+## Forecast (critical path)
+  [[Forecast]]
+    inherit = ForecastBase
+  [[ColdForecast]]
+    inherit = ForecastBase
+{% for mem in allMembers %}
+  [[ColdForecastMember{{mem}}]]
+    inherit = ColdForecast
+    script = $origin/ColdForecast.csh "{{mem}}" "{{FCLengthHR}}" "{{FCOutIntervalHR}}" "False" "{{outerMesh}}" "False" "True"
+    [[[job]]]
+      execution retry delays = {{CyclingFCRetry}}
+  [[ForecastMember{{mem}}]]
+    inherit = Forecast
+    script = $origin/Forecast.csh "{{mem}}" "{{FCLengthHR}}" "{{FCOutIntervalHR}}" "True" "{{outerMesh}}" "True" "True"
+    [[[job]]]
+      execution retry delays = {{CyclingFCRetry}}
+{% endfor %}
+  [[ForecastFinished]]
+    inherit = BACKGROUND

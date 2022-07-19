@@ -6,13 +6,16 @@
 # already running, then executing this script will automatically kill those running suites.
 ####################################################################################################
 
+## extended forecast from external analyses for real-time or historical period and optional
+#  verification
+
 echo "$0 (INFO): generating a new cylc suite"
 
 date
 
 echo "$0 (INFO): Initializing the MPAS-Workflow experiment directory"
 # Create the experiment directory and cylc task scripts
-source SetupWorkflow.csh
+source drivers/SetupWorkflow.csh "base"
 
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
@@ -29,12 +32,9 @@ source config/observations.csh
 source config/workflow.csh
 
 # application-specific settings, including resource requests
-source config/applications/ensvariational.csh
 source config/applications/forecast.csh $outerMesh
 source config/applications/hofx.csh
 source config/applications/initic.csh
-source config/applications/rtpp.csh
-source config/applications/variational.csh
 source config/applications/verifyobs.csh
 source config/applications/verifymodel.csh
 
@@ -55,25 +55,6 @@ date
 # example: ${ExperimentName}_verify for a simultaneous suite running only Verification
 set SuiteName = ${ExperimentName}
 
-# Differentiate between creating the workflow suite for the first time
-# and restarting (i.e., when initialCyclePoint > firstCyclePoint)
-if ($initialCyclePoint == $firstCyclePoint) then
-  # The analysis will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
-  # initialCyclePoint
-  set AnalysisTimes = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
-
-  # The forecast will run every CyclingWindowHR hours, starting CyclingWindowHR+DA2FCOffsetHR hours
-  # after the initialCyclePoint
-  @ ColdFCOffset = ${CyclingWindowHR} + ${DA2FCOffsetHR}
-  set ForecastTimes = +PT${ColdFCOffset}H/PT${CyclingWindowHR}H
-else
-  # The analysis will run every CyclingWindowHR hours, starting at the initialCyclePoint
-  set AnalysisTimes = PT${CyclingWindowHR}H
-
-  # The forecast will run every CyclingWindowHR hours, starting DA2FCOffsetHR hours after the
-  # initialCyclePoint
-  set ForecastTimes = +PT${DA2FCOffsetHR}H/PT${CyclingWindowHR}H
-endif
 set GenerateTimes = PT${CyclingWindowHR}H
 
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
@@ -90,17 +71,10 @@ cat >! suite.rc << EOF
 {% set firstCyclePoint   = "${firstCyclePoint}" %}
 {% set initialCyclePoint = "${initialCyclePoint}" %}
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
-{% set AnalysisTimes = "${AnalysisTimes}" %}
-{% set ForecastTimes = "${ForecastTimes}" %}
 {% set GenerateTimes = "${GenerateTimes}" %}
-{% set DA2FCOffsetHR = "${DA2FCOffsetHR}" %}
-{% set FC2DAOffsetHR = "${FC2DAOffsetHR}" %}
 
 {% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
-{% set ExtendedEnsFCTimes = "${ExtendedEnsFCTimes}" %}
 
-{% set FCOutIntervalHR = ${FCOutIntervalHR} %} #integer
-{% set FCLengthHR = ${FCLengthHR} %} #integer
 {% set ExtendedFCOutIntervalHR = ${ExtendedFCOutIntervalHR} %} #integer
 {% set ExtendedFCLengthHR = ${ExtendedFCLengthHR} %} #integer
 {% set ExtendedFCLengths = range(0, ExtendedFCLengthHR+ExtendedFCOutIntervalHR, ExtendedFCOutIntervalHR) %}
@@ -110,19 +84,8 @@ cat >! suite.rc << EOF
 
 # members
 {% set nMembers = ${nMembers} %} #integer
-{% set allMembers = range(1, nMembers+1, 1) %}
-{% set EnsVerifyMembers = allMembers %}
 {% set allMeshes = ${allMeshesJinja} %} #list
 {% set outerMesh = "$outerMesh" %}
-
-# variational
-{% set EDASize = ${EDASize} %} #integer
-{% set nDAInstances = ${nDAInstances} %} #integer
-{% set DAInstances = range(1, nDAInstances+1, 1) %}
-
-# inflation
-{% set RTPPRelaxationFactor = ${rtpp__relaxationFactor} %}
-{% set ABEInflation = ${ABEInflation} %}
 
 # common job controls
 {% set CPQueueName = "${CPQueueName}" %}
@@ -131,36 +94,17 @@ cat >! suite.rc << EOF
 {% set NCPAccountNumber = "${NCPAccountNumber}" %}
 {% set SingleProcQueueName = "${SingleProcQueueName}" %}
 {% set SingleProcAccountNumber = "${SingleProcAccountNumber}" %}
-{% set EnsMeanBGQueueName = "${EnsMeanBGQueueName}" %}
-{% set EnsMeanBGAccountNumber = "${EnsMeanBGAccountNumber}" %}
 
 {% set InitializationRetry = "${InitializationRetry}" %}
-{% set GFSAnalysisRetry = "${GFSAnalysisRetry}" %}
+{% set GetAnalysisRetry = "${GetAnalysisRetry}" %}
 {% set GetObsRetry = "${GetObsRetry}" %}
-{% set VariationalRetry = "${VariationalRetry}" %}
-{% set EnsOfVariationalRetry = "${EnsOfVariationalRetry}" %}
-{% set CyclingFCRetry = "${CyclingFCRetry}" %}
-{% set RTPPRetry = "${RTPPRetry}" %}
+{% set ConvertObsRetry = "${ConvertObsRetry}" %}
 {% set HofXRetry = "${HofXRetry}" %}
 {% set CleanRetry = "${CleanRetry}" %}
 {% set VerifyObsRetry = "${VerifyObsRetry}" %}
 {% set VerifyModelRetry = "${VerifyModelRetry}" %}
 
 # mesh-specific job controls
-{% set CyclingFCSeconds = "${forecast__seconds}" %}
-{% set CyclingFCNodes = "${forecast__nodes}" %}
-{% set CyclingFCPEPerNode = "${forecast__PEPerNode}" %}
-
-{% set RTPPSeconds = "${rtpp__seconds}" %}
-{% set RTPPNodes = "${rtpp__nodes}" %}
-{% set RTPPPEPerNode = "${rtpp__PEPerNode}" %}
-{% set RTPPMemory = "${rtpp__memory}" %}
-
-{% set EnsOfVariationalSeconds = "${ensvariational__seconds}" %}
-{% set EnsOfVariationalNodes = "${ensvariational__nodes}" %}
-{% set EnsOfVariationalPEPerNode = "${ensvariational__PEPerNode}" %}
-{% set EnsOfVariationalMemory = "${ensvariational__memory}" %}
-
 {% set ExtendedFCSeconds = "${extendedforecast__seconds}" %}
 {% set ExtendedFCNodes = "${forecast__nodes}" %}
 {% set ExtendedFCPEPerNode = "${forecast__PEPerNode}" %}
@@ -180,16 +124,9 @@ cat >! suite.rc << EOF
 {% set PrepareExternalAnalysisTasksEnsemble = [${externalanalyses__PrepareExternalAnalysisTasksEnsemble}] %}
 {% set PrepareExternalAnalysisEnsemble = " => ".join(PrepareExternalAnalysisTasksEnsemble) %}
 
-{% set PrepareFirstBackgroundOuter = "${firstbackground__PrepareFirstBackgroundOuter}" %}
-
 {% set InitICSeconds = "${initic__seconds}" %}
 {% set InitICNodes = "${initic__nodes}" %}
 {% set InitICPEPerNode = "${initic__PEPerNode}" %}
-
-{% set VariationalSeconds = "${variational__seconds}" %}
-{% set VariationalNodes = "${variational__nodes}" %}
-{% set VariationalPEPerNode = "${variational__PEPerNode}" %}
-{% set VariationalMemory = "${variational__memory}" %}
 
 {% set VerifyModelSeconds = "${verifymodel__seconds}" %}
 {% set VerifyModelEnsMeanSeconds = "${verifymodelens__seconds}" %}
@@ -198,18 +135,17 @@ cat >! suite.rc << EOF
 {% set VerifyObsEnsMeanSeconds = "${verifyobsens__seconds}" %}
 
 # task selection controls
-{% set CriticalPathType = "${CriticalPathType}" %}
 {% set VerifyAgainstObservations = ${VerifyAgainstObservations} %} #bool
 {% set VerifyAgainstExternalAnalyses = ${VerifyAgainstExternalAnalyses} %} #bool
-{% set VerifyDeterministicDA = ${VerifyDeterministicDA} %} #bool
-{% set CompareDA2Benchmark = ${CompareDA2Benchmark} %} #bool
+{% set VerifyDeterministicDA = False %} #bool
+{% set CompareDA2Benchmark = False %} #bool
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %} #bool
-{% set VerifyBGMembers = ${VerifyBGMembers} %} #bool
-{% set CompareBG2Benchmark = ${CompareBG2Benchmark} %} #bool
-{% set VerifyEnsMeanBG = ${VerifyEnsMeanBG} %} #bool
-{% set DiagnoseEnsSpreadBG = ${DiagnoseEnsSpreadBG} %} #bool
-{% set VerifyANMembers = ${VerifyANMembers} %} #bool
-{% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %} #bool
+{% set VerifyBGMembers = False %} #bool
+{% set CompareBG2Benchmark = False %} #bool
+{% set VerifyEnsMeanBG = False %} #bool
+{% set DiagnoseEnsSpreadBG = False %} #bool
+{% set VerifyANMembers = False %} #bool
+{% set VerifyExtendedEnsFC = False %} #bool
 
 # Active cycle points
 {% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
@@ -221,10 +157,6 @@ cat >! suite.rc << EOF
 {% else %}
   {% set PrepareObservations = "GetObs => ObsToIODA => ObsReady" %}
 {% endif %}
-
-# Use external analysis for sea surface updating
-{% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysisOuter %}
-
 
 [meta]
   title = "${PackageBaseName}--${SuiteName}"
@@ -241,21 +173,10 @@ cat >! suite.rc << EOF
   # and to avoid over-utilization of login nodes
   # hint: execute 'ps aux | grep $USER' to check your login node overhead
   # default: 3
-{% if CriticalPathType != "Normal" %}
-  max active cycle points = 20
-{% else %}
   max active cycle points = {{maxActiveCyclePoints}}
-{% endif %}
 
   [[dependencies]]
 
-{% if CriticalPathType == "GenerateExternalAnalyses" %}
-## (i) External analyses generation for a historical period
-    [[[{{GenerateTimes}}]]]
-      graph = {{PrepareExternalAnalysisOuter}}
-
-{% elif CriticalPathType == "ForecastFromExternalAnalyses" %}
-## (ii) External analyses generation for a historical period
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
 
@@ -283,29 +204,19 @@ cat >! suite.rc << EOF
       '''
 {% endif %}
 
-{% elif CriticalPathType == "GenerateObs" %}
-## (iii) Observation generation for a historical period
-    [[[{{GenerateTimes}}]]]
-      graph = {{PrepareObservations}}
+# TODO: use pre-canned versions without running MeanAnalysis part
+{# if VerifyAgainstExternalAnalyses #}
+#%include include/verifymodel.rc
+{# endif #}
 
-{% else %}
+{# if VerifyAgainstObservations #}
+#%include include/verifyobs.rc
+{# endif #}
 
-## (iv.a) Critical path
-%include include/criticalpath.rc
-
-## (iv.b) Verification
-  {% if VerifyAgainstExternalAnalyses %}
-%include include/verifymodel.rc
-  {% endif %}
-
-  {% if VerifyAgainstObservations %}
-%include include/verifyobs.rc
-  {% endif %}
-
-{% endif %}
 
 [runtime]
-%include include/tasks.rc
+%include include/tasks/base.rc
+%include include/tasks/verify.rc
 
 [visualization]
   initial cycle point = {{initialCyclePoint}}

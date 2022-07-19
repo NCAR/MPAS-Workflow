@@ -1,2 +1,3 @@
 run:
   scenarios: [ForecastFromGFSAnalyses]
+  driver: ForecastFromGFSAnalyses

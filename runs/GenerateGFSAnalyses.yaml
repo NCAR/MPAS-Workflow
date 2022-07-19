@@ -1,2 +1,3 @@
 run:
   scenarios: [GenerateGFSAnalyses]
+  driver: GenerateExternalAnalyses

@@ -1,7 +1,10 @@
 #!/bin/csh -f
 
+# ArgExpConfigType: either Cycling or Base
+set ArgExpConfigType = "$1"
+
 ## create experiment environment
-source generateExperimentConfig.csh
+source experiment/${ArgExperimentType}.csh
 
 set workflowParts = ( \
   GetGFSAnalysisFromRDA.csh \
