@@ -134,7 +134,9 @@ cat >! suite.rc << EOF
 [runtime]
 %include include/tasks/base.rc
 %include include/tasks/criticalpath.rc
-%include include/tasks/externalmodel.rc
+%include include/tasks/firstbackground.rc
+%include include/tasks/externalanalyses.rc
+%include include/tasks/initic.rc
 %include include/tasks/observations.rc
 %include include/tasks/verify.rc
 

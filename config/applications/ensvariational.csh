@@ -48,7 +48,7 @@ cat >! include/tasks/ensvariational.rc << EOF
       -m = ae
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
-      -l = select=${nodes}:ncpus=${PEPerNode}:mpiprocs=${PEPerNode}:mem=${memory}GB
+      -l = select=${nodes}:ncpus=${PEPerNode_}:mpiprocs=${PEPerNode_}:mem=${memory_}GB
   {% endfor %}
 EOF
 

@@ -1,4 +1,4 @@
 #!/bin/csh -f
 
-source experiment/parseConfig.csh
-source experiment/generateExperimentConfig.csh
+source setupExperiment/parseConfig.csh
+source setupExperiment/generateExperimentConfig.csh

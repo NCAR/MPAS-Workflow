@@ -82,7 +82,8 @@ cat >! suite.rc << EOF
 
 [runtime]
 %include include/tasks/base.rc
-%include include/tasks/externalmodel.rc
+%include include/tasks/externalanalyses.rc
+%include include/tasks/initic.rc
 
 [visualization]
   initial cycle point = {{initialCyclePoint}}

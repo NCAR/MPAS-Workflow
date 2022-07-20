@@ -1,6 +1,0 @@
-%include firstbackground.rc
-%include externalanalyses.rc
-%include initic.rc
-
-  [[ExternalAnalysisReady]]
-    inherit = BACKGROUND

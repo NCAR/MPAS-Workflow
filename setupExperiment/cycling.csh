@@ -1,6 +1,6 @@
 #!/bin/csh -f
 
-source experiment/parseConfig.csh
+source setupExperiment/parseConfig.csh
 
 ## experiment name
 if ("$ExperimentName" == None) then
@@ -76,4 +76,4 @@ if ("$ExperimentName" == None) then
   setenv ExperimentName ${ExperimentName}_${MeshesDescriptor}
 endif
 
-source experiment/generateExperimentConfig.csh
+source setupExperiment/generateExperimentConfig.csh

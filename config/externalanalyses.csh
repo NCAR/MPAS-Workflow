@@ -132,6 +132,9 @@ cat >! include/tasks/externalanalyses.rc << EOF
       execution time limit = PT30S
       execution retry delays = $externalanalyses__retryOuter
 {% endfor %}
+
+  [[ExternalAnalysisReady]]
+    inherit = BACKGROUND
 EOF
 
 endif

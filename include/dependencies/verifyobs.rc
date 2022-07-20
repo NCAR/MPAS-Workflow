@@ -62,7 +62,7 @@
 {% if VerifyExtendedMeanFC %}
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
-  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] 
+  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
         DataAssimFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
   {% endif %}
         ExtendedForecastFinished => HofXMeanFC
@@ -80,7 +80,7 @@
 {% if VerifyExtendedEnsFC %}
     [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
-  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] 
+  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
         DataAssimFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
   {% endif %}
         ExtendedForecastFinished => HofXEnsFC

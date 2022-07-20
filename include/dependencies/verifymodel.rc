@@ -41,7 +41,9 @@
 {% if VerifyExtendedMeanFC %}
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
+  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
         DataAssimFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
+  {% endif %}
         ExtendedForecastFinished => VerifyModelMeanFC
 
         # need analyses at all verified forecast lengths
@@ -58,7 +60,9 @@
 {% if VerifyExtendedEnsFC %}
     [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
+  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
         DataAssimFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
+  {% endif %}
         ExtendedForecastFinished => VerifyModelEnsFC
 
         # need analyses at all verified forecast lengths
