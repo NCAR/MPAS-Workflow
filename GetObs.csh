@@ -121,7 +121,6 @@ foreach inst ( ${convertToIODAObservations} )
   else if ( "${observations__resource}" == "NCEPFTPOnline" ) then
     echo "Getting ${inst} from the NCEP FTP"
     # url for GDAS data
-    #set gdas_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gdas.${yymmdd}/${hh}/atmos
     set gdas_ftp = https://ftpprd.ncep.noaa.gov/data/nccf/com/obsproc/prod/gdas.${yymmdd}
     # set name for the observation type
     if ( ${inst} == prepbufr ) then

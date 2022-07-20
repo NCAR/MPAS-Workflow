@@ -271,6 +271,7 @@ conda activate npl
   [[ExternalAnalysisReady]]
     inherit = BACKGROUND
   [[GetGDASanalysis]]
+    inherit = BATCH
     script = $origin/GetGDASanalysis.csh
     [[[job]]]
       execution time limit = PT45M

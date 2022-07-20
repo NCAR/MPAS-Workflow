@@ -8,10 +8,10 @@ date
 source config/model.csh
 source config/experiment.csh
 source config/builds.csh
-set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
+set yyyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set thisCycleDate = ${yymmdd}${hh}
+set thisCycleDate = ${yyyymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
@@ -34,11 +34,11 @@ if ( ${model__AnalysisSource} == "GFSfromRDAOnline" ) then
   # RDA GFS forecasts directory
   set GFSgribdirRDA = /gpfs/fs1/collections/rda/data/ds084.1
   # link ungribbed GFS
-  ./${linkWPS} ${GFSgribdirRDA}/${yy}/${yymmdd}/gfs.${res}.${yymmdd}${hh}.f${fhour}.grib2
+  ./${linkWPS} ${GFSgribdirRDA}/${yy}/${yyyymmdd}/gfs.${res}.${yyyymmdd}${hh}.f${fhour}.grib2
 else if ( ${model__AnalysisSource} == "GFSfromNCEPFTPOnline" ) then
   echo "Getting GFS analysis from the NCEP FTP"
   # url for GFS data
-  set gfs_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gfs.${yymmdd}/${hh}/atmos
+  set gfs_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gfs.${yyyymmdd}/${hh}/atmos
   set gfs_file = gfs.t${hh}z.pgrb2.${res}.f${fhour}
   # check if the GFS analysis is available
   if ( ! -e ${gfs_file}) then

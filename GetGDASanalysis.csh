@@ -36,7 +36,7 @@ foreach anaInfix ($gdasAnaInfix)
   if ( ${anaInfix} == sfluxgrb ) then
      set gdasfile = ${gdas}.grib2
   else
-     set gdasfile = ${gdas}.nc  
+     set gdasfile = ${gdas}.nc
   endif
   # check if the GDAS analyses are available
   if ( ! -e ${gdasfile}) then
