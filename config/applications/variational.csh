@@ -204,7 +204,7 @@ endif
 
 if ( ! -e include/dependencies/abei.rc ) then 
 
-if ( "$ABEInflation" == True ) then
+  if ( "$ABEInflation" == True ) then
 cat >! include/dependencies/abei.rc << EOF
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] =>
         MeanBackground =>
@@ -213,13 +213,14 @@ cat >! include/dependencies/abei.rc << EOF
         GenerateABEInflation => CleanHofXEnsMeanBG
 EOF
 
-else
+  else
 cat >! include/dependencies/abei.rc << EOF
 #
 EOF
 
-endif
+  endif
 
+endif
 
 ##############################
 ## more non-YAML-fied settings
