@@ -8,7 +8,7 @@ workflow:
   VerifyEnsMeanBG: True
   maxActiveCyclePoints: 1
 observations:
-  resource:  NCEPFTPOnline
+  resource: NCEPFTPOnline
 experiment:
   ExperimentName: 'RealTime'
 model:
