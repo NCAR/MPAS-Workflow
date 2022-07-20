@@ -21,7 +21,7 @@ cd ${mainScriptDir}
 
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
-# cross-application settings
+# included configurations
 source config/experiment.csh
 source config/externalanalyses.csh
 source config/job.csh
@@ -45,62 +45,18 @@ date
 # example: ${ExperimentName}_verify for a simultaneous suite running only Verification
 set SuiteName = ${ExperimentName}
 
-set GenerateTimes = PT${CyclingWindowHR}H
-
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
 mkdir -p ${cylcWorkDir}
 
 echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
-## Import relevant environment variables as Jinja2 variables
-# main suite directory
-{% set mainScriptDir = "${mainScriptDir}" %}
 
-# cycling dates-time information
-{% set firstCyclePoint   = "${firstCyclePoint}" %}
-{% set initialCyclePoint = "${initialCyclePoint}" %}
-{% set finalCyclePoint   = "${finalCyclePoint}" %}
-{% set GenerateTimes = "${GenerateTimes}" %}
-
-# members
-{% set nMembers = ${nMembers} %} #integer
-{% set allMembers = range(1, nMembers+1, 1) %}
-{% set outerMesh = "$outerMesh" %}
-
-# common job controls
-{% set CPQueueName = "${CPQueueName}" %}
-{% set CPAccountNumber = "${CPAccountNumber}" %}
-{% set NCPQueueName = "${NCPQueueName}" %}
-{% set NCPAccountNumber = "${NCPAccountNumber}" %}
-{% set SingleProcQueueName = "${SingleProcQueueName}" %}
-{% set SingleProcAccountNumber = "${SingleProcAccountNumber}" %}
-
-{% set InitializationRetry = "${InitializationRetry}" %}
-{% set GetAnalysisRetry = "${GetAnalysisRetry}" %}
-{% set CleanRetry = "${CleanRetry}" %}
-
-## Mini-workflows that prepare cold-start initial condition files from an external analysis
-{% set PrepareExternalAnalysisTasksOuter = [${externalanalyses__PrepareExternalAnalysisTasksOuter}] %}
-{% set PrepareExternalAnalysisOuter = " => ".join(PrepareExternalAnalysisTasksOuter) %}
-
-{% set PrepareExternalAnalysisTasksInner = [${externalanalyses__PrepareExternalAnalysisTasksInner}] %}
-{% set PrepareExternalAnalysisInner = " => ".join(PrepareExternalAnalysisTasksInner) %}
-
-{% set PrepareExternalAnalysisTasksEnsemble = [${externalanalyses__PrepareExternalAnalysisTasksEnsemble}] %}
-{% set PrepareExternalAnalysisEnsemble = " => ".join(PrepareExternalAnalysisTasksEnsemble) %}
-
-{% set PrepareFirstBackgroundOuter = "${firstbackground__PrepareFirstBackgroundOuter}" %}
-
-{% set InitICSeconds = "${initic__seconds}" %}
-{% set InitICNodes = "${initic__nodes}" %}
-{% set InitICPEPerNode = "${initic__PEPerNode}" %}
-
-# task selection controls
-{% set CriticalPathType = "${CriticalPathType}" %}
-
-# Active cycle points
-{% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
+%include include/variables/experiment.rc
+%include include/variables/externalanalyses.rc
+%include include/variables/job.rc
+%include include/variables/model.rc
+%include include/variables/workflow.rc
 
 [meta]
   title = "${PackageBaseName}--${SuiteName}"
@@ -121,7 +77,7 @@ cat >! suite.rc << EOF
 
   [[dependencies]]
 
-    [[[{{GenerateTimes}}]]]
+    [[[PT${CyclingWindowHR}H]]]
       graph = {{PrepareExternalAnalysisOuter}}
 
 [runtime]

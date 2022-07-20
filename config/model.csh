@@ -20,9 +20,6 @@ setenv nCellsOuter "`$getLocalOrNone nCells.$outerMesh`"
 setenv nCellsInner "`$getLocalOrNone nCells.$innerMesh`"
 setenv nCellsEnsemble "`$getLocalOrNone nCells.$ensembleMesh`"
 
-# list of all meshes formatted to be fed to a jinja2 command
-set allMeshesJinja = '["'$outerMesh'", "'$innerMesh'", "'$ensembleMesh'"]'
-
 $setLocal ${outerMesh}.TimeStep
 $setLocal ${outerMesh}.DiffusionLengthScale
 
@@ -58,3 +55,16 @@ setenv localStaticFieldsPrefix static
 setenv localStaticFieldsFileOuter ${localStaticFieldsPrefix}.${nCellsOuter}.nc
 setenv localStaticFieldsFileInner ${localStaticFieldsPrefix}.${nCellsInner}.nc
 setenv localStaticFieldsFileEnsemble ${localStaticFieldsPrefix}.${nCellsEnsemble}.nc
+
+
+##################################
+# auto-generate cylc include files
+##################################
+
+if ( ! -e include/variables/model.rc ) then
+cat >! include/variables/model.rc << EOF
+{% set allMeshes = ["$outerMesh", "$innerMesh", "$ensembleMesh"] %} #list
+{% set outerMesh = "$outerMesh" %}
+EOF
+
+endif

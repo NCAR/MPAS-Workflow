@@ -3,6 +3,11 @@ observations:
 # OPTIONS: PANDACArchive, GladeRDAOnline, NCEPFTPOnline, GenerateObs
   resource: None
 
+  job:
+    # cylc retry strings for "GetObs" and "ObsToIODA" tasks
+    get__retry: '80*PT5M'
+    convert__retry: '2*PT30S'
+
 ## convertToIODAObservations
 # list of raw observation types to convert to IODA format, when (resource != PANDACArchive)
   convertToIODAObservations:
@@ -25,6 +30,8 @@ observations:
 # locations of raw bufr and prepbufr observation data, separated by resource
 
   NCEPFTPOnline:
+    PrepareObservations: "GetObs => ObsToIODA => ObsReady"
+
     instrumentsAllowingBiasCorrection:
     - amsua_aqua
     - amsua_metop-a
@@ -47,6 +54,8 @@ observations:
         common: "{{ObsWorkDir}}"
 
   GladeRDAOnline:
+    PrepareObservations: "GetObs => ObsToIODA => ObsReady"
+
     instrumentsAllowingBiasCorrection:
     - amsua_aqua
     - amsua_metop-a
@@ -75,6 +84,8 @@ observations:
         common: "{{ObsWorkDir}}"
 
   PANDACArchive:
+    PrepareObservations: "ObsReady"
+
     instrumentsAllowingBiasCorrection: [None]
 
     IODAPrefix:
@@ -178,6 +189,8 @@ observations:
 
 
   GenerateObs:
+    PrepareObservations: "ObsReady"
+
     instrumentsAllowingBiasCorrection:
     - amsua_aqua
     - amsua_metop-a

@@ -6,7 +6,7 @@
 if ( $?config_variational ) exit 0
 set config_variational = 1
 
-source config/firstbackground.csh
+source config/firstbackground.csh # for nMembers
 source config/model.csh
 source config/naming.csh
 
@@ -121,17 +121,105 @@ $setLocal maxIODAPoolSize
 $setLocal retainObsFeedback
 
 ## job
-$setLocal job.${outerMesh}.${innerMesh}.$DAType.baseSeconds
-set secondsPerEnVarMember = "`$getLocalOrNone job.${outerMesh}.${innerMesh}.$DAType.secondsPerEnVarMember`"
-if ("$secondsPerEnVarMember" == None) then
-  set secondsPerEnVarMember = 0
-endif
-@ seconds = $secondsPerEnVarMember * $ensPbNMembers + $baseSeconds
-setenv variational__seconds $seconds
+$setLocal job.retry
 
-$setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.nodes
-$setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.PEPerNode
-$setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.memory
+foreach parameter (baseSeconds secondsPerEnVarMember nodes PEPerNode memory)
+  set p = "`$getLocalOrNone job.${outerMesh}.${innerMesh}.${DAType}.${parameter}`"
+  if ("$p" == None) then
+    set p = "`$getLocalOrNone job.defaults.${parameter}`"
+  endif
+  if ("$p" == None) then
+    echo "config/applications/variational.csh (ERROR): invalid value for $paramater"
+    exit 1
+  endif
+  set ${parameter}_ = "$p"
+end
+
+if ("$secondsPerEnVarMember_" == None) then
+  set secondsPerEnVarMember_ = 0
+endif
+@ seconds = $secondsPerEnVarMember_ * $ensPbNMembers + $baseSeconds_
+setenv seconds $seconds
+
+
+##################################
+# auto-generate cylc include files
+##################################
+
+if ( ! -e include/tasks/variational.rc ) then 
+cat >! include/tasks/variational.rc << EOF
+# variational
+  [[InitDataAssim]]
+    inherit = BATCH
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA" "variational"
+    script = \$origin/PrepVariational.csh "1"
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = ${retry}
+
+  # single instance or ensemble of Variational(s)
+  [[DataAssim]]
+    inherit = BATCH
+  {% for mem in range(1, ${nMembers}+1, 1) %}
+  [[DAMember{{mem}}]]
+    inherit = DataAssim
+    script = \$origin/Variational.csh "{{mem}}"
+    [[[job]]]
+      execution time limit = PT${seconds}S
+      execution retry delays = ${retry}
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select=${nodes_}:ncpus=${PEPerNode_}:mpiprocs=${PEPerNode_}:mem=${memory_}GB
+  {% endfor %}
+  [[CleanVariational]]
+    inherit = CleanBase
+    script = \$origin/CleanVariational.csh
+EOF
+
+endif
+
+if ( ! -e include/dependencies/variational.rc ) then 
+cat >! include/dependencies/variational.rc << EOF
+{% if ${EDASize} > 1 %}
+        # prepare the working directory, then run
+        InitDataAssim => EnsDataAssim
+
+        # all EnsDataAssim members must succeed in order to start post
+        EnsDataAssim:succeed-all => DataAssimPost
+
+{% else %}
+        # prepare the working directory, then run
+        InitDataAssim => DataAssim
+
+        # all DataAssim members must succeed in order to start post
+        DataAssim:succeed-all => DataAssimPost
+
+{% endif %}
+  {% set CleanDataAssim = 'CleanVariational' %}
+EOF
+
+endif
+
+if ( ! -e include/dependencies/abei.rc ) then 
+
+if ( "$ABEInflation" == True ) then
+cat >! include/dependencies/abei.rc << EOF
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] =>
+        MeanBackground =>
+        HofXEnsMeanBG =>
+        GenerateABEInflation => PreDataAssim
+        GenerateABEInflation => CleanHofXEnsMeanBG
+EOF
+
+else
+cat >! include/dependencies/abei.rc << EOF
+#
+EOF
+
+endif
+
 
 ##############################
 ## more non-YAML-fied settings

@@ -78,3 +78,30 @@ set firstbackground__staticPrefixEnsemble = `echo "$firstbackground__staticPrefi
   | sed 's@{{nCells}}@'${nCellsEnsemble}'@' \
   `
 
+
+##################################
+# auto-generate cylc include files
+##################################
+
+if ( ! -e include/tasks/firstbackground.rc ) then 
+cat >! include/tasks/firstbackground.rc << EOF
+  [[LinkWarmStartBackgrounds]]
+    inherit = BATCH
+    script = \$origin/LinkWarmStartBackgrounds.csh
+    [[[job]]]
+      # give longer for higher resolution and more EDA members
+      # TODO: set time limit based on outerMesh AND (number of members OR
+      #       independent task for each member)
+      execution time limit = PT10M
+      execution retry delays = 1*PT5S
+EOF
+
+endif
+
+## Mini-workflow that prepares the firstbackground for the outerMesh
+if ( ! -e include/variables/firstbackground.rc ) then 
+cat >! include/variables/firstbackground.rc << EOF
+{% set PrepareFirstBackgroundOuter = "${firstbackground__PrepareFirstBackgroundOuter}" %}
+EOF
+
+endif

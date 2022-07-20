@@ -21,16 +21,16 @@ cd ${mainScriptDir}
 
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
-# cross-application settings
+# included application-independent configurations
 source config/experiment.csh
-source config/firstbackground.csh
 source config/externalanalyses.csh
+source config/firstbackground.csh
 source config/job.csh
 source config/model.csh
 source config/observations.csh
 source config/workflow.csh
 
-# application-specific settings, including resource requests
+# setup application-specific cylc tasks
 source config/applications/ensvariational.csh
 source config/applications/forecast.csh $outerMesh
 source config/applications/hofx.csh
@@ -76,7 +76,6 @@ else
   # initialCyclePoint
   set ForecastTimes = +PT${DA2FCOffsetHR}H/PT${CyclingWindowHR}H
 endif
-set GenerateTimes = PT${CyclingWindowHR}H
 
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
 mkdir -p ${cylcWorkDir}
@@ -84,150 +83,18 @@ mkdir -p ${cylcWorkDir}
 echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
-## Import relevant environment variables as Jinja2 variables
-# main suite directory
-{% set mainScriptDir = "${mainScriptDir}" %}
-
 # cycling dates-time information
-{% set firstCyclePoint   = "${firstCyclePoint}" %}
-{% set initialCyclePoint = "${initialCyclePoint}" %}
-{% set finalCyclePoint   = "${finalCyclePoint}" %}
 {% set AnalysisTimes = "${AnalysisTimes}" %}
 {% set ForecastTimes = "${ForecastTimes}" %}
-{% set GenerateTimes = "${GenerateTimes}" %}
-{% set DA2FCOffsetHR = "${DA2FCOffsetHR}" %}
-{% set FC2DAOffsetHR = "${FC2DAOffsetHR}" %}
 
-{% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
-{% set ExtendedEnsFCTimes = "${ExtendedEnsFCTimes}" %}
-
-{% set FCOutIntervalHR = ${FCOutIntervalHR} %} #integer
-{% set FCLengthHR = ${FCLengthHR} %} #integer
-{% set ExtendedFCOutIntervalHR = ${ExtendedFCOutIntervalHR} %} #integer
-{% set ExtendedFCLengthHR = ${ExtendedFCLengthHR} %} #integer
-{% set ExtendedFCLengths = range(0, ExtendedFCLengthHR+ExtendedFCOutIntervalHR, ExtendedFCOutIntervalHR) %}
-
-# observation information
-{% set observationsResource = "${observations__resource}" %}
-
-# members
-{% set nMembers = ${nMembers} %} #integer
-{% set allMembers = range(1, nMembers+1, 1) %}
-{% set EnsVerifyMembers = allMembers %}
-{% set allMeshes = ${allMeshesJinja} %} #list
-{% set outerMesh = "$outerMesh" %}
-
-# variational
-{% set EDASize = ${EDASize} %} #integer
-{% set nDAInstances = ${nDAInstances} %} #integer
-{% set DAInstances = range(1, nDAInstances+1, 1) %}
-
-# inflation
-{% set RTPPRelaxationFactor = ${rtpp__relaxationFactor} %}
-{% set ABEInflation = ${ABEInflation} %}
-
-# common job controls
-{% set CPQueueName = "${CPQueueName}" %}
-{% set CPAccountNumber = "${CPAccountNumber}" %}
-{% set NCPQueueName = "${NCPQueueName}" %}
-{% set NCPAccountNumber = "${NCPAccountNumber}" %}
-{% set SingleProcQueueName = "${SingleProcQueueName}" %}
-{% set SingleProcAccountNumber = "${SingleProcAccountNumber}" %}
-{% set EnsMeanBGQueueName = "${EnsMeanBGQueueName}" %}
-{% set EnsMeanBGAccountNumber = "${EnsMeanBGAccountNumber}" %}
-
-{% set InitializationRetry = "${InitializationRetry}" %}
-{% set GetAnalysisRetry = "${GetAnalysisRetry}" %}
-{% set GetObsRetry = "${GetObsRetry}" %}
-{% set ConvertObsRetry = "${ConvertObsRetry}" %}
-{% set VariationalRetry = "${VariationalRetry}" %}
-{% set EnsOfVariationalRetry = "${EnsOfVariationalRetry}" %}
-{% set CyclingFCRetry = "${CyclingFCRetry}" %}
-{% set RTPPRetry = "${RTPPRetry}" %}
-{% set HofXRetry = "${HofXRetry}" %}
-{% set CleanRetry = "${CleanRetry}" %}
-{% set VerifyObsRetry = "${VerifyObsRetry}" %}
-{% set VerifyModelRetry = "${VerifyModelRetry}" %}
-
-# mesh-specific job controls
-{% set CyclingFCSeconds = "${forecast__seconds}" %}
-{% set CyclingFCNodes = "${forecast__nodes}" %}
-{% set CyclingFCPEPerNode = "${forecast__PEPerNode}" %}
-
-{% set RTPPSeconds = "${rtpp__seconds}" %}
-{% set RTPPNodes = "${rtpp__nodes}" %}
-{% set RTPPPEPerNode = "${rtpp__PEPerNode}" %}
-{% set RTPPMemory = "${rtpp__memory}" %}
-
-{% set EnsOfVariationalSeconds = "${ensvariational__seconds}" %}
-{% set EnsOfVariationalNodes = "${ensvariational__nodes}" %}
-{% set EnsOfVariationalPEPerNode = "${ensvariational__PEPerNode}" %}
-{% set EnsOfVariationalMemory = "${ensvariational__memory}" %}
-
-{% set ExtendedFCSeconds = "${extendedforecast__seconds}" %}
-{% set ExtendedFCNodes = "${forecast__nodes}" %}
-{% set ExtendedFCPEPerNode = "${forecast__PEPerNode}" %}
-
-{% set HofXSeconds = "${hofx__seconds}" %}
-{% set HofXNodes = "${hofx__nodes}" %}
-{% set HofXPEPerNode = "${hofx__PEPerNode}" %}
-{% set HofXMemory = "${hofx__memory}" %}
-
-## Mini-workflows that prepare cold-start initial condition files from an external analysis
-{% set PrepareExternalAnalysisTasksOuter = [${externalanalyses__PrepareExternalAnalysisTasksOuter}] %}
-{% set PrepareExternalAnalysisOuter = " => ".join(PrepareExternalAnalysisTasksOuter) %}
-
-{% set PrepareExternalAnalysisTasksInner = [${externalanalyses__PrepareExternalAnalysisTasksInner}] %}
-{% set PrepareExternalAnalysisInner = " => ".join(PrepareExternalAnalysisTasksInner) %}
-
-{% set PrepareExternalAnalysisTasksEnsemble = [${externalanalyses__PrepareExternalAnalysisTasksEnsemble}] %}
-{% set PrepareExternalAnalysisEnsemble = " => ".join(PrepareExternalAnalysisTasksEnsemble) %}
-
-{% set PrepareFirstBackgroundOuter = "${firstbackground__PrepareFirstBackgroundOuter}" %}
-
-{% set InitICSeconds = "${initic__seconds}" %}
-{% set InitICNodes = "${initic__nodes}" %}
-{% set InitICPEPerNode = "${initic__PEPerNode}" %}
-
-{% set VariationalSeconds = "${variational__seconds}" %}
-{% set VariationalNodes = "${variational__nodes}" %}
-{% set VariationalPEPerNode = "${variational__PEPerNode}" %}
-{% set VariationalMemory = "${variational__memory}" %}
-
-{% set VerifyModelSeconds = "${verifymodel__seconds}" %}
-{% set VerifyModelEnsMeanSeconds = "${verifymodelens__seconds}" %}
-
-{% set VerifyObsSeconds = "${verifyobs__seconds}" %}
-{% set VerifyObsEnsMeanSeconds = "${verifyobsens__seconds}" %}
-
-# task selection controls
-{% set CriticalPathType = "${CriticalPathType}" %}
-{% set VerifyAgainstObservations = ${VerifyAgainstObservations} %} #bool
-{% set VerifyAgainstExternalAnalyses = ${VerifyAgainstExternalAnalyses} %} #bool
-{% set VerifyDeterministicDA = ${VerifyDeterministicDA} %} #bool
-{% set CompareDA2Benchmark = ${CompareDA2Benchmark} %} #bool
-{% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %} #bool
-{% set VerifyBGMembers = ${VerifyBGMembers} %} #bool
-{% set CompareBG2Benchmark = ${CompareBG2Benchmark} %} #bool
-{% set VerifyEnsMeanBG = ${VerifyEnsMeanBG} %} #bool
-{% set DiagnoseEnsSpreadBG = ${DiagnoseEnsSpreadBG} %} #bool
-{% set VerifyANMembers = ${VerifyANMembers} %} #bool
-{% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %} #bool
-
-# Active cycle points
-{% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
-
-## Mini-workflow that prepares observations for IODA ingest
-{% if observationsResource == "PANDACArchive" %}
-  # assume that IODA observation files are already available for PANDACArchive case
-  {% set PrepareObservations = "ObsReady" %}
-{% else %}
-  {% set PrepareObservations = "GetObs => ObsToIODA => ObsReady" %}
-{% endif %}
-
-# Use external analysis for sea surface updating
-{% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysisOuter %}
-
+%include include/variables/experiment.rc
+%include include/variables/extendedforecast.rc
+%include include/variables/externalanalyses.rc
+%include include/variables/firstbackground.rc
+%include include/variables/job.rc
+%include include/variables/model.rc
+%include include/variables/observations.rc
+%include include/variables/workflow.rc
 
 [meta]
   title = "${PackageBaseName}--${SuiteName}"
@@ -253,23 +120,23 @@ cat >! suite.rc << EOF
   [[dependencies]]
 
 ## (iv.a) Critical path
-%include include/criticalpath.rc
+%include include/dependencies/criticalpath.rc
 
 ## (iv.b) Verification
   {% if VerifyAgainstExternalAnalyses %}
-%include include/verifymodel.rc
+%include include/dependencies/verifymodel.rc
   {% endif %}
 
   {% if VerifyAgainstObservations %}
-%include include/verifyobs.rc
+%include include/dependencies/verifyobs.rc
   {% endif %}
 
 [runtime]
 %include include/tasks/base.rc
 %include include/tasks/criticalpath.rc
-%include include/tasks/verify.rc
-%include include/tasks/externalobs.rc
 %include include/tasks/externalmodel.rc
+%include include/tasks/observations.rc
+%include include/tasks/verify.rc
 
 [visualization]
   initial cycle point = {{initialCyclePoint}}

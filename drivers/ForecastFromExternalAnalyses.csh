@@ -22,16 +22,15 @@ cd ${mainScriptDir}
 
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
-# cross-application settings
+# included application-independent configurations
 source config/experiment.csh
-source config/firstbackground.csh
 source config/externalanalyses.csh
 source config/job.csh
 source config/model.csh
 source config/observations.csh
 source config/workflow.csh
 
-# application-specific settings, including resource requests
+# setup application-specific cylc tasks
 source config/applications/forecast.csh $outerMesh
 source config/applications/hofx.csh
 source config/applications/initic.csh
@@ -55,108 +54,20 @@ date
 # example: ${ExperimentName}_verify for a simultaneous suite running only Verification
 set SuiteName = ${ExperimentName}
 
-set GenerateTimes = PT${CyclingWindowHR}H
-
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
 mkdir -p ${cylcWorkDir}
 
 echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
-## Import relevant environment variables as Jinja2 variables
-# main suite directory
-{% set mainScriptDir = "${mainScriptDir}" %}
 
-# cycling dates-time information
-{% set firstCyclePoint   = "${firstCyclePoint}" %}
-{% set initialCyclePoint = "${initialCyclePoint}" %}
-{% set finalCyclePoint   = "${finalCyclePoint}" %}
-{% set GenerateTimes = "${GenerateTimes}" %}
-
-{% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
-
-{% set ExtendedFCOutIntervalHR = ${ExtendedFCOutIntervalHR} %} #integer
-{% set ExtendedFCLengthHR = ${ExtendedFCLengthHR} %} #integer
-{% set ExtendedFCLengths = range(0, ExtendedFCLengthHR+ExtendedFCOutIntervalHR, ExtendedFCOutIntervalHR) %}
-
-# observation information
-{% set observationsResource = "${observations__resource}" %}
-
-# members
-{% set nMembers = ${nMembers} %} #integer
-{% set allMeshes = ${allMeshesJinja} %} #list
-{% set outerMesh = "$outerMesh" %}
-
-# common job controls
-{% set CPQueueName = "${CPQueueName}" %}
-{% set CPAccountNumber = "${CPAccountNumber}" %}
-{% set NCPQueueName = "${NCPQueueName}" %}
-{% set NCPAccountNumber = "${NCPAccountNumber}" %}
-{% set SingleProcQueueName = "${SingleProcQueueName}" %}
-{% set SingleProcAccountNumber = "${SingleProcAccountNumber}" %}
-
-{% set InitializationRetry = "${InitializationRetry}" %}
-{% set GetAnalysisRetry = "${GetAnalysisRetry}" %}
-{% set GetObsRetry = "${GetObsRetry}" %}
-{% set ConvertObsRetry = "${ConvertObsRetry}" %}
-{% set HofXRetry = "${HofXRetry}" %}
-{% set CleanRetry = "${CleanRetry}" %}
-{% set VerifyObsRetry = "${VerifyObsRetry}" %}
-{% set VerifyModelRetry = "${VerifyModelRetry}" %}
-
-# mesh-specific job controls
-{% set ExtendedFCSeconds = "${extendedforecast__seconds}" %}
-{% set ExtendedFCNodes = "${forecast__nodes}" %}
-{% set ExtendedFCPEPerNode = "${forecast__PEPerNode}" %}
-
-{% set HofXSeconds = "${hofx__seconds}" %}
-{% set HofXNodes = "${hofx__nodes}" %}
-{% set HofXPEPerNode = "${hofx__PEPerNode}" %}
-{% set HofXMemory = "${hofx__memory}" %}
-
-## Mini-workflows that prepare cold-start initial condition files from an external analysis
-{% set PrepareExternalAnalysisTasksOuter = [${externalanalyses__PrepareExternalAnalysisTasksOuter}] %}
-{% set PrepareExternalAnalysisOuter = " => ".join(PrepareExternalAnalysisTasksOuter) %}
-
-{% set PrepareExternalAnalysisTasksInner = [${externalanalyses__PrepareExternalAnalysisTasksInner}] %}
-{% set PrepareExternalAnalysisInner = " => ".join(PrepareExternalAnalysisTasksInner) %}
-
-{% set PrepareExternalAnalysisTasksEnsemble = [${externalanalyses__PrepareExternalAnalysisTasksEnsemble}] %}
-{% set PrepareExternalAnalysisEnsemble = " => ".join(PrepareExternalAnalysisTasksEnsemble) %}
-
-{% set InitICSeconds = "${initic__seconds}" %}
-{% set InitICNodes = "${initic__nodes}" %}
-{% set InitICPEPerNode = "${initic__PEPerNode}" %}
-
-{% set VerifyModelSeconds = "${verifymodel__seconds}" %}
-{% set VerifyModelEnsMeanSeconds = "${verifymodelens__seconds}" %}
-
-{% set VerifyObsSeconds = "${verifyobs__seconds}" %}
-{% set VerifyObsEnsMeanSeconds = "${verifyobsens__seconds}" %}
-
-# task selection controls
-{% set VerifyAgainstObservations = ${VerifyAgainstObservations} %} #bool
-{% set VerifyAgainstExternalAnalyses = ${VerifyAgainstExternalAnalyses} %} #bool
-{% set VerifyDeterministicDA = False %} #bool
-{% set CompareDA2Benchmark = False %} #bool
-{% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %} #bool
-{% set VerifyBGMembers = False %} #bool
-{% set CompareBG2Benchmark = False %} #bool
-{% set VerifyEnsMeanBG = False %} #bool
-{% set DiagnoseEnsSpreadBG = False %} #bool
-{% set VerifyANMembers = False %} #bool
-{% set VerifyExtendedEnsFC = False %} #bool
-
-# Active cycle points
-{% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
-
-## Mini-workflow that prepares observations for IODA ingest
-{% if observationsResource == "PANDACArchive" %}
-  # assume that IODA observation files are already available for PANDACArchive case
-  {% set PrepareObservations = "ObsReady" %}
-{% else %}
-  {% set PrepareObservations = "GetObs => ObsToIODA => ObsReady" %}
-{% endif %}
+%include include/variables/experiment.rc
+%include include/variables/extendedforecast.rc
+%include include/variables/externalanalyses.rc
+%include include/variables/job.rc
+%include include/variables/model.rc
+%include include/variables/observations.rc
+%include include/variables/workflow.rc
 
 [meta]
   title = "${PackageBaseName}--${SuiteName}"
@@ -180,42 +91,19 @@ cat >! suite.rc << EOF
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
 
-{% if VerifyExtendedMeanFC %}
-    # obs-space
-    [[[{{ExtendedMeanFCTimes}}]]]
-      graph = '''
-        ExtendedForecastFinished => HofXMeanFC
-        HofXMeanFC:succeed-all => VerifyObsMeanFC
-        VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
-  {% for dt in ExtendedFCLengths %}
-        PrepareObservations[+PT{dt}H] => HofXMeanFC{{dt}}hr
-  {% endfor %}
-      '''
-
-    # model-space
-    [[[{{ExtendedMeanFCTimes}}]]]
-      graph = '''
-        ExtendedForecastFinished => VerifyModelMeanFC
-        # need analyses at all verified forecast lengths
-{% for dt in ExtendedFCLengths %}
-  {% set prep = "[PT"+dt+"+H] => ".join(PrepareExternalAnalysisTasksOuter)+"[PT"+dt+"H]" %}
-        {{prep}} => VerifyModelMeanFC{{dt}}hr
-{% endfor %}
-      '''
+{% if VerifyAgainstExternalAnalyses %}
+%include include/dependencies/verifymodel.rc
 {% endif %}
 
-# TODO: use pre-canned versions without running MeanAnalysis part
-{# if VerifyAgainstExternalAnalyses #}
-#%include include/verifymodel.rc
-{# endif #}
-
-{# if VerifyAgainstObservations #}
-#%include include/verifyobs.rc
-{# endif #}
+{% if VerifyAgainstObservations %}
+%include include/dependencies/verifyobs.rc
+{% endif %}
 
 
 [runtime]
 %include include/tasks/base.rc
+%include include/tasks/observations.rc
+%include include/tasks/externalmodel.rc
 %include include/tasks/verify.rc
 
 [visualization]

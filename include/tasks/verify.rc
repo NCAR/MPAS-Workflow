@@ -1,44 +1,7 @@
-  [[ExtendedFCBase]]
-    inherit = BATCH
-    [[[job]]]
-      execution time limit = PT{{ExtendedFCSeconds}}S
-    [[[directives]]]
-      -m = ae
-      -q = {{NCPQueueName}}
-      -A = {{NCPAccountNumber}}
-      -l = select={{ExtendedFCNodes}}:ncpus={{ExtendedFCPEPerNode}}:mpiprocs={{ExtendedFCPEPerNode}}
-  [[ExtendedForecastFinished]]
-    inherit = BACKGROUND
-
-  [[HofXBase]]
-    inherit = BATCH
-    [[[job]]]
-      execution time limit = PT{{HofXSeconds}}S
-      execution retry delays = {{HofXRetry}}
-    [[[directives]]]
-      -q = {{NCPQueueName}}
-      -A = {{NCPAccountNumber}}
-      -l = select={{HofXNodes}}:ncpus={{HofXPEPerNode}}:mpiprocs={{HofXPEPerNode}}:mem={{HofXMemory}}GB
-
-  [[VerifyModelBase]]
-    inherit = BATCH
-    [[[job]]]
-      execution time limit = PT{{VerifyModelSeconds}}S
-      execution retry delays = {{VerifyModelRetry}}
-    [[[directives]]]
-      -q = {{NCPQueueName}}
-      -A = {{NCPAccountNumber}}
-      -l = select=1:ncpus=36:mpiprocs=36
-
-  [[VerifyObsBase]]
-    inherit = BATCH
-    [[[job]]]
-      execution time limit = PT{{VerifyObsSeconds}}S
-      execution retry delays = {{VerifyObsRetry}}
-    [[[directives]]]
-      -q = {{NCPQueueName}}
-      -A = {{NCPAccountNumber}}
-      -l = select=1:ncpus=36:mpiprocs=36
+%include extendedforecast.rc
+%include hofxbase.rc
+%include verifymodelbase.rc
+%include verifyobsbase.rc
 
 ## DA
   [[VerifyObsDA]]
@@ -48,25 +11,7 @@
     inherit = CompareBase
     script = $origin/CompareObsDA.csh "1" "0" "DA" "variational"
 
-## ExternalAnalysis
-  [[ExtendedFCFromExternalAnalysis]]
-    inherit = ExtendedFCBase
-    script = $origin/ExtendedFCFromExternalAnalysis.csh "1" "{{ExtendedFCLengthHR}}" "{{ExtendedFCOutIntervalHR}}" "False" "{{outerMesh}}" "False" "False"
-
-## Extended forecast from mean analysis (including single-member deterministic)
-  [[MeanAnalysis]]
-    inherit = BATCH
-    script = $origin/MeanAnalysis.csh
-    [[[job]]]
-      execution time limit = PT5M
-    [[[directives]]]
-      -m = ae
-      -q = {{NCPQueueName}}
-      -A = {{NCPAccountNumber}}
-      -l = select=1:ncpus=36:mpiprocs=36
-  [[ExtendedMeanFC]]
-    inherit = ExtendedFCBase
-    script = $origin/ExtendedMeanFC.csh "1" "{{ExtendedFCLengthHR}}" "{{ExtendedFCOutIntervalHR}}" "False" "{{outerMesh}}" "True" "False"
+## extended forecast from mean/deterministic state
   [[HofXMeanFC]]
     inherit = HofXBase
   [[VerifyModelMeanFC]]
@@ -110,33 +55,22 @@
     [[[directives]]]
       -q = {{EnsMeanBGQueueName}}
       -A = {{EnsMeanBGAccountNumber}}
-{% if DiagnoseEnsSpreadBG %}
-  {% set nEnsSpreadMem = nMembers %}
-  {% set modelSeconds = VerifyModelEnsMeanSeconds %}
-  {% set obsSeconds = VerifyObsEnsMeanSeconds %}
-{% else %}
-  {% set nEnsSpreadMem = 0 %}
-  {% set modelSeconds = VerifyModelSeconds %}
-  {% set obsSeconds = VerifyObsSeconds %}
-{% endif %}
   [[VerifyModelEnsMeanBG]]
     inherit = VerifyModelBase
     script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
     [[[job]]]
-      execution time limit = PT{{modelSeconds}}S
+      execution time limit = PT{{modelEnsSeconds}}S
   [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
     script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}" "hofx"
     [[[job]]]
-      execution time limit = PT{{obsSeconds}}S
+      execution time limit = PT{{obsEnsSeconds}}S
   [[CleanHofXEnsMeanBG]]
     inherit = CleanBase
     script = $origin/CleanHofXEnsMeanBG.csh "1" "0" "BG"
 
 
 ## various kinds of ensembles
-  [[ExtendedEnsFC]]
-    inherit = ExtendedFCBase
 {% for state in ['BG', 'AN']%}
   [[HofX{{state}}]]
     inherit = HofXBase
@@ -187,9 +121,6 @@
     inherit = CleanBase
 {% for mem in EnsVerifyMembers %}
   # ensemble of extended forecasts from ensemble of analyses
-  [[ExtendedFC{{mem}}]]
-    inherit = ExtendedEnsFC
-    script = $origin/ExtendedEnsFC.csh "{{mem}}" "{{ExtendedFCLengthHR}}" "{{ExtendedFCOutIntervalHR}}" "False" "{{outerMesh}}" "True" "False"
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC

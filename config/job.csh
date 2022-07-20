@@ -14,15 +14,21 @@ $setLocal SingleProcQueueName
 $setLocal EnsMeanBGQueueName
 $setLocal EnsMeanBGAccountNumber
 
-$setLocal InitializationRetry
-$setLocal GetAnalysisRetry
-$setLocal GetObsRetry
-$setLocal ConvertObsRetry
-$setLocal VariationalRetry
-$setLocal EnsOfVariationalRetry
-$setLocal CyclingFCRetry
-$setLocal RTPPRetry
-$setLocal HofXRetry
-$setLocal CleanRetry
-$setLocal VerifyObsRetry
-$setLocal VerifyModelRetry
+
+##################################
+# auto-generate cylc include files
+##################################
+
+if ( ! -e include/variables/job.rc ) then
+cat >! include/variables/job.rc << EOF
+{% set CPQueueName = "${CPQueueName}" %}
+{% set CPAccountNumber = "${CPAccountNumber}" %}
+{% set NCPQueueName = "${NCPQueueName}" %}
+{% set NCPAccountNumber = "${NCPAccountNumber}" %}
+{% set SingleProcQueueName = "${SingleProcQueueName}" %}
+{% set SingleProcAccountNumber = "${SingleProcAccountNumber}" %}
+{% set EnsMeanBGQueueName = "${EnsMeanBGQueueName}" %}
+{% set EnsMeanBGAccountNumber = "${EnsMeanBGAccountNumber}" %}
+EOF
+
+endif

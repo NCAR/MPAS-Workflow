@@ -16,7 +16,7 @@ set ArgFcIntervalHR = "$3" 	# fcIntervalHRTEMPLATE
 # ArgFcIAU: whether this forecast has IAU (separate branch)
 set ArgFcIAU = "$4"
 
-# ArgMesh: str, mesh name, one of allMeshesJinja, only applicable to FirstCycleDate
+# ArgMesh: str, mesh name, one of model.allMeshes, not currently used
 set ArgMesh = "$5"
 
 # ArgDACycling: whether the initial forecast state is a DA analysis

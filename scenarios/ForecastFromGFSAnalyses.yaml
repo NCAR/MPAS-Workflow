@@ -8,6 +8,22 @@ workflow:
   ExtendedMeanFCTimes: T00
   ExtendedFCLengthHR: 240
   ExtendedFCOutIntervalHR: 24
+
+  # optionally turn on extended forecast verification
+  #VerifyExtendedMeanFC: True
+  #VerifyAgainstObservations: True
+  #VerifyAgainstExternalAnalyses: True
+
+  # none of the following verification methods are valid and are set to False
+  VerifyDeterministicDA: False
+  CompareDA2Benchmark: False
+  VerifyBGMembers: False
+  CompareBG2Benchmark: False
+  VerifyEnsMeanBG: False
+  DiagnoseEnsSpreadBG: False
+  VerifyANMembers: False
+  VerifyExtendedEnsFC: False
+
 externalanalyses:
   resource: "GFS.RDA"
 experiment:

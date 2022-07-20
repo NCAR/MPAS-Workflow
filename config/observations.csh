@@ -12,6 +12,9 @@ setenv getObservationsOrNone "${getLocalOrNone}"
 # nested observations__resource
 $setNestedObservations resource
 
+# mini-workflow that prepares observations for IODA ingest
+$setLocal ${observations__resource}.PrepareObservations
+
 $setLocal convertToIODAObservations
 $setLocal GDASObsErrtable
 $setLocal CRTMTABLES
@@ -21,3 +24,47 @@ $setLocal InterpolationType
 set fixedCoeff = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
 set fixedTlapmeanCov = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
 set initialVARBCcoeff = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
+
+$setLocal job.get__retry
+$setLocal job.convert__retry
+
+
+##################################
+# auto-generate cylc include files
+##################################
+
+if ( ! -e include/variables/observations.rc ) then 
+cat >! include/variables/observations.rc << EOF
+{% set PrepareObservations = "${PrepareObservations}" %}
+EOF
+
+endif
+
+if ( ! -e include/tasks/observations.rc ) then 
+cat >! include/tasks/observations.rc << EOF
+  [[GetObs]]
+    inherit = BATCH
+    script = \$origin/GetObs.csh
+    [[[job]]]
+      execution time limit = PT10M
+      execution retry delays = ${get__retry}
+  [[ObsToIODA]]
+    inherit = BATCH
+    script = \$origin/ObsToIODA.csh
+    [[[job]]]
+      execution time limit = PT10M
+      execution retry delays = ${convert__retry}
+    # currently ObsToIODA has to be on Cheyenne, because ioda-upgrade.x is built there
+    # TODO: build ioda-upgrade.x on casper, remove CP directives below
+    # Note: memory for ObsToIODA may need to be increased when hyperspectral and/or
+    #       geostationary instruments are added
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select=1:ncpus=1:mem=10GB
+  [[ObsReady]]
+    inherit = BACKGROUND
+EOF
+
+endif

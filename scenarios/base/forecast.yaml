@@ -4,9 +4,31 @@ forecast:
 # OPTIONS: True/False
   updateSea: True
 
+  # length of verification forecasts
+  ExtendedFCLengthHR: 240
+
+  # interval between OMF verification times of an individual forecast
+  ExtendedFCOutIntervalHR: 12
+
+  # times of the day to run extended forecast from mean analysis
+  ExtendedMeanFCTimes: T00,T12
+
+  # times of the day to run ensemble of extended forecasts
+  ExtendedEnsFCTimes: T00
+
+
 ## mesh-specific settings
   # resource requirements
   job:
+    # cylc retry string
+    retry: '2*PT30S'
+
+    defaults:
+      nodes: 4
+      PEPerNode: 32
+      baseSeconds: 60
+      secondsPerForecastHR: 500
+
     #{{outerMesh}}:
     #  baseSeconds: int
     #  secondsPerForecastHR: int

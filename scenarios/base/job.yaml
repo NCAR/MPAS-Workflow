@@ -15,10 +15,6 @@ job:
   NCPAccountNumber: NMMM0043
   NCPQueueName: economy
 
-# EnsMeanBG*: settings for ensemble mean BG calculation, useful when it becomes time-critical
-  EnsMeanBGAccountNumber: NMMM0043
-  EnsMeanBGQueueName: economy
-
 # SingleProc*: used for single-processor jobs, both critical and non-critical paths
 # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
   #SingleProcAccountNumber: NMMM0043
@@ -26,18 +22,6 @@ job:
   SingleProcAccountNumber: NMMM0015
   SingleProcQueueName: "casper@casper-pbs"
 
-## *Retry
-# various retry counts for different types of tasks
-  InitializationRetry: '2*PT30S'
-  GetAnalysisRetry: '80*PT5M'
-  GetObsRetry: '80*PT5M'
-  ConvertObsRetry: '2*PT30S'
-  VariationalRetry: '2*PT30S'
-  EnsOfVariationalRetry: '1*PT30S'
-  CyclingFCRetry: '2*PT30S'
-  RTPPRetry: '2*PT30S'
-  HofXRetry: '2*PT30S'
-  CleanRetry: '2*PT15S'
-  VerifyObsRetry: '1*PT30S'
-  VerifyModelRetry: '1*PT30S'
-  CleanRetry: '2*PT10S'
+# EnsMeanBG*: settings for ensemble mean BG calculation; useful for override when time-critical
+  EnsMeanBGAccountNumber: NMMM0043
+  EnsMeanBGQueueName: economy

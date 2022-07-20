@@ -71,6 +71,15 @@ hofx:
 ## mesh-specific settings
   # resource requirements
   job:
+    # cylc retry string
+    retry: '2*PT30S'
+
+    defaults:
+      seconds: 1000
+      nodes: 4
+      PEPerNode: 32
+      memory: 109
+
     #{{outerMesh}}:
     #  seconds: int
     #  nodes: int

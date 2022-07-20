@@ -33,7 +33,6 @@ echo ""
 rm -rf ${mainScriptDir}
 mkdir -p $mainScriptDir/config
 
-
 cat >! $mainScriptDir/config/experiment.csh << EOF
 #!/bin/csh -f
 if ( \$?config_experiment ) exit 0
@@ -132,3 +131,13 @@ setenv StaticFieldsFileInner ${firstbackground__staticPrefixInner}.\${FirstFileD
 setenv StaticFieldsFileEnsemble ${firstbackground__staticPrefixEnsemble}.\${FirstFileDate}.nc
 EOF
 
+mkdir -p $mainScriptDir/include/variables
+
+if ( ! -e $mainScriptDir/include/variables/experiment.rc ) then 
+cat >! $mainScriptDir/include/variables/experiment.rc << EOF
+{% set mainScriptDir = "${mainScriptDir}" %}
+{% set nMembers = ${nMembers} %} #integer
+{% set allMembers = range(1, $nMembers+1, 1) %}
+EOF
+
+endif

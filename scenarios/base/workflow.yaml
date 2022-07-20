@@ -133,30 +133,18 @@ workflow:
 # OPTIONS: True/False
   VerifyExtendedEnsFC: False
 
+  # maximum consecutive cycle points to be active at any time
+  maxActiveCyclePoints: 4
+
+
 ##################################
 ## analysis and forecast intervals
 ##################################
   # interval between `da` analyses
   CyclingWindowHR: 6
 
-  # length of verification forecasts
-  ExtendedFCLengthHR: 240
-
-  # interval between OMF verification times of an individual forecast
-  ExtendedFCOutIntervalHR: 12
-
-  # times of the day to run extended forecast from mean analysis
-  ExtendedMeanFCTimes: T00,T12
-
-  # times of the day to run ensemble of extended forecasts
-  ExtendedEnsFCTimes: T00
-
   # window of observations included in AN/BG verification
   DAVFWindowHR: 6
 
   # window of observations included in forecast verification
   FCVFWindowHR: 6
-
-  # maximum consecutive cycle points to be active at any time
-  # for CriticalPathType == Normal
-  maxActiveCyclePoints: 4

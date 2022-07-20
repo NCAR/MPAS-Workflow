@@ -1,7 +1,7 @@
   # ... for deterministic DA in observation space only (OMB+OMA together)
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
-{% if CriticalPathType in ["Normal", "Reanalysis"] and VerifyDeterministicDA and nMembers < 2 %}
+{% if VerifyDeterministicDA and nMembers < 2 and CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"]  %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         DataAssimFinished => VerifyObsDA
@@ -14,7 +14,8 @@
 
 
   # ... for background-duration forecast from deterministic analysis or ensemble of analyses
-{% if VerifyBGMembers or (VerifyEnsMeanBG and nMembers == 1)%}
+{% if (VerifyBGMembers or (VerifyEnsMeanBG and nMembers == 1)) and CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
+
     [[[{{AnalysisTimes}}]]]
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
@@ -29,7 +30,7 @@
 
 
   # ... for mean of ensemble of backgrounds and ensemble spread (bg only for obs, bg+an for model)
-{% if VerifyEnsMeanBG and nMembers > 1 %}
+{% if VerifyEnsMeanBG and nMembers > 1 and CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         MeanBackground => HofXEnsMeanBG
@@ -46,7 +47,7 @@
 
 
   # ... for ensemble of analyses
-{% if VerifyANMembers %}
+{% if VerifyANMembers and CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         DataAssimFinished => HofXAN
@@ -61,7 +62,9 @@
 {% if VerifyExtendedMeanFC %}
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
+  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] 
         DataAssimFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
+  {% endif %}
         ExtendedForecastFinished => HofXMeanFC
         HofXMeanFC:succeed-all => VerifyObsMeanFC
         VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
@@ -77,7 +80,9 @@
 {% if VerifyExtendedEnsFC %}
     [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
+  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] 
         DataAssimFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
+  {% endif %}
         ExtendedForecastFinished => HofXEnsFC
         HofXEnsFC:succeed-all => VerifyObsEnsFC
         VerifyObsEnsFC:succeed-all => CleanHofXEnsFC

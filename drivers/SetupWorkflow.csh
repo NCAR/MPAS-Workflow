@@ -4,7 +4,7 @@
 set ArgExpConfigType = "$1"
 
 ## create experiment environment
-source experiment/${ArgExperimentType}.csh
+source setupExperiment/${ArgExperimentType}.csh
 
 set workflowParts = ( \
   GetGFSAnalysisFromRDA.csh \

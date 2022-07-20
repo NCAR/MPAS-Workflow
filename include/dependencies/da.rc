@@ -1,0 +1,19 @@
+        ## Pre-DA
+        # observation processing
+        {{PrepareObservations}} => PreDataAssim
+
+        # inflation
+%include abei.rc
+
+        # init
+        PreDataAssim => InitDataAssim
+
+        ## Data assimilation
+%include variational.rc
+
+        ## Post-DA
+        # inflation+relaxation
+%include rtpp.rc
+
+        # clean after finished
+        DataAssimPost => DataAssimFinished => {{CleanDataAssim}}

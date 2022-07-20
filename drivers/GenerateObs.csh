@@ -21,10 +21,11 @@ cd ${mainScriptDir}
 
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
-# cross-application settings
+# included configurations
 source config/experiment.csh
 source config/job.csh
 source config/observations.csh
+source config/workflow.csh
 
 echo "$0 (INFO):  ExperimentName = ${ExperimentName}"
 
@@ -43,49 +44,17 @@ date
 # example: ${ExperimentName}_verify for a simultaneous suite running only Verification
 set SuiteName = ${ExperimentName}
 
-set GenerateTimes = PT${CyclingWindowHR}H
-
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
 mkdir -p ${cylcWorkDir}
 
 echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
-## Import relevant environment variables as Jinja2 variables
-# main suite directory
-{% set mainScriptDir = "${mainScriptDir}" %}
 
-# cycling dates-time information
-{% set firstCyclePoint   = "${firstCyclePoint}" %}
-{% set initialCyclePoint = "${initialCyclePoint}" %}
-{% set finalCyclePoint   = "${finalCyclePoint}" %}
-{% set GenerateTimes = "${GenerateTimes}" %}
-
-# observation information
-{% set observationsResource = "${observations__resource}" %}
-
-# job controls
-{% set CPQueueName = "${CPQueueName}" %}
-{% set CPAccountNumber = "${CPAccountNumber}" %}
-{% set NCPQueueName = "${NCPQueueName}" %}
-{% set NCPAccountNumber = "${NCPAccountNumber}" %}
-{% set SingleProcQueueName = "${SingleProcQueueName}" %}
-{% set SingleProcAccountNumber = "${SingleProcAccountNumber}" %}
-
-{% set GetObsRetry = "${GetObsRetry}" %}
-{% set ConvertObsRetry = "${ConvertObsRetry}" %}
-{% set CleanRetry = "${CleanRetry}" %}
-
-# Active cycle points
-{% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
-
-## Mini-workflow that prepares observations for IODA ingest
-{% if observationsResource == "PANDACArchive" %}
-  # assume that IODA observation files are already available for PANDACArchive case
-  {% set PrepareObservations = "ObsReady" %}
-{% else %}
-  {% set PrepareObservations = "GetObs => ObsToIODA => ObsReady" %}
-{% endif %}
+%include include/variables/experiment.rc
+%include include/variables/job.rc
+%include include/variables/observations.rc
+%include include/variables/workflow.rc
 
 [meta]
   title = "${PackageBaseName}--${SuiteName}"
@@ -106,12 +75,12 @@ cat >! suite.rc << EOF
 
   [[dependencies]]
 
-    [[[{{GenerateTimes}}]]]
+    [[[PT${CyclingWindowHR}H]]]
       graph = {{PrepareObservations}}
 
 [runtime]
 %include include/tasks/base.rc
-%include include/tasks/externalobs.rc
+%include include/tasks/observations.rc
 
 [visualization]
   initial cycle point = {{initialCyclePoint}}

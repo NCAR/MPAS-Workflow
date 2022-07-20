@@ -49,7 +49,7 @@ conda activate npl
     inherit = BATCH
     [[[job]]]
       execution time limit = PT5M
-      execution retry delays = {{CleanRetry}}
+      execution retry delays = 2*PT15S
 
 ## Null parent or child
   [[Null]]

@@ -1,56 +1,6 @@
-## Forecasts and analyses generated outside MPAS-Workflow
-  [[LinkWarmStartBackgrounds]]
-    inherit = BATCH
-    script = $origin/LinkWarmStartBackgrounds.csh
-    [[[job]]]
-      # give longer for higher resolution and more EDA members
-      # TODO: set time limit based on outerMesh AND (number of members OR
-      #       independent task for each member)
-      execution time limit = PT10M
-      execution retry delays = {{InitializationRetry}}
-  [[GetGFSAnalysisFromRDA]]
-    inherit = BATCH
-    script = $origin/GetGFSAnalysisFromRDA.csh
-    [[[job]]]
-      execution time limit = PT20M
-      execution retry delays = {{GetAnalysisRetry}}
-  [[GetGFSanalysisFromFTP]]
-    inherit = BATCH
-    script = $origin/GetGFSAnalysisFromFTP.csh
-    [[[job]]]
-      execution time limit = PT20M
-      execution retry delays = {{GetAnalysisRetry}}
-
-  [[UngribExternalAnalysis]]
-    inherit = BATCH
-    script = $origin/UngribExternalAnalysis.csh
-    [[[job]]]
-      execution time limit = PT5M
-      execution retry delays = {{InitializationRetry}}
-    # currently UngribExternalAnalysis has to be on Cheyenne, because ungrib.exe is built there
-    # TODO: build ungrib.exe on casper, remove CP directives below
-    [[[directives]]]
-      -q = {{CPQueueName}}
-      -A = {{CPAccountNumber}}
-
-{% for mesh in allMeshes %}
-  [[LinkExternalAnalysis-{{mesh}}]]
-    inherit = BATCH
-    script = $origin/LinkExternalAnalysis.csh "{{mesh}}"
-    [[[job]]]
-      execution time limit = PT30S
-
-  [[ExternalAnalysisToMPAS-{{mesh}}]]
-    inherit = BATCH
-    script = $origin/ExternalAnalysisToMPAS.csh "{{mesh}}"
-    [[[job]]]
-      execution time limit = PT{{InitICSeconds}}S
-      execution retry delays = {{InitializationRetry}}
-    [[[directives]]]
-      -q = {{CPQueueName}}
-      -A = {{CPAccountNumber}}
-      -l = select={{InitICNodes}}:ncpus={{InitICPEPerNode}}:mpiprocs={{InitICPEPerNode}}
-{% endfor %}
+%include firstbackground.rc
+%include externalanalyses.rc
+%include initic.rc
 
   [[ExternalAnalysisReady]]
     inherit = BACKGROUND
