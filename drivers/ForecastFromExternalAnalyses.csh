@@ -9,33 +9,35 @@
 ## extended forecast from external analyses for real-time or historical period and optional
 #  verification
 
+set appIndependentConfigs = (externalanalyses job model observations workflow)
+set appDependentConfigs = (forecast hofx initic verifyobs verifymodel)
+set ExpConfigType = base
+
 echo "$0 (INFO): generating a new cylc suite"
 
 date
 
+# application-independent configurations
+foreach c ($appIndependentConfigs)
+  ./config/${c}.csh
+end
+
 echo "$0 (INFO): Initializing the MPAS-Workflow experiment directory"
 # Create the experiment directory and cylc task scripts
-source drivers/SetupWorkflow.csh "base"
+source drivers/SetupWorkflow.csh "$ExpConfigType"
 
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
 
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
-# included application-independent configurations
+# experiment-specific configuration
 source config/experiment.csh
-source config/externalanalyses.csh
-source config/job.csh
-source config/model.csh
-source config/observations.csh
-source config/workflow.csh
 
-# setup application-specific cylc tasks
-source config/applications/forecast.csh $outerMesh
-source config/applications/hofx.csh
-source config/applications/initic.csh
-source config/applications/verifyobs.csh
-source config/applications/verifymodel.csh
+# application-specific configurations
+foreach app ($appDependentConfigs)
+  ./config/applications/${app}.csh
+end
 
 echo "$0 (INFO):  ExperimentName = ${ExperimentName}"
 
@@ -60,14 +62,13 @@ mkdir -p ${cylcWorkDir}
 echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
-
-%include include/variables/experiment.rc
-%include include/variables/extendedforecast.rc
-%include include/variables/externalanalyses.rc
-%include include/variables/job.rc
-%include include/variables/model.rc
-%include include/variables/observations.rc
-%include include/variables/workflow.rc
+%include include/variables/auto/experiment.rc
+%include include/variables/auto/extendedforecast.rc
+%include include/variables/auto/externalanalyses.rc
+%include include/variables/auto/job.rc
+%include include/variables/auto/model.rc
+%include include/variables/auto/observations.rc
+%include include/variables/auto/workflow.rc
 
 [meta]
   title = "${PackageBaseName}--${SuiteName}"
@@ -102,9 +103,9 @@ cat >! suite.rc << EOF
 
 [runtime]
 %include include/tasks/base.rc
-%include include/tasks/externalanalyses.rc
-%include include/tasks/initic.rc
-%include include/tasks/observations.rc
+%include include/tasks/auto/externalanalyses.rc
+%include include/tasks/auto/initic.rc
+%include include/tasks/auto/observations.rc
 %include include/tasks/verify.rc
 
 [visualization]
@@ -130,5 +131,9 @@ rm -rf ${cylcWorkDir}/${SuiteName}
 cylc register ${SuiteName} ${mainScriptDir}
 cylc validate --strict ${SuiteName}
 cylc run ${SuiteName}
+
+# clean up auto-generated rc files
+cd -
+rm include/*/auto/*.rc
 
 exit 0

@@ -19,8 +19,8 @@ $setLocal EnsMeanBGAccountNumber
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/variables/job.rc ) then
-cat >! include/variables/job.rc << EOF
+if ( ! -e include/variables/auto/job.rc ) then
+cat >! include/variables/auto/job.rc << EOF
 {% set CPQueueName = "${CPQueueName}" %}
 {% set CPAccountNumber = "${CPAccountNumber}" %}
 {% set NCPQueueName = "${NCPQueueName}" %}

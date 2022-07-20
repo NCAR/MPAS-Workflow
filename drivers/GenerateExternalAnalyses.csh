@@ -8,25 +8,35 @@
 
 ## external analyses generation for real-time or a historical period
 
+set appIndependentConfigs = (externalanalyses job model workflow)
+set appDependentConfigs = ()
+set ExpConfigType = base
+
 echo "$0 (INFO): generating a new cylc suite"
 
 date
 
+# application-independent configurations
+foreach c ($appIndependentConfigs)
+  ./config/${c}.csh
+end
+
 echo "$0 (INFO): Initializing the MPAS-Workflow experiment directory"
 # Create the experiment directory and cylc task scripts
-source drivers/SetupWorkflow.csh "base"
+source drivers/SetupWorkflow.csh "$ExpConfigType"
 
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
 
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
-# included configurations
+# experiment-specific configuration
 source config/experiment.csh
-source config/externalanalyses.csh
-source config/job.csh
-source config/model.csh
-source config/workflow.csh
+
+# application-specific configurations
+foreach app ($appDependentConfigs)
+  ./config/applications/${app}.csh
+end
 
 echo "$0 (INFO):  ExperimentName = ${ExperimentName}"
 
@@ -52,11 +62,11 @@ echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
 
-%include include/variables/experiment.rc
-%include include/variables/externalanalyses.rc
-%include include/variables/job.rc
-%include include/variables/model.rc
-%include include/variables/workflow.rc
+%include include/variables/auto/experiment.rc
+%include include/variables/auto/externalanalyses.rc
+%include include/variables/auto/job.rc
+%include include/variables/auto/model.rc
+%include include/variables/auto/workflow.rc
 
 [meta]
   title = "${PackageBaseName}--${SuiteName}"
@@ -77,13 +87,13 @@ cat >! suite.rc << EOF
 
   [[dependencies]]
 
-    [[[PT${CyclingWindowHR}H]]]
+    [[[PT{{CyclingWindowHR}}H]]]
       graph = {{PrepareExternalAnalysisOuter}}
 
 [runtime]
 %include include/tasks/base.rc
-%include include/tasks/externalanalyses.rc
-%include include/tasks/initic.rc
+%include include/tasks/auto/externalanalyses.rc
+%include include/tasks/auto/initic.rc
 
 [visualization]
   initial cycle point = {{initialCyclePoint}}
@@ -108,5 +118,9 @@ rm -rf ${cylcWorkDir}/${SuiteName}
 cylc register ${SuiteName} ${mainScriptDir}
 cylc validate --strict ${SuiteName}
 cylc run ${SuiteName}
+
+# clean up auto-generated rc files
+cd -
+rm include/*/auto/*.rc
 
 exit 0

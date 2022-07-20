@@ -33,7 +33,7 @@ setenv nodes $nodes
 # auto-generate cylc include files
 ##################################
 
-cat >! include/tasks/ensvariational.rc << EOF
+cat >! include/tasks/auto/ensvariational.rc << EOF
   # single instance or ensemble of EDA(s)
   [[EnsDataAssim]]
     inherit = BATCH

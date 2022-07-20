@@ -8,37 +8,35 @@
 
 ## general-purpose experimental cycling
 
+set appIndependentConfigs = (externalanalyses firstbackground job model observations workflow)
+set appDependentConfigs = (ensvariational forecast hofx initic rtpp variational verifyobs verifymodel)
+set ExpConfigType = cycling
+
 echo "$0 (INFO): generating a new cylc suite"
 
 date
 
+# application-independent configurations
+foreach c ($appIndependentConfigs)
+  ./config/${c}.csh
+end
+
 echo "$0 (INFO): Initializing the MPAS-Workflow experiment directory"
 # Create the experiment directory and cylc task scripts
-source drivers/SetupWorkflow.csh "cycling"
+source drivers/SetupWorkflow.csh "$ExpConfigType"
 
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
 
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
 
-# included application-independent configurations
+# experiment-specific configuration
 source config/experiment.csh
-source config/externalanalyses.csh
-source config/firstbackground.csh
-source config/job.csh
-source config/model.csh
-source config/observations.csh
-source config/workflow.csh
 
-# setup application-specific cylc tasks
-source config/applications/ensvariational.csh
-source config/applications/forecast.csh $outerMesh
-source config/applications/hofx.csh
-source config/applications/initic.csh
-source config/applications/rtpp.csh
-source config/applications/variational.csh
-source config/applications/verifyobs.csh
-source config/applications/verifymodel.csh
+# application-specific configurations
+foreach app ($appDependentConfigs)
+  ./config/applications/${app}.csh
+end
 
 echo "$0 (INFO):  ExperimentName = ${ExperimentName}"
 
@@ -57,44 +55,21 @@ date
 # example: ${ExperimentName}_verify for a simultaneous suite running only Verification
 set SuiteName = ${ExperimentName}
 
-# Differentiate between creating the workflow suite for the first time
-# and restarting (i.e., when initialCyclePoint > firstCyclePoint)
-if ($initialCyclePoint == $firstCyclePoint) then
-  # The analysis will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
-  # initialCyclePoint
-  set AnalysisTimes = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
-
-  # The forecast will run every CyclingWindowHR hours, starting CyclingWindowHR+DA2FCOffsetHR hours
-  # after the initialCyclePoint
-  @ ColdFCOffset = ${CyclingWindowHR} + ${DA2FCOffsetHR}
-  set ForecastTimes = +PT${ColdFCOffset}H/PT${CyclingWindowHR}H
-else
-  # The analysis will run every CyclingWindowHR hours, starting at the initialCyclePoint
-  set AnalysisTimes = PT${CyclingWindowHR}H
-
-  # The forecast will run every CyclingWindowHR hours, starting DA2FCOffsetHR hours after the
-  # initialCyclePoint
-  set ForecastTimes = +PT${DA2FCOffsetHR}H/PT${CyclingWindowHR}H
-endif
-
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
 mkdir -p ${cylcWorkDir}
 
 echo "$0 (INFO): Generating the suite.rc file"
 cat >! suite.rc << EOF
 #!Jinja2
-# cycling dates-time information
-{% set AnalysisTimes = "${AnalysisTimes}" %}
-{% set ForecastTimes = "${ForecastTimes}" %}
+%include include/variables/auto/experiment.rc
+%include include/variables/auto/extendedforecast.rc
+%include include/variables/auto/externalanalyses.rc
+%include include/variables/auto/firstbackground.rc
+%include include/variables/auto/job.rc
+%include include/variables/auto/model.rc
+%include include/variables/auto/observations.rc
+%include include/variables/auto/workflow.rc
 
-%include include/variables/experiment.rc
-%include include/variables/extendedforecast.rc
-%include include/variables/externalanalyses.rc
-%include include/variables/firstbackground.rc
-%include include/variables/job.rc
-%include include/variables/model.rc
-%include include/variables/observations.rc
-%include include/variables/workflow.rc
 
 [meta]
   title = "${PackageBaseName}--${SuiteName}"
@@ -111,11 +86,7 @@ cat >! suite.rc << EOF
   # and to avoid over-utilization of login nodes
   # hint: execute 'ps aux | grep $USER' to check your login node overhead
   # default: 3
-{% if CriticalPathType != "Normal" %}
-  max active cycle points = 20
-{% else %}
   max active cycle points = {{maxActiveCyclePoints}}
-{% endif %}
 
   [[dependencies]]
 
@@ -134,10 +105,10 @@ cat >! suite.rc << EOF
 [runtime]
 %include include/tasks/base.rc
 %include include/tasks/criticalpath.rc
-%include include/tasks/firstbackground.rc
-%include include/tasks/externalanalyses.rc
-%include include/tasks/initic.rc
-%include include/tasks/observations.rc
+%include include/tasks/auto/firstbackground.rc
+%include include/tasks/auto/externalanalyses.rc
+%include include/tasks/auto/initic.rc
+%include include/tasks/auto/observations.rc
 %include include/tasks/verify.rc
 
 [visualization]
@@ -163,5 +134,9 @@ rm -rf ${cylcWorkDir}/${SuiteName}
 cylc register ${SuiteName} ${mainScriptDir}
 cylc validate --strict ${SuiteName}
 cylc run ${SuiteName}
+
+# clean up auto-generated rc files
+cd -
+rm include/*/auto/*.rc
 
 exit 0

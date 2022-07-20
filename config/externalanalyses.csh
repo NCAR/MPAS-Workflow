@@ -96,8 +96,8 @@ end
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/tasks/externalanalyses.rc ) then 
-cat >! include/tasks/externalanalyses.rc << EOF
+if ( ! -e include/tasks/auto/externalanalyses.rc ) then
+cat >! include/tasks/auto/externalanalyses.rc << EOF
 ## Analyses generated outside MPAS-Workflow
   [[GetGFSAnalysisFromRDA]]
     inherit = BATCH
@@ -140,8 +140,8 @@ EOF
 endif
 
 ## Mini-workflows that prepare cold-start initial condition files from an external analysis
-if ( ! -e include/variables/externalanalyses.rc ) then 
-cat >! include/variables/externalanalyses.rc << EOF
+if ( ! -e include/variables/auto/externalanalyses.rc ) then
+cat >! include/variables/auto/externalanalyses.rc << EOF
 {% set PrepareExternalAnalysisTasksOuter = [${externalanalyses__PrepareExternalAnalysisTasksOuter}] %}
 {% set PrepareExternalAnalysisOuter = " => ".join(PrepareExternalAnalysisTasksOuter) %}
 

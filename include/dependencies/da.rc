@@ -3,17 +3,17 @@
         {{PrepareObservations}} => PreDataAssim
 
         # inflation
-%include include/dependencies/abei.rc
+%include include/dependencies/auto/abei.rc
 
         # init
         PreDataAssim => InitDataAssim
 
         ## Data assimilation
-%include include/dependencies/variational.rc
+%include include/dependencies/auto/variational.rc
 
         ## Post-DA
         # inflation+relaxation
-%include include/dependencies/rtpp.rc
+%include include/dependencies/auto/rtpp.rc
 
         # clean after finished
         DataAssimPost => DataAssimFinished => {{CleanDataAssim}}

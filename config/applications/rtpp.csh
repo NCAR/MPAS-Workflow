@@ -15,7 +15,7 @@ setenv AppName rtpp
 setenv appyaml ${AppName}.yaml
 
 ## job
-$setNestedRtpp job.retry
+$setLocal job.retry
 
 foreach parameter (baseSeconds secondsPerMember nodes PEPerNode memory)
   set p = "`$getLocalOrNone job.${ensembleMesh}.${parameter}`"
@@ -37,8 +37,8 @@ setenv seconds $seconds
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/tasks/rtpp.rc ) then 
-cat >! include/tasks/rtpp.rc << EOF
+if ( ! -e include/tasks/auto/rtpp.rc ) then
+cat >! include/tasks/auto/rtpp.rc << EOF
   [[PrepRTPP]]
     inherit = BATCH
     script = \$origin/PrepRTPP.csh
@@ -63,17 +63,17 @@ EOF
 
 endif
 
-if ( ! -e include/dependencies/rtpp.rc ) then 
+if ( ! -e include/dependencies/auto/rtpp.rc ) then
 
-if ("$rtpp__relaxationFactor" != "0.0" && $nMembers > 1) then 
-cat >! include/dependencies/rtpp.rc << EOF
+if ("$rtpp__relaxationFactor" != "0.0" && $nMembers > 1) then
+cat >! include/dependencies/auto/rtpp.rc << EOF
         PrepRTPP => RTPP
         DataAssimPost => RTPP => DataAssimFinished
   {% set CleanDataAssim = CleanDataAssim + ' & CleanRTPP' %}
 EOF
 
 else
-cat >! include/dependencies/rtpp.rc << EOF
+cat >! include/dependencies/auto/rtpp.rc << EOF
 #
 EOF
 

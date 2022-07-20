@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 # ArgMesh: str, mesh, one of model.allMeshes, not currently used
-set ArgMesh = "$1"
+#set ArgMesh = "$1"
 
 #if ( $?config_forecast ) exit 0
 #set config_forecast = 1
@@ -9,6 +9,10 @@ set ArgMesh = "$1"
 source config/experiment.csh # for nMembers
 source config/model.csh
 source config/scenario.csh forecast
+
+#if ("$ArgMesh" == None or "$ArgMesh" == "") then
+#  set ArgMesh = "$outerMesh"
+#endif
 
 $setLocal updateSea
 
@@ -46,8 +50,8 @@ end
 @ seconds = $secondsPerForecastHR_ * $FCLengthHR + $baseSeconds_
 setenv seconds $seconds
 
-if ( ! -e include/tasks/forecast.rc ) then 
-cat >! include/tasks/forecast.rc << EOF
+if ( ! -e include/tasks/auto/forecast.rc ) then
+cat >! include/tasks/auto/forecast.rc << EOF
   [[ForecastBase]]
     inherit = BATCH
     [[[job]]]
@@ -80,8 +84,8 @@ endif
 @ seconds = $secondsPerForecastHR_ * $ExtendedFCLengthHR + $baseSeconds_
 setenv seconds $seconds
 
-if ( ! -e include/variables/extendedforecast.rc ) then 
-cat >! include/variables/extendedforecast.rc << EOF
+if ( ! -e include/variables/auto/extendedforecast.rc ) then
+cat >! include/variables/auto/extendedforecast.rc << EOF
 {% set EnsVerifyMembers = range(1, $nMembers+1, 1) %}
 {% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
 {% set ExtendedEnsFCTimes = "${ExtendedEnsFCTimes}" %}
@@ -90,8 +94,8 @@ EOF
 
 endif
 
-if ( ! -e include/tasks/extendedforecast.rc ) then 
-cat >! include/tasks/extendedforecast.rc << EOF
+if ( ! -e include/tasks/auto/extendedforecast.rc ) then
+cat >! include/tasks/auto/extendedforecast.rc << EOF
   [[ExtendedFCBase]]
     inherit = BATCH
     [[[job]]]

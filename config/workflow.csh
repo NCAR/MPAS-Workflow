@@ -57,16 +57,42 @@ setenv DA2FCOffsetHR 0
 setenv FC2DAOffsetHR ${CyclingWindowHR}
 
 
+# Differentiate between creating the workflow suite for the first time
+# and restarting (i.e., when initialCyclePoint > firstCyclePoint)
+if ($initialCyclePoint == $firstCyclePoint) then
+  # The analysis will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
+  # initialCyclePoint
+  set AnalysisTimes = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
+
+  # The forecast will run every CyclingWindowHR hours, starting CyclingWindowHR+DA2FCOffsetHR hours
+  # after the initialCyclePoint
+  @ ColdFCOffset = ${CyclingWindowHR} + ${DA2FCOffsetHR}
+  set ForecastTimes = +PT${ColdFCOffset}H/PT${CyclingWindowHR}H
+else
+  # The analysis will run every CyclingWindowHR hours, starting at the initialCyclePoint
+  set AnalysisTimes = PT${CyclingWindowHR}H
+
+  # The forecast will run every CyclingWindowHR hours, starting DA2FCOffsetHR hours after the
+  # initialCyclePoint
+  set ForecastTimes = +PT${DA2FCOffsetHR}H/PT${CyclingWindowHR}H
+endif
+
+
 ##################################
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/variables/workflow.rc ) then
-cat >! include/variables/workflow.rc << EOF
+if ( ! -e include/variables/auto/workflow.rc ) then
+cat >! include/variables/auto/workflow.rc << EOF
 # cycling dates-time information
 {% set firstCyclePoint   = "${firstCyclePoint}" %}
 {% set initialCyclePoint = "${initialCyclePoint}" %}
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
+
+{% set AnalysisTimes = "${AnalysisTimes}" %}
+{% set ForecastTimes = "${ForecastTimes}" %}
+
+{% set CyclingWindowHR = "${CyclingWindowHR}" %}
 {% set DA2FCOffsetHR = "${DA2FCOffsetHR}" %}
 {% set FC2DAOffsetHR = "${FC2DAOffsetHR}" %}
 

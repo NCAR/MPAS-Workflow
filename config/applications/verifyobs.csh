@@ -3,7 +3,7 @@
 if ( $?config_verifyobs ) exit 0
 setenv config_verifyobs 1
 
-source config/experiment.csh
+source config/experiment.csh # for nMembers
 source config/scenario.csh verifyobs
 
 $setLocal pyVerifyDir
@@ -28,8 +28,8 @@ setenv verifyobsens__seconds $seconds
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/tasks/verifyobsbase.rc ) then 
-cat >! include/tasks/verifyobsbase.rc << EOF
+if ( ! -e include/tasks/auto/verifyobsbase.rc ) then
+cat >! include/tasks/auto/verifyobsbase.rc << EOF
   [[VerifyObsBase]]
     inherit = BATCH
     [[[job]]]

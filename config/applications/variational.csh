@@ -146,8 +146,8 @@ setenv seconds $seconds
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/tasks/variational.rc ) then 
-cat >! include/tasks/variational.rc << EOF
+if ( ! -e include/tasks/auto/variational.rc ) then
+cat >! include/tasks/auto/variational.rc << EOF
 # variational
   [[InitDataAssim]]
     inherit = BATCH
@@ -180,8 +180,8 @@ EOF
 
 endif
 
-if ( ! -e include/dependencies/variational.rc ) then 
-cat >! include/dependencies/variational.rc << EOF
+if ( ! -e include/dependencies/auto/variational.rc ) then
+cat >! include/dependencies/auto/variational.rc << EOF
 {% if ${EDASize} > 1 %}
         # prepare the working directory, then run
         InitDataAssim => EnsDataAssim
@@ -202,10 +202,10 @@ EOF
 
 endif
 
-if ( ! -e include/dependencies/abei.rc ) then 
+if ( ! -e include/dependencies/auto/abei.rc ) then
 
   if ( "$ABEInflation" == True ) then
-cat >! include/dependencies/abei.rc << EOF
+cat >! include/dependencies/auto/abei.rc << EOF
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] =>
         MeanBackground =>
         HofXEnsMeanBG =>
@@ -214,7 +214,7 @@ cat >! include/dependencies/abei.rc << EOF
 EOF
 
   else
-cat >! include/dependencies/abei.rc << EOF
+cat >! include/dependencies/auto/abei.rc << EOF
 #
 EOF
 

@@ -61,8 +61,8 @@ setenv localStaticFieldsFileEnsemble ${localStaticFieldsPrefix}.${nCellsEnsemble
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/variables/model.rc ) then
-cat >! include/variables/model.rc << EOF
+if ( ! -e include/variables/auto/model.rc ) then
+cat >! include/variables/auto/model.rc << EOF
 {% set allMeshes = ["$outerMesh", "$innerMesh", "$ensembleMesh"] %} #list
 {% set outerMesh = "$outerMesh" %}
 EOF

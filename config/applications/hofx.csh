@@ -50,8 +50,8 @@ end
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/tasks/hofxbase.rc ) then 
-cat >! include/tasks/hofxbase.rc << EOF
+if ( ! -e include/tasks/auto/hofxbase.rc ) then
+cat >! include/tasks/auto/hofxbase.rc << EOF
   [[HofXBase]]
     inherit = BATCH
     [[[job]]]

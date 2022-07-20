@@ -28,8 +28,8 @@ end
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/tasks/initic.rc ) then 
-cat >! include/tasks/initic.rc << EOF
+if ( ! -e include/tasks/auto/initic.rc ) then
+cat >! include/tasks/auto/initic.rc << EOF
 {% for mesh in allMeshes %}
   [[ExternalAnalysisToMPAS-{{mesh}}]]
     inherit = BATCH

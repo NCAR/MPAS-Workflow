@@ -83,8 +83,8 @@ set firstbackground__staticPrefixEnsemble = `echo "$firstbackground__staticPrefi
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/tasks/firstbackground.rc ) then 
-cat >! include/tasks/firstbackground.rc << EOF
+if ( ! -e include/tasks/auto/firstbackground.rc ) then
+cat >! include/tasks/auto/firstbackground.rc << EOF
   [[LinkWarmStartBackgrounds]]
     inherit = BATCH
     script = \$origin/LinkWarmStartBackgrounds.csh
@@ -99,8 +99,8 @@ EOF
 endif
 
 ## Mini-workflow that prepares the firstbackground for the outerMesh
-if ( ! -e include/variables/firstbackground.rc ) then 
-cat >! include/variables/firstbackground.rc << EOF
+if ( ! -e include/variables/auto/firstbackground.rc ) then
+cat >! include/variables/auto/firstbackground.rc << EOF
 {% set PrepareFirstBackgroundOuter = "${firstbackground__PrepareFirstBackgroundOuter}" %}
 EOF
 

@@ -33,15 +33,15 @@ $setLocal job.convert__retry
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/variables/observations.rc ) then 
-cat >! include/variables/observations.rc << EOF
+if ( ! -e include/variables/auto/observations.rc ) then
+cat >! include/variables/auto/observations.rc << EOF
 {% set PrepareObservations = "${PrepareObservations}" %}
 EOF
 
 endif
 
-if ( ! -e include/tasks/observations.rc ) then 
-cat >! include/tasks/observations.rc << EOF
+if ( ! -e include/tasks/auto/observations.rc ) then
+cat >! include/tasks/auto/observations.rc << EOF
   [[GetObs]]
     inherit = BATCH
     script = \$origin/GetObs.csh

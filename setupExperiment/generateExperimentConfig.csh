@@ -131,10 +131,8 @@ setenv StaticFieldsFileInner ${firstbackground__staticPrefixInner}.\${FirstFileD
 setenv StaticFieldsFileEnsemble ${firstbackground__staticPrefixEnsemble}.\${FirstFileDate}.nc
 EOF
 
-mkdir -p $mainScriptDir/include/variables
-
-if ( ! -e $mainScriptDir/include/variables/experiment.rc ) then 
-cat >! $mainScriptDir/include/variables/experiment.rc << EOF
+if ( ! -e include/variables/auto/experiment.rc ) then
+cat >! include/variables/auto/experiment.rc << EOF
 {% set mainScriptDir = "${mainScriptDir}" %}
 {% set nMembers = ${nMembers} %} #integer
 {% set allMembers = range(1, $nMembers+1, 1) %}

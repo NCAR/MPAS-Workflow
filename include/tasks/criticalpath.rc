@@ -9,8 +9,8 @@
     inherit = BACKGROUND
 
 # variational tasks
-%include include/tasks/variational.rc
-%include include/tasks/ensvariational.rc
+%include include/tasks/auto/variational.rc
+%include include/tasks/auto/ensvariational.rc
 
   # inflation (pre and post)
   [[GenerateABEInflation]]
@@ -24,7 +24,7 @@
       -l = select=1:ncpus=36:mpiprocs=36
 
 # rtpp tasks
-%include include/tasks/rtpp.rc
+%include include/tasks/auto/rtpp.rc
 
 ## Forecast (critical path)
-%include include/tasks/forecast.rc
+%include include/tasks/auto/forecast.rc
