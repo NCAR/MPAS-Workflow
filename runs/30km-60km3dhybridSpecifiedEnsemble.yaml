@@ -1,0 +1,2 @@
+run:
+  scenarios: [3dhybrid_O30kmIE60km_SpecifiedEnsemble]
