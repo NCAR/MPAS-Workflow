@@ -10,11 +10,11 @@ source config/workflow.csh
 source config/observations.csh
 source config/experiment.csh
 source config/builds.csh
-set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
+set yyyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
 set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set thisCycleDate = ${yymmdd}${hh}
+set thisCycleDate = ${yyyymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
@@ -121,7 +121,7 @@ foreach inst ( ${convertToIODAObservations} )
   else if ( "${observations__resource}" == "NCEPFTPOnline" ) then
     echo "Getting ${inst} from the NCEP FTP"
     # url for GDAS data
-    set gdas_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gdas.${yymmdd}/${hh}/atmos
+    set gdas_ftp = https://ftpprd.ncep.noaa.gov/data/nccf/com/obsproc/prod/gdas.${yyyymmdd}
     # set name for the observation type
     if ( ${inst} == prepbufr ) then
       set THIS_FILE = gdas.t${hh}z.${inst}.nr

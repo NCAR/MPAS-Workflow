@@ -33,6 +33,9 @@ setenv nCellsEnsemble "`$getLocalOrNone nCells.$ensembleMesh`"
 $setLocal ${outerMesh}.TimeStep
 $setLocal ${outerMesh}.DiffusionLengthScale
 
+# Get GDAS analyses
+$setLocal GetGDASAnalysis
+
 $setLocal GraphInfoDir
 
 $setNestedModel precision

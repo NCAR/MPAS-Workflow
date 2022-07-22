@@ -22,8 +22,6 @@ model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-builds:
-  commonBuild: /glade/p/mmm/parc/ivette/pandac/jedi/build22MAY_th
 firstbackground:
   resource: "PANDAC.GFS"
 externalanalyses:
