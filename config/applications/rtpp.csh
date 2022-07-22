@@ -8,7 +8,11 @@ source config/firstbackground.csh # for nMembers
 
 source config/scenario.csh rtpp
 
-$setNestedRtpp relaxationFactor
+setenv rtpp__relaxationFactor "`$getLocalOrNone relaxationFactor`"
+if ("$rtpp__relaxationFactor" == None) then
+  setenv rtpp__relaxationFactor "0.0"
+endif
+
 $setLocal retainOriginalAnalyses
 
 setenv AppName rtpp

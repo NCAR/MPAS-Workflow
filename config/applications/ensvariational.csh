@@ -35,11 +35,10 @@ setenv nodes $nodes
 
 cat >! include/tasks/auto/ensvariational.rc << EOF
   # single instance or ensemble of EDA(s)
-  [[EnsDataAssim]]
-    inherit = BATCH
+{% if ${EDASize} > 1 %}
   {% for inst in range(1, ${nDAInstances}+1, 1) %}
   [[EDAInstance{{inst}}]]
-    inherit = EnsDataAssim
+    inherit = DataAssim
     script = \$origin/EnsembleOfVariational.csh "{{inst}}"
     [[[job]]]
       execution time limit = PT${seconds}S
@@ -50,5 +49,6 @@ cat >! include/tasks/auto/ensvariational.rc << EOF
       -A = {{CPAccountNumber}}
       -l = select=${nodes}:ncpus=${PEPerNode_}:mpiprocs=${PEPerNode_}:mem=${memory_}GB
   {% endfor %}
+{% endif %}
 EOF
 

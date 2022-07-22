@@ -17,5 +17,3 @@ variational:
   DAType: 3denvar
   SelfExclusion: False
   nInnerIterations: [,]
-rtpp:
-  relaxationFactor: 0.0

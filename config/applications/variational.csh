@@ -157,9 +157,11 @@ cat >! include/tasks/auto/variational.rc << EOF
       execution time limit = PT20M
       execution retry delays = ${retry}
 
-  # single instance or ensemble of Variational(s)
   [[DataAssim]]
     inherit = BATCH
+
+{% if ${EDASize} == 1 %}
+  # single instance or ensemble of Variational(s)
   {% for mem in range(1, ${nMembers}+1, 1) %}
   [[DAMember{{mem}}]]
     inherit = DataAssim
@@ -173,31 +175,11 @@ cat >! include/tasks/auto/variational.rc << EOF
       -A = {{CPAccountNumber}}
       -l = select=${nodes_}:ncpus=${PEPerNode_}:mpiprocs=${PEPerNode_}:mem=${memory_}GB
   {% endfor %}
+{% endif %}
+
   [[CleanVariational]]
     inherit = CleanBase
     script = \$origin/CleanVariational.csh
-EOF
-
-endif
-
-if ( ! -e include/dependencies/auto/variational.rc ) then
-cat >! include/dependencies/auto/variational.rc << EOF
-{% if ${EDASize} > 1 %}
-        # prepare the working directory, then run
-        InitDataAssim => EnsDataAssim
-
-        # all EnsDataAssim members must succeed in order to start post
-        EnsDataAssim:succeed-all => DataAssimPost
-
-{% else %}
-        # prepare the working directory, then run
-        InitDataAssim => DataAssim
-
-        # all DataAssim members must succeed in order to start post
-        DataAssim:succeed-all => DataAssimPost
-
-{% endif %}
-  {% set CleanDataAssim = 'CleanVariational' %}
 EOF
 
 endif

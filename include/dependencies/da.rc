@@ -1,3 +1,5 @@
+  {% set CleanDataAssim = 'CleanVariational' %}
+
         ## Pre-DA
         # observation processing
         {{PrepareObservations}} => PreDataAssim
@@ -9,9 +11,12 @@
         PreDataAssim => InitDataAssim
 
         ## Data assimilation
-%include include/dependencies/auto/variational.rc
+        InitDataAssim => DataAssim
 
         ## Post-DA
+        # all DataAssim members must succeed in order to start post
+        DataAssim:succeed-all => DataAssimPost
+
         # inflation+relaxation
 %include include/dependencies/auto/rtpp.rc
 
