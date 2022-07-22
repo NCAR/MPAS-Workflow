@@ -19,7 +19,6 @@ setenv ExperimentName ${ExperimentName}${ExpSuffix}
 
 ## absolute experiment directory
 setenv ExperimentDirectory ${ParentDirectory}/${ExperimentName}
-setenv PackageBaseName MPAS-Workflow
 setenv mainScriptDir ${ExperimentDirectory}/${PackageBaseName}
 
 echo ""
@@ -136,6 +135,7 @@ cat >! include/variables/auto/experiment.rc << EOF
 {% set mainScriptDir = "${mainScriptDir}" %}
 {% set nMembers = ${nMembers} %} #integer
 {% set allMembers = range(1, $nMembers+1, 1) %}
+{% set title = "${PackageBaseName}--${SuiteName}" %}
 EOF
 
 endif

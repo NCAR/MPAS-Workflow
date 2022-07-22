@@ -11,6 +11,7 @@
 set appIndependentConfigs = (externalanalyses firstbackground job model observations workflow)
 set appDependentConfigs = (ensvariational forecast hofx initic rtpp variational verifyobs verifymodel)
 set ExpConfigType = cycling
+set suite = Cycle
 
 echo "$0 (INFO): generating a new cylc suite"
 
@@ -58,65 +59,8 @@ set SuiteName = ${ExperimentName}
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
 mkdir -p ${cylcWorkDir}
 
-echo "$0 (INFO): Generating the suite.rc file"
-cat >! suite.rc << EOF
-#!Jinja2
-%include include/variables/auto/experiment.rc
-%include include/variables/auto/extendedforecast.rc
-%include include/variables/auto/externalanalyses.rc
-%include include/variables/auto/firstbackground.rc
-%include include/variables/auto/job.rc
-%include include/variables/auto/model.rc
-%include include/variables/auto/observations.rc
-%include include/variables/auto/workflow.rc
-
-
-[meta]
-  title = "${PackageBaseName}--${SuiteName}"
-
-[cylc]
-  UTC mode = False
-  [[environment]]
-[scheduling]
-  initial cycle point = {{initialCyclePoint}}
-  final cycle point   = {{finalCyclePoint}}
-
-  # Maximum number of simultaneous active dates;
-  # useful for constraining non-blocking flows
-  # and to avoid over-utilization of login nodes
-  # hint: execute 'ps aux | grep $USER' to check your login node overhead
-  # default: 3
-  max active cycle points = {{maxActiveCyclePoints}}
-
-  [[dependencies]]
-
-## (iv.a) Critical path
-%include include/dependencies/criticalpath.rc
-
-## (iv.b) Verification
-  {% if VerifyAgainstExternalAnalyses %}
-%include include/dependencies/verifymodel.rc
-  {% endif %}
-
-  {% if VerifyAgainstObservations %}
-%include include/dependencies/verifyobs.rc
-  {% endif %}
-
-[runtime]
-%include include/tasks/base.rc
-%include include/tasks/criticalpath.rc
-%include include/tasks/auto/firstbackground.rc
-%include include/tasks/auto/externalanalyses.rc
-%include include/tasks/auto/initic.rc
-%include include/tasks/auto/observations.rc
-%include include/tasks/verify.rc
-
-[visualization]
-  initial cycle point = {{initialCyclePoint}}
-  final cycle point   = {{finalCyclePoint}}
-  number of cycle points = 200
-  default node attributes = "style=filled", "fillcolor=grey"
-EOF
+# copy suite to cylc-recognized name
+cp -v suites/${suite}.rc ./suite.rc
 
 cylc poll $SuiteName >& /dev/null
 if ( $status == 0 ) then

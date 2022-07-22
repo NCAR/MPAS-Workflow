@@ -1,0 +1,38 @@
+#!Jinja2
+
+%include include/variables/auto/experiment.rc
+%include include/variables/auto/job.rc
+%include include/variables/auto/observations.rc
+%include include/variables/auto/workflow.rc
+
+[meta]
+  title = "{{title}}"
+
+[cylc]
+  UTC mode = False
+  [[environment]]
+[scheduling]
+  initial cycle point = {{initialCyclePoint}}
+  final cycle point   = {{finalCyclePoint}}
+
+  # Maximum number of simultaneous active dates;
+  # useful for constraining non-blocking flows
+  # and to avoid over-utilization of login nodes
+  # hint: execute 'ps aux | grep $USER' to check your login node overhead
+  # default: 3
+  max active cycle points = {{maxActiveCyclePoints}}
+
+  [[dependencies]]
+
+    [[[PT{{CyclingWindowHR}}H]]]
+      graph = {{PrepareObservations}}
+
+[runtime]
+%include include/tasks/base.rc
+%include include/tasks/auto/observations.rc
+
+[visualization]
+  initial cycle point = {{initialCyclePoint}}
+  final cycle point   = {{finalCyclePoint}}
+  number of cycle points = 200
+  default node attributes = "style=filled", "fillcolor=grey"

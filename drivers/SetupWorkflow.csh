@@ -28,6 +28,7 @@ set workflowParts = ( \
   PrepVariational.csh \
   EnsembleOfVariational.csh \
   include \
+  suites \
 )
 foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
