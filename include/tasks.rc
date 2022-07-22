@@ -285,7 +285,12 @@ conda activate npl
       -l = select={{InitICNodes}}:ncpus={{InitICPEPerNode}}:mpiprocs={{InitICPEPerNode}}
   [[ExternalAnalysisReady]]
     inherit = BACKGROUND
-
+  [[GetGDASanalysis]]
+    inherit = BATCH
+    script = $origin/GetGDASanalysis.csh
+    [[[job]]]
+      execution time limit = PT45M
+      execution retry delays = {{GFSAnalysisRetry}}
 
 ## Verification: extended forecast from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
