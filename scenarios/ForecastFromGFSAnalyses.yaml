@@ -3,16 +3,14 @@ workflow:
   firstCyclePoint: 20180414T18
   initialCyclePoint: 20180415T00
   finalCyclePoint: 20180415T00
+
   CriticalPathType: ForecastFromExternalAnalyses
   maxActiveCyclePoints: 60
-  ExtendedMeanFCTimes: T00
-  ExtendedFCLengthHR: 240
-  ExtendedFCOutIntervalHR: 24
 
   # optionally turn on extended forecast verification
-  #VerifyExtendedMeanFC: True
-  #VerifyAgainstObservations: True
-  #VerifyAgainstExternalAnalyses: True
+  VerifyExtendedMeanFC: True
+  VerifyAgainstObservations: True
+  VerifyAgainstExternalAnalyses: True
 
   # none of the following verification methods are valid and are set to False
   VerifyDeterministicDA: False
@@ -26,22 +24,26 @@ workflow:
 
 externalanalyses:
   resource: "GFS.RDA"
+
 experiment:
   ExperimentName: 'ForecastFromGFSAnalyses'
   ExperimentUserPrefix: ''
+
+forecast:
+  ExtendedMeanFCTimes: T00,T12
+  ExtendedFCLengthHR: 24
+  ExtendedFCOutIntervalHR: 12
+
 model:
-  outerMesh: 60km
-#TODO: make it so that innerMesh and ensembleMesh are not needed
-  innerMesh: 60km
-  ensembleMesh: 60km
+  outerMesh: 120km
+
+observations: # for optional verification
+  resource: GladeRDAOnline
+
 job:
   CPQueueName: economy
   NCPQueueName: economy
-#TODO: make it so that firstbackground, observations, and variational are not necessary
+
+#TODO: make it so that firstbackground is not necessary; currently used to ensure nMembers==1
 firstbackground:
   resource: "ForecastFromAnalysis"
-observations:
-  resource: PANDACArchive
-variational:
-  DAType: 3dvar
-  nInnerIterations: [0,]

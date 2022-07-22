@@ -17,7 +17,7 @@
   [[VerifyModelMeanFC]]
     inherit = VerifyModelBase
   [[VerifyObsMeanFC]]
-    inherit = VerifyModelBase
+    inherit = VerifyObsBase
   [[CleanHofXMeanFC]]
     inherit = CleanBase
 {% for dt in ExtendedFCLengths %}

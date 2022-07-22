@@ -30,7 +30,10 @@ observations:
 # locations of raw bufr and prepbufr observation data, separated by resource
 
   NCEPFTPOnline:
-    PrepareObservations: "GetObs => ObsToIODA => ObsReady"
+    PrepareObservationsTasks:
+    - GetObs
+    - ObsToIODA
+    - ObsReady
 
     instrumentsAllowingBiasCorrection:
     - amsua_aqua
@@ -54,7 +57,10 @@ observations:
         common: "{{ObsWorkDir}}"
 
   GladeRDAOnline:
-    PrepareObservations: "GetObs => ObsToIODA => ObsReady"
+    PrepareObservationsTasks:
+    - GetObs
+    - ObsToIODA
+    - ObsReady
 
     instrumentsAllowingBiasCorrection:
     - amsua_aqua
@@ -84,7 +90,7 @@ observations:
         common: "{{ObsWorkDir}}"
 
   PANDACArchive:
-    PrepareObservations: "ObsReady"
+    PrepareObservationsTasks: [ObsReady]
 
     instrumentsAllowingBiasCorrection: [None]
 
@@ -189,7 +195,7 @@ observations:
 
 
   GenerateObs:
-    PrepareObservations: "ObsReady"
+    PrepareObservationsTasks: [ObsReady]
 
     instrumentsAllowingBiasCorrection:
     - amsua_aqua

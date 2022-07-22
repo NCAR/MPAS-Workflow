@@ -13,7 +13,12 @@ setenv getObservationsOrNone "${getLocalOrNone}"
 $setNestedObservations resource
 
 # mini-workflow that prepares observations for IODA ingest
-$setLocal ${observations__resource}.PrepareObservations
+$setLocal ${observations__resource}.PrepareObservationsTasks
+set tmp = ""
+foreach task ($PrepareObservationsTasks)
+  set tmp = "$tmp"'"'$task'"'", "
+end
+set PrepareObservationsTasks = "$tmp"
 
 $setLocal convertToIODAObservations
 $setLocal GDASObsErrtable
@@ -35,7 +40,8 @@ $setLocal job.convert__retry
 
 if ( ! -e include/variables/auto/observations.rc ) then
 cat >! include/variables/auto/observations.rc << EOF
-{% set PrepareObservations = "${PrepareObservations}" %}
+{% set PrepareObservationsTasks = [${PrepareObservationsTasks}] %}
+{% set PrepareObservations = " => ".join(PrepareObservationsTasks) %}
 EOF
 
 endif

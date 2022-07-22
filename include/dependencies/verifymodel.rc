@@ -39,38 +39,38 @@
   # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedMeanFC %}
-    [[[{{ExtendedMeanFCTimes}}]]]
+  {% for TIME in ExtendedMeanFCTimesList %}
+    [[[R{{nExtFCOuts}}/{{TIME}}/PT{{extFCIntervHR}}H]]]
       graph = '''
-  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
-        DataAssimFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
-  {% endif %}
-        ExtendedForecastFinished => VerifyModelMeanFC
-
-        # need analyses at all verified forecast lengths
-{% for dt in ExtendedFCLengths %}
-  {% set prep = "[PT"+dt+"+H] => ".join(PrepareExternalAnalysisTasksOuter)+"[PT"+dt+"H]" %}
-        {{prep}} => VerifyModelMeanFC{{dt}}hr
-{% endfor %}
+        {{PrepareExternalAnalysisOuter}}
       '''
+    {% for dt in ExtendedFCLengths %}
+    [[[{{TIME}}]]]
+      graph = '''
+        ExtendedForecastFinished => VerifyModelMeanFC{{dt}}hr
+        ExternalAnalysisReady[PT{{dt}}H] => VerifyModelMeanFC{{dt}}hr
+      '''
+    {% endfor %}
+  {% endfor %}
 {% endif %}
 
 
   # ... for extended forecast from ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedEnsFC %}
-    [[[{{ExtendedEnsFCTimes}}]]]
+  {% for TIME in ExtendedEnsFCTimesList %}
+    [[[R{{nExtFCOuts}}/{{TIME}}/PT{{extFCIntervHR}}H]]]
       graph = '''
-  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
-        DataAssimFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
-  {% endif %}
-        ExtendedForecastFinished => VerifyModelEnsFC
-
-        # need analyses at all verified forecast lengths
-{% for dt in ExtendedFCLengths %}
-  {% set prep = "[PT"+dt+"+H] => ".join(PrepareExternalAnalysisTasksOuter)+"[PT"+dt+"H]" %}
-  {% for mem in EnsVerifyMembers %}
-        {{prep}} => VerifyModelEnsFC{{mem}}-{{dt}}hr
-  {% endfor %}
-{% endfor %}
+        {{PrepareExternalAnalysisOuter}}
       '''
+    {% for dt in ExtendedFCLengths %}
+    [[[{{TIME}}]]]
+      graph = '''
+      {% for mem in EnsVerifyMembers %}
+        ExtendedForecastFinished => VerifyModelEnsFC{{mem}}-{{dt}}hr
+        ExternalAnalysisReady[PT{{dt}}H] => VerifyModelEnsFC{{mem}}-{{dt}}hr
+      {% endfor %}
+      '''
+    {% endfor %}
+  {% endfor %}
 {% endif %}

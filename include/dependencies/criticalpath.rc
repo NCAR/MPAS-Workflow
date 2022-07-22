@@ -58,3 +58,17 @@
 {% else %}
     {{ raise('CriticalPathType is not valid') }}
 {% endif %}
+
+# optional extended forecasts for verification
+{% if VerifyExtendedMeanFC %}
+    [[[{{ExtendedMeanFCTimes}}]]]
+      graph = '''
+        DataAssimFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
+      '''
+{% endif %}
+{% if VerifyExtendedEnsFC %}
+    [[[{{ExtendedEnsFCTimes}}]]]
+      graph = '''
+        DataAssimFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
+      '''
+{% endif %}

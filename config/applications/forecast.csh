@@ -24,7 +24,9 @@ setenv FCLengthHR ${CyclingWindowHR}
 $setLocal ExtendedFCLengthHR
 $setLocal ExtendedFCOutIntervalHR
 $setLocal ExtendedMeanFCTimes
+set ExtendedMeanFCTimesList = '"'`echo $ExtendedMeanFCTimes | sed 's@,@","@g'`'"'
 $setLocal ExtendedEnsFCTimes
+set ExtendedEnsFCTimesList = '"'`echo $ExtendedEnsFCTimes | sed 's@,@","@g'`'"'
 
 ## job
 $setLocal job.retry
@@ -89,7 +91,12 @@ cat >! include/variables/auto/extendedforecast.rc << EOF
 {% set EnsVerifyMembers = range(1, $nMembers+1, 1) %}
 {% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
 {% set ExtendedEnsFCTimes = "${ExtendedEnsFCTimes}" %}
-{% set ExtendedFCLengths = range(0, ${ExtendedFCLengthHR}+${ExtendedFCOutIntervalHR}, ${ExtendedFCOutIntervalHR}) %}
+{% set ExtendedMeanFCTimesList = [${ExtendedMeanFCTimesList}] %}
+{% set ExtendedEnsFCTimesList = [${ExtendedEnsFCTimesList}] %}
+{% set extFCLenHR = ${ExtendedFCLengthHR} %}
+{% set extFCIntervHR = ${ExtendedFCOutIntervalHR} %}
+{% set nExtFCOuts = (extFCLenHR / extFCIntervHR + 1)|int %}
+{% set ExtendedFCLengths = range(0, extFCLenHR+extFCIntervHR, extFCIntervHR) %}
 EOF
 
 endif

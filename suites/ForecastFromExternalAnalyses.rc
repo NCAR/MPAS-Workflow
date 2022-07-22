@@ -27,7 +27,9 @@
   [[dependencies]]
 
     [[[{{ExtendedMeanFCTimes}}]]]
-      graph = {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
+      graph = '''
+        {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
+      '''
 
 {% if VerifyAgainstExternalAnalyses %}
 %include include/dependencies/verifymodel.rc

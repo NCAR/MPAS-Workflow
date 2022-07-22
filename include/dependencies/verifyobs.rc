@@ -60,36 +60,42 @@
   # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedMeanFC %}
-    [[[{{ExtendedMeanFCTimes}}]]]
+  {% for TIME in ExtendedMeanFCTimesList %}
+    [[[R{{nExtFCOuts}}/{{TIME}}/PT{{extFCIntervHR}}H]]]
       graph = '''
-  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
-        DataAssimFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
-  {% endif %}
-        ExtendedForecastFinished => HofXMeanFC
-        HofXMeanFC:succeed-all => VerifyObsMeanFC
-        VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
-  {% for dt in ExtendedFCLengths %}
-        PrepareObservations[+PT{dt}H] => HofXMeanFC{{dt}}hr
-  {% endfor %}
+        {{PrepareObservations}}
       '''
+    {% for dt in ExtendedFCLengths %}
+    [[[{{TIME}}]]]
+      graph = '''
+        ExtendedForecastFinished => HofXMeanFC{{dt}}hr
+        ObsReady[PT{{dt}}H] => HofXMeanFC{{dt}}hr
+        HofXMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
+        VerifyObsMeanFC{{dt}}hr => CleanHofXMeanFC{{dt}}hr
+      '''
+    {% endfor %}
+  {% endfor %}
 {% endif %}
 
 
   # ... for extended forecast from ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedEnsFC %}
-    [[[{{ExtendedEnsFCTimes}}]]]
+  {% for TIME in ExtendedEnsFCTimesList %}
+    [[[R{{nExtFCOuts}}/{{TIME}}/PT{{extFCIntervHR}}H]]]
       graph = '''
-  {% if CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
-        DataAssimFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
-  {% endif %}
-        ExtendedForecastFinished => HofXEnsFC
-        HofXEnsFC:succeed-all => VerifyObsEnsFC
-        VerifyObsEnsFC:succeed-all => CleanHofXEnsFC
-  {% for mem in EnsVerifyMembers %}
+        {{PrepareObservations}}
+      '''
     {% for dt in ExtendedFCLengths %}
-        PrepareObservations[+PT{dt}H] => HofXEnsFC{{mem}}-{{dt}}hr
+    [[[{{TIME}}]]]
+      graph = '''
+      {% for mem in EnsVerifyMembers %}
+        ExtendedForecastFinished => HofXEnsFC{{mem}}-{{dt}}hr
+        ObsReady[PT{{dt}}H] => HofXEnsFC{{mem}}-{{dt}}hr
+        HofXEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
+        VerifyObsEnsFC{{mem}}-{{dt}}hr => CleanHofXEnsFC{{mem}}-{{dt}}hr
+      {% endfor %}
+      '''
     {% endfor %}
   {% endfor %}
-      '''
 {% endif %}

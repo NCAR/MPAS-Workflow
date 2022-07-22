@@ -10,10 +10,12 @@ forecast:
   # interval between OMF verification times of an individual forecast
   ExtendedFCOutIntervalHR: 12
 
-  # times of the day to run extended forecast from mean analysis
+  # UTC times to run extended forecast from mean analysis
+  # formatted as comma-separated string, e.g., T00,T06,T12,T18
   ExtendedMeanFCTimes: T00,T12
 
-  # times of the day to run ensemble of extended forecasts
+  # UTC times to run ensemble of extended forecasts
+  # formatted as comma-separated string, e.g., T00,T06,T12,T18
   ExtendedEnsFCTimes: T00
 
 
