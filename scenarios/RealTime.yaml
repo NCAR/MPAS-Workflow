@@ -1,8 +1,8 @@
 workflow:
   # test a recent date
   firstCyclePoint: 20220316T00
-  initialCyclePoint: 20220715T18
-  finalCyclePoint: 20250720T00
+  initialCyclePoint: 20220720T00
+  finalCyclePoint: 20250720T18
   InitializationType: ColdStart
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
