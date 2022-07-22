@@ -6,12 +6,12 @@
 # already running, then executing this script will automatically kill those running suites.
 ####################################################################################################
 
-## external analyses generation for real-time or a historical period
+## general-purpose experimental cycling
 
-set appIndependentConfigs = (externalanalyses job model workflow)
-set appDependentConfigs = ()
-set ExpConfigType = base
-set suite = GenerateExternalAnalyses
+set suite = "$1"
+set appIndependentConfigs = ($2)
+set appDependentConfigs = ($3)
+set ExpConfigType = "$4"
 
 echo "$0 (INFO): generating a new cylc suite"
 
@@ -19,12 +19,14 @@ date
 
 # application-independent configurations
 foreach c ($appIndependentConfigs)
+  echo "./config/${c}.csh"
   ./config/${c}.csh
 end
 
 echo "$0 (INFO): Initializing the MPAS-Workflow experiment directory"
 # Create the experiment directory and cylc task scripts
-source drivers/SetupWorkflow.csh "$ExpConfigType"
+echo "source SetupWorkflow.csh $ExpConfigType"
+source SetupWorkflow.csh "$ExpConfigType"
 
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
@@ -36,6 +38,7 @@ source config/experiment.csh
 
 # application-specific configurations
 foreach app ($appDependentConfigs)
+  echo "./config/applications/${app}.csh"
   ./config/applications/${app}.csh
 end
 

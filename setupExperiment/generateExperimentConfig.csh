@@ -3,12 +3,9 @@
 setenv TMPDIR /glade/scratch/${USER}/temp
 mkdir -p $TMPDIR
 
-source config/benchmark.csh
-source config/firstbackground.csh
-source config/externalanalyses.csh
+source config/firstbackground.csh # for nMembers
 source config/naming.csh
 source config/workflow.csh
-source config/model.csh
 
 if ( ${ExperimentName} == None || ${ExperimentName} == "" ) then
   echo "ExperimentName(${ExperimentName}) must be defined"
@@ -37,6 +34,10 @@ cat >! $mainScriptDir/config/experiment.csh << EOF
 if ( \$?config_experiment ) exit 0
 setenv config_experiment 1
 
+source config/benchmark.csh
+source config/externalanalyses.csh
+source config/firstbackground.csh
+source config/model.csh
 source config/naming.csh # temporary, source directly in dependent scripts
 
 ###################
@@ -72,9 +73,9 @@ setenv ObsWorkDir ${ExperimentDirectory}/\$obsWorkDir
 setenv ${DataAssim}WorkDir ${ExperimentDirectory}/\$dataAssimWorkDir
 
 setenv ${Forecast}WorkDir ${ExperimentDirectory}/\$forecastWorkDir
-#setenv FirstBackgroundDirOuter ${ExperimentDirectory}/\$forecastWorkDir/template-$outerMesh/${FirstCycleDate}
-#setenv FirstBackgroundDirInner ${ExperimentDirectory}/\$forecastWorkDir/template-$innerMesh/${FirstCycleDate}
-#setenv FirstBackgroundDirEnsemble ${ExperimentDirectory}/\$forecastWorkDir/template-$ensembleMesh/${FirstCycleDate}
+#setenv FirstBackgroundDirOuter ${ExperimentDirectory}/\$forecastWorkDir/template-\${outerMesh}/${FirstCycleDate}
+#setenv FirstBackgroundDirInner ${ExperimentDirectory}/\$forecastWorkDir/template-\${innerMesh}/${FirstCycleDate}
+#setenv FirstBackgroundDirEnsemble ${ExperimentDirectory}/\$forecastWorkDir/template-\${ensembleMesh}/${FirstCycleDate}
 
 setenv CyclingInflationWorkDir ${ExperimentDirectory}/\$cyclingInflationWorkDir
 setenv RTPPWorkDir ${ExperimentDirectory}/\$rTPPWorkDir
@@ -83,14 +84,14 @@ setenv ABEInflationWorkDir ${ExperimentDirectory}/\$aBEInflationWorkDir
 setenv ExtendedFCWorkDir ${ExperimentDirectory}/\$extendedFCWorkDir
 setenv VerificationWorkDir ${ExperimentDirectory}/\$verificationWorkDir
 
-setenv ExternalAnalysisWorkDir ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}
-setenv ExternalAnalysisWorkDirOuter ${ExperimentDirectory}/\$externalAnalysisWorkDir/${outerMesh}
-setenv ExternalAnalysisWorkDirInner ${ExperimentDirectory}/\$externalAnalysisWorkDir/${innerMesh}
-setenv ExternalAnalysisWorkDirEnsemble ${ExperimentDirectory}/\$externalAnalysisWorkDir/${ensembleMesh}
+setenv ExternalAnalysisWorkDir ${ExperimentDirectory}/\$externalAnalysisWorkDir/\${externalanalyses__resource}
+setenv ExternalAnalysisWorkDirOuter ${ExperimentDirectory}/\$externalAnalysisWorkDir/\${outerMesh}
+setenv ExternalAnalysisWorkDirInner ${ExperimentDirectory}/\$externalAnalysisWorkDir/\${innerMesh}
+setenv ExternalAnalysisWorkDirEnsemble ${ExperimentDirectory}/\$externalAnalysisWorkDir/\${ensembleMesh}
 
 ## benchmark experiment archive
-setenv Benchmark${DataAssim}WorkDir ${benchmark__ExperimentDirectory}/\$dataAssimWorkDir
-setenv BenchmarkVerificationWorkDir ${benchmark__ExperimentDirectory}/\$verificationWorkDir
+setenv Benchmark${DataAssim}WorkDir \${benchmark__ExperimentDirectory}/\$dataAssimWorkDir
+setenv BenchmarkVerificationWorkDir \${benchmark__ExperimentDirectory}/\$verificationWorkDir
 
 
 #########################
@@ -99,7 +100,7 @@ setenv BenchmarkVerificationWorkDir ${benchmark__ExperimentDirectory}/\$verifica
 # TODO: move these to a cross-application config/yaml combo
 
 ## number of ensemble members (currently from firstbackground)
-setenv nMembers $nMembers
+setenv nMembers \$nMembers
 
 #############################
 # static stream file settings
@@ -111,23 +112,23 @@ set dd = `echo ${FirstCycleDate} | cut -c 7-8`
 set hh = `echo ${FirstCycleDate} | cut -c 9-10`
 setenv FirstFileDate \${yy}-\${mm}-\${dd}_\${hh}.00.00
 
-setenv StaticFieldsDirOuter \`echo "$firstbackground__staticDirectoryOuter" \
+setenv StaticFieldsDirOuter \`echo "\${firstbackground__staticDirectoryOuter}" \
   | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirOuter}'@' \
   | sed 's@{{FirstCycleDate}}@'${FirstCycleDate}'@' \
   \`
-setenv StaticFieldsDirInner \`echo "$firstbackground__staticDirectoryInner" \
+setenv StaticFieldsDirInner \`echo "\${firstbackground__staticDirectoryInner}" \
   | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirInner}'@' \
   | sed 's@{{FirstCycleDate}}@'${FirstCycleDate}'@' \
   \`
-setenv StaticFieldsDirEnsemble \`echo "$firstbackground__staticDirectoryEnsemble" \
+setenv StaticFieldsDirEnsemble \`echo "\${firstbackground__staticDirectoryEnsemble}" \
   | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirEnsemble}'@' \
   | sed 's@{{FirstCycleDate}}@'${FirstCycleDate}'@' \
   \`
-setenv staticMemFmt "${firstbackground__memberFormatOuter}"
+setenv staticMemFmt "\${firstbackground__memberFormatOuter}"
 
-setenv StaticFieldsFileOuter ${firstbackground__staticPrefixOuter}.\${FirstFileDate}.nc
-setenv StaticFieldsFileInner ${firstbackground__staticPrefixInner}.\${FirstFileDate}.nc
-setenv StaticFieldsFileEnsemble ${firstbackground__staticPrefixEnsemble}.\${FirstFileDate}.nc
+setenv StaticFieldsFileOuter \${firstbackground__staticPrefixOuter}.\${FirstFileDate}.nc
+setenv StaticFieldsFileInner \${firstbackground__staticPrefixInner}.\${FirstFileDate}.nc
+setenv StaticFieldsFileEnsemble \${firstbackground__staticPrefixEnsemble}.\${FirstFileDate}.nc
 EOF
 
 if ( ! -e include/variables/auto/experiment.rc ) then
@@ -135,7 +136,7 @@ cat >! include/variables/auto/experiment.rc << EOF
 {% set mainScriptDir = "${mainScriptDir}" %}
 {% set nMembers = ${nMembers} %} #integer
 {% set allMembers = range(1, $nMembers+1, 1) %}
-{% set title = "${PackageBaseName}--${SuiteName}" %}
+{% set title = "${PackageBaseName}--${ExperimentName}" %}
 EOF
 
 endif

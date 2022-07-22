@@ -7,7 +7,10 @@ source config/model.csh
 
 source config/scenario.csh externalanalyses
 
-$setNestedExternalanalyses resource
+setenv externalanalyses__resource "`$getLocalOrNone resource`"
+if ("$externalanalyses__resource" == None) then
+  exit 0
+endif
 
 # outer
 set name = Outer
@@ -40,6 +43,9 @@ unset externalanalyses__UngribPrefixOuter
 
 set externalanalyses__Vtable = "$externalanalyses__VtableOuter"
 unset externalanalyses__VtableOuter
+
+set externalanalyses__retry = "$externalanalyses__retryOuter"
+unset externalanalyses__retryOuter
 
 # inner
 set name = Inner
@@ -104,13 +110,13 @@ cat >! include/tasks/auto/externalanalyses.rc << EOF
     script = \$origin/GetGFSAnalysisFromRDA.csh
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = $externalanalyses__retryOuter
+      execution retry delays = $externalanalyses__retry
   [[GetGFSanalysisFromFTP]]
     inherit = BATCH
     script = \$origin/GetGFSAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = $externalanalyses__retryOuter
+      execution retry delays = $externalanalyses__retry
 
   [[UngribExternalAnalysis]]
     inherit = BATCH
@@ -130,7 +136,7 @@ cat >! include/tasks/auto/externalanalyses.rc << EOF
     script = \$origin/LinkExternalAnalysis.csh "{{mesh}}"
     [[[job]]]
       execution time limit = PT30S
-      execution retry delays = $externalanalyses__retryOuter
+      execution retry delays = $externalanalyses__retry
 {% endfor %}
 
   [[ExternalAnalysisReady]]

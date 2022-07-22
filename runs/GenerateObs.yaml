@@ -1,3 +1,6 @@
 run:
   scenarios: [GenerateObs]
-  driver: GenerateObs
+  suite: GenerateObs
+  appIndependentConfigs: [job, observations, workflow]
+  appDependentConfigs: []
+  ExpConfigType: base

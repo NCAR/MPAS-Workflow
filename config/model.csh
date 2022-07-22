@@ -10,8 +10,8 @@ source config/scenario.csh model
 setenv MPASCore atmosphere
 
 ## meshes
-# outerMesh is mandatory for all drivers/*.csh
-# innerMesh and ensembleMesh are mandatory for driver/Cycle.csh
+# outerMesh is mandatory for all model-dependent suites
+# innerMesh and ensembleMesh are mandatory for suites/Cycle.rc
 $setLocal outerMesh
 setenv innerMesh "`$getLocalOrNone innerMesh`"
 setenv ensembleMesh "`$getLocalOrNone ensembleMesh`"

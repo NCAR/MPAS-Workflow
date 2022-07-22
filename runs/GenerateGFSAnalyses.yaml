@@ -1,3 +1,6 @@
 run:
   scenarios: [GenerateGFSAnalyses]
-  driver: GenerateExternalAnalyses
+  suite: GenerateExternalAnalyses
+  appIndependentConfigs: [externalanalyses, job, model, workflow]
+  appDependentConfigs: [initic]
+  ExpConfigType: base

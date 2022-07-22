@@ -1,3 +1,6 @@
 run:
   scenarios: [ForecastFromGFSAnalyses]
-  driver: ForecastFromGFSAnalyses
+  suite: ForecastFromExternalAnalyses
+  appIndependentConfigs: [externalanalyses, job, model, observations, workflow]
+  appDependentConfigs: [forecast, hofx, initic, verifyobs, verifymodel]
+  ExpConfigType: base

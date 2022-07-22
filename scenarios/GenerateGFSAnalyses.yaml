@@ -12,17 +12,6 @@ experiment:
   ExperimentUserPrefix: ''
 model:
   outerMesh: 60km
-#TODO: make it so that innerMesh and ensembleMesh are not needed
-  innerMesh: 60km
-  ensembleMesh: 60km
 job:
   CPQueueName: economy
   NCPQueueName: economy
-#TODO: make it so that firstbackground, observations, and variational are not necessary
-firstbackground:
-  resource: "ForecastFromAnalysis"
-observations:
-  resource: PANDACArchive
-variational:
-  DAType: 3dvar
-  nInnerIterations: [0,]

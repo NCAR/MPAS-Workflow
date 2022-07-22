@@ -70,10 +70,16 @@ $setRun scenarioDirectory
 # the one or more cylc suites.  driver scripts (except SetupWorkflow) automatically stop active
 # scenario suites when the user executes this script.
 # OPTIONS: Cycle, GenerateObs, GenerateGFSAnalyses, ForecastFromGFSAnalyses, SetupWorkflow
-setenv driver "`$getRunOrNone driver`"
-if ( "$driver" == None ) then
-  # useful to set below line to SetupWorkflow for override
-  setenv driver Cycle
+setenv suite "`$getRunOrNone suite`"
+if ( "$suite" == None ) then
+  setenv suite Cycle
+  set appIndependentConfigs = (externalanalyses firstbackground job model observations workflow)
+  set appDependentConfigs = (ensvariational forecast hofx initic rtpp variational verifyobs verifymodel)
+  setenv ExpConfigType cycling
+else
+  $setRun appIndependentConfigs
+  $setRun appDependentConfigs
+  $setRun ExpConfigType
 endif
 
 ###################################################################################################
@@ -89,9 +95,9 @@ foreach thisScenario ($scenarios)
   echo ""
   echo ""
   echo "#########################################################################"
-  echo "${0}: Executing drivers/${driver}.csh for the $thisScenario scenario"
+  echo "${0}: Executing drive.csh for the $thisScenario scenario"
   sed -i 's@^set\ scenario\ =\ .*@set\ scenario\ =\ '$thisScenario'@' config/scenario.csh
-  ./drivers/${driver}.csh
+  ./drive.csh "$suite" "$appIndependentConfigs" "$appDependentConfigs" "$ExpConfigType"
 
   if ( $status != 0 ) then
     echo "$0 (ERROR): error when setting up $thisScenario"

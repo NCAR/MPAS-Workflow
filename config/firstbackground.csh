@@ -6,9 +6,13 @@ setenv config_firstbackground 1
 source config/model.csh
 
 source config/scenario.csh firstbackground
-
-$setNestedFirstbackground resource
-$setLocal nMembers
+setenv firstbackground__resource "`$getLocalOrNone resource`"
+if ("$firstbackground__resource" == None) then
+  setenv nMembers 0
+  exit 0
+else
+  $setLocal nMembers
+endif
 
 foreach parameter (directory filePrefix staticDirectory staticPrefix maxMembers memberFormat PrepareFirstBackground)
   set p = "`$getLocalOrNone $firstbackground__resource.$outerMesh.${parameter}`"
