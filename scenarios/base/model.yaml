@@ -43,6 +43,10 @@ model:
 # OPTIONS: GFSfromPANDACArchive, GFSfromRDAOnline, GFSfromNCEPFTPOnline
   AnalysisSource: GFSfromPANDACArchive
 
+## Download GDAS Analysis
+# OPTIONS: True/False
+  GetGDASAnalysis: False
+
 ## fixedEnsBSource
 # selection of data source for fixed ensemble background covariance members when
 # EDASize==nDAInstances==1 and DAType is either 3denvar or 3dhybrid

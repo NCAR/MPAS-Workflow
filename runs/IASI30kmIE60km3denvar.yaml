@@ -1,0 +1,2 @@
+run:
+  scenarios: [IASI30kmIE60km3denvar]
