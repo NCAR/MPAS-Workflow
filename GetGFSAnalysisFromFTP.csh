@@ -16,6 +16,7 @@ set thisValidDate = ${thisCycleDate}
 
 set res = 0p25
 set fhour = 000
+# url for GFS data
 set gfs_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gfs.${yymmdd}/${hh}/atmos
 set gribFile = gfs.t${hh}z.pgrb2.${res}.f${fhour}
 
@@ -34,7 +35,6 @@ ln -sfv ${WPSBuildDir}/${linkWPS} .
 rm -rf GRIBFILE.*
 
 echo "Getting GFS analysis from the NCEP FTP"
-# url for GFS data
 # check if the GFS analysis is available
 if ( ! -e ${gribFile}) then
   set gfs_ftp_file = ${gfs_ftp}/${gribFile}
