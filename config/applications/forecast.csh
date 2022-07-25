@@ -73,10 +73,10 @@ cat >! include/tasks/auto/forecast.rc << EOF
 {% for mem in range(1, $nMembers+1, 1) %}
   [[ColdForecastMember{{mem}}]]
     inherit = ColdForecast
-    script = \$origin/ColdForecast.csh "{{mem}}" "${FCLengthHR}" "${FCOutIntervalHR}" "False" "${outerMesh}" "False" "True"
+    script = \$origin/applications/ColdForecast.csh "{{mem}}" "${FCLengthHR}" "${FCOutIntervalHR}" "False" "${outerMesh}" "False" "True"
   [[ForecastMember{{mem}}]]
     inherit = Forecast
-    script = \$origin/Forecast.csh "{{mem}}" "${FCLengthHR}" "${FCOutIntervalHR}" "True" "${outerMesh}" "True" "True"
+    script = \$origin/applications/Forecast.csh "{{mem}}" "${FCLengthHR}" "${FCOutIntervalHR}" "True" "${outerMesh}" "True" "True"
   [[ForecastFinished]]
     inherit = BACKGROUND
 {% endfor %}
@@ -118,12 +118,12 @@ cat >! include/tasks/auto/extendedforecast.rc << EOF
   ## from external analysis
   [[ExtendedFCFromExternalAnalysis]]
     inherit = ExtendedFCBase
-    script = \$origin/ExtendedFCFromExternalAnalysis.csh "1" "${ExtendedFCLengthHR}" "${ExtendedFCOutIntervalHR}" "False" "${outerMesh}" "False" "False"
+    script = \$origin/applications/ExtendedFCFromExternalAnalysis.csh "1" "${ExtendedFCLengthHR}" "${ExtendedFCOutIntervalHR}" "False" "${outerMesh}" "False" "False"
 
   ## from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
     inherit = BATCH
-    script = \$origin/MeanAnalysis.csh
+    script = \$origin/applications/MeanAnalysis.csh
     [[[job]]]
       execution time limit = PT5M
     [[[directives]]]
@@ -133,7 +133,7 @@ cat >! include/tasks/auto/extendedforecast.rc << EOF
       -l = select=1:ncpus=36:mpiprocs=36
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
-    script = \$origin/ExtendedMeanFC.csh "1" "${ExtendedFCLengthHR}" "${ExtendedFCOutIntervalHR}" "False" "${outerMesh}" "True" "False"
+    script = \$origin/applications/ExtendedMeanFC.csh "1" "${ExtendedFCLengthHR}" "${ExtendedFCOutIntervalHR}" "False" "${outerMesh}" "True" "False"
 
   ## from ensemble of analyses
   [[ExtendedEnsFC]]
@@ -141,7 +141,7 @@ cat >! include/tasks/auto/extendedforecast.rc << EOF
 {% for mem in EnsVerifyMembers %}
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
-    script = \$origin/ExtendedEnsFC.csh "{{mem}}" "${ExtendedFCLengthHR}" "${ExtendedFCOutIntervalHR}" "False" "${outerMesh}" "True" "False"
+    script = \$origin/applications/ExtendedEnsFC.csh "{{mem}}" "${ExtendedFCLengthHR}" "${ExtendedFCOutIntervalHR}" "False" "${outerMesh}" "True" "False"
 {% endfor %}
 
   [[ExtendedForecastFinished]]

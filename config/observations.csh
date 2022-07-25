@@ -50,13 +50,13 @@ if ( ! -e include/tasks/auto/observations.rc ) then
 cat >! include/tasks/auto/observations.rc << EOF
   [[GetObs]]
     inherit = BATCH
-    script = \$origin/GetObs.csh
+    script = \$origin/applications/GetObs.csh
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = ${get__retry}
   [[ObsToIODA]]
     inherit = BATCH
-    script = \$origin/ObsToIODA.csh
+    script = \$origin/applications/ObsToIODA.csh
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = ${convert__retry}

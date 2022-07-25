@@ -151,8 +151,8 @@ cat >! include/tasks/auto/variational.rc << EOF
 # variational
   [[InitDataAssim]]
     inherit = BATCH
-    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA" "variational"
-    script = \$origin/PrepVariational.csh "1"
+    env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIVariational.csh "1" "0" "DA" "variational"
+    script = \$origin/applications/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = ${retry}
@@ -165,7 +165,7 @@ cat >! include/tasks/auto/variational.rc << EOF
   {% for mem in range(1, ${nMembers}+1, 1) %}
   [[DAMember{{mem}}]]
     inherit = DataAssim
-    script = \$origin/Variational.csh "{{mem}}"
+    script = \$origin/applications/Variational.csh "{{mem}}"
     [[[job]]]
       execution time limit = PT${seconds}S
       execution retry delays = ${retry}
@@ -179,7 +179,7 @@ cat >! include/tasks/auto/variational.rc << EOF
 
   [[CleanVariational]]
     inherit = CleanBase
-    script = \$origin/CleanVariational.csh
+    script = \$origin/applications/CleanVariational.csh
 EOF
 
 endif

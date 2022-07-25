@@ -107,20 +107,20 @@ cat >! include/tasks/auto/externalanalyses.rc << EOF
 ## Analyses generated outside MPAS-Workflow
   [[GetGFSAnalysisFromRDA]]
     inherit = BATCH
-    script = \$origin/GetGFSAnalysisFromRDA.csh
+    script = \$origin/applications/GetGFSAnalysisFromRDA.csh
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = $externalanalyses__retry
   [[GetGFSanalysisFromFTP]]
     inherit = BATCH
-    script = \$origin/GetGFSAnalysisFromFTP.csh
+    script = \$origin/applications/GetGFSAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = $externalanalyses__retry
 
   [[UngribExternalAnalysis]]
     inherit = BATCH
-    script = \$origin/UngribExternalAnalysis.csh
+    script = \$origin/applications/UngribExternalAnalysis.csh
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = 2*PT30S
@@ -133,7 +133,7 @@ cat >! include/tasks/auto/externalanalyses.rc << EOF
 {% for mesh in allMeshes %}
   [[LinkExternalAnalysis-{{mesh}}]]
     inherit = BATCH
-    script = \$origin/LinkExternalAnalysis.csh "{{mesh}}"
+    script = \$origin/applications/LinkExternalAnalysis.csh "{{mesh}}"
     [[[job]]]
       execution time limit = PT30S
       execution retry delays = $externalanalyses__retry

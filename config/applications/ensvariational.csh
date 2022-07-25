@@ -40,7 +40,7 @@ cat >! include/tasks/auto/ensvariational.rc << EOF
   {% for inst in range(1, ${nDAInstances}+1, 1) %}
   [[EDAInstance{{inst}}]]
     inherit = DataAssim
-    script = \$origin/EnsembleOfVariational.csh "{{inst}}"
+    script = \$origin/applications/EnsembleOfVariational.csh "{{inst}}"
     [[[job]]]
       execution time limit = PT${seconds}S
       execution retry delays = ${retry}

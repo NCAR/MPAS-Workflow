@@ -12,47 +12,47 @@ set preparationName = PrepJEDI
 echo "Making task scripts for ${self_StateType} state"
 
 #Application preparation
-set PreparationScript=${mainScriptDir}/${preparationName}${self_taskBaseScript}.csh
+set PreparationScript=${mainAppDir}/${preparationName}${self_taskBaseScript}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
     -e 's@WindowHRTEMPLATE@wrapWindowHRTEMPLATE@' \
-    ${preparationName}.csh > ${PreparationScript}
+    applications/${preparationName}.csh > ${PreparationScript}
 chmod 744 ${PreparationScript}
 
 #Application
-set JobScript=${mainScriptDir}/${self_taskBaseScript}.csh
+set JobScript=${mainAppDir}/${self_taskBaseScript}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
     -e 's@inStateDirsTEMPLATE@'${self_inStateDirs}'@' \
     -e 's@inStatePrefixTEMPLATE@'${self_inStatePrefix}'@' \
-    AppScriptNameTEMPLATE.csh > ${JobScript}
+    applications/AppScriptNameTEMPLATE.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 #Application verification
-set VFObsScript=${mainScriptDir}/VerifyObs${self_StateType}.csh
+set VFObsScript=${mainAppDir}/VerifyObs${self_StateType}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
-    verifyobs.csh > ${VFObsScript}
+    applications/verifyobs.csh > ${VFObsScript}
 chmod 744 ${VFObsScript}
 
-set CompareObsScript=${mainScriptDir}/CompareObs${self_StateType}.csh
+set CompareObsScript=${mainAppDir}/CompareObs${self_StateType}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
     -e 's@WorkDirsBenchmarkTEMPLATE@'${benchmark_WorkDirs}'@' \
-    compareobs.csh > ${CompareObsScript}
+    applications/compareobs.csh > ${CompareObsScript}
 chmod 744 ${CompareObsScript}
 
-set VFModelScript=${mainScriptDir}/VerifyModel${self_StateType}.csh
+set VFModelScript=${mainAppDir}/VerifyModel${self_StateType}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
     -e 's@inStateDirsTEMPLATE@'${self_inStateDirs}'@' \
     -e 's@inStatePrefixTEMPLATE@'${self_inStatePrefix}'@' \
-    verifymodel.csh > ${VFModelScript}
+    applications/verifymodel.csh > ${VFModelScript}
 chmod 744 ${VFModelScript}
 
-set CompareModelScript=${mainScriptDir}/CompareModel${self_StateType}.csh
+set CompareModelScript=${mainAppDir}/CompareModel${self_StateType}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
     -e 's@WorkDirsBenchmarkTEMPLATE@'${benchmark_WorkDirs}'@' \
-    comparemodel.csh > ${CompareModelScript}
+    applications/comparemodel.csh > ${CompareModelScript}
 chmod 744 ${CompareModelScript}
 
 #Application cleanup
-set JobScript=${mainScriptDir}/Clean${self_taskBaseScript}.csh
+set JobScript=${mainAppDir}/Clean${self_taskBaseScript}.csh
 sed -e 's@WorkDirsTEMPLATE@'${self_WorkDirs}'@' \
-    CleanAppScriptNameTEMPLATE.csh > ${JobScript}
+    applications/CleanAppScriptNameTEMPLATE.csh > ${JobScript}
 chmod 744 ${JobScript}

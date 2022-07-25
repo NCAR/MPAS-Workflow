@@ -85,7 +85,7 @@ if ( ! -e include/tasks/auto/firstbackground.rc ) then
 cat >! include/tasks/auto/firstbackground.rc << EOF
   [[LinkWarmStartBackgrounds]]
     inherit = BATCH
-    script = \$origin/LinkWarmStartBackgrounds.csh
+    script = \$origin/applications/LinkWarmStartBackgrounds.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members
       # TODO: set time limit based on outerMesh AND (number of members OR

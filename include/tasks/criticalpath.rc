@@ -15,7 +15,7 @@
   # inflation (pre and post)
   [[GenerateABEInflation]]
     inherit = BATCH
-    script = $origin/GenerateABEInflation.csh
+    script = $origin/applications/GenerateABEInflation.csh
     [[[job]]]
       execution time limit = PT20M
     [[[directives]]]

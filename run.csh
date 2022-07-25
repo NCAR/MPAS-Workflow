@@ -12,30 +12,8 @@
 #   ./run.csh {{runConfig}}
 
 ## ArgRunConfig
-# A YAML file describing the set of scenarios to run
-# OPTIONS:
-set ValidRunConfigs = ( \
-  test \
-  120km3dvar \
-  120km3denvar \
-  120kmEDA \
-  60kmEDA \
-  30km-60km3denvar \
-  30km-60km3denvarSpecifiedEnsemble \
-  RealTime \
-  GenerateObs \
-  GenerateGFSAnalyses \
-  ForecastFromGFSAnalyses \
-  IASI120km3denvar \
-)
+# A YAML file describing the set of scenarios to run located in runs/
 set ArgRunConfig = $1
-
-if ("$ValidRunConfigs" =~ *"$ArgRunConfig"* && $ArgRunConfig != '') then
-  echo "$0 (INFO): Running the $ArgRunConfig set of scenarios"
-else
-  echo "$0 (ERROR): invalid ArgRunConfig, $ArgRunConfig"
-  exit 1
-endif
 
 ###################################################################################################
 # get the configuration (only developers should modify this)
@@ -49,6 +27,13 @@ set baseConfig = runs/base.yaml
 
 # this config
 set runConfig = runs/${ArgRunConfig}.yaml
+
+if ( -e $runConfig ) then
+  echo "$0 (INFO): Running the $ArgRunConfig set of scenarios"
+else
+  echo "$0 (ERROR): invalid ArgRunConfig, $ArgRunConfig"
+  exit 1
+endif
 
 # setRun and setRestore are helper functions that pick out a configuration node
 # under the "run" and "restore" keys of runConfig

@@ -34,7 +34,7 @@ cat >! include/tasks/auto/initic.rc << EOF
 {% for mesh in allMeshes %}
   [[ExternalAnalysisToMPAS-{{mesh}}]]
     inherit = BATCH
-    script = \$origin/ExternalAnalysisToMPAS.csh "{{mesh}}"
+    script = \$origin/applications/ExternalAnalysisToMPAS.csh "{{mesh}}"
     [[[job]]]
       execution time limit = PT${seconds_}S
       execution retry delays = ${retry}

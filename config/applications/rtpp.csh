@@ -45,13 +45,13 @@ if ( ! -e include/tasks/auto/rtpp.rc ) then
 cat >! include/tasks/auto/rtpp.rc << EOF
   [[PrepRTPP]]
     inherit = BATCH
-    script = \$origin/PrepRTPP.csh
+    script = \$origin/applications/PrepRTPP.csh
     [[[job]]]
       execution time limit = PT1M
       execution retry delays = ${retry}
   [[RTPP]]
     inherit = BATCH
-    script = \$origin/RTPP.csh
+    script = \$origin/applications/RTPP.csh
     [[[job]]]
       execution time limit = PT${seconds}S
       execution retry delays = ${retry}
@@ -62,7 +62,7 @@ cat >! include/tasks/auto/rtpp.rc << EOF
       -l = select=${nodes_}:ncpus=${PEPerNode_}:mpiprocs=${PEPerNode_}:mem=${memory_}GB
   [[CleanRTPP]]
     inherit = CleanBase
-    script = \$origin/CleanRTPP.csh
+    script = \$origin/applications/CleanRTPP.csh
 EOF
 
 endif

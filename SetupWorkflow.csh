@@ -6,31 +6,39 @@ set ArgExpConfigType = "$1"
 ## create experiment environment
 source setupExperiment/${ArgExpConfigType}.csh
 
-set workflowParts = ( \
+set standaloneApplications = ( \
+  CleanRTPP.csh \
+  EnsembleOfVariational.csh \
+  ExternalAnalysisToMPAS.csh \
+  GenerateABEInflation.csh \
   GetGFSAnalysisFromRDA.csh \
   GetGFSAnalysisFromFTP.csh \
-  LinkExternalAnalysis.csh \
-  UngribExternalAnalysis.csh \
-  ExternalAnalysisToMPAS.csh \
-  LinkWarmStartBackgrounds.csh \
   GetObs.csh \
-  ObsToIODA.csh \
-  getCycleVars.csh \
-  tools \
-  config \
-  scenarios \
+  LinkExternalAnalysis.csh \
+  LinkWarmStartBackgrounds.csh \
   MeanAnalysis.csh \
   MeanBackground.csh \
+  ObsToIODA.csh \
   PrepRTPP.csh \
-  RTPP.csh \
-  CleanRTPP.csh \
-  GenerateABEInflation.csh \
   PrepVariational.csh \
-  EnsembleOfVariational.csh \
-  include \
-  suites \
+  RTPP.csh \
+  UngribExternalAnalysis.csh \
 )
-foreach part ($workflowParts)
+setenv mainAppDir ${mainScriptDir}/applications
+mkdir -p ${mainAppDir}
+foreach app ($standaloneApplications)
+  cp -rP applications/$app ${mainAppDir}/
+end
+
+set configParts = ( \
+  config \
+  getCycleVars.csh \
+  include \
+  scenarios \
+  suites \
+  tools \
+)
+foreach part ($configParts)
   cp -rP $part ${mainScriptDir}/
 end
 
@@ -47,7 +55,7 @@ set AppAndVerify = AppAndVerify
 ## PrepJEDIVariational, Variational, VerifyObsDA, VerifyModelDA*, CleanVariational
 # *VerifyModelDA is non-functional and unused
 set taskBaseScript = Variational
-set WrapperScript=${mainScriptDir}/${AppAndVerify}DA.csh
+set WrapperScript=${mainAppDir}/${AppAndVerify}DA.csh
 sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapWorkDirsBenchmarkTEMPLATE@BenchmarkCyclingDADirs@' \
     -e 's@AppScriptNameTEMPLATE@Variational@' \
@@ -56,7 +64,7 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeTEMPLATE@DA@' \
     -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
-    ${AppAndVerify}.csh > ${WrapperScript}
+    applications/${AppAndVerify}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}
 ${WrapperScript}
 rm ${WrapperScript}
@@ -65,52 +73,52 @@ rm ${WrapperScript}
 ## ColdForecast
 if ("$externalanalyses__resource" != None) then
   echo "Making ColdForecast job script"
-  set JobScript=${mainScriptDir}/ColdForecast.csh
+  set JobScript=${mainAppDir}/ColdForecast.csh
   sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
       -e 's@StateDirsTEMPLATE@ExternalAnalysisDirOuters@' \
       -e 's@StatePrefixTEMPLATE@'${externalanalyses__filePrefixOuter}'@' \
-      forecast.csh > ${JobScript}
+      applications/forecast.csh > ${JobScript}
   chmod 744 ${JobScript}
 endif
 
 ## Forecast
 echo "Making Forecast job script"
-set JobScript=${mainScriptDir}/Forecast.csh
+set JobScript=${mainAppDir}/Forecast.csh
 sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
     -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
     -e 's@StatePrefixTEMPLATE@'${ANFilePrefix}'@' \
-    forecast.csh > ${JobScript}
+    applications/forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 
 ## ExtendedMeanFC
 echo "Making ExtendedMeanFC job script"
-set JobScript=${mainScriptDir}/ExtendedMeanFC.csh
+set JobScript=${mainAppDir}/ExtendedMeanFC.csh
 sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
     -e 's@StateDirsTEMPLATE@MeanAnalysisDirs@' \
     -e 's@StatePrefixTEMPLATE@'${ANFilePrefix}'@' \
-    forecast.csh > ${JobScript}
+    applications/forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 
 ## ExtendedEnsFC
 echo "Making ExtendedEnsFC job script"
-set JobScript=${mainScriptDir}/ExtendedEnsFC.csh
+set JobScript=${mainAppDir}/ExtendedEnsFC.csh
 sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
     -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
     -e 's@StatePrefixTEMPLATE@'${ANFilePrefix}'@' \
-    forecast.csh > ${JobScript}
+    applications/forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 
 ## ExtendedFCFromExternalAnalysis
 if ("$externalanalyses__resource" != None) then
   echo "Making ExtendedFCFromExternalAnalysis job script"
-  set JobScript=${mainScriptDir}/ExtendedFCFromExternalAnalysis.csh
+  set JobScript=${mainAppDir}/ExtendedFCFromExternalAnalysis.csh
   sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
       -e 's@StateDirsTEMPLATE@ExternalAnalysisDirOuters@' \
       -e 's@StatePrefixTEMPLATE@'${externalanalyses__filePrefixOuter}'@' \
-      forecast.csh > ${JobScript}
+      applications/forecast.csh > ${JobScript}
   chmod 744 ${JobScript}
 endif
 
@@ -132,7 +140,7 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC ExternalAnalysis)
 #    set TemplateVariables = (ExtendedMeanFCDirs ${FCFilePrefix} ${FCVFWindowHR})
   endif
   set taskBaseScript = HofX${state}
-  set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh
+  set WrapperScript=${mainAppDir}/${AppAndVerify}${state}.csh
   sed -e 's@wrapWorkDirsTEMPLATE@Verify'${state}'Dirs@' \
       -e 's@wrapWorkDirsBenchmarkTEMPLATE@BenchmarkVerify'${state}'Dirs@' \
       -e 's@AppScriptNameTEMPLATE@HofX@' \
@@ -141,7 +149,7 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC ExternalAnalysis)
       -e 's@wrapStatePrefixTEMPLATE@'$TemplateVariables[2]'@' \
       -e 's@wrapStateTypeTEMPLATE@'${state}'@' \
       -e 's@wrapWindowHRTEMPLATE@'$TemplateVariables[3]'@' \
-      ${AppAndVerify}.csh > ${WrapperScript}
+      applications/${AppAndVerify}.csh > ${WrapperScript}
   chmod 744 ${WrapperScript}
   ${WrapperScript}
   rm ${WrapperScript}
