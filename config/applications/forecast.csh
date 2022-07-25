@@ -6,8 +6,10 @@
 #if ( $?config_forecast ) exit 0
 #set config_forecast = 1
 
-source config/experiment.csh # for nMembers
+source config/members.csh
 source config/model.csh
+source config/workflow.csh
+
 source config/scenario.csh forecast
 
 #if ("$ArgMesh" == None or "$ArgMesh" == "") then
@@ -68,7 +70,7 @@ cat >! include/tasks/auto/forecast.rc << EOF
     inherit = ForecastBase
   [[ColdForecast]]
     inherit = ForecastBase
-{% for mem in allMembers %}
+{% for mem in range(1, $nMembers+1, 1) %}
   [[ColdForecastMember{{mem}}]]
     inherit = ColdForecast
     script = \$origin/ColdForecast.csh "{{mem}}" "${FCLengthHR}" "${FCOutIntervalHR}" "False" "${outerMesh}" "False" "True"

@@ -5,6 +5,7 @@ setenv config_ensvariational 1
 
 source config/model.csh
 source config/applications/variational.csh
+
 source config/scenario.csh ensvariational
 
 ## job

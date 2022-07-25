@@ -3,8 +3,9 @@
 if ( $?config_verifymodel ) exit 0
 setenv config_verifymodel 1
 
+source config/members.csh
 source config/model.csh
-source config/experiment.csh # for nMembers
+
 source config/scenario.csh verifymodel
 
 $setLocal pyVerifyDir
@@ -45,7 +46,7 @@ cat >! include/tasks/auto/verifymodelbase.rc << EOF
       -l = select=1:ncpus=36:mpiprocs=36
 
 {% if DiagnoseEnsSpreadBG %}
-  {% set nEnsSpreadMem = nMembers %}
+  {% set nEnsSpreadMem = ${nMembers} %}
   {% set modelEnsSeconds = ${verifymodelens__seconds} %}
 {% else %}
   {% set nEnsSpreadMem = 0 %}

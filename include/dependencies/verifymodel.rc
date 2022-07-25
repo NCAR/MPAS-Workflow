@@ -1,5 +1,5 @@
   # ... for background-duration forecast from deterministic analysis or ensemble of analyses
-{% if VerifyBGMembers or (VerifyEnsMeanBG and nMembers == 1)%}
+{% if VerifyBGMembers or (VerifyEnsMeanBG and nMembers == 1) %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => VerifyModelBG
@@ -57,7 +57,7 @@
 
   # ... for extended forecast from ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
-{% if VerifyExtendedEnsFC %}
+{% if VerifyExtendedEnsFC and nMembers > 1 %}
   {% for TIME in ExtendedEnsFCTimesList %}
     [[[R{{nExtFCOuts}}/{{TIME}}/PT{{extFCIntervHR}}H]]]
       graph = '''

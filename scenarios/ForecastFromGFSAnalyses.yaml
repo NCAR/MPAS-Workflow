@@ -1,3 +1,28 @@
+externalanalyses:
+  resource: "GFS.RDA"
+
+experiment:
+  ExperimentName: 'ForecastFromGFSAnalyses'
+  ExperimentUserPrefix: ''
+
+forecast:
+  ExtendedMeanFCTimes: T00,T12
+  ExtendedFCLengthHR: 24
+  ExtendedFCOutIntervalHR: 12
+
+job:
+  CPQueueName: economy
+  NCPQueueName: economy
+
+members:
+  n: 1
+
+model:
+  outerMesh: 120km
+
+observations: # for optional verification
+  resource: GladeRDAOnline
+
 workflow:
   # test a recent date
   firstCyclePoint: 20180414T18
@@ -21,29 +46,3 @@ workflow:
   DiagnoseEnsSpreadBG: False
   VerifyANMembers: False
   VerifyExtendedEnsFC: False
-
-externalanalyses:
-  resource: "GFS.RDA"
-
-experiment:
-  ExperimentName: 'ForecastFromGFSAnalyses'
-  ExperimentUserPrefix: ''
-
-forecast:
-  ExtendedMeanFCTimes: T00,T12
-  ExtendedFCLengthHR: 24
-  ExtendedFCOutIntervalHR: 12
-
-model:
-  outerMesh: 120km
-
-observations: # for optional verification
-  resource: GladeRDAOnline
-
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
-
-#TODO: make it so that firstbackground is not necessary; currently used to ensure nMembers==1
-firstbackground:
-  resource: "ForecastFromAnalysis"

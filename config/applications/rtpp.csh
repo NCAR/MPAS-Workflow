@@ -3,8 +3,8 @@
 if ( $?config_rtpp ) exit 0
 setenv config_rtpp 1
 
+source config/members.csh
 source config/model.csh
-source config/firstbackground.csh # for nMembers
 
 source config/scenario.csh rtpp
 

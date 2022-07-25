@@ -3,7 +3,8 @@
 if ( $?config_verifyobs ) exit 0
 setenv config_verifyobs 1
 
-source config/experiment.csh # for nMembers
+source config/members.csh
+
 source config/scenario.csh verifyobs
 
 $setLocal pyVerifyDir
@@ -41,7 +42,7 @@ cat >! include/tasks/auto/verifyobsbase.rc << EOF
       -l = select=1:ncpus=36:mpiprocs=36
 
 {% if DiagnoseEnsSpreadBG %}
-  {% set nEnsSpreadMem = nMembers %}
+  {% set nEnsSpreadMem = ${nMembers} %}
   {% set obsEnsSeconds = ${verifyobsens__seconds} %}
 {% else %}
   {% set nEnsSpreadMem = 0 %}

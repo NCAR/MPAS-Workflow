@@ -6,7 +6,7 @@
 if ( $?config_variational ) exit 0
 set config_variational = 1
 
-source config/firstbackground.csh # for nMembers
+source config/members.csh
 source config/model.csh
 source config/naming.csh
 
@@ -29,7 +29,7 @@ endif
 @ nEnsDAMembers = $EDASize * $nDAInstances
 
 if ($nEnsDAMembers != $nMembers) then
-  echo "variational (ERROR): nMembers must be divisible by EDASize"
+  echo "config/applications/variational.csh (ERROR): nMembers must be divisible by EDASize"
   exit 1
 endif
 setenv nDAInstances $nDAInstances

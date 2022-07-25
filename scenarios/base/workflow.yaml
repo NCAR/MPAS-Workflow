@@ -112,7 +112,7 @@ workflow:
   CompareBG2Benchmark: False
 
 ## VerifyEnsMeanBG: whether to run verification scripts for ensemble mean
-#    background (nMembers > 1) or deterministic background (nMembers == 1)
+#    background (members.n > 1) or deterministic background (members.n == 1)
 # OPTIONS: True/False
   VerifyEnsMeanBG: True
 

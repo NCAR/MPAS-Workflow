@@ -10,11 +10,15 @@ source config/scenario.csh model
 setenv MPASCore atmosphere
 
 ## meshes
-# outerMesh is mandatory for all model-dependent suites
-# innerMesh and ensembleMesh are mandatory for suites/Cycle.rc
-$setLocal outerMesh
+# outerMesh, innerMesh, and ensembleMesh are mandatory for suites/Cycle.rc
+setenv outerMesh "`$getLocalOrNone outerMesh`"
 setenv innerMesh "`$getLocalOrNone innerMesh`"
 setenv ensembleMesh "`$getLocalOrNone ensembleMesh`"
+
+if ("$outerMesh" == None) then
+  echo "  config/model.csh (INFO): no mesh information provided. model will not be configured."
+  exit 0
+endif
 
 setenv nCellsOuter "`$getLocalOrNone nCells.$outerMesh`"
 setenv nCellsInner "`$getLocalOrNone nCells.$innerMesh`"

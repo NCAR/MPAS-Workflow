@@ -3,9 +3,7 @@
 setenv TMPDIR /glade/scratch/${USER}/temp
 mkdir -p $TMPDIR
 
-source config/firstbackground.csh # for nMembers
 source config/naming.csh
-source config/workflow.csh
 
 if ( ${ExperimentName} == None || ${ExperimentName} == "" ) then
   echo "ExperimentName(${ExperimentName}) must be defined"
@@ -38,7 +36,8 @@ source config/benchmark.csh
 source config/externalanalyses.csh
 source config/firstbackground.csh
 source config/model.csh
-source config/naming.csh # temporary, source directly in dependent scripts
+source config/naming.csh
+source config/workflow.csh
 
 ###################
 # scratch directory
@@ -73,9 +72,6 @@ setenv ObsWorkDir ${ExperimentDirectory}/\$obsWorkDir
 setenv ${DataAssim}WorkDir ${ExperimentDirectory}/\$dataAssimWorkDir
 
 setenv ${Forecast}WorkDir ${ExperimentDirectory}/\$forecastWorkDir
-#setenv FirstBackgroundDirOuter ${ExperimentDirectory}/\$forecastWorkDir/template-\${outerMesh}/${FirstCycleDate}
-#setenv FirstBackgroundDirInner ${ExperimentDirectory}/\$forecastWorkDir/template-\${innerMesh}/${FirstCycleDate}
-#setenv FirstBackgroundDirEnsemble ${ExperimentDirectory}/\$forecastWorkDir/template-\${ensembleMesh}/${FirstCycleDate}
 
 setenv CyclingInflationWorkDir ${ExperimentDirectory}/\$cyclingInflationWorkDir
 setenv RTPPWorkDir ${ExperimentDirectory}/\$rTPPWorkDir
@@ -85,57 +81,90 @@ setenv ExtendedFCWorkDir ${ExperimentDirectory}/\$extendedFCWorkDir
 setenv VerificationWorkDir ${ExperimentDirectory}/\$verificationWorkDir
 
 setenv ExternalAnalysisWorkDir ${ExperimentDirectory}/\$externalAnalysisWorkDir/\${externalanalyses__resource}
-setenv ExternalAnalysisWorkDirOuter ${ExperimentDirectory}/\$externalAnalysisWorkDir/\${outerMesh}
-setenv ExternalAnalysisWorkDirInner ${ExperimentDirectory}/\$externalAnalysisWorkDir/\${innerMesh}
-setenv ExternalAnalysisWorkDirEnsemble ${ExperimentDirectory}/\$externalAnalysisWorkDir/\${ensembleMesh}
+if ("\${outerMesh}" != None) then
+  setenv ExternalAnalysisWorkDirOuter ${ExperimentDirectory}/\$externalAnalysisWorkDir/\${outerMesh}
+else
+  setenv ExternalAnalysisWorkDirOuter None
+endif
+if ("\${innerMesh}" != None) then
+  setenv ExternalAnalysisWorkDirInner ${ExperimentDirectory}/\$externalAnalysisWorkDir/\${innerMesh}
+else
+  setenv ExternalAnalysisWorkDirInner None
+endif
+if ("\${ensembleMesh}" != None) then
+  setenv ExternalAnalysisWorkDirEnsemble ${ExperimentDirectory}/\$externalAnalysisWorkDir/\${ensembleMesh}
+else
+  setenv ExternalAnalysisWorkDirEnsemble None
+endif
+
+#if ("\${outerMesh}" != None) then
+#  setenv FirstBackgroundDirOuter ${ExperimentDirectory}/\$forecastWorkDir/template-\${outerMesh}/\${FirstCycleDate}
+#else
+#  setenv FirstBackgroundDirOuter None
+#endif
+#
+#if ("\${innerMesh}" != None) then
+#  setenv FirstBackgroundDirInner ${ExperimentDirectory}/\$forecastWorkDir/template-\${innerMesh}/\${FirstCycleDate}
+#else
+#  setenv FirstBackgroundDirInner None
+#endif
+#
+#if ("\${ensembleMesh}" != None) then
+#  setenv FirstBackgroundDirEnsemble ${ExperimentDirectory}/\$forecastWorkDir/template-\${ensembleMesh}/\${FirstCycleDate}
+#else
+#  setenv FirstBackgroundDirEnsemble None
+#endif
 
 ## benchmark experiment archive
 setenv Benchmark${DataAssim}WorkDir \${benchmark__ExperimentDirectory}/\$dataAssimWorkDir
 setenv BenchmarkVerificationWorkDir \${benchmark__ExperimentDirectory}/\$verificationWorkDir
 
 
-#########################
-# member-related settings
-#########################
-# TODO: move these to a cross-application config/yaml combo
-
-## number of ensemble members (currently from firstbackground)
-setenv nMembers \$nMembers
-
 #############################
 # static stream file settings
 #############################
 ## file date for first background
-set yy = `echo ${FirstCycleDate} | cut -c 1-4`
-set mm = `echo ${FirstCycleDate} | cut -c 5-6`
-set dd = `echo ${FirstCycleDate} | cut -c 7-8`
-set hh = `echo ${FirstCycleDate} | cut -c 9-10`
+set yy = \`echo "\${FirstCycleDate}" | cut -c 1-4\`
+set mm = \`echo "\${FirstCycleDate}" | cut -c 5-6\`
+set dd = \`echo "\${FirstCycleDate}" | cut -c 7-8\`
+set hh = \`echo "\${FirstCycleDate}" | cut -c 9-10\`
+
 setenv FirstFileDate \${yy}-\${mm}-\${dd}_\${hh}.00.00
 
-setenv StaticFieldsDirOuter \`echo "\${firstbackground__staticDirectoryOuter}" \
-  | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirOuter}'@' \
-  | sed 's@{{FirstCycleDate}}@'${FirstCycleDate}'@' \
-  \`
-setenv StaticFieldsDirInner \`echo "\${firstbackground__staticDirectoryInner}" \
-  | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirInner}'@' \
-  | sed 's@{{FirstCycleDate}}@'${FirstCycleDate}'@' \
-  \`
-setenv StaticFieldsDirEnsemble \`echo "\${firstbackground__staticDirectoryEnsemble}" \
-  | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirEnsemble}'@' \
-  | sed 's@{{FirstCycleDate}}@'${FirstCycleDate}'@' \
-  \`
-setenv staticMemFmt "\${firstbackground__memberFormatOuter}"
+if ("\$firstbackground__resource" != None) then
+  setenv StaticFieldsDirOuter \`echo "\${firstbackground__staticDirectoryOuter}" \
+    | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirOuter}'@' \
+    | sed 's@{{FirstCycleDate}}@'\${FirstCycleDate}'@' \
+    \`
+  setenv StaticFieldsDirInner \`echo "\${firstbackground__staticDirectoryInner}" \
+    | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirInner}'@' \
+    | sed 's@{{FirstCycleDate}}@'\${FirstCycleDate}'@' \
+    \`
+  setenv StaticFieldsDirEnsemble \`echo "\${firstbackground__staticDirectoryEnsemble}" \
+    | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirEnsemble}'@' \
+    | sed 's@{{FirstCycleDate}}@'\${FirstCycleDate}'@' \
+    \`
+  setenv staticMemFmt "\${firstbackground__memberFormatOuter}"
 
-setenv StaticFieldsFileOuter \${firstbackground__staticPrefixOuter}.\${FirstFileDate}.nc
-setenv StaticFieldsFileInner \${firstbackground__staticPrefixInner}.\${FirstFileDate}.nc
-setenv StaticFieldsFileEnsemble \${firstbackground__staticPrefixEnsemble}.\${FirstFileDate}.nc
+  setenv StaticFieldsFileOuter \${firstbackground__staticPrefixOuter}.\${FirstFileDate}.nc
+  setenv StaticFieldsFileInner \${firstbackground__staticPrefixInner}.\${FirstFileDate}.nc
+  setenv StaticFieldsFileEnsemble \${firstbackground__staticPrefixEnsemble}.\${FirstFileDate}.nc
+else
+  setenv StaticFieldsDirOuter None
+  setenv StaticFieldsDirInner None
+  setenv StaticFieldsDirEnsemble None
+
+  setenv staticMemFmt None
+
+  setenv StaticFieldsFileOuter None
+  setenv StaticFieldsFileInner None
+  setenv StaticFieldsFileEnsemble None
+endif
 EOF
 
 if ( ! -e include/variables/auto/experiment.rc ) then
 cat >! include/variables/auto/experiment.rc << EOF
 {% set mainScriptDir = "${mainScriptDir}" %}
-{% set nMembers = ${nMembers} %} #integer
-{% set allMembers = range(1, $nMembers+1, 1) %}
 {% set title = "${PackageBaseName}--${ExperimentName}" %}
 EOF
 

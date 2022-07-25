@@ -5,6 +5,8 @@ workflow:
   VerifyEnsMeanBG: False
 observations:
   resource: GladeRDAOnline
+members:
+  n: 1
 model:
   outerMesh: 120km
   innerMesh: 120km

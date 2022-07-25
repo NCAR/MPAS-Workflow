@@ -1,19 +1,20 @@
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.LaggedGEFS"
+hofx:
+  maxIODAPoolSize: 3
+members:
+  n: 20
 model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-firstbackground:
-  resource: "PANDAC.LaggedGEFS"
-  nMembers: 20
-externalanalyses:
-  resource: "GFS.PANDAC"
+observations:
+  resource: PANDACArchive
+rtpp:
+  relaxationFactor: 0.8
 variational:
   DAType: 3denvar
   SelfExclusion: True
   maxIODAPoolSize: 3
-hofx:
-  maxIODAPoolSize: 3
-rtpp:
-  relaxationFactor: 0.8
-observations:
-  resource: PANDACArchive

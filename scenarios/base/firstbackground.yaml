@@ -5,9 +5,6 @@ firstbackground:
   # e.g., "ForecastFromAnalysis", "PANDAC.GFS", "PANDAC.LaggedGEFS"
   resource: None
 
-  ## nMembers: number of background, and thus DA and forecast members
-  nMembers: 1
-
   ## defaults:
   # default resource values
   # can be overridden in either a `common` or `{{mesh}}``-specific block

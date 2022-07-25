@@ -8,7 +8,7 @@ ensvariational:
     #{{outerMesh}}:
     #  baseSeconds: int
     #  secondsPerEnVarMember: int
-    #  #@ seconds = $nMembers * $secondsPerEnVarMember + $baseSeconds
+    #  #@ seconds = $members.n * $secondsPerEnVarMember + $baseSeconds
     #  nodesPerMember: int
     #  #@ nodes = $nodesPerMember * $EDASize
     #  PEPerNode: int

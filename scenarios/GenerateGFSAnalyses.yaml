@@ -1,3 +1,13 @@
+externalanalyses:
+  resource: "GFS.RDA"
+experiment:
+  ExperimentName: 'GenerateGFSAnalyses'
+  ExperimentUserPrefix: ''
+job:
+  CPQueueName: economy
+  NCPQueueName: economy
+model:
+  outerMesh: 60km
 workflow:
   # test a recent date
   firstCyclePoint: 20180414T18
@@ -5,13 +15,3 @@ workflow:
   finalCyclePoint: 20180524T18
   CriticalPathType: GenerateExternalAnalyses
   maxActiveCyclePoints: 60
-externalanalyses:
-  resource: "GFS.RDA"
-experiment:
-  ExperimentName: 'GenerateGFSAnalyses'
-  ExperimentUserPrefix: ''
-model:
-  outerMesh: 60km
-job:
-  CPQueueName: economy
-  NCPQueueName: economy

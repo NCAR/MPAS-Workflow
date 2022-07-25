@@ -3,16 +3,11 @@
 if ( $?config_firstbackground ) exit 0
 setenv config_firstbackground 1
 
+source config/members.csh
 source config/model.csh
-
 source config/scenario.csh firstbackground
+
 setenv firstbackground__resource "`$getLocalOrNone resource`"
-if ("$firstbackground__resource" == None) then
-  setenv nMembers 0
-  exit 0
-else
-  $setLocal nMembers
-endif
 
 foreach parameter (directory filePrefix staticDirectory staticPrefix maxMembers memberFormat PrepareFirstBackground)
   set p = "`$getLocalOrNone $firstbackground__resource.$outerMesh.${parameter}`"
@@ -28,7 +23,6 @@ end
 set firstbackground__staticPrefixOuter = `echo "$firstbackground__staticPrefixOuter" \
   | sed 's@{{nCells}}@'${nCellsOuter}'@' \
   `
-
 if ($nMembers > $firstbackground__maxMembersOuter) then
   echo "firstbackground (ERROR): nMembers must be <= maxMembersOuter ($firstbackground__maxMembersOuter)"
   exit 1

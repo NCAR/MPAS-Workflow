@@ -7,7 +7,7 @@ if ("$ExperimentName" == None) then
 
   source config/applications/rtpp.csh
   source config/applications/variational.csh
-  source config/firstbackground.csh
+  source config/members.csh
   source config/model.csh
 
 

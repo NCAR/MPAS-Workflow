@@ -44,6 +44,7 @@ source config/experiment.csh
 source config/externalanalyses.csh
 source config/firstbackground.csh
 source config/tools.csh
+source config/members.csh
 source config/model.csh
 source config/builds.csh
 source config/environmentJEDI.csh
