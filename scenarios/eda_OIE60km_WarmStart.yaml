@@ -38,6 +38,8 @@ observations:
       ahi_himawari8: 15X15
 rtpp:
   relaxationFactor: 0.7
+staticstream:
+  resource: "PANDAC.LaggedGEFS"
 variational:
   DAType: 3denvar
   SelfExclusion: True

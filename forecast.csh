@@ -13,16 +13,16 @@ set ArgFcLengthHR = "$2" 	# fcLengthHRTEMPLATE
 # ArgFcIntervalHR: forecast output interval (hours)
 set ArgFcIntervalHR = "$3" 	# fcIntervalHRTEMPLATE
 
-# ArgFcIAU: whether this forecast has IAU (separate branch)
+# ArgFcIAU: whether this forecast has IAU (separate branch) (True/False)
 set ArgFcIAU = "$4"
 
 # ArgMesh: str, mesh name, one of model.allMeshes, not currently used
 set ArgMesh = "$5"
 
-# ArgDACycling: whether the initial forecast state is a DA analysis
+# ArgDACycling: whether the initial forecast state is a DA analysis (True/False)
 set ArgDACycling = "$6"
 
-# ArgDeleteZerothForecast: whether to delete zeroth-hour forecast
+# ArgDeleteZerothForecast: whether to delete zeroth-hour forecast (True/False)
 set ArgDeleteZerothForecast = "$7"
 
 ## arg checks
@@ -83,18 +83,9 @@ endif
 set icFileExt = ${thisMPASFileDate}.nc
 set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
 
-if ( "$ArgDACycling" == False ) then
-  set configDODACycling = false
-
-  # use cold-start IC for static stream
-  set memberStaticFieldsFile = ${initialState}
-else
-  set configDODACycling = true
-
-  # use previously generated IC for static stream
-  set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
-  set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
-endif
+# use previously generated init file for static stream
+set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
+set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
 
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
@@ -234,6 +225,7 @@ sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
+set configDODACycling = `echo "$ArgDACycling" | sed 's/\(.*\)/\L\1/'` # converts to lower-case
 sed -i 's@configDODACycling@'${configDODACycling}'@' $NamelistFile
 
 if ( ${ArgFcLengthHR} == 0 ) then

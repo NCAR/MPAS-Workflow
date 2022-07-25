@@ -19,6 +19,8 @@ observations:
   resource: PANDACArchive
 rtpp:
   relaxationFactor: 0.8
+staticstream:
+  resource: "PANDAC.LaggedGEFS"
 variational:
   DAType: 3denvar
   nInnerIterations: [15,]

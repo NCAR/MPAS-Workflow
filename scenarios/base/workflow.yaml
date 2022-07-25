@@ -11,14 +11,14 @@ workflow:
 #   + any other date when firstbackground.resource==ForecastFromAnalysis
   firstCyclePoint: 20180414T18
 
-## initialCyclePoint
+## initialCyclePoint (optional)
 # OPTIONS: >= FirstCycleDate (see config/experiment.csh)
 # Either:
-# + initialCyclePoint must be equal to FirstCycleDate
+# + initialCyclePoint defaults to or is manually set equal to firstCyclePoint
 # OR:
-# + CyclingFC must have been completed for the cycle before initialCyclePoint. Set > FirstCycleDate
-#   to automatically restart from a previously completed cycle.
-  initialCyclePoint: 20180414T18
+# + initialCyclePoint > FirstCyclePoint to automatically restart from a previously completed cycle.
+#   CyclingFC output must already be present from the cycle before initialCyclePoint.
+  initialCyclePoint: None
 
 ## finalCyclePoint
 # OPTIONS: >= initialCyclePoint
