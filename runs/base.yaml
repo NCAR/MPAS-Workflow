@@ -3,6 +3,10 @@ run:
 # scenarios located under config/scenarios that will be run
   scenarios: [None]
   scenarioDirectory: scenarios
+  suite: Cycle
+  appIndependentConfigs: [externalanalyses firstbackground job model observations workflow]
+  appDependentConfigs: [ensvariational forecast hofx initic rtpp variational verifyobs verifymodel]
+  ExpConfigType: cycling
 restore:
   scenario: 3dvar_OIE120km_WarmStart
   scenarioDirectory: scenarios

@@ -55,17 +55,10 @@ $setRun scenarioDirectory
 # the one or more cylc suites.  driver scripts (except SetupWorkflow) automatically stop active
 # scenario suites when the user executes this script.
 # OPTIONS: Cycle, GenerateObs, GenerateGFSAnalyses, ForecastFromGFSAnalyses, SetupWorkflow
-setenv suite "`$getRunOrNone suite`"
-if ( "$suite" == None ) then
-  setenv suite Cycle
-  set appIndependentConfigs = (externalanalyses firstbackground job model observations workflow)
-  set appDependentConfigs = (ensvariational forecast hofx initic rtpp variational verifyobs verifymodel)
-  setenv ExpConfigType cycling
-else
-  $setRun appIndependentConfigs
-  $setRun appDependentConfigs
-  $setRun ExpConfigType
-endif
+$setRun suite
+$setRun appIndependentConfigs
+$setRun appDependentConfigs
+$setRun ExpConfigType
 
 ###################################################################################################
 # run the scenarios (only developers should modify this)
