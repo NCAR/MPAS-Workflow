@@ -14,7 +14,10 @@ set yymmdd = `echo ${firstCyclePoint} | cut -c 1-8`
 set hh = `echo ${firstCyclePoint} | cut -c 10-11`
 setenv FirstCycleDate ${yymmdd}${hh}
 
-$setLocal initialCyclePoint
+setenv initialCyclePoint "`$getLocalOrNone initialCyclePoint`"
+if ("$initialCyclePoint" == None) then
+  setenv initialCyclePoint "$firstCyclePoint"
+endif
 $setLocal finalCyclePoint
 
 # critical path selection

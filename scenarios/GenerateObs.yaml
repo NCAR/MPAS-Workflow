@@ -14,9 +14,7 @@ job:
   CPQueueName: economy
   NCPQueueName: economy
 workflow:
-  # test a recent date
   firstCyclePoint: 20180415T00
-  initialCyclePoint: 20180415T00
   finalCyclePoint: 20180416T00
   CriticalPathType: GenerateObs
   maxActiveCyclePoints: 60

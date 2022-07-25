@@ -37,6 +37,7 @@ source config/externalanalyses.csh
 source config/firstbackground.csh
 source config/model.csh
 source config/naming.csh
+source config/staticstream.csh
 source config/workflow.csh
 
 ###################
@@ -131,24 +132,24 @@ set hh = \`echo "\${FirstCycleDate}" | cut -c 9-10\`
 
 setenv FirstFileDate \${yy}-\${mm}-\${dd}_\${hh}.00.00
 
-if ("\$firstbackground__resource" != None) then
-  setenv StaticFieldsDirOuter \`echo "\${firstbackground__staticDirectoryOuter}" \
+if ("\$externalanalyses__resource" != None) then
+  setenv StaticFieldsDirOuter \`echo "\${staticstream__directoryOuter}" \
     | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirOuter}'@' \
     | sed 's@{{FirstCycleDate}}@'\${FirstCycleDate}'@' \
     \`
-  setenv StaticFieldsDirInner \`echo "\${firstbackground__staticDirectoryInner}" \
+  setenv StaticFieldsDirInner \`echo "\${staticstream__directoryInner}" \
     | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirInner}'@' \
     | sed 's@{{FirstCycleDate}}@'\${FirstCycleDate}'@' \
     \`
-  setenv StaticFieldsDirEnsemble \`echo "\${firstbackground__staticDirectoryEnsemble}" \
+  setenv StaticFieldsDirEnsemble \`echo "\${staticstream__directoryEnsemble}" \
     | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirEnsemble}'@' \
     | sed 's@{{FirstCycleDate}}@'\${FirstCycleDate}'@' \
     \`
-  setenv staticMemFmt "\${firstbackground__memberFormatOuter}"
+  setenv staticMemFmt "\${staticstream__memberFormatOuter}"
 
-  setenv StaticFieldsFileOuter \${firstbackground__staticPrefixOuter}.\${FirstFileDate}.nc
-  setenv StaticFieldsFileInner \${firstbackground__staticPrefixInner}.\${FirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble \${firstbackground__staticPrefixEnsemble}.\${FirstFileDate}.nc
+  setenv StaticFieldsFileOuter \${staticstream__filePrefixOuter}.\${FirstFileDate}.nc
+  setenv StaticFieldsFileInner \${staticstream__filePrefixInner}.\${FirstFileDate}.nc
+  setenv StaticFieldsFileEnsemble \${staticstream__filePrefixEnsemble}.\${FirstFileDate}.nc
 else
   setenv StaticFieldsDirOuter None
   setenv StaticFieldsDirInner None
