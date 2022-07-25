@@ -63,14 +63,15 @@ rm ${WrapperScript}
 
 
 ## ColdForecast
-echo "Making ColdForecast job script"
-set JobScript=${mainScriptDir}/ColdForecast.csh
-sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
-    -e 's@StateDirsTEMPLATE@ExternalAnalysisDirOuters@' \
-    -e 's@StatePrefixTEMPLATE@'${externalanalyses__filePrefixOuter}'@' \
-    forecast.csh > ${JobScript}
-chmod 744 ${JobScript}
-
+if ("$externalanalyses__resource" != None) then
+  echo "Making ColdForecast job script"
+  set JobScript=${mainScriptDir}/ColdForecast.csh
+  sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
+      -e 's@StateDirsTEMPLATE@ExternalAnalysisDirOuters@' \
+      -e 's@StatePrefixTEMPLATE@'${externalanalyses__filePrefixOuter}'@' \
+      forecast.csh > ${JobScript}
+  chmod 744 ${JobScript}
+endif
 
 ## Forecast
 echo "Making Forecast job script"
@@ -103,14 +104,15 @@ chmod 744 ${JobScript}
 
 
 ## ExtendedFCFromExternalAnalysis
-echo "Making ExtendedFCFromExternalAnalysis job script"
-set JobScript=${mainScriptDir}/ExtendedFCFromExternalAnalysis.csh
-sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
-    -e 's@StateDirsTEMPLATE@ExternalAnalysisDirOuters@' \
-    -e 's@StatePrefixTEMPLATE@'${externalanalyses__filePrefixOuter}'@' \
-    forecast.csh > ${JobScript}
-chmod 744 ${JobScript}
-
+if ("$externalanalyses__resource" != None) then
+  echo "Making ExtendedFCFromExternalAnalysis job script"
+  set JobScript=${mainScriptDir}/ExtendedFCFromExternalAnalysis.csh
+  sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
+      -e 's@StateDirsTEMPLATE@ExternalAnalysisDirOuters@' \
+      -e 's@StatePrefixTEMPLATE@'${externalanalyses__filePrefixOuter}'@' \
+      forecast.csh > ${JobScript}
+  chmod 744 ${JobScript}
+endif
 
 ## PrepJEDIHofX{{state}}, HofX{{state}}, CleanHofX{{state}}
 ## VerifyObs{{state}}, CompareObs{{state}},

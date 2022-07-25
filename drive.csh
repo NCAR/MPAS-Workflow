@@ -23,6 +23,12 @@ foreach c ($appIndependentConfigs)
   ./config/${c}.csh
 end
 
+# application-specific configurations
+foreach app ($appDependentConfigs)
+  echo "./config/applications/${app}.csh"
+  ./config/applications/${app}.csh
+end
+
 echo "$0 (INFO): Initializing the MPAS-Workflow experiment directory"
 # Create the experiment directory and cylc task scripts
 echo "source SetupWorkflow.csh $ExpConfigType"
@@ -32,15 +38,6 @@ source SetupWorkflow.csh "$ExpConfigType"
 cd ${mainScriptDir}
 
 echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
-
-# experiment-specific configuration
-source config/experiment.csh
-
-# application-specific configurations
-foreach app ($appDependentConfigs)
-  echo "./config/applications/${app}.csh"
-  ./config/applications/${app}.csh
-end
 
 echo "$0 (INFO):  ExperimentName = ${ExperimentName}"
 
