@@ -13,6 +13,7 @@ conda activate npl
 # are migrated to "~/.tcshrc", users should have their expected environment restored.
 
 module load cylc
+module load graphviz
 module load git
 git lfs install
 module list

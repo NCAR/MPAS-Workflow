@@ -7,25 +7,7 @@
 ####################################################################################################
 
 set suite = "$1"
-set appIndependentConfigs = ($2)
-set appDependentConfigs = ($3)
-set ExpConfigType = "$4"
-
-echo "$0 (INFO): generating a new cylc suite"
-
-date
-
-# application-independent configurations
-foreach c ($appIndependentConfigs)
-  echo "./config/${c}.csh"
-  ./config/${c}.csh
-end
-
-# application-specific configurations
-foreach app ($appDependentConfigs)
-  echo "./config/applications/${app}.csh"
-  ./config/applications/${app}.csh
-end
+set ExpConfigType = "$2"
 
 echo "$0 (INFO): Initializing the MPAS-Workflow experiment directory"
 # Create the experiment directory and cylc task scripts

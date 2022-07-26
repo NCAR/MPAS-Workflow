@@ -31,7 +31,7 @@ Starting a cycling experiment on the Cheyenne HPC
  ./drive.csh "{{suite}}" "{{appIndependentConfigs}}" "{{appDependentConfigs}}" "{{ExpConfigType}}"
  # above may be deprecated soon
  #OR
- ./run.csh {{runConfig}} # recommended
+ ./Run.py {{runConfig}} # recommended
  #OR
  ./test.csh # recommended
 ```
@@ -39,7 +39,7 @@ Starting a cycling experiment on the Cheyenne HPC
 Options for {{suite}}, {{appIndependentConfigs}}, {{appDependentConfigs}}, and {{ExpConfigType}}
 are demonstrated in `runs/*.yaml`.
 
-Options for `{{runConfig}}` are given in `run.csh`.
+Options for `{{runConfig}}` are found as files with `.yaml` extensions under `runs/`.
 
 It is required to set the `work` and `run` directories in $HOME/.cylc/global.rc as follows:
 ```
@@ -213,9 +213,9 @@ node of `drivers/Cycle.csh` or any other driver. All task dependencies are descr
 See `scenarios/base/workflow.yaml` for user-selectable options that control `drivers/Cycle.csh`.
 
 
-Super driver: run.csh
----------------------
-`run.csh` executes one of the drivers (`drivers/*.csh`) for a set of pre-defined
+Super driver: Run.py
+--------------------
+`Run.py` initiates one of the suites (`suites/*.rc`) for a set of pre-defined
 scenarios, each of which must be described in a scenario configuration file (i.e.,
 `scenarios/*.yaml`).  The scenario set is selected in `runs/*.yaml`. One of those `run`
 configurations is `test.yaml`.  It is recommended to run the `test` scenario set (1) when
@@ -226,14 +226,13 @@ the command-line:
 ```shell
   source env-script/cheyenne.${YourShell}
 
-  ./run.csh test
+  ./Run.py test
   #OR, equivalently,
   ./test.csh
 ```
 
 Most of the run configurtaions (`runs/*.yaml`) only select a single scenario, except for the
-automated test.  When only one scenario is selected, the user can achieve the same effect by
-executing `drivers/Cycle.csh` and the choice to use `run.csh` is a matter of personal preference.
+automated test.
 
 
 Templated workflow tasks

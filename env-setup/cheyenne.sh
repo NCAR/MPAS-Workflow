@@ -11,6 +11,7 @@ conda activate npl
 # because that flag prevents sourcing ~/.bashrc.
 
 module load cylc
+module load graphviz
 module load git
 git lfs install
 module list
