@@ -6,8 +6,6 @@
 # already running, then executing this script will automatically kill those running suites.
 ####################################################################################################
 
-## general-purpose experimental cycling
-
 set suite = "$1"
 set appIndependentConfigs = ($2)
 set appDependentConfigs = ($3)
