@@ -142,25 +142,25 @@ class Workflow(SubConfig):
     # OR:
     # + initialCyclePoint > FirstCyclePoint to automatically restart from a previously completed cycle.
     #   CyclingFC output must already be present from the cycle before initialCyclePoint.
-    self.setOrDefault('initialCyclePoint', firstCyclePoint)
+    self._setOrDefault('initialCyclePoint', firstCyclePoint)
 
 
     ## FirstCycleDate in directory structure format
     date = dt.datetime.strptime(firstCyclePoint, dtf.abbrevISO8601Fmt)
-    self.set('FirstCycleDate', date.strftime(dtf.cycleFmt))
+    self._set('FirstCycleDate', date.strftime(dtf.cycleFmt))
 
 
     ## next date after first background is initialized
     step = dt.timedelta(hours=CyclingWindowHR)
-    self.set('nextFirstCycleDate', (date+step).strftime(dtf.cycleFmt))
-    self.set('nextFirstFileDate', (date+step).strftime(dtf.MPASFileFmt))
+    self._set('nextFirstCycleDate', (date+step).strftime(dtf.cycleFmt))
+    self._set('nextFirstFileDate', (date+step).strftime(dtf.MPASFileFmt))
 
 
     ## DA2FCOffsetHR and FC2DAOffsetHR: control the offsets between DataAssim and Forecast
     # tasks in the critical path
     # TODO: set DA2FCOffsetHR and FC2DAOffsetHR based on IAU controls
-    self.set('DA2FCOffsetHR', 0)
-    self.set('FC2DAOffsetHR', CyclingWindowHR)
+    self._set('DA2FCOffsetHR', 0)
+    self._set('FC2DAOffsetHR', CyclingWindowHR)
 
 
     # Differentiate between creating the workflow suite for the first time
@@ -168,20 +168,20 @@ class Workflow(SubConfig):
     if (self.get('initialCyclePoint') == firstCyclePoint):
       # The analysis will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
       # initialCyclePoint
-      self.set('AnalysisTimes', '+PT'+str(CyclingWindowHR)+'H/PT'+str(CyclingWindowHR)+'H')
+      self._set('AnalysisTimes', '+PT'+str(CyclingWindowHR)+'H/PT'+str(CyclingWindowHR)+'H')
 
       # The forecast will run every CyclingWindowHR hours, starting CyclingWindowHR+DA2FCOffsetHR hours
       # after the initialCyclePoint
       ColdFCOffset = CyclingWindowHR + self.get('DA2FCOffsetHR')
-      self.set('ForecastTimes', '+PT'+str(ColdFCOffset)+'H/PT'+str(CyclingWindowHR)+'H')
+      self._set('ForecastTimes', '+PT'+str(ColdFCOffset)+'H/PT'+str(CyclingWindowHR)+'H')
 
     else:
       # The analysis will run every CyclingWindowHR hours, starting at the initialCyclePoint
-      self.set('AnalysisTimes', '+PT'+str(CyclingWindowHR)+'H')
+      self._set('AnalysisTimes', '+PT'+str(CyclingWindowHR)+'H')
 
       # The forecast will run every CyclingWindowHR hours, starting DA2FCOffsetHR hours after the
       # initialCyclePoint
-      self.set('ForecastTimes', '+PT'+str(DA2FCOffsetHR)+'H/PT'+str(CyclingWindowHR)+'H')
+      self._set('ForecastTimes', '+PT'+str(DA2FCOffsetHR)+'H/PT'+str(CyclingWindowHR)+'H')
 
 
     #################################
