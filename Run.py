@@ -17,19 +17,7 @@ from pathlib import Path
 # basic classes
 from initialize.Config import Config
 from initialize.Scenario import Scenario
-
-# suite classes
-from initialize.Cycle import Cycle
-from initialize.GenerateExternalAnalyses import GenerateExternalAnalyses
-from initialize.GenerateObs import GenerateObs
-from initialize.ForecastFromExternalAnalyses import ForecastFromExternalAnalyses
-
-suiteDict = {
-  'Cycle': Cycle,
-  'ForecastFromExternalAnalyses': ForecastFromExternalAnalyses,
-  'GenerateExternalAnalyses': GenerateExternalAnalyses,
-  'GenerateObs': GenerateObs,
-}
+from initialize.Suite import SuiteFactory
 
 def main():
   '''
@@ -78,7 +66,7 @@ class Run():
       scenario = Scenario(directory, scenarioName)
       scenario.initialize()
 
-      suite = suiteDict[suiteName](scenario)
+      suite = SuiteFactory(suiteName, scenario)
       suite.drive()
 
 ## execute main program

@@ -31,3 +31,20 @@ class Suite():
     cmd = ['./drive.csh', self.__class__.__name__, self.ExpConfigType]
     print(' '.join(cmd))
     sub = subprocess.run(cmd)
+
+
+# Register all suite classes
+from initialize.Cycle import Cycle
+from initialize.GenerateExternalAnalyses import GenerateExternalAnalyses
+from initialize.GenerateObs import GenerateObs
+from initialize.ForecastFromExternalAnalyses import ForecastFromExternalAnalyses
+
+suiteDict = {
+  'Cycle': Cycle,
+  'ForecastFromExternalAnalyses': ForecastFromExternalAnalyses,
+  'GenerateExternalAnalyses': GenerateExternalAnalyses,
+  'GenerateObs': GenerateObs,
+}
+
+def SuiteFactory(suiteName, scenarioName):
+  return suiteDict[suiteName](scenarioName)

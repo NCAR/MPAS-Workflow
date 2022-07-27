@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import subprocess
 from initialize.Suite import Suite
 #from initialize.Config import Config
 
