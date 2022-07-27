@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from initialize.Config import Config
+
 # This script sets up the environment needed to parse a particular section of the
 # complete scenario configuration YAML.
 
@@ -54,8 +56,9 @@
 # $setNestedForecast updateSea # `setenv forecast__updateSea False`
 
 class Scenario():
-  def __init__(self, directory, name):
-    self.__conf = directory+'/'+name+'.yaml'
+  baseDirectory = 'scenarios/base'
+  def __init__(self, file):
+    self.conf = Config(file)
     self.__script = [
 '''#!/bin/csh -f
 
@@ -65,7 +68,7 @@ class Scenario():
 set configSection = $1
 
 ## this config
-setenv scenarioConfig '''+self.__conf+'''
+setenv scenarioConfig '''+file+'''
 
 source config/config.csh
 
@@ -76,8 +79,12 @@ setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig ${con
 set nestedConfigFunctionName = setNested"`echo "${configSection}" | sed 's/.*/\\u&/'`"
 setenv ${nestedConfigFunctionName} "source $setNestedConfig $baseConfig $scenarioConfig ${configSection}"
 ''']
+
+  def base(self, baseKey):
+    return self.baseDirectory+'/'+baseKey+'.yaml'
+
   def get(self):
-    return self.__conf
+    return self.conf
 
   #TODO: python-ify all config shell scripts such that config/scenario.csh is no longer needed
   def initialize(self):

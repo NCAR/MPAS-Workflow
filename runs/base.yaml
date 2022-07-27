@@ -1,6 +1,0 @@
-run:
-## scenarios
-# scenarios to be run; located under {{directory}
-  scenarios: [None]
-  directory: scenarios
-  suite: Cycle

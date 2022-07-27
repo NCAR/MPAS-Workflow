@@ -36,6 +36,7 @@ set configParts = ( \
   include \
   scenarios \
   suites \
+  test \
   tools \
 )
 foreach part ($configParts)

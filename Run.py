@@ -11,10 +11,12 @@
 #   source env/cheyenne.${YourShell}
 #   ./Run.py {{runConfig}}
 
+# external modules
 import argparse
+from collections.abc import Iterable
 from pathlib import Path
 
-# basic classes
+# local modules
 from initialize.Config import Config
 from initialize.Scenario import Scenario
 from initialize.Suite import SuiteFactory
@@ -23,47 +25,48 @@ def main():
   '''
   main program
   '''
-  # Parse command line
-  ap = argparse.ArgumentParser()
-  ap.add_argument('name', type=str,
-                  help='name of run; i.e., {{runConfig}} part of {{runConfig}}.yaml')
-  args = ap.parse_args()
-
-  run = Run('runs/base.yaml', 'runs/'+args.name+'.yaml')
+  run = Run()
   run.execute()
 
 
 class Run():
-  def __init__(self, dconf, rconf):
+  def __init__(self):
     self.logPrefix = self.__class__.__name__+': '
 
-    defaults = Path(dconf)
-    assert defaults.is_file(), (self.logPrefix+'dconf ('+dconf+') is not a file')
+    # Parse command line
+    ap = argparse.ArgumentParser()
+    ap.add_argument('config', type=str,
+                    help='configuration file; e.g., runs/test.yaml, scenarios/{{scenarioName}}.yaml')
+    args = ap.parse_args()
+    assert Path(args.config).is_file(), (self.logPrefix+'config ('+args.config+') does not exist')
 
-    run = Path(rconf)
-    assert run.is_file(), (self.logPrefix+'rconf ('+rconf+') is not a file')
+    self.__configFile = args.config
+    self.__config = Config(args.config)
 
-    print('(INFO): Running the set of scenarios described by '+rconf)
-
-    self.__run = Config(defaults, run, 'run')
 
   def execute(self):
     '''
     execute the scenarios
     '''
-    # scenario location(s)
-    directory = self.__run.getOrDie('directory')
-    scenarios = self.__run.getOrDie('scenarios')
 
-    # suite name
-    suiteName = self.__run.getOrDie('suite')
+    if self.__config.has('scenarios'):
+      # scenario location(s)
+      scenarios = self.__config.getOrDie('scenarios')
+      assert isinstance(scenarios, Iterable), 'scenarios must be a list of scenario files'
+    else:
+      scenarios = [self.__configFile]
 
-    for scenarioName in scenarios:
+    # suite name (defaults to Cycle)
+    suiteName = self.__config.getOrDefault('suite', 'Cycle')
+
+    for scenarioFile in scenarios:
+      assert Path(scenarioFile).is_file(), (self.logPrefix+'scenario ('+scenarioFile+') does not exist')
+
       print("#########################################################################")
-      print("Running the scenario: "+scenarioName)
+      print("Running the scenario: "+scenarioFile)
       print("#########################################################################")
 
-      scenario = Scenario(directory, scenarioName)
+      scenario = Scenario(scenarioFile)
       scenario.initialize()
 
       suite = SuiteFactory(suiteName, scenario)

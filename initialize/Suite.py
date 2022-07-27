@@ -13,7 +13,7 @@ class Suite():
   appIndependentConfigs = []
   appDependentConfigs = []
   def __init__(self, scenario):
-    self.__scenario = scenario.get()
+    self.conf = scenario.get()
 
     # application-independent configurations
     for c in self.appIndependentConfigs:
@@ -34,10 +34,10 @@ class Suite():
 
 
 # Register all suite classes
-from initialize.Cycle import Cycle
-from initialize.GenerateExternalAnalyses import GenerateExternalAnalyses
-from initialize.GenerateObs import GenerateObs
-from initialize.ForecastFromExternalAnalyses import ForecastFromExternalAnalyses
+from initialize.suites.Cycle import Cycle
+from initialize.suites.GenerateExternalAnalyses import GenerateExternalAnalyses
+from initialize.suites.GenerateObs import GenerateObs
+from initialize.suites.ForecastFromExternalAnalyses import ForecastFromExternalAnalyses
 
 suiteDict = {
   'Cycle': Cycle,
@@ -46,5 +46,5 @@ suiteDict = {
   'GenerateObs': GenerateObs,
 }
 
-def SuiteFactory(suiteName, scenarioName):
-  return suiteDict[suiteName](scenarioName)
+def SuiteFactory(suiteName, scenario):
+  return suiteDict[suiteName](scenario)

@@ -33,10 +33,8 @@ Starting a cycling experiment on the Cheyenne HPC
  ./test.csh
 ```
 
-Options for {{suite}}, {{appIndependentConfigs}}, {{appDependentConfigs}}, and {{ExpConfigType}}
-are demonstrated in `runs/*.yaml`.
-
-Options for `{{runConfig}}` are found as files with `.yaml` extensions under `runs/`.
+`{{runConfig}}` is a yaml-based configuration file, examples of which are given in
+`scenarios/*.yaml` and `test/testinput/*.yaml`
 
 It is required to set the `work` and `run` directories in $HOME/.cylc/global.rc as follows:
 ```
@@ -212,24 +210,22 @@ See `scenarios/base/workflow.yaml` for user-selectable options that control `dri
 
 Super driver: Run.py
 --------------------
-`Run.py` initiates one of the suites (`suites/*.rc`) for a set of pre-defined
-scenarios, each of which must be described in a scenario configuration file (i.e.,
-`scenarios/*.yaml`).  The scenario set is selected in `runs/*.yaml`. One of those `run`
-configurations is `test.yaml`.  It is recommended to run the `test` scenario set (1) when
-a new user first clones the MPAS-Workflow repository and (2) before submitting a GitHub pull request
-to [MPAS-Workflow](https://github.com/NCAR/MPAS-Workflow).  For example, execute the following from
-the command-line:
+`Run.py` initiates one of the suites (`suites/*.rc`) for either a single scenario or a list of
+scenarios, each of which must be described in a scenario configuration file.  Other than for
+automated testing (`test/testinput/test.yaml`), most of the scenario configurations
+(`scenarios/*.yaml`) only select a single scenario. It is recommended to run the `test.yaml`
+list of scenarios both (1) when a new user first clones the MPAS-Workflow repository and (2) before
+submitting a GitHub pull request to [MPAS-Workflow](https://github.com/NCAR/MPAS-Workflow).  For
+example, execute the following from the command-line:
 
 ```shell
   source env-script/cheyenne.${YourShell}
 
-  ./Run.py test
+  ./Run.py test/testinput/test.yaml
   #OR, equivalently,
   ./test.csh
 ```
 
-Most of the run configurtaions (`runs/*.yaml`) only select a single scenario, except for the
-automated test.
 
 
 Templated workflow tasks

@@ -1,3 +1,5 @@
+suite: GenerateExternalAnalyses
+
 externalanalyses:
   resource: "GFS.RDA"
 experiment:
