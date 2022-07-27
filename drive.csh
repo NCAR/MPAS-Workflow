@@ -59,7 +59,7 @@ cylc register ${SuiteName} ${mainScriptDir}
 cylc validate --strict ${SuiteName}
 cylc run ${SuiteName}
 
-# clean up auto-generated rc files
+# clean up auto-generated files
 cd -
 rm include/*/auto/*.rc
 

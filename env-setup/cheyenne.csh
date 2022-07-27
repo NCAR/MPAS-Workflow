@@ -1,6 +1,7 @@
 source /etc/profile.d/modules.csh
 module load conda/latest
 conda activate npl
+setenv PYTHONDONTWRITEBYTECODE 1 # avoid __pycache__ creation
 
 # "conda init" modifies ~/.tcshrc in order to enable conda in batch jobs.  If conda is loaded in
 # a csh/tcsh script that is part of a batch job, the following line is needed.
