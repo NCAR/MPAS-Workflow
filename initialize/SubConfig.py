@@ -10,6 +10,8 @@ class SubConfig():
     # renew config defaults
     #######################
     config.renew(self.defaults, self.baseKey)
+    self.__config = config
+    self._table = {}
 
   def initCsh(self):
     return ['''#!/bin/csh -f
@@ -22,6 +24,17 @@ if ( $?config_'''+self.baseKey+''' ) exit 0
 set config_'''+self.baseKey+''' = 1
 
 ''']
+  def get(self, v):
+    return self._table[v]
+
+  def set(self, v, value):
+    self._table[v] = value
+
+  def setOrDie(self, v):
+    self._table[v] = self.__config.getOrDie(v)
+
+  def setOrDefault(self, v, default):
+    self._table[v] = self.__config.getOrDefault(v, default)
 
   @staticmethod
   def varToCsh(var, value):

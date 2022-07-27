@@ -5,7 +5,7 @@ from initialize.SubConfig import SubConfig
 class Job(SubConfig):
   defaults = 'scenarios/base/job.yaml'
   baseKey = 'job'
-  allVariables = [
+  baseVariables = [
     'CPAccountNumber',
     'CPQueueName',
     'NCPAccountNumber',
@@ -21,26 +21,25 @@ class Job(SubConfig):
     ##############
     # parse config
     ##############
-    self.values = {}
-    for v in self.allVariables:
-      self.values[v] = config.getOrDie(v)
+    for v in self.baseVariables:
+      self.setOrDie(v)
 
     #################################
     # auto-generate shell config file
     #################################
-    cshVariables = self.allVariables
+    cshVariables = list(self._table.keys())
     cshStr = self.initCsh()
     for v in cshVariables:
-      cshStr += self.varToCsh(v, self.values[v])
+      cshStr += self.varToCsh(v, self._table[v])
 
     self.write('config/job.csh', cshStr)
 
     ##################################
     # auto-generate cylc include files
     ##################################
-    cylcVariables = self.allVariables
+    cylcVariables = list(self._table.keys())
     cylcStr = []
     for v in cylcVariables:
-      cylcStr += self.varToCylc(v, self.values[v])
+      cylcStr += self.varToCylc(v, self._table[v])
 
     self.write('include/variables/auto/job.rc', cylcStr)

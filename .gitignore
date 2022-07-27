@@ -4,4 +4,5 @@ include/tasks/auto/*.rc
 include/dependencies/auto/*.rc
 config/scenario.csh
 config/job.csh
+config/workflow.csh
 ~*
