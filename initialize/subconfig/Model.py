@@ -41,7 +41,7 @@ class Model(SubConfig):
     ## precision
     # floating-point precision of all application output
     # OPTIONS: single, double
-    'model__precision': ['single', str],
+    'precision': ['single', str],
   }
 
   def __init__(self, config):
@@ -50,6 +50,8 @@ class Model(SubConfig):
     ###################
     # derived variables
     ###################
+    self._set('model__precision', self.get('precision'))
+
     TemplateFieldsPrefix = 'templateFields'
     self._set('TemplateFieldsPrefix', TemplateFieldsPrefix)
 
@@ -94,22 +96,9 @@ class Model(SubConfig):
     allMeshes = [mesh.name for mesh in self.meshes.values()]
     self._set('allMeshes', allMeshes)
 
-    #################################
-    # auto-generate shell config file
-    #################################
-    cshVariables = list(self._table.keys())
-    cshStr = self.initCsh()
-    for v in cshVariables:
-      cshStr += self.varToCsh(v, self._table[v])
-
-    self.write('config/model.csh', cshStr)
-
-    ##################################
-    # auto-generate cylc include files
-    ##################################
-    cylcVariables = ['outerMesh', 'allMeshes']
-    cylcStr = []
-    for v in cylcVariables:
-      cylcStr += self.varToCylc(v, self._table[v])
-
-    self.write('include/variables/auto/model.rc', cylcStr)
+    ###############################
+    # export for use outside python
+    ###############################
+    csh = list(self._table.keys())
+    cylc = ['outerMesh', 'allMeshes']
+    self.exportVars(csh, cylc)

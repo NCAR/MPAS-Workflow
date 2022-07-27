@@ -7,8 +7,6 @@ from initialize.SubConfig import SubConfig
 
 class Workflow(SubConfig):
   baseKey = 'workflow'
-  requiredVariables = {
-  }
   variablesWithDefaults = {
     #dates
     'firstCyclePoint': ['20180414T18', str],
@@ -184,22 +182,9 @@ class Workflow(SubConfig):
       self._set('ForecastTimes', '+PT'+str(DA2FCOffsetHR)+'H/PT'+str(CyclingWindowHR)+'H')
 
 
-    #################################
-    # auto-generate shell config file
-    #################################
-    cshVariables = list(self._table.keys())
-    cshStr = self.initCsh()
-    for v in cshVariables:
-      cshStr += self.varToCsh(v, self._table[v])
-
-    self.write('config/workflow.csh', cshStr)
-
-    ##################################
-    # auto-generate cylc include files
-    ##################################
-    cylcVariables = list(self._table.keys())
-    cylcStr = []
-    for v in cylcVariables:
-      cylcStr += self.varToCylc(v, self._table[v])
-
-    self.write('include/variables/auto/workflow.rc', cylcStr)
+    ###############################
+    # export for use outside python
+    ###############################
+    csh = list(self._table.keys())
+    cylc = list(self._table.keys())
+    self.exportVars(csh, cylc)

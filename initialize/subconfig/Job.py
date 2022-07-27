@@ -4,8 +4,6 @@ from initialize.SubConfig import SubConfig
 
 class Job(SubConfig):
   baseKey = 'job'
-  requiredVariables = {
-  }
   variablesWithDefaults = {
     ## *AccountNumber
     # OPTIONS: NMMM0015, NMMM0043
@@ -43,22 +41,9 @@ class Job(SubConfig):
 
     # EMPTY
 
-    #################################
-    # auto-generate shell config file
-    #################################
-    cshVariables = list(self._table.keys())
-    cshStr = self.initCsh()
-    for v in cshVariables:
-      cshStr += self.varToCsh(v, self._table[v])
-
-    self.write('config/job.csh', cshStr)
-
-    ##################################
-    # auto-generate cylc include files
-    ##################################
-    cylcVariables = list(self._table.keys())
-    cylcStr = []
-    for v in cylcVariables:
-      cylcStr += self.varToCylc(v, self._table[v])
-
-    self.write('include/variables/auto/job.rc', cylcStr)
+    ###############################
+    # export for use outside python
+    ###############################
+    csh = list(self._table.keys())
+    cylc = list(self._table.keys())
+    self.exportVars(csh, cylc)
