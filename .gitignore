@@ -2,6 +2,7 @@
 include/variables/auto/*.rc
 include/tasks/auto/*.rc
 include/dependencies/auto/*.rc
+config/scenario.csh
 __pycache__
 */__pycache__
 */*/__pycache__

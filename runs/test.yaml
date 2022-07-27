@@ -12,4 +12,4 @@ run:
     eda_OIE120km_WarmStart,
   ]
 # test scenario configurations are copies of the default scenarios, with lower resource overhead
-  scenarioDirectory: scenarios/testinput
+  directory: scenarios/testinput

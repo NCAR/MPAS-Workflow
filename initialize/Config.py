@@ -5,34 +5,36 @@ from copy import deepcopy
 import yaml
 
 class Config():
-  def __init__(self, default, scenario, baseLevel=None):
-    with open(default) as file:
-      self.__default = yaml.load(file, Loader=yaml.FullLoader)
+  def __init__(self, defaults, scenario, baseKey):
+    with open(defaults) as file:
+      d = yaml.load(file, Loader=yaml.FullLoader)
 
     with open(scenario) as file:
       self.__scenario = yaml.load(file, Loader=yaml.FullLoader)
 
-    self.__baseLevel = baseLevel
+    self.reset(d, baseKey)
+
+  def reset(self, defaults, baseKey):
+    self.defaults = defaults[baseKey]
+    self.scenario = self.__scenario[baseKey]
 
   def get(self, dotSeparatedKey):
     '''
     get dictionary value for nested dot-separated key
-    e.g., get('top.next') tries to retrieve self.__scenario['top']['next']
-          if exception ocurrs, try to retrieve self.__defaults['top']['next']
+    e.g., get('top.next') tries to retrieve self.scenario['top']['next']
+          if exception ocurrs, try to retrieve self.defaults['top']['next']
           if exception occurs, return None
     '''
     key = dotSeparatedKey.split('.')
-    if self.__baseLevel is not None:
-      key = [self.__baseLevel] + key
 
     try:
-      v = deepcopy(self.__scenario)
+      v = deepcopy(self.scenario)
       for level in key:
         v = deepcopy(v[level])
         #k = level
     except:
       try:
-        v = deepcopy(self.__default)
+        v = deepcopy(self.defaults)
         for level in key:
           v = deepcopy(v[level])
           #k = level

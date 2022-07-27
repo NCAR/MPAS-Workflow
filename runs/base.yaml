@@ -1,12 +1,6 @@
 run:
 ## scenarios
-# scenarios located under config/scenarios that will be run
+# scenarios to be run; located under {{directory}
   scenarios: [None]
-  scenarioDirectory: scenarios
+  directory: scenarios
   suite: Cycle
-  appIndependentConfigs: [externalanalyses, firstbackground, job, model, observations, workflow]
-  appDependentConfigs: [ensvariational, forecast, hofx, initic, rtpp, variational, verifyobs, verifymodel]
-  ExpConfigType: cycling
-restore:
-  scenario: 3dvar_OIE120km_WarmStart
-  scenarioDirectory: scenarios

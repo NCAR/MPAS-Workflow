@@ -28,12 +28,9 @@ Starting a cycling experiment on the Cheyenne HPC
  #OR
  source env-setup/cheyenne.sh
 
- ./drive.csh "{{suite}}" "{{appIndependentConfigs}}" "{{appDependentConfigs}}" "{{ExpConfigType}}"
- # above may be deprecated soon
+ ./Run.py {{runConfig}}
  #OR
- ./Run.py {{runConfig}} # recommended
- #OR
- ./test.csh # recommended
+ ./test.csh
 ```
 
 Options for {{suite}}, {{appIndependentConfigs}}, {{appDependentConfigs}}, and {{ExpConfigType}}

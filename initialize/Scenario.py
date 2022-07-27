@@ -1,7 +1,4 @@
-#!/bin/csh -f
-
-#if ( $?config_scenario ) exit 0
-#set config_scenario = 1
+#!/usr/bin/env python3
 
 # This script sets up the environment needed to parse a particular section of the
 # complete scenario configuration YAML.
@@ -56,25 +53,19 @@
 # $setNestedForecast nodes     # yaml node does not exist, causes error
 # $setNestedForecast updateSea # `setenv forecast__updateSea False`
 
+class Scenario():
+  def __init__(self, directory, name):
+    self.__conf = directory+'/'+name+'.yaml'
+    self.__script = [
+'''#!/bin/csh -f
+
 ## configSection (required argument)
 # base configuration section defined in scenarios/base/${configSection}.yaml that
 # is being parsed by the sourcing script
 set configSection = $1
 
-## scenario
-# select from pre-defined scenarios (scenarios/*.yaml) or define your own
-set scenario = 3dvar_OIE120km_WarmStart
-
-## scenarioDirectory
-# The scenario must be described in a yaml file in the scenarioDirectory.  Users can create their
-# own unique scenarios by adding options in their scenario YAML that differ from the defaults in
-# scenarios/base/*.yaml.  Redundant options with respect to the base YAMLS may also be included
-# in the user-defined scenario YAML as desired in order to improve clarity. Note that the default
-# values of the base options may change.
-set scenarioDirectory = scenarios
-
 ## this config
-setenv scenarioConfig ${scenarioDirectory}/${scenario}.yaml
+setenv scenarioConfig '''+self.__conf+'''
 
 source config/config.csh
 
@@ -82,13 +73,14 @@ source config/config.csh
 setenv baseConfig scenarios/base/${configSection}.yaml
 setenv setLocal "source $setConfig $baseConfig $scenarioConfig ${configSection}"
 setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig ${configSection}"
-set nestedConfigFunctionName = setNested"`echo "${configSection}" | sed 's/.*/\u&/'`"
+set nestedConfigFunctionName = setNested"`echo "${configSection}" | sed 's/.*/\\u&/'`"
 setenv ${nestedConfigFunctionName} "source $setNestedConfig $baseConfig $scenarioConfig ${configSection}"
+''']
+  def get(self):
+    return self.__conf
 
-#TODO: possibly implement one of below options to reduce config overhead
-# (1) create a combined yaml (thisConfig) to avoid double-reading of baseConfig and
-#     scenarioConfig [less impactful]
-# (2) parse each sub-section of the yaml into environment variables, e.g.,
-#     __workflow__VARIABLENAME, to avoid many redundant reads of the entire config
-#     [more impactful, added complexity]
-# (3) move full config parsing (and task scripts?) into python [most work]
+  #TODO: python-ify all config shell scripts such that config/scenario.csh is no longer needed
+  def initialize(self):
+    with open('config/scenario.csh', 'w') as file:
+      file.writelines(self.__script)
+      file.close()

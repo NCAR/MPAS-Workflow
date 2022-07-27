@@ -12,9 +12,24 @@
 #   ./Run.py {{runConfig}}
 
 import argparse
-from config.Config import Config
-from Drive import Drive
 from pathlib import Path
+
+# basic classes
+from initialize.Config import Config
+from initialize.Scenario import Scenario
+
+# suite classes
+from initialize.Cycle import Cycle
+from initialize.GenerateExternalAnalyses import GenerateExternalAnalyses
+from initialize.GenerateObs import GenerateObs
+from initialize.ForecastFromExternalAnalyses import ForecastFromExternalAnalyses
+
+suiteDict = {
+  'Cycle': Cycle,
+  'ForecastFromExternalAnalyses': ForecastFromExternalAnalyses,
+  'GenerateExternalAnalyses': GenerateExternalAnalyses,
+  'GenerateObs': GenerateObs,
+}
 
 def main():
   '''
@@ -26,58 +41,45 @@ def main():
                   help='name of run; i.e., {{runConfig}} part of {{runConfig}}.yaml')
   args = ap.parse_args()
 
-  r = Run('runs/base.yaml', 'runs/'+args.name+'.yaml')
-  r.execute()
+  run = Run('runs/base.yaml', 'runs/'+args.name+'.yaml')
+  run.execute()
 
 
 class Run():
-  def __init__(self, defaults, run):
+  def __init__(self, dconf, rconf):
     self.logPrefix = self.__class__.__name__+': '
 
-    d = Path(defaults)
-    assert d.is_file(), (self.logPrefix+'defaults ('+defaults+') is not a file')
-    r = Path(run)
-    assert r.is_file(), (self.logPrefix+'run ('+run+') is not a file')
+    defaults = Path(dconf)
+    assert defaults.is_file(), (self.logPrefix+'dconf ('+dconf+') is not a file')
 
-    print('(INFO): Running the set of scenarios described by '+run)
+    run = Path(rconf)
+    assert run.is_file(), (self.logPrefix+'rconf ('+rconf+') is not a file')
 
-    self.__run = Config(d, r, 'run')
-    self.__restore = Config(d, r, 'restore')
+    print('(INFO): Running the set of scenarios described by '+rconf)
+
+    self.__run = Config(defaults, run, 'run')
 
   def execute(self):
     '''
     execute the scenarios
     '''
-    # scenario settings
+    # scenario location(s)
+    directory = self.__run.getOrDie('directory')
     scenarios = self.__run.getOrDie('scenarios')
-    directory = self.__run.getOrDie('scenarioDirectory')
 
-    # suite settings
-    suite = self.__run.getOrDie('suite')
-    appIndependentConfigs = self.__run.getOrDie('appIndependentConfigs')
-    appDependentConfigs = self.__run.getOrDie('appDependentConfigs')
-    ExpConfigType = self.__run.getOrDie('ExpConfigType')
+    # suite name
+    suiteName = self.__run.getOrDie('suite')
 
-    for scenario in scenarios:
+    for scenarioName in scenarios:
       print("#########################################################################")
-      print("Executing Drive for "+scenario)
+      print("Running the scenario: "+scenarioName)
       print("#########################################################################")
 
-      d = Drive(
-        scenario, directory,
-        suite,
-        ExpConfigType,
-        appIndependentConfigs,
-        appDependentConfigs,
-      )
-      d.execute()
+      scenario = Scenario(directory, scenarioName)
+      scenario.initialize()
 
-    # restore settings
-    restScenario = self.__restore.getOrDie('scenario')
-    restDirectory = self.__restore.getOrDie('scenarioDirectory')
-
-    # TODO: remove after config/scenario.csh is python-ified
-    d.restore(restScenario, restDirectory)
+      suite = suiteDict[suiteName](scenario)
+      suite.drive()
 
 ## execute main program
 if __name__ == '__main__': main()
