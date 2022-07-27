@@ -3,4 +3,5 @@ include/variables/auto/*.rc
 include/tasks/auto/*.rc
 include/dependencies/auto/*.rc
 config/scenario.csh
+config/job.csh
 ~*

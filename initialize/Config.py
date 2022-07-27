@@ -1,29 +1,36 @@
 #!/usr/bin/env python3
 
-import argparse
 from copy import deepcopy
 import yaml
 
 class Config():
-  def __init__(self, conf, defaults=None, baseKey=None):
-    with open(conf) as file:
+  def __init__(self, filename, defaults=None, subKey=None):
+    self._filename = filename
+    with open(filename) as file:
       self.__conf = yaml.load(file, Loader=yaml.FullLoader)
 
-    self.renew(defaults, baseKey)
+    self.renew(defaults, subKey)
 
-  def renew(self, defaults=None, baseKey=None):
+#  def make(self, defaults, subKey):
+#    self.renew(defaults, subKey)
+#
+#  @classmethod
+#  def fromOther(cls, other, defaults, subKey):
+#    return cls(other._filename, defaults, subKey)
+
+  def renew(self, defaults=None, subKey=None):
     if defaults is not None:
       with open(defaults) as file:
         d = yaml.load(file, Loader=yaml.FullLoader)
     else:
       d = None
 
-    if baseKey is not None:
+    if subKey is not None:
       if d is not None:
-        self.defaults = d[baseKey]
+        self.defaults = d[subKey]
       else:
         self.defaults = None
-      self.conf = self.__conf[baseKey]
+      self.conf = self.__conf[subKey]
     else:
       if d is not None:
         self.defaults = d

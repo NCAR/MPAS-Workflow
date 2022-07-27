@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
 from initialize.Suite import Suite
-#from initialize.Config import Config
+from initialize.subconfig.Job import Job
 
 class Cycle(Suite):
   ExpConfigType = 'cycling'
-  appIndependentConfigs = ['externalanalyses', 'firstbackground', 'job', 'model', 'observations', 'workflow']
+  appIndependentConfigs = ['externalanalyses', 'firstbackground', 'model', 'observations', 'workflow']
   appDependentConfigs = ['ensvariational', 'forecast', 'hofx', 'initic', 'rtpp', 'variational', 'verifyobs', 'verifymodel']
 
   def __init__(self, scenario):
+    conf = scenario.get()
+    job = Job(conf)
     super().__init__(scenario)

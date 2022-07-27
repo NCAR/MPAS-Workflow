@@ -13,8 +13,6 @@ class Suite():
   appIndependentConfigs = []
   appDependentConfigs = []
   def __init__(self, scenario):
-    self.conf = scenario.get()
-
     # application-independent configurations
     for c in self.appIndependentConfigs:
       cmd = ['./config/'+c+'.csh']
