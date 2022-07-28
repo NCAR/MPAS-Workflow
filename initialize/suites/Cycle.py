@@ -25,4 +25,4 @@ class Cycle(Suite):
     ss = StaticStream(conf, model.meshes, members, workflow.get('FirstCycleDate'))
 
     #TODO: remove below line when all components are migrated to python, turn off for testing for now
-    #super().__init__(scenario)
+    super().__init__(scenario)

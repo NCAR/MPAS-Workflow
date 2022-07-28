@@ -70,8 +70,7 @@ class Run():
       scenario.initialize()
 
       suite = SuiteFactory(suiteName, scenario)
-      #TODO: uncomment line below when testing is complete
-      #suite.drive()
+      suite.drive()
       suite.clean()
 
 ## execute main program
