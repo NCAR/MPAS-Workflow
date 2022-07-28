@@ -6,10 +6,11 @@ from initialize.subconfig.Model import Model
 from initialize.subconfig.Workflow import Workflow
 from initialize.subconfig.ExternalAnalyses import ExternalAnalyses
 
+# applications
+from initialize.subconfig.InitIC import InitIC
+
 class GenerateExternalAnalyses(Suite):
   ExpConfigType = 'base'
-  appDependentConfigs = ['initic']
-
   def __init__(self, scenario):
     conf = scenario.getConfig()
     job = Job(conf)
@@ -18,5 +19,7 @@ class GenerateExternalAnalyses(Suite):
     model = Model(conf)
 
     ea = ExternalAnalyses(conf, model.meshes)
+
+    ic = InitIC(conf, model.meshes)
 
     super().__init__(scenario)

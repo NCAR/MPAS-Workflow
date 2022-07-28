@@ -9,6 +9,10 @@ initic:
     #  seconds: int
     #  nodes: int
     #  PEPerNode: int
+    defaults:
+      seconds: 600
+      nodes: 4
+      PEPerNode: 36
     30km:
       seconds: 60
       nodes: 4

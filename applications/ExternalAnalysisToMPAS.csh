@@ -14,7 +14,6 @@ source config/auto/model.csh
 source config/experiment.csh
 source config/builds.csh
 source config/environmentJEDI.csh
-source config/applications/initic.csh
 source config/auto/externalanalyses.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -82,13 +81,13 @@ end
 
 ## copy/modify dynamic streams file
 rm ${StreamsFileInit}
-cp -v $ModelConfigDir/$AppName/${StreamsFileInit} .
+cp -v $ModelConfigDir/initic/${StreamsFileInit} .
 sed -i 's@{{nCells}}@'${nCells}'@' ${StreamsFileInit}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}
-cp -v $ModelConfigDir/$AppName/${NamelistFileInit} .
+cp -v $ModelConfigDir/initic/${NamelistFileInit} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@nCells@'${nCells}'@' $NamelistFileInit
 sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileInit

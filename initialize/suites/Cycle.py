@@ -10,9 +10,12 @@ from initialize.subconfig.Observations import Observations
 from initialize.subconfig.StaticStream import StaticStream
 from initialize.subconfig.Workflow import Workflow
 
+# applications
+from initialize.subconfig.InitIC import InitIC
+
 class Cycle(Suite):
   ExpConfigType = 'cycling'
-  appDependentConfigs = ['ensvariational', 'forecast', 'hofx', 'initic', 'rtpp', 'variational', 'verifyobs', 'verifymodel']
+  appDependentConfigs = ['ensvariational', 'forecast', 'hofx', 'rtpp', 'variational', 'verifyobs', 'verifymodel']
 
   def __init__(self, scenario):
     conf = scenario.getConfig()
@@ -27,6 +30,8 @@ class Cycle(Suite):
     ea = ExternalAnalyses(conf, model.meshes)
     fb = FirstBackground(conf, model.meshes, members, workflow.get('FirstCycleDate'))
     ss = StaticStream(conf, model.meshes, members, workflow.get('FirstCycleDate'))
+
+    ic = InitIC(conf, model.meshes)
 
     #TODO: remove below line when all components are migrated to python, turn off for testing for now
     super().__init__(scenario)

@@ -7,7 +7,6 @@ date
 source config/environmentJEDI.csh
 source config/experiment.csh
 source config/builds.csh
-source config/applications/initic.csh
 source config/auto/externalanalyses.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
@@ -29,7 +28,7 @@ ln -sfv ${externalanalyses__Vtable} Vtable
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}
-cp -v $ModelConfigDir/$AppName/${NamelistFileWPS} .
+cp -v $ModelConfigDir/initic/${NamelistFileWPS} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
 sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileWPS
 
