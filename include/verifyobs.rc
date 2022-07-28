@@ -67,9 +67,6 @@
         ExtendedMeanFC => HofXMeanFC
         HofXMeanFC:succeed-all => VerifyObsMeanFC
         VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
-  {% for dt in ExtendedFCLengths %}
-        PrepareObservations[+PT{dt}H] => HofXMeanFC{{dt}}hr
-  {% endfor %}
       '''
 {% endif %}
 
@@ -83,10 +80,5 @@
         ExtendedEnsFC:succeed-all => HofXEnsFC
         HofXEnsFC:succeed-all => VerifyObsEnsFC
         VerifyObsEnsFC:succeed-all => CleanHofXEnsFC
-  {% for mem in EnsVerifyMembers %}
-    {% for dt in ExtendedFCLengths %}
-        PrepareObservations[+PT{dt}H] => HofXEnsFC{{mem}}-{{dt}}hr
-    {% endfor %}
-  {% endfor %}
       '''
 {% endif %}
