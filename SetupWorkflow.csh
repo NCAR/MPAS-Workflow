@@ -46,8 +46,8 @@ end
 cd ${mainScriptDir}
 
 ## load the workflow settings
-source config/workflow.csh
-source config/externalanalyses.csh
+source config/auto/workflow.csh
+source config/auto/externalanalyses.csh
 
 cd -
 

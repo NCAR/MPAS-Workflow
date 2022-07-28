@@ -8,7 +8,7 @@ from initialize.Config import Config
 # It should be sourced in a section-specific configuration shell script after all
 # other "config/*.csh" dependencies are sourced as follows
 #
-#   source config/scenario.csh {{configSection}}
+#   source config/auto/scenario.csh {{configSection}}
 
 # Multiple functions are created automatically that can be used to parse the particular YAML
 # section. Consider the following example:
@@ -88,6 +88,6 @@ setenv ${nestedConfigFunctionName} "source $setNestedConfig $baseConfig $scenari
 
   #TODO: python-ify all config shell scripts such that config/scenario.csh is no longer needed
   def initialize(self):
-    with open('config/scenario.csh', 'w') as file:
+    with open('config/auto/scenario.csh', 'w') as file:
       file.writelines(self.__script)
       file.close()

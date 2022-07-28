@@ -3,9 +3,9 @@
 if ( $?config_firstbackground ) exit 0
 setenv config_firstbackground 1
 
-source config/members.csh
-source config/model.csh
-source config/scenario.csh firstbackground
+source config/auto/members.csh
+source config/auto/model.csh
+source config/auto/scenario.csh firstbackground
 
 setenv firstbackground__resource "`$getLocalOrNone resource`"
 

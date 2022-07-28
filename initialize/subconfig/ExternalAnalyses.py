@@ -15,7 +15,7 @@ class ExternalAnalyses(SubConfig):
   }
 
   @staticmethod
-  def extractResource(config, resource, mesh, key)
+  def extractResource(config, resource, mesh, key):
     value = config.get('.'.join([resource, mesh, key]))
     if value is None:
       value = config.get('.'.join([resource, 'common', key]))
@@ -126,16 +126,17 @@ class ExternalAnalyses(SubConfig):
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
 
-{% for mesh in '''+meshes['allMeshes']+''' %}
-  [[LinkExternalAnalysis-{{mesh}}]]
-    inherit = BATCH
-    script = $origin/applications/LinkExternalAnalysis.csh "{{mesh}}"
-    [[[job]]]
-      execution time limit = PT30S
-      execution retry delays = '''+RETRY+'''
-{% endfor %}
-
   [[ExternalAnalysisReady]]
     inherit = BACKGROUND''']
+
+    for mesh in list(set([mesh.name for mesh in self.meshes.values()])):
+      cylcTasks += [
+'''
+  [[LinkExternalAnalysis-'''+mesh+''']]
+    inherit = BATCH
+    script = $origin/applications/LinkExternalAnalysis.csh "'''+mesh+'''"
+    [[[job]]]
+      execution time limit = PT30S
+      execution retry delays = '''+RETRY]
 
     self.exportTasks(cylcTasks)

@@ -39,13 +39,13 @@ endif
 
 # Setup environment
 # =================
-source config/workflow.csh
+source config/auto/workflow.csh
 source config/experiment.csh
-source config/externalanalyses.csh
+source config/auto/externalanalyses.csh
 source config/firstbackground.csh
 source config/tools.csh
-source config/members.csh
-source config/model.csh
+source config/auto/members.csh
+source config/auto/model.csh
 source config/builds.csh
 source config/environmentJEDI.csh
 source config/applications/forecast.csh # "$ArgMesh"

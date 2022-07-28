@@ -44,7 +44,7 @@ set config_'''+self.baseKey+''' = 1
 ''']
     for v in variables:
       Str += self.varToCsh(v, self._table[v])
-    self.write('config/'+self.baseKey+'.csh', Str)
+    self.write('config/auto/'+self.baseKey+'.csh', Str)
 
   def exportVarsToCylc(self, variables):
     Str = []

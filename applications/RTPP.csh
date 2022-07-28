@@ -7,8 +7,8 @@ date
 source config/builds.csh
 source config/environmentJEDI.csh
 source config/experiment.csh
-source config/members.csh
-source config/model.csh
+source config/auto/members.csh
+source config/auto/model.csh
 source config/mpas/variables.csh
 source config/tools.csh
 source config/applications/rtpp.csh

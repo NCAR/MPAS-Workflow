@@ -3,7 +3,7 @@
 setenv TMPDIR /glade/scratch/${USER}/temp
 mkdir -p $TMPDIR
 
-source config/scenario.csh experiment
+source config/auto/scenario.csh experiment
 
 # ParentDirectory parts
 $setLocal ParentDirectoryPrefix

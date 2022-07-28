@@ -3,9 +3,9 @@
 if ( $?config_staticstream ) exit 0
 setenv config_staticstream 1
 
-source config/members.csh
-source config/model.csh
-source config/scenario.csh staticstream
+source config/auto/members.csh
+source config/auto/model.csh
+source config/auto/scenario.csh staticstream
 
 setenv staticstream__resource "`$getLocalOrNone resource`"
 

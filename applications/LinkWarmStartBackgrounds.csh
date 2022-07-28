@@ -1,9 +1,9 @@
 #!/bin/csh -f
 
 source config/experiment.csh
-source config/members.csh
-source config/model.csh
-source config/workflow.csh
+source config/auto/members.csh
+source config/auto/model.csh
+source config/auto/workflow.csh
 
 source config/firstbackground.csh
 

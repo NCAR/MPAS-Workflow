@@ -10,12 +10,12 @@ date
 
 # Setup environment
 # =================
-source config/model.csh
+source config/auto/model.csh
 source config/experiment.csh
 source config/builds.csh
 source config/environmentJEDI.csh
 source config/applications/initic.csh
-source config/externalanalyses.csh
+source config/auto/externalanalyses.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}

@@ -29,7 +29,7 @@ endif
 source config/builds.csh
 source config/environmentJEDI.csh
 source config/experiment.csh
-source config/members.csh
+source config/auto/members.csh
 source config/mpas/variables.csh
 source config/tools.csh
 source config/applications/variational.csh

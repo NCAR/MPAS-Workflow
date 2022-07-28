@@ -3,9 +3,9 @@
 if ( $?config_verifyobs ) exit 0
 setenv config_verifyobs 1
 
-source config/members.csh
+source config/auto/members.csh
 
-source config/scenario.csh verifyobs
+source config/auto/scenario.csh verifyobs
 
 $setLocal pyVerifyDir
 

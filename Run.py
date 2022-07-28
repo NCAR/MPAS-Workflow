@@ -72,6 +72,7 @@ class Run():
       suite = SuiteFactory(suiteName, scenario)
       #TODO: uncomment line below when testing is complete
       #suite.drive()
+      suite.clean()
 
 ## execute main program
 if __name__ == '__main__': main()

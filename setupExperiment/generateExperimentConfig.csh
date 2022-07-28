@@ -33,12 +33,12 @@ if ( \$?config_experiment ) exit 0
 setenv config_experiment 1
 
 source config/benchmark.csh
-source config/externalanalyses.csh
+source config/auto/externalanalyses.csh
 source config/firstbackground.csh
-source config/model.csh
+source config/auto/model.csh
 source config/naming.csh
 source config/staticstream.csh
-source config/workflow.csh
+source config/auto/workflow.csh
 
 ###################
 # scratch directory

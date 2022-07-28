@@ -52,9 +52,9 @@ endif
 # Setup environment
 # =================
 source config/experiment.csh
-source config/model.csh
+source config/auto/model.csh
 source config/observations.csh
-source config/workflow.csh
+source config/auto/workflow.csh
 source config/tools.csh
 source config/mpas/variables.csh
 source config/builds.csh

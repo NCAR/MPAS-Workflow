@@ -3,10 +3,10 @@
 if ( $?config_ensvariational ) exit 0
 setenv config_ensvariational 1
 
-source config/model.csh
+source config/auto/model.csh
 source config/applications/variational.csh
 
-source config/scenario.csh ensvariational
+source config/auto/scenario.csh ensvariational
 
 ## job
 $setLocal job.retry

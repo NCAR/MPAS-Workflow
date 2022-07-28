@@ -93,8 +93,7 @@ class Model(SubConfig):
           self._set('TimeStep', config.getOrDie(mesh+'.TimeStep'))
           self._set('DiffusionLengthScale', config.getOrDie(mesh+'.DiffusionLengthScale'))
 
-    allMeshes = [mesh.name for mesh in self.meshes.values()]
-    self.meshes['allMeshes'] = str(allMeshes)
+    allMeshes = list(set([mesh.name for mesh in self.meshes.values()]))
 
     self._set('allMeshes', allMeshes)
 

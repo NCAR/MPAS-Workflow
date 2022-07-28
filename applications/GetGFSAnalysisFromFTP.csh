@@ -7,7 +7,7 @@ date
 # =================
 source config/builds.csh
 source config/experiment.csh
-#source config/externalanalyses.csh
+#source config/auto/externalanalyses.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`

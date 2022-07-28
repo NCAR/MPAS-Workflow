@@ -3,8 +3,8 @@
 if ( $?config_builds ) exit 0
 set config_builds = 1
 
-source config/model.csh
-source config/scenario.csh builds
+source config/auto/model.csh
+source config/auto/scenario.csh builds
 
 #############################
 ## build directory structures
@@ -57,7 +57,7 @@ set MPASLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
 
 # Note: this also requires modifying forecast.csh:
 #@@ -28,7 +28,7 @@ source config/tools.csh
-# source config/model.csh
+# source config/auto/model.csh
 # source config/modeldata.csh
 # source config/builds.csh
 #-source config/environmentJEDI.csh

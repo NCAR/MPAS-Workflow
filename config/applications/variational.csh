@@ -6,11 +6,11 @@
 if ( $?config_variational ) exit 0
 set config_variational = 1
 
-source config/members.csh
-source config/model.csh
+source config/auto/members.csh
+source config/auto/model.csh
 source config/naming.csh
 
-source config/scenario.csh variational
+source config/auto/scenario.csh variational
 
 # variational settings
 $setLocal DAType

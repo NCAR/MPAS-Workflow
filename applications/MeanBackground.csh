@@ -5,7 +5,7 @@ date
 # Setup environment
 # =================
 source config/experiment.csh
-source config/members.csh
+source config/auto/members.csh
 source config/tools.csh
 source config/builds.csh
 source config/environmentJEDI.csh

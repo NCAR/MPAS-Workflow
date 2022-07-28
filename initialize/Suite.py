@@ -7,6 +7,7 @@
 ####################################################################################################
 
 import subprocess
+import glob
 
 class Suite():
   ExpConfigType = None
@@ -30,6 +31,19 @@ class Suite():
     print(' '.join(cmd))
     sub = subprocess.run(cmd)
 
+  @staticmethod
+  def clean():
+    print('cleaning up auto-generated files...')
+
+    files = glob.glob("config/auto/*.csh")
+    for file in files:
+      cmd = ['rm','-v', file]
+      sub = subprocess.run(cmd)
+
+    files = glob.glob("include/*/auto/*.rc")
+    for file in files:
+      cmd = ['rm','-v', file]
+      sub = subprocess.run(cmd)
 
 # Register all suite classes
 from initialize.suites.Cycle import Cycle

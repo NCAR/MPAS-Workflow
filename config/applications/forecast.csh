@@ -6,11 +6,11 @@
 #if ( $?config_forecast ) exit 0
 #set config_forecast = 1
 
-source config/members.csh
-source config/model.csh
-source config/workflow.csh
+source config/auto/members.csh
+source config/auto/model.csh
+source config/auto/workflow.csh
 
-source config/scenario.csh forecast
+source config/auto/scenario.csh forecast
 
 #if ("$ArgMesh" == None or "$ArgMesh" == "") then
 #  set ArgMesh = "$outerMesh"

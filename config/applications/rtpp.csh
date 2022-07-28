@@ -3,10 +3,10 @@
 if ( $?config_rtpp ) exit 0
 setenv config_rtpp 1
 
-source config/members.csh
-source config/model.csh
+source config/auto/members.csh
+source config/auto/model.csh
 
-source config/scenario.csh rtpp
+source config/auto/scenario.csh rtpp
 
 setenv rtpp__relaxationFactor "`$getLocalOrNone relaxationFactor`"
 if ("$rtpp__relaxationFactor" == None) then

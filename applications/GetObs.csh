@@ -6,7 +6,7 @@ date
 
 # Setup environment
 # =================
-source config/workflow.csh
+source config/auto/workflow.csh
 source config/observations.csh
 source config/experiment.csh
 source config/builds.csh
