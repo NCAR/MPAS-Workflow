@@ -65,6 +65,30 @@ set config_'''+self.baseKey+''' = 1
     ##################################
     self.exportVarsToCylc(cylc)
 
+  def extractResource(self, resource1, resource2, key):
+    if resource1 is None:
+      r1 = ''
+    else:
+      r1 = resource1
+
+    if resource2 is None:
+      r2 = ''
+    else:
+      r2 = resource2
+
+    value = self.__config.get('.'.join([r1, r2, key]))
+
+    if value is None:
+      value = self.__config.get('.'.join([r1, 'common', key]))
+
+    if value is None:
+      value = self.__config.get('.'.join([r1, 'defaults', key]))
+
+    if value is None:
+      value = self.__config.get('.'.join(['defaults', key]))
+
+    return value
+
   def get(self, v):
     return self._vtable[v]
 
@@ -107,6 +131,7 @@ set config_'''+self.baseKey+''' = 1
 
   @staticmethod
   def write(filename, Str):
+     if len(Str) == 0: return
      print('Creating '+filename)
      with open(filename, 'w') as f:
        f.writelines(Str)

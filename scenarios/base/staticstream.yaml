@@ -1,22 +1,16 @@
 staticstream:
-
-  ## resource:
-  # used to select one of the options below (must be in quotes)
-  # e.g., "PANDAC.LaggedGEFS"
-  resource: None
-
   ## defaults:
   # default resource values
   # can be overridden in either a `common` or `{{mesh}}``-specific block
   defaults:
-    ## directory: location of static stream file
+    ## directory (required): location of static stream file
     directory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
 
     ## filePrefix: prefix of static stream file
     filePrefix: "x1.{{nCells}}.init"
 
     ## maxMembers: maximum number of static stream members available for this resource
-    maxMembers: 1
+    maxMembers: None
 
     ## memberFormat:
     # python formatting string for memberDir function

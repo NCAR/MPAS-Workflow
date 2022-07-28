@@ -14,18 +14,7 @@ class FirstBackground(SubConfig):
     'resource': str,
   }
 
-  @staticmethod
-  def extractResource(config, resource, mesh, key):
-    value = config.get('.'.join([resource, mesh, key]))
-    if value is None:
-      value = config.get('.'.join([resource, 'common', key]))
-
-    if value is None:
-      value = config.get('.'.join(['defaults', key]))
-
-    return value
-
-  def __init__(self, config, meshes, members):
+  def __init__(self, config, meshes, members, FirstCycleDate):
     super().__init__(config)
 
     csh = []
@@ -40,7 +29,7 @@ class FirstBackground(SubConfig):
     csh.append(resourceName)
 
     # check for valid members.n
-    maxMembers = self.extractResource(config, resource, meshes['Outer'].name, 'maxMembers')
+    maxMembers = self.extractResource(resource, meshes['Outer'].name, 'maxMembers')
     assert members.n > 0 and members.n <= maxMembers, (
       self.logPrefix+'invalid members.n => '+str(members.n))
 
@@ -54,13 +43,16 @@ class FirstBackground(SubConfig):
         'memberFormat',
         'PrepareFirstBackground',
       ]:
-        value = self.extractResource(config, resource, mesh, key)
+        value = self.extractResource(resource, mesh, key)
         if key == 'PrepareFirstBackground':
           # push back cylc mini-workflow
           variable = key+name
           cylc.append(variable)
         else:
           # auto-generated csh variables
+          if key == 'directory' and isinstance(value, str):
+            value = value.replace('{{FirstCycleDate}}', FirstCycleDate)
+
           variable = 'firstbackground__'+key+name
           csh.append(variable)
 

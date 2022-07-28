@@ -21,11 +21,8 @@ while ( $member <= $nMembers )
       mkdir -p $CyclingFCDirs[$member]
 
       # Outer loop mesh
-      set directoryOuter = `echo "${firstbackground__directoryOuter}" \
-        | sed 's@{{FirstCycleDate}}@'$FirstCycleDate'@' \
-        `
       set fcFile = $CyclingFCDirs[$member]/${FCFilePrefix}.${nextFirstFileDate}.nc
-      set InitialMemberFC = "$directoryOuter"`${memberDir} 2 $member "${firstbackground__memberFormatOuter}"`
+      set InitialMemberFC = "$firstbackground__directoryOuter"`${memberDir} 2 $member "${firstbackground__memberFormatOuter}"`
       ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixOuter}.${nextFirstFileDate}.nc ${fcFile}${OrigFileSuffix}
       # rm ${fcFile}
       cp ${fcFile}${OrigFileSuffix} ${fcFile}
@@ -35,11 +32,8 @@ while ( $member <= $nMembers )
         echo ""
         set innerFCDir = $CyclingFCDirs[$member]/Inner
         mkdir -p ${innerFCDir}
-        set directoryInner = `echo "${firstbackground__directoryInner}" \
-          | sed 's@{{FirstCycleDate}}@'$FirstCycleDate'@' \
-          `
         set fcFile = $innerFCDir/${FCFilePrefix}.${nextFirstFileDate}.nc
-        set InitialMemberFC = "$directoryInner"`${memberDir} 2 $member "${firstbackground__memberFormatInner}"`
+        set InitialMemberFC = "$firstbackground__directoryInner"`${memberDir} 2 $member "${firstbackground__memberFormatInner}"`
         ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixInner}.${nextFirstFileDate}.nc ${fcFile}${OrigFileSuffix}
         # rm ${fcFile}
         cp ${fcFile}${OrigFileSuffix} ${fcFile}

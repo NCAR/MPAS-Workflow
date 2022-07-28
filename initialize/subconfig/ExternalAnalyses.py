@@ -14,17 +14,6 @@ class ExternalAnalyses(SubConfig):
     'resource': str,
   }
 
-  @staticmethod
-  def extractResource(config, resource, mesh, key):
-    value = config.get('.'.join([resource, mesh, key]))
-    if value is None:
-      value = config.get('.'.join([resource, 'common', key]))
-
-    if value is None:
-      value = config.get('.'.join(['defaults', key]))
-
-    return value
-
   def __init__(self, config, meshes):
     super().__init__(config)
 
@@ -51,7 +40,7 @@ class ExternalAnalyses(SubConfig):
          'Vtable',
          'UngribPrefix',
         ]:
-          value = self.extractResource(config, resource, mesh, key)
+          value = self.extractResource(resource, mesh, key)
 
           if key == 'PrepareExternalAnalysisTasks':
             # push back cylc mini-workflow variables
@@ -81,7 +70,7 @@ class ExternalAnalyses(SubConfig):
               else:
                 continue
             
-            if key == 'filePrefix':
+            if key == 'filePrefix' and isinstance(value, str):
               value = value.replace('{{nCells}}', nCells)
 
             self._set(variable, value)
@@ -97,7 +86,7 @@ class ExternalAnalyses(SubConfig):
     ###############################
     self.exportVars(csh, cylc)
 
-    RETRY = self.extractResource(config, resource, meshes['Outer'].name, 'retry')
+    RETRY = self.extractResource(resource, meshes['Outer'].name, 'retry')
 
     tasks = [
 '''## Analyses generated outside MPAS-Workflow

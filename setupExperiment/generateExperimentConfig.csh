@@ -37,7 +37,7 @@ source config/auto/externalanalyses.csh
 source config/auto/firstbackground.csh
 source config/auto/model.csh
 source config/naming.csh
-source config/staticstream.csh
+source config/auto/staticstream.csh
 source config/auto/workflow.csh
 
 ###################
@@ -135,15 +135,12 @@ setenv FirstFileDate \${yy}-\${mm}-\${dd}_\${hh}.00.00
 if ("\$externalanalyses__resource" != None) then
   setenv StaticFieldsDirOuter \`echo "\${staticstream__directoryOuter}" \
     | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirOuter}'@' \
-    | sed 's@{{FirstCycleDate}}@'\${FirstCycleDate}'@' \
     \`
   setenv StaticFieldsDirInner \`echo "\${staticstream__directoryInner}" \
     | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirInner}'@' \
-    | sed 's@{{FirstCycleDate}}@'\${FirstCycleDate}'@' \
     \`
   setenv StaticFieldsDirEnsemble \`echo "\${staticstream__directoryEnsemble}" \
     | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirEnsemble}'@' \
-    | sed 's@{{FirstCycleDate}}@'\${FirstCycleDate}'@' \
     \`
   setenv staticMemFmt "\${staticstream__memberFormatOuter}"
 

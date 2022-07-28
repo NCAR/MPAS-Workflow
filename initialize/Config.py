@@ -26,17 +26,18 @@ class Config():
       d = None
 
     if subKey is not None:
-      if d is not None:
+      try:
         self.defaults = d[subKey]
-      else:
-        self.defaults = None
-      self.conf = self.__conf[subKey]
-    else:
-      if d is not None:
-        self.defaults = d
-      else:
+      except:
         self.defaults = None
 
+      try:
+        self.conf = self.__conf[subKey]
+      except:
+        self.conf = None
+
+    else:
+      self.defaults = d
       self.conf = self.__conf
 
   def get(self, dotSeparatedKey):
@@ -62,6 +63,9 @@ class Config():
           v = None
       else:
         v = None
+
+    if v is not None:
+      if v == 'None': v = None
 
     return v
 
