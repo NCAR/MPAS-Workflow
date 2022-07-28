@@ -98,24 +98,6 @@ else
   setenv ExternalAnalysisWorkDirEnsemble None
 endif
 
-#if ("\${outerMesh}" != None) then
-#  setenv FirstBackgroundDirOuter ${ExperimentDirectory}/\$forecastWorkDir/template-\${outerMesh}/\${FirstCycleDate}
-#else
-#  setenv FirstBackgroundDirOuter None
-#endif
-#
-#if ("\${innerMesh}" != None) then
-#  setenv FirstBackgroundDirInner ${ExperimentDirectory}/\$forecastWorkDir/template-\${innerMesh}/\${FirstCycleDate}
-#else
-#  setenv FirstBackgroundDirInner None
-#endif
-#
-#if ("\${ensembleMesh}" != None) then
-#  setenv FirstBackgroundDirEnsemble ${ExperimentDirectory}/\$forecastWorkDir/template-\${ensembleMesh}/\${FirstCycleDate}
-#else
-#  setenv FirstBackgroundDirEnsemble None
-#endif
-
 ## benchmark experiment archive
 setenv Benchmark${DataAssim}WorkDir \${benchmark__ExperimentDirectory}/\$dataAssimWorkDir
 setenv BenchmarkVerificationWorkDir \${benchmark__ExperimentDirectory}/\$verificationWorkDir

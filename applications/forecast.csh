@@ -69,14 +69,8 @@ if ("$ArgMesh" == "$outerMesh") then
   set nCells = $nCellsOuter
 # not used presently
 #else if ("$ArgMesh" == "$innerMesh") then
-#  set self_WorkDir = ${FirstBackgroundDirInner}
-#  set self_icStateDir = $ExternalAnalysisDirInner
-#  set self_icStatePrefix = $externalanalyses__filePrefixInner
 #  set nCells = $nCellsInner
 #else if ("$ArgMesh" == "$ensembleMesh") then
-#  set self_WorkDir = ${FirstBackgroundDirEnsemble}
-#  set self_icStateDir = $ExternalAnalysisDirEnsemble
-#  set self_icStatePrefix = $externalanalyses__filePrefixEnsemble
 #  set nCells = $nCellsEnsemble
 endif
 
