@@ -10,10 +10,11 @@ from initialize.subconfig.Workflow import Workflow
 
 # applications
 from initialize.subconfig.InitIC import InitIC
+from initialize.subconfig.HofX import HofX
 
 class ForecastFromExternalAnalyses(Suite):
   ExpConfigType = 'base'
-  appDependentConfigs = ['forecast', 'hofx', 'verifyobs', 'verifymodel']
+  appDependentConfigs = ['forecast', 'verifyobs', 'verifymodel']
 
   def __init__(self, scenario):
     conf = scenario.getConfig()
@@ -29,5 +30,6 @@ class ForecastFromExternalAnalyses(Suite):
     ss = StaticStream(conf, model.meshes, members, workflow.get('FirstCycleDate'))
 
     ic = InitIC(conf, model.meshes)
+    hofx = HofX(conf, model.meshes, model)
 
     super().__init__(scenario)

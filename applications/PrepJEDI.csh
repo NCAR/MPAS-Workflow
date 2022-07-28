@@ -69,9 +69,9 @@ source ./getCycleVars.csh
 source config/auto/scenario.csh observations
 setenv getObservationsOrNone "${getLocalOrNone}"
 
-# source applications/$ArgAppType.csh last to apply application-specific behaviors
+# source auto/$ArgAppType.csh last to apply application-specific behaviors
 # for observations
-source config/applications/$ArgAppType.csh
+source config/auto/$ArgAppType.csh
 
 # templated work directory
 set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]

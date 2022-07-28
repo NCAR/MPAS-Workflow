@@ -12,10 +12,11 @@ from initialize.subconfig.Workflow import Workflow
 
 # applications
 from initialize.subconfig.InitIC import InitIC
+from initialize.subconfig.HofX import HofX
 
 class Cycle(Suite):
   ExpConfigType = 'cycling'
-  appDependentConfigs = ['ensvariational', 'forecast', 'hofx', 'rtpp', 'variational', 'verifyobs', 'verifymodel']
+  appDependentConfigs = ['ensvariational', 'forecast', 'rtpp', 'variational', 'verifyobs', 'verifymodel']
 
   def __init__(self, scenario):
     conf = scenario.getConfig()
@@ -32,6 +33,7 @@ class Cycle(Suite):
     ss = StaticStream(conf, model.meshes, members, workflow.get('FirstCycleDate'))
 
     ic = InitIC(conf, model.meshes)
+    hofx = HofX(conf, model.meshes, model)
 
     #TODO: remove below line when all components are migrated to python, turn off for testing for now
     super().__init__(scenario)

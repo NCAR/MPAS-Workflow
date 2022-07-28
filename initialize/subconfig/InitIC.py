@@ -38,6 +38,6 @@ class InitIC(SubConfig):
     [[[directives]]]
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
-      -l = select='''+nodes+''':ncpus='''+PEPerNode+''':mpiprocs='''+PEPerNode+'''''']
+      -l = select='''+nodes+':ncpus='+PEPerNode+':mpiprocs='+PEPerNode]
 
     self.exportTasks(tasks)
