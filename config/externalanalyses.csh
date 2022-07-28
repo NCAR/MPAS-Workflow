@@ -7,6 +7,9 @@ source config/model.csh
 
 source config/scenario.csh externalanalyses
 
+# Get GDAS analyses
+$setLocal GetGDASAnalysis
+
 setenv externalanalyses__resource "`$getLocalOrNone resource`"
 if ("$externalanalyses__resource" == None) then
   exit 0
@@ -111,11 +114,17 @@ cat >! include/tasks/auto/externalanalyses.rc << EOF
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = $externalanalyses__retry
-  [[GetGFSanalysisFromFTP]]
+  [[GetGFSAnalysisFromFTP]]
     inherit = BATCH
     script = \$origin/GetGFSAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT20M
+      execution retry delays = $externalanalyses__retry
+  [[GetGDASAnalysisFromFTP]]
+    inherit = BATCH
+    script = $origin/GetGDASAnalysisFromFTP.csh
+    [[[job]]]
+      execution time limit = PT45M
       execution retry delays = $externalanalyses__retry
 
   [[UngribExternalAnalysis]]
@@ -159,6 +168,8 @@ cat >! include/variables/auto/externalanalyses.rc << EOF
 
 # Use external analysis for sea surface updating
 {% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysisOuter %}
+
+{% set GetGDASAnalysis = ${GetGDASAnalysis} %} #bool
 EOF
 
 endif

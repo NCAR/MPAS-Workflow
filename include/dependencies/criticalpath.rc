@@ -30,6 +30,12 @@
         DataAssimFinished[-PT{{DA2FCOffsetHR}}H] => Forecast
       '''
 
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+  {% if GetGDASAnalysis %}
+        GetGDASAnalysisFromFTP
+  {% endif %}
+      '''
 {% elif CriticalPathType == "Bypass" %}
   {% set CleanDataAssim = 'Null' %}
     [[[{{AnalysisTimes}}]]]

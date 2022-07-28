@@ -5,6 +5,10 @@ externalanalyses:
   # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC"
   resource: None
 
+  ## Download GDAS Analysis
+  # OPTIONS: True/False
+  GetGDASAnalysis: False
+
   ## defaults:
   # default resource values
   # can be overridden in either a `common` or `{{mesh}}``-specific block
