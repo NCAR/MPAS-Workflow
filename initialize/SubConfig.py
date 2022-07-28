@@ -9,6 +9,8 @@ class SubConfig():
   optionalVariables = {}
   variablesWithDefaults = {}
   def __init__(self, config):
+    self.logPrefix = self.__class__.__name__+': '
+
     #######################
     # renew config defaults
     #######################

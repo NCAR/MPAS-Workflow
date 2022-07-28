@@ -3,7 +3,7 @@
 # Process arguments
 # =================
 ## args
-# ArgMesh: str, mesh name, one of model.allMeshes
+# ArgMesh: str, mesh name, one of model.meshes
 set ArgMesh = "$1"
 
 date

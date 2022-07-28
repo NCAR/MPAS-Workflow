@@ -1,6 +1,6 @@
 #!/bin/csh -f
 
-# ArgMesh: str, mesh, one of model.allMeshes, not currently used
+# ArgMesh: str, mesh, one of model.meshes, not currently used
 #set ArgMesh = "$1"
 
 #if ( $?config_forecast ) exit 0

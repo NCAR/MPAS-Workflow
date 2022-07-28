@@ -16,7 +16,7 @@ set ArgFcIntervalHR = "$3" 	# fcIntervalHRTEMPLATE
 # ArgFcIAU: whether this forecast has IAU (separate branch) (True/False)
 set ArgFcIAU = "$4"
 
-# ArgMesh: str, mesh name, one of model.allMeshes, not currently used
+# ArgMesh: str, mesh name, one of model.meshes, not currently used
 set ArgMesh = "$5"
 
 # ArgDACycling: whether the initial forecast state is a DA analysis (True/False)
@@ -42,7 +42,7 @@ endif
 source config/auto/workflow.csh
 source config/experiment.csh
 source config/auto/externalanalyses.csh
-source config/firstbackground.csh
+source config/auto/firstbackground.csh
 source config/tools.csh
 source config/auto/members.csh
 source config/auto/model.csh

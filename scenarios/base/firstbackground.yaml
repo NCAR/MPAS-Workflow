@@ -1,10 +1,4 @@
 firstbackground:
-
-  ## resource:
-  # used to select one of the options below (must be in quotes)
-  # e.g., "ForecastFromAnalysis", "PANDAC.GFS", "PANDAC.LaggedGEFS"
-  resource: None
-
   ## defaults:
   # default resource values
   # can be overridden in either a `common` or `{{mesh}}``-specific block

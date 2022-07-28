@@ -17,8 +17,10 @@ class Members(SubConfig):
     n = self.get('n')
     if n is None:
       self._set('nMembers', 0)
+      self.n = 0
     else:
       self._set('nMembers', n)
+      self.n = n
 
     # EMPTY
 

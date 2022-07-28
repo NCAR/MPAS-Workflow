@@ -54,7 +54,7 @@ class ExternalAnalyses(SubConfig):
           value = self.extractResource(config, resource, mesh, key)
 
           if key == 'PrepareExternalAnalysisTasks':
-            # auto-generated cylc variables
+            # push back cylc mini-workflow variables
             values = [task.replace('{{mesh}}',mesh) for task in value]
 
             # first add variable as a list of tasks
@@ -99,7 +99,7 @@ class ExternalAnalyses(SubConfig):
 
     RETRY = self.extractResource(config, resource, meshes['Outer'].name, 'retry')
 
-    cylcTasks = [
+    tasks = [
 '''## Analyses generated outside MPAS-Workflow
   [[GetGFSAnalysisFromRDA]]
     inherit = BATCH
@@ -129,8 +129,8 @@ class ExternalAnalyses(SubConfig):
   [[ExternalAnalysisReady]]
     inherit = BACKGROUND''']
 
-    for mesh in list(set([mesh.name for mesh in self.meshes.values()])):
-      cylcTasks += [
+    for mesh in list(set([mesh.name for mesh in meshes.values()])):
+      tasks += [
 '''
   [[LinkExternalAnalysis-'''+mesh+''']]
     inherit = BATCH
@@ -139,4 +139,4 @@ class ExternalAnalyses(SubConfig):
       execution time limit = PT30S
       execution retry delays = '''+RETRY]
 
-    self.exportTasks(cylcTasks)
+    self.exportTasks(tasks)
