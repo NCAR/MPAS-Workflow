@@ -3,8 +3,8 @@ externalanalyses:
   # default resource values
   # can be overridden in either a `common` or `{{mesh}}``-specific block
   defaults:
-    ## externalDirectory: where pre-generated analyses are stored
-    externalDirectory: None
+    ## directory (optional): location where pre-generated analyses are stored, if applicable
+    directory: None
 
     ## filePrefix: prefix of analysis files
     filePrefix: "x1.{{nCells}}.init"
@@ -19,7 +19,7 @@ externalanalyses:
     # a cylc dependency graph that generates analyses
     # default behavior is to assume that analyses are already prepared offline
     PrepareExternalAnalysisTasks:
-    - "LinkExternalAnalysis-mesh"
+    - "LinkExternalAnalysis-{{mesh}}"
     - "ExternalAnalysisReady"
 
     ## retry
@@ -29,17 +29,17 @@ externalanalyses:
   GFS:
     PANDAC: # only available 20180415T00-20180525T00
       120km:
-        externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/GFSAna"
+        directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/GFSAna"
       60km:
-        externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/GFSAna"
+        directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/GFSAna"
       30km:
-        externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAna"
+        directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAna"
     RDA:
       common:
         PrepareExternalAnalysisTasks:
         - "GetGFSAnalysisFromRDA"
         - "UngribExternalAnalysis"
-        - "ExternalAnalysisToMPAS-mesh"
+        - "ExternalAnalysisToMPAS-{{mesh}}"
         - "ExternalAnalysisReady"
         Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
         retry: '1*PT20S'
@@ -49,7 +49,7 @@ externalanalyses:
         PrepareExternalAnalysisTasks:
         - "GetGFSAnalysisFromFTP"
         - "UngribExternalAnalysis"
-        - "ExternalAnalysisToMPAS-mesh"
+        - "ExternalAnalysisToMPAS-{{mesh}}"
         - "ExternalAnalysisReady"
         Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
         retry: '80*PT5M'

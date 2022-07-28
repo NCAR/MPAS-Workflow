@@ -25,19 +25,19 @@ source ./getCycleVars.csh
 if ("$ArgMesh" == "$outerMesh") then
   set WorkDir = ${ExternalAnalysisDirOuter}
   set filePrefix = $externalanalyses__filePrefixOuter
-  set externalDirectory = `echo "$externalanalyses__externalDirectoryOuter" \
+  set directory = `echo "$externalanalyses__directoryOuter" \
     | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
     `
 else if ("$ArgMesh" == "$innerMesh") then
   set WorkDir = ${ExternalAnalysisDirInner}
   set filePrefix = $externalanalyses__filePrefixInner
-  set externalDirectory = `echo "$externalanalyses__externalDirectoryInner" \
+  set directory = `echo "$externalanalyses__directoryInner" \
     | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
     `
 else if ("$ArgMesh" == "$ensembleMesh") then
   set WorkDir = ${ExternalAnalysisDirEnsemble}
   set filePrefix = $externalanalyses__filePrefixEnsemble
-  set externalDirectory = `echo "$externalanalyses__externalDirectoryEnsemble" \
+  set directory = `echo "$externalanalyses__directoryEnsemble" \
     | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
     `
 else
@@ -51,7 +51,7 @@ cd ${WorkDir}
 
 # ================================================================================================
 
-ln -sfv $externalDirectory/$filePrefix.$thisMPASFileDate.nc ./
+ln -sfv $directory/$filePrefix.$thisMPASFileDate.nc ./
 
 date
 

@@ -94,11 +94,13 @@ class Model(SubConfig):
           self._set('DiffusionLengthScale', config.getOrDie(mesh+'.DiffusionLengthScale'))
 
     allMeshes = [mesh.name for mesh in self.meshes.values()]
+    self.meshes['allMeshes'] = str(allMeshes)
+
     self._set('allMeshes', allMeshes)
 
     ###############################
     # export for use outside python
     ###############################
     csh = list(self._table.keys())
-    cylc = ['outerMesh', 'allMeshes']
+    cylc = ['allMeshes']
     self.exportVars(csh, cylc)

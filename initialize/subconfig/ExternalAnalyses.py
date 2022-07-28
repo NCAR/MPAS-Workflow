@@ -14,6 +14,17 @@ class ExternalAnalyses(SubConfig):
     'resource': str,
   }
 
+  @staticmethod
+  def extractResource(config, resource, mesh, key)
+    value = config.get('.'.join([resource, mesh, key]))
+    if value is None:
+      value = config.get('.'.join([resource, 'common', key]))
+
+    if value is None:
+      value = config.get('.'.join(['defaults', key]))
+
+    return value
+
   def __init__(self, config, meshes):
     super().__init__(config)
 
@@ -34,29 +45,17 @@ class ExternalAnalyses(SubConfig):
         nCells = str(m.nCells)
 
         for key in [
-         'externalDirectory',
+         'directory',
          'filePrefix',
          'PrepareExternalAnalysisTasks',
-         'retry',
          'Vtable',
          'UngribPrefix',
         ]:
-          value = config.get('.'.join([resource, mesh, key]))
-          if value is None:
-            value = config.get('.'.join([resource, 'common', key]))
+          value = self.extractResource(config, resource, mesh, key)
 
-          if value is None:
-            value = config.get('.'.join(['defaults', key]))
-
-          if key == 'retry':
-            # used in the auto-generated cylc tasks
-            if name == 'Outer':
-              RETRY = value
-            continue
-
-          elif key == 'PrepareExternalAnalysisTasks':
+          if key == 'PrepareExternalAnalysisTasks':
             # auto-generated cylc variables
-            values = [t.replace('mesh',mesh) for t in value]
+            values = [task.replace('{{mesh}}',mesh) for task in value]
 
             # first add variable as a list of tasks
             variable = key+name
@@ -88,15 +87,17 @@ class ExternalAnalyses(SubConfig):
             self._set(variable, value)
             csh.append(variable)
 
-    # Use external analysis for sea surface updating
-    variable = 'PrepareSeaSurfaceUpdate'
-    self._set(variable, self.get('PrepareExternalAnalysisOuter'))
-    cylc.append(variable)
+      # Use external analysis for sea surface updating
+      variable = 'PrepareSeaSurfaceUpdate'
+      self._set(variable, self.get('PrepareExternalAnalysisOuter'))
+      cylc.append(variable)
 
     ###############################
     # export for use outside python
     ###############################
     self.exportVars(csh, cylc)
+
+    RETRY = self.extractResource(config, resource, meshes['Outer'].name, 'retry')
 
     cylcTasks = [
 '''## Analyses generated outside MPAS-Workflow
@@ -125,7 +126,7 @@ class ExternalAnalyses(SubConfig):
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
 
-{% for mesh in allMeshes %}
+{% for mesh in '''+meshes['allMeshes']+''' %}
   [[LinkExternalAnalysis-{{mesh}}]]
     inherit = BATCH
     script = $origin/applications/LinkExternalAnalysis.csh "{{mesh}}"
