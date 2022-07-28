@@ -4,7 +4,7 @@ from initialize.SubConfig import SubConfig
 
 class FirstBackground(SubConfig):
   baseKey = 'firstbackground'
-  defaults = 'scenarios/base/firstbackground.yaml'
+  defaults = 'scenarios/defaults/firstbackground.yaml'
 
   requiredVariables = {
     ## resource:

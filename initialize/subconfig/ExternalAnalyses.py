@@ -4,7 +4,7 @@ from initialize.SubConfig import SubConfig
 
 class ExternalAnalyses(SubConfig):
   baseKey = 'externalanalyses'
-  defaults = 'scenarios/base/externalanalyses.yaml'
+  defaults = 'scenarios/defaults/externalanalyses.yaml'
 
   optionalVariables = {
     ## resource:

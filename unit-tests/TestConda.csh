@@ -51,7 +51,7 @@ echo status=$s
 #  exit $s
 #endif
 
-python /glade/scratch/${USER}/pandac/TryConda/MPAS-Workflow/tools/getYAMLNode.py /glade/scratch/${USER}/pandac/TryConda/MPAS-Workflow/scenarios/base/model.yaml /glade/scratch/${USER}/pandac/TryConda/MPAS-Workflow/scenarios/3dvar_OIE120km_WarmStart.yaml model.outerMesh -o key
+python /glade/scratch/${USER}/pandac/TryConda/MPAS-Workflow/tools/getYAMLNode.py /glade/scratch/${USER}/pandac/TryConda/MPAS-Workflow/scenarios/defaults/model.yaml /glade/scratch/${USER}/pandac/TryConda/MPAS-Workflow/scenarios/3dvar_OIE120km_WarmStart.yaml model.outerMesh -o key
 
 set s = $status
 echo status=$s

@@ -64,7 +64,7 @@ entire workflow.  Some files are designed to be modified by users, and others mo
 `config/scenario.csh`: selection of a particular experiment scenario
 
 For many `csh` scripts located under `config/` and `config/applications`, there is a one-to-one
-correspondance with yaml files located under `scenarios/base/`. For those configuration components,
+correspondance with yaml files located under `scenarios/defaults/`. For those configuration components,
 the `csh` script is used to parse the `yaml` and/or the identically named section of the scenario
 `yaml` file (e.g., `scenarios/3dvar_OIE120km_WarmStart.yaml`). The `base` scenario `yaml`'s contain
 the default values and documentation for each user-configurable setting.  Those `base`
@@ -72,43 +72,43 @@ configuration sections are as follows:
 
 #### cross-application settings
 
-`scenarios/base/experiment.yaml`: experiment naming conventions
+`scenarios/defaults/experiment.yaml`: experiment naming conventions
 
-`scenarios/base/externalanalyses.csh`: controls how external DA system analysis files are produced,
+`scenarios/defaults/externalanalyses.csh`: controls how external DA system analysis files are produced,
 including online vs. offline.  External analyses are used for verification and for optionally
 initializing a cold-start forecast at the first cylce of an experiment.
 
-`scenarios/base/firstbackground.csh`: controls how the first DA cycle background state is supplied,
+`scenarios/defaults/firstbackground.csh`: controls how the first DA cycle background state is supplied,
 including online vs. offline and deterministic vs. ensemble
 
-`scenarios/base/job.yaml`: account and queue selection
+`scenarios/defaults/job.yaml`: account and queue selection
 
-`scenarios/base/model.yaml`: model mesh settings
+`scenarios/defaults/model.yaml`: model mesh settings
 
-`scenarios/base/observations.yaml`: observation source data
+`scenarios/defaults/observations.yaml`: observation source data
 
-`scenarios/base/staticstream.csh`: controls how the static stream file is supplied.  Defaults to
+`scenarios/defaults/staticstream.csh`: controls how the static stream file is supplied.  Defaults to
 using the externalanalyses from the first cycle
 
-`scenarios/base/workflow.yaml`: cylc task selection and date bounds
+`scenarios/defaults/workflow.yaml`: cylc task selection and date bounds
 
 #### application-specific settings
 
-`scenarios/base/ensvariational.yaml`
+`scenarios/defaults/ensvariational.yaml`
 
-`scenarios/base/forecast.yaml`
+`scenarios/defaults/forecast.yaml`
 
-`scenarios/base/hofx.yaml`
+`scenarios/defaults/hofx.yaml`
 
-`scenarios/base/initic.yaml`
+`scenarios/defaults/initic.yaml`
 
-`scenarios/base/rtpp.yaml`
+`scenarios/defaults/rtpp.yaml`
 
-`scenarios/base/variational.yaml`
+`scenarios/defaults/variational.yaml`
 
-`scenarios/base/verifyobs.yaml`
+`scenarios/defaults/verifyobs.yaml`
 
-`scenarios/base/verifymodel.yaml`
+`scenarios/defaults/verifymodel.yaml`
 
 While users can directly modify those `base` `yaml`'s to achieve their desired configuration,
 it is recommended to modify one of the existing full scenarios located directly under `scenarios/`
@@ -200,12 +200,12 @@ respectively, independent of tasks in other categories.
 include dependencies on tasks in `include/tasks/cycling.rc` that produce the data to be verified.
 Multiple aspects of verification are controlled via the `workflow` section of the scenario
 configuration. Full descriptions of all verification options are available in
-`scenarios/base/workflow.yaml`.
+`scenarios/defaults/workflow.yaml`.
 - `include/tasks/*.rc`: describes all cylc tasks that can be selected under the `[[dependencies]]`
 node of `drivers/Cycle.csh` or any other driver. All task dependencies are described in one of
 `criticalpath.rc`, `verifyobs.rc`, `verifymodel.rc`, or files included therein.
 
-See `scenarios/base/workflow.yaml` for user-selectable options that control `drivers/Cycle.csh`.
+See `scenarios/defaults/workflow.yaml` for user-selectable options that control `drivers/Cycle.csh`.
 
 
 Super driver: Run.py
@@ -249,7 +249,7 @@ deterministic cycling.
 a single executable.  Multiple `EDAInstance*` members with a small number of sub-members can
 be conducted simultaneously if it is beneficial to group members instead of running them all
 independently like what is achieved via `DAMember*` tasks.  Users are referred to
-`scenarios/base/variational.yaml` for configuration information.
+`scenarios/defaults/variational.yaml` for configuration information.
 
 `forecast.csh`: used to generate all forecast scripts, e.g., `CyclingFC.csh` and `ExtendedMeanFC.csh`,
 which execute `mpas_atmosphere` forecasts across a templated time range with state output at a
@@ -272,7 +272,7 @@ partitioning.
 application.  Templated w.r.t. the background state prefix and directory. Reads one output
 forecast state from a `CyclingFCMember*` task, as coded in `SetupWorkflow.csh`.  Multiple instances
 can be launched in parallel to conduct an ensemble of data assimilations (EDA).  See
-`scenarios/base/variational.yaml` for configuration information.
+`scenarios/defaults/variational.yaml` for configuration information.
 
 `verifyobs.csh`: used to generate scripts that verify observation-database output from `HofX` and
 `Variational`-type tasks.

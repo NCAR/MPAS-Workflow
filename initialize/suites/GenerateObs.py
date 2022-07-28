@@ -10,7 +10,7 @@ class GenerateObs(Suite):
   appDependentConfigs = []
 
   def __init__(self, scenario):
-    conf = scenario.get()
+    conf = scenario.getConfig()
     job = Job(conf)
     workflow = Workflow(conf)
 

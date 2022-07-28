@@ -9,7 +9,7 @@ class Mesh():
     self.attrib = attrib
 
 class Model(SubConfig):
-  defaults = 'scenarios/base/model.yaml'
+  defaults = 'scenarios/defaults/model.yaml'
   baseKey = 'model'
   # mesh descriptors, e.g.:
   # uniform spacing: 30km, 60km, 120km

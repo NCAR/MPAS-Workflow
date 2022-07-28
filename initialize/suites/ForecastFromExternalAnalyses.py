@@ -13,7 +13,7 @@ class ForecastFromExternalAnalyses(Suite):
   appDependentConfigs = ['forecast', 'hofx', 'initic', 'verifyobs', 'verifymodel']
 
   def __init__(self, scenario):
-    conf = scenario.get()
+    conf = scenario.getConfig()
     job = Job(conf)
     members = Members(conf)
     model = Model(conf)

@@ -12,7 +12,7 @@ class GenerateExternalAnalyses(Suite):
   appDependentConfigs = ['initic']
 
   def __init__(self, scenario):
-    conf = scenario.get()
+    conf = scenario.getConfig()
     job = Job(conf)
     model = Model(conf)
     workflow = Workflow(conf)

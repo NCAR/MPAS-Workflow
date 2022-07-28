@@ -4,7 +4,7 @@ from initialize.SubConfig import SubConfig
 
 class StaticStream(SubConfig):
   baseKey = 'staticstream'
-  defaults = 'scenarios/base/staticstream.yaml'
+  defaults = 'scenarios/defaults/staticstream.yaml'
 
   optionalVariables = {
     ## resource:

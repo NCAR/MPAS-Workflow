@@ -56,14 +56,13 @@ from initialize.Config import Config
 # $setNestedForecast updateSea # `setenv forecast__updateSea False`
 
 class Scenario():
-  baseDirectory = 'scenarios/base'
   def __init__(self, file):
     self.conf = Config(file)
     self.__script = [
 '''#!/bin/csh -f
 
 ## configSection (required argument)
-# base configuration section defined in scenarios/base/${configSection}.yaml that
+# defaults configuration section defined in scenarios/defaults/${configSection}.yaml that
 # is being parsed by the sourcing script
 set configSection = $1
 
@@ -73,17 +72,14 @@ setenv scenarioConfig '''+file+'''
 source config/config.csh
 
 ## define local re-usable configuration parsing functions for this configSection
-setenv baseConfig scenarios/base/${configSection}.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig ${configSection}"
-setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig ${configSection}"
+setenv defaultsConfig scenarios/defaults/${configSection}.yaml
+setenv setLocal "source $setConfig $defaultsConfig $scenarioConfig ${configSection}"
+setenv getLocalOrNone "source $getConfigOrNone $defaultsConfig $scenarioConfig ${configSection}"
 set nestedConfigFunctionName = setNested"`echo "${configSection}" | sed 's/.*/\\u&/'`"
-setenv ${nestedConfigFunctionName} "source $setNestedConfig $baseConfig $scenarioConfig ${configSection}"
+setenv ${nestedConfigFunctionName} "source $setNestedConfig $defaultsConfig $scenarioConfig ${configSection}"
 ''']
 
-  def base(self, baseKey):
-    return self.baseDirectory+'/'+baseKey+'.yaml'
-
-  def get(self):
+  def getConfig(self):
     return self.conf
 
   #TODO: python-ify all config shell scripts such that config/scenario.csh is no longer needed
