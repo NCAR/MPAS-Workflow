@@ -122,7 +122,7 @@ cat >! include/tasks/auto/externalanalyses.rc << EOF
       execution retry delays = $externalanalyses__retry
   [[GetGDASAnalysisFromFTP]]
     inherit = BATCH
-    script = $origin/GetGDASAnalysisFromFTP.csh
+    script = \$origin/GetGDASAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT45M
       execution retry delays = $externalanalyses__retry
