@@ -14,7 +14,7 @@ class SubConfig():
     #######################
     config.renew(self.defaults, self.baseKey)
     self.__config = config
-    self._table = {}
+    self._vtable = {}
 
     ##############
     # parse config
@@ -43,13 +43,13 @@ set config_'''+self.baseKey+''' = 1
 
 ''']
     for v in variables:
-      Str += self.varToCsh(v, self._table[v])
+      Str += self.varToCsh(v, self._vtable[v])
     self.write('config/auto/'+self.baseKey+'.csh', Str)
 
   def exportVarsToCylc(self, variables):
     Str = []
     for v in variables:
-      Str += self.varToCylc(v, self._table[v])
+      Str += self.varToCylc(v, self._vtable[v])
     self.write('include/variables/auto/'+self.baseKey+'.rc', Str)
 
   def exportVars(self, csh=[], cylc=[]):
@@ -64,25 +64,25 @@ set config_'''+self.baseKey+''' = 1
     self.exportVarsToCylc(cylc)
 
   def get(self, v):
-    return self._table[v]
+    return self._vtable[v]
 
   def _set(self, v, value):
-    self._table[v] = value
+    self._vtable[v] = value
 
   def _setOrDie(self, v, t=None):
-    self._table[v] = self.__config.getOrDie(v)
+    self._vtable[v] = self.__config.getOrDie(v)
     if t is not None:
-      self._table[v] = t(self._table[v])
+      self._vtable[v] = t(self._vtable[v])
 
   def _setOrNone(self, v, t=None):
-    self._table[v] = self.__config.get(v)
-    if self._table[v] is not None and t is not None:
-      self._table[v] = t(self._table[v])
+    self._vtable[v] = self.__config.get(v)
+    if self._vtable[v] is not None and t is not None:
+      self._vtable[v] = t(self._vtable[v])
 
   def _setOrDefault(self, v, default, t=None):
-    self._table[v] = self.__config.getOrDefault(v, default)
+    self._vtable[v] = self.__config.getOrDefault(v, default)
     if t is not None:
-      self._table[v] = t(self._table[v])
+      self._vtable[v] = t(self._vtable[v])
 
   @staticmethod
   def varToCsh(var, value):

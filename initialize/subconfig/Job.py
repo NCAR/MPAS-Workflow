@@ -44,6 +44,9 @@ class Job(SubConfig):
     ###############################
     # export for use outside python
     ###############################
-    csh = list(self._table.keys())
-    cylc = list(self._table.keys())
+    # no variables needed in csh
+    csh = []
+
+    # all variables needed in cylc
+    cylc = list(self._vtable.keys())
     self.exportVars(csh, cylc)

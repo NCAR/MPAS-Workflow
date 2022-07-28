@@ -100,6 +100,6 @@ class Model(SubConfig):
     ###############################
     # export for use outside python
     ###############################
-    csh = list(self._table.keys())
+    csh = list(self._vtable.keys())
     cylc = ['allMeshes']
     self.exportVars(csh, cylc)
