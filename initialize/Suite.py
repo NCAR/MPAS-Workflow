@@ -11,15 +11,8 @@ import glob
 
 class Suite():
   ExpConfigType = None
-  appIndependentConfigs = []
   appDependentConfigs = []
   def __init__(self, scenario):
-    # application-independent configurations
-    for c in self.appIndependentConfigs:
-      cmd = ['./config/'+c+'.csh']
-      print(' '.join(cmd))
-      sub = subprocess.run(cmd)
-
     # application-specific configurations
     for app in self.appDependentConfigs:
       cmd = ['./config/applications/'+app+'.csh']

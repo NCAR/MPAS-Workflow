@@ -8,14 +8,15 @@ from initialize.subconfig.ExternalAnalyses import ExternalAnalyses
 
 class GenerateExternalAnalyses(Suite):
   ExpConfigType = 'base'
-  appIndependentConfigs = []
   appDependentConfigs = ['initic']
 
   def __init__(self, scenario):
     conf = scenario.getConfig()
     job = Job(conf)
-    model = Model(conf)
     workflow = Workflow(conf)
+
+    model = Model(conf)
+
     ea = ExternalAnalyses(conf, model.meshes)
 
     super().__init__(scenario)

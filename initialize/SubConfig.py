@@ -79,6 +79,9 @@ set config_'''+self.baseKey+''' = 1
     value = self.__config.get('.'.join([r1, r2, key]))
 
     if value is None:
+      value = self.__config.get('.'.join([r1, key]))
+
+    if value is None:
       value = self.__config.get('.'.join([r1, 'common', key]))
 
     if value is None:
@@ -88,6 +91,11 @@ set config_'''+self.baseKey+''' = 1
       value = self.__config.get('.'.join(['defaults', key]))
 
     return value
+
+  def extractResourceOrDie(self, r1, r2, key):
+    v = self.extractResource(r1, r2, key)
+    assert v is not None, (r1+', '+r2+', '+key+' targets invalid or nonexistent node')
+    return v
 
   def get(self, v):
     return self._vtable[v]

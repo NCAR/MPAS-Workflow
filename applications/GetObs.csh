@@ -7,7 +7,7 @@ date
 # Setup environment
 # =================
 source config/auto/workflow.csh
-source config/observations.csh
+source config/auto/observations.csh
 source config/experiment.csh
 source config/builds.csh
 set yyyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`

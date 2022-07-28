@@ -1,34 +1,9 @@
 observations:
-## resource
-# OPTIONS: PANDACArchive, GladeRDAOnline, NCEPFTPOnline, GenerateObs
-  resource: None
+  # resource options available for selection with observations.resource
+  # the selected resource is parsed in applications/PrepJEDI.csh
 
-  job:
-    # cylc retry strings for "GetObs" and "ObsToIODA" tasks
-    get__retry: '80*PT5M'
-    convert__retry: '2*PT30S'
-
-## convertToIODAObservations
-# list of raw observation types to convert to IODA format, when (resource != PANDACArchive)
-  convertToIODAObservations:
-  - prepbufr
-  - satwnd
-  - gpsro
-  - 1bamua
-  #- mtiasi
-  #- 1bmhs
-  #- airsev
-  #- cris
-
-## GDAS observations error table
-# This file provides observation errors for all types of conventional and satwnd data
-# for 33 pressure levels (1100 hPa to 0 hPa). More information on this table can be
-# found in the GSI User's guide (https://dtcenter.ucar.edu/com-GSI/users/docs/users_guide/GSIUserGuide_v3.7.pdf)
-  GDASObsErrtable: /glade/work/guerrett/pandac/fixed_input/GSI_errtables/HRRRENS_errtable_10sep2018.r3dv
-
-## *Directory
-# locations of raw bufr and prepbufr observation data, separated by resource
-
+  ## IODADirectory (used below)
+  # locations of raw bufr and prepbufr observation data, separated by resource
   NCEPFTPOnline:
     PrepareObservationsTasks:
     - GetObs
@@ -220,12 +195,3 @@ observations:
 
       hofx:
         common: /glade/p/mmm/parc/guerrett/pandac/fixed_input/GenerateObs/Observations
-
-
-## CRTM
-  CRTMTABLES: /glade/work/guerrett/pandac/fixed_input/crtm_bin/
-
-## InterpolationType
-# controls the horizontal interpolation used in variational and hofx applications
-# OPTIONS: bump, unstructured
-  InterpolationType: unstructured

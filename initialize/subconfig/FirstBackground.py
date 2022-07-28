@@ -29,7 +29,7 @@ class FirstBackground(SubConfig):
     csh.append(resourceName)
 
     # check for valid members.n
-    maxMembers = self.extractResource(resource, meshes['Outer'].name, 'maxMembers')
+    maxMembers = self.extractResourceOrDie(resource, meshes['Outer'].name, 'maxMembers')
     assert members.n > 0 and members.n <= maxMembers, (
       self.logPrefix+'invalid members.n => '+str(members.n))
 

@@ -53,7 +53,7 @@ endif
 # =================
 source config/experiment.csh
 source config/auto/model.csh
-source config/observations.csh
+source config/auto/observations.csh
 source config/auto/workflow.csh
 source config/tools.csh
 source config/mpas/variables.csh
@@ -64,6 +64,13 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
+# getObservationsOrNone exposes the observations section of the config for run-time-dependent
+# behaviors
+source config/auto/scenario.csh observations
+setenv getObservationsOrNone "${getLocalOrNone}"
+
+# source applications/$ArgAppType.csh last to apply application-specific behaviors
+# for observations
 source config/applications/$ArgAppType.csh
 
 # templated work directory
@@ -371,10 +378,6 @@ set thisYAML = insert${sedstring}.yaml
 sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
-
-
-## Horizontal interpolation type
-sed -i 's@{{InterpolationType}}@'${InterpolationType}'@g' $thisYAML
 
 
 ## QC characteristics

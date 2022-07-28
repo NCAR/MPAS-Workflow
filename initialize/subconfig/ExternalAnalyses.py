@@ -90,7 +90,7 @@ class ExternalAnalyses(SubConfig):
     ###############################
     self.exportVars(csh, cylc)
 
-    RETRY = self.extractResource(resource, meshes['Outer'].name, 'retry')
+    RETRY = self.extractResourceOrDie(resource, meshes['Outer'].name, 'retry')
 
     tasks = [
 '''## Analyses generated outside MPAS-Workflow
