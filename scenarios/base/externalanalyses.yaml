@@ -1,10 +1,4 @@
 externalanalyses:
-
-  ## resource:
-  # used to select one of the options below (must be in quotes)
-  # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC"
-  resource: None
-
   ## defaults:
   # default resource values
   # can be overridden in either a `common` or `{{mesh}}``-specific block

@@ -2,9 +2,10 @@
 include/variables/auto/*.rc
 include/tasks/auto/*.rc
 include/dependencies/auto/*.rc
-config/scenario.csh
 config/job.csh
+config/externalanalyses.csh 
 config/members.csh
 config/model.csh
+config/scenario.csh
 config/workflow.csh
 ~*

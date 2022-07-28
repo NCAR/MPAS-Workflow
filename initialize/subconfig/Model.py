@@ -3,9 +3,9 @@
 from initialize.SubConfig import SubConfig
 
 class Mesh():
-  def __init__(self, name, ncells, attrib=None):
+  def __init__(self, name, nCells, attrib=None):
     self.name = str(name)
-    self.ncells = int(ncells)
+    self.nCells = int(nCells)
     self.attrib = attrib
 
 class Model(SubConfig):

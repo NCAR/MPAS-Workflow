@@ -28,6 +28,9 @@ class SubConfig():
     for v, a in self.variablesWithDefaults.items():
       self._setOrDefault(v, a[0], a[1])
 
+  def exportTasks(self, text):
+    self.write('include/tasks/auto/'+self.baseKey+'.rc', text)
+
   def exportVarsToCsh(self, variables):
     Str = ['''#!/bin/csh -f
 ######################################################
