@@ -1,4 +1,8 @@
 externalanalyses:
+  ## Download GDAS Analysis
+  # OPTIONS: True/False
+  GetGDASAnalysis: False
+
   ## defaults:
   # default resource values
   # can be overridden in either a `common` or `{{mesh}}``-specific block

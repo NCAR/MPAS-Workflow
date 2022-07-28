@@ -11,6 +11,7 @@ set standaloneApplications = ( \
   EnsembleOfVariational.csh \
   ExternalAnalysisToMPAS.csh \
   GenerateABEInflation.csh \
+  GetGDASAnalysisFromFTP.csh \
   GetGFSAnalysisFromRDA.csh \
   GetGFSAnalysisFromFTP.csh \
   GetObs.csh \

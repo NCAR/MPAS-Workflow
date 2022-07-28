@@ -13,12 +13,16 @@ class ExternalAnalyses(SubConfig):
     # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC"
     'resource': str,
   }
+  variablesWithDefaults = {
+    # Get GDAS analyses
+    'GetGDASAnalysis': [False, bool]
+  }
 
   def __init__(self, config, meshes):
     super().__init__(config)
 
     csh = []
-    cylc = []
+    cylc = ['GetGDASAnalysis']
 
     ###################
     # derived variables
@@ -101,6 +105,12 @@ class ExternalAnalyses(SubConfig):
     script = $origin/applications/GetGFSAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT20M
+      execution retry delays = '''+RETRY+'''
+  [[GetGDASAnalysisFromFTP]]
+    inherit = BATCH
+    script = $origin/GetGDASAnalysisFromFTP.csh
+    [[[job]]]
+      execution time limit = PT45M
       execution retry delays = '''+RETRY+'''
 
   [[UngribExternalAnalysis]]
