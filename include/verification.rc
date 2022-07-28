@@ -83,7 +83,6 @@
         ExtendedMeanFC => HofXMeanFC
         ExtendedMeanFC => VerifyModelMeanFC
   {% for dt in ExtendedFCLengths %}
-        PrepareObservations[+PT{dt}H] => HofXMeanFC{{dt}}hr
         HofXMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
         VerifyObsMeanFC{{dt}}hr => CleanHofXMeanFC{{dt}}hr
   {% endfor %}
@@ -101,7 +100,6 @@
         ExtendedFC{{mem}} => VerifyModelEnsFC{{mem}}
         ExtendedFC{{mem}} => HofXEnsFC{{mem}}
     {% for dt in ExtendedFCLengths %}
-        PrepareObservations[+PT{dt}H] => HofXEnsFC{{mem}}-{{dt}}hr
         HofXEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
         VerifyObsEnsFC{{mem}}-{{dt}}hr => CleanHofXEnsFC{{mem}}-{{dt}}hr
     {% endfor %}
