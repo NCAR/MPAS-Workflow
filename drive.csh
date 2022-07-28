@@ -107,6 +107,7 @@ cat >! suite.rc << EOF
 
 # observation information
 {% set observationsResource = "${observations__resource}" %}
+{% set GetGDASAnalysis = ${GetGDASAnalysis} %} #bool
 
 # members
 {% set nMembers = ${nMembers} %} #integer

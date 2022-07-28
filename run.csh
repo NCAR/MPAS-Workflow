@@ -22,11 +22,14 @@ set ValidRunConfigs = ( \
   60kmEDA \
   30km-60km3denvar \
   30km-60km3denvarSpecifiedEnsemble \
+  30km-60km3dhybridSpecifiedEnsemble \
   RealTime \
   GenerateObs \
   GenerateGFSAnalyses \
   ForecastFromGFSAnalyses \
   IASI120km3denvar \
+  IASI30kmIE60km3denvar \
+  ABI120km3denvar \
 )
 set ArgRunConfig = $1
 

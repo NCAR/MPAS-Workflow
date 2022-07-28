@@ -303,6 +303,13 @@ conda activate npl
   [[ExtendedForecastFinished]]
     inherit = BACKGROUND
 
+  [[GetGDASanalysis]]
+    inherit = BATCH
+    script = $origin/GetGDASanalysis.csh
+    [[[job]]]
+      execution time limit = PT45M
+      execution retry delays = {{GFSAnalysisRetry}}
+
 ## Verification: extended forecast from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
     inherit = BATCH
