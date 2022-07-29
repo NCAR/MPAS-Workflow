@@ -1,7 +1,7 @@
 %include include/tasks/auto/extendedforecast.rc
-%include include/tasks/auto/hofxbase.rc
-%include include/tasks/auto/verifymodelbase.rc
-%include include/tasks/auto/verifyobsbase.rc
+%include include/tasks/auto/hofx.rc
+%include include/tasks/auto/verifymodel.rc
+%include include/tasks/auto/verifyobs.rc
 
 ## DA
   [[VerifyObsDA]]

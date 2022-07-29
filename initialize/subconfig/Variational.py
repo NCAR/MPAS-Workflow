@@ -162,6 +162,8 @@ class Variational(SubConfig):
     self._set('NamelistFileList', [model.get('outerNamelistFile'), model.get('innerNamelistFile')])
     self._set('localStaticFieldsFileList', [model.get('localStaticFieldsFileOuter'), model.get('localStaticFieldsFileInner')])
 
+    # combine both sets of observations together
+    self._set('observations', list(set(self.get('benchmarkObservations') + self.get('experimentalObservations'))))
 
     # nOuterIterations, automatically determined from length of nInnerIterations
     self._set('nOuterIterations', len(self.get('nInnerIterations')))
@@ -174,6 +176,7 @@ class Variational(SubConfig):
     self._set('nDAInstances', NN // EDASize)
 
     BlockEDA = 'DRPBlockLanczos'
+    self._set('BlockEDA', BlockEDA)
     if EDASize == 1 and self.get('MinimizerAlgorithm') == BlockEDA:
       print("WARNING: MinimizerAlgorithm cannot be $BlockEDA when EDASize is 1, re-setting to DRPLanczos")
       self._set('MinimizerAlgorithm', 'DRPLanczos')
@@ -208,11 +211,11 @@ class Variational(SubConfig):
         r1 = 'ensemble.forecasts'
         r2 = '.'.join([resource, meshes['Ensemble'].name])
 
-        memberPrefix = str(self.extractResourceOrDie(r1, r2, 'memberPrefix'))
+        memberPrefix = str(self.extractResourceOrDefault(r1, r2, 'memberPrefix', '')) # default is empty string
         memberNDigits = int(self.extractResourceOrDie(r1, r2, 'memberNDigits'))
         filePrefix = str(self.extractResourceOrDie(r1, r2, 'filePrefix'))
         directory0 = str(self.extractResourceOrDie(r1, r2, 'directory0'))
-        directory1 = str(self.extractResource(r1, r2, 'directory1'))
+        directory1 = str(self.extractResource(r1, r2, 'directory1')) # can be empty
         maxMembers = int(self.extractResourceOrDie(r1, r2, 'maxMembers'))
         forecastDateOffsetHR = int(self.extractResourceOrDie(r1, r2, 'forecastDateOffsetHR'))
 
@@ -232,7 +235,7 @@ class Variational(SubConfig):
     # covariance
     if DAType == '3dvar' or DAType == '3dhybrid':
       r = meshes['Inner'].name
-      self._setOrDie('covariance.bumpCovControlVariables', str, 'bumpCovControlVariables')
+      self._setOrDie('covariance.bumpCovControlVariables', list, 'bumpCovControlVariables')
       self._setOrDie('covariance.bumpCovPrefix', str, 'bumpCovPrefix')
       self._setOrDie('covariance.bumpCovVBalPrefix', str, 'bumpCovVBalPrefix')
       self._setOrDie('.'.join(['covariance', r, 'bumpCovDir']), str, 'bumpCovDir')

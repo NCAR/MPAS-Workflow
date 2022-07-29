@@ -33,8 +33,8 @@ setenv verifymodelens__seconds $seconds
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/tasks/auto/verifymodelbase.rc ) then
-cat >! include/tasks/auto/verifymodelbase.rc << EOF
+if ( ! -e include/tasks/auto/verifymodel.rc ) then
+cat >! include/tasks/auto/verifymodel.rc << EOF
   [[VerifyModelBase]]
     inherit = BATCH
     [[[job]]]

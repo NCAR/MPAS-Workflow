@@ -29,8 +29,8 @@ setenv verifyobsens__seconds $seconds
 # auto-generate cylc include files
 ##################################
 
-if ( ! -e include/tasks/auto/verifyobsbase.rc ) then
-cat >! include/tasks/auto/verifyobsbase.rc << EOF
+if ( ! -e include/tasks/auto/verifyobs.rc ) then
+cat >! include/tasks/auto/verifyobs.rc << EOF
   [[VerifyObsBase]]
     inherit = BATCH
     [[[job]]]
