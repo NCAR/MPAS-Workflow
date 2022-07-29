@@ -157,7 +157,8 @@ class Workflow(SubConfig):
     ## DA2FCOffsetHR and FC2DAOffsetHR: control the offsets between DataAssim and Forecast
     # tasks in the critical path
     # TODO: set DA2FCOffsetHR and FC2DAOffsetHR based on IAU controls
-    self._set('DA2FCOffsetHR', 0)
+    DA2FCOffsetHR = 0
+    self._set('DA2FCOffsetHR', DA2FCOffsetHR)
     self._set('FC2DAOffsetHR', CyclingWindowHR)
 
     MemPrefix = 'mem'
@@ -177,7 +178,7 @@ class Workflow(SubConfig):
 
       # The forecast will run every CyclingWindowHR hours, starting CyclingWindowHR+DA2FCOffsetHR hours
       # after the initialCyclePoint
-      ColdFCOffset = CyclingWindowHR + self.get('DA2FCOffsetHR')
+      ColdFCOffset = CyclingWindowHR + DA2FCOffsetHR
       self._set('ForecastTimes', '+PT'+str(ColdFCOffset)+'H/PT'+str(CyclingWindowHR)+'H')
 
     else:

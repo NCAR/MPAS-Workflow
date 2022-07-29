@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from collections import OrderedDict
+
 from initialize.SubConfig import SubConfig
 
 class Variational(SubConfig):
@@ -7,6 +9,26 @@ class Variational(SubConfig):
   defaults = 'scenarios/defaults/variational.yaml'
 
   WorkDir = 'CyclingDA'
+
+  ## benchmarkObservations
+  # base set of observation types assimilated in all experiments
+  # not included in auto-generated experiment names
+  benchmarkObservations = [
+    # anchor
+    'aircraft',
+    'gnssroref',
+    'satwind',
+    'satwnd',
+    'sfc',
+    'sondes',
+    # MW satellite-based
+    'amsua_aqua',
+    'amsua_metop-a',
+    'amsua_metop-b',
+    'amsua_n15',
+    'amsua_n18',
+    'amsua_n19',
+  ]
 
   requiredVariables = {
     ## DAType [Required Parameter]
@@ -66,53 +88,32 @@ class Variational(SubConfig):
     # OPTIONS: 8, 9, 10
     'ABEIChannel': [8, int],
 
-
-    ## benchmarkObservations
-    # base set of observation types assimilated in all experiments
-    'benchmarkObservations': [[
-      # anchor
-      'aircraft',
-      'gnssroref',
-      'satwind',
-      'satwnd',
-      'sfc',
-      'sondes',
-      # MW satellite-based
-      'amsua_aqua',
-      'amsua_metop-a',
-      'amsua_metop-b',
-      'amsua_n15',
-      'amsua_n18',
-      'amsua_n19',
-    ], list],
-
-    ## experimentalObservations
-    # observation types assimilated in variational application instances
-    # in addition to the benchmarkObservations
+    ## observations
+    # observation types assimilated in the variational application
     # Abbreviations:
     #   clr == clear-sky
     #   cld == cloudy-sky
-    'experimentalObservations': [[
-      # MW satellite-based
-      #'amsua-cld_aqua',
-      #'amsua-cld_metop-a',
-      #'amsua-cld_metop-b',
-      #'amsua-cld_n15',
-      #'amsua-cld_n18',
-      #'amsua-cld_n19',
-      #'mhs_n19',
-      #'mhs_n18',
-      #'mhs_metop-a',
-      #'mhs_metop-b',
-      # IR satellite-based
-      #'abi_g16',
-      #'ahi_himawari8',
-      #'abi-clr_g16',
-      #'ahi-clr_himawari8',
-      #'iasi_metop-a',
-      #'iasi_metop-b',
-      #'iasi_metop-c',
-    ], list],
+    # OPTIONS besides benchmarkObservations
+    ## MW satellite-based
+    # amsua-cld_aqua 
+    # amsua-cld_metop-a 
+    # amsua-cld_metop-b 
+    # amsua-cld_n15 
+    # amsua-cld_n18 
+    # amsua-cld_n19 
+    # mhs_n19 
+    # mhs_n18 
+    # mhs_metop-a 
+    # mhs_metop-b 
+    ## IR satellite-based
+    # abi_g16 
+    # ahi_himawari8 
+    # abi-clr_g16 
+    # ahi-clr_himawari8 
+    # iasi_metop-a 
+    # iasi_metop-b 
+    # iasi_metop-c 
+    'observations': [benchmarkObservations, list],
 
     ## nObsIndent
     # number of spaces to precede members of the 'observers' list in the JEDI YAML
@@ -156,14 +157,14 @@ class Variational(SubConfig):
     self._set('appyaml', DAType+'.yaml')
     self._set('YAMLPrefix', DAType+'_')
 
+    # needed in csh experiment naming; TODO: move experiment naming to python then remove this line
+    self._set('benchmarkObservations', self.benchmarkObservations)
+
     self._set('MeshList', ['Outer', 'Inner'])
     self._set('nCellsList', [meshes['Outer'].nCells, meshes['Inner'].nCells])
     self._set('StreamsFileList', [model.get('outerStreamsFile'), model.get('innerStreamsFile')])
     self._set('NamelistFileList', [model.get('outerNamelistFile'), model.get('innerNamelistFile')])
     self._set('localStaticFieldsFileList', [model.get('localStaticFieldsFileOuter'), model.get('localStaticFieldsFileInner')])
-
-    # combine both sets of observations together
-    self._set('observations', list(set(self.get('benchmarkObservations') + self.get('experimentalObservations'))))
 
     # nOuterIterations, automatically determined from length of nInnerIterations
     self._set('nOuterIterations', len(self.get('nInnerIterations')))
