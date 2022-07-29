@@ -29,7 +29,7 @@ class FirstBackground(SubConfig):
     csh.append(resourceName)
 
     # check for valid members.n
-    maxMembers = self.extractResourceOrDie(resource, meshes['Outer'].name, 'maxMembers')
+    maxMembers = self.extractResourceOrDie(resource, meshes['Outer'].name, 'maxMembers', int)
     assert members.n > 0 and members.n <= maxMembers, (
       self.logPrefix+'invalid members.n => '+str(members.n))
 
@@ -37,13 +37,13 @@ class FirstBackground(SubConfig):
       mesh = m.name
       nCells = str(m.nCells)
 
-      for key in [
-        'directory',
-        'filePrefix',
-        'memberFormat',
-        'PrepareFirstBackground',
+      for (key, t) in [
+        ['directory', str],
+        ['filePrefix', str],
+        ['memberFormat', str],
+        ['PrepareFirstBackground', str],
       ]:
-        value = self.extractResource(resource, mesh, key)
+        value = self.extractResource(resource, mesh, key, t)
         if key == 'PrepareFirstBackground':
           # push back cylc mini-workflow
           variable = key+name

@@ -33,7 +33,7 @@ class StaticStream(SubConfig):
       nCells = str(m.nCells)
 
       for key in ['directory', 'filePrefix', 'memberFormat']:
-        value = self.extractResource(resource, mesh, key)
+        value = self.extractResource(resource, mesh, key, str)
         if key == 'directory' and isinstance(value, str):
           value = value.replace('{{FirstCycleDate}}', FirstCycleDate)
 
@@ -46,7 +46,7 @@ class StaticStream(SubConfig):
         csh.append(variable)
 
     # check for uniform static stream used across members (maxMembers is None) or valid members.n
-    maxMembers = self.extractResource(resource, meshes['Outer'].name, 'maxMembers')
+    maxMembers = self.extractResource(resource, meshes['Outer'].name, 'maxMembers', int)
     if maxMembers is not None:
       assert (members.n <= int(maxMembers)), (
         self.logPrefix+'invalid members.n => '+str(members.n))

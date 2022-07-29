@@ -37,14 +37,14 @@ class ExternalAnalyses(SubConfig):
         mesh = m.name
         nCells = str(m.nCells)
 
-        for key in [
-         'directory',
-         'filePrefix',
-         'PrepareExternalAnalysisTasks',
-         'Vtable',
-         'UngribPrefix',
+        for (key, t) in [
+         ['directory', str],
+         ['filePrefix', str],
+         ['PrepareExternalAnalysisTasks', list],
+         ['Vtable', str],
+         ['UngribPrefix', str],
         ]:
-          value = self.extractResource(resource, mesh, key)
+          value = self.extractResource(resource, mesh, key, t)
 
           if key == 'PrepareExternalAnalysisTasks':
             # push back cylc mini-workflow variables
@@ -90,7 +90,7 @@ class ExternalAnalyses(SubConfig):
     ###############################
     self.exportVars(csh, cylc)
 
-    RETRY = self.extractResourceOrDie(resource, meshes['Outer'].name, 'retry')
+    RETRY = self.extractResourceOrDie(resource, meshes['Outer'].name, 'retry', str)
 
     tasks = [
 '''## Analyses generated outside MPAS-Workflow

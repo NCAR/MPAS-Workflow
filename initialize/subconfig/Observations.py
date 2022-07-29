@@ -62,7 +62,7 @@ class Observations(SubConfig):
 
     # PrepareObservationsTasks is a list of strings
     key = 'PrepareObservationsTasks'
-    values = self.extractResourceOrDie(resource, None, key)
+    values = self.extractResourceOrDie(resource, None, key, list)
 
     # first add variable as a list of tasks
     cylc.append(key)
