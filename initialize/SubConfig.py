@@ -30,6 +30,9 @@ class SubConfig():
     for v, a in self.variablesWithDefaults.items():
       self._setOrDefault(v, a[0], a[1])
 
+  def exportDependencies(self, text):
+    self.write('include/dependencies/auto/'+self.baseKey+'.rc', text)
+
   def exportTasks(self, text):
     self.write('include/tasks/auto/'+self.baseKey+'.rc', text)
 
@@ -99,26 +102,41 @@ set config_'''+self.baseKey+''' = 1
     assert v is not None, (r1+', '+r2+', '+key+' targets invalid or nonexistent node')
     return v
 
+  def extractResourceOrDefault(self, r1, r2, key, default):
+    v = self.extractResource(r1, r2, key)
+    if v is None:
+      v = default
+    return v
+
   def get(self, v):
     return self._vtable[v]
 
   def _set(self, v, value):
     self._vtable[v] = value
 
-  def _setOrDie(self, v, t=None):
-    self._vtable[v] = self.__config.getOrDie(v)
-    if t is not None:
-      self._vtable[v] = t(self._vtable[v])
+  def _setOrDie(self, v, t=None, vout=None):
+    v_ = vout
+    if v_ is None: v_ = v
 
-  def _setOrNone(self, v, t=None):
-    self._vtable[v] = self.__config.get(v)
-    if self._vtable[v] is not None and t is not None:
-      self._vtable[v] = t(self._vtable[v])
-
-  def _setOrDefault(self, v, default, t=None):
-    self._vtable[v] = self.__config.getOrDefault(v, default)
+    self._vtable[v_] = self.__config.getOrDie(v)
     if t is not None:
-      self._vtable[v] = t(self._vtable[v])
+      self._vtable[v_] = t(self._vtable[v_])
+
+  def _setOrNone(self, v, t=None, vout=None):
+    v_ = vout
+    if v_ is None: v_ = v
+
+    self._vtable[v_] = self.__config.get(v)
+    if self._vtable[v_] is not None and t is not None:
+      self._vtable[v_] = t(self._vtable[v_])
+
+  def _setOrDefault(self, v, default, t=None, vout=None):
+    v_ = vout
+    if v_ is None: v_ = v
+
+    self._vtable[v_] = self.__config.getOrDefault(v, default)
+    if t is not None:
+      self._vtable[v_] = t(self._vtable[v_])
 
   @staticmethod
   def varToCsh(var, value):

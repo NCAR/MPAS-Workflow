@@ -32,7 +32,8 @@ source config/experiment.csh
 source config/auto/members.csh
 source config/mpas/variables.csh
 source config/tools.csh
-source config/applications/variational.csh
+source config/auto/workflow.csh
+source config/auto/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}

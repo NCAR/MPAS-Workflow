@@ -6,7 +6,7 @@ source setupExperiment/parseConfig.csh
 if ("$ExperimentName" == None) then
 
   source config/applications/rtpp.csh
-  source config/applications/variational.csh
+  source config/auto/variational.csh
   source config/auto/members.csh
   source config/auto/model.csh
 

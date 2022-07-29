@@ -160,6 +160,13 @@ class Workflow(SubConfig):
     self._set('DA2FCOffsetHR', 0)
     self._set('FC2DAOffsetHR', CyclingWindowHR)
 
+    MemPrefix = 'mem'
+    MemNDigits = 3
+    self.MemPrefix = MemPrefix
+    self.MemNDigits = MemNDigits
+    self._set('flowMemFmt', '/'+MemPrefix+'{:0'+str(MemNDigits)+'d}')
+    self._set('flowInstanceFmt', '/instance{:0'+str(MemNDigits)+'d}')
+    self._set('flowMemFileFmt', '_{:0'+str(MemNDigits)+'d}')
 
     # Differentiate between creating the workflow suite for the first time
     # and restarting (i.e., when initialCyclePoint > firstCyclePoint)

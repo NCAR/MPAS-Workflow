@@ -76,16 +76,3 @@ setenv diagPrefix     ydiags
 # TODO: enable VarBC updating
 # -----
 setenv VarBCAnalysis ${OutDBDir}/satbias_crtm_ana
-
-
-#########################
-# member-related settings
-#########################
-# TODO: move these to a cross-application config/yaml combo
-
-
-setenv flowMemPrefix "mem"
-setenv flowMemNDigits 3
-setenv flowMemFmt "/${flowMemPrefix}{:0${flowMemNDigits}d}"
-setenv flowInstanceFmt "/instance{:0${flowMemNDigits}d}"
-setenv flowMemFileFmt "_{:0${flowMemNDigits}d}"

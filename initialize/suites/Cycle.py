@@ -13,10 +13,11 @@ from initialize.subconfig.Workflow import Workflow
 # applications
 from initialize.subconfig.InitIC import InitIC
 from initialize.subconfig.HofX import HofX
+from initialize.subconfig.Variational import Variational
 
 class Cycle(Suite):
   ExpConfigType = 'cycling'
-  appDependentConfigs = ['ensvariational', 'forecast', 'rtpp', 'variational', 'verifyobs', 'verifymodel']
+  appDependentConfigs = ['ensvariational', 'forecast', 'rtpp', 'verifyobs', 'verifymodel']
 
   def __init__(self, scenario):
     conf = scenario.getConfig()
@@ -34,6 +35,7 @@ class Cycle(Suite):
 
     ic = InitIC(conf, model.meshes)
     hofx = HofX(conf, model.meshes, model)
+    var = Variational(conf, model.meshes, model, members, workflow)
 
     #TODO: remove below line when all components are migrated to python, turn off for testing for now
     super().__init__(scenario)

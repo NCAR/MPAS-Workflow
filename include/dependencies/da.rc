@@ -4,8 +4,8 @@
         # observation processing
         {{PrepareObservations}} => PreDataAssim
 
-        # inflation
-%include include/dependencies/auto/abei.rc
+        # inflation or other variational dependencies
+%include include/dependencies/auto/variational.rc
 
         # init
         PreDataAssim => InitDataAssim

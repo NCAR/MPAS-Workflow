@@ -4,7 +4,7 @@ if ( $?config_ensvariational ) exit 0
 setenv config_ensvariational 1
 
 source config/auto/model.csh
-source config/applications/variational.csh
+source config/auto/variational.csh
 
 source config/auto/scenario.csh ensvariational
 

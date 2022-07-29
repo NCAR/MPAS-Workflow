@@ -74,7 +74,6 @@ class HofX(SubConfig):
 
     ## retainObsFeedback
     # whether to retain the observation feedback files (obs, geovals, ydiag)
-    # OPTIONS: True/False
     'retainObsFeedback': [True, bool],
   }
   def __init__(self, config, meshes, model):

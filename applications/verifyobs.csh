@@ -48,6 +48,7 @@ endif
 # =================
 source config/experiment.csh
 source config/tools.csh
+source config/auto/workflow.csh
 source config/auto/$ArgAppType.csh
 source config/applications/verifyobs.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
