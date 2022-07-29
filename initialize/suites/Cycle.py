@@ -17,7 +17,7 @@ from initialize.subconfig.Variational import Variational
 
 class Cycle(Suite):
   ExpConfigType = 'cycling'
-  appDependentConfigs = ['ensvariational', 'forecast', 'rtpp', 'verifyobs', 'verifymodel']
+  appDependentConfigs = ['forecast', 'rtpp', 'verifyobs', 'verifymodel']
 
   def __init__(self, scenario):
     conf = scenario.getConfig()

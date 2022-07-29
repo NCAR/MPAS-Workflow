@@ -10,7 +10,6 @@
 
 # variational tasks
 %include include/tasks/auto/variational.rc
-%include include/tasks/auto/ensvariational.rc
 
   # inflation (pre and post)
   [[GenerateABEInflation]]

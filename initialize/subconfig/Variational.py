@@ -8,7 +8,7 @@ class Variational(SubConfig):
   baseKey = 'variational'
   defaults = 'scenarios/defaults/variational.yaml'
 
-  WorkDir = 'CyclingDA'
+  workDir = 'CyclingDA'
 
   ## benchmarkObservations
   # base set of observation types assimilated in all experiments
@@ -174,7 +174,8 @@ class Variational(SubConfig):
     EDASize = self.get('EDASize')
     assert NN > 0, ('members.n must be greater than 0')
     assert NN % EDASize == 0 and EDASize > 0, ('members.n must be divisible by EDASize')
-    self._set('nDAInstances', NN // EDASize)
+    nDAInstances = NN // EDASize
+    self._set('nDAInstances', nDAInstances)
 
     BlockEDA = 'DRPBlockLanczos'
     self._set('BlockEDA', BlockEDA)
@@ -249,14 +250,22 @@ class Variational(SubConfig):
     # job resource settings
     retry = self.extractResourceOrDie('job', None, 'retry', str)
 
-    meshesKey = meshes['Outer'].name+'.'+meshes['Inner'].name
-    baseSeconds = self.extractResourceOrDie('job', meshesKey, 'baseSeconds', int)
-    secondsPerEnVarMember = self.extractResourceOrDefault('job', meshesKey, 'secondsPerEnVarMember', 0, int)
-    nodes = self.extractResourceOrDie('job', meshesKey, 'nodes', int)
-    PEPerNode = self.extractResourceOrDie('job', meshesKey, 'PEPerNode', int)
-    memory = self.extractResourceOrDefault('job', meshesKey, 'memory', '45GB', str)
+    r2 = meshes['Outer'].name+'.'+meshes['Inner'].name
+    if EDASize == 1:
+      r2 += '.'+DAType
+      nodes = self.extractResourceOrDie('job', r2, 'nodes', int)
+    else:
+      r2 += '.ensemble '+DAType
+      nodesPerMember = self.extractResourceOrDie('job', r2, 'nodesPerMember', int)
+      nodes = EDASize * nodesPerMember
 
+    PEPerNode = self.extractResourceOrDie('job', r2, 'PEPerNode', int)
+    memory = self.extractResourceOrDefault('job', r2, 'memory', '45GB', str)
+
+    baseSeconds = self.extractResourceOrDie('job', r2, 'baseSeconds', int)
+    secondsPerEnVarMember = self.extractResourceOrDefault('job', r2, 'secondsPerEnVarMember', 0, int)
     seconds = str(baseSeconds + secondsPerEnVarMember * ensPbNMembers)
+
 
     ###############################
     # export for use outside python
@@ -265,10 +274,10 @@ class Variational(SubConfig):
 
     tasks = [
 '''
-# variational
+# '''+self.baseKey+'''
   [[InitDataAssim]]
     inherit = BATCH
-    env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIVariational.csh "1" "0" "DA" "variational"
+    env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIVariational.csh "1" "0" "DA" "'''+self.baseKey+'''"
     script = $origin/applications/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
@@ -276,19 +285,6 @@ class Variational(SubConfig):
 
   [[DataAssim]]
     inherit = BATCH
-
-  [[CleanVariational]]
-    inherit = CleanBase
-    script = $origin/applications/CleanVariational.csh''']
-
-    if EDASize == 1: 
-      # EDASize > 1 handled in EnsVariational class (maybe consider combining)
-      # single instance or ensemble of Variational(s)
-      for mm in range(1, NN+1, 1):
-        tasks += ['''
-  [[DAMember'''+str(mm)+''']]
-    inherit = DataAssim
-    script = $origin/applications/Variational.csh "'''+str(mm)+'''"
     [[[job]]]
       execution time limit = PT'''+str(seconds)+'''S
       execution retry delays = '''+retry+'''
@@ -296,7 +292,27 @@ class Variational(SubConfig):
       -m = ae
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
-      -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory]
+      -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory+'''
+
+  [[CleanVariational]]
+    inherit = CleanBase
+    script = $origin/applications/CleanVariational.csh''']
+
+    if EDASize == 1:
+      # EDASize > 1 handled in EnsVariational class (maybe consider combining)
+      # single instance or ensemble of Variational(s)
+      for mm in range(1, NN+1, 1):
+        tasks += ['''
+  [[DAMember'''+str(mm)+''']]
+    inherit = DataAssim
+    script = $origin/applications/Variational.csh "'''+str(mm)+'"']
+
+    else:
+      for instance in range(1, nDAInstances+1, 1):
+        tasks += ['''
+  [[EDAInstance'''+str(instance)+''']]
+    inherit = DataAssim
+    script = \$origin/applications/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     self.exportTasks(tasks)
 
