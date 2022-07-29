@@ -211,13 +211,13 @@ class Variational(SubConfig):
         r1 = 'ensemble.forecasts'
         r2 = '.'.join([resource, meshes['Ensemble'].name])
 
-        memberPrefix = str(self.extractResourceOrDefault(r1, r2, 'memberPrefix', '')) # default is empty string
-        memberNDigits = int(self.extractResourceOrDie(r1, r2, 'memberNDigits'))
-        filePrefix = str(self.extractResourceOrDie(r1, r2, 'filePrefix'))
-        directory0 = str(self.extractResourceOrDie(r1, r2, 'directory0'))
-        directory1 = str(self.extractResource(r1, r2, 'directory1')) # can be empty
-        maxMembers = int(self.extractResourceOrDie(r1, r2, 'maxMembers'))
-        forecastDateOffsetHR = int(self.extractResourceOrDie(r1, r2, 'forecastDateOffsetHR'))
+        memberPrefix = self.extractResourceOrDefault(r1, r2, 'memberPrefix', None, str) # if None, default downstream is empty string
+        memberNDigits = self.extractResourceOrDie(r1, r2, 'memberNDigits', int)
+        filePrefix = self.extractResourceOrDie(r1, r2, 'filePrefix', str)
+        directory0 = self.extractResourceOrDie(r1, r2, 'directory0', str)
+        directory1 = self.extractResource(r1, r2, 'directory1', str) # can be None
+        maxMembers = self.extractResourceOrDie(r1, r2, 'maxMembers', int)
+        forecastDateOffsetHR = self.extractResourceOrDie(r1, r2, 'forecastDateOffsetHR', int)
 
         self._set('ensPbMemPrefix', memberPrefix)
         self._set('ensPbMemNDigits', memberNDigits)
@@ -246,16 +246,16 @@ class Variational(SubConfig):
     csh = list(self._vtable.keys())
 
     # job resource settings
+    retry = self.extractResourceOrDie('job', None, 'retry', str)
+
     meshesKey = meshes['Outer'].name+'.'+meshes['Inner'].name
+    baseSeconds = self.extractResourceOrDie('job', meshesKey, 'baseSeconds', int)
+    secondsPerEnVarMember = self.extractResourceOrDefault('job', meshesKey, 'secondsPerEnVarMember', 0, int)
+    nodes = self.extractResourceOrDie('job', meshesKey, 'nodes', int)
+    PEPerNode = self.extractResourceOrDie('job', meshesKey, 'PEPerNode', int)
+    memory = self.extractResourceOrDefault('job', meshesKey, 'memory', '45GB', str)
 
-    retry = self.extractResourceOrDie('job', None, 'retry')
-    baseSeconds = str(int(self.extractResourceOrDie('job', meshesKey, 'baseSeconds')))
-    secondsPerEnVarMember = str(int(self.extractResourceOrDefault('job', meshesKey, 'secondsPerEnVarMember', 0)))
-    nodes = str(int(self.extractResourceOrDie('job', meshesKey, 'nodes')))
-    PEPerNode = str(int(self.extractResourceOrDie('job', meshesKey, 'PEPerNode')))
-    memory = str(int(self.extractResourceOrDie('job', meshesKey, 'memory')))
-
-    seconds = secondsPerEnVarMember * ensPbNMembers + baseSeconds
+    seconds = str(baseSeconds + secondsPerEnVarMember * ensPbNMembers)
 
     ###############################
     # export for use outside python
@@ -289,14 +289,13 @@ class Variational(SubConfig):
     inherit = DataAssim
     script = $origin/applications/Variational.csh "'''+str(mm)+'''"
     [[[job]]]
-      execution time limit = PT'''+seconds+'''S
+      execution time limit = PT'''+str(seconds)+'''S
       execution retry delays = '''+retry+'''
     [[[directives]]]
       -m = ae
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
-      -l = select=${nodes_}:ncpus=${PEPerNode_}:mpiprocs=${PEPerNode_}:mem=${memory_}GB
-      -l = select='''+nodes+':ncpus='+PEPerNode+':mpiprocs='+PEPerNode+':mem='+memory+'''GB''']
+      -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory]
 
     self.exportTasks(tasks)
 

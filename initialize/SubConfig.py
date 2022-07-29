@@ -70,7 +70,7 @@ set config_'''+self.baseKey+''' = 1
     ##################################
     self.exportVarsToCylc(cylc)
 
-  def extractResource(self, resource1, resource2, key):
+  def extractResource(self, resource1, resource2, key, t=None):
     if resource1 is None:
       r1 = ''
     else:
@@ -95,15 +95,18 @@ set config_'''+self.baseKey+''' = 1
     if value is None:
       value = self.__config.get('.'.join(['defaults', key]))
 
-    return value
+    if t is not None and value is not None:
+      return t(value)
+    else:
+      return value
 
-  def extractResourceOrDie(self, r1, r2, key):
-    v = self.extractResource(r1, r2, key)
+  def extractResourceOrDie(self, r1, r2, key, t=None):
+    v = self.extractResource(r1, r2, key, t)
     assert v is not None, (r1+', '+r2+', '+key+' targets invalid or nonexistent node')
     return v
 
-  def extractResourceOrDefault(self, r1, r2, key, default):
-    v = self.extractResource(r1, r2, key)
+  def extractResourceOrDefault(self, r1, r2, key, default, t=None):
+    v = self.extractResource(r1, r2, key, t)
     if v is None:
       v = default
     return v

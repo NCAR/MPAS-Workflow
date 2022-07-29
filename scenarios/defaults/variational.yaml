@@ -144,7 +144,7 @@ variational:
       secondsPerEnVarMember: 10
       nodes: 8
       PEPerNode: 16
-      memory: 109
+      memory: 109GB
 
     # TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
     # TODO: update with latest resource requirements following GetValues refactoring
@@ -164,59 +164,59 @@ variational:
           secondsPerEnVarMember: 5
           nodes: 64
           PEPerNode: 8
-          memory: 45
+          memory: 45GB
         3dvar:
           baseSeconds: 1500
           nodes: 64
           PEPerNode: 8
-          memory: 45
+          memory: 45GB
       60km: #120 inner total
         3denvar:
           # single-precision bundle build
           nodes: 6
           PEPerNode: 32
-          memory: 109
+          memory: 109GB
           baseSeconds: 200
           secondsPerEnVarMember: 10
         3dhybrid:
           # single-precision bundle build
           nodes: 6
           PEPerNode: 32
-          memory: 109
+          memory: 109GB
           baseSeconds: 250
           secondsPerEnVarMember: 10
         3dvar:
           baseSeconds: 1200
           nodes: 6
           PEPerNode: 32
-          memory: 109
+          memory: 109GB
     60km: #60 inner total
       60km:
         3denvar:
           # double-precision bundle build
           ##nodes: 6
           ##PEPerNode: 32
-          ##memory: 45
+          ##memory: 45GB
           ##baseSeconds: 200
           ##secondsPerEnVarMember: 6
           # single-precision bundle build
           nodes: 4
           PEPerNode: 36
-          memory: 45
+          memory: 45GB
           baseSeconds: 200
           secondsPerEnVarMember: 6
         3dhybrid:
           # single-precision bundle build (approximated from 3denvar)
           nodes: 4
           PEPerNode: 36
-          memory: 45
+          memory: 45GB
           baseSeconds: 250
           secondsPerEnVarMember: 6
         3dvar:
           baseSeconds: 500
           nodes: 6
           PEPerNode: 32
-          memory: 109
+          memory: 109GB
     120km: #60 inner total
       120km:
         3denvar:
@@ -224,9 +224,9 @@ variational:
           secondsPerEnVarMember: 5
           nodes: 4
           PEPerNode: 32
-          memory: 45
+          memory: 45GB
         3dvar:
           baseSeconds: 360
           nodes: 4
           PEPerNode: 32
-          memory: 45
+          memory: 45GB

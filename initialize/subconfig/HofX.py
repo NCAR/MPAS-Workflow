@@ -95,11 +95,13 @@ class HofX(SubConfig):
     # all csh variables above
     csh = list(self._vtable.keys())
 
-    retry = self.extractResourceOrDie('job', None, 'retry')
-    seconds = str(int(self.extractResourceOrDie('job', meshes['Outer'].name, 'seconds')))
-    nodes = str(int(self.extractResourceOrDie('job', meshes['Outer'].name, 'nodes')))
-    PEPerNode = str(int(self.extractResourceOrDie('job', meshes['Outer'].name, 'PEPerNode')))
-    memory = str(int(self.extractResourceOrDie('job', meshes['Outer'].name, 'memory')))
+    retry = self.extractResourceOrDie('job', None, 'retry', str)
+
+    meshesKey = meshes['Outer'].name
+    seconds = self.extractResourceOrDie('job', meshesKey, 'seconds', int)
+    nodes = self.extractResourceOrDie('job', meshesKey, 'nodes', int)
+    PEPerNode = self.extractResourceOrDie('job', meshesKey, 'PEPerNode', int)
+    memory = self.extractResourceOrDefault('job', meshesKey, 'memory', '45GB', str)
 
     ###############################
     # export for use outside python
@@ -111,11 +113,11 @@ class HofX(SubConfig):
   [[HofXBase]]
     inherit = BATCH
     [[[job]]]
-      execution time limit = PT'''+seconds+'''S
+      execution time limit = PT'''+str(seconds)+'''S
       execution retry delays = '''+retry+'''
     [[[directives]]]
       -q = {{NCPQueueName}}
       -A = {{NCPAccountNumber}}
-      -l = select='''+nodes+':ncpus='+PEPerNode+':mpiprocs='+PEPerNode+':mem='+memory+'GB']
+      -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory]
 
     self.exportTasks(tasks)
