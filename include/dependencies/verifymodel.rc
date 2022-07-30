@@ -39,12 +39,12 @@
   # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedMeanFC %}
-  {% for TIME in ExtendedMeanFCTimesList %}
-    [[[R{{nExtFCOuts}}/{{TIME}}/PT{{extFCIntervHR}}H]]]
+  {% for TIME in extMeanTimesList %}
+    [[[R{{nExtOuts}}/{{TIME}}/PT{{extIntervHR}}H]]]
       graph = '''
         {{PrepareExternalAnalysisOuter}}
       '''
-    {% for dt in ExtendedFCLengths %}
+    {% for dt in extLengths %}
     [[[{{TIME}}]]]
       graph = '''
         ExtendedForecastFinished => VerifyModelMeanFC{{dt}}hr
@@ -58,12 +58,12 @@
   # ... for extended forecast from ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedEnsFC and nMembers > 1 %}
-  {% for TIME in ExtendedEnsFCTimesList %}
-    [[[R{{nExtFCOuts}}/{{TIME}}/PT{{extFCIntervHR}}H]]]
+  {% for TIME in extEnsTimesList %}
+    [[[R{{nExtOuts}}/{{TIME}}/PT{{extIntervHR}}H]]]
       graph = '''
         {{PrepareExternalAnalysisOuter}}
       '''
-    {% for dt in ExtendedFCLengths %}
+    {% for dt in extLengths %}
     [[[{{TIME}}]]]
       graph = '''
       {% for mem in EnsVerifyMembers %}

@@ -20,7 +20,7 @@
     inherit = VerifyObsBase
   [[CleanHofXMeanFC]]
     inherit = CleanBase
-{% for dt in ExtendedFCLengths %}
+{% for dt in extLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "hofx"
@@ -121,7 +121,7 @@
     inherit = CleanBase
 {% for mem in EnsVerifyMembers %}
   # ensemble of extended forecasts from ensemble of analyses
-  {% for dt in ExtendedFCLengths %}
+  {% for dt in extLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC" "hofx"

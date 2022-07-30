@@ -55,20 +55,9 @@ set MPASLookupFileGlobs = (.TBL .DBL DATA COMPATABILITY VERSION)
 #setenv ForecastBuildDir /glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single
 #setenv ForecastEXE ${MPASCore}_model
 
-# Note: this also requires modifying forecast.csh:
-#@@ -28,7 +28,7 @@ source config/tools.csh
-# source config/auto/model.csh
-# source config/modeldata.csh
-# source config/builds.csh
+# Note: this also requires modifying applications/forecast.csh:
 #-source config/environmentJEDI.csh
 #+source config/environmentMPT.csh
-# source config/applications/forecast.csh
-# set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
-# set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-#@@ -203,8 +203,8 @@ else
-#   rm ./${ForecastEXE}
-#   ln -sfv ${ForecastBuildDir}/${ForecastEXE} ./
-#   # mpiexec is for Open MPI, mpiexec_mpt is for MPT
 #-  mpiexec ./${ForecastEXE}
 #-  #mpiexec_mpt ./${ForecastEXE}
 #+  #mpiexec ./${ForecastEXE}

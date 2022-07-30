@@ -7,10 +7,10 @@ experiment:
   ExperimentName: 'ForecastFromGFSAnalyses'
   ExperimentUserPrefix: ''
 
-forecast:
-  ExtendedMeanFCTimes: T00,T12
-  ExtendedFCLengthHR: 24
-  ExtendedFCOutIntervalHR: 12
+extendedforecast:
+  meanTimes: T00,T12
+  lengthHR: 24
+  outIntervalHR: 12
 
 job:
   CPQueueName: economy
@@ -26,8 +26,8 @@ observations: # for optional verification
   resource: GladeRDAOnline
 
 workflow:
-  firstCyclePoint: 20180415T00
-  finalCyclePoint: 20180416T00
+  firstCyclePoint: 20220606T00
+  finalCyclePoint: 20220607T00
 
   CriticalPathType: ForecastFromExternalAnalyses
   maxActiveCyclePoints: 60

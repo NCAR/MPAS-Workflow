@@ -30,11 +30,10 @@ mkdir -p $mainScriptDir/config
 cat >! $mainScriptDir/config/experiment.csh << EOF
 #!/bin/csh -f
 if ( \$?config_experiment ) exit 0
-setenv config_experiment 1
+set config_experiment = 1
 
 source config/benchmark.csh
 source config/auto/externalanalyses.csh
-source config/auto/firstbackground.csh
 source config/auto/model.csh
 source config/naming.csh
 source config/auto/staticstream.csh
@@ -114,31 +113,32 @@ set hh = \`echo "\${FirstCycleDate}" | cut -c 9-10\`
 
 setenv FirstFileDate \${yy}-\${mm}-\${dd}_\${hh}.00.00
 
+foreach m (Outer Inner Ensemble)
+  setenv StaticFieldsDir\$m None
+  setenv StaticFieldsFile\$m None
+end
 if ("\$externalanalyses__resource" != None) then
-  setenv StaticFieldsDirOuter \`echo "\${staticstream__directoryOuter}" \
-    | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirOuter}'@' \
-    \`
-  setenv StaticFieldsDirInner \`echo "\${staticstream__directoryInner}" \
-    | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirInner}'@' \
-    \`
-  setenv StaticFieldsDirEnsemble \`echo "\${staticstream__directoryEnsemble}" \
-    | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirEnsemble}'@' \
-    \`
+  if ("\${outerMesh}" != None) then
+    setenv StaticFieldsDirOuter \`echo "\${staticstream__directoryOuter}" \
+      | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirOuter}'@' \
+      \`
+    setenv StaticFieldsFileOuter \${staticstream__filePrefixOuter}.\${FirstFileDate}.nc
+  endif
+  if ("\${innerMesh}" != None) then
+    setenv StaticFieldsDirInner \`echo "\${staticstream__directoryInner}" \
+      | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirInner}'@' \
+      \`
+    setenv StaticFieldsFileInner \${staticstream__filePrefixInner}.\${FirstFileDate}.nc
+  endif
+  if ("\${ensembleMesh}" != None) then
+    setenv StaticFieldsDirEnsemble \`echo "\${staticstream__directoryEnsemble}" \
+      | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirEnsemble}'@' \
+      \`
+    setenv StaticFieldsFileEnsemble \${staticstream__filePrefixEnsemble}.\${FirstFileDate}.nc
+  end
   setenv staticMemFmt "\${staticstream__memberFormatOuter}"
-
-  setenv StaticFieldsFileOuter \${staticstream__filePrefixOuter}.\${FirstFileDate}.nc
-  setenv StaticFieldsFileInner \${staticstream__filePrefixInner}.\${FirstFileDate}.nc
-  setenv StaticFieldsFileEnsemble \${staticstream__filePrefixEnsemble}.\${FirstFileDate}.nc
 else
-  setenv StaticFieldsDirOuter None
-  setenv StaticFieldsDirInner None
-  setenv StaticFieldsDirEnsemble None
-
-  setenv staticMemFmt None
-
-  setenv StaticFieldsFileOuter None
-  setenv StaticFieldsFileInner None
-  setenv StaticFieldsFileEnsemble None
+  setenv staticMemFmt " "
 endif
 EOF
 

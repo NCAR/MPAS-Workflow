@@ -27,7 +27,7 @@
 
   [[dependencies]]
 
-    [[[{{ExtendedMeanFCTimes}}]]]
+    [[[{{extMeanTimes}}]]]
       graph = '''
         {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
       '''

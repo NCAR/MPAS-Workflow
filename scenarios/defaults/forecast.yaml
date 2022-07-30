@@ -1,26 +1,5 @@
 forecast:
-## updateSea
-# whether to update surface fields before a forecast (e.g., sst, xice)
-# OPTIONS: True/False
-  updateSea: True
-
-  # length of verification forecasts
-  ExtendedFCLengthHR: 240
-
-  # interval between OMF verification times of an individual forecast
-  ExtendedFCOutIntervalHR: 12
-
-  # UTC times to run extended forecast from mean analysis
-  # formatted as comma-separated string, e.g., T00,T06,T12,T18
-  ExtendedMeanFCTimes: T00,T12
-
-  # UTC times to run ensemble of extended forecasts
-  # formatted as comma-separated string, e.g., T00,T06,T12,T18
-  ExtendedEnsFCTimes: T00
-
-
-## mesh-specific settings
-  # resource requirements
+  # resource requirements (used for both Forecast and ExtendedForecast)
   job:
     # cylc retry string
     retry: '2*PT30S'

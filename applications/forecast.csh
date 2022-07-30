@@ -25,6 +25,9 @@ set ArgDACycling = "$6"
 # ArgDeleteZerothForecast: whether to delete zeroth-hour forecast (True/False)
 set ArgDeleteZerothForecast = "$7"
 
+# ArgUpdateSea: whether to update the sea surface fields with values from an external analysis (True/False)
+set ArgUpdateSea = "$8"
+
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isNotInt = ($status)
@@ -42,29 +45,25 @@ endif
 source config/auto/workflow.csh
 source config/experiment.csh
 source config/auto/externalanalyses.csh
-source config/auto/firstbackground.csh
 source config/tools.csh
 source config/auto/members.csh
 source config/auto/model.csh
 source config/builds.csh
 source config/environmentJEDI.csh
-source config/applications/forecast.csh # "$ArgMesh"
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-## ALL forecasts after the first cycle date use this sub-branch (must be outerMesh)
 # templated work directory
 set self_WorkDir = "$WorkDirsTEMPLATE[$ArgMember]"
 
 # other templated variables
 set self_icStateDir = "$StateDirsTEMPLATE[$ArgMember]"
-
-# static variables
 set self_icStatePrefix = "StatePrefixTEMPLATE"
 
+# nCells
 if ("$ArgMesh" == "$outerMesh") then
   set nCells = $nCellsOuter
 # not used presently
@@ -74,6 +73,7 @@ if ("$ArgMesh" == "$outerMesh") then
 #  set nCells = $nCellsEnsemble
 endif
 
+# initialState
 set icFileExt = ${thisMPASFileDate}.nc
 set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
 
@@ -85,8 +85,6 @@ echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
-# other templated variables
-set self_icStateDir = $StateDirsTEMPLATE[$ArgMember]
 set config_run_duration = 0_${ArgFcLengthHR}:00:00
 set output_interval = 0_${ArgFcIntervalHR}:00:00
 
@@ -122,12 +120,12 @@ stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 )
   rm ./$staticfile
-  ln -sfv $ModelConfigDir/$AppName/$staticfile .
+  ln -sfv $ModelConfigDir/forecast/$staticfile .
 end
 
 ## copy/modify dynamic streams file
 rm ${StreamsFile}
-cp -v $ModelConfigDir/$AppName/${StreamsFile} .
+cp -v $ModelConfigDir/forecast/${StreamsFile} .
 sed -i 's@{{nCells}}@'${nCells}'@' ${StreamsFile}
 sed -i 's@{{outputInterval}}@'${output_interval}'@' ${StreamsFile}
 sed -i 's@{{StaticFieldsPrefix}}@'${localStaticFieldsPrefix}'@' ${StreamsFile}
@@ -139,13 +137,15 @@ sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 set localSeaUpdateFile = x1.${nCells}.sfc_update.nc
 sed -i 's@{{surfaceUpdateFile}}@'${localSeaUpdateFile}'@' ${StreamsFile}
 
-if ( "${updateSea}" == "True" ) then
+if ("${ArgUpdateSea}" == True) then
   ## sea/ocean surface files
   # TODO: move sea directory configuration to yamls
   setenv seaMaxMembers 20
   setenv deterministicSeaAnaDir ${ExternalAnalysisDirOuter}
   setenv deterministicSeaMemFmt " "
   setenv deterministicSeaFilePrefix x1.${nCells}.init
+
+  source config/auto/firstbackground.csh
 
   if ( $nMembers > 1 && "$firstbackground__resource" == "PANDAC.LaggedGEFS" ) then
     # using member-specific sst/xice data from GEFS, only works for this special case
@@ -213,7 +213,7 @@ endif
 
 ## copy/modify dynamic namelist
 rm ${NamelistFile}
-cp -v $ModelConfigDir/$AppName/$NamelistFile .
+cp -v $ModelConfigDir/forecast/$NamelistFile .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile
