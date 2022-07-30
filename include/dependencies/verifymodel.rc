@@ -20,7 +20,7 @@
         {{PrepareExternalAnalysisOuter}} => VerifyModelEnsMeanBG
   {% if DiagnoseEnsSpreadBG %}
         DataAssimFinished => VerifyModelEnsMeanBG
-        VerifyModelEnsMeanBG => {{CleanDataAssim}}
+        VerifyModelEnsMeanBG => CleanDataAssim
   {% endif %}
       '''
 {% endif %}

@@ -36,31 +36,20 @@
         GetGDASAnalysisFromFTP
   {% endif %}
       '''
-{% elif CriticalPathType == "Bypass" %}
-  {% set CleanDataAssim = 'Null' %}
-    [[[{{AnalysisTimes}}]]]
-      graph = DataAssimFinished
-
-    [[[{{ForecastTimes}}]]]
-      graph = ForecastFinished
-
 {% elif CriticalPathType == "Reanalysis" %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
 %include include/dependencies/da.rc
       '''
-    [[[{{ForecastTimes}}]]]
-      graph = ForecastFinished
 
 {% elif CriticalPathType == "Reforecast" %}
-    {% set CleanDataAssim = 'Null' %}
-    [[[{{AnalysisTimes}}]]]
-      graph = DataAssimFinished
     [[[{{ForecastTimes}}]]]
       graph = '''
 %include include/dependencies/forecast.rc
       '''
 
+{# elif CriticalPathType == "Bypass" #}
+  # nothing to do
 {% else %}
     {{ raise('CriticalPathType is not valid') }}
 {% endif %}

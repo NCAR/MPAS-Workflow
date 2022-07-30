@@ -31,7 +31,7 @@ class FirstBackground(SubConfig):
     # check for valid members.n
     maxMembers = self.extractResourceOrDie(resource, meshes['Outer'].name, 'maxMembers', int)
     assert members.n > 0 and members.n <= maxMembers, (
-      self.logPrefix+'invalid members.n => '+str(members.n))
+      self._msg('invalid members.n => '+str(members.n)))
 
     for name, m in meshes.items():
       mesh = m.name

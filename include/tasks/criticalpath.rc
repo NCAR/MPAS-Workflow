@@ -1,29 +1,3 @@
-## Data assimilation and supporting tasks (critical path)
-  # Pre => (Ens)DataAssim => Post => Finished => Clean
-  [[PreDataAssim]]
-    [[[job]]]
-      batch system = background
-  [[DataAssimPost]]
-    inherit = BACKGROUND
-  [[DataAssimFinished]]
-    inherit = BACKGROUND
-
-# variational tasks
 %include include/tasks/auto/variational.rc
-
-  # inflation (pre and post)
-  [[GenerateABEInflation]]
-    inherit = BATCH
-    script = $origin/applications/GenerateABEInflation.csh
-    [[[job]]]
-      execution time limit = PT20M
-    [[[directives]]]
-      -q = {{CPQueueName}}
-      -A = {{CPAccountNumber}}
-      -l = select=1:ncpus=36:mpiprocs=36
-
-# rtpp tasks
 %include include/tasks/auto/rtpp.rc
-
-## Forecast (critical path)
 %include include/tasks/auto/forecast.rc

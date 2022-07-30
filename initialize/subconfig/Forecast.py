@@ -22,9 +22,6 @@ class Forecast(SubConfig):
 
     self.mesh = mesh
 
-    cylc = []
-    csh = []
-
     ###################
     # derived variables
     ###################
@@ -55,6 +52,8 @@ class Forecast(SubConfig):
     ###############################
     # export for use outside python
     ###############################
+    cylc = []
+    csh = []
     self.exportVars(csh, cylc)
 
     tasks = ['''

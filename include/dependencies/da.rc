@@ -1,24 +1,3 @@
-  {% set CleanDataAssim = 'CleanVariational' %}
-
-        ## Pre-DA
-        # observation processing
-        {{PrepareObservations}} => PreDataAssim
-
-        # inflation or other variational dependencies
+%include include/dependencies/auto/da.rc
 %include include/dependencies/auto/variational.rc
-
-        # init
-        PreDataAssim => InitDataAssim
-
-        ## Data assimilation
-        InitDataAssim => DataAssim
-
-        ## Post-DA
-        # all DataAssim members must succeed in order to start post
-        DataAssim:succeed-all => DataAssimPost
-
-        # inflation+relaxation
 %include include/dependencies/auto/rtpp.rc
-
-        # clean after finished
-        DataAssimPost => DataAssimFinished => {{CleanDataAssim}}

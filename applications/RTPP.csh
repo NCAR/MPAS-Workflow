@@ -12,7 +12,7 @@ source config/auto/model.csh
 source config/mpas/variables.csh
 source config/tools.csh
 source config/auto/workflow.csh
-source config/applications/rtpp.csh
+source config/auto/rtpp.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -82,11 +82,11 @@ stream_list.${MPASCore}.analysis \
 stream_list.${MPASCore}.ensemble \
 stream_list.${MPASCore}.control \
 )
-  ln -sfv $ModelConfigDir/${AppName}/$staticfile .
+  ln -sfv $ModelConfigDir/rtpp/$staticfile .
 end
 
 rm ${StreamsFile}
-cp -v $ModelConfigDir/${AppName}/${StreamsFile} .
+cp -v $ModelConfigDir/rtpp/${StreamsFile} .
 sed -i 's@{{nCells}}@'${nCellsEnsemble}'@' ${StreamsFile}
 sed -i 's@{{TemplateFieldsPrefix}}@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@{{StaticFieldsPrefix}}@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
@@ -109,7 +109,7 @@ sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
 rm $NamelistFile
-cp -v $ModelConfigDir/${AppName}/${NamelistFile} .
+cp -v $ModelConfigDir/rtpp/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${nCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
@@ -125,10 +125,10 @@ end
 # =============
 ## Copy jedi/applications yaml
 set thisYAML = orig.yaml
-cp -v ${ConfigDir}/jedi/applications/${AppName}.yaml $thisYAML
+cp -v ${ConfigDir}/jedi/applications/$appyaml $thisYAML
 
 ## RTPP inflation factor
-sed -i 's@{{relaxationFactor}}@'${rtpp__relaxationFactor}'@g' $thisYAML
+sed -i 's@{{relaxationFactor}}@'${relaxationFactor}'@g' $thisYAML
 
 ## streams
 sed -i 's@{{EnsembleStreamsFile}}@'${self_WorkDir}'/'${StreamsFile}'@' $thisYAML

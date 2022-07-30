@@ -30,6 +30,9 @@ class SubConfig():
     for v, a in self.variablesWithDefaults.items():
       self._setOrDefault(v, a[0], a[1])
 
+  def _msg(self, text):
+    return self.logPrefix+text
+
   def exportDependencies(self, text):
     self.write('include/dependencies/auto/'+self.baseKey+'.rc', text)
 

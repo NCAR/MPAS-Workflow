@@ -4,7 +4,6 @@
 %include include/variables/auto/externalanalyses.rc
 %include include/variables/auto/job.rc
 %include include/variables/auto/members.rc
-%include include/variables/auto/model.rc
 %include include/variables/auto/observations.rc
 %include include/variables/auto/workflow.rc
 

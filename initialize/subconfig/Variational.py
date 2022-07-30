@@ -147,8 +147,6 @@ class Variational(SubConfig):
   def __init__(self, config, meshes, model, members, workflow): #, forecast):
     super().__init__(config)
 
-    cylc = []
-
     ###################
     # derived variables
     ###################
@@ -270,11 +268,28 @@ class Variational(SubConfig):
     ###############################
     # export for use outside python
     ###############################
+    cylc = []
     self.exportVars(csh, cylc)
+
+    self.pre = 'PreDataAssim'
+    self.post = 'DataAssimPost'
+    self.finished = 'DataAssimFinished'
 
     tasks = [
 '''
 # '''+self.baseKey+'''
+## Data assimilation and supporting tasks (critical path)
+  # Pre => DataAssim => Post => Finished => Clean
+  [['''+self.pre+''']]
+    [[[job]]]
+      batch system = background
+  [['''+self.post+''']]
+    inherit = BACKGROUND
+  [['''+self.finished+''']]
+    inherit = BACKGROUND
+  [[CleanDataAssim]]
+    inherit = CleanBase
+
   [[InitDataAssim]]
     inherit = BATCH
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIVariational.csh "1" "0" "DA" "'''+self.baseKey+'''"
@@ -294,12 +309,23 @@ class Variational(SubConfig):
       -A = {{CPAccountNumber}}
       -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory+'''
 
+  # inflation
+  [[GenerateABEInflation]]
+    inherit = BATCH
+    script = $origin/applications/GenerateABEInflation.csh
+    [[[job]]]
+      execution time limit = PT20M
+    [[[directives]]]
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select=1:ncpus=36:mpiprocs=36
+
+  # clean
   [[CleanVariational]]
-    inherit = CleanBase
+    inherit = CleanDataAssim
     script = $origin/applications/CleanVariational.csh''']
 
     if EDASize == 1:
-      # EDASize > 1 handled in EnsVariational class (maybe consider combining)
       # single instance or ensemble of Variational(s)
       for mm in range(1, NN+1, 1):
         tasks += ['''
@@ -308,6 +334,7 @@ class Variational(SubConfig):
     script = $origin/applications/Variational.csh "'''+str(mm)+'"']
 
     else:
+      # single instance or ensemble of EnsembleOfVariational(s)
       for instance in range(1, nDAInstances+1, 1):
         tasks += ['''
   [[EDAInstance'''+str(instance)+''']]
@@ -316,13 +343,31 @@ class Variational(SubConfig):
 
     self.exportTasks(tasks)
 
-    dependencies = ['#']
+    dependencies = ['''
+        ## Pre-DA
+        # observation processing
+        {{PrepareObservations}} => '''+self.pre+'''
+
+        # init
+        '''+self.pre+''' => InitDataAssim
+
+        ## Data assimilation
+        InitDataAssim => DataAssim
+
+        ## Post-DA
+        # all DataAssim members must succeed in order to start post
+        DataAssim:succeed-all => '''+self.post+'''
+
+        # clean after finished
+        '''+self.post+''' => '''+self.finished+''' => CleanDataAssim''']
+
     if self.get('ABEInflation'):
       dependencies += ['''
-        ForecastFinished[-PT{{FC2DAOffsetHR}}H] =>
+        # abei
+        '''+self.pre+''' =>
         MeanBackground =>
         HofXEnsMeanBG =>
-        GenerateABEInflation => PreDataAssim
+        GenerateABEInflation => InitDataAssim
         GenerateABEInflation => CleanHofXEnsMeanBG''']
 
     self.exportDependencies(dependencies)

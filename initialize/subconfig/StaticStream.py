@@ -49,7 +49,7 @@ class StaticStream(SubConfig):
     maxMembers = self.extractResource(resource, meshes['Outer'].name, 'maxMembers', int)
     if maxMembers is not None:
       assert (members.n <= int(maxMembers)), (
-        self.logPrefix+'invalid members.n => '+str(members.n))
+        self._msg('invalid members.n => '+str(members.n)))
 
     ###############################
     # export for use outside python

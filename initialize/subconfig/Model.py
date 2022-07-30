@@ -76,30 +76,29 @@ class Model(SubConfig):
       m = typ+'Mesh'
       Typ = typ.capitalize()
 
-      mesh = self.get(m)
-      if mesh is not None:
-        self._set('nCells'+Typ, config.getOrDie(mesh+'.nCells'))
+      name = self.get(m)
+      if name is not None:
+        self._set('nCells'+Typ, config.getOrDie(name+'.nCells'))
         nCells = self.get('nCells'+Typ)
 
-        self.meshes[Typ] = Mesh(mesh, nCells)
+        self.meshes[Typ] = Mesh(name, nCells)
 
         self._set('InitFilePrefix'+Typ, 'x1.'+str(nCells)+'.init')
-        self._set(typ+'StreamsFile', StreamsFile+'_'+mesh)
-        self._set(typ+'NamelistFile', NamelistFile+'_'+mesh)
+        self._set(typ+'StreamsFile', StreamsFile+'_'+name)
+        self._set(typ+'NamelistFile', NamelistFile+'_'+name)
         self._set('TemplateFieldsFile'+Typ, TemplateFieldsPrefix+'.'+str(nCells)+'.nc')
         self._set('localStaticFieldsFile'+Typ, localStaticFieldsPrefix+'.'+str(nCells)+'.nc')
 
         if Typ == 'Outer':
-          self._set('TimeStep', config.getOrDie(mesh+'.TimeStep'))
-          self._set('DiffusionLengthScale', config.getOrDie(mesh+'.DiffusionLengthScale'))
-
-    allMeshes = list(set([mesh.name for mesh in self.meshes.values()]))
-
-    self._set('allMeshes', allMeshes)
+          self._set('TimeStep', config.getOrDie(name+'.TimeStep'))
+          self._set('DiffusionLengthScale', config.getOrDie(name+'.DiffusionLengthScale'))
 
     ###############################
     # export for use outside python
     ###############################
     csh = list(self._vtable.keys())
-    cylc = ['allMeshes']
+    cylc = []
     self.exportVars(csh, cylc)
+
+  def getMeshes(self):
+    return self.meshes

@@ -15,11 +15,12 @@ from initialize.subconfig.InitIC import InitIC
 from initialize.subconfig.ExtendedForecast import ExtendedForecast
 from initialize.subconfig.Forecast import Forecast
 from initialize.subconfig.HofX import HofX
+from initialize.subconfig.RTPP import RTPP
 from initialize.subconfig.Variational import Variational
 
 class Cycle(Suite):
   ExpConfigType = 'cycling'
-  appDependentConfigs = ['rtpp', 'verifyobs', 'verifymodel']
+  appDependentConfigs = ['verifyobs', 'verifymodel']
 
   def __init__(self, scenario):
     conf = scenario.getConfig()
@@ -28,17 +29,19 @@ class Cycle(Suite):
     workflow = Workflow(conf)
 
     model = Model(conf)
+    meshes = model.getMeshes()
     obs = Observations(conf)
     members = Members(conf)
 
-    ea = ExternalAnalyses(conf, model.meshes)
-    fb = FirstBackground(conf, model.meshes, members, workflow.get('FirstCycleDate'))
-    ss = StaticStream(conf, model.meshes, members, workflow.get('FirstCycleDate'))
+    ea = ExternalAnalyses(conf, meshes)
+    fb = FirstBackground(conf, meshes, members, workflow.get('FirstCycleDate'))
+    ss = StaticStream(conf, meshes, members, workflow.get('FirstCycleDate'))
 
-    ic = InitIC(conf, model.meshes)
-    hofx = HofX(conf, model.meshes, model)
-    var = Variational(conf, model.meshes, model, members, workflow)
-    fc = Forecast(conf, model.meshes['Outer'], members, workflow)
+    ic = InitIC(conf, meshes)
+    hofx = HofX(conf, meshes, model)
+    var = Variational(conf, meshes, model, members, workflow)
+    rtpp = RTPP(conf, meshes['Ensemble'], members, var)
+    fc = Forecast(conf, meshes['Outer'], members, workflow)
     extfc = ExtendedForecast(conf, members, fc,)
 
     #TODO: remove below line when all components are migrated to python, turn off for testing for now

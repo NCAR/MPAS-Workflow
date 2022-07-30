@@ -30,7 +30,7 @@ workflow:
   finalCyclePoint: 20220607T00
 
   CriticalPathType: ForecastFromExternalAnalyses
-  maxActiveCyclePoints: 60
+  maxActiveCyclePoints: 10
 
   # optionally turn on extended forecast verification
   VerifyExtendedMeanFC: True
