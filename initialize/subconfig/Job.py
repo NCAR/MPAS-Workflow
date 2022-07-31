@@ -35,18 +35,9 @@ class Job(SubConfig):
   def __init__(self, config):
     super().__init__(config)
 
-    ###################
-    # derived variables
-    ###################
-
-    # EMPTY
-
     ###############################
     # export for use outside python
     ###############################
-    # no variables needed in csh
-    csh = []
-
-    # all variables needed in cylc
+    # TODO: have all dependent classes take a Job object as an argument, do not export
     cylc = list(self._vtable.keys())
-    self.exportVars(csh, cylc)
+    self.exportVarsToCylc(cylc)

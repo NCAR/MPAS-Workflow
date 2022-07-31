@@ -144,7 +144,7 @@ class Variational(SubConfig):
     'retainObsFeedback': [True, bool],
   }
 
-  def __init__(self, config, meshes, model, members, workflow): #, forecast):
+  def __init__(self, config, meshes, model, members, workflow, da): #, forecast):
     super().__init__(config)
 
     ###################
@@ -242,8 +242,15 @@ class Variational(SubConfig):
       self._setOrDie('.'.join(['covariance', r, 'bumpCovStdDevFile']), str, 'bumpCovStdDevFile')
       self._setOrDie('.'.join(['covariance', r, 'bumpCovVBalDir']), str, 'bumpCovVBalDir')
 
-    # all csh variables above
+    ###############################
+    # export for use outside python
+    ###############################
     csh = list(self._vtable.keys())
+    self.exportVarsToCsh(csh)
+
+    ########################
+    # tasks and dependencies
+    ########################
 
     # job resource settings
     retry = self.extractResourceOrDie('job', None, 'retry', str)
@@ -264,42 +271,18 @@ class Variational(SubConfig):
     secondsPerEnVarMember = self.extractResourceOrDefault('job', r2, 'secondsPerEnVarMember', 0, int)
     seconds = str(baseSeconds + secondsPerEnVarMember * ensPbNMembers)
 
-
-    ###############################
-    # export for use outside python
-    ###############################
-    cylc = []
-    self.exportVars(csh, cylc)
-
-    self.pre = 'PreDataAssim'
-    self.post = 'DataAssimPost'
-    self.finished = 'DataAssimFinished'
-
-    tasks = [
-'''
-# '''+self.baseKey+'''
-## Data assimilation and supporting tasks (critical path)
-  # Pre => DataAssim => Post => Finished => Clean
-  [['''+self.pre+''']]
-    [[[job]]]
-      batch system = background
-  [['''+self.post+''']]
-    inherit = BACKGROUND
-  [['''+self.finished+''']]
-    inherit = BACKGROUND
-  [[CleanDataAssim]]
-    inherit = CleanBase
-
-  [[InitDataAssim]]
-    inherit = BATCH
+    self.tasks = ['''
+  ## variational tasks
+  [[InitVariational]]
+    inherit = '''+da.init+''', SingleBatch
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIVariational.csh "1" "0" "DA" "'''+self.baseKey+'''"
     script = $origin/applications/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+retry+'''
 
-  [[DataAssim]]
-    inherit = BATCH
+  [[Variationals]]
+    inherit = '''+da.execute+''', BATCH
     [[[job]]]
       execution time limit = PT'''+str(seconds)+'''S
       execution retry delays = '''+retry+'''
@@ -322,52 +305,31 @@ class Variational(SubConfig):
 
   # clean
   [[CleanVariational]]
-    inherit = CleanDataAssim
+    inherit = '''+da.clean+''', CleanBase
     script = $origin/applications/CleanVariational.csh''']
 
     if EDASize == 1:
       # single instance or ensemble of Variational(s)
       for mm in range(1, NN+1, 1):
-        tasks += ['''
-  [[DAMember'''+str(mm)+''']]
-    inherit = DataAssim
+        self.tasks += ['''
+  [[Variational'''+str(mm)+''']]
+    inherit = Variationals
     script = $origin/applications/Variational.csh "'''+str(mm)+'"']
 
     else:
       # single instance or ensemble of EnsembleOfVariational(s)
       for instance in range(1, nDAInstances+1, 1):
-        tasks += ['''
-  [[EDAInstance'''+str(instance)+''']]
-    inherit = DataAssim
+        self.tasks += ['''
+  [[EDA'''+str(instance)+''']]
+    inherit = Variationals
     script = \$origin/applications/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
-    self.exportTasks(tasks)
-
-    dependencies = ['''
-        ## Pre-DA
-        # observation processing
-        {{PrepareObservations}} => '''+self.pre+'''
-
-        # init
-        '''+self.pre+''' => InitDataAssim
-
-        ## Data assimilation
-        InitDataAssim => DataAssim
-
-        ## Post-DA
-        # all DataAssim members must succeed in order to start post
-        DataAssim:succeed-all => '''+self.post+'''
-
-        # clean after finished
-        '''+self.post+''' => '''+self.finished+''' => CleanDataAssim''']
-
+    self.dependencies = ['#']
     if self.get('ABEInflation'):
-      dependencies += ['''
+      self.dependencies += ['''
         # abei
-        '''+self.pre+''' =>
+        '''+da.pre+''' =>
         MeanBackground =>
         HofXEnsMeanBG =>
-        GenerateABEInflation => InitDataAssim
+        GenerateABEInflation => '''+da.init+'''
         GenerateABEInflation => CleanHofXEnsMeanBG''']
-
-    self.exportDependencies(dependencies)

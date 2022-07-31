@@ -1,3 +1,0 @@
-%include include/tasks/auto/variational.rc
-%include include/tasks/auto/rtpp.rc
-%include include/tasks/auto/forecast.rc

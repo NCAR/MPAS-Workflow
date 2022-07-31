@@ -42,7 +42,8 @@
 
 [runtime]
 %include include/tasks/base.rc
-%include include/tasks/criticalpath.rc
+%include include/tasks/auto/da.rc
+%include include/tasks/auto/forecast.rc
 %include include/tasks/auto/firstbackground.rc
 %include include/tasks/auto/externalanalyses.rc
 %include include/tasks/auto/initic.rc

@@ -22,9 +22,8 @@ class Members(SubConfig):
       self._set('nMembers', n)
       self.n = n
 
-    # EMPTY
-
     ###############################
     # export for use outside python
     ###############################
-    self.exportVars(['nMembers'], ['nMembers'])
+    self.exportVarsToCsh(['nMembers'])
+    self.exportVarsToCylc(['nMembers'])

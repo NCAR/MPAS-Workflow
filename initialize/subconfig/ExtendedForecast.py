@@ -25,8 +25,6 @@ class ExtendedForecast(SubConfig):
   def __init__(self, config, members, forecast):
     super().__init__(config)
 
-    csh = []
-
     ###################
     # derived variables
     ###################
@@ -50,6 +48,14 @@ class ExtendedForecast(SubConfig):
       'extMeanTimesList', 'extEnsTimesList',
       'EnsVerifyMembers', 'extIntervHR', 'extLengths', 'nExtOuts']
 
+    ###############################
+    # export for use outside python
+    ###############################
+    self.exportVarsToCylc(cylc)
+
+    ########################
+    # tasks and dependencies
+    ########################
     # job settings
     retry = self.extractResourceOrDefault('job', None, 'retry', '1*PT30S', str)
     baseSeconds = forecast.get('baseSeconds')
@@ -59,11 +65,6 @@ class ExtendedForecast(SubConfig):
     memory = forecast.get('memory')
 
     seconds = baseSeconds + secondsPerForecastHR * lengthHR
-
-    ###############################
-    # export for use outside python
-    ###############################
-    self.exportVars(csh, cylc)
 
     tasks = ['''
   [[ExtendedFCBase]]

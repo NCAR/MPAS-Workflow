@@ -26,14 +26,18 @@ class Forecast(SubConfig):
     # derived variables
     ###################
 
-    updateSea = self.get('updateSea')
+    IAU = self.get('IAU')
 
     # TODO: set based on IAU
-    IAU = self.get('IAU')
     outIntervalHR = workflow.get('CyclingWindowHR')
     lengthHR = workflow.get('CyclingWindowHR')
 
+    ########################
+    # tasks and dependencies
+    ########################
     # job settings
+    updateSea = self.get('updateSea')
+
     retry = self.extractResourceOrDie('job', None, 'retry', str)
     baseSeconds = self.extractResourceOrDie('job', mesh.name, 'baseSeconds', int)
     secondsPerForecastHR = self.extractResourceOrDie('job', mesh.name, 'secondsPerForecastHR', int)
@@ -49,16 +53,8 @@ class Forecast(SubConfig):
     self._set('PEPerNode', PEPerNode)
     self._set('memory', memory)
 
-    ###############################
-    # export for use outside python
-    ###############################
-    cylc = []
-    csh = []
-    self.exportVars(csh, cylc)
-
     tasks = ['''
   [[ForecastBase]]
-    inherit = BATCH
     [[[job]]]
       execution time limit = PT'''+str(seconds)+'''S
       execution retry delays = '''+retry+'''
@@ -69,9 +65,9 @@ class Forecast(SubConfig):
       -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory+'''
 
   [[Forecast]]
-    inherit = ForecastBase
+    inherit = ForecastBase, BATCH
   [[ColdForecast]]
-    inherit = ForecastBase
+    inherit = ForecastBase, BATCH
   [[ForecastFinished]]
     inherit = BACKGROUND''']
 
@@ -97,3 +93,12 @@ class Forecast(SubConfig):
     script = $origin/applications/Forecast.csh '''+WarmArgs]
 
     self.exportTasks(tasks)
+
+    dependencies = ['''
+        # ensure there is a valid sea-surface update file before forecast
+        {{PrepareSeaSurfaceUpdate}} => Forecast
+
+        # all members must succeed in order to proceed
+        Forecast:succeed-all => ForecastFinished''']
+
+    self.exportDependencies(dependencies)

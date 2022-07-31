@@ -145,7 +145,11 @@ if ("${ArgUpdateSea}" == True) then
   setenv deterministicSeaMemFmt " "
   setenv deterministicSeaFilePrefix x1.${nCells}.init
 
+  # need to change to mainScriptDir to source firstbackground
+  # TODO: remove this dependence
+  cd ${mainScriptDir}
   source config/auto/firstbackground.csh
+  cd -
 
   if ( $nMembers > 1 && "$firstbackground__resource" == "PANDAC.LaggedGEFS" ) then
     # using member-specific sst/xice data from GEFS, only works for this special case

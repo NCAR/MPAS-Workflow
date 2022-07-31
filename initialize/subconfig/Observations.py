@@ -70,29 +70,32 @@ class Observations(SubConfig):
 
     # then add as a joined string with dependencies between subtasks (" => ")
     # e.g.,
-    # key: PrepareObservationsTasks becomes PrepareObservations
     # value: [a, b] becomes "a => b"
-    key = key.replace('Tasks','')
+    key = 'PrepareObservations'
     value = " => ".join(values)
     cylc.append(key)
     self._set(key, value)
-
+    self.workflow = key
    
     ###############################
     # export for use outside python
     ###############################
-    self.exportVars(csh, cylc)
+    self.exportVarsToCsh(csh)
+    self.exportVarsToCylc(cylc)
 
+    ########################
+    # tasks and dependencies
+    ########################
     tasks = [
 '''
   [[GetObs]]
-    inherit = BATCH
+    inherit = SingleBatch
     script = $origin/applications/GetObs.csh
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = '''+self.get('getRetry')+'''
   [[ObsToIODA]]
-    inherit = BATCH
+    inherit = SingleBatch
     script = $origin/applications/ObsToIODA.csh
     [[[job]]]
       execution time limit = PT10M

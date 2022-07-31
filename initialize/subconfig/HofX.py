@@ -79,8 +79,6 @@ class HofX(SubConfig):
   def __init__(self, config, meshes, model):
     super().__init__(config)
 
-    cylc = []
-
     ###################
     # derived variables
     ###################
@@ -95,18 +93,22 @@ class HofX(SubConfig):
     # all csh variables above
     csh = list(self._vtable.keys())
 
-    retry = self.extractResourceOrDie('job', None, 'retry', str)
+    ###############################
+    # export for use outside python
+    ###############################
+    self.exportVarsToCsh(csh)
 
+    ########################
+    # tasks and dependencies
+    ########################
+
+    # job settings
+    retry = self.extractResourceOrDie('job', None, 'retry', str)
     meshesKey = meshes['Outer'].name
     seconds = self.extractResourceOrDie('job', meshesKey, 'seconds', int)
     nodes = self.extractResourceOrDie('job', meshesKey, 'nodes', int)
     PEPerNode = self.extractResourceOrDie('job', meshesKey, 'PEPerNode', int)
     memory = self.extractResourceOrDefault('job', meshesKey, 'memory', '45GB', str)
-
-    ###############################
-    # export for use outside python
-    ###############################
-    self.exportVars(csh, cylc)
 
     tasks = [
 '''

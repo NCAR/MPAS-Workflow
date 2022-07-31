@@ -88,33 +88,37 @@ class ExternalAnalyses(SubConfig):
     ###############################
     # export for use outside python
     ###############################
-    self.exportVars(csh, cylc)
+    self.exportVarsToCsh(csh)
+    self.exportVarsToCylc(cylc)
 
+    ########################
+    # tasks and dependencies
+    ########################
     RETRY = self.extractResourceOrDie(resource, meshes['Outer'].name, 'retry', str)
 
     tasks = [
 '''## Analyses generated outside MPAS-Workflow
   [[GetGFSAnalysisFromRDA]]
-    inherit = BATCH
+    inherit = SingleBatch
     script = $origin/applications/GetGFSAnalysisFromRDA.csh
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+RETRY+'''
   [[GetGFSanalysisFromFTP]]
-    inherit = BATCH
+    inherit = SingleBatch
     script = $origin/applications/GetGFSAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+RETRY+'''
   [[GetGDASAnalysisFromFTP]]
-    inherit = BATCH
+    inherit = SingleBatch
     script = $origin/GetGDASAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT45M
       execution retry delays = '''+RETRY+'''
 
   [[UngribExternalAnalysis]]
-    inherit = BATCH
+    inherit = SingleBatch
     script = $origin/applications/UngribExternalAnalysis.csh
     [[[job]]]
       execution time limit = PT5M
@@ -132,7 +136,7 @@ class ExternalAnalyses(SubConfig):
       tasks += [
 '''
   [[LinkExternalAnalysis-'''+mesh+''']]
-    inherit = BATCH
+    inherit = SingleBatch
     script = $origin/applications/LinkExternalAnalysis.csh "'''+mesh+'''"
     [[[job]]]
       execution time limit = PT30S

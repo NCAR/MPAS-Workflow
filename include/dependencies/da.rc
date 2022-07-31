@@ -1,3 +1,0 @@
-%include include/dependencies/auto/da.rc
-%include include/dependencies/auto/variational.rc
-%include include/dependencies/auto/rtpp.rc

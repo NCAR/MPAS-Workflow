@@ -61,12 +61,16 @@ class FirstBackground(SubConfig):
     ###############################
     # export for use outside python
     ###############################
-    self.exportVars(csh, cylc)
+    self.exportVarsToCsh(csh)
+    self.exportVarsToCylc(cylc)
 
+    ########################
+    # tasks and dependencies
+    ########################
     tasks = [
 '''
   [[LinkWarmStartBackgrounds]]
-    inherit = BATCH
+    inherit = SingleBatch
     script = $origin/applications/LinkWarmStartBackgrounds.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members

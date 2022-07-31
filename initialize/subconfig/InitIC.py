@@ -9,21 +9,14 @@ class InitIC(SubConfig):
   def __init__(self, config, meshes):
     super().__init__(config)
 
-    csh = []
-    cylc = []
-
-    ###################
-    # derived variables
-    ###################
+    ########################
+    # tasks and dependencies
+    ########################
+    # job settings
     retry = self.extractResourceOrDie('job', None, 'retry')
     seconds = str(int(self.extractResourceOrDie('job', meshes['Outer'].name, 'seconds')))
     nodes = str(int(self.extractResourceOrDie('job', meshes['Outer'].name, 'nodes')))
     PEPerNode = str(int(self.extractResourceOrDie('job', meshes['Outer'].name, 'PEPerNode')))
-
-    ###############################
-    # export for use outside python
-    ###############################
-    self.exportVars(csh, cylc)
 
     tasks = []
     for mesh in list(set([mesh.name for mesh in meshes.values()])):

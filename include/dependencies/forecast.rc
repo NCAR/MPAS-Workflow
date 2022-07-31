@@ -1,5 +1,0 @@
-        # ensure there is a valid sea-surface update file before forecast
-        {{PrepareSeaSurfaceUpdate}} => Forecast
-
-        # all members must succeed in order to proceed
-        Forecast:succeed-all => ForecastFinished

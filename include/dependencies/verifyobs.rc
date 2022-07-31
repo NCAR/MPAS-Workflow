@@ -4,8 +4,8 @@
 {% if VerifyDeterministicDA and nMembers < 2 and CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"]  %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
-        DataAssimFinished => VerifyObsDA
-        VerifyObsDA => CleanDataAssim
+        DAFinished => VerifyObsDA
+        VerifyObsDA => CleanDA
   {% if CompareDA2Benchmark %}
         VerifyObsDA => CompareObsDA
   {% endif %}
@@ -50,7 +50,7 @@
 {% if VerifyANMembers and CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
-        DataAssimFinished => HofXAN
+        DAFinished => HofXAN
         HofXAN:succeed-all => VerifyObsAN
         VerifyObsAN:succeed-all => CleanHofXAN
       '''

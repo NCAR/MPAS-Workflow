@@ -17,12 +17,11 @@ class StaticStream(SubConfig):
   def __init__(self, config, meshes, members, FirstCycleDate):
     super().__init__(config)
 
-    csh = []
-    cylc = []
-
     ###################
     # derived variables
     ###################
+    csh = []
+
     resourceName = 'staticstream__resource'
     resource = self.get('resource')
     self._set(resourceName, resource)
@@ -54,4 +53,4 @@ class StaticStream(SubConfig):
     ###############################
     # export for use outside python
     ###############################
-    self.exportVars(csh, cylc)
+    self.exportVarsToCsh(csh)

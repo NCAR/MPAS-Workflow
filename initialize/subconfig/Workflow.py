@@ -195,4 +195,5 @@ class Workflow(SubConfig):
     ###############################
     csh = list(self._vtable.keys())
     cylc = list(self._vtable.keys())
-    self.exportVars(csh, cylc)
+    self.exportVarsToCsh(csh)
+    self.exportVarsToCylc(cylc)

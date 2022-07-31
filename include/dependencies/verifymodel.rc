@@ -19,8 +19,8 @@
         MeanBackground => VerifyModelEnsMeanBG
         {{PrepareExternalAnalysisOuter}} => VerifyModelEnsMeanBG
   {% if DiagnoseEnsSpreadBG %}
-        DataAssimFinished => VerifyModelEnsMeanBG
-        VerifyModelEnsMeanBG => CleanDataAssim
+        DAFinished => VerifyModelEnsMeanBG
+        VerifyModelEnsMeanBG => CleanDA
   {% endif %}
       '''
 {% endif %}
@@ -30,7 +30,7 @@
 {% if VerifyANMembers %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
-        DataAssimFinished => VerifyModelAN
+        DAFinished => VerifyModelAN
         {{PrepareExternalAnalysisOuter}} => VerifyModelAN
       '''
 {% endif %}

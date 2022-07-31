@@ -23,9 +23,6 @@ class RTPP(SubConfig):
   def __init__(self, config, ensMesh, members, da):
     super().__init__(config)
 
-    tasks = ['#']
-    dependencies = ['#']
-
     ###################
     # derived variables
     ###################
@@ -37,10 +34,21 @@ class RTPP(SubConfig):
     # used by experiment naming convention
     self._set('rtpp__relaxationFactor', relaxationFactor)
 
-    # all csh variables above
-    csh = list(self._vtable.keys())
+    active = (relaxationFactor > 0. and members.n > 1)
 
-    if relaxationFactor > 0. and members.n > 1:
+    ###############################
+    # export for use outside python
+    ###############################
+    if active:
+      csh = list(self._vtable.keys())
+      self.exportVarsToCsh(csh)
+
+    ########################
+    # tasks and dependencies
+    ########################
+    self.tasks = ['#']
+    self.dependencies = ['#']
+    if active:
       retry = self.extractResourceOrDie('job', None, 'retry', str)
 
       meshKey = ensMesh.name
@@ -52,9 +60,10 @@ class RTPP(SubConfig):
       PEPerNode = self.extractResourceOrDie('job', meshKey, 'PEPerNode', int)
       memory = self.extractResourceOrDie('job', meshKey, 'memory', str)
 
-      tasks += ['''
+      self.tasks += ['''
   [[PrepRTPP]]
-    inherit = BATCH
+    # note: does not depend on any other tasks
+    inherit = SingleBatch
     script = $origin/applications/PrepRTPP.csh
     [[[job]]]
       execution time limit = PT1M
@@ -72,17 +81,9 @@ class RTPP(SubConfig):
       -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory+'''
 
   [[CleanRTPP]]
-    inherit = CleanDataAssim
+    inherit = '''+da.clean+''', CleanBase
     script = $origin/applications/CleanRTPP.csh''']
 
-      dependencies += ['''
+      self.dependencies += ['''
         PrepRTPP => RTPP
         '''+da.post+''' => RTPP => '''+da.finished]
-
-    ###############################
-    # export for use outside python
-    ###############################
-    cylc = []
-    self.exportVars(csh, cylc)
-    self.exportTasks(tasks)
-    self.exportDependencies(dependencies)

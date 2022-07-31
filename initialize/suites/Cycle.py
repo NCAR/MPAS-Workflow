@@ -11,12 +11,11 @@ from initialize.subconfig.StaticStream import StaticStream
 from initialize.subconfig.Workflow import Workflow
 
 # applications
+from initialize.subconfig.DataAssimilation import DataAssimilation
 from initialize.subconfig.InitIC import InitIC
 from initialize.subconfig.ExtendedForecast import ExtendedForecast
 from initialize.subconfig.Forecast import Forecast
 from initialize.subconfig.HofX import HofX
-from initialize.subconfig.RTPP import RTPP
-from initialize.subconfig.Variational import Variational
 
 class Cycle(Suite):
   ExpConfigType = 'cycling'
@@ -39,10 +38,9 @@ class Cycle(Suite):
 
     ic = InitIC(conf, meshes)
     hofx = HofX(conf, meshes, model)
-    var = Variational(conf, meshes, model, members, workflow)
-    rtpp = RTPP(conf, meshes['Ensemble'], members, var)
+    da = DataAssimilation(conf, obs, meshes, model, members, workflow)
     fc = Forecast(conf, meshes['Outer'], members, workflow)
-    extfc = ExtendedForecast(conf, members, fc,)
+    extfc = ExtendedForecast(conf, members, fc)
 
     #TODO: remove below line when all components are migrated to python, turn off for testing for now
     super().__init__(scenario)
