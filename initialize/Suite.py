@@ -20,15 +20,16 @@ class Suite():
   def clean():
     print('cleaning up auto-generated files...')
 
+    cmd = ['rm']
+    #cmd += ['-v']
+
     files = glob.glob("config/auto/*.csh")
     for file in files:
-      cmd = ['rm','-v', file]
-      sub = subprocess.run(cmd)
+      sub = subprocess.run(cmd+[file])
 
     files = glob.glob("include/*/auto/*.rc")
     for file in files:
-      cmd = ['rm','-v', file]
-      sub = subprocess.run(cmd)
+      sub = subprocess.run(cmd+[file])
 
 # Register all suite classes
 from initialize.suites.Cycle import Cycle
