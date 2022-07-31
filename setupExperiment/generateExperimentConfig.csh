@@ -135,7 +135,7 @@ if ("\$externalanalyses__resource" != None) then
       | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirEnsemble}'@' \
       \`
     setenv StaticFieldsFileEnsemble \${staticstream__filePrefixEnsemble}.\${FirstFileDate}.nc
-  end
+  endif
   setenv staticMemFmt "\${staticstream__memberFormatOuter}"
 else
   setenv staticMemFmt " "
