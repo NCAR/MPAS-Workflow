@@ -1,6 +1,4 @@
 verifyobs:
-  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics
-
   # resource requirements
   job:
     # cylc retry string

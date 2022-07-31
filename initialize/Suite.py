@@ -11,14 +11,6 @@ import glob
 
 class Suite():
   ExpConfigType = None
-  appDependentConfigs = []
-  def __init__(self, scenario):
-    # application-specific configurations
-    for app in self.appDependentConfigs:
-      cmd = ['./config/applications/'+app+'.csh']
-      print(' '.join(cmd))
-      sub = subprocess.run(cmd)
-
   def drive(self):
     cmd = ['./drive.csh', self.__class__.__name__, self.ExpConfigType]
     print(' '.join(cmd))

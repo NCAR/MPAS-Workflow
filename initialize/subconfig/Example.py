@@ -40,10 +40,10 @@ class Example(SubConfig):
     # export for use outside python
     ###############################
     #cylc = list(self._vtable.keys())
-    #self.exportVarsToCsh(csh)
+    #self.exportVarsToCylc(cylc)
 
     #csh = list(self._vtable.keys())
-    #self.exportVarsToCylc(cylc)
+    #self.exportVarsToCsh(csh)
 
     ########################
     # tasks and dependencies

@@ -16,11 +16,11 @@ from initialize.subconfig.InitIC import InitIC
 from initialize.subconfig.ExtendedForecast import ExtendedForecast
 from initialize.subconfig.Forecast import Forecast
 from initialize.subconfig.HofX import HofX
+from initialize.subconfig.VerifyModel import VerifyModel
+from initialize.subconfig.VerifyObs import VerifyObs
 
 class Cycle(Suite):
   ExpConfigType = 'cycling'
-  appDependentConfigs = ['verifyobs', 'verifymodel']
-
   def __init__(self, scenario):
     conf = scenario.getConfig()
 
@@ -41,6 +41,5 @@ class Cycle(Suite):
     da = DataAssimilation(conf, obs, meshes, model, members, workflow)
     fc = Forecast(conf, meshes['Outer'], members, workflow)
     extfc = ExtendedForecast(conf, members, fc)
-
-    #TODO: remove below line when all components are migrated to python, turn off for testing for now
-    super().__init__(scenario)
+    vmodel = VerifyModel(conf, meshes['Outer'], members)
+    vobs = VerifyObs(conf, members)

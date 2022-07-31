@@ -14,11 +14,11 @@ from initialize.subconfig.InitIC import InitIC
 from initialize.subconfig.ExtendedForecast import ExtendedForecast
 from initialize.subconfig.Forecast import Forecast
 from initialize.subconfig.HofX import HofX
+from initialize.subconfig.VerifyModel import VerifyModel
+from initialize.subconfig.VerifyObs import VerifyObs
 
 class ForecastFromExternalAnalyses(Suite):
   ExpConfigType = 'base'
-  appDependentConfigs = ['verifyobs', 'verifymodel']
-
   def __init__(self, scenario):
     conf = scenario.getConfig()
 
@@ -26,15 +26,16 @@ class ForecastFromExternalAnalyses(Suite):
     workflow = Workflow(conf)
 
     model = Model(conf)
+    meshes = model.getMeshes()
     obs = Observations(conf)
     members = Members(conf)
 
-    ea = ExternalAnalyses(conf, model.meshes)
-    ss = StaticStream(conf, model.meshes, members, workflow.get('FirstCycleDate'))
+    ea = ExternalAnalyses(conf, meshes)
+    ss = StaticStream(conf, meshes, members, workflow.get('FirstCycleDate'))
 
-    ic = InitIC(conf, model.meshes)
-    hofx = HofX(conf, model.meshes, model)
-    fc = Forecast(conf, model.meshes['Outer'], members, workflow)
+    ic = InitIC(conf, meshes)
+    hofx = HofX(conf, meshes, model)
+    fc = Forecast(conf, meshes['Outer'], members, workflow)
     extfc = ExtendedForecast(conf, members, fc,)
-
-    super().__init__(scenario)
+    vmodel = VerifyModel(conf, meshes['Outer'], members)
+    vobs = VerifyObs(conf, members)

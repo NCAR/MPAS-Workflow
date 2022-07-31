@@ -1,25 +1,20 @@
 verifymodel:
-  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics
-
-## mesh-specific settings
   # resource requirements
   job:
     # cylc retry string
     retry: '1*PT30S'
 
-    defaults:
-      baseSeconds: 2000
-      secondsPerMember: 500
-
     #{{outerMesh}}:
     #  baseSeconds: int
     #  secondsPerMember: int
+    defaults:
+      baseSeconds: 2000
+      secondsPerMember: 500
     30km:
       baseSeconds: 1200
-      secondsPerMember: 120
     60km:
       baseSeconds: 480
-      secondsPerMember: 40
+      secondsPerMember: 100
     120km:
       baseSeconds: 120
-      secondsPerMember: 10
+      secondsPerMember: 40

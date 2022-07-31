@@ -21,5 +21,3 @@ class GenerateExternalAnalyses(Suite):
     ea = ExternalAnalyses(conf, model.meshes)
 
     ic = InitIC(conf, model.meshes)
-
-    super().__init__(scenario)
