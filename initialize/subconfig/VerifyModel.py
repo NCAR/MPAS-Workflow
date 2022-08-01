@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class VerifyModel(SubConfig):
+class VerifyModel(Component):
   baseKey = 'verifymodel'
   defaults = 'scenarios/defaults/verifymodel.yaml'
   variablesWithDefaults = {

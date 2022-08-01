@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class RTPP(SubConfig):
+class RTPP(Component):
   baseKey = 'rtpp'
   defaults = 'scenarios/defaults/rtpp.yaml'
   workDir = 'CyclingInflation/RTPP'

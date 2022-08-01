@@ -2,7 +2,7 @@
 
 from collections.abc import Iterable
 
-class SubConfig():
+class Component():
   defaults = None
   baseKey = None
   requiredVariables = {}
@@ -45,26 +45,17 @@ class SubConfig():
   def _setOrDie(self, v, t=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-
-    self._vtable[v_] = self.__config.getOrDie(v)
-    if t is not None:
-      self._vtable[v_] = t(self._vtable[v_])
+    self._vtable[v_] = self.__config.getOrDie(v, t)
 
   def _setOrNone(self, v, t=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-
-    self._vtable[v_] = self.__config.get(v)
-    if self._vtable[v_] is not None and t is not None:
-      self._vtable[v_] = t(self._vtable[v_])
+    self._vtable[v_] = self.__config.get(v, t)
 
   def _setOrDefault(self, v, default, t=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-
-    self._vtable[v_] = self.__config.getOrDefault(v, default)
-    if t is not None:
-      self._vtable[v_] = t(self._vtable[v_])
+    self._vtable[v_] = self.__config.getOrDefault(v, default, t)
 
   ## general purpose nested extract methods
   def extractResource(self, resource1, resource2, key, t=None):
@@ -78,24 +69,21 @@ class SubConfig():
     else:
       r2 = resource2
 
-    value = self.__config.get('.'.join([r1, r2, key]))
+    value = self.__config.get('.'.join([r1, r2, key]), t)
 
     if value is None:
-      value = self.__config.get('.'.join([r1, key]))
+      value = self.__config.get('.'.join([r1, key]), t)
 
     if value is None:
-      value = self.__config.get('.'.join([r1, 'common', key]))
+      value = self.__config.get('.'.join([r1, 'common', key]), t)
 
     if value is None:
-      value = self.__config.get('.'.join([r1, 'defaults', key]))
+      value = self.__config.get('.'.join([r1, 'defaults', key]), t)
 
     if value is None:
-      value = self.__config.get('.'.join(['defaults', key]))
+      value = self.__config.get('.'.join(['defaults', key]), t)
 
-    if t is not None and value is not None:
-      return t(value)
-    else:
-      return value
+    return value
 
   def extractResourceOrDie(self, r1, r2, key, t=None):
     v = self.extractResource(r1, r2, key, t)

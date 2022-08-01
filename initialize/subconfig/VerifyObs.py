@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class VerifyObs(SubConfig):
+class VerifyObs(Component):
   baseKey = 'verifyobs'
   defaults = 'scenarios/defaults/verifyobs.yaml'
   variablesWithDefaults = {

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class Job(SubConfig):
+class Job(Component):
   baseKey = 'job'
   variablesWithDefaults = {
     ## *AccountNumber

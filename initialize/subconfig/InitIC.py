@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class InitIC(SubConfig):
+class InitIC(Component):
   baseKey = 'initic'
   defaults = 'scenarios/defaults/initic.yaml'
 

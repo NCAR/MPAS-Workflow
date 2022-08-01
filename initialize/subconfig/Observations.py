@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class Observations(SubConfig):
+class Observations(Component):
   baseKey = 'observations'
   defaults = 'scenarios/defaults/observations.yaml'
 

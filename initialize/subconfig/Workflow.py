@@ -3,9 +3,9 @@
 import datetime as dt
 import tools.dateFormats as dtf
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class Workflow(SubConfig):
+class Workflow(Component):
   baseKey = 'workflow'
   variablesWithDefaults = {
     #dates

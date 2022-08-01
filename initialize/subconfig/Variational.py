@@ -2,9 +2,9 @@
 
 from collections import OrderedDict
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class Variational(SubConfig):
+class Variational(Component):
   baseKey = 'variational'
   defaults = 'scenarios/defaults/variational.yaml'
 

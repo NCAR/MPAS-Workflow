@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class HofX(SubConfig):
+class HofX(Component):
   baseKey = 'hofx'
   defaults = 'scenarios/defaults/hofx.yaml'
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class Members(SubConfig):
+class Members(Component):
   baseKey = 'members'
   optionalVariables = {
     ## n: number of firstbackground, DA, and forecast members

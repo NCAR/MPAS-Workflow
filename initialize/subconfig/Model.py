@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
 class Mesh():
   def __init__(self, name, nCells, attrib=None):
@@ -8,7 +8,7 @@ class Mesh():
     self.nCells = int(nCells)
     self.attrib = attrib
 
-class Model(SubConfig):
+class Model(Component):
   defaults = 'scenarios/defaults/model.yaml'
   baseKey = 'model'
   # mesh descriptors, e.g.:

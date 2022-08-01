@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class Forecast(SubConfig):
+class Forecast(Component):
   baseKey = 'forecast'
   defaults = 'scenarios/defaults/forecast.yaml'
   workDir = 'CyclingFC'

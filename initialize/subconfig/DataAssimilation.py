@@ -2,11 +2,11 @@
 
 from collections import OrderedDict
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 from initialize.subconfig.RTPP import RTPP
 from initialize.subconfig.Variational import Variational
 
-class DataAssimilation(SubConfig):
+class DataAssimilation(Component):
   '''
   Framework for all DataAssimilation applications.  Can be used to manage interdependent classes
   and cylc tasks, but does not execute any tasks on its own.

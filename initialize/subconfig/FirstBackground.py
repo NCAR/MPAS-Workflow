@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class FirstBackground(SubConfig):
+class FirstBackground(Component):
   baseKey = 'firstbackground'
   defaults = 'scenarios/defaults/firstbackground.yaml'
 

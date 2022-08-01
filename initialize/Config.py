@@ -4,23 +4,19 @@ from copy import deepcopy
 import yaml
 
 class Config():
-  def __init__(self, filename, defaults=None, subKey=None):
-    self._filename = filename
-    with open(filename) as file:
-      self.__conf = yaml.load(file, Loader=yaml.FullLoader)
+  def __init__(self, filename=None, defaultsFile=None, subKey=None):
+    #self._filename = filename
+    if filename is not None:
+      with open(filename) as file:
+        self.__conf = yaml.load(file, Loader=yaml.FullLoader)
+    elif parent is not None and isinstance(parent, dict):
+      self.__conf = parent
 
-    self.renew(defaults, subKey)
+    self.renew(defaultsFile, subKey)
 
-#  def make(self, defaults, subKey):
-#    self.renew(defaults, subKey)
-#
-#  @classmethod
-#  def fromOther(cls, other, defaults, subKey):
-#    return cls(other._filename, defaults, subKey)
-
-  def renew(self, defaults=None, subKey=None):
-    if defaults is not None:
-      with open(defaults) as file:
+  def renew(self, defaultsFile=None, subKey=None):
+    if defaultsFile is not None:
+      with open(defaultsFile) as file:
         d = yaml.load(file, Loader=yaml.FullLoader)
     else:
       d = None
@@ -40,7 +36,7 @@ class Config():
       self.defaults = d
       self.conf = self.__conf
 
-  def get(self, dotSeparatedKey):
+  def get(self, dotSeparatedKey, t=None):
     '''
     get dictionary value for nested dot-separated key
     e.g., get('top.next') tries to retrieve self.conf['top']['next']
@@ -67,39 +63,26 @@ class Config():
     if v is not None:
       if v == 'None': v = None
 
-    return v
+    if t is not None and v is not None:
+      return t(v)
+    else:
+      return v
 
-  def getOrDefault(self, key, default):
+  def getOrDefault(self, key, default, t=None):
     '''option to provide default value as second argument'''
-    v = self.get(key)
+    v = self.get(key, t)
     if v is None:
       return default
     else:
       return v
 
-  def has(self, key):
+  def has(self, key, t=None):
     '''determine if config node is available'''
-    v = self.get(key)
+    v = self.get(key, t)
     return (v is not None)
 
-  def getOrDie(self, key):
+  def getOrDie(self, key, t=None):
     '''throw error if node is not available'''
-    v = self.get(key)
+    v = self.get(key, t)
     assert v is not None, ('key ('+key+') is invalid or has None value')
     return v
-
-  def getAsCsh(self, key):
-    v = self.get(key)
-    vsh = str(v)
-    if isinstance(v, list):
-      vsh = vsh.replace('\'','')
-      vsh = vsh.replace('[','')
-      vsh = vsh.replace(']','')
-      vsh = vsh.replace(',',' ')
-      #vsh = ' '+vsh+' '
-    return vsh
-
-  def getAsCshOrDie(self, key):
-    vsh = self.getAsShell(key)
-    assert vsh != 'None', ('key ('+key+') is invalid or has None value')
-    return vsh

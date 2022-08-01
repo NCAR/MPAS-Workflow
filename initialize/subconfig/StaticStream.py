@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class StaticStream(SubConfig):
+class StaticStream(Component):
   baseKey = 'staticstream'
   defaults = 'scenarios/defaults/staticstream.yaml'
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from initialize.SubConfig import SubConfig
+from initialize.Component import Component
 
-class Example(SubConfig):
+class Example(Component):
   baseKey = 'example'
   #defaults = 'scenarios/defaults/example.yaml' (optional)
   requiredVariables = {
