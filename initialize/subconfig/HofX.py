@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from initialize.Component import Component
+from initialize.Resource import Resource
 
 class HofX(Component):
   baseKey = 'hofx'
@@ -87,8 +88,8 @@ class HofX(Component):
 
     self._set('MeshList', ['HofX'])
     self._set('nCellsList', [meshes['Outer'].nCells])
-    self._set('StreamsFileList', [model.get('outerStreamsFile')])
-    self._set('NamelistFileList', [model.get('outerNamelistFile')])
+    self._set('StreamsFileList', [model['outerStreamsFile']])
+    self._set('NamelistFileList', [model['outerNamelistFile']])
 
     # all csh variables above
     csh = list(self._vtable.keys())
@@ -103,23 +104,25 @@ class HofX(Component):
     ########################
 
     # job settings
-    retry = self.extractResourceOrDie('job', None, 'retry', str)
-    meshesKey = meshes['Outer'].name
-    seconds = self.extractResourceOrDie('job', meshesKey, 'seconds', int)
-    nodes = self.extractResourceOrDie('job', meshesKey, 'nodes', int)
-    PEPerNode = self.extractResourceOrDie('job', meshesKey, 'PEPerNode', int)
-    memory = self.extractResourceOrDefault('job', meshesKey, 'memory', '45GB', str)
+    attr = {
+      'retry': {'t': str},
+      'seconds': {'t': int},
+      'nodes': {'t': int},
+      'PEPerNode': {'t': int},
+      'memory': {'def': '45GB', 't': str},
+    }
+    job = Resource(self._conf, attr, 'job', meshes['Outer'].name)
 
     tasks = [
 '''
   [[HofXBase]]
     inherit = BATCH
     [[[job]]]
-      execution time limit = PT'''+str(seconds)+'''S
-      execution retry delays = '''+retry+'''
+      execution time limit = PT'''+str(job['seconds'])+'''S
+      execution retry delays = '''+job['retry']+'''
     [[[directives]]]
       -q = {{NCPQueueName}}
       -A = {{NCPAccountNumber}}
-      -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory]
+      -l = select='''+str(job['nodes'])+':ncpus='+str(job['PEPerNode'])+':mpiprocs='+str(job['PEPerNode'])+':mem='+job['memory']]
 
     self.exportTasks(tasks)

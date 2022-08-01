@@ -4,17 +4,17 @@ from initialize.Config import Config
 
 class SubConfig(Config):
   def __init__(self,
-      table: dict = {},
-      defaults: dict = {},
+      table:dict = {},
+      defaults:dict = {},
     ):
     self._table = table
     self._defaults = defaults
 
   @ classmethod
   def fromConfig(cls,
-      parent: Config,
-      subKey: str,
-      defaultsFile: str = None,
+      parent:Config,
+      subKey:str,
+      defaultsFile:str = None,
     ):
     table, defaults = parent.extract(subKey, defaultsFile)
     return cls(table, defaults)

@@ -58,6 +58,9 @@ class Config():
     else:
       return v
 
+  def __getitem__(self, key:str):
+    return self.get(key)
+
   def getOrDefault(self, key, default, t=None):
     '''option to provide default value as second argument'''
     v = self.get(key, t)

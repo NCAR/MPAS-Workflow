@@ -40,6 +40,9 @@ class Component():
     'basic _vtable get method'
     return self._vtable[v]
 
+  def __getitem__(self, v):
+    return self._vtable[v]
+
   def _set(self, v, value):
     'basic _vtable set method'
     self._vtable[v] = value
