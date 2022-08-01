@@ -26,17 +26,17 @@ class Forecast(Component):
     # derived variables
     ###################
 
-    IAU = self.get('IAU')
+    IAU = self['IAU']
 
     # TODO: set based on IAU
-    outIntervalHR = workflow.get('CyclingWindowHR')
-    lengthHR = workflow.get('CyclingWindowHR')
+    outIntervalHR = workflow['CyclingWindowHR']
+    lengthHR = workflow['CyclingWindowHR']
 
     ########################
     # tasks and dependencies
     ########################
     # job settings
-    updateSea = self.get('updateSea')
+    updateSea = self['updateSea']
 
     retry = self.extractResourceOrDie('job', None, 'retry', str)
     baseSeconds = self.extractResourceOrDie('job', mesh.name, 'baseSeconds', int)

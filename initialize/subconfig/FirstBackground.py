@@ -24,7 +24,7 @@ class FirstBackground(Component):
     # derived variables
     ###################
     resourceName = 'firstbackground__resource'
-    resource = self.get('resource')
+    resource = self['resource']
     self._set(resourceName, resource)
     csh.append(resourceName)
 

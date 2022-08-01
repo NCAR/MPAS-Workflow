@@ -33,8 +33,8 @@ class Cycle(Suite):
     members = Members(conf)
 
     ea = ExternalAnalyses(conf, meshes)
-    fb = FirstBackground(conf, meshes, members, workflow.get('FirstCycleDate'))
-    ss = StaticStream(conf, meshes, members, workflow.get('FirstCycleDate'))
+    fb = FirstBackground(conf, meshes, members, workflow['FirstCycleDate'])
+    ss = StaticStream(conf, meshes, members, workflow['FirstCycleDate'])
 
     ic = InitIC(conf, meshes)
     hofx = HofX(conf, meshes, model)

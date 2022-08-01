@@ -51,7 +51,7 @@ class Observations(Component):
     # derived variables
     ###################
     resourceName = 'observations__resource'
-    resource = self.get('resource')
+    resource = self['resource']
     self._set(resourceName, resource)
 
     # all csh variables above
@@ -93,13 +93,13 @@ class Observations(Component):
     script = $origin/applications/GetObs.csh
     [[[job]]]
       execution time limit = PT10M
-      execution retry delays = '''+self.get('getRetry')+'''
+      execution retry delays = '''+self['getRetry']+'''
   [[ObsToIODA]]
     inherit = SingleBatch
     script = $origin/applications/ObsToIODA.csh
     [[[job]]]
       execution time limit = PT10M
-      execution retry delays = '''+self.get('convertRetry')+'''
+      execution retry delays = '''+self['convertRetry']+'''
     # currently ObsToIODA has to be on Cheyenne, because ioda-upgrade.x is built there
     # TODO: build ioda-upgrade.x on casper, remove CP directives below
     # Note: memory for ObsToIODA may need to be increased when hyperspectral and/or

@@ -31,7 +31,7 @@ class ForecastFromExternalAnalyses(Suite):
     members = Members(conf)
 
     ea = ExternalAnalyses(conf, meshes)
-    ss = StaticStream(conf, meshes, members, workflow.get('FirstCycleDate'))
+    ss = StaticStream(conf, meshes, members, workflow['FirstCycleDate'])
 
     ic = InitIC(conf, meshes)
     hofx = HofX(conf, meshes, model)

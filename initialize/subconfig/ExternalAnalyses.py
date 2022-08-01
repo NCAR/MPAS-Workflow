@@ -28,7 +28,7 @@ class ExternalAnalyses(Component):
     # derived variables
     ###################
     resourceName = 'externalanalyses__resource'
-    resource = self.get('resource')
+    resource = self['resource']
     self._set(resourceName, resource)
     csh.append(resourceName)
 
@@ -82,7 +82,7 @@ class ExternalAnalyses(Component):
 
       # Use external analysis for sea surface updating
       variable = 'PrepareSeaSurfaceUpdate'
-      self._set(variable, self.get('PrepareExternalAnalysisOuter'))
+      self._set(variable, self['PrepareExternalAnalysisOuter'])
       cylc.append(variable)
 
     ###############################

@@ -130,8 +130,8 @@ class Workflow(Component):
     # derived variables
     ###################
 
-    firstCyclePoint = self.get('firstCyclePoint')
-    CyclingWindowHR = self.get('CyclingWindowHR')
+    firstCyclePoint = self['firstCyclePoint']
+    CyclingWindowHR = self['CyclingWindowHR']
 
     ## initialCyclePoint (optional)
     # OPTIONS: >= FirstCycleDate (see config/experiment.csh)
@@ -171,7 +171,7 @@ class Workflow(Component):
 
     # Differentiate between creating the workflow suite for the first time
     # and restarting (i.e., when initialCyclePoint > firstCyclePoint)
-    if (self.get('initialCyclePoint') == firstCyclePoint):
+    if (self['initialCyclePoint'] == firstCyclePoint):
       # The analysis will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
       # initialCyclePoint
       self._set('AnalysisTimes', '+PT'+str(CyclingWindowHR)+'H/PT'+str(CyclingWindowHR)+'H')

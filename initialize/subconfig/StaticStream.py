@@ -23,7 +23,7 @@ class StaticStream(Component):
     csh = []
 
     resourceName = 'staticstream__resource'
-    resource = self.get('resource')
+    resource = self['resource']
     self._set(resourceName, resource)
     csh.append(resourceName)
 

@@ -50,7 +50,7 @@ class Model(Component):
     ###################
     # derived variables
     ###################
-    self._set('model__precision', self.get('precision'))
+    self._set('model__precision', self['precision'])
 
     TemplateFieldsPrefix = 'templateFields'
     self._set('TemplateFieldsPrefix', TemplateFieldsPrefix)
@@ -76,10 +76,10 @@ class Model(Component):
       m = typ+'Mesh'
       Typ = typ.capitalize()
 
-      name = self.get(m)
+      name = self[m]
       if name is not None:
         self._set('nCells'+Typ, self._conf.getOrDie(name+'.nCells'))
-        nCells = self.get('nCells'+Typ)
+        nCells = self['nCells'+Typ]
 
         self.meshes[Typ] = Mesh(name, nCells)
 

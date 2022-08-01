@@ -29,12 +29,12 @@ class ExtendedForecast(Component):
     # derived variables
     ###################
 
-    lengthHR = self.get('lengthHR')
-    outIntervalHR = self.get('outIntervalHR')
-    self._set('extMeanTimes', self.get('meanTimes'))
-    self._set('extEnsTimes', self.get('ensTimes'))
-    self._set('extMeanTimesList', self.get('meanTimes').split(','))
-    self._set('extEnsTimesList', self.get('ensTimes').split(','))
+    lengthHR = self['lengthHR']
+    outIntervalHR = self['outIntervalHR']
+    self._set('extMeanTimes', self['meanTimes'])
+    self._set('extEnsTimes', self['ensTimes'])
+    self._set('extMeanTimesList', self['meanTimes'].split(','))
+    self._set('extEnsTimesList', self['ensTimes'].split(','))
 
     EnsVerifyMembers = range(1, members.n+1, 1)
     self._set('EnsVerifyMembers', EnsVerifyMembers)
@@ -58,11 +58,11 @@ class ExtendedForecast(Component):
     ########################
     # job settings
     retry = self.extractResourceOrDefault('job', None, 'retry', '1*PT30S', str)
-    baseSeconds = forecast.get('baseSeconds')
-    secondsPerForecastHR = forecast.get('secondsPerForecastHR')
-    nodes = forecast.get('nodes')
-    PEPerNode = forecast.get('PEPerNode')
-    memory = forecast.get('memory')
+    baseSeconds = forecast['baseSeconds']
+    secondsPerForecastHR = forecast['secondsPerForecastHR']
+    nodes = forecast['nodes']
+    PEPerNode = forecast['PEPerNode']
+    memory = forecast['memory']
 
     seconds = baseSeconds + secondsPerForecastHR * lengthHR
 

@@ -27,7 +27,7 @@ class RTPP(Component):
     # derived variables
     ###################
     self._set('appyaml', 'rtpp.yaml')
-    relaxationFactor = self.get('relaxationFactor')
+    relaxationFactor = self['relaxationFactor']
     assert relaxationFactor >= 0. and relaxationFactor <= 1., (
       self._msg('invalid relaxationFactor: '+str(relaxationFactor)))
 

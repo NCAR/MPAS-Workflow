@@ -36,12 +36,12 @@ class Component():
   def _msg(self, text):
     return self.logPrefix+text
 
-  def get(self, v):
-    'basic _vtable get method'
-    return self._vtable[v]
-
-  def __getitem__(self, v):
-    return self._vtable[v]
+  def __getitem__(self, key):
+    '''
+    basic _vtable get method
+    usage: value = Component[key]
+    '''
+    return self._vtable[key]
 
   def _set(self, v, value):
     'basic _vtable set method'

@@ -14,7 +14,7 @@ class Members(Component):
     ###################
     # derived variables
     ###################
-    n = self.get('n')
+    n = self['n']
     if n is None:
       self._set('nMembers', 0)
       self.n = 0

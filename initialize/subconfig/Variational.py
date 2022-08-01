@@ -150,7 +150,7 @@ class Variational(Component):
     ###################
     # derived variables
     ###################
-    DAType = self.get('DAType')
+    DAType = self['DAType']
     self._set('AppName', DAType)
     self._set('appyaml', DAType+'.yaml')
     self._set('YAMLPrefix', DAType+'_')
@@ -160,16 +160,16 @@ class Variational(Component):
 
     self._set('MeshList', ['Outer', 'Inner'])
     self._set('nCellsList', [meshes['Outer'].nCells, meshes['Inner'].nCells])
-    self._set('StreamsFileList', [model.get('outerStreamsFile'), model.get('innerStreamsFile')])
-    self._set('NamelistFileList', [model.get('outerNamelistFile'), model.get('innerNamelistFile')])
-    self._set('localStaticFieldsFileList', [model.get('localStaticFieldsFileOuter'), model.get('localStaticFieldsFileInner')])
+    self._set('StreamsFileList', [model['outerStreamsFile'], model['innerStreamsFile']])
+    self._set('NamelistFileList', [model['outerNamelistFile'], model['innerNamelistFile']])
+    self._set('localStaticFieldsFileList', [model['localStaticFieldsFileOuter'], model['localStaticFieldsFileInner']])
 
     # nOuterIterations, automatically determined from length of nInnerIterations
-    self._set('nOuterIterations', len(self.get('nInnerIterations')))
+    self._set('nOuterIterations', len(self['nInnerIterations']))
 
     # determine nDAInstances from members.n and EDASize
     NN = members.n
-    EDASize = self.get('EDASize')
+    EDASize = self['EDASize']
     assert NN > 0, ('members.n must be greater than 0')
     assert NN % EDASize == 0 and EDASize > 0, ('members.n must be divisible by EDASize')
     nDAInstances = NN // EDASize
@@ -177,7 +177,7 @@ class Variational(Component):
 
     BlockEDA = 'DRPBlockLanczos'
     self._set('BlockEDA', BlockEDA)
-    if EDASize == 1 and self.get('MinimizerAlgorithm') == BlockEDA:
+    if EDASize == 1 and self['MinimizerAlgorithm'] == BlockEDA:
       print("WARNING: MinimizerAlgorithm cannot be $BlockEDA when EDASize is 1, re-setting to DRPLanczos")
       self._set('MinimizerAlgorithm', 'DRPLanczos')
 
@@ -325,7 +325,7 @@ class Variational(Component):
     script = \$origin/applications/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     self.dependencies = ['#']
-    if self.get('ABEInflation'):
+    if self['ABEInflation']:
       self.dependencies += ['''
         # abei
         '''+da.pre+''' =>
