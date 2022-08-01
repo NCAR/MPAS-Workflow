@@ -207,7 +207,7 @@ class Variational(Component):
         self._set('ensPbOffsetHR', 0)
 
       else:
-        resource = config.getOrDie('ensemble.forecasts.resource')
+        resource = self._conf.getOrDie('ensemble.forecasts.resource')
         r1 = 'ensemble.forecasts'
         r2 = '.'.join([resource, meshes['Ensemble'].name])
 

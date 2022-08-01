@@ -2,25 +2,28 @@
 
 from collections.abc import Iterable
 
+from initialize.Config import Config
+from initialize.SubConfig import SubConfig
+
 class Component():
-  defaults = None
   baseKey = None
+  defaults = None
   requiredVariables = {}
   optionalVariables = {}
   variablesWithDefaults = {}
-  def __init__(self, config):
+  def __init__(self, config: Config):
     self.logPrefix = self.__class__.__name__+': '
 
-    #######################
-    # renew config defaults
-    #######################
-    config.renew(self.defaults, self.baseKey)
-    self.__config = config
-    self._vtable = {}
+    ###################
+    # extract SubConfig
+    ###################
+    self._conf = SubConfig.fromConfig(config, self.baseKey, self.defaults)
+    #assert self._conf is not None, self._msg('invalid baseKey: '+self.baseKey)
 
     ##############
     # parse config
     ##############
+    self._vtable = {}
     for v, t in self.requiredVariables.items():
       self._setOrDie(v, t)
 
@@ -41,21 +44,21 @@ class Component():
     'basic _vtable set method'
     self._vtable[v] = value
 
-  ## methods for setting _vtable values from self.__config
+  ## methods for setting _vtable values from self._conf
   def _setOrDie(self, v, t=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-    self._vtable[v_] = self.__config.getOrDie(v, t)
+    self._vtable[v_] = self._conf.getOrDie(v, t)
 
   def _setOrNone(self, v, t=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-    self._vtable[v_] = self.__config.get(v, t)
+    self._vtable[v_] = self._conf.get(v, t)
 
   def _setOrDefault(self, v, default, t=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-    self._vtable[v_] = self.__config.getOrDefault(v, default, t)
+    self._vtable[v_] = self._conf.getOrDefault(v, default, t)
 
   ## general purpose nested extract methods
   def extractResource(self, resource1, resource2, key, t=None):
@@ -69,19 +72,19 @@ class Component():
     else:
       r2 = resource2
 
-    value = self.__config.get('.'.join([r1, r2, key]), t)
+    value = self._conf.get('.'.join([r1, r2, key]), t)
 
     if value is None:
-      value = self.__config.get('.'.join([r1, key]), t)
+      value = self._conf.get('.'.join([r1, key]), t)
 
     if value is None:
-      value = self.__config.get('.'.join([r1, 'common', key]), t)
+      value = self._conf.get('.'.join([r1, 'common', key]), t)
 
     if value is None:
-      value = self.__config.get('.'.join([r1, 'defaults', key]), t)
+      value = self._conf.get('.'.join([r1, 'defaults', key]), t)
 
     if value is None:
-      value = self.__config.get('.'.join(['defaults', key]), t)
+      value = self._conf.get('.'.join(['defaults', key]), t)
 
     return value
 

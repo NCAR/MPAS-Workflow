@@ -57,7 +57,7 @@ from initialize.Config import Config
 
 class Scenario():
   def __init__(self, file):
-    self.conf = Config(file)
+    self.__conf = Config(file)
     self.__script = [
 '''#!/bin/csh -f
 
@@ -80,7 +80,7 @@ setenv ${nestedConfigFunctionName} "source $setNestedConfig $defaultsConfig $sce
 ''']
 
   def getConfig(self):
-    return self.conf
+    return self.__conf
 
   #TODO: python-ify all config shell scripts such that config/scenario.csh is no longer needed
   def initialize(self):

@@ -4,62 +4,52 @@ from copy import deepcopy
 import yaml
 
 class Config():
-  def __init__(self, filename=None, defaultsFile=None, subKey=None):
-    #self._filename = filename
-    if filename is not None:
-      with open(filename) as file:
-        self.__conf = yaml.load(file, Loader=yaml.FullLoader)
-    elif parent is not None and isinstance(parent, dict):
-      self.__conf = parent
+  def __init__(self,
+      filename: str,
+      defaultsFile:str = None,
+    ):
 
-    self.renew(defaultsFile, subKey)
+   with open(filename) as file:
+     self._table = yaml.load(file, Loader=yaml.FullLoader)
 
-  def renew(self, defaultsFile=None, subKey=None):
+   if defaultsFile is not None:
+     with open(defaultsFile) as file:
+       self._defaults = yaml.load(file, Loader=yaml.FullLoader)
+   else:
+     self._defaults = {}
+
+  def extract(self, subKey: str, defaultsFile:str = None):
+    t = deepcopy(self._table.get(subKey, {}))
+
     if defaultsFile is not None:
       with open(defaultsFile) as file:
-        d = yaml.load(file, Loader=yaml.FullLoader)
+        defaults = yaml.load(file, Loader=yaml.FullLoader)
+      d = defaults.get(subKey, {})
     else:
-      d = None
+      d = deepcopy(self._defaults.get(subKey, {}))
 
-    if subKey is not None:
-      try:
-        self.defaults = d[subKey]
-      except:
-        self.defaults = None
-
-      try:
-        self.conf = self.__conf[subKey]
-      except:
-        self.conf = None
-
-    else:
-      self.defaults = d
-      self.conf = self.__conf
+    return t, d
 
   def get(self, dotSeparatedKey, t=None):
     '''
     get dictionary value for nested dot-separated key
-    e.g., get('top.next') tries to retrieve self.conf['top']['next']
+    e.g., get('top.next') tries to retrieve self._table['top']['next']
           if exception ocurrs, try to retrieve self.defaults['top']['next']
           if exception occurs, return None
     '''
     key = dotSeparatedKey.split('.')
 
     try:
-      v = deepcopy(self.conf)
+      v = deepcopy(self._table)
       for level in key:
         v = deepcopy(v[level])
     except:
-      if self.defaults is not None:
-        try:
-          v = deepcopy(self.defaults)
-          for level in key:
-            v = deepcopy(v[level])
-        except:
-          v = None
-      else:
+      try:
+        v = deepcopy(self._defaults)
+        for level in key:
+          v = deepcopy(v[level])
+      except:
         v = None
-
     if v is not None:
       if v == 'None': v = None
 
