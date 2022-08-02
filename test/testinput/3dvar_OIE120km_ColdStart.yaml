@@ -4,9 +4,9 @@ externalanalyses:
   resource: "GFS.RDA"
 firstbackground:
   resource: "ForecastFromAnalysis"
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
 members:
   n: 1
 model:

@@ -67,9 +67,9 @@ variational:
         3denvar:
           baseSeconds: 1200
           memory: 109
-job:
-  CPQueueName: premium
-  NCPQueueName: premium
+hpc:
+  CriticalQueue: premium
+  NonCriticalQueue: premium
 verifyobs:
   pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics
 hofx:

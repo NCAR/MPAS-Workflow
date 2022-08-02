@@ -5,9 +5,9 @@ externalanalyses:
 experiment:
   ExperimentName: 'GenerateGFSAnalyses'
   ExperimentUserPrefix: ''
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
 model:
   outerMesh: 60km
 workflow:

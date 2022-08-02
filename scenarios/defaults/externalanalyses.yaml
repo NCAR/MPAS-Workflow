@@ -26,9 +26,11 @@ externalanalyses:
     - "LinkExternalAnalysis-{{mesh}}"
     - "ExternalAnalysisReady"
 
-    ## retry
-    # cylc retry string
-    retry: '0*PT5S'
+    job:
+      # job settings for "Get*AnalysisFrom*" tasks
+      GetAnalysisFrom:
+        # cylc retry string
+        retry: '0*PT5S'
 
   GFS:
     PANDAC: # only available 20180415T00-20180525T00
@@ -46,7 +48,9 @@ externalanalyses:
         - "ExternalAnalysisToMPAS-{{mesh}}"
         - "ExternalAnalysisReady"
         Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
-        retry: '1*PT20S'
+        job:
+          GetAnalysisFrom:
+            retry: '1*PT20S'
 
     NCEPFTP:
       common:
@@ -56,5 +60,7 @@ externalanalyses:
         - "ExternalAnalysisToMPAS-{{mesh}}"
         - "ExternalAnalysisReady"
         Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
-        retry: '80*PT5M'
+        job:
+          GetAnalysisFrom:
+            retry: '80*PT5M'
 

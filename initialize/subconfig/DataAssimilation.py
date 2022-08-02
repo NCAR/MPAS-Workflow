@@ -13,7 +13,7 @@ class DataAssimilation(Component):
   '''
   baseKey = 'da'
 
-  def __init__(self, config, obs, meshes, model, members, workflow):
+  def __init__(self, config, hpc, obs, meshes, model, members, workflow):
     super().__init__(config)
 
     ########################
@@ -59,11 +59,11 @@ class DataAssimilation(Component):
         # finished after post, clean after finished
         '''+self.post+''' => '''+self.finished+''' => '''+self.clean]
 
-    self.var = Variational(config, meshes, model, members, workflow, self)
+    self.var = Variational(config, hpc, meshes, model, members, workflow, self)
     tasks += self.var.tasks
     dependencies += self.var.dependencies
 
-    self.rtpp = RTPP(config, meshes['Ensemble'], members, self)
+    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self)
     tasks += self.rtpp.tasks
     dependencies += self.rtpp.dependencies
 

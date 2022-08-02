@@ -12,9 +12,9 @@ observations:
 experiment:
   ExperimentName: 'GenerateObs'
   ExperimentUserPrefix: ''
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
 workflow:
   firstCyclePoint: 20180415T00
   finalCyclePoint: 20180416T00

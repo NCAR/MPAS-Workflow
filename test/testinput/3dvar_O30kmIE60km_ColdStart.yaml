@@ -1,14 +1,13 @@
-workflow:
-  # test a recent date
-  firstCyclePoint: 20220201T00
-  initialCyclePoint: 20220201T00
-  finalCyclePoint: 20220201T06
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
-observations:
-  resource: GladeRDAOnline
+externalanalyses:
+  resource: "GFS.RDA"
 experiment:
   ExperimentName: '3dvar_O30kmIE60km_ColdStart_TEST'
+
+firstbackground:
+  resource: "ForecastFromAnalysis"
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
 members:
   n: 1
 model:
@@ -23,14 +22,16 @@ model:
   # and determine if it is viable to bring into the workflow.  Ideally those files should be
   # generated using the same MPAS-A code version as is used in the initic and forecast applications.
   GraphInfoDir: /glade/work/duda/static_moved_to_campaign
-firstbackground:
-  resource: "ForecastFromAnalysis"
-externalanalyses:
-  resource: "GFS.RDA"
+observations:
+  resource: GladeRDAOnline
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]
   biasCorrection: True
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
+workflow:
+  # test a recent date
+  firstCyclePoint: 20220201T00
+  initialCyclePoint: 20220201T00
+  finalCyclePoint: 20220201T06
+  VerifyDeterministicDA: True
+  VerifyEnsMeanBG: True

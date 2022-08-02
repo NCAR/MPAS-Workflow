@@ -26,6 +26,6 @@ variational:
   DAType: 3dvar
   nInnerIterations: [60,]
   biasCorrection: True
-job:
-  CPQueueName: premium
-  NCPQueueName: economy
+hpc:
+  CriticalQueue: premium
+  NonCriticalQueue: economy

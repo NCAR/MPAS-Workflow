@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from initialize.Component import Component
+from initialize.Resource import Resource
+from initialize.util.Task import TaskFactory
 
 class RTPP(Component):
   baseKey = 'rtpp'
@@ -20,7 +22,7 @@ class RTPP(Component):
     'retainOriginalAnalyses': [False, bool],
   }
 
-  def __init__(self, config, ensMesh, members, da):
+  def __init__(self, config, hpc, ensMesh, members, da):
     super().__init__(config)
 
     ###################
@@ -49,16 +51,21 @@ class RTPP(Component):
     self.tasks = ['#']
     self.dependencies = ['#']
     if active:
-      retry = self.extractResourceOrDie('job', None, 'retry', str)
 
-      meshKey = ensMesh.name
-      baseSeconds = self.extractResourceOrDie('job', meshKey, 'baseSeconds', int)
-      secondsPerMember = self.extractResourceOrDie('job', meshKey, 'secondsPerMember', int)
-      seconds = str(baseSeconds + secondsPerMember * members.n)
-
-      nodes = self.extractResourceOrDie('job', meshKey, 'nodes', int)
-      PEPerNode = self.extractResourceOrDie('job', meshKey, 'PEPerNode', int)
-      memory = self.extractResourceOrDie('job', meshKey, 'memory', str)
+      attr = {
+        'retry': {'t': str},
+        'baseSeconds': {'t': int},
+        'secondsPerMember': {'t': int},
+        'nodes': {'t': int},
+        'PEPerNode': {'t': int},
+        'memory': {'def': '45GB', 't': str},
+        'queue': {'def': hpc['CriticalQueue']},
+        'account': {'def': hpc['CriticalAccount']},
+        'email': {'def': True, 't': bool},
+      }
+      job = Resource(self._conf, attr, 'job', ensMesh.name)
+      job._set('seconds', job['baseSeconds'] + job['secondsPerMember'] * members.n)
+      task = TaskFactory[hpc.name](job)
 
       self.tasks += ['''
   [[PrepRTPP]]
@@ -67,18 +74,11 @@ class RTPP(Component):
     script = $origin/applications/PrepRTPP.csh
     [[[job]]]
       execution time limit = PT1M
-      execution retry delays = '''+retry+'''
+      execution retry delays = '''+job['retry']+'''
   [[RTPP]]
     inherit = BATCH
     script = $origin/applications/RTPP.csh
-    [[[job]]]
-      execution time limit = PT'''+str(seconds)+'''S
-      execution retry delays = '''+retry+'''
-    [[[directives]]]
-      -m = ae
-      -q = {{CPQueueName}}
-      -A = {{CPAccountNumber}}
-      -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory+'''
+'''+task.job()+task.directives()+'''
 
   [[CleanRTPP]]
     inherit = '''+da.clean+''', CleanBase

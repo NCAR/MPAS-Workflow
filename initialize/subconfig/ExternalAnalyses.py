@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from initialize.Component import Component
+from initialize.Resource import Resource
+from initialize.util.Task import TaskFactory
 
 class ExternalAnalyses(Component):
   baseKey = 'externalanalyses'
@@ -18,7 +20,7 @@ class ExternalAnalyses(Component):
     'GetGDASAnalysis': [False, bool]
   }
 
-  def __init__(self, config, meshes):
+  def __init__(self, config, hpc, meshes):
     super().__init__(config)
 
     csh = []
@@ -94,7 +96,19 @@ class ExternalAnalyses(Component):
     ########################
     # tasks and dependencies
     ########################
-    RETRY = self.extractResourceOrDie(resource, meshes['Outer'].name, 'retry', str)
+    getRetry = self.extractResourceOrDie(resource, None, 'job.GetAnalysisFrom.retry', str)
+
+    attr = {
+      'seconds': {'def': 300},
+      'retry': {'def': '2*PT30S'},
+      # currently UngribExternalAnalysis has to be on Cheyenne, because ungrib.exe is built there
+      # TODO: build ungrib.exe on casper, remove Critical directives below, deferring to
+      #       SingleBatch inheritance
+      'queue': {'def': hpc['CriticalQueue']},
+      'account': {'def': hpc['CriticalAccount']},
+    }
+    ungribjob = Resource(self._conf, attr, 'job', 'ungrib')
+    ungribtask = TaskFactory[hpc.name](ungribjob)
 
     tasks = [
 '''## Analyses generated outside MPAS-Workflow
@@ -103,31 +117,24 @@ class ExternalAnalyses(Component):
     script = $origin/applications/GetGFSAnalysisFromRDA.csh
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = '''+RETRY+'''
+      execution retry delays = '''+getRetry+'''
   [[GetGFSanalysisFromFTP]]
     inherit = SingleBatch
     script = $origin/applications/GetGFSAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = '''+RETRY+'''
+      execution retry delays = '''+getRetry+'''
   [[GetGDASAnalysisFromFTP]]
     inherit = SingleBatch
     script = $origin/GetGDASAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT45M
-      execution retry delays = '''+RETRY+'''
+      execution retry delays = '''+getRetry+'''
 
   [[UngribExternalAnalysis]]
     inherit = SingleBatch
     script = $origin/applications/UngribExternalAnalysis.csh
-    [[[job]]]
-      execution time limit = PT5M
-      execution retry delays = 2*PT30S
-    # currently UngribExternalAnalysis has to be on Cheyenne, because ungrib.exe is built there
-    # TODO: build ungrib.exe on casper, remove CP directives below
-    [[[directives]]]
-      -q = {{CPQueueName}}
-      -A = {{CPAccountNumber}}
+'''+ungribtask.job()+ungribtask.directives()+'''
 
   [[ExternalAnalysisReady]]
     inherit = BACKGROUND''']
@@ -140,6 +147,6 @@ class ExternalAnalyses(Component):
     script = $origin/applications/LinkExternalAnalysis.csh "'''+mesh+'''"
     [[[job]]]
       execution time limit = PT30S
-      execution retry delays = '''+RETRY]
+      execution retry delays = 1*PT30S''']
 
     self.exportTasks(tasks)

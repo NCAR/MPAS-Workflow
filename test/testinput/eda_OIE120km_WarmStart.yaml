@@ -6,9 +6,9 @@ firstbackground:
   resource: "PANDAC.LaggedGEFS"
 hofx:
   retainObsFeedback: False
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
 members:
   n: 5
 model:

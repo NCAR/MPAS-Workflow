@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from initialize.Component import Component
+from initialize.Resource import Resource
+from initialize.util.Task import TaskFactory
 
 class VerifyModel(Component):
   baseKey = 'verifymodel'
@@ -9,7 +11,7 @@ class VerifyModel(Component):
     'pyVerifyDir': ['/glade/work/guerrett/pandac/fixed_input/graphics', str],
   }
 
-  def __init__(self, config, mesh, members):
+  def __init__(self, config, hpc, mesh, members):
     super().__init__(config)
 
     ###############################
@@ -22,28 +24,31 @@ class VerifyModel(Component):
     # tasks and dependencies
     ########################
     # job settings
-    retry = self.extractResourceOrDie('job', None, 'retry', str)
-    seconds = self.extractResourceOrDie('job', mesh.name, 'baseSeconds', int)
-    secondsPerMember = self.extractResourceOrDie('job', mesh.name, 'secondsPerMember', int)
-    ensSeconds = seconds + secondsPerMember * members.n
+    attr = {
+      'retry': {'t': str},
+      'seconds': {'t': int},
+      'secondsPerMember': {'t': int},
+      'nodes': {'def': 1, 't': int},
+      'PEPerNode': {'def': 36, 't': int},
+      'memory': {'def': '45GB', 't': str},
+      'queue': {'def': hpc['NonCriticalQueue']},
+      'account': {'def': hpc['NonCriticalAccount']},
+    }
+    job = Resource(self._conf, attr, 'job')
+    ensSeconds = job['seconds'] + job['secondsPerMember'] * members.n
+    task = TaskFactory[hpc.name](job)
 
     tasks = ['''
   [[VerifyModelBase]]
     inherit = BATCH
-    [[[job]]]
-      execution time limit = PT'''+str(seconds)+'''S
-      execution retry delays = '''+retry+'''
-    [[[directives]]]
-      -q = {{NCPQueueName}}
-      -A = {{NCPAccountNumber}}
-      -l = select=1:ncpus=36:mpiprocs=36
+'''+task.job()+task.directives()+'''
 
 {% if DiagnoseEnsSpreadBG %}
   {% set nEnsSpreadMem = '''+str(members.n)+''' %}
-  {% set modelEnsSeconds = '''+str(seconds)+''' %}
+  {% set modelEnsSeconds = '''+str(ensSeconds)+''' %}
 {% else %}
   {% set nEnsSpreadMem = 0 %}
-  {% set modelEnsSeconds = '''+str(seconds)+''' %}
+  {% set modelEnsSeconds = '''+str(job['seconds'])+''' %}
 {% endif %}
 ''']
 

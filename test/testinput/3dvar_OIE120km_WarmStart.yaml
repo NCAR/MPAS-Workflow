@@ -4,9 +4,9 @@ externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
   resource: "PANDAC.GFS"
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
 members:
   n: 1
 model:

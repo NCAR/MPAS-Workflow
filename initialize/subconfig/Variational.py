@@ -3,6 +3,8 @@
 from collections import OrderedDict
 
 from initialize.Component import Component
+from initialize.Resource import Resource
+from initialize.util.Task import TaskFactory
 
 class Variational(Component):
   baseKey = 'variational'
@@ -144,7 +146,7 @@ class Variational(Component):
     'retainObsFeedback': [True, bool],
   }
 
-  def __init__(self, config, meshes, model, members, workflow, da): #, forecast):
+  def __init__(self, config, hpc, meshes, model, members, workflow, da): #, forecast):
     super().__init__(config)
 
     ###################
@@ -251,25 +253,44 @@ class Variational(Component):
     ########################
     # tasks and dependencies
     ########################
-
     # job resource settings
-    retry = self.extractResourceOrDie('job', None, 'retry', str)
 
+    # Variationals
+    # r2 = {{outerMesh}}.{{innerMesh}}{{EDAStr}}.{{DAType}}
     r2 = meshes['Outer'].name+'.'+meshes['Inner'].name
-    if EDASize == 1:
-      r2 += '.'+DAType
-      nodes = self.extractResourceOrDie('job', r2, 'nodes', int)
-    else:
-      r2 += '.ensemble '+DAType
-      nodesPerMember = self.extractResourceOrDie('job', r2, 'nodesPerMember', int)
-      nodes = EDASize * nodesPerMember
+    nodeCount = 'nodes'
+    if EDASize > 1:
+      r2 += '.ensemble'
+      nodeCount = 'nodesPerMember'
+    r2 += '.'+DAType
 
-    PEPerNode = self.extractResourceOrDie('job', r2, 'PEPerNode', int)
-    memory = self.extractResourceOrDefault('job', r2, 'memory', '45GB', str)
+    attr = {
+      'retry': {'t': str},
+      'baseSeconds': {'t': int},
+      'secondsPerEnVarMember': {'t': int},
+      nodeCount: {'t': int},
+      'PEPerNode': {'t': int},
+      'memory': {'def': '45GB', 't': str},
+      'queue': {'def': hpc['CriticalQueue']},
+      'account': {'def': hpc['CriticalAccount']},
+      'email': {'def': True, 't': bool},
+    }
+    varjob = Resource(self._conf, attr, 'job', r2)
+    varjob._set('seconds', varjob['baseSeconds'] + varjob['secondsPerEnVarMember'] * ensPbNMembers)
+    if EDASize > 1:
+      varjob._set('nodes', varjob['nodesPerMember'] * EDASize)
+    vartask = TaskFactory[hpc.name](varjob)
 
-    baseSeconds = self.extractResourceOrDie('job', r2, 'baseSeconds', int)
-    secondsPerEnVarMember = self.extractResourceOrDefault('job', r2, 'secondsPerEnVarMember', 0, int)
-    seconds = str(baseSeconds + secondsPerEnVarMember * ensPbNMembers)
+    # GenerateABEInflation
+    attr = {
+      'seconds': {'def': 1200},
+      'nodes': {'def': 1},
+      'PEPerNode': {'def': 36},
+      'queue': {'def': hpc['CriticalQueue']},
+      'account': {'def': hpc['CriticalAccount']},
+    }
+    abeijob = Resource(self._conf, attr, 'abei.job', meshes['Outer'].name)
+    abeitask = TaskFactory[hpc.name](abeijob)
 
     self.tasks = ['''
   ## variational tasks
@@ -279,29 +300,17 @@ class Variational(Component):
     script = $origin/applications/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = '''+retry+'''
+      execution retry delays = '''+varjob['retry']+'''
 
   [[Variationals]]
     inherit = '''+da.execute+''', BATCH
-    [[[job]]]
-      execution time limit = PT'''+str(seconds)+'''S
-      execution retry delays = '''+retry+'''
-    [[[directives]]]
-      -m = ae
-      -q = {{CPQueueName}}
-      -A = {{CPAccountNumber}}
-      -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory+'''
+'''+vartask.job()+vartask.directives()+'''
 
   # inflation
   [[GenerateABEInflation]]
     inherit = BATCH
     script = $origin/applications/GenerateABEInflation.csh
-    [[[job]]]
-      execution time limit = PT20M
-    [[[directives]]]
-      -q = {{CPQueueName}}
-      -A = {{CPAccountNumber}}
-      -l = select=1:ncpus=36:mpiprocs=36
+'''+abeitask.job()+abeitask.directives()+'''
 
   # clean
   [[CleanVariational]]

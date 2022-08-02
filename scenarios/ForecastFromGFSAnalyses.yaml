@@ -12,9 +12,9 @@ extendedforecast:
   lengthHR: 24
   outIntervalHR: 12
 
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
 
 members:
   n: 1

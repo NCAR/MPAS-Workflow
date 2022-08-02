@@ -170,12 +170,13 @@ variational:
           PEPerNode: 8
           memory: 45GB
           baseSeconds: 1500
-        ensemble 3denvar: # i.e., EDASize > 1, multiple background members treated per executable
-          nodesPerMember: 3
-          PEPerNode: 12
-          memory: 109GB
-          baseSeconds: 1200
-          secondsPerEnVarMember: 10
+        ensemble: # i.e., EDASize > 1, multiple background members treated per executable
+          3denvar:
+            nodesPerMember: 3
+            PEPerNode: 12
+            memory: 109GB
+            baseSeconds: 1200
+            secondsPerEnVarMember: 10
       60km: #120 inner total
         3denvar:
           # single-precision bundle build
@@ -223,12 +224,13 @@ variational:
           PEPerNode: 32
           memory: 109GB
           baseSeconds: 500
-        ensemble 3denvar:
-          nodesPerMember: 3
-          PEPerNode: 12
-          memory: 109GB
-          baseSeconds: 1200
-          secondsPerEnVarMember: 10
+        ensemble:
+          3denvar:
+            nodesPerMember: 3
+            PEPerNode: 12
+            memory: 109GB
+            baseSeconds: 1200
+            secondsPerEnVarMember: 10
     120km: #60 inner total
       120km:
         3denvar:
@@ -242,9 +244,10 @@ variational:
           PEPerNode: 32
           memory: 45GB
           baseSeconds: 360
-        ensemble 3denvar:
-          nodesPerMember: 3
-          PEPerNode: 12
-          memory: 109GB
-          baseSeconds: 1200
-          secondsPerEnVarMember: 10
+        ensemble:
+          3denvar:
+            nodesPerMember: 3
+            PEPerNode: 12
+            memory: 109GB
+            baseSeconds: 1200
+            secondsPerEnVarMember: 10

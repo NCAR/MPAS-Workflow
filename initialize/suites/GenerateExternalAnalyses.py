@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from initialize.Suite import Suite
-from initialize.subconfig.Job import Job
+from initialize.subconfig.HPC import HPC
 from initialize.subconfig.Model import Model
 from initialize.subconfig.Workflow import Workflow
 from initialize.subconfig.ExternalAnalyses import ExternalAnalyses
@@ -13,11 +13,11 @@ class GenerateExternalAnalyses(Suite):
   ExpConfigType = 'base'
   def __init__(self, scenario):
     conf = scenario.getConfig()
-    job = Job(conf)
+    hpc = HPC(conf)
     workflow = Workflow(conf)
 
     model = Model(conf)
 
-    ea = ExternalAnalyses(conf, model.meshes)
+    ea = ExternalAnalyses(conf, hpc, model.meshes)
 
-    ic = InitIC(conf, model.meshes)
+    ic = InitIC(conf, hpc, model.meshes)

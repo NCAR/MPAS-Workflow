@@ -1,22 +1,30 @@
 #!/usr/bin/env python3
 
 from initialize.Component import Component
+from initialize.Resource import Resource
+from initialize.util.Task import TaskFactory
 
 class InitIC(Component):
   baseKey = 'initic'
   defaults = 'scenarios/defaults/initic.yaml'
 
-  def __init__(self, config, meshes):
+  def __init__(self, config, hpc, meshes):
     super().__init__(config)
 
     ########################
     # tasks and dependencies
     ########################
     # job settings
-    retry = self.extractResourceOrDie('job', None, 'retry')
-    seconds = str(int(self.extractResourceOrDie('job', meshes['Outer'].name, 'seconds')))
-    nodes = str(int(self.extractResourceOrDie('job', meshes['Outer'].name, 'nodes')))
-    PEPerNode = str(int(self.extractResourceOrDie('job', meshes['Outer'].name, 'PEPerNode')))
+    attr = {
+      'retry': {'t': str},
+      'seconds': {'t': int},
+      'nodes': {'t': int},
+      'PEPerNode': {'t': int},
+      'queue': {'def': hpc['CriticalQueue']},
+      'account': {'def': hpc['CriticalAccount']},
+    }
+    job = Resource(self._conf, attr, 'job', meshes['Outer'].name)
+    task = TaskFactory[hpc.name](job)
 
     tasks = []
     for mesh in list(set([mesh.name for mesh in meshes.values()])):
@@ -25,12 +33,6 @@ class InitIC(Component):
   [[ExternalAnalysisToMPAS-'''+mesh+''']]
     inherit = BATCH
     script = $origin/applications/ExternalAnalysisToMPAS.csh "'''+mesh+'''"
-    [[[job]]]
-      execution time limit = PT'''+seconds+'''S
-      execution retry delays = '''+retry+'''
-    [[[directives]]]
-      -q = {{CPQueueName}}
-      -A = {{CPAccountNumber}}
-      -l = select='''+nodes+':ncpus='+PEPerNode+':mpiprocs='+PEPerNode]
+'''+task.job()+task.directives()]
 
     self.exportTasks(tasks)

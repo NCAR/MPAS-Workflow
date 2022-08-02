@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from initialize.Component import Component
+from initialize.Resource import Resource
+from initialize.util.Task import TaskFactory
 
 class ExtendedForecast(Component):
   baseKey = 'extendedforecast'
@@ -22,7 +24,7 @@ class ExtendedForecast(Component):
     'ensTimes': ['T00', str],
   }
 
-  def __init__(self, config, members, forecast):
+  def __init__(self, config, hpc, members, forecast):
     super().__init__(config)
 
     ###################
@@ -57,43 +59,41 @@ class ExtendedForecast(Component):
     # tasks and dependencies
     ########################
     # job settings
-    retry = self.extractResourceOrDefault('job', None, 'retry', '1*PT30S', str)
-    baseSeconds = forecast['baseSeconds']
-    secondsPerForecastHR = forecast['secondsPerForecastHR']
-    nodes = forecast['nodes']
-    PEPerNode = forecast['PEPerNode']
-    memory = forecast['memory']
 
-    seconds = baseSeconds + secondsPerForecastHR * lengthHR
+    # ExtendedFCBase
+    job = forecast.job
+    job._set('seconds', job['baseSeconds'] + job['secondsPerForecastHR'] * lengthHR)
+    job._set('queue', hpc['NonCriticalQueue'])
+    job._set('account', hpc['NonCriticalAccount'])
+    fctask = TaskFactory[hpc.name](job)
+
+    # MeanAnalysis
+    attr = {
+      'seconds': {'def': 300},
+      'nodes': {'def': 1, 't': int},
+      'PEPerNode': {'def': 36, 't': int},
+      'queue': {'def': hpc['NonCriticalQueue']},
+      'account': {'def': hpc['NonCriticalAccount']},
+    }
+    meanjob = Resource(self._conf, attr, 'job', 'meananalysis')
+    meantask = TaskFactory[hpc.name](meanjob)
 
     tasks = ['''
   [[ExtendedFCBase]]
     inherit = BATCH
-    [[[job]]]
-      execution time limit = PT'''+str(seconds)+'''S
-      execution retry delays = '''+retry+'''
-    [[[directives]]]
-      -m = ae
-      -q = {{NCPQueueName}}
-      -A = {{NCPAccountNumber}}
-      -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory+'''
+'''+fctask.job()+fctask.directives()+'''
 
   ## from external analysis
   [[ExtendedFCFromExternalAnalysis]]
     inherit = ExtendedFCBase
     script = $origin/applications/ExtendedFCFromExternalAnalysis.csh "1" "'''+str(lengthHR)+'''" "'''+str(outIntervalHR)+'''" "False" "'''+forecast.mesh.name+'''" "False" "False" "False"
 
+  # TODO: move MeanAnalysis somewhere else
   ## from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
     inherit = BATCH
     script = $origin/applications/MeanAnalysis.csh
-    [[[job]]]
-      execution time limit = PT5M
-    [[[directives]]]
-      -m = ae
-      -q = {{NCPQueueName}}
-      -A = {{NCPAccountNumber}}
-      -l = select=1:ncpus=36:mpiprocs=36
+'''+meantask.job()+meantask.directives()+'''
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
     script = $origin/applications/ExtendedMeanFC.csh "1" "'''+str(lengthHR)+'''" "'''+str(outIntervalHR)+'''" "False" "'''+forecast.mesh.name+'''" "True" "False" "False"

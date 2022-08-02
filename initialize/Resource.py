@@ -78,3 +78,7 @@ class Resource(Config):
     if v is None:
       v = default
     return v
+
+  def _set(self, key, value):
+    'allow manual override'
+    self._table[key] = value

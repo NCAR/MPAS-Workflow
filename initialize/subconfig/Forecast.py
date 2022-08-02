@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from initialize.Component import Component
+from initialize.Resource import Resource
+from initialize.util.Task import TaskFactory
 
 class Forecast(Component):
   baseKey = 'forecast'
@@ -17,7 +19,7 @@ class Forecast(Component):
     'IAU': [False, bool],
   }
 
-  def __init__(self, config, mesh, members, workflow):
+  def __init__(self, config, hpc, mesh, members, workflow):
     super().__init__(config)
 
     self.mesh = mesh
@@ -38,31 +40,25 @@ class Forecast(Component):
     # job settings
     updateSea = self['updateSea']
 
-    retry = self.extractResourceOrDie('job', None, 'retry', str)
-    baseSeconds = self.extractResourceOrDie('job', mesh.name, 'baseSeconds', int)
-    secondsPerForecastHR = self.extractResourceOrDie('job', mesh.name, 'secondsPerForecastHR', int)
-    nodes = self.extractResourceOrDie('job', mesh.name, 'nodes', int)
-    PEPerNode = self.extractResourceOrDie('job', mesh.name, 'PEPerNode', int)
-    memory = self.extractResourceOrDefault('job', mesh.name, 'memory', '45GB', str)
-    seconds = baseSeconds + secondsPerForecastHR * lengthHR
-
-    # for use by ExtendedForecast
-    self._set('baseSeconds', baseSeconds)
-    self._set('secondsPerForecastHR', secondsPerForecastHR)
-    self._set('nodes', nodes)
-    self._set('PEPerNode', PEPerNode)
-    self._set('memory', memory)
+    attr = {
+      'retry': {'t': str},
+      'baseSeconds': {'t': int},
+      'secondsPerForecastHR': {'t': int},
+      'nodes': {'t': int},
+      'PEPerNode': {'t': int},
+      'memory': {'def': '45GB', 't': str},
+      'queue': {'def': hpc['CriticalQueue']},
+      'account': {'def': hpc['CriticalAccount']},
+      'email': {'def': True, 't': bool},
+    }
+    # store job for ExtendedForecast to re-use
+    self.job = Resource(self._conf, attr, 'job', mesh.name)
+    self.job._set('seconds', self.job['baseSeconds'] + self.job['secondsPerForecastHR'] * lengthHR)
+    task = TaskFactory[hpc.name](self.job)
 
     tasks = ['''
   [[ForecastBase]]
-    [[[job]]]
-      execution time limit = PT'''+str(seconds)+'''S
-      execution retry delays = '''+retry+'''
-    [[[directives]]]
-      -m = ae
-      -q = {{CPQueueName}}
-      -A = {{CPAccountNumber}}
-      -l = select='''+str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)+':mem='+memory+'''
+'''+task.job()+task.directives()+'''
 
   [[Forecast]]
     inherit = ForecastBase, BATCH

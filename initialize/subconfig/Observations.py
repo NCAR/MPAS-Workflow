@@ -44,7 +44,7 @@ class Observations(Component):
     'initialVARBCcoeff': ['/glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018', str],
   }
 
-  def __init__(self, config):
+  def __init__(self, config, hpc):
     super().__init__(config)
 
     ###################
@@ -98,16 +98,17 @@ class Observations(Component):
     inherit = SingleBatch
     script = $origin/applications/ObsToIODA.csh
     [[[job]]]
-      execution time limit = PT10M
+      execution time limit = PT600S
       execution retry delays = '''+self['convertRetry']+'''
-    # currently ObsToIODA has to be on Cheyenne, because ioda-upgrade.x is built there
-    # TODO: build ioda-upgrade.x on casper, remove CP directives below
-    # Note: memory for ObsToIODA may need to be increased when hyperspectral and/or
-    #       geostationary instruments are added
     [[[directives]]]
+      # currently ObsToIODA has to be on Cheyenne, because ioda-upgrade.x is built there
+      # TODO: build ioda-upgrade.x on casper, remove Critical directives below, deferring to
+      #       SingleBatch inheritance
+      # Note: memory for ObsToIODA may need to be increased when hyperspectral and/or
+      #       geostationary instruments are added
       -m = ae
-      -q = {{CPQueueName}}
-      -A = {{CPAccountNumber}}
+      -q = '''+hpc['CriticalQueue']+'''
+      -A = '''+hpc['CriticalAccount']+'''
       -l = select=1:ncpus=1:mem=10GB
   [[ObsReady]]
     inherit = BACKGROUND''']

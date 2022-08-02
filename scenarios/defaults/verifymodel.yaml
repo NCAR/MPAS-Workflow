@@ -5,16 +5,16 @@ verifymodel:
     retry: '1*PT30S'
 
     #{{outerMesh}}:
-    #  baseSeconds: int
+    #  seconds: int
     #  secondsPerMember: int
     defaults:
-      baseSeconds: 2000
+      seconds: 2000
       secondsPerMember: 500
     30km:
-      baseSeconds: 1200
+      seconds: 1200
     60km:
-      baseSeconds: 480
+      seconds: 480
       secondsPerMember: 100
     120km:
-      baseSeconds: 120
+      seconds: 120
       secondsPerMember: 40

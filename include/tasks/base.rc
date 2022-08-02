@@ -50,8 +50,8 @@ conda activate npl
       -j = oe
       -k = eod
       -S = /bin/tcsh
-      -q = {{SingleProcQueueName}}
-      -A = {{SingleProcAccountNumber}}
+      -q = {{SingleProcQueue}}
+      -A = {{SingleProcAccount}}
       -l = select=1:ncpus=1
 
   [[CompareBase]]
@@ -59,8 +59,8 @@ conda activate npl
     [[[job]]]
       execution time limit = PT5M
     [[[directives]]]
-      -q = {{NCPQueueName}}
-      -A = {{NCPAccountNumber}}
+      -q = {{NonCriticalQueue}}
+      -A = {{NonCriticalAccount}}
 
   [[CleanBase]]
     inherit = SingleBatch

@@ -1,7 +1,7 @@
 #!Jinja2
 
 %include include/variables/auto/experiment.rc
-%include include/variables/auto/job.rc
+%include include/variables/auto/hpc.rc
 %include include/variables/auto/observations.rc
 %include include/variables/auto/workflow.rc
 

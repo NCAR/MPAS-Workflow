@@ -2,6 +2,7 @@
 
 from initialize.Component import Component
 from initialize.Resource import Resource
+from initialize.util.Task import TaskFactory
 
 class HofX(Component):
   baseKey = 'hofx'
@@ -77,7 +78,7 @@ class HofX(Component):
     # whether to retain the observation feedback files (obs, geovals, ydiag)
     'retainObsFeedback': [True, bool],
   }
-  def __init__(self, config, meshes, model):
+  def __init__(self, config, hpc, meshes, model):
     super().__init__(config)
 
     ###################
@@ -110,19 +111,16 @@ class HofX(Component):
       'nodes': {'t': int},
       'PEPerNode': {'t': int},
       'memory': {'def': '45GB', 't': str},
+      'queue': {'def': hpc['NonCriticalQueue']},
+      'account': {'def': hpc['NonCriticalAccount']},
     }
     job = Resource(self._conf, attr, 'job', meshes['Outer'].name)
+    task = TaskFactory[hpc.name](job)
 
     tasks = [
 '''
   [[HofXBase]]
     inherit = BATCH
-    [[[job]]]
-      execution time limit = PT'''+str(job['seconds'])+'''S
-      execution retry delays = '''+job['retry']+'''
-    [[[directives]]]
-      -q = {{NCPQueueName}}
-      -A = {{NCPAccountNumber}}
-      -l = select='''+str(job['nodes'])+':ncpus='+str(job['PEPerNode'])+':mpiprocs='+str(job['PEPerNode'])+':mem='+job['memory']]
+'''+task.job()+task.directives()]
 
     self.exportTasks(tasks)

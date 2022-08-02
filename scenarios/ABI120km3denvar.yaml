@@ -47,8 +47,8 @@ variational:
     amsua_n19,
     abi_g16,
   ]
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
 verifyobs:
   pyVerifyDir: /glade/work/ivette/pandac/mpas-jedi/graphics

@@ -3,7 +3,7 @@
 from initialize.Suite import Suite
 from initialize.subconfig.ExternalAnalyses import ExternalAnalyses
 from initialize.subconfig.FirstBackground import FirstBackground
-from initialize.subconfig.Job import Job
+from initialize.subconfig.HPC import HPC
 from initialize.subconfig.Members import Members
 from initialize.subconfig.Model import Model
 from initialize.subconfig.Observations import Observations
@@ -24,22 +24,22 @@ class Cycle(Suite):
   def __init__(self, scenario):
     conf = scenario.getConfig()
 
-    job = Job(conf)
+    hpc = HPC(conf)
     workflow = Workflow(conf)
 
     model = Model(conf)
     meshes = model.getMeshes()
-    obs = Observations(conf)
+    obs = Observations(conf, hpc)
     members = Members(conf)
 
-    ea = ExternalAnalyses(conf, meshes)
+    ea = ExternalAnalyses(conf, hpc, meshes)
     fb = FirstBackground(conf, meshes, members, workflow['FirstCycleDate'])
     ss = StaticStream(conf, meshes, members, workflow['FirstCycleDate'])
 
-    ic = InitIC(conf, meshes)
-    hofx = HofX(conf, meshes, model)
-    da = DataAssimilation(conf, obs, meshes, model, members, workflow)
-    fc = Forecast(conf, meshes['Outer'], members, workflow)
-    extfc = ExtendedForecast(conf, members, fc)
-    vmodel = VerifyModel(conf, meshes['Outer'], members)
-    vobs = VerifyObs(conf, members)
+    ic = InitIC(conf, hpc, meshes)
+    hofx = HofX(conf, hpc, meshes, model)
+    da = DataAssimilation(conf, hpc, obs, meshes, model, members, workflow)
+    fc = Forecast(conf, hpc, meshes['Outer'], members, workflow)
+    extfc = ExtendedForecast(conf, hpc, members, fc)
+    vmodel = VerifyModel(conf, hpc, meshes['Outer'], members)
+    vobs = VerifyObs(conf, hpc, members)
