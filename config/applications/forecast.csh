@@ -3,15 +3,9 @@
 if ( $?config_forecast ) exit 0
 setenv config_forecast 1
 
-source config/scenario.csh
 source config/model.csh
 source config/workflow.csh
-
-# setLocal is a helper function that picks out a configuration node
-# under the "forecast" key of scenarioConfig
-setenv baseConfig scenarios/base/forecast.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig forecast"
-setenv setNestedForecast "source $setNestedConfig $baseConfig $scenarioConfig forecast"
+source config/scenario.csh forecast
 
 set mesh = "$outerMesh"
 setenv nCells "$nCellsOuter"

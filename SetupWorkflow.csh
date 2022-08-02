@@ -4,6 +4,7 @@
 source generateExperimentConfig.csh
 
 set workflowParts = ( \
+  GetGDASanalysis.csh \
   GetGFSanalysis.csh \
   UngribColdStartIC.csh \
   GenerateColdStartIC.csh \

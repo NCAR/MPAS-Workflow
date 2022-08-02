@@ -4,14 +4,7 @@
 if ( $?config_model ) exit 0
 setenv config_model 1
 
-source config/scenario.csh
-
-# setLocal is a helper function that picks out a configuration node
-# under the "model" key of scenarioConfig
-setenv baseConfig scenarios/base/model.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig model"
-setenv setNestedModel "source $setNestedConfig $baseConfig $scenarioConfig model"
-setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig model"
+source config/scenario.csh model
 
 ## MPASCore - must be atmosphere
 setenv MPASCore atmosphere
@@ -42,6 +35,9 @@ $setLocal ${outerMesh}.DiffusionLengthScale
 
 # deterministic analysis source
 $setNestedModel AnalysisSource
+
+# Get GDAS analyses
+$setLocal GetGDASAnalysis
 
 # stochastic cycle window duration forecast source
 # only applicable to 3denvar when nMembers<2
