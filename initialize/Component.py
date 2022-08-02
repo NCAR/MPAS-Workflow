@@ -121,6 +121,10 @@ class Component():
       vsh = vsh.replace(']','')
       vsh = vsh.replace(',',' ')
       return ['set '+var+' = ('+vsh+')\n']
+    elif isinstance(var, str) and ' ' in var:
+      parts = var.split(' ')
+      vvar = ''.join([parts[0][0].lower()+parts[0][1:]]+[v.capitalize() for v in parts[1:]])
+      return ['setenv '+vvar+' "'+str(value)+'"\n']
     else:
       return ['setenv '+var+' "'+str(value)+'"\n']
 

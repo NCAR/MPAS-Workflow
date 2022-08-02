@@ -9,7 +9,7 @@ date
 source config/auto/workflow.csh
 source config/auto/observations.csh
 source config/experiment.csh
-source config/builds.csh
+source config/auto/build.csh
 set yyyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
 set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from initialize.Suite import Suite
+from initialize.components.Build import Build
 from initialize.components.ExternalAnalyses import ExternalAnalyses
 from initialize.components.FirstBackground import FirstBackground
 from initialize.components.HPC import HPC
@@ -28,6 +29,7 @@ class Cycle(Suite):
     workflow = Workflow(conf)
 
     model = Model(conf)
+    build = Build(conf, model)
     meshes = model.getMeshes()
     obs = Observations(conf, hpc)
     members = Members(conf)

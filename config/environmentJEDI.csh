@@ -3,17 +3,13 @@
 if ( $?config_environmentJEDI ) exit 0
 setenv config_environmentJEDI 1
 
-## BuildCompiler
-# {compiler}-{mpi-implementation} combination that selects the JEDI module used to build
-# the executables described in config/builds.csh
-# OPTIONS: gnu-openmpi, intel-impi
-setenv BuildCompiler 'gnu-openmpi'
+source config/auto/build.csh # for compilerUsed
 
 source /etc/profile.d/modules.csh
 setenv OPT /glade/work/jedipara/cheyenne/opt/modules
 module purge
 module use $OPT/modulefiles/core
-module load jedi/${BuildCompiler}
+module load jedi/${compilerUsed}
 module load json
 module load json-schema-validator
 limit stacksize unlimited

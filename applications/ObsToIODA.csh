@@ -7,7 +7,7 @@ date
 # =================
 source config/auto/observations.csh
 source config/experiment.csh
-source config/builds.csh
+source config/auto/build.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
 set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`
@@ -37,7 +37,7 @@ setenv SPLIThourly "-split"
 setenv noGSIQCFilters "-noqc"
 
 foreach gdasfile ( *"gdas"* )
-   echo "Running ${obs2iodaEXEC} for ${gdasfile}"
+   echo "Running ${obs2iodaEXE} for ${gdasfile}"
    # link SpcCoeff files for converting IR radiances to brightness temperature
    if ( ${gdasfile} =~ *"cris"* && ${ccyy} >= '2021' ) then
      ln -sf ${CRTMTABLES}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
@@ -53,24 +53,24 @@ foreach gdasfile ( *"gdas"* )
 
    # Run the obs2ioda executable to convert files from BUFR to IODA-v2
    # ==================
-   rm ./${obs2iodaEXEC}
-   ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
+   rm ./${obs2iodaEXE}
+   ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXE} ./
    if ( ${gdasfile} =~ *"mtiasi"* ) then
-     ./${obs2iodaEXEC} ${SPLIThourly} ${gdasfile} >&! log_${gdasfile}
+     ./${obs2iodaEXE} ${SPLIThourly} ${gdasfile} >&! log_${gdasfile}
    else if ( ${gdasfile} =~ *"prepbufr"* ) then
      # run obs2ioda for preburf with additional QC as in GSI
-     ./${obs2iodaEXEC} ${gdasfile} >&! log_${gdasfile}
+     ./${obs2iodaEXE} ${gdasfile} >&! log_${gdasfile}
      # for surface obs, run obs2ioda for prepbufr without additional QC
      mkdir -p sfc
      cd sfc
-     ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
-     ./${obs2iodaEXEC} ${noGSIQCFilters} ../${gdasfile} >&! log_sfc
+     ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXE} ./
+     ./${obs2iodaEXE} ${noGSIQCFilters} ../${gdasfile} >&! log_sfc
      # replace surface obs file with file created without additional QC
      mv sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
      cd ..
      rm -rf sfc
    else
-     ./${obs2iodaEXEC} ${gdasfile} >&! log_${gdasfile}
+     ./${obs2iodaEXE} ${gdasfile} >&! log_${gdasfile}
    endif
    # Check status
    # ============
@@ -90,14 +90,14 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
   cd ${mainScriptDir}
   source config/environmentJEDI.csh
   cd -
-  rm ./${iodaupgradeEXEC}
-  ln -sfv ${iodaupgradeBuildDir}/${iodaupgradeEXEC} ./
+  rm ./${iodaupgradeEXE}
+  ln -sfv ${iodaupgradeBuildDir}/${iodaupgradeEXE} ./
   set types = ( aircraft ascat profiler satwind sfc sondes satwnd )
   foreach ty ( ${types} )
     if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
       set ty_obs = ${ty}_obs_${thisValidDate}.h5
       set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
-      ./${iodaupgradeEXEC} ${ty_obs} ${ty_obs_base}_tmp.h5 >&! log_${ty}_upgrade
+      ./${iodaupgradeEXE} ${ty_obs} ${ty_obs_base}_tmp.h5 >&! log_${ty}_upgrade
       rm -rf $ty_obs
       mv ${ty_obs_base}_tmp.h5 $ty_obs
       # Check status

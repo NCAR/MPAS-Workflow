@@ -37,7 +37,7 @@ endif
 # =================
 source config/experiment.csh
 source config/tools.csh
-source config/builds.csh
+source config/auto/build.csh
 source config/environmentJEDI.csh
 source config/auto/hofx.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`

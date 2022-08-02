@@ -11,7 +11,7 @@ date
 
 # Setup environment
 # =================
-source config/builds.csh
+source config/auto/build.csh
 source config/experiment.csh
 source config/auto/externalanalyses.csh
 source config/auto/model.csh
