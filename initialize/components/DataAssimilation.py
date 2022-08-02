@@ -3,8 +3,8 @@
 from collections import OrderedDict
 
 from initialize.Component import Component
-from initialize.subconfig.RTPP import RTPP
-from initialize.subconfig.Variational import Variational
+from initialize.components.RTPP import RTPP
+from initialize.components.Variational import Variational
 
 class DataAssimilation(Component):
   '''

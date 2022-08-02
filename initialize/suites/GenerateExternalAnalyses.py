@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
 from initialize.Suite import Suite
-from initialize.subconfig.HPC import HPC
-from initialize.subconfig.Model import Model
-from initialize.subconfig.Workflow import Workflow
-from initialize.subconfig.ExternalAnalyses import ExternalAnalyses
+from initialize.components.HPC import HPC
+from initialize.components.Model import Model
+from initialize.components.Workflow import Workflow
+from initialize.components.ExternalAnalyses import ExternalAnalyses
 
 # applications
-from initialize.subconfig.InitIC import InitIC
+from initialize.components.InitIC import InitIC
 
 class GenerateExternalAnalyses(Suite):
   ExpConfigType = 'base'

@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 
 from initialize.Suite import Suite
-from initialize.subconfig.ExternalAnalyses import ExternalAnalyses
-from initialize.subconfig.FirstBackground import FirstBackground
-from initialize.subconfig.HPC import HPC
-from initialize.subconfig.Members import Members
-from initialize.subconfig.Model import Model
-from initialize.subconfig.Observations import Observations
-from initialize.subconfig.StaticStream import StaticStream
-from initialize.subconfig.Workflow import Workflow
+from initialize.components.ExternalAnalyses import ExternalAnalyses
+from initialize.components.FirstBackground import FirstBackground
+from initialize.components.HPC import HPC
+from initialize.components.Members import Members
+from initialize.components.Model import Model
+from initialize.components.Observations import Observations
+from initialize.components.StaticStream import StaticStream
+from initialize.components.Workflow import Workflow
 
 # applications
-from initialize.subconfig.DataAssimilation import DataAssimilation
-from initialize.subconfig.InitIC import InitIC
-from initialize.subconfig.ExtendedForecast import ExtendedForecast
-from initialize.subconfig.Forecast import Forecast
-from initialize.subconfig.HofX import HofX
-from initialize.subconfig.VerifyModel import VerifyModel
-from initialize.subconfig.VerifyObs import VerifyObs
+from initialize.components.DataAssimilation import DataAssimilation
+from initialize.components.InitIC import InitIC
+from initialize.components.ExtendedForecast import ExtendedForecast
+from initialize.components.Forecast import Forecast
+from initialize.components.HofX import HofX
+from initialize.components.VerifyModel import VerifyModel
+from initialize.components.VerifyObs import VerifyObs
 
 class Cycle(Suite):
   ExpConfigType = 'cycling'

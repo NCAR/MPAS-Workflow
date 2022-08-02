@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 from initialize.Suite import Suite
-from initialize.subconfig.HPC import HPC
-from initialize.subconfig.Workflow import Workflow
-from initialize.subconfig.Observations import Observations
+from initialize.components.HPC import HPC
+from initialize.components.Workflow import Workflow
+from initialize.components.Observations import Observations
 
 class GenerateObs(Suite):
   ExpConfigType = 'base'
