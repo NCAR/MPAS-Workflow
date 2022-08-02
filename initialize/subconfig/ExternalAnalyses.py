@@ -126,7 +126,7 @@ class ExternalAnalyses(Component):
       execution retry delays = '''+getRetry+'''
   [[GetGDASAnalysisFromFTP]]
     inherit = SingleBatch
-    script = $origin/GetGDASAnalysisFromFTP.csh
+    script = $origin/applications/GetGDASAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT45M
       execution retry delays = '''+getRetry+'''
