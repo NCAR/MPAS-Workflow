@@ -1,4 +1,5 @@
 #!Jinja2
+%include include/variables/auto/benchmark.rc
 %include include/variables/auto/experiment.rc
 %include include/variables/auto/extendedforecast.rc
 %include include/variables/auto/externalanalyses.rc
@@ -42,6 +43,7 @@
 
 [runtime]
 %include include/tasks/base.rc
+%include include/tasks/auto/benchmark.rc
 %include include/tasks/auto/externalanalyses.rc
 %include include/tasks/auto/initic.rc
 %include include/tasks/auto/observations.rc

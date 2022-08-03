@@ -11,6 +11,7 @@ from initialize.components.StaticStream import StaticStream
 from initialize.components.Workflow import Workflow
 
 # applications
+from initialize.components.Benchmark import Benchmark
 from initialize.components.InitIC import InitIC
 from initialize.components.ExtendedForecast import ExtendedForecast
 from initialize.components.Forecast import Forecast
@@ -39,5 +40,12 @@ class ForecastFromExternalAnalyses(Suite):
     hofx = HofX(conf, hpc, meshes, model)
     fc = Forecast(conf, hpc, meshes['Outer'], members, workflow)
     extfc = ExtendedForecast(conf, hpc, members, fc,)
+
+    #if conf.has('verifymodel'): # TODO: make verifymodel optional
     vmodel = VerifyModel(conf, hpc, meshes['Outer'], members)
+
+    #if conf.has('verifyobs'): # TODO: make verifyobs optional
     vobs = VerifyObs(conf, hpc, members)
+
+    #if conf.has('benchmark'): # TODO: make benchmark optional
+    bench = Benchmark(conf, hpc)

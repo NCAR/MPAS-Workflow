@@ -39,9 +39,7 @@ workflow:
 
   # none of the following verification methods are valid and are set to False
   VerifyDeterministicDA: False
-  CompareDA2Benchmark: False
   VerifyBGMembers: False
-  CompareBG2Benchmark: False
   VerifyEnsMeanBG: False
   DiagnoseEnsSpreadBG: False
   VerifyANMembers: False

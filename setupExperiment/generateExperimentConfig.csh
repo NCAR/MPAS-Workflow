@@ -32,7 +32,7 @@ cat >! $mainScriptDir/config/experiment.csh << EOF
 if ( \$?config_experiment ) exit 0
 set config_experiment = 1
 
-source config/benchmark.csh
+source config/auto/benchmark.csh
 source config/auto/externalanalyses.csh
 source config/auto/model.csh
 source config/naming.csh

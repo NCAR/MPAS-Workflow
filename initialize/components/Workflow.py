@@ -73,10 +73,6 @@ class Workflow(Component):
     #    Only works when CriticalPathType == Normal.
     'VerifyDeterministicDA': [True, bool],
 
-    ## CompareDA2Benchmark: compare verification statistics files between two experiments
-    #    after the DA verification completes
-    'CompareDA2Benchmark': [False, bool],
-
     ## VerifyExtendedMeanFC: whether to run verification scripts across
     #    extended forecast states, first intialized at mean analysis
     'VerifyExtendedMeanFC': [False, bool],
@@ -85,10 +81,6 @@ class Workflow(Component):
     #    forecast length. Runs HofXBG, VerifyObsBG, and VerifyModelBG on critical
     #    path forecasts that are initialized from ensemble member analyses.
     'VerifyBGMembers': [False, bool],
-
-    ## CompareBG2Benchmark: compare verification statistics files between two experiments
-    #    after the BGMembers verification completes
-    'CompareBG2Benchmark': [False, bool],
 
     ## VerifyEnsMeanBG: whether to run verification scripts for ensemble mean
     #    background (members.n > 1) or deterministic background (members.n == 1)

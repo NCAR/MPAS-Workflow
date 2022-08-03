@@ -44,8 +44,8 @@ setenv OutDBDir dbOut
 # verification and comparison
 set ObsDiagnosticsDir = diagnostic_stats/obs
 set ModelDiagnosticsDir = diagnostic_stats/model
-set ObsCompareDir = Compare2Benchmark/obs
-set ModelCompareDir = Compare2Benchmark/model
+set ObsCompareDir = CompareToBenchmark/obs
+set ModelCompareDir = CompareToBenchmark/model
 
 
 #####################################

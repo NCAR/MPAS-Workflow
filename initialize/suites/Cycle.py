@@ -12,6 +12,7 @@ from initialize.components.StaticStream import StaticStream
 from initialize.components.Workflow import Workflow
 
 # applications
+from initialize.components.Benchmark import Benchmark
 from initialize.components.DataAssimilation import DataAssimilation
 from initialize.components.InitIC import InitIC
 from initialize.components.ExtendedForecast import ExtendedForecast
@@ -43,5 +44,13 @@ class Cycle(Suite):
     da = DataAssimilation(conf, hpc, obs, meshes, model, members, workflow)
     fc = Forecast(conf, hpc, meshes['Outer'], members, workflow)
     extfc = ExtendedForecast(conf, hpc, members, fc)
+
+    #if conf.has('verifymodel'): # TODO: make verifymodel optional
     vmodel = VerifyModel(conf, hpc, meshes['Outer'], members)
+
+    #if conf.has('verifyobs'): # TODO: make verifyobs optional
     vobs = VerifyObs(conf, hpc, members)
+
+    #if conf.has('benchmark'): # TODO: make benchmark optional,
+    # and depend on whether verifyobs/verifymodel are selected
+    bench = Benchmark(conf, hpc)

@@ -64,8 +64,8 @@ set benchmark_WorkDir = $WorkDirsBenchmarkTEMPLATE[$ArgMember]
 
 # ================================================================================================
 
-# collect obs-space diagnostic statistics into DB files
-# =====================================================
+# Compare obs-space verification statistics
+
 set CompareDir = ${self_WorkDir}/${ObsCompareDir}
 mkdir -p ${CompareDir}
 cd ${CompareDir}
@@ -84,18 +84,19 @@ set ObsTypeList = ( \
 )
 
 rm compare.txt
+rm ${ExperimentDirectory}/verifyobs_differences_found.txt
 foreach obstype ($ObsTypeList)
-  set self_StatisticsFile = "${self_WorkDir}/${ObsDiagnosticsDir}/stats_${ArgAppType}_${obstype}.nc"
-  set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ObsDiagnosticsDir}/stats_${ArgAppType}_${obstype}.nc"
+  set self_StatisticsFile = "${self_WorkDir}/${ObsDiagnosticsDir}/stats_${ArgAppType}_${obstype}.h5"
+  set benchmark_StatisticsFile = "${benchmark_WorkDir}/${ObsDiagnosticsDir}/stats_${ArgAppType}_${obstype}.h5"
 
-  echo "nccmp -dfFmSN -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile}" | tee -a compare.txt
-  nccmp -d -N -S -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} | tee -a compare.txt
+  echo "nccmp -dfFmSN ${self_StatisticsFile} ${benchmark_StatisticsFile}" | tee -a compare.txt
+  nccmp -dfFmSN ${self_StatisticsFile} ${benchmark_StatisticsFile} | tee -a compare.txt
 
   # nccmp returns 0 if the files are identical. Log non-zero returns in a file for human review.
   if ($status != 0) then
     echo "$self_StatisticsFile" >> ${ExperimentDirectory}/verifyobs_differences_found.txt
-    echo "--> ${CompareDir}/diffStatistics.nc" >> ${ExperimentDirectory}/verifyobs_differences_found.txt
-    ncdiff -O -v Count,Mean,RMS,STD ${self_StatisticsFile} ${benchmark_StatisticsFile} diffStatistics_${obstype}.nc
+    echo "--> ${CompareDir}/diffStatistics.h5" >> ${ExperimentDirectory}/verifyobs_differences_found.txt
+    ncdiff -O ${self_StatisticsFile} ${benchmark_StatisticsFile} diffStatistics_${obstype}.h5
   endif
 end
 

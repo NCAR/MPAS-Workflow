@@ -113,20 +113,21 @@ class Component():
 
   # csh variables
   @staticmethod
-  def varToCsh(var, value):
+  def varToCsh(var:str, value):
+    vvar = var
+    if ' ' in var:
+      parts = var.split(' ')
+      vvar = ''.join([parts[0][0].lower()+parts[0][1:]]+[v.capitalize() for v in parts[1:]])
+
     if isinstance(value, Iterable) and not isinstance(value, str):
       vsh = str(value)
       vsh = vsh.replace('\'','')
       vsh = vsh.replace('[','')
       vsh = vsh.replace(']','')
       vsh = vsh.replace(',',' ')
-      return ['set '+var+' = ('+vsh+')\n']
-    elif isinstance(var, str) and ' ' in var:
-      parts = var.split(' ')
-      vvar = ''.join([parts[0][0].lower()+parts[0][1:]]+[v.capitalize() for v in parts[1:]])
-      return ['setenv '+vvar+' "'+str(value)+'"\n']
+      return ['set '+vvar+' = ('+vsh+')\n']
     else:
-      return ['setenv '+var+' "'+str(value)+'"\n']
+      return ['setenv '+vvar+' "'+str(value)+'"\n']
 
   def exportVarsToCsh(self, variables):
     if len(variables) == 0: return
@@ -146,11 +147,16 @@ set config_'''+self.baseKey+''' = 1
 
   # cylc variables
   @staticmethod
-  def varToCylc(var, value):
+  def varToCylc(var:str, value):
+    vvar = var
+    if ' ' in var:
+      parts = var.split(' ')
+      vvar = ''.join([parts[0][0].lower()+parts[0][1:]]+[v.capitalize() for v in parts[1:]])
+
     if isinstance(value, str):
-      return ['{% set '+var+' = "'+value+'" %}\n']
+      return ['{% set '+vvar+' = "'+value+'" %}\n']
     else:
-      return ['{% set '+var+' = '+str(value)+' %}\n']
+      return ['{% set '+vvar+' = '+str(value)+' %}\n']
 
   def exportVarsToCylc(self, variables):
     if len(variables) == 0: return

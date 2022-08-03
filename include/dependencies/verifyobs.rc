@@ -6,7 +6,7 @@
       graph = '''
         DAFinished => VerifyObsDA
         VerifyObsDA => CleanDA
-  {% if CompareDA2Benchmark %}
+  {% if compareDaToBenchmark %}
         VerifyObsDA => CompareObsDA
   {% endif %}
       '''
@@ -22,7 +22,7 @@
         {{PrepareObservations}} => HofXBG
         HofXBG:succeed-all => VerifyObsBG
         VerifyObsBG:succeed-all => CleanHofXBG
-    {% if CompareBG2Benchmark %}
+    {% if compareBgToBenchmark %}
         VerifyObsBG:succeed-all => CompareObsBG
     {% endif %}
       '''

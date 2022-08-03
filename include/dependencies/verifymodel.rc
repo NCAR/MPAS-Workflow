@@ -4,7 +4,7 @@
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => VerifyModelBG
         {{PrepareExternalAnalysisOuter}} => VerifyModelBG
-    {% if CompareBG2Benchmark %}
+    {% if compareBgToBenchmark %}
         VerifyModelBG:succeed-all => CompareModelBG
     {% endif %}
       '''

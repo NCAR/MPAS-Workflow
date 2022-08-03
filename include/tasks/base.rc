@@ -54,14 +54,6 @@ conda activate npl
       -A = {{SingleProcAccount}}
       -l = select=1:ncpus=1
 
-  [[CompareBase]]
-    inherit = SingleBatch
-    [[[job]]]
-      execution time limit = PT5M
-    [[[directives]]]
-      -q = {{NonCriticalQueue}}
-      -A = {{NonCriticalAccount}}
-
   [[CleanBase]]
     inherit = SingleBatch
     [[[job]]]
