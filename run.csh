@@ -18,6 +18,7 @@ set ValidRunConfigs = ( \
   test \
   120km3dvar \
   120km3denvar \
+  120km3denvarIAU \
   120kmEDA \
   60kmEDA \
   30km-60km3denvar \

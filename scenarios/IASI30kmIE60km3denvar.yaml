@@ -35,8 +35,15 @@ model:
   outerMesh: 30km
   innerMesh: 60km
   ensembleMesh: 60km
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
 variational:
   DAType: 3denvar
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
   nInnerIterations: [60,60]
   biasCorrection: True
   tropprsMethod: thompson

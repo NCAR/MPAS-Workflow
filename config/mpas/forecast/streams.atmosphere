@@ -24,10 +24,11 @@
 <immutable_stream name="iau"
                   type="input"
                   precision="{{PRECISION}}"
-                  filename_template="x1.{{nCells}}.AmB.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_template="AmB.$Y-$M-$D_$h.$m.$s.nc"
                   filename_interval="none"
                   packages="iau"
-                  input_interval="none" />
+                  io_type="netcdf4"
+                  input_interval="initial_only" />
 
 <stream name="output"
         type="none"

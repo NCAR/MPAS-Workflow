@@ -98,7 +98,7 @@ cat >! suite.rc << EOF
 
 {% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
 {% set ExtendedEnsFCTimes = "${ExtendedEnsFCTimes}" %}
-
+{% set forecastIAU = ${forecast__IAU} %} #bool
 {% set FCOutIntervalHR = ${FCOutIntervalHR} %} #integer
 {% set FCLengthHR = ${FCLengthHR} %} #integer
 {% set ExtendedFCOutIntervalHR = ${ExtendedFCOutIntervalHR} %} #integer

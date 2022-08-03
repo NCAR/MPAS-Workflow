@@ -12,6 +12,19 @@ source config/scenario.csh forecast
 
 $setLocal updateSea
 
+## IAU
+$setNestedForecast IAU
+if ($forecast__IAU == True) then
+  @ IAUoutIntervalHR = $CyclingWindowHR / 2
+  @ IAUfcLengthHR = 3 * $IAUoutIntervalHR
+  setenv FCLengthHR $IAUfcLengthHR
+  setenv FCOutIntervalHR $IAUoutIntervalHR
+else
+  setenv FCLengthHR $CyclingWindowHR
+  setenv FCOutIntervalHR $CyclingWindowHR
+endif
+##
+
 setenv AppName forecast
 
 setenv FCOutIntervalHR ${CyclingWindowHR}
