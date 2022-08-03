@@ -48,7 +48,7 @@
 %include include/dependencies/auto/forecast.rc
       '''
 
-{# elif CriticalPathType == "Bypass" #}
+{% elif CriticalPathType == "Bypass" %}
   # nothing to do
 {% else %}
     {{ raise('CriticalPathType is not valid') }}
