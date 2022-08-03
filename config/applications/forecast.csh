@@ -31,7 +31,7 @@ setenv AppName forecast
 $setLocal job.${ArgMesh}.baseSeconds
 $setLocal job.${ArgMesh}.secondsPerForecastHR
 
-@ seconds = $secondsPerForecastHR * $CyclingWindowHR + $baseSeconds
+@ seconds = $secondsPerForecastHR * $FCLengthHR + $baseSeconds
 setenv forecast__seconds $seconds
 
 @ seconds = $secondsPerForecastHR * $ExtendedFCLengthHR + $baseSeconds
