@@ -49,7 +49,7 @@
     config_print_detailed_minmax_vel = true
 /
 &IAU
-    config_IAU_option = 'off'
+    config_IAU_option = '{{IAU}}'
     config_IAU_window_length_s = 21600.
 /
 &physics

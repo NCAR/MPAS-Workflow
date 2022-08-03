@@ -7,7 +7,7 @@ setenv config_environmentJEDI 1
 # {compiler}-{mpi-implementation} combination that selects the JEDI module used to build
 # the executables described in config/builds.csh
 # OPTIONS: gnu-openmpi, intel-impi
-setenv BuildCompiler 'gnu-openmpi'
+setenv BuildCompiler 'gnu-openmpi/10.1.0'
 
 source /etc/profile.d/modules.csh
 setenv OPT /glade/work/jedipara/cheyenne/opt/modules

@@ -1,8 +1,11 @@
 forecast:
-## updateSea
-# whether to update surface fields before a forecast (e.g., sst, xice)
-# OPTIONS: True/False
+  ## updateSea
+  # whether to update surface fields before a forecast (e.g., sst, xice)
+  # OPTIONS: True/False
   updateSea: True
+
+  # whether or not to activate IAU 
+  IAU: False
 
   # length of verification forecasts
   ExtendedFCLengthHR: 240
@@ -17,7 +20,6 @@ forecast:
   # UTC times to run ensemble of extended forecasts
   # formatted as comma-separated string, e.g., T00,T06,T12,T18
   ExtendedEnsFCTimes: T00
-
 
 ## mesh-specific settings
   # resource requirements

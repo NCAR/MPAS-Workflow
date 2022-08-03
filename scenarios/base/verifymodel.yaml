@@ -15,11 +15,11 @@ verifymodel:
     #  baseSeconds: int
     #  secondsPerMember: int
     30km:
-      baseSeconds: 1200
-      secondsPerMember: 120
+      baseSeconds: 2000
+      secondsPerMember: 500
     60km:
       baseSeconds: 480
-      secondsPerMember: 40
+      secondsPerMember: 100
     120km:
       baseSeconds: 120
-      secondsPerMember: 10
+      secondsPerMember: 40

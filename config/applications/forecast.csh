@@ -18,10 +18,20 @@ source config/scenario.csh forecast
 
 $setLocal updateSea
 
-setenv AppName forecast
+## IAU
+$setNestedForecast IAU
+if ($forecast__IAU == True) then
+  @ IAUoutIntervalHR = $CyclingWindowHR / 2
+  @ IAUfcLengthHR = 3 * $IAUoutIntervalHR
+  setenv FCLengthHR $IAUfcLengthHR
+  setenv FCOutIntervalHR $IAUoutIntervalHR
+else
+  setenv FCLengthHR $CyclingWindowHR
+  setenv FCOutIntervalHR $CyclingWindowHR
+endif
+##
 
-setenv FCOutIntervalHR ${CyclingWindowHR}
-setenv FCLengthHR ${CyclingWindowHR}
+setenv AppName forecast
 
 $setLocal ExtendedFCLengthHR
 $setLocal ExtendedFCOutIntervalHR
@@ -76,7 +86,7 @@ cat >! include/tasks/auto/forecast.rc << EOF
     script = \$origin/ColdForecast.csh "{{mem}}" "${FCLengthHR}" "${FCOutIntervalHR}" "False" "${outerMesh}" "False" "True"
   [[ForecastMember{{mem}}]]
     inherit = Forecast
-    script = \$origin/Forecast.csh "{{mem}}" "${FCLengthHR}" "${FCOutIntervalHR}" "True" "${outerMesh}" "True" "True"
+    script = \$origin/Forecast.csh "{{mem}}" "${FCLengthHR}" "${FCOutIntervalHR}" "${forecast__IAU}" "${outerMesh}" "True" "True"
   [[ForecastFinished]]
     inherit = BACKGROUND
 {% endfor %}
