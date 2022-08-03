@@ -95,8 +95,11 @@ cat >! suite.rc << EOF
 {% set FC2DAOffsetHR = "${FC2DAOffsetHR}" %}
 {% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
 {% set ExtendedEnsFCTimes = "${ExtendedEnsFCTimes}" %}
-{% set ExtendedFCWindowHR = ${ExtendedFCWindowHR} %} #integer
-{% set ExtendedFC_DT_HR = ${ExtendedFC_DT_HR} %} #integer
+{% set forecastIAU = ${forecast__IAU} %} #bool
+{% set FCOutIntervalHR = ${FCOutIntervalHR} %} #integer
+{% set FCLengthHR = ${FCLengthHR} %} #integer
+{% set ExtendedFCOutIntervalHR = ${ExtendedFCOutIntervalHR} %} #integer
+{% set ExtendedFCLengthHR = ${ExtendedFCLengthHR} %} #integer
 
 # observation information
 {% set observationsResource = "${observations__resource}" %}

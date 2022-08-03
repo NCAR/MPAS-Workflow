@@ -1,4 +1,4 @@
-{% set ExtendedFCLengths = range(0, ExtendedFCWindowHR+ExtendedFC_DT_HR, ExtendedFC_DT_HR) %}
+{% set ExtendedFCLengths = range(0, ExtendedFCLengthHR+ExtendedFCOutIntervalHR, ExtendedFCOutIntervalHR) %}
 {% set EnsVerifyMembers = range(1, nMembers+1, 1) %}
 
 

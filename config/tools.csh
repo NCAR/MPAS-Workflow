@@ -8,13 +8,15 @@ set wd = `pwd`
 set pyDir = $wd/tools
 set pyTools = ( \
   advanceCYMDH \
+  checkMissingChannels \
+  create_amb_in_nc \
+  dateList \
   memberDir \
   nSpaces \
   substituteEnsembleBMembers \
   substituteEnsembleBTemplate \
+  TimeFmtChange \
   updateXTIME \
-  dateList \
-  checkMissingChannels \
 )
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"

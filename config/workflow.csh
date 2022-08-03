@@ -31,8 +31,8 @@ $setLocal VerifyExtendedEnsFC
 
 # durations and intervals
 $setLocal CyclingWindowHR
-$setLocal ExtendedFCWindowHR
-$setLocal ExtendedFC_DT_HR
+$setLocal ExtendedFCLengthHR
+$setLocal ExtendedFCOutIntervalHR
 $setLocal ExtendedMeanFCTimes
 $setLocal ExtendedEnsFCTimes
 $setLocal DAVFWindowHR
