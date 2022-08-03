@@ -27,9 +27,6 @@ endif
 
 setenv AppName forecast
 
-setenv FCOutIntervalHR ${CyclingWindowHR}
-setenv FCLengthHR ${CyclingWindowHR}
-
 ## job
 $setLocal job.${ArgMesh}.baseSeconds
 $setLocal job.${ArgMesh}.secondsPerForecastHR
