@@ -42,6 +42,9 @@ externalanalyses:
   resource: "GFS.PANDAC"
 variational:
   DAType: 3denvar
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
   nInnerIterations: [60,60]
   ensemble:
     forecasts:

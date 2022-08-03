@@ -30,9 +30,12 @@ class Forecast(Component):
 
     IAU = self['IAU']
 
-    # TODO: set based on IAU
-    outIntervalHR = workflow['CyclingWindowHR']
-    lengthHR = workflow['CyclingWindowHR']
+    if IAU:
+      outIntervalHR = workflow['CyclingWindowHR'] // 2
+      lengthHR = 3 * outIntervalHR
+    else:
+      outIntervalHR = workflow['CyclingWindowHR']
+      lengthHR = workflow['CyclingWindowHR']
 
     ########################
     # tasks and dependencies
