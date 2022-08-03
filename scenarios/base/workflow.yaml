@@ -137,10 +137,10 @@ workflow:
   CyclingWindowHR: 6
 
   # length of verification forecasts
-  ExtendedFCWindowHR: 240
+  ExtendedFCLengthHR: 240
 
   # interval between OMF verification times of an individual forecast
-  ExtendedFC_DT_HR: 12
+  ExtendedFCOutIntervalHR: 12
 
   # times of the day to run extended forecast from mean analysis
   ExtendedMeanFCTimes: T00,T12
