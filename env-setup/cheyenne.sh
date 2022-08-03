@@ -1,4 +1,17 @@
+#!/bin/bash -f
+
+# Use deactivate to remove NPL from environment if it is activated
+type deactivate >& /dev/null
+if [ $? -eq 0 ]; then
+  deactivate
+fi
+
 source /etc/profile.d/modules.sh
+module purge
+module load ncarenv/1.3
+module load gnu/10.1.0
+module load ncarcompilers/0.5.0
+module load netcdf/4.8.1
 module load conda/latest
 conda activate npl
 export PYTHONDONTWRITEBYTECODE=1 # avoid __pycache__ creation
