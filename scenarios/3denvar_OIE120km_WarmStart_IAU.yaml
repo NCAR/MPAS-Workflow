@@ -1,0 +1,30 @@
+workflow:
+  InitializationType: WarmStart
+  initialCyclePoint: 20180414T18
+  finalCyclePoint:   20180514T18
+  VerifyDeterministicDA: True 
+  VerifyEnsMeanBG: False
+
+  VerifyExtendedMeanFC: False
+  ExtendedFCLengthHR: 120
+  ExtendedFCOutIntervalHR: 12
+  ExtendedMeanFCTimes: T00
+
+observations:
+  resource: PANDACArchive
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+experiment:
+  ExpSuffix: '_IAUfix2'
+variational:
+  DAType: 3denvar
+forecast:
+  IAU: True
+builds:
+  commonBuild: /glade/work/syha/mpas-bundle-build-iau-rthm
+job:
+  CPAccountNumber: NMMM0013
+  NCPAccountNumber: NMMM0013
+  SingleProcAccountNumber: NMMM0013

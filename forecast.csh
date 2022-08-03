@@ -1,5 +1,5 @@
 #!/bin/csh -f
-
+# forecast.csh
 date
 
 # Process arguments
@@ -7,6 +7,9 @@ date
 ## args
 # ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
+set ArgFcIntervalHR = "$2" 	# fcIntervalHRTEMPLATE
+set ArgFcLengthHR = "$3" 	# fcLengthHRTEMPLATE
+set ArgFcIAU = "$4"             # forecastIAU
 
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
@@ -42,13 +45,17 @@ echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
-# other templated variables
-set self_icStateDir = $StateDirsTEMPLATE[$ArgMember]
-set self_fcLengthHR = fcLengthHRTEMPLATE
-set self_fcIntervalHR = fcIntervalHRTEMPLATE
-set config_run_duration = 0_${self_fcLengthHR}:00:00
-set output_interval = 0_${self_fcIntervalHR}:00:00
+# Default templated variables based on the input arguments.
+set config_run_duration  = ${ArgFcLengthHR}:00:00
+set output_interval      = ${ArgFcIntervalHR}:00:00
 set deleteZerothForecast = deleteZerothForecastTEMPLATE
+set self_icStateDir      = $StateDirsTEMPLATE[$ArgMember]
+
+# Input parameters can further change for the first DA cycle inside this script.
+set self_FcIntervalHR = ${ArgFcIntervalHR}
+set self_FcLengthHR   = ${ArgFcLengthHR}
+set self_FcIAU        = ${ArgFcIAU}       # True or False (default)
+set StartDate = ${thisMPASNamelistDate}
 
 # static variables
 set self_icStatePrefix = ${ANFilePrefix}
@@ -62,20 +69,59 @@ set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
 set icFileExt = ${thisMPASFileDate}.nc
 set icFile = ${ICFilePrefix}.${icFileExt}
-rm ./${icFile}
+if( -e ${icFile} ) rm ./${icFile}
 if ( ${InitializationType} == "ColdStart" && ${thisValidDate} == ${FirstCycleDate}) then
   set initialState = ${InitICWorkDir}/${thisValidDate}/${InitFilePrefixOuter}.${icFileExt}
   set do_DAcycling = "false"
   ln -sfv ${initialState} ${localStaticFieldsFile}
+  set self_FcIAU = False
+  setenv IAU False
 else
   set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
   set do_DAcycling = "true"
+  set firstIAUDate = `$advanceCYMDH ${FirstCycleDate} ${IAUoutIntervalHR}`
   set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
   set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
   ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
   cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+
+  # We can start IAU only from the second DA cycle (otherwise, 3hrly background forecast is not available yet.)
+  if ( ${self_FcIAU} == True && $thisValidDate > $firstIAUDate) then 
+   set IAUDate = `$advanceCYMDH ${thisCycleDate} -${IAUoutIntervalHR}`
+   setenv IAUDate ${IAUDate}
+   set BGFileExt = `$TimeFmtChange ${IAUDate}`.00.00.nc   	# analysis - 3h [YYYY-MM-DD_HH.00.00]
+   set BGFile   = ${prevCyclingFCDir}/${FCFilePrefix}.${BGFileExt}	# mpasout at (analysis - 3h)
+   set BGFileA  = ${CyclingDAInDir}/${BGFilePrefix}.${icFileExt}	# bg at the analysis time
+   echo ""
+   echo "IAU needs two background files:"
+   echo "IC: ${BGFile}"
+   echo "bg: ${BGFileA}"
+
+   if ( -e ${BGFile} && -e ${BGFileA} ) then
+    echo "IAU starts from ${IAUDate}."
+    set StartDate  = `$TimeFmtChange ${IAUDate}`:00:00	# YYYYMMDDHH => YYYY-MM-DD_HH:00:00
+    # Compute analysis increments (AmB)
+    ln -sfv ${initialState} ${ANFilePrefix}.${icFileExt}		# an.YYYY-MM-DD_HH.00.00.nc
+    ln -sfv ${BGFileA}      ${BGFilePrefix}.${icFileExt}		# bg.YYYY-MM-DD_HH.00.00.nc
+    setenv myCommand "${create_amb_in_nc} ${thisValidDate}" # ${IAU_window_s}"
+    echo "$myCommand"
+    ${myCommand}
+    set famb = AmB.`$TimeFmtChange ${IAUDate}`.00.00.nc
+    ls -lL $famb						|| exit
+    # Initial condition (mpasin.YYYY-MM-DD_HH.00.00.nc)
+    ln -sfv ${BGFile} ${ICFilePrefix}.${BGFileExt}		|| exit
+   else		# either analysis or background does not exist; IAU is off.
+    echo "IAU was on, but no input files. So it is off and initialized at ${thisValidDate}."
+    setenv IAU False
+    set self_FcIAU          = False
+    set self_FcLengthHR   = ${CyclingWindowHR}
+    set config_run_duration = ${self_FcLengthHR}:00:00
+    set output_interval     = ${self_FcIntervalHR}:00:00
+   endif
+  endif # ( ${IAU} == True ) then
 endif
 ln -sfv ${initialState} ./${icFile}
+if ( ${self_FcIAU} == True ) \rm -f ./${icFile}
 
 ## link MPAS mesh graph info
 rm ./x1.${nCells}.graph.info*
@@ -92,12 +138,12 @@ foreach staticfile ( \
 stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
 )
-  rm ./$staticfile
+  if( -e $staticfile ) rm ./$staticfile
   ln -sfv $ModelConfigDir/$AppName/$staticfile .
 end
 
 ## copy/modify dynamic streams file
-rm ${StreamsFile}
+if( -e ${StreamsFile}) rm ${StreamsFile}
 cp -v $ModelConfigDir/$AppName/${StreamsFile} .
 sed -i 's@nCells@'${nCells}'@' ${StreamsFile}
 sed -i 's@outputInterval@'${output_interval}'@' ${StreamsFile}
@@ -162,16 +208,20 @@ else
 endif
 
 ## copy/modify dynamic namelist
-rm ${NamelistFile}
+if( -e ${NamelistFile}) rm ${NamelistFile}
 cp -v $ModelConfigDir/$AppName/$NamelistFile .
-sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
+sed -i 's@startTime@'${StartDate}'@' $NamelistFile
 sed -i 's@fcLength@'${config_run_duration}'@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 sed -i 's@configDODACycling@'${do_DAcycling}'@' $NamelistFile
+if ( ${self_FcIAU} == True ) then
+    sed -i 's@off@on@' $NamelistFile
+    echo "IAU is turned on."
+endif
 
-if ( ${self_fcLengthHR} == 0 ) then
+if ( ${ArgFcLengthHR} == 0 ) then
   ## zero-length forecast case (NOT CURRENTLY USED)
   rm ./${icFile}_tmp
   mv ./${icFile} ./${icFile}_tmp
@@ -181,26 +231,21 @@ if ( ${self_fcLengthHR} == 0 ) then
   ln -sfv ${self_icStateDir}/${DIAGFilePrefix}.${icFileExt} ./
 else
   ## remove previously generated forecasts
-  set fcDate = `$advanceCYMDH ${thisValidDate} ${self_fcIntervalHR}`
-  set finalFCDate = `$advanceCYMDH ${thisValidDate} ${self_fcLengthHR}`
+  set fcDate = `$advanceCYMDH ${thisValidDate} ${self_FcIntervalHR}`
+  set finalFCDate = `$advanceCYMDH ${thisValidDate} ${self_FcLengthHR}`
   while ( ${fcDate} <= ${finalFCDate} )
-    set yy = `echo ${fcDate} | cut -c 1-4`
-    set mm = `echo ${fcDate} | cut -c 5-6`
-    set dd = `echo ${fcDate} | cut -c 7-8`
-    set hh = `echo ${fcDate} | cut -c 9-10`
-    set fcFileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
-    set fcFileExt = ${fcFileDate}.nc
-    set fcFile = ${FCFilePrefix}.${fcFileExt}
+    set fcFileDate  = `$TimeFmtChange ${fcDate}`
+    set fcFile = ${FCFilePrefix}.${fcFileDate}.00.00.nc
 
-    rm ${fcFile}
+    if( -e ${fcFile} ) rm ${fcFile}
 
-    set fcDate = `$advanceCYMDH ${fcDate} ${self_fcIntervalHR}`
+    set fcDate = `$advanceCYMDH ${fcDate} ${self_FcIntervalHR}`
     setenv fcDate ${fcDate}
   end
 
   # Run the executable
   # ==================
-  rm ./${ForecastEXE}
+  if( -e ${ForecastEXE} ) rm ./${ForecastEXE}
   ln -sfv ${ForecastBuildDir}/${ForecastEXE} ./
   # mpiexec is for Open MPI, mpiexec_mpt is for MPT
   mpiexec ./${ForecastEXE}
@@ -226,15 +271,10 @@ if ( "$deleteZerothForecast" == "True" ) then
   # Optionally remove initial forecast file
   # =======================================
   set fcDate = ${thisValidDate}
-  set yy = `echo ${fcDate} | cut -c 1-4`
-  set mm = `echo ${fcDate} | cut -c 5-6`
-  set dd = `echo ${fcDate} | cut -c 7-8`
-  set hh = `echo ${fcDate} | cut -c 9-10`
-  set fcFileDate  = ${yy}-${mm}-${dd}_${hh}.00.00
-  set fcFileExt = ${fcFileDate}.nc
-  set fcFile = ${FCFilePrefix}.${fcFileExt}
+  set fcFileDate  = `$TimeFmtChange ${fcDate}`
+  set fcFile = ${FCFilePrefix}.${fcFileDate}.00.00.nc
   rm ${fcFile}
-  set diagFile = ${DIAGFilePrefix}.${fcFileExt}
+  set diagFile = ${DIAGFilePrefix}.${fcFileDate}.00.00.nc
   rm ${diagFile}
 endif
 

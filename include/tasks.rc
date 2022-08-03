@@ -223,7 +223,7 @@ conda activate npl
 {% for mem in allMembers %}
   [[ForecastMember{{mem}}]]
     inherit = Forecast
-    script = $origin/Forecast.csh "{{mem}}"
+    script = $origin/Forecast.csh "{{mem}}" "{{FCOutIntervalHR}}" "{{FCLengthHR}}" "{{forecastIAU}}"
     [[[job]]]
       execution retry delays = {{CyclingFCRetry}}
 {% endfor %}
@@ -290,7 +290,7 @@ conda activate npl
       -l = select=1:ncpus=36:mpiprocs=36
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
-    script = $origin/ExtendedMeanFC.csh "1"
+    script = $origin/ExtendedMeanFC.csh "1" "{{ExtendedFCOutIntervalHR}}" "{{ExtendedFCLengthHR}}" "False"
   [[HofXMeanFC]]
     inherit = HofXBase
   [[VerifyModelMeanFC]]
@@ -400,7 +400,7 @@ conda activate npl
   # ensemble of extended forecasts from ensemble of analyses
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
-    script = $origin/ExtendedEnsFC.csh "{{mem}}"
+    script = $origin/ExtendedEnsFC.csh "{{mem}}" "{{ExtendedFCOutIntervalHR}}" "{{ExtendedFCLengthHR}}" "False"
   [[HofXEnsFC{{mem}}]]
     inherit = HofXBase
   [[VerifyModelEnsFC{{mem}}]]

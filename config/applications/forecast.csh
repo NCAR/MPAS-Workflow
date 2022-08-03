@@ -12,6 +12,19 @@ setenv nCells "$nCellsOuter"
 
 $setLocal updateSea
 
+## IAU
+$setNestedForecast IAU
+if ($forecast__IAU == True) then
+  @ IAUoutIntervalHR = $CyclingWindowHR / 2
+  @ IAUfcLengthHR = 3 * $IAUoutIntervalHR
+  setenv FCLengthHR $IAUfcLengthHR
+  setenv FCOutIntervalHR $IAUoutIntervalHR
+else
+  setenv FCLengthHR $CyclingWindowHR
+  setenv FCOutIntervalHR $CyclingWindowHR
+endif
+##
+
 setenv AppName forecast
 
 ## job
@@ -21,7 +34,7 @@ $setLocal job.${mesh}.secondsPerForecastHR
 @ seconds = $secondsPerForecastHR * $CyclingWindowHR + $baseSeconds
 setenv forecast__seconds $seconds
 
-@ seconds = $secondsPerForecastHR * $ExtendedFCWindowHR + $baseSeconds
+@ seconds = $secondsPerForecastHR * $ExtendedFCLengthHR + $baseSeconds
 setenv extendedforecast__seconds $seconds
 
 $setNestedForecast job.${mesh}.nodes

@@ -4,6 +4,9 @@ forecast:
 # OPTIONS: True/False
   updateSea: True
 
+# whether or not to activate IAU 
+  IAU: False
+
 ## mesh-specific settings
   # resource requirements
   job:
