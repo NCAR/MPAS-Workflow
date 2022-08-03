@@ -105,10 +105,6 @@ echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
 
-# Default templated variables based on the input arguments.
-set deleteZerothForecast = deleteZerothForecastTEMPLATE
-set self_icStateDir      = $StateDirsTEMPLATE[$ArgMember]
-
 # Input parameters can further change for the first DA cycle inside this script.
 set self_FCIntervalHR = ${ArgFCIntervalHR}
 set self_FCLengthHR   = ${ArgFCLengthHR}
