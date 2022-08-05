@@ -4,7 +4,8 @@ if ( $?config_rtpp ) exit 0
 setenv config_rtpp 1
 
 source config/model.csh
-source config/applications/variational.csh
+source config/firstbackground.csh
+
 source config/scenario.csh rtpp
 
 $setNestedRtpp relaxationFactor
@@ -15,9 +16,9 @@ setenv appyaml ${AppName}.yaml
 
 ## job
 $setLocal job.${ensembleMesh}.baseSeconds
-$setLocal job.${ensembleMesh}.secondsPerEDAMember
+$setLocal job.${ensembleMesh}.secondsPerMember
 
-@ seconds = $secondsPerEDAMember * $nEnsDAMembers + $baseSeconds
+@ seconds = $secondsPerMember * $nMembers + $baseSeconds
 setenv rtpp__seconds $seconds
 
 $setNestedRtpp job.${ensembleMesh}.nodes

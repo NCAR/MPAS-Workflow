@@ -6,13 +6,13 @@ verifymodel:
   job:
     #{{outerMesh}}:
     #  baseSeconds: int
-    #  secondsPerEDAMember: int
+    #  secondsPerMember: int
     30km:
-      baseSeconds: 1200
-      secondsPerEDAMember: 120
+      baseSeconds: 2000
+      secondsPerMember: 500
     60km:
       baseSeconds: 480
-      secondsPerEDAMember: 40
+      secondsPerMember: 100
     120km:
       baseSeconds: 120
-      secondsPerEDAMember: 10
+      secondsPerMember: 40

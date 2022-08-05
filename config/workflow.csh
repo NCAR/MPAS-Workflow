@@ -15,9 +15,6 @@ setenv FirstCycleDate ${yymmdd}${hh}
 $setLocal initialCyclePoint
 $setLocal finalCyclePoint
 
-# cold (online) vs. warm (offline)
-$setLocal InitializationType
-
 # critical path selection
 $setLocal CriticalPathType
 

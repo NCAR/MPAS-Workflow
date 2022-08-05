@@ -6,9 +6,9 @@ date
 # =================
 source config/environmentJEDI.csh
 source config/experiment.csh
-source config/modeldata.csh
 source config/builds.csh
 source config/applications/initic.csh
+source config/externalanalyses.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -17,16 +17,15 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-set WorkDir = ${InitICWorkDir}/${thisValidDate}
+set WorkDir = ${ExternalAnalysisDir}
 echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
 
 # ================================================================================================
 
-## link Vtable
-set Vtable = Vtable.GFS_FV3
-ln -sfv ${VtableDir}/${Vtable} Vtable
+## link Vtable file
+ln -sfv ${externalanalyses__Vtable} Vtable
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileWPS}

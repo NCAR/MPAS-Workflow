@@ -11,7 +11,7 @@ source config/scenario.csh ensvariational
 $setLocal job.${outerMesh}.baseSeconds
 $setLocal job.${outerMesh}.secondsPerEnVarMember
 
-@ seconds = $secondsPerEnVarMember * $nEnVarMembers + $baseSeconds
+@ seconds = $secondsPerEnVarMember * $ensPbNMembers + $baseSeconds
 setenv ensvariational__seconds $seconds
 
 $setLocal job.${outerMesh}.nodesPerMember

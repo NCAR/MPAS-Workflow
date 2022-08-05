@@ -13,6 +13,6 @@ $setLocal pyVerifyDir
 $setLocal job.${outerMesh}.baseSeconds
 setenv verifymodel__seconds $baseSeconds
 
-$setLocal job.${outerMesh}.secondsPerEDAMember
-@ seconds = $secondsPerEDAMember * $nMembers + $baseSeconds
+$setLocal job.${outerMesh}.secondsPerMember
+@ seconds = $secondsPerMember * $nMembers + $baseSeconds
 setenv verifymodelens__seconds $seconds

@@ -232,35 +232,47 @@ conda activate npl
 
 
 ## Forecasts and analyses generated outside MPAS-Workflow
-  [[GetWarmStartIC]]
+  [[LinkWarmStartBackgrounds]]
     inherit = BATCH
-    script = $origin/GetWarmStartIC.csh
+    script = $origin/LinkWarmStartBackgrounds.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members
       # TODO: set time limit based on outerMesh AND (number of members OR
       #       independent task for each member)
       execution time limit = PT10M
       execution retry delays = {{InitializationRetry}}
-  [[GetGFSanalysis]]
+  [[GetGFSAnalysisFromRDA]]
     inherit = BATCH
-    script = $origin/GetGFSanalysis.csh
+    script = $origin/GetGFSAnalysisFromRDA.csh
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = {{GFSAnalysisRetry}}
-  [[UngribColdStartIC]]
+  [[GetGFSanalysisFromFTP]]
     inherit = BATCH
-    script = $origin/UngribColdStartIC.csh
+    script = $origin/GetGFSAnalysisFromFTP.csh
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = {{GFSAnalysisRetry}}
+  [[LinkExternalAnalysis]]
+    inherit = BATCH
+    script = $origin/LinkExternalAnalysis.csh
+    [[[job]]]
+      execution time limit = PT30S
+
+  [[UngribExternalAnalysis]]
+    inherit = BATCH
+    script = $origin/UngribExternalAnalysis.csh
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = {{InitializationRetry}}
-    # currently UngribColdStartIC has to be on Cheyenne, because ungrib.exe is built there
+    # currently UngribExternalAnalysis has to be on Cheyenne, because ungrib.exe is built there
     # TODO: build ungrib.exe on casper, remove CP directives below
     [[[directives]]]
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
-  [[GenerateColdStartIC]]
+  [[ExternalAnalysisToMPAS]]
     inherit = BATCH
-    script = $origin/GenerateColdStartIC.csh
+    script = $origin/ExternalAnalysisToMPAS.csh
     [[[job]]]
       execution time limit = PT{{InitICSeconds}}S
       execution retry delays = {{InitializationRetry}}
@@ -343,7 +355,7 @@ conda activate npl
     inherit = VerifyModelBase
     script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
     [[[job]]]
-      execution time limit = PT{{modelSeconds}}M
+      execution time limit = PT{{modelSeconds}}S
   [[VerifyObsEnsMeanBG]]
     inherit = VerifyObsBase
     script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}" "hofx"

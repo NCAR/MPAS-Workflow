@@ -1,5 +1,5 @@
 workflow:
-  InitializationType: WarmStart
+  CriticalPathType: Bypass
 observations:
   resource: PANDACArchive
 experiment:
@@ -8,10 +8,14 @@ model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
+firstbackground:
+  resource: "PANDAC.LaggedGEFS"
+  nMembers: 20
+externalanalyses:
+  resource: "GFS.PANDAC"
 variational:
   DAType: 3denvar
-  nDAInstances: 20
-  LeaveOneOutEDA: False
+  SelfExclusion: False
   nInnerIterations: [,]
 rtpp:
   relaxationFactor: 0.0

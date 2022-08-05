@@ -3,7 +3,6 @@
 source config/tools.csh
 source config/workflow.csh
 source config/experiment.csh
-source config/${InitializationType}ModelData.csh
 
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 #set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`
@@ -17,6 +16,8 @@ set CyclingDAInDir = $CyclingDADir/${bgDir}
 set CyclingDAOutDir = $CyclingDADir/${anDir}
 set CyclingDADirs = (${CyclingDADir})
 set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})
+
+set ExternalAnalysisDir = ${ExternalAnalysisWorkDir}/${thisValidDate}
 
 set prevCyclingDADir = ${CyclingDAWorkDir}/${prevCycleDate}
 set CyclingFCDir = ${CyclingFCWorkDir}/${thisCycleDate}
@@ -90,7 +91,3 @@ set thisMPASFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set thisMPASNamelistDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set thisISO8601Date = ${yy}-${mm}-${dd}T${hh}:00:00Z
 set ICfileDate = ${yy}-${mm}-${dd}_${hh}
-
-if ( ${InitializationType} == "ColdStart" ) then
-  setenv GFSAnaDirVerify ${GFSAnaDirOuter}/${thisValidDate}
-endif

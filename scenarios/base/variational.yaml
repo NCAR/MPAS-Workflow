@@ -13,10 +13,16 @@ variational:
 # OPTIONS: True/False
   biasCorrection: False
 
+## tropprsMethod
 # method for the tropopause pressure determination used in the
 # cloud detection filter for infrared observations
 # OPTIONS: thompson, wmo (currently the build code only works for thompson)
   tropprsMethod: thompson
+
+## maxIODAPoolSize
+# maximum number of IO pool members in IODA writer class
+# OPTIONS: 1 to NPE, default: 10
+  maxIODAPoolSize: 10
 
 ##ensembleCovarianceWeight and staticCovarianceWeight
 # weights of ensemble and static components of the background errorcovariance
@@ -25,28 +31,25 @@ variational:
   staticCovarianceWeight: None
 
 ### EDA
-# optionally carry out an ensemble of variational data assimilations (EDA) by modifying nDAInstances
-# and EDASize, where nEnsDAMembers=(EDASize * nDAInstances)
-# nEnsDAMembers is also the number of forecasts used to represent the flow-dependent background
-# error covariance when DAType is 3denvar or 3dhybrid
+# an ensemble of variational data assimilations (EDA) will be carried out
+# whenever firstbackground.nMembers > 1
 
-## nDAInstances:
-# number of instances of Variational or EnsembleOfVariational applications
-# DEFAULT: 1
-  nDAInstances: None
+# One can modify EDASize such that nMemberss=(EDASize * nDAInstances)
+# nMembers is also the number of forecasts used to represent the flow-dependent background
+# error covariance when DAType is 3denvar or 3dhybrid
 
 ## EDASize
 # ensemble size of each DA instance
 # DEFAULT: 1
-#   1: ensemble of nDAInstances independent Variational applications (nEnsDAMembers independent
+#   1: ensemble of nDAInstances independent Variational applications (nMembers independent
 #      jobs), each with 1 background state member per DA job
 # > 1: ensemble of nDAInstances independent EnsembleOfVariational applications, each with EDASize
 #      background state members per DA job
   EDASize: None
 
-## LeaveOneOutEDA, whether to use self-exclusion in the EnVar ensemble B during EDA cycling
+## SelfExclusion, whether exclude own background from the ensemble B perturbations in EnVar during EDA cycling
 # OPTIONS: True/False
-  LeaveOneOutEDA: True
+  SelfExclusion: True
 
 ## ABEIInflation
 # whether to utilize adaptive background error inflation (ABEI) in cloud-affected scenes
@@ -118,20 +121,99 @@ variational:
   radianceThinningDistance: "145.0"
 
 ## mesh-specific settings
-  # externally-produced localization files (envar or hybrid)
-  localization:
-    #{{ensembleMesh}}:
-    #  bumpLocPrefix: str
-    #  bumpLocDir: str
-    30km:
-      bumpLocPrefix: bumploc_1200.0km_6.0km
-      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_25APR2022code
-    60km:
-      bumpLocPrefix: bumploc_1200.0km_6.0km
-      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_25APR2022code
-    120km:
-      bumpLocPrefix: bumploc_1200.0km_6.0km
-      bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_25APR2022code
+  ensemble: #(envar or hybrid)
+    forecasts:
+      ## resource (required)
+      # use the format "{{project}}.{{source}}"
+      # see below for options (e.g., "PANDAC.GEFS")
+      resource: None
+
+      #{{project}}:
+      #  {{source}}:
+      #    {{ensembleMesh}}:
+      #      maxMembers: int
+      #      directory0: str
+      #      directory1: str
+      #      #dateFormatter: str
+      #      memberNDigits: int
+      #      memberPrefix: str
+      #      forecastDateOffsetHR: int
+
+      # produces this filename:
+      #  {{directory0}}/{{memberPrefix}}{{member}}/{{directory1}}/{{filePrefix}}.{{thisMPASFileDate}}.nc
+      #
+      #  where
+      #    + {{member}} is an iterator formatted using {{memberNDigits}}
+      #    + {{directory0}} or {{directory1}} may include {{prevDateTime}} for substitution
+      #    + {{prevDateTime}} is the previous forecast date-time, formatted as YYMMDDHH, and depends on
+      #      the forecastDateOffsetHR and workflow.CyclingWindowHR
+      #    + {{thisMPASFileDate}} is formatted as YY-MM-DD_HH.00.00
+      # For more details, see PrepVariational.csh and tools/substituteEnsembleBTemplate.py
+
+      # common settings act as default values when not contained in {{project}}.{{source}}
+      defaults:
+        maxMembers: 0
+        directory0: None #must override
+        directory1: None
+        #dateFormatter: 'YYYYMMDDHH' # not currently implemented
+        filePrefix: mpasout
+        memberPrefix: None # defaults to empty string
+        memberNDigits: 0 # must override
+        forecastDateOffsetHR: 0 # added to CyclingWindowHR, only non-zero for IAU
+
+      PANDAC:
+        GEFS: # only available 2018041500-2018051418
+          120km:
+            maxMembers: 20
+            directory0: '/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/EnsForCov/{{prevDateTime}}'
+            filePrefix: EnsForCov
+            memberNDigits: 2
+
+            # for example, the settings above produce the following yaml template:
+            #members from template:
+            #  template:
+            #    <<: *memberConfig
+            #    filename: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/EnsForCov/{{prevDateTime}}/%iMember%/EnsForCov.{{thisMPASFileDate}}.nc
+            #  pattern: %iMember%
+            #  start: 1
+            #  zero padding: 2
+            #  nmembers: 20
+
+          60km:
+            maxMembers: 20
+            directory0: '/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/EnsForCov/{{prevDateTime}}'
+            filePrefix: EnsForCov
+            memberNDigits: 2
+
+        DART: # only available 2018041500-2018051418
+          60km:
+            maxMembers: 80
+            directory0: '/glade/scratch/guerrett/pandac/schwartz_dart_NMEM80_60km/CyclingFC/{{prevDateTime}}'
+            memberPrefix: mem
+            memberNDigits: 3
+
+        EDA: # only available 2018041500-2018051418
+          60km:
+            maxMembers: 80
+            directory0: '/glade/scratch/guerrett/pandac/guerrett_eda_3denvar-60-iter_NMEM80_RTPP0.7_SelfExclusion_OIE60km_WarmStart/CyclingFC/{{prevDateTime}}'
+            memberPrefix: mem
+            memberNDigits: 3
+
+
+    # externally-produced localization files
+    localization:
+      #{{ensembleMesh}}:
+      #  bumpLocPrefix: str
+      #  bumpLocDir: str
+      30km:
+        bumpLocPrefix: bumploc_1200.0km_6.0km
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_25APR2022code
+      60km:
+        bumpLocPrefix: bumploc_1200.0km_6.0km
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_25APR2022code
+      120km:
+        bumpLocPrefix: bumploc_1200.0km_6.0km
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_25APR2022code
 
   # externally-produced background covariance files (var or hybrid)
   covariance:
@@ -169,12 +251,12 @@ variational:
     #    {{DAType}}: # i.e., 3dvar, 3denvar, 3dhybrid, 4denvar, etc...
     #      baseSeconds: int
     #      secondsPerEnVarMember: int, default is 0
-    #      #@ seconds = $secondsPerEnVarMember * $nEnVarMembers + $baseSeconds
+    #      #@ seconds = $secondsPerEnVarMember * $ensPbNMembers + $baseSeconds
     #      nodes: int
     #      PEPerNode: int
     #      memory: int
     30km:
-      30km:
+      30km: #120 inner total
         3denvar:
           baseSeconds: 1500
           secondsPerEnVarMember: 5
@@ -186,10 +268,10 @@ variational:
           nodes: 64
           PEPerNode: 8
           memory: 45
-      60km:
+      60km: #120 inner total
         3denvar:
-          baseSeconds: 1200
-          secondsPerEnVarMember: 10
+          baseSeconds: 350
+          secondsPerEnVarMember: 8
           nodes: 6
           PEPerNode: 32
           memory: 109
@@ -198,7 +280,7 @@ variational:
           nodes: 6
           PEPerNode: 32
           memory: 109
-    60km:
+    60km: #60 inner total
       60km:
         3denvar:
           baseSeconds: 500
@@ -211,7 +293,7 @@ variational:
           nodes: 6
           PEPerNode: 32
           memory: 109
-    120km:
+    120km: #60 inner total
       120km:
         3denvar:
           baseSeconds: 360

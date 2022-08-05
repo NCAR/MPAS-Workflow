@@ -18,8 +18,15 @@ model:
   ensembleMesh: 120km
 experiment:
   ExpSuffix: '_IAUfix2'
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
 variational:
   DAType: 3denvar
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
 forecast:
   IAU: True
 builds:

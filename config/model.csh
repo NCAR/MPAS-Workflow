@@ -33,17 +33,8 @@ setenv nCellsEnsemble "`$getLocalOrNone nCells.$ensembleMesh`"
 $setLocal ${outerMesh}.TimeStep
 $setLocal ${outerMesh}.DiffusionLengthScale
 
-# deterministic analysis source
-$setNestedModel AnalysisSource
-
 # Get GDAS analyses
 $setLocal GetGDASAnalysis
-
-# stochastic cycle window duration forecast source
-# only applicable to 3denvar when nMembers<2
-$setLocal fixedEnsBSource
-$setLocal nPreviousEnsDAMembers
-$setLocal PreviousEDAForecastDir
 
 $setLocal GraphInfoDir
 

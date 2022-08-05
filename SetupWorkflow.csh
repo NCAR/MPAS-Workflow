@@ -4,11 +4,13 @@
 source generateExperimentConfig.csh
 
 set workflowParts = ( \
+  GetGFSAnalysisFromRDA.csh \
+  GetGFSAnalysisFromFTP.csh \
   GetGDASanalysis.csh \
-  GetGFSanalysis.csh \
-  UngribColdStartIC.csh \
-  GenerateColdStartIC.csh \
-  GetWarmStartIC.csh \
+  LinkExternalAnalysis.csh \
+  UngribExternalAnalysis.csh \
+  ExternalAnalysisToMPAS.csh \
+  LinkWarmStartBackgrounds.csh \
   GetObs.csh \
   ObsToIODA.csh \
   getCycleVars.csh \

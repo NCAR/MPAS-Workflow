@@ -1,37 +1,44 @@
 workflow:
   firstCyclePoint: 20180414T18
   initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180415T00
-  VerifyDeterministicDA: False
-  VerifyEnsMeanBG: False
-  DiagnoseEnsSpreadBG: False
+  finalCyclePoint: 20180514T18
+  CriticalPathType: Normal
+  VerifyDeterministicDA: True
+  VerifyEnsMeanBG: True
 model:
-  outerMesh: 60km
+  outerMesh: 30km
   innerMesh: 60km
   ensembleMesh: 60km
 firstbackground:
-  resource: "PANDAC.LaggedGEFS"
-  nMembers: 80
+  resource: "PANDAC.GFS"
 externalanalyses:
   resource: "GFS.PANDAC"
 variational:
   DAType: 3denvar
-  SelfExclusion: True
-  maxIODAPoolSize: 3
+  nInnerIterations: [60,60,]
+
+## DART
+#  ensemble:
+#    forecasts:
+#      resource: "PANDAC.DART"
+#experiment:
+#  ExpSuffix: '_B-DART80'
+
+## EDA
+  ensemble:
+    forecasts:
+      resource: "PANDAC.EDA"
+experiment:
+  ExpSuffix: '_B-SE80+RTPP70'
+
+forecast:
   job:
-    60km:
-      60km:
-        #NOTE: increase memory and time when instruments are added beyond conv + clear-amsua
-        3denvar:
-          nodes: 6
-          PEPerNode: 32
-          memory: 45
-          baseSeconds: 220
-          secondsPerEnVarMember: 3
-hofx:
-  maxIODAPoolSize: 3
-rtpp:
-  relaxationFactor: 0.7
+    30km:
+      # more efficient
+      nodes: 4
+      PEPerNode: 36
+      baseSeconds: 60
+      secondsPerForecastHR: 150
 observations:
   resource: PANDACArchive
   PANDACArchive:

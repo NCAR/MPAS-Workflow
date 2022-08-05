@@ -15,9 +15,15 @@ def substituteEnsembleB():
   ap = argparse.ArgumentParser()
 
   ap.add_argument(
-    'Directory0',
+    'directory0',
     type=str,
     help='first part of directory name, before member directory'
+  )
+
+  ap.add_argument(
+    'directory1',
+    type=str,
+    help='second part of directory name, after member directory'
   )
 
   ap.add_argument(
@@ -27,20 +33,15 @@ def substituteEnsembleB():
   )
 
   ap.add_argument(
-    'Directory1',
-    type=str,
-    help='second part of directory name, after member directory'
-  )
-
-  ap.add_argument(
     'File',
     type=str,
     help='common file name for all members'
   )
 
   ap.add_argument(
-    'nDigits',
+    'memberNDigits',
     type=int,
+    choices = [1,2,3,4,5,6],
     help='number of digits, including padded zeros, in member directory name'
   )
 
@@ -75,12 +76,6 @@ def substituteEnsembleB():
     default="False",
     help='Whether to use self-exclusion, excluding own member (index in yamlFiles) from yaml'
   )
-  ap.add_argument(
-    '-s', '--shuffle',
-    type=bool,
-    default=True,
-    help='Whether to randomly shuffle the order of ensemble state stubs'
-  )
 
   # parse the arguments
   args = ap.parse_args()
@@ -89,18 +84,17 @@ def substituteEnsembleB():
   if memberPrefix == 'None':
     memberPrefix = ''
 
-  Directory1 = args.Directory1
-  if Directory1 == 'None':
-    Directory1 = ''
+  directory1 = args.directory1
+  if directory1 == 'None':
+    directory1 = ''
   else:
-    Directory1 += '/'
+    directory1 += '/'
 
   yamlFiles = args.yamlFiles
 
   substitutionString = args.substitutionString
   indent = ''.join([' ']*args.nIndent)
   SelfExclusion = bool(strtobool(args.SelfExclusion))
-  shuffle = args.shuffle
 
   # variational yaml files
   with open(yamlFiles) as f:
@@ -110,15 +104,17 @@ def substituteEnsembleB():
   for member, file in enumerate(filedata.split('\n')[:-1]):
     yamls[str(member+1)] = file
 
+  filename = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File
+
   membersTemplate = \
 '''
 members from template:
   template:
     <<: *memberConfig
-    filename: '''+args.Directory0+'/'+memberPrefix+'%iMember%/'+Directory1+args.File+'''
+    filename: '''+filename+'''
   pattern: %iMember%
   start: 1
-  zero padding: '''+str(args.nDigits)+'''
+  zero padding: '''+str(args.memberNDigits)+'''
 '''
 
   # substitute members template into all yaml files
