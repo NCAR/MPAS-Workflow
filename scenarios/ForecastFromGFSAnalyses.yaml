@@ -4,8 +4,8 @@ externalanalyses:
   resource: "GFS.RDA"
 
 experiment:
-  ExperimentName: 'ForecastFromGFSAnalyses'
-  ExperimentUserPrefix: ''
+  name: 'ForecastFromGFSAnalyses'
+  prefix: ''
 
 extendedforecast:
   meanTimes: T00,T12
@@ -26,11 +26,9 @@ observations: # for optional verification
   resource: GladeRDAOnline
 
 workflow:
-  firstCyclePoint: 20220606T00
-  finalCyclePoint: 20220607T00
-
-  CriticalPathType: ForecastFromExternalAnalyses
-  maxActiveCyclePoints: 10
+  first cycle point: 20220606T00
+  final cycle point: 20220607T00
+  max active cycle points: 10
 
   # optionally turn on extended forecast verification
   VerifyExtendedMeanFC: True

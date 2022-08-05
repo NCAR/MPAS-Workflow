@@ -240,8 +240,7 @@ end
 # Satellite bias correction
 # =========================
 # next cycle after FirstCycleDate
-set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
-if ( ${thisValidDate} == ${nextFirstDate} ) then
+if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
   set biasCorrectionDir = $initialVARBCcoeff
 else
   set biasCorrectionDir = ${VariationalWorkDir}/$prevValidDate/dbOut

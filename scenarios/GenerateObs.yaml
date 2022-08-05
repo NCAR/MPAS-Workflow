@@ -10,13 +10,12 @@ observations:
   - 1bmhs
   - airsev
 experiment:
-  ExperimentName: 'GenerateObs'
-  ExperimentUserPrefix: ''
+  name: 'GenerateObs'
+  prefix: ''
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 workflow:
-  firstCyclePoint: 20180415T00
-  finalCyclePoint: 20180416T00
-  CriticalPathType: GenerateObs
-  maxActiveCyclePoints: 60
+  first cycle point: 20180415T00
+  final cycle point: 20180416T00
+  max active cycle points: 60

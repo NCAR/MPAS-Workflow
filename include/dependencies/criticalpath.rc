@@ -1,5 +1,5 @@
 # firstCyclePoint
-{% if initialCyclePoint == firstCyclePoint %}
+{% if restartCyclePoint == firstCyclePoint %}
     [[[R1]]]
       graph = '''
         # prepare first DA background state

@@ -1,15 +1,15 @@
 workflow:
   # test a recent date
-  firstCyclePoint: 20220316T00
-  initialCyclePoint: 20220720T00
-  finalCyclePoint: 20250720T18
+  first cycle point: 20220316T00
+  restart cycle point: 20220720T00
+  final cycle point: 20250720T18
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
-  maxActiveCyclePoints: 1
+  max active cycle points: 1
 observations:
   resource: NCEPFTPOnline
 experiment:
-  ExperimentName: 'RealTime'
+  name: 'RealTime'
 members:
   n: 1
 model:

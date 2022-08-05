@@ -1,7 +1,7 @@
 workflow:
   InitializationType: WarmStart
-  initialCyclePoint: 20180414T18
-  finalCyclePoint:   20180514T18
+  first cycle point: 20180414T18
+  final cycle point:   20180514T18
   VerifyDeterministicDA: True 
   VerifyEnsMeanBG: False
 

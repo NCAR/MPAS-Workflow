@@ -1,7 +1,7 @@
 externalanalyses:
   resource: "GFS.RDA"
 experiment:
-  ExperimentName: '3dvar_O30kmIE60km_ColdStart_TEST'
+  name: '3dvar_O30kmIE60km_ColdStart_TEST'
 
 firstbackground:
   resource: "ForecastFromAnalysis"
@@ -30,8 +30,7 @@ variational:
   biasCorrection: True
 workflow:
   # test a recent date
-  firstCyclePoint: 20220201T00
-  initialCyclePoint: 20220201T00
-  finalCyclePoint: 20220201T06
+  first cycle point: 20220201T00
+  final cycle point: 20220201T06
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True

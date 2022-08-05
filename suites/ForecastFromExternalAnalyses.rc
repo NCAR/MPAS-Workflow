@@ -15,7 +15,7 @@
   UTC mode = False
   [[environment]]
 [scheduling]
-  initial cycle point = {{initialCyclePoint}}
+  initial cycle point = {{restartCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
 
   # Maximum number of simultaneous active dates;
@@ -50,7 +50,7 @@
 %include include/tasks/verify.rc
 
 [visualization]
-  initial cycle point = {{initialCyclePoint}}
+  initial cycle point = {{restartCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
   number of cycle points = 200
   default node attributes = "style=filled", "fillcolor=grey"

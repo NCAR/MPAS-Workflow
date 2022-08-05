@@ -1,5 +1,5 @@
 experiment:
-  ExperimentName: '3denvar_OIE120km_WarmStart_TEST'
+  name: '3denvar_OIE120km_WarmStart_TEST'
 externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
@@ -22,8 +22,7 @@ variational:
     forecasts:
       resource: "PANDAC.GEFS"
 workflow:
-  firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180415T06
+  first cycle point: 20180414T18
+  final cycle point: 20180415T06
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True

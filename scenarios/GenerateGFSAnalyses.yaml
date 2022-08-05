@@ -3,15 +3,14 @@ suite: GenerateExternalAnalyses
 externalanalyses:
   resource: "GFS.RDA"
 experiment:
-  ExperimentName: 'GenerateGFSAnalyses'
-  ExperimentUserPrefix: ''
+  name: 'GenerateGFSAnalyses'
+  prefix: ''
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 model:
   outerMesh: 60km
 workflow:
-  firstCyclePoint: 20180414T18
-  finalCyclePoint: 20180416T00
-  CriticalPathType: GenerateExternalAnalyses
-  maxActiveCyclePoints: 60
+  first cycle point: 20180414T18
+  final cycle point: 20180416T00
+  max active cycle points: 60

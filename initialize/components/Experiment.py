@@ -10,34 +10,37 @@ class Experiment(Component):
 
   PackageBaseName = 'MPAS-Workflow'
 
-  ## ParentDirectory will be constructd using
-  # hpc['top directory']+'/'+self['ExperimentUserDir']+'/'+self['ParentDirectoryChild']
+  ## ExperimentDirectory
+  # Auto-generated directory location of this experiment
+  # Will be constructd using
+  # hpc['top directory']+'/'+self['user directory']+'/'+self['user directory child']+'/'+SuiteName
+
+  # SuiteName is constructed as self['prefix']+self['name']+self['suffix']
 
   optionalVariables = {
-    ## ExperimentName
+    ## name
     # leave as None to be automatically generated from critical config elements
-    # Note: when using with run.csh and for multiple simultaneously running scenarios, setting
-    # ExperimentName explicitly for all scenarios is the safest way to ensure that two scenarios do not
-    # have identically auto-generated ExperimentName's
-    'ExperimentName': str,
+    # Note: when running multiple scenarios simultaneously, setting name explicitly for
+    # each scenario is the safest way to ensure that two scenarios do not have identically
+    # auto-generated name's
+    'name': str,
 
-    ## ExperimentUserDir
+    ## user directory
     # subdirectory within ParentDirectoryPrefix where experiments are located
     # leave as None to be assigned with os.getenv('USER')
-    'ExperimentUserDir': str,
+    'user directory': str,
 
-    ## ExperimentUserPrefix
-    # prefix of experiment name
-    # leave as None to be assigned with os.getenv('USER')
-    'ExperimentUserPrefix': str,
+    ## prefix
+    # prefix to name when building SuiteName
+    # leave as None to be assigned with os.getenv('USER')+'_'
+    'prefix': str,
   }
   variablesWithDefaults = {
-    ## ExpSuffix
-    # a unique suffix to distinguish this experiment from others
-    'ExpSuffix': ['', str],
+    ## suffix
+    'suffix': ['', str],
 
-    ## ParentDirectoryChild
-    'ParentDirectoryChild': ['pandac', str],
+    ## user directory child
+    'user directory child': ['pandac', str],
   }
 
   def __init__(self, config, hpc, meshes=None, variational=None, members=None, rtpp=None):
@@ -46,7 +49,7 @@ class Experiment(Component):
     ###################
     # derived variables
     ###################
-    suiteName = self['ExperimentName']
+    suiteName = self['name']
     if suiteName is None:
       name = ''
       if variational is not None:
@@ -97,27 +100,29 @@ class Experiment(Component):
 
         name += '_'+name_
 
-      assert name != '', ('Must give a valid ExperimentName')
+      assert name != '', ('Must give a valid name')
 
       suiteName = name
 
     user = os.getenv('USER')
 
-    if self['ExperimentUserDir'] is None:
-      self._set('ExperimentUserDir', user)
+    if self['user directory'] is None:
+      self._set('user directory', user)
 
-    if self['ExperimentUserPrefix'] is None:
-      self._set('ExperimentUserPrefix', user+'_')
+    if self['prefix'] is None:
+      self._set('prefix', user+'_')
 
-    ParentDirectory = hpc['top directory']+'/'+self['ExperimentUserDir']+'/'+self['ParentDirectoryChild']
+    ParentDirectory = hpc['top directory']+'/'+self['user directory']+'/'+self['user directory child']
 
-    suiteName = self['ExperimentUserPrefix']+suiteName+self['ExpSuffix']
+    suiteName = self['prefix']+suiteName+self['suffix']
     self._set('SuiteName', suiteName)
+
+    # ensure cylc suite parent directory exists
     cylcWorkDir = hpc['top directory']+'/'+user+'/cylc-run'
+    self._set('cylcWorkDir', cylcWorkDir)
     cmd = ['mkdir', '-p', cylcWorkDir]
     self._msg(' '.join(cmd))
     sub = subprocess.run(cmd)
-    self._set('cylcWorkDir', cylcWorkDir)
 
     ## absolute experiment directory
     self._set('ExperimentDirectory', ParentDirectory+'/'+suiteName)

@@ -1,7 +1,6 @@
 workflow:
-  firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180415T06
-  finalCyclePoint: 20180514T18
+  first cycle point: 20180414T18
+  final cycle point: 20180514T18
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
 observations:
@@ -29,7 +28,7 @@ observations:
       abi_g16: 15X15
       ahi_himawari8: 15X15
 experiment:
-  ExperimentName: '3denvar_O30kmIE60km_WarmStart_IASI_6h_TEST_2-outer_60-inner'
+  name: '3denvar_O30kmIE60km_WarmStart_IASI_6h_TEST_2-outer_60-inner'
 members:
   n: 1
 model:
