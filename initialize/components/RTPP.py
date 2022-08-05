@@ -5,7 +5,6 @@ from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
 class RTPP(Component):
-  baseKey = 'rtpp'
   defaults = 'scenarios/defaults/rtpp.yaml'
   workDir = 'CyclingInflation/RTPP'
 
@@ -65,7 +64,7 @@ class RTPP(Component):
       }
       job = Resource(self._conf, attr, 'job', ensMesh.name)
       job._set('seconds', job['baseSeconds'] + job['secondsPerMember'] * members.n)
-      task = TaskFactory[hpc.name](job)
+      task = TaskFactory[hpc.system](job)
 
       self.tasks += ['''
   [[PrepRTPP]]

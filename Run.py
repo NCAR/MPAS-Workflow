@@ -69,7 +69,7 @@ class Run():
       scenario = Scenario(scenarioFile)
       scenario.initialize()
 
-      suite = SuiteFactory(suiteName, scenario)
+      suite = SuiteFactory(suiteName, scenario.getConfig())
       suite.drive()
       suite.clean()
 

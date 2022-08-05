@@ -5,7 +5,6 @@ from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
 class ExtendedForecast(Component):
-  baseKey = 'extendedforecast'
   workDir = 'ExtendedFC'
 
   variablesWithDefaults = {
@@ -65,7 +64,7 @@ class ExtendedForecast(Component):
     job._set('seconds', job['baseSeconds'] + job['secondsPerForecastHR'] * lengthHR)
     job._set('queue', hpc['NonCriticalQueue'])
     job._set('account', hpc['NonCriticalAccount'])
-    fctask = TaskFactory[hpc.name](job)
+    fctask = TaskFactory[hpc.system](job)
 
     # MeanAnalysis
     attr = {
@@ -76,7 +75,7 @@ class ExtendedForecast(Component):
       'account': {'def': hpc['NonCriticalAccount']},
     }
     meanjob = Resource(self._conf, attr, 'job', 'meananalysis')
-    meantask = TaskFactory[hpc.name](meanjob)
+    meantask = TaskFactory[hpc.system](meanjob)
 
     tasks = ['''
   [[ExtendedFCBase]]

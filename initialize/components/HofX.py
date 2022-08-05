@@ -5,7 +5,6 @@ from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
 class HofX(Component):
-  baseKey = 'hofx'
   defaults = 'scenarios/defaults/hofx.yaml'
 
   variablesWithDefaults = {
@@ -115,7 +114,7 @@ class HofX(Component):
       'account': {'def': hpc['NonCriticalAccount']},
     }
     job = Resource(self._conf, attr, 'job', meshes['Outer'].name)
-    task = TaskFactory[hpc.name](job)
+    task = TaskFactory[hpc.system](job)
 
     tasks = [
 '''

@@ -6,7 +6,6 @@ import tools.dateFormats as dtf
 from initialize.Component import Component
 
 class Workflow(Component):
-  baseKey = 'workflow'
   variablesWithDefaults = {
     #dates
     'first cycle point': ['20180414T18', str],
@@ -142,7 +141,7 @@ class Workflow(Component):
     self._set('nextFirstFileDate', (first+step).strftime(dtf.MPASFileFmt))
 
 
-    ## DA2FCOffsetHR and FC2DAOffsetHR: control the offsets between DataAssim and Forecast
+    ## DA2FCOffsetHR and FC2DAOffsetHR: control the offsets between DA and Forecast
     # tasks in the critical path
     # TODO: set DA2FCOffsetHR and FC2DAOffsetHR based on IAU controls
     DA2FCOffsetHR = 0

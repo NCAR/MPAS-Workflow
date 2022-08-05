@@ -6,7 +6,6 @@ import tools.dateFormats as dtf
 from initialize.Component import Component
 
 class StaticStream(Component):
-  baseKey = 'staticstream'
   defaults = 'scenarios/defaults/staticstream.yaml'
 
   optionalVariables = {

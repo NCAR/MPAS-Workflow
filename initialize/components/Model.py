@@ -10,7 +10,6 @@ class Mesh():
 
 class Model(Component):
   defaults = 'scenarios/defaults/model.yaml'
-  baseKey = 'model'
   # mesh descriptors, e.g.:
   # uniform spacing: 30km, 60km, 120km
   # variable spacing: ?

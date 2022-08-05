@@ -5,7 +5,6 @@ from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
 class ExternalAnalyses(Component):
-  baseKey = 'externalanalyses'
   defaults = 'scenarios/defaults/externalanalyses.yaml'
   workDir = 'ExternalAnalyses'
   optionalVariables = {
@@ -108,7 +107,7 @@ class ExternalAnalyses(Component):
       'account': {'def': hpc['CriticalAccount']},
     }
     ungribjob = Resource(self._conf, attr, 'job', 'ungrib')
-    ungribtask = TaskFactory[hpc.name](ungribjob)
+    ungribtask = TaskFactory[hpc.system](ungribjob)
 
     tasks = [
 '''## Analyses generated outside MPAS-Workflow

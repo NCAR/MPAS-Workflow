@@ -3,7 +3,6 @@
 from initialize.Component import Component
 
 class FirstBackground(Component):
-  baseKey = 'firstbackground'
   defaults = 'scenarios/defaults/firstbackground.yaml'
 
   requiredVariables = {

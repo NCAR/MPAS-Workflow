@@ -5,7 +5,6 @@ from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
 class Forecast(Component):
-  baseKey = 'forecast'
   defaults = 'scenarios/defaults/forecast.yaml'
   workDir = 'CyclingFC'
 #  RSTFilePrefix = 'restart'
@@ -63,7 +62,7 @@ class Forecast(Component):
     # store job for ExtendedForecast to re-use
     self.job = Resource(self._conf, attr, 'job', mesh.name)
     self.job._set('seconds', self.job['baseSeconds'] + self.job['secondsPerForecastHR'] * lengthHR)
-    task = TaskFactory[hpc.name](self.job)
+    task = TaskFactory[hpc.system](self.job)
 
     tasks = ['''
   [[ForecastBase]]

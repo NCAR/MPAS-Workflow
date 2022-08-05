@@ -3,7 +3,6 @@
 from initialize.Component import Component
 
 class Observations(Component):
-  baseKey = 'observations'
   defaults = 'scenarios/defaults/observations.yaml'
   workDir = 'Observations'
   InDBDir = 'dbIn'

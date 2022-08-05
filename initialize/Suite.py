@@ -9,7 +9,15 @@
 import subprocess
 import glob
 
+from initialize.Config import Config
+
 class Suite():
+  def __init__(self, conf:Config):
+    '''
+    virtual method
+    '''
+    raise NotImplementedError()
+
   def drive(self):
     cmd = ['./drive.csh', self.__class__.__name__]
     print(' '.join(cmd))
@@ -43,5 +51,5 @@ suiteDict = {
   'GenerateObs': GenerateObs,
 }
 
-def SuiteFactory(suiteName, scenario):
-  return suiteDict[suiteName](scenario)
+def SuiteFactory(suiteName:str, conf:Config):
+  return suiteDict[suiteName](conf)

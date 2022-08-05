@@ -6,20 +6,19 @@ from initialize.Config import Config
 from initialize.SubConfig import SubConfig
 
 class Component():
-  baseKey = None
   defaults = None
   workDir = None
   requiredVariables = {}
   optionalVariables = {}
   variablesWithDefaults = {}
-  def __init__(self, config: Config):
+  def __init__(self, config:Config):
+    self.lower = self.__class__.__name__.lower()
     self.logPrefix = self.__class__.__name__+': '
 
     ###################
     # extract SubConfig
     ###################
-    self._conf = SubConfig.fromConfig(config, self.baseKey, self.defaults)
-    #assert self._conf is not None, self._msg('invalid baseKey: '+self.baseKey)
+    self._conf = SubConfig.fromConfig(config, self.lower, self.defaults)
 
     ##############
     # parse config
@@ -138,13 +137,13 @@ class Component():
 # MODIFY THE SCENARIO YAML FILE INSTEAD.
 ######################################################
 
-if ( $?config_'''+self.baseKey+''' ) exit 0
-set config_'''+self.baseKey+''' = 1
+if ( $?config_'''+self.lower+''' ) exit 0
+set config_'''+self.lower+''' = 1
 
 ''']
     for v in variables:
       Str += self.varToCsh(v, self._vtable[v])
-    self.write('config/auto/'+self.baseKey+'.csh', Str)
+    self.write('config/auto/'+self.lower+'.csh', Str)
 
   # cylc variables
   @staticmethod
@@ -164,12 +163,12 @@ set config_'''+self.baseKey+''' = 1
     Str = []
     for v in variables:
       Str += self.varToCylc(v, self._vtable[v])
-    self.write('include/variables/auto/'+self.baseKey+'.rc', Str)
+    self.write('include/variables/auto/'+self.lower+'.rc', Str)
 
   # cylc dependencies
   def exportDependencies(self, text):
-    self.write('include/dependencies/auto/'+self.baseKey+'.rc', text)
+    self.write('include/dependencies/auto/'+self.lower+'.rc', text)
 
   # cylc tasks
   def exportTasks(self, text):
-    self.write('include/tasks/auto/'+self.baseKey+'.rc', text)
+    self.write('include/tasks/auto/'+self.lower+'.rc', text)

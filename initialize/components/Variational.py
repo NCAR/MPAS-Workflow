@@ -7,11 +7,9 @@ from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
 class ABEI(Component):
-  baseKey = 'abei'
   workDir = 'CyclingInflation/ABEI'
 
 class Variational(Component):
-  baseKey = 'variational'
   defaults = 'scenarios/defaults/variational.yaml'
   workDir = 'CyclingDA'
 #  analysisPrefix = 'an'
@@ -286,7 +284,7 @@ class Variational(Component):
     varjob._set('seconds', varjob['baseSeconds'] + varjob['secondsPerEnVarMember'] * ensPbNMembers)
     if EDASize > 1:
       varjob._set('nodes', varjob['nodesPerMember'] * EDASize)
-    vartask = TaskFactory[hpc.name](varjob)
+    vartask = TaskFactory[hpc.system](varjob)
 
     # GenerateABEInflation
     attr = {
@@ -297,13 +295,13 @@ class Variational(Component):
       'account': {'def': hpc['CriticalAccount']},
     }
     abeijob = Resource(self._conf, attr, 'abei.job', meshes['Outer'].name)
-    abeitask = TaskFactory[hpc.name](abeijob)
+    abeitask = TaskFactory[hpc.system](abeijob)
 
     self.tasks = ['''
   ## variational tasks
   [[InitVariational]]
     inherit = '''+da.init+''', SingleBatch
-    env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIVariational.csh "1" "0" "DA" "'''+self.baseKey+'''"
+    env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIVariational.csh "1" "0" "DA" "'''+self.lower+'''"
     script = $origin/applications/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M

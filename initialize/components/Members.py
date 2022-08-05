@@ -3,7 +3,6 @@
 from initialize.Component import Component
 
 class Members(Component):
-  baseKey = 'members'
   optionalVariables = {
     ## n: number of firstbackground, DA, and forecast members
     'n': int,

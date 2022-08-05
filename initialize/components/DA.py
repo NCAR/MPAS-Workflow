@@ -6,13 +6,11 @@ from initialize.Component import Component
 from initialize.components.RTPP import RTPP
 from initialize.components.Variational import Variational
 
-class DataAssimilation(Component):
+class DA(Component):
   '''
-  Framework for all DataAssimilation applications.  Can be used to manage interdependent classes
+  Framework for all data assimilation (DA) applications.  Can be used to manage interdependent classes
   and cylc tasks, but does not execute any tasks on its own.
   '''
-  baseKey = 'da'
-
   def __init__(self, config, hpc, obs, meshes, model, members, workflow):
     super().__init__(config)
 

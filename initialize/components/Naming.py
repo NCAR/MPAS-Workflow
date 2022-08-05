@@ -19,7 +19,6 @@ from initialize.components.Variational import Variational
 from initialize.components.Variational import ABEI
 
 class Naming(Component):
-  baseKey = 'naming'
   def __init__(self, config, experiment):#, namedComponents):
     super().__init__(config)
 

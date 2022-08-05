@@ -5,7 +5,6 @@ from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
 class Benchmark(Component):
-  baseKey = 'benchmark'
   ObsCompareDir = 'CompareToBenchmark/obs'
   ModelCompareDir = 'CompareToBenchmark/model'
   optionalVariables = {
@@ -55,7 +54,7 @@ class Benchmark(Component):
       'account': {'def': hpc['NonCriticalAccount']},
     }
     job = Resource(self._conf, attr, 'job', 'compare')
-    task = TaskFactory[hpc.name](job)
+    task = TaskFactory[hpc.system](job)
 
     tasks = ['''
   [[CompareBase]]

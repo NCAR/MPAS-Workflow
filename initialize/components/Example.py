@@ -3,7 +3,6 @@
 from initialize.Component import Component
 
 class Example(Component):
-  baseKey = 'example'
   #defaults = 'scenarios/defaults/example.yaml' (optional)
   requiredVariables = {
     'required int': int,

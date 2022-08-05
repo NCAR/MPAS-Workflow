@@ -5,7 +5,6 @@ from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
 class VerifyObs(Component):
-  baseKey = 'verifyobs'
   defaults = 'scenarios/defaults/verifyobs.yaml'
   workDir = 'Verification'
   diagnosticsDir = 'diagnostic_stats/obs'
@@ -40,7 +39,7 @@ class VerifyObs(Component):
     }
     job = Resource(self._conf, attr, 'job')
     ensSeconds = job['seconds'] + job['secondsPerMember'] * members.n
-    task = TaskFactory[hpc.name](job)
+    task = TaskFactory[hpc.system](job)
 
     tasks = ['''
   [[VerifyObsBase]]

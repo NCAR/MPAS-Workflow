@@ -3,7 +3,6 @@
 from initialize.Component import Component
 
 class Build(Component):
-  baseKey = 'build'
   variablesWithDefaults = {
     ## mpas bundle
     # mpas-bundle build directory

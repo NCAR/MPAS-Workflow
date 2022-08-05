@@ -5,7 +5,6 @@ from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
 class InitIC(Component):
-  baseKey = 'initic'
   defaults = 'scenarios/defaults/initic.yaml'
 
   def __init__(self, config, hpc, meshes):
@@ -24,7 +23,7 @@ class InitIC(Component):
       'account': {'def': hpc['CriticalAccount']},
     }
     job = Resource(self._conf, attr, 'job', meshes['Outer'].name)
-    task = TaskFactory[hpc.name](job)
+    task = TaskFactory[hpc.system](job)
 
     tasks = []
     for mesh in list(set([mesh.name for mesh in meshes.values()])):

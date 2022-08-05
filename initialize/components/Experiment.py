@@ -6,8 +6,6 @@ import subprocess
 from initialize.Component import Component
 
 class Experiment(Component):
-  baseKey = 'experiment'
-
   PackageBaseName = 'MPAS-Workflow'
 
   ## ExperimentDirectory

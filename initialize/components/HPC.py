@@ -6,8 +6,7 @@ import subprocess
 from initialize.Component import Component
 
 class HPC(Component):
-  baseKey = 'hpc'
-  name = 'cheyenne'
+  system = 'cheyenne'
   variablesWithDefaults = {
     'top directory': ['/glade/scratch', str],
     'TMPDIR': ['/glade/scratch/{{USER}}/temp', str],

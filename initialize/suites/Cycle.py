@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from initialize.Config import Config
 from initialize.Suite import Suite
 from initialize.components.Build import Build
 from initialize.components.Experiment import Experiment
@@ -15,7 +16,7 @@ from initialize.components.Workflow import Workflow
 
 # applications
 from initialize.components.Benchmark import Benchmark
-from initialize.components.DataAssimilation import DataAssimilation
+from initialize.components.DA import DA
 from initialize.components.InitIC import InitIC
 from initialize.components.ExtendedForecast import ExtendedForecast
 from initialize.components.Forecast import Forecast
@@ -24,9 +25,7 @@ from initialize.components.VerifyModel import VerifyModel
 from initialize.components.VerifyObs import VerifyObs
 
 class Cycle(Suite):
-  def __init__(self, scenario):
-    conf = scenario.getConfig()
-
+  def __init__(self, conf:Config):
     hpc = HPC(conf)
     workflow = Workflow(conf)
 
@@ -41,7 +40,7 @@ class Cycle(Suite):
 
     ic = InitIC(conf, hpc, meshes)
     hofx = HofX(conf, hpc, meshes, model)
-    da = DataAssimilation(conf, hpc, obs, meshes, model, members, workflow)
+    da = DA(conf, hpc, obs, meshes, model, members, workflow)
     fc = Forecast(conf, hpc, meshes['Outer'], members, workflow)
     extfc = ExtendedForecast(conf, hpc, members, fc)
 
