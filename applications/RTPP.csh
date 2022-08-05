@@ -4,13 +4,14 @@ date
 
 # Setup environment
 # =================
-source config/auto/build.csh
 source config/environmentJEDI.csh
-source config/experiment.csh
-source config/auto/members.csh
-source config/auto/model.csh
 source config/mpas/variables.csh
 source config/tools.csh
+source config/auto/build.csh
+source config/auto/experiment.csh
+source config/auto/members.csh
+source config/auto/model.csh
+source config/auto/staticstream.csh
 source config/auto/workflow.csh
 source config/auto/rtpp.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -201,10 +202,10 @@ cat >! ${enspsed}SEDF.yaml << EOF
 EOF
 
   set ensPFile = ${ensPFilePrefix}.${thisMPASFileDate}.nc
-  set anBeforeRTPPDir = ${anDir}BeforeRTPP
+  set anBeforeRTPPDir = ${analysisSubDir}BeforeRTPP
   mkdir ${anBeforeRTPPDir}
-  rm ${anDir}
-  ln -sf ${anBeforeRTPPDir} ${anDir}
+  rm ${analysisSubDir}
+  ln -sf ${anBeforeRTPPDir} ${analysisSubDir}
   set member = 1
   while ( $member <= ${nMembers} )
     set ensPDir = $ensPDirs[$member]
@@ -213,7 +214,7 @@ EOF
     ## copy original analysis files for diagnosing RTPP behavior
     if ($PMatrix == Pa) then
       set memDir = `${memberDir} 2 $member "${flowMemFmt}"`
-      set tempAnalysisCopyDir = ./${anDir}${memDir}
+      set tempAnalysisCopyDir = ./${analysisSubDir}${memDir}
 
       # Restore ${ensPFileBeforeRTPP} with original files if ${tempAnalysisCopyDir}/${ensPFile} already exists
       if ( -f "${tempAnalysisCopyDir}/${ensPFile}" ) then

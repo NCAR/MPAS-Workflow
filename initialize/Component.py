@@ -8,6 +8,7 @@ from initialize.SubConfig import SubConfig
 class Component():
   baseKey = None
   defaults = None
+  workDir = None
   requiredVariables = {}
   optionalVariables = {}
   variablesWithDefaults = {}
@@ -34,7 +35,7 @@ class Component():
       self._setOrDefault(v, a[0], a[1])
 
   def _msg(self, text):
-    return self.logPrefix+text
+    print(self.logPrefix+text)
 
   def __getitem__(self, key):
     '''

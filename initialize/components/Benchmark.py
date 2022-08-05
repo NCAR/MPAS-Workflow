@@ -6,6 +6,8 @@ from initialize.util.Task import TaskFactory
 
 class Benchmark(Component):
   baseKey = 'benchmark'
+  ObsCompareDir = 'CompareToBenchmark/obs'
+  ModelCompareDir = 'CompareToBenchmark/model'
   optionalVariables = {
     'experiment directory': str,
   }
@@ -20,18 +22,27 @@ class Benchmark(Component):
   }
 
 
-  def __init__(self, config, hpc):
+  def __init__(self, config, hpc, exp, naming):
     super().__init__(config)
 
     ###################
     # derived variables
     ###################
     self._set('benchmark__ExperimentDirectory', self['experiment directory'])
+    self._set('ObsCompareDir', self.ObsCompareDir)
+    self._set('ModelCompareDir', self.ModelCompareDir)
+
+    for v, value in naming.directories.items():
+      benchDir = self['experiment directory']
+      if benchDir is None: benchDir = exp['ExperimentDirectory']
+      self._set('Benchmark'+v,
+        value.replace(exp['ExperimentDirectory'], benchDir))
 
     ###############################
     # export for use outside python
     ###############################
-    self.exportVarsToCsh(['benchmark__ExperimentDirectory'])
+    csh = list(self._vtable.keys())
+    self.exportVarsToCsh(csh)
     self.exportVarsToCylc(['compare da to benchmark', 'compare bg to benchmark'])
 
     ########################

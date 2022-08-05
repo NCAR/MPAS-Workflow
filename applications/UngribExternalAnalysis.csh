@@ -5,8 +5,8 @@ date
 # Setup environment
 # =================
 source config/environmentJEDI.csh
-source config/experiment.csh
 source config/auto/build.csh
+source config/auto/experiment.csh
 source config/auto/externalanalyses.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`

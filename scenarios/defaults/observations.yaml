@@ -26,10 +26,10 @@ observations:
 
     IODADirectory:
       variational:
-        common: "{{ObsWorkDir}}"
+        common: "{{ObservationsWorkDir}}"
 
       hofx:
-        common: "{{ObsWorkDir}}"
+        common: "{{ObservationsWorkDir}}"
 
   GladeRDAOnline:
     PrepareObservationsTasks:
@@ -59,10 +59,10 @@ observations:
 
     IODADirectory:
       variational:
-        common: "{{ObsWorkDir}}"
+        common: "{{ObservationsWorkDir}}"
 
       hofx:
-        common: "{{ObsWorkDir}}"
+        common: "{{ObservationsWorkDir}}"
 
   PANDACArchive:
     PrepareObservationsTasks: [ObsReady]

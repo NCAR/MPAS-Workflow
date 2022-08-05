@@ -1,10 +1,7 @@
 #!/bin/csh -f
 
-# ArgExpConfigType: either Cycling or Base
-set ArgExpConfigType = "$1"
-
-## create experiment environment
-source setupExperiment/${ArgExpConfigType}.csh
+## experiment provides mainScriptDir
+source config/auto/experiment.csh
 
 set standaloneApplications = ( \
   CleanRTPP.csh \
@@ -47,7 +44,16 @@ end
 cd ${mainScriptDir}
 
 ## load the workflow settings
+
+# workflow provides CyclingWindowHR, DAVFWindowHR, FCVFWindowHR, FirstCycleDate
 source config/auto/workflow.csh
+
+# getCycleVars provides FCFilePrefix, ANFilePrefix
+set thisCycleDate = ${FirstCycleDate}
+set thisValidDate = ${FirstCycleDate}
+source ./getCycleVars.csh
+
+# externalanalyses provides externalanalyses__*
 source config/auto/externalanalyses.csh
 
 cd -

@@ -5,9 +5,9 @@ date
 
 # Setup environment
 # =================
-source config/auto/observations.csh
-source config/experiment.csh
 source config/auto/build.csh
+source config/auto/experiment.csh
+source config/auto/observations.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
 set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`

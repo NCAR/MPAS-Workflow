@@ -7,12 +7,16 @@ from initialize.util.Task import TaskFactory
 class VerifyModel(Component):
   baseKey = 'verifymodel'
   defaults = 'scenarios/defaults/verifymodel.yaml'
+  workDir = 'Verification'
+  diagnosticsDir = 'diagnostic_stats/model'
   variablesWithDefaults = {
     'pyVerifyDir': ['/glade/work/guerrett/pandac/fixed_input/graphics', str],
   }
 
   def __init__(self, config, hpc, mesh, members):
     super().__init__(config)
+
+    self._set('ModelDiagnosticsDir', self.diagnosticsDir)
 
     ###############################
     # export for use outside python
@@ -34,7 +38,7 @@ class VerifyModel(Component):
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }
-    job = Resource(self._conf, attr, 'job')
+    job = Resource(self._conf, attr, 'job', mesh.name)
     ensSeconds = job['seconds'] + job['secondsPerMember'] * members.n
     task = TaskFactory[hpc.name](job)
 

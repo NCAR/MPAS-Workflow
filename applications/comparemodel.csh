@@ -35,8 +35,8 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
-source config/naming.csh
+source config/auto/benchmark.csh
+source config/auto/verifymodel.csh
 source config/tools.csh
 module load nccmp
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`

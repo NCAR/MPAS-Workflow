@@ -6,11 +6,16 @@ from initialize.Component import Component
 from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
+class ABEI(Component):
+  baseKey = 'abei'
+  workDir = 'CyclingInflation/ABEI'
+
 class Variational(Component):
   baseKey = 'variational'
   defaults = 'scenarios/defaults/variational.yaml'
-
   workDir = 'CyclingDA'
+#  analysisPrefix = 'an'
+#  backgroundPrefix = 'bg'
 
   ## benchmarkObservations
   # base set of observation types assimilated in all experiments
@@ -148,6 +153,8 @@ class Variational(Component):
 
   def __init__(self, config, hpc, meshes, model, members, workflow, da): #, forecast):
     super().__init__(config)
+
+    #self.abei = ABEI()
 
     ###################
     # derived variables

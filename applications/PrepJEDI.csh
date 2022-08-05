@@ -51,12 +51,13 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
+source config/mpas/variables.csh
+source config/tools.csh
+source config/auto/experiment.csh
 source config/auto/model.csh
+source config/auto/naming.csh
 source config/auto/observations.csh
 source config/auto/workflow.csh
-source config/tools.csh
-source config/mpas/variables.csh
 source config/auto/build.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -206,8 +207,8 @@ foreach instrument ($observations)
       continue
     endif
   endif
-  # substitute $ObsWorkDir for {{ObsWorkDir}}
-  set $key = `echo "$IODADirectory" | sed 's@{{ObsWorkDir}}@'$ObsWorkDir'@'`
+  # substitute $ObservationsWorkDir for {{ObservationsWorkDir}}
+  set $key = `echo "$IODADirectory" | sed 's@{{ObservationsWorkDir}}@'$ObservationsWorkDir'@'`
 
   # prefix
   set key = IODAPrefix
@@ -243,7 +244,7 @@ set nextFirstDate = `$advanceCYMDH ${FirstCycleDate} +${self_WindowHR}`
 if ( ${thisValidDate} == ${nextFirstDate} ) then
   set biasCorrectionDir = $initialVARBCcoeff
 else
-  set biasCorrectionDir = ${CyclingDAWorkDir}/$prevValidDate/dbOut
+  set biasCorrectionDir = ${VariationalWorkDir}/$prevValidDate/dbOut
 endif
 
 # =============
@@ -304,8 +305,8 @@ foreach instrument ($observations)
       set foundsatbias = False
       foreach dt (${dateListback})
         # check for satbias file at dt
-        if ( -e ${CyclingDAWorkDir}/${dt}/dbOut/satbias_${i}.h5 ) then
-          set biasCorrectionDir = ${CyclingDAWorkDir}/${dt}/dbOut
+        if ( -e ${VariationalWorkDir}/${dt}/dbOut/satbias_${i}.h5 ) then
+          set biasCorrectionDir = ${VariationalWorkDir}/${dt}/dbOut
           set foundsatbias = True
           break
         endif
@@ -440,7 +441,7 @@ sed -i 's@{{maxIODAPoolSize}}@'${maxIODAPoolSize}'@g' $prevYAML
 
 # bg file
 sed -i 's@{{bgStatePrefix}}@'${BGFilePrefix}'@g' $thisYAML
-sed -i 's@{{bgStateDir}}@'${self_WorkDir}'/'${bgDir}'@g' $thisYAML
+sed -i 's@{{bgStateDir}}@'${self_WorkDir}'/'${backgroundSubDir}'@g' $thisYAML
 
 # streams+namelist
 set iMesh = 0

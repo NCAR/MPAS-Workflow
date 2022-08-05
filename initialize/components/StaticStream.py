@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import datetime as dt
+import tools.dateFormats as dtf
+
 from initialize.Component import Component
 
 class StaticStream(Component):
@@ -14,7 +17,7 @@ class StaticStream(Component):
     'resource': str,
   }
 
-  def __init__(self, config, meshes, members, FirstCycleDate):
+  def __init__(self, config, meshes, members, FirstCycleDate, naming):
     super().__init__(config)
 
     ###################
@@ -22,33 +25,48 @@ class StaticStream(Component):
     ###################
     csh = []
 
-    resourceName = 'staticstream__resource'
     resource = self['resource']
-    self._set(resourceName, resource)
-    csh.append(resourceName)
+
+    FirstFileDate = dt.datetime.strptime(FirstCycleDate, dtf.cycleFmt).strftime(dtf.MPASFileFmt)
 
     for name, m in meshes.items():
       mesh = m.name
       nCells = str(m.nCells)
 
-      for key in ['directory', 'filePrefix', 'memberFormat']:
+      for key in ['directory', 'filePrefix']:
         value = self.extractResource(resource, mesh, key, str)
-        if key == 'directory' and isinstance(value, str):
+        if key == 'directory':
           value = value.replace('{{FirstCycleDate}}', FirstCycleDate)
 
-        if key == 'filePrefix' and isinstance(value, str):
+        if key == 'filePrefix':
           value = value.replace('{{nCells}}', nCells)
 
         # auto-generated csh variables
-        variable = 'staticstream__'+key+name
+        variable = key+name
         self._set(variable, value)
-        csh.append(variable)
+
+      #############################
+      # static stream file settings
+      #############################
+      n = 'StaticFieldsDir'+name
+      self._set(n, self['directory'+name].replace(
+        '{{ExternalAnalysesWorkDir}}', naming['ExternalAnalysesWorkDir']+'/'+mesh))
+      csh.append(n)
+
+      n = 'StaticFieldsFile'+name
+      self._set(n, self['filePrefix'+name]+'.'+FirstFileDate+'.nc')
+      csh.append(n)
+
+    staticMemFmt = self.extractResource(resource, meshes['Outer'].name, 'memberFormat', str)
+    self._set('staticMemFmt', staticMemFmt)
+    csh.append('staticMemFmt')
 
     # check for uniform static stream used across members (maxMembers is None) or valid members.n
     maxMembers = self.extractResource(resource, meshes['Outer'].name, 'maxMembers', int)
     if maxMembers is not None:
       assert (members.n <= int(maxMembers)), (
         self._msg('invalid members.n => '+str(members.n)))
+
 
     ###############################
     # export for use outside python

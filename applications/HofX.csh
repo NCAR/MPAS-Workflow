@@ -35,11 +35,12 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
+source config/environmentJEDI.csh
 source config/tools.csh
 source config/auto/build.csh
-source config/environmentJEDI.csh
+source config/auto/experiment.csh
 source config/auto/hofx.csh
+source config/auto/staticstream.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -84,7 +85,7 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 # Link/copy bg from other directory
 # =================================
-set bg = ./${bgDir}
+set bg = ./${backgroundSubDir}
 mkdir -p ${bg}
 
 set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$thisMPASFileDate.nc

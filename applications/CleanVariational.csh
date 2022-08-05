@@ -4,9 +4,10 @@ date
 
 # Setup environment
 # =================
-source config/experiment.csh
-source config/auto/members.csh
 source config/tools.csh
+source config/auto/members.csh
+source config/auto/model.csh
+source config/auto/observations.csh
 source config/auto/variational.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`

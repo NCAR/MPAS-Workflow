@@ -7,12 +7,16 @@ from initialize.util.Task import TaskFactory
 class VerifyObs(Component):
   baseKey = 'verifyobs'
   defaults = 'scenarios/defaults/verifyobs.yaml'
+  workDir = 'Verification'
+  diagnosticsDir = 'diagnostic_stats/obs'
   variablesWithDefaults = {
     'pyVerifyDir': ['/glade/work/guerrett/pandac/fixed_input/graphics', str],
   }
 
   def __init__(self, config, hpc, members):
     super().__init__(config)
+
+    self._set('ObsDiagnosticsDir', self.diagnosticsDir)
 
     ###############################
     # export for use outside python

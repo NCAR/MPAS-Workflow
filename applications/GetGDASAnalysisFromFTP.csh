@@ -5,8 +5,6 @@ date
 
 # Setup environment
 # =================
-source config/model.csh
-source config/experiment.csh
 source config/auto/build.csh
 set yyyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`

@@ -5,6 +5,13 @@ from initialize.Component import Component
 class Observations(Component):
   baseKey = 'observations'
   defaults = 'scenarios/defaults/observations.yaml'
+  workDir = 'Observations'
+  InDBDir = 'dbIn'
+  OutDBDir = 'dbOut'
+  VarBCAnalysis = OutDBDir+'/satbias_crtm_ana'
+  obsPrefix = 'obsout'
+  geoPrefix = 'geoval'
+  diagPrefix = 'ydiags'
 
   requiredVariables = {
     ## resource
@@ -53,6 +60,13 @@ class Observations(Component):
     resourceName = 'observations__resource'
     resource = self['resource']
     self._set(resourceName, resource)
+
+    self._set('InDBDir', self.InDBDir)
+    self._set('OutDBDir', self.OutDBDir)
+    self._set('VarBCAnalysis', self.VarBCAnalysis)
+    self._set('obsPrefix', self.obsPrefix)
+    self._set('geoPrefix', self.geoPrefix)
+    self._set('diagPrefix', self.diagPrefix)
 
     # all csh variables above
     csh = list(self._vtable.keys())

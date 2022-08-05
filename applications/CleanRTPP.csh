@@ -4,7 +4,6 @@ date
 
 # Setup environment
 # =================
-source config/naming.csh
 source config/auto/rtpp.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -22,7 +21,7 @@ cd ${self_WorkDir}
 # Remove original analyses before RTPP
 # ====================================
 if ("${retainOriginalAnalyses}" == False) then
-  rm -r ${anDir}BeforeRTPP
+  rm -r ${analysisSubDir}BeforeRTPP
 endif
 
 date

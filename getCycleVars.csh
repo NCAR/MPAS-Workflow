@@ -1,9 +1,27 @@
 #!/bin/csh -f
 
-source config/experiment.csh
-source config/auto/members.csh
+# usage: source getCycleVars.csh
+
+# requires thisCycleDate and thisValidDate to be set externally
+
 source config/tools.csh
+source config/auto/benchmark.csh
+source config/auto/members.csh
+source config/auto/model.csh
+source config/auto/naming.csh
 source config/auto/workflow.csh
+
+# cross-application prefixes and directories
+setenv RSTFilePrefix restart
+setenv ICFilePrefix mpasin
+setenv FCFilePrefix mpasout
+setenv DIAGFilePrefix diag
+setenv ANFilePrefix an
+setenv BGFilePrefix bg
+setenv forecastSubDir fc
+setenv analysisSubDir an
+setenv backgroundSubDir bg
+setenv OrigFileSuffix _orig
 
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 #set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`
@@ -11,38 +29,38 @@ setenv prevCycleDate ${prevCycleDate}
 #setenv nextCycleDate ${nextCycleDate}
 
 ## setup cycle directory names
-set ObsDir = ${ObsWorkDir}/${thisValidDate}
-set CyclingDADir = ${CyclingDAWorkDir}/${thisCycleDate}
-set CyclingDAInDir = $CyclingDADir/${bgDir}
-set CyclingDAOutDir = $CyclingDADir/${anDir}
+set ObsDir = ${ObservationsWorkDir}/${thisValidDate}
+set CyclingDADir = ${VariationalWorkDir}/${thisCycleDate}
+set CyclingDAInDir = $CyclingDADir/${backgroundSubDir}
+set CyclingDAOutDir = $CyclingDADir/${analysisSubDir}
 set CyclingDADirs = (${CyclingDADir})
-set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})
+set BenchmarkCyclingDADirs = (${BenchmarkVariationalWorkDir}/${thisCycleDate})
 
-set ExternalAnalysisDir = ${ExternalAnalysisWorkDir}/${thisValidDate}
-set ExternalAnalysisDirOuter = ${ExternalAnalysisWorkDirOuter}/${thisValidDate}
-set ExternalAnalysisDirInner = ${ExternalAnalysisWorkDirInner}/${thisValidDate}
-set ExternalAnalysisDirEnsemble = ${ExternalAnalysisWorkDirEnsemble}/${thisValidDate}
+set ExternalAnalysisDir = ${ExternalAnalysesWorkDir}/${thisValidDate}
+set ExternalAnalysisDirOuter = ${ExternalAnalysesWorkDir}/${outerMesh}/${thisValidDate}
+set ExternalAnalysisDirInner = ${ExternalAnalysesWorkDir}/${innerMesh}/${thisValidDate}
+set ExternalAnalysisDirEnsemble = ${ExternalAnalysesWorkDir}/${ensembleMesh}/${thisValidDate}
 
-set prevCyclingDADir = ${CyclingDAWorkDir}/${prevCycleDate}
-set CyclingFCDir = ${CyclingFCWorkDir}/${thisCycleDate}
-set prevCyclingFCDir = ${CyclingFCWorkDir}/${prevCycleDate}
-set ExtendedFCDir = ${ExtendedFCWorkDir}/${thisCycleDate}
+set prevCyclingDADir = ${VariationalWorkDir}/${prevCycleDate}
+set CyclingFCDir = ${ForecastWorkDir}/${thisCycleDate}
+set prevCyclingFCDir = ${ForecastWorkDir}/${prevCycleDate}
+set ExtendedFCDir = ${ExtendedForecastWorkDir}/${thisCycleDate}
 
 set memDir = /mean
 set MeanBackgroundDirs = (${CyclingDAInDir}${memDir})
 set MeanAnalysisDirs = (${CyclingDAOutDir}${memDir})
 set ExtendedMeanFCDirs = (${ExtendedFCDir}${memDir})
 
-set VerifyEnsMeanBGDirs = (${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate})
-set VerifyMeanANDirs = (${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
-set VerifyMeanFCDirs = (${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
+set VerifyEnsMeanBGDirs = (${VerifyObsWorkDir}/${backgroundSubDir}${memDir}/${thisCycleDate})
+set VerifyMeanANDirs = (${VerifyObsWorkDir}/${analysisSubDir}${memDir}/${thisCycleDate})
+set VerifyMeanFCDirs = (${VerifyObsWorkDir}/${forecastSubDir}${memDir}/${thisCycleDate})
 
-#set BenchmarkVerifyEnsMeanBGDirs = (${BenchmarkVerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate})
-#set BenchmarkVerifyMeanANDirs = (${BenchmarkVerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
-#set BenchmarkVerifyMeanFCDirs = (${BenchmarkVerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
+#set BenchmarkVerifyEnsMeanBGDirs = (${BenchmarkVerifyObsWorkDir}/${backgroundSubDir}${memDir}/${thisCycleDate})
+#set BenchmarkVerifyMeanANDirs = (${BenchmarkVerifyObsWorkDir}/${analysisSubDir}${memDir}/${thisCycleDate})
+#set BenchmarkVerifyMeanFCDirs = (${BenchmarkVerifyObsWorkDir}/${forecastSubDir}${memDir}/${thisCycleDate})
 
 set CyclingRTPPDir = ${RTPPWorkDir}/${thisCycleDate}
-set CyclingABEInflationDir = ${ABEInflationWorkDir}/${thisCycleDate}
+set CyclingABEInflationDir = ${ABEIWorkDir}/${thisCycleDate}
 
 set CyclingDAInDirs = ()
 set CyclingDAOutDirs = ()
@@ -53,15 +71,15 @@ set prevCyclingFCDirs = ()
 
 set ExtendedEnsFCDirs = ()
 
-set VerifyBGPrefix = ${VerificationWorkDir}/${bgDir}
+set VerifyBGPrefix = ${VerifyObsWorkDir}/${backgroundSubDir}
 set VerifyBGDirs = ()
-set VerifyANPrefix = ${VerificationWorkDir}/${anDir}
+set VerifyANPrefix = ${VerifyObsWorkDir}/${analysisSubDir}
 set VerifyANDirs = ()
 set VerifyEnsFCDirs = ()
 
-set BenchmarkVerifyBGPrefix = ${BenchmarkVerificationWorkDir}/${bgDir}
+set BenchmarkVerifyBGPrefix = ${BenchmarkVerifyObsWorkDir}/${backgroundSubDir}
 set BenchmarkVerifyBGDirs = ()
-set BenchmarkVerifyANPrefix = ${BenchmarkVerificationWorkDir}/${anDir}
+set BenchmarkVerifyANPrefix = ${BenchmarkVerifyObsWorkDir}/${analysisSubDir}
 set BenchmarkVerifyANDirs = ()
 set BenchmarkVerifyEnsFCDirs = ()
 
@@ -79,11 +97,11 @@ while ( $member <= ${nMembers} )
 
   set VerifyANDirs = ($VerifyANDirs ${VerifyANPrefix}${memDir}/${thisCycleDate})
   set VerifyBGDirs = ($VerifyBGDirs ${VerifyBGPrefix}${memDir}/${thisCycleDate})
-  set VerifyEnsFCDirs = ($VerifyEnsFCDirs ${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
+  set VerifyEnsFCDirs = ($VerifyEnsFCDirs ${VerifyObsWorkDir}/${forecastSubDir}${memDir}/${thisCycleDate})
 
   set BenchmarkVerifyANDirs = ($BenchmarkVerifyANDirs ${BenchmarkVerifyANPrefix}${memDir}/${thisCycleDate})
   set BenchmarkVerifyBGDirs = ($BenchmarkVerifyBGDirs ${BenchmarkVerifyBGPrefix}${memDir}/${thisCycleDate})
-  set BenchmarkVerifyEnsFCDirs = ($BenchmarkVerifyEnsFCDirs ${BenchmarkVerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
+  set BenchmarkVerifyEnsFCDirs = ($BenchmarkVerifyEnsFCDirs ${BenchmarkVerifyObsWorkDir}/${forecastSubDir}${memDir}/${thisCycleDate})
 
   @ member++
 end

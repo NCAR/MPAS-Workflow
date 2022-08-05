@@ -10,9 +10,8 @@ import subprocess
 import glob
 
 class Suite():
-  ExpConfigType = None
   def drive(self):
-    cmd = ['./drive.csh', self.__class__.__name__, self.ExpConfigType]
+    cmd = ['./drive.csh', self.__class__.__name__]
     print(' '.join(cmd))
     sub = subprocess.run(cmd)
 

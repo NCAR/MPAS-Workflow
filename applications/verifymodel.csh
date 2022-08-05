@@ -38,9 +38,8 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
-source config/auto/externalanalyses.csh
 source config/tools.csh
+source config/auto/externalanalyses.csh
 source config/auto/model.csh
 source config/auto/verifymodel.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`

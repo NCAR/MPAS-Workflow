@@ -8,6 +8,12 @@ class Forecast(Component):
   baseKey = 'forecast'
   defaults = 'scenarios/defaults/forecast.yaml'
   workDir = 'CyclingFC'
+#  RSTFilePrefix = 'restart'
+#  ICFilePrefix = 'mpasin'
+#
+#  FCFilePrefix = 'mpasout'
+#  fcDir = 'fc'
+#  DIAGFilePrefix = 'diag'
 
   variablesWithDefaults = {
     ## updateSea

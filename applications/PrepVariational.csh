@@ -30,12 +30,14 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
+source config/tools.csh
+source config/auto/experiment.csh
 source config/auto/members.csh
 source config/auto/model.csh
-source config/tools.csh
-source config/auto/workflow.csh
+source config/auto/observations.csh
+source config/auto/staticstream.csh
 source config/auto/variational.csh
+source config/auto/workflow.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -159,7 +161,7 @@ set prevYAML = $thisYAML
 # Analysis directory
 # ==================
 sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $prevYAML
-sed -i 's@{{anStateDir}}@'${self_WorkDir}'/'${anDir}'@g' $prevYAML
+sed -i 's@{{anStateDir}}@'${self_WorkDir}'/'${analysisSubDir}'@g' $prevYAML
 
 
 # Hybrid Jb weights
@@ -357,7 +359,7 @@ echo "Starting model state preparation stage"
 # Input/Output model state preparation
 # ====================================
 
-# get source static fields files (config/experiment.csh)
+# get source static fields
 set StaticFieldsDirList = ($StaticFieldsDirOuter $StaticFieldsDirInner)
 set StaticFieldsFileList = ($StaticFieldsFileOuter $StaticFieldsFileInner)
 

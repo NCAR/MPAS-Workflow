@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 
+import os
+import subprocess
+
 from initialize.Component import Component
 
 class HPC(Component):
   baseKey = 'hpc'
   name = 'cheyenne'
   variablesWithDefaults = {
+    'top directory': ['/glade/scratch', str],
+    'TMPDIR': ['/glade/scratch/{{USER}}/temp', str],
+
     # TODO: place these configuration elements in a resource
     ## *Account
     # OPTIONS: NMMM0015, NMMM0043
@@ -36,6 +42,12 @@ class HPC(Component):
   }
   def __init__(self, config):
     super().__init__(config)
+
+    user = os.getenv('USER')
+    TMPDIR = self['TMPDIR'].replace('{{USER}}', user)
+    cmd = ['mkdir', '-p', TMPDIR]
+    print(' '.join(cmd))
+    sub = subprocess.run(cmd)
 
     ###############################
     # export for use outside python

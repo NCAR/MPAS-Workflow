@@ -46,8 +46,8 @@ endif
 
 # Setup environment
 # =================
-source config/experiment.csh
 source config/tools.csh
+source config/auto/observations.csh
 source config/auto/workflow.csh
 source config/auto/$ArgAppType.csh
 source config/auto/verifyobs.csh
@@ -90,8 +90,8 @@ endif
 
   if ($ArgNMembers > 1) then
     #Note: this only works for BG verifcation, not extended ensemble forecasts
-    echo "${baseCommand} -m $ArgNMembers -e ${VerificationWorkDir}/${bgDir}${flowMemFmt}/${thisCycleDate}/${OutDBDir}" | tee ./myCommand
-    ${baseCommand} -m $ArgNMembers -e "${VerificationWorkDir}/${bgDir}${flowMemFmt}/${thisCycleDate}/${OutDBDir}" >& log.${mainScript}
+    echo "${baseCommand} -m $ArgNMembers -e ${VerifyObsWorkDir}/${backgroundSubDir}${flowMemFmt}/${thisCycleDate}/${OutDBDir}" | tee ./myCommand
+    ${baseCommand} -m $ArgNMembers -e "${VerifyObsWorkDir}/${backgroundSubDir}${flowMemFmt}/${thisCycleDate}/${OutDBDir}" >& log.${mainScript}
   else
     echo "${baseCommand}" | tee ./myCommand
     ${baseCommand} >& log.${mainScript}

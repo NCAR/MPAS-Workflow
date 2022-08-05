@@ -7,21 +7,15 @@
 ####################################################################################################
 
 set suite = "$1"
-set ExpConfigType = "$2"
 
-echo "$0 (INFO): Initializing the MPAS-Workflow experiment directory"
-# Create the experiment directory and cylc task scripts
-echo "source SetupWorkflow.csh $ExpConfigType"
-source SetupWorkflow.csh "$ExpConfigType"
+echo "$0 (INFO): Generating the MPAS-Workflow task scripts"
+# Create the cylc task scripts
+echo "./SetupWorkflow.csh"
+./SetupWorkflow.csh
+source config/auto/experiment.csh
 
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
-
-echo "$0 (INFO): loading the workflow-relevant parts of the configuration"
-
-echo "$0 (INFO):  ExperimentName = ${ExperimentName}"
-
-echo "$0 (INFO): setting up the environment"
 
 module purge
 module load cylc
@@ -29,18 +23,10 @@ module load graphviz
 
 date
 
-## SuiteName: name of the cylc suite, can be used to differentiate between two
-# suites running simultaneously in the same ${ExperimentName} directory
-#
-# default: ${ExperimentName}
-# example: ${ExperimentName}_verify for a simultaneous suite running only Verification
-set SuiteName = ${ExperimentName}
-
-set cylcWorkDir = /glade/scratch/${USER}/cylc-run
-mkdir -p ${cylcWorkDir}
-
 # copy suite to cylc-recognized name
 cp -v suites/${suite}.rc ./suite.rc
+
+echo "$0 (INFO): checking if a suite with the same name is already running"
 
 cylc poll $SuiteName >& /dev/null
 if ( $status == 0 ) then
@@ -55,6 +41,7 @@ endif
 
 rm -rf ${cylcWorkDir}/${SuiteName}
 
+echo "$0 (INFO): register, validate, and run the suite"
 cylc register ${SuiteName} ${mainScriptDir}
 cylc validate --strict ${SuiteName}
 cylc run ${SuiteName}

@@ -2,10 +2,12 @@
 
 from initialize.Suite import Suite
 from initialize.components.Build import Build
+from initialize.components.Experiment import Experiment
 from initialize.components.ExternalAnalyses import ExternalAnalyses
 from initialize.components.HPC import HPC
 from initialize.components.Members import Members
 from initialize.components.Model import Model
+from initialize.components.Naming import Naming
 from initialize.components.Observations import Observations
 from initialize.components.StaticStream import StaticStream
 from initialize.components.Workflow import Workflow
@@ -20,7 +22,6 @@ from initialize.components.VerifyModel import VerifyModel
 from initialize.components.VerifyObs import VerifyObs
 
 class ForecastFromExternalAnalyses(Suite):
-  ExpConfigType = 'base'
   def __init__(self, scenario):
     conf = scenario.getConfig()
 
@@ -34,7 +35,6 @@ class ForecastFromExternalAnalyses(Suite):
     members = Members(conf)
 
     ea = ExternalAnalyses(conf, hpc, meshes)
-    ss = StaticStream(conf, meshes, members, workflow['FirstCycleDate'])
 
     ic = InitIC(conf, hpc, meshes)
     hofx = HofX(conf, hpc, meshes, model)
@@ -47,5 +47,14 @@ class ForecastFromExternalAnalyses(Suite):
     #if conf.has('verifyobs'): # TODO: make verifyobs optional
     vobs = VerifyObs(conf, hpc, members)
 
-    #if conf.has('benchmark'): # TODO: make benchmark optional
-    bench = Benchmark(conf, hpc)
+    exp = Experiment(conf, hpc)
+
+    #namedComponents = [fc, extfc, vobs, vmodel, obs, ea]
+    #naming = Naming(conf, exp, namedComponents)
+    naming = Naming(conf, exp)
+
+    ss = StaticStream(conf, meshes, members, workflow['FirstCycleDate'], naming)
+
+    #if conf.has('benchmark'): # TODO: make benchmark optional,
+    # and depend on whether verifyobs/verifymodel are selected
+    bench = Benchmark(conf, hpc, exp, naming)

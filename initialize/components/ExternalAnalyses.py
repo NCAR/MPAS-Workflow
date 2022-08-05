@@ -7,7 +7,7 @@ from initialize.util.Task import TaskFactory
 class ExternalAnalyses(Component):
   baseKey = 'externalanalyses'
   defaults = 'scenarios/defaults/externalanalyses.yaml'
-
+  workDir = 'ExternalAnalyses'
   optionalVariables = {
     ## resource:
     # used to select from among available options (e.g., see defaults)
