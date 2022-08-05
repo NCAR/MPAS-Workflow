@@ -62,7 +62,7 @@ class RTPP(Component):
         'account': {'def': hpc['CriticalAccount']},
         'email': {'def': True, 't': bool},
       }
-      job = Resource(self._conf, attr, 'job', ensMesh.name)
+      job = Resource(self._conf, attr, ('job', ensMesh.name))
       job._set('seconds', job['baseSeconds'] + job['secondsPerMember'] * members.n)
       task = TaskFactory[hpc.system](job)
 

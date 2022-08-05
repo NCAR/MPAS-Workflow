@@ -2,9 +2,6 @@ rtpp:
 ## mesh-specific settings
   # resource requirements
   job:
-    # cylc retry string
-    retry: '2*PT30S'
-
     #{{ensembleMesh}}:
     #  baseSeconds: int
     #  secondsPerMember: int
@@ -17,6 +14,10 @@ rtpp:
       nodes: 4
       PEPerNode: 24
       memory: 109GB
+
+      # cylc retry string
+      retry: '2*PT30S'
+
     60km:
       baseSeconds: 10
       secondsPerMember: 10

@@ -1,14 +1,14 @@
 hofx:
   # resource requirements
   job:
-    # cylc retry string
-    retry: '2*PT30S'
-
     defaults:
       seconds: 1000
       nodes: 4
       PEPerNode: 32
       memory: 109GB
+
+      # cylc retry string
+      retry: '2*PT30S'
 
     #{{outerMesh}}:
     #  seconds: int

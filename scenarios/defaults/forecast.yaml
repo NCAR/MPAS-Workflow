@@ -1,14 +1,14 @@
 forecast:
   # resource requirements (used for both Forecast and ExtendedForecast)
   job:
-    # cylc retry string
-    retry: '2*PT30S'
-
     defaults:
       nodes: 4
       PEPerNode: 32
       baseSeconds: 60
       secondsPerForecastHR: 500
+
+      # cylc retry string
+      retry: '2*PT30S'
 
     #{{outerMesh}}:
     #  baseSeconds: int

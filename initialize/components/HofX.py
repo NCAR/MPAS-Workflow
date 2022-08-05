@@ -113,7 +113,7 @@ class HofX(Component):
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }
-    job = Resource(self._conf, attr, 'job', meshes['Outer'].name)
+    job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
     task = TaskFactory[hpc.system](job)
 
     tasks = [

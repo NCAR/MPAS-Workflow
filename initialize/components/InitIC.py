@@ -22,7 +22,7 @@ class InitIC(Component):
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
     }
-    job = Resource(self._conf, attr, 'job', meshes['Outer'].name)
+    job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
     task = TaskFactory[hpc.system](job)
 
     tasks = []

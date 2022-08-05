@@ -77,7 +77,7 @@ class Model(Component):
 
       name = self[m]
       if name is not None:
-        self._set('nCells'+Typ, self._conf.getOrDie(name+'.nCells'))
+        self._set('nCells'+Typ, self._conf.getOrDie('resources.'+name+'.nCells'))
         nCells = self['nCells'+Typ]
 
         self.meshes[Typ] = Mesh(name, nCells)
@@ -89,8 +89,8 @@ class Model(Component):
         self._set('localStaticFieldsFile'+Typ, localStaticFieldsPrefix+'.'+str(nCells)+'.nc')
 
         if Typ == 'Outer':
-          self._set('TimeStep', self._conf.getOrDie(name+'.TimeStep'))
-          self._set('DiffusionLengthScale', self._conf.getOrDie(name+'.DiffusionLengthScale'))
+          self._set('TimeStep', self._conf.getOrDie('resources.'+name+'.TimeStep'))
+          self._set('DiffusionLengthScale', self._conf.getOrDie('resources.'+name+'.DiffusionLengthScale'))
 
     ###############################
     # export for use outside python

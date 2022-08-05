@@ -53,7 +53,7 @@ class Benchmark(Component):
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }
-    job = Resource(self._conf, attr, 'job', 'compare')
+    job = Resource(self._conf, attr, ('job', 'compare'))
     task = TaskFactory[hpc.system](job)
 
     tasks = ['''

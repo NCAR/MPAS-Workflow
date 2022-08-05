@@ -60,7 +60,7 @@ class Forecast(Component):
       'email': {'def': True, 't': bool},
     }
     # store job for ExtendedForecast to re-use
-    self.job = Resource(self._conf, attr, 'job', mesh.name)
+    self.job = Resource(self._conf, attr, ('job', mesh.name))
     self.job._set('seconds', self.job['baseSeconds'] + self.job['secondsPerForecastHR'] * lengthHR)
     task = TaskFactory[hpc.system](self.job)
 

@@ -37,7 +37,7 @@ class VerifyObs(Component):
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }
-    job = Resource(self._conf, attr, 'job')
+    job = Resource(self._conf, attr, ('job',))
     ensSeconds = job['seconds'] + job['secondsPerMember'] * members.n
     task = TaskFactory[hpc.system](job)
 

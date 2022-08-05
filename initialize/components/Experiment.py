@@ -35,7 +35,7 @@ class Experiment(Component):
   }
   variablesWithDefaults = {
     ## suffix
-    'suffix': ['', str],
+    'suffix': ['_ResourceRefactor', str],
 
     ## user directory child
     'user directory child': ['pandac', str],

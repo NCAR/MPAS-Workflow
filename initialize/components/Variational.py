@@ -218,13 +218,13 @@ class Variational(Component):
         r1 = 'ensemble.forecasts'
         r2 = '.'.join([resource, meshes['Ensemble'].name])
 
-        memberPrefix = self.extractResourceOrDefault(r1, r2, 'memberPrefix', None, str) # if None, default downstream is empty string
-        memberNDigits = self.extractResourceOrDie(r1, r2, 'memberNDigits', int)
-        filePrefix = self.extractResourceOrDie(r1, r2, 'filePrefix', str)
-        directory0 = self.extractResourceOrDie(r1, r2, 'directory0', str)
-        directory1 = self.extractResource(r1, r2, 'directory1', str) # can be None
-        maxMembers = self.extractResourceOrDie(r1, r2, 'maxMembers', int)
-        forecastDateOffsetHR = self.extractResourceOrDie(r1, r2, 'forecastDateOffsetHR', int)
+        memberPrefix = self.extractResourceOrDefault((r1, r2), 'memberPrefix', None, str) # if None, default downstream is empty string
+        memberNDigits = self.extractResourceOrDie((r1, r2), 'memberNDigits', int)
+        filePrefix = self.extractResourceOrDie((r1, r2), 'filePrefix', str)
+        directory0 = self.extractResourceOrDie((r1, r2), 'directory0', str)
+        directory1 = self.extractResource((r1, r2), 'directory1', str) # can be None
+        maxMembers = self.extractResourceOrDie((r1, r2), 'maxMembers', int)
+        forecastDateOffsetHR = self.extractResourceOrDie((r1, r2), 'forecastDateOffsetHR', int)
 
         self._set('ensPbMemPrefix', memberPrefix)
         self._set('ensPbMemNDigits', memberNDigits)
@@ -280,7 +280,7 @@ class Variational(Component):
       'account': {'def': hpc['CriticalAccount']},
       'email': {'def': True, 't': bool},
     }
-    varjob = Resource(self._conf, attr, 'job', r2)
+    varjob = Resource(self._conf, attr, ('job', r2))
     varjob._set('seconds', varjob['baseSeconds'] + varjob['secondsPerEnVarMember'] * ensPbNMembers)
     if EDASize > 1:
       varjob._set('nodes', varjob['nodesPerMember'] * EDASize)
@@ -294,7 +294,7 @@ class Variational(Component):
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
     }
-    abeijob = Resource(self._conf, attr, 'abei.job', meshes['Outer'].name)
+    abeijob = Resource(self._conf, attr, ('abei.job', meshes['Outer'].name))
     abeitask = TaskFactory[hpc.system](abeijob)
 
     self.tasks = ['''

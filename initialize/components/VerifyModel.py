@@ -37,7 +37,7 @@ class VerifyModel(Component):
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }
-    job = Resource(self._conf, attr, 'job', mesh.name)
+    job = Resource(self._conf, attr, ('job', mesh.name))
     ensSeconds = job['seconds'] + job['secondsPerMember'] * members.n
     task = TaskFactory[hpc.system](job)
 

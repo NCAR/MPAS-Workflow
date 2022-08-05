@@ -136,15 +136,16 @@ variational:
 
   # resource requirements
   job:
-    # cylc retry string
-    retry: '2*PT30S'
-
     defaults:
       baseSeconds: 1500
       secondsPerEnVarMember: 10
       nodes: 8
       PEPerNode: 16
       memory: 109GB
+
+      # cylc retry string
+      retry: '2*PT30S'
+
 
     # TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
     # TODO: update with latest resource requirements following GetValues refactoring

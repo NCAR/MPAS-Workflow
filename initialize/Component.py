@@ -64,40 +64,29 @@ class Component():
     self._vtable[v_] = self._conf.getOrDefault(v, default, t)
 
   ## general purpose nested extract methods
-  def extractResource(self, resource1, resource2, key, t=None):
-    if resource1 is None:
-      r1 = ''
-    else:
-      r1 = resource1
+  def extractResource(self, resource:tuple, key:str, t=None):
+    value = None
+    for i in range(len(resource), -1, -1):
+      l = list(resource[:i+1])
+      if None in l: continue
+      if value is None:
+        value = self._conf.get('.'.join(l+[key]), t)
 
-    if resource2 is None:
-      r2 = ''
-    else:
-      r2 = resource2
-
-    value = self._conf.get('.'.join([r1, r2, key]), t)
+      if value is None:
+        value = self._conf.get('.'.join(l+['common', key]), t)
 
     if value is None:
-      value = self._conf.get('.'.join([r1, key]), t)
-
-    if value is None:
-      value = self._conf.get('.'.join([r1, 'common', key]), t)
-
-    if value is None:
-      value = self._conf.get('.'.join([r1, 'defaults', key]), t)
-
-    if value is None:
-      value = self._conf.get('.'.join(['defaults', key]), t)
+      value = self._conf.get('.'.join([resource[0], 'defaults', key]), t)
 
     return value
 
-  def extractResourceOrDie(self, r1, r2, key, t=None):
-    v = self.extractResource(r1, r2, key, t)
-    assert v is not None, (r1+', '+r2+', '+key+' targets invalid or nonexistent node')
+  def extractResourceOrDie(self, resource:tuple, key:str, t=None):
+    v = self.extractResource(resource, key, t)
+    assert v is not None, (str(resource)+'.'+key+' targets invalid or nonexistent node')
     return v
 
-  def extractResourceOrDefault(self, r1, r2, key, default, t=None):
-    v = self.extractResource(r1, r2, key, t)
+  def extractResourceOrDefault(self, resource:tuple, key:str, default, t=None):
+    v = self.extractResource(resource, key, t)
     if v is None:
       v = default
     return v

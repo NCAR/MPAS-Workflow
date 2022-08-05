@@ -28,7 +28,7 @@ class FirstBackground(Component):
     csh.append(resourceName)
 
     # check for valid members.n
-    maxMembers = self.extractResourceOrDie(resource, meshes['Outer'].name, 'maxMembers', int)
+    maxMembers = self.extractResourceOrDie(('resources', resource, meshes['Outer'].name), 'maxMembers', int)
     assert members.n > 0 and members.n <= maxMembers, (
       self._msg('invalid members.n => '+str(members.n)))
 
@@ -42,7 +42,7 @@ class FirstBackground(Component):
         ['memberFormat', str],
         ['PrepareFirstBackground', str],
       ]:
-        value = self.extractResource(resource, mesh, key, t)
+        value = self.extractResource(('resources', resource, mesh), key, t)
         if key == 'PrepareFirstBackground':
           # push back cylc mini-workflow
           variable = key+name

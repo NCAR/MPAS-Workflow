@@ -74,7 +74,7 @@ class ExtendedForecast(Component):
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }
-    meanjob = Resource(self._conf, attr, 'job', 'meananalysis')
+    meanjob = Resource(self._conf, attr, ('job', 'meananalysis'))
     meantask = TaskFactory[hpc.system](meanjob)
 
     tasks = ['''

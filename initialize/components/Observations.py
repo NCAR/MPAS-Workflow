@@ -75,7 +75,7 @@ class Observations(Component):
 
     # PrepareObservationsTasks is a list of strings
     key = 'PrepareObservationsTasks'
-    values = self.extractResourceOrDie(resource, None, key, list)
+    values = self.extractResourceOrDie(('resources', resource), key, list)
 
     # first add variable as a list of tasks
     cylc.append(key)

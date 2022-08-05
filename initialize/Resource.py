@@ -11,7 +11,7 @@ class Resource(Config):
 
   useful for extracting resource-dependent or mesh-dependent subconfigurations
   '''
-  def __init__(self, config:Config, keys:dict, r1:str = None, r2:str = None):
+  def __init__(self, config:Config, keys:dict, resource:tuple):
     '''
     keys: {key1[str]: {
               'def': default value, # optional
@@ -22,21 +22,9 @@ class Resource(Config):
               'req': required, # bool, optional, True when missing
               't': type}, # e.g., int, float, str, list, optional, None when missing
            }
-    r1 (optional): first yaml node level under which the Resource is located
-    r2 (optional): second yaml node level ...
     '''
     self._table = {}
     self._defaults = {}
-
-    if r1 is None:
-      r1_ = ''
-    else:
-      r1_ = r1
-
-    if r2 is None:
-      r2_ = ''
-    else:
-      r2_ = r2
 
     for key, att in keys.items():
       default = att.get('def', None)
@@ -44,37 +32,36 @@ class Resource(Config):
       t = att.get('t', None)
 
       if default is not None:
-        self._table[key] = self.extractNodeOrDefault(config, r1_, r2_, key, default, t)
+        self._table[key] = self.extractNodeOrDefault(config, resource, key, default, t)
       elif required:
-        self._table[key] = self.extractNodeOrDie(config, r1_, r2_, key, t)
+        self._table[key] = self.extractNodeOrDie(config, resource, key, t)
       else:
-        self._table[key] = self.extractNode(config, r1_, r2_, key, t)
+        self._table[key] = self.extractNode(config, resource, key, t)
 
   @staticmethod
-  def extractNode(config, r1, r2, key, t=None):
-      value = config.get('.'.join([r1, r2, key]), t)
+  def extractNode(config, resource:tuple, key:str, t=None):
+    value = None
+    for i in range(len(resource), -1, -1):
+      l = list(resource[:i+1])
+      if None in l: continue
+      if value is None:
+        value = config.get('.'.join(l+[key]), t)
 
       if value is None:
-        value = config.get('.'.join([r1, key]), t)
+        value = config.get('.'.join(l+['common', key]), t)
 
-      if value is None:
-        value = config.get('.'.join([r1, 'common', key]), t)
+    if value is None:
+      value = config.get('.'.join([resource[0], 'defaults', key]), t)
 
-      if value is None:
-        value = config.get('.'.join([r1, 'defaults', key]), t)
+    return value
 
-      if value is None:
-        value = config.get('.'.join(['defaults', key]), t)
-
-      return value
-
-  def extractNodeOrDie(self, config, r1, r2, key, t=None):
-    v = self.extractNode(config, r1, r2, key, t)
-    assert v is not None, (r1+', '+r2+', '+key+' targets invalid or nonexistent node')
+  def extractNodeOrDie(self, config, resource, key, t=None):
+    v = self.extractNode(config, resource, key, t)
+    assert v is not None, (str(resource)+'.'+key+' targets invalid or nonexistent node')
     return v
 
-  def extractNodeOrDefault(self, config, r1, r2, key, default, t=None):
-    v = self.extractNode(config, r1, r2, key, t)
+  def extractNodeOrDefault(self, config, resource, key, default, t=None):
+    v = self.extractNode(config, resource, key, t)
     if v is None:
       v = default
     return v

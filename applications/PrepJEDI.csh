@@ -195,12 +195,12 @@ foreach instrument ($observations)
 
   # Check for instrument-specific directory first
   set key = IODADirectory
-  set address = "${observations__resource}.${key}.${ArgAppType}.${instrument}"
+  set address = "resources.${observations__resource}.${key}.${ArgAppType}.${instrument}"
   # TODO: this is somewhat slow with lots of redundant loads of the entire observations.yaml config
   set $key = "`$getObservationsOrNone ${address}`"
   if ("$IODADirectory" == None) then
     # Fall back on "common" directory, if present
-    set address_ = "${observations__resource}.${key}.${ArgAppType}.common"
+    set address_ = "resources.${observations__resource}.${key}.${ArgAppType}.common"
     set $key = "`$getObservationsOrNone ${address_}`"
     if ("$IODADirectory" == None) then
       echo "$0 (WARNING): skipping ${instrument} due to missing value at ${address} and ${address_}"
@@ -212,7 +212,7 @@ foreach instrument ($observations)
 
   # prefix
   set key = IODAPrefix
-  set address = "${observations__resource}.${key}.${instrument}"
+  set address = "resources.${observations__resource}.${key}.${instrument}"
   set $key = "`$getObservationsOrNone ${address}`"
   if ("$IODAPrefix" == None) then
     set IODAPrefix = ${instrument}
@@ -278,7 +278,7 @@ touch $observationsYAML
 # need to change to mainScriptDir for getObservationsOrNone to work
 cd ${mainScriptDir}
 set key = instrumentsAllowingBiasCorrection
-set $key = (`$getObservationsOrNone ${observations__resource}.${key}`)
+set $key = (`$getObservationsOrNone resources.${observations__resource}.${key}`)
 cd ${self_WorkDir}
 
 set found = 0
@@ -385,8 +385,8 @@ sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $thisYAML
 
 # need to change to mainScriptDir for getObservationsOrNone to work
 cd ${mainScriptDir}
-set ABISuperObGrid = "`$getObservationsOrNone ${observations__resource}.IODASuperObGrid.abi_g16`"
-set AHISuperObGrid = "`$getObservationsOrNone ${observations__resource}.IODASuperObGrid.ahi_himawari8`"
+set ABISuperObGrid = "`$getObservationsOrNone resources.${observations__resource}.IODASuperObGrid.abi_g16`"
+set AHISuperObGrid = "`$getObservationsOrNone resources.${observations__resource}.IODASuperObGrid.ahi_himawari8`"
 cd ${self_WorkDir}
 
 if ("$ABISuperObGrid" != None) then

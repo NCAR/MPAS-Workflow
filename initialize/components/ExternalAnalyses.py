@@ -45,7 +45,7 @@ class ExternalAnalyses(Component):
          ['Vtable', str],
          ['UngribPrefix', str],
         ]:
-          value = self.extractResource(resource, mesh, key, t)
+          value = self.extractResource(('resources', resource, mesh), key, t)
 
           if key == 'PrepareExternalAnalysisTasks':
             # push back cylc mini-workflow variables
@@ -95,7 +95,7 @@ class ExternalAnalyses(Component):
     ########################
     # tasks and dependencies
     ########################
-    getRetry = self.extractResourceOrDie(resource, None, 'job.GetAnalysisFrom.retry', str)
+    getRetry = self.extractResourceOrDie(('resources', resource), 'job.GetAnalysisFrom.retry', str)
 
     attr = {
       'seconds': {'def': 300},
@@ -106,7 +106,7 @@ class ExternalAnalyses(Component):
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
     }
-    ungribjob = Resource(self._conf, attr, 'job', 'ungrib')
+    ungribjob = Resource(self._conf, attr, ('job', 'ungrib'))
     ungribtask = TaskFactory[hpc.system](ungribjob)
 
     tasks = [
