@@ -77,38 +77,38 @@ class ExtendedForecast(Component):
     meanjob = Resource(self._conf, attr, ('job', 'meananalysis'))
     meantask = TaskFactory[hpc.system](meanjob)
 
+    self.groupName = self.__class__.__name__
     tasks = ['''
-  [[ExtendedFCBase]]
-    inherit = BATCH
+  [['''+self.groupName+''']]
 '''+fctask.job()+fctask.directives()+'''
 
   ## from external analysis
   [[ExtendedFCFromExternalAnalysis]]
-    inherit = ExtendedFCBase
+    inherit = '''+self.groupName+''', BATCH
     script = $origin/applications/ExtendedFCFromExternalAnalysis.csh "1" "'''+str(lengthHR)+'''" "'''+str(outIntervalHR)+'''" "False" "'''+forecast.mesh.name+'''" "False" "False" "False"
 
   # TODO: move MeanAnalysis somewhere else
   ## from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
-    inherit = BATCH
+    inherit = '''+self.groupName+''', Mean, BATCH
     script = $origin/applications/MeanAnalysis.csh
 '''+meantask.job()+meantask.directives()+'''
   [[ExtendedMeanFC]]
-    inherit = ExtendedFCBase
+    inherit = '''+self.groupName+''', BATCH
     script = $origin/applications/ExtendedMeanFC.csh "1" "'''+str(lengthHR)+'''" "'''+str(outIntervalHR)+'''" "False" "'''+forecast.mesh.name+'''" "True" "False" "False"
 
 
   [[ExtendedForecastFinished]]
-    inherit = BACKGROUND
+    inherit = '''+self.groupName+''', BACKGROUND
 
   ## from ensemble of analyses
   [[ExtendedEnsFC]]
-    inherit = ExtendedFCBase''']
+    inherit = '''+self.groupName]
 
     for mm in EnsVerifyMembers:
       tasks += ['''
   [[ExtendedFC'''+str(mm)+''']]
-    inherit = ExtendedEnsFC
+    inherit = ExtendedEnsFC, BATCH
     script = $origin/applications/ExtendedEnsFC.csh "'''+str(mm)+'''" "'''+str(lengthHR)+'''" "'''+str(outIntervalHR)+'''" "False" "'''+forecast.mesh.name+'''" "True" "False" "False"''']
 
     self.exportTasks(tasks)

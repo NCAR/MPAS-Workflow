@@ -64,16 +64,19 @@ class Forecast(Component):
     self.job._set('seconds', self.job['baseSeconds'] + self.job['secondsPerForecastHR'] * lengthHR)
     task = TaskFactory[hpc.system](self.job)
 
+    self.groupName = 'ForecastFamily'
     tasks = ['''
-  [[ForecastBase]]
+  [['''+self.groupName+''']]
+  [[ColdForecast]]
+    inherit = '''+self.groupName+'''
 '''+task.job()+task.directives()+'''
 
   [[Forecast]]
-    inherit = ForecastBase, BATCH
-  [[ColdForecast]]
-    inherit = ForecastBase, BATCH
+    inherit = '''+self.groupName+'''
+'''+task.job()+task.directives()+'''
+
   [[ForecastFinished]]
-    inherit = BACKGROUND''']
+    inherit = '''+self.groupName+''', BACKGROUND''']
 
     for mm in range(1, members.n+1, 1):
       # ColdArgs explanation
@@ -89,11 +92,11 @@ class Forecast(Component):
       WarmArgs = '"'+str(mm)+'" "'+str(lengthHR)+'" "'+str(outIntervalHR)+'" "'+str(IAU)+'" "'+mesh.name+'" "True" "True" "'+str(updateSea)+'"'
 
       tasks += ['''
-  [[ColdForecastMember'''+str(mm)+''']]
-    inherit = ColdForecast
+  [[ColdForecast'''+str(mm)+''']]
+    inherit = ColdForecast, BATCH
     script = $origin/applications/ColdForecast.csh '''+ColdArgs+'''
-  [[ForecastMember'''+str(mm)+''']]
-    inherit = Forecast
+  [[Forecast'''+str(mm)+''']]
+    inherit = Forecast, BATCH
     script = $origin/applications/Forecast.csh '''+WarmArgs]
 
     self.exportTasks(tasks)

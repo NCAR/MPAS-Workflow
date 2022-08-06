@@ -57,8 +57,7 @@ class Benchmark(Component):
     task = TaskFactory[hpc.system](job)
 
     tasks = ['''
-  [[CompareBase]]
-    inherit = SingleBatch
+  [[Compare]]
 '''+task.job()+task.directives()]
 
     self.exportTasks(tasks)

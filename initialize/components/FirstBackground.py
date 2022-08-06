@@ -66,10 +66,11 @@ class FirstBackground(Component):
     ########################
     # tasks and dependencies
     ########################
-    tasks = [
-'''
+    self.groupName = self.__class__.__name__
+    tasks = ['''
+  [['''+self.groupName+''']]
   [[LinkWarmStartBackgrounds]]
-    inherit = SingleBatch
+    inherit = '''+self.groupName+''', SingleBatch
     script = $origin/applications/LinkWarmStartBackgrounds.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members

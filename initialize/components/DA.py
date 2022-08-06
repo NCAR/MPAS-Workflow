@@ -30,14 +30,22 @@ class DA(Component):
     self.finished = 'DAFinished' # marker
     self.clean = 'CleanDA' # family
 
+    self.groupName = 'DAFamily'
     tasks = ['''
   ## data assimilation task markers
+  [['''+self.groupName+''']]
   [['''+self.pre+''']]
+    inherit = '''+self.groupName+'''
   [['''+self.init+''']]
+    inherit = '''+self.groupName+'''
   [['''+self.execute+''']]
+    inherit = '''+self.groupName+'''
   [['''+self.post+''']]
+    inherit = '''+self.groupName+'''
   [['''+self.finished+''']]
-  [['''+self.clean+''']]''']
+    inherit = '''+self.groupName+'''
+  [['''+self.clean+''']]
+    inherit = '''+self.groupName]
 
     dependencies = ['''
         # pre => init => execute:succeed-all => post => finished => clean

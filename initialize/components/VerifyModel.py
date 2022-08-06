@@ -41,9 +41,9 @@ class VerifyModel(Component):
     ensSeconds = job['seconds'] + job['secondsPerMember'] * members.n
     task = TaskFactory[hpc.system](job)
 
+    self.groupName = self.__class__.__name__
     tasks = ['''
-  [[VerifyModelBase]]
-    inherit = BATCH
+  [['''+self.groupName+''']]
 '''+task.job()+task.directives()+'''
 
 {% if DiagnoseEnsSpreadBG %}

@@ -25,12 +25,15 @@ class InitIC(Component):
     job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
     task = TaskFactory[hpc.system](job)
 
-    tasks = []
+    self.groupName = self.__class__.__name__
+    tasks = ['''
+  [['''+self.groupName+']]']
+
     for mesh in list(set([mesh.name for mesh in meshes.values()])):
       tasks += [
 '''
   [[ExternalAnalysisToMPAS-'''+mesh+''']]
-    inherit = BATCH
+    inherit = '''+self.groupName+''', BATCH
     script = $origin/applications/ExternalAnalysisToMPAS.csh "'''+mesh+'''"
 '''+task.job()+task.directives()]
 

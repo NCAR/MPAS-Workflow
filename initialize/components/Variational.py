@@ -308,18 +308,17 @@ class Variational(Component):
       execution retry delays = '''+varjob['retry']+'''
 
   [[Variationals]]
-    inherit = '''+da.execute+''', BATCH
 '''+vartask.job()+vartask.directives()+'''
 
   # inflation
   [[GenerateABEInflation]]
-    inherit = BATCH
+    inherit = '''+da.groupName+''', BATCH
     script = $origin/applications/GenerateABEInflation.csh
 '''+abeitask.job()+abeitask.directives()+'''
 
   # clean
   [[CleanVariational]]
-    inherit = '''+da.clean+''', CleanBase
+    inherit = Clean, '''+da.clean+'''
     script = $origin/applications/CleanVariational.csh''']
 
     if EDASize == 1:
@@ -327,7 +326,7 @@ class Variational(Component):
       for mm in range(1, NN+1, 1):
         self.tasks += ['''
   [[Variational'''+str(mm)+''']]
-    inherit = Variationals
+    inherit = '''+da.execute+''', Variationals, BATCH
     script = $origin/applications/Variational.csh "'''+str(mm)+'"']
 
     else:
@@ -335,7 +334,7 @@ class Variational(Component):
       for instance in range(1, nDAInstances+1, 1):
         self.tasks += ['''
   [[EDA'''+str(instance)+''']]
-    inherit = Variationals
+    inherit = '''+da.execute+''', Variationals, BATCH
     script = \$origin/applications/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     self.dependencies = ['#']

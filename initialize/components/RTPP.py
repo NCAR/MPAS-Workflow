@@ -69,18 +69,18 @@ class RTPP(Component):
       self.tasks += ['''
   [[PrepRTPP]]
     # note: does not depend on any other tasks
-    inherit = SingleBatch
+    inherit = '''+da.groupName+''', SingleBatch
     script = $origin/applications/PrepRTPP.csh
     [[[job]]]
       execution time limit = PT1M
       execution retry delays = '''+job['retry']+'''
   [[RTPP]]
-    inherit = BATCH
+    inherit = '''+da.groupName+''', BATCH
     script = $origin/applications/RTPP.csh
 '''+task.job()+task.directives()+'''
 
   [[CleanRTPP]]
-    inherit = '''+da.clean+''', CleanBase
+    inherit = '''+da.clean+''', Clean
     script = $origin/applications/CleanRTPP.csh''']
 
       self.dependencies += ['''

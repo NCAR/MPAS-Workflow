@@ -109,40 +109,44 @@ class ExternalAnalyses(Component):
     ungribjob = Resource(self._conf, attr, ('job', 'ungrib'))
     ungribtask = TaskFactory[hpc.system](ungribjob)
 
+    self.groupName = self.__class__.__name__
     tasks = [
 '''## Analyses generated outside MPAS-Workflow
+  [['''+self.groupName+''']]
   [[GetGFSAnalysisFromRDA]]
-    inherit = SingleBatch
+    inherit = '''+self.groupName+''', SingleBatch
     script = $origin/applications/GetGFSAnalysisFromRDA.csh
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+getRetry+'''
   [[GetGFSanalysisFromFTP]]
-    inherit = SingleBatch
+    inherit = '''+self.groupName+''', SingleBatch
     script = $origin/applications/GetGFSAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+getRetry+'''
   [[GetGDASAnalysisFromFTP]]
-    inherit = SingleBatch
+    inherit = '''+self.groupName+''', SingleBatch
     script = $origin/applications/GetGDASAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT45M
       execution retry delays = '''+getRetry+'''
 
   [[UngribExternalAnalysis]]
-    inherit = SingleBatch
+    inherit = '''+self.groupName+''', SingleBatch
     script = $origin/applications/UngribExternalAnalysis.csh
 '''+ungribtask.job()+ungribtask.directives()+'''
 
+  [[LinkExternalAnalyses]]
+    inherit = '''+self.groupName+'''
   [[ExternalAnalysisReady]]
-    inherit = BACKGROUND''']
+    inherit = '''+self.groupName+''', BACKGROUND''']
 
     for mesh in list(set([mesh.name for mesh in meshes.values()])):
       tasks += [
 '''
   [[LinkExternalAnalysis-'''+mesh+''']]
-    inherit = SingleBatch
+    inherit = LinkExternalAnalyses, SingleBatch
     script = $origin/applications/LinkExternalAnalysis.csh "'''+mesh+'''"
     [[[job]]]
       execution time limit = PT30S

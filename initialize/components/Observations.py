@@ -99,16 +99,17 @@ class Observations(Component):
     ########################
     # tasks and dependencies
     ########################
-    tasks = [
-'''
+    self.groupName = self.__class__.__name__
+    tasks = ['''
+  [['''+self.groupName+''']]
   [[GetObs]]
-    inherit = SingleBatch
+    inherit = '''+self.groupName+''', SingleBatch
     script = $origin/applications/GetObs.csh
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = '''+self['getRetry']+'''
   [[ObsToIODA]]
-    inherit = SingleBatch
+    inherit = '''+self.groupName+''', SingleBatch
     script = $origin/applications/ObsToIODA.csh
     [[[job]]]
       execution time limit = PT600S
@@ -124,6 +125,6 @@ class Observations(Component):
       -A = '''+hpc['CriticalAccount']+'''
       -l = select=1:ncpus=1:mem=10GB
   [[ObsReady]]
-    inherit = BACKGROUND''']
+    inherit = '''+self.groupName+''', BACKGROUND''']
 
     self.exportTasks(tasks)

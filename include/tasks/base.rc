@@ -54,8 +54,7 @@ conda activate npl
       -A = {{SingleProcAccount}}
       -l = select=1:ncpus=1
 
-  [[CleanBase]]
-    inherit = SingleBatch
+  [[Clean]]
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = 2*PT15S
@@ -63,3 +62,6 @@ conda activate npl
 ## Null parent or child
   [[Null]]
     inherit = BACKGROUND
+
+  [[CleanHofX]]
+  [[Mean]]

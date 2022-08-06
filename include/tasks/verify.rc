@@ -5,41 +5,38 @@
 
 ## DA
   [[VerifyObsDA]]
-    inherit = VerifyObsBase
+    inherit = VerifyObs, BATCH
     script = $origin/applications/VerifyObsDA.csh "1" "0" "DA" "0" "variational"
   [[CompareObsDA]]
-    inherit = CompareBase
+    inherit = Compare, SingleBatch
     script = $origin/applications/CompareObsDA.csh "1" "0" "DA" "variational"
 
 ## extended forecast from mean/deterministic state
   [[HofXMeanFC]]
-    inherit = HofXBase
   [[VerifyModelMeanFC]]
-    inherit = VerifyModelBase
   [[VerifyObsMeanFC]]
-    inherit = VerifyObsBase
   [[CleanHofXMeanFC]]
-    inherit = CleanBase
+    inherit = CleanHofX
 {% for dt in extLengths %}
   [[HofXMeanFC{{dt}}hr]]
-    inherit = HofXMeanFC
+    inherit = HofX, HofXMeanFC, BATCH
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "hofx"
     script = $origin/applications/HofXMeanFC.csh "1" "{{dt}}" "FC"
   [[VerifyObsMeanFC{{dt}}hr]]
-    inherit = VerifyObsMeanFC
+    inherit = VerifyObs, VerifyObsMeanFC, BATCH
     script = $origin/applications/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0" "hofx"
   [[VerifyModelMeanFC{{dt}}hr]]
-    inherit = VerifyModelMeanFC
+    inherit = VerifyModel, VerifyModelMeanFC, BATCH
     script = $origin/applications/VerifyModelMeanFC.csh "1" "{{dt}}" "FC" "0"
   [[CleanHofXMeanFC{{dt}}hr]]
-    inherit = CleanHofXMeanFC
+    inherit = Clean, CleanHofXMeanFC
     script = $origin/applications/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
 {% endfor %}
 
 
 ## ensemble mean background
   [[MeanBackground]]
-    inherit = BATCH
+    inherit = Mean, BATCH
     script = $origin/applications/MeanBackground.csh
     [[[job]]]
       execution time limit = PT5M
@@ -49,91 +46,83 @@
       -A = {{NonCriticalAccount}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[HofXEnsMeanBG]]
-    inherit = HofXBase
+    inherit = HofX, BATCH
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG" "hofx"
     script = $origin/applications/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = {{EnsMeanBGQueue}}
       -A = {{EnsMeanBGAccount}}
   [[VerifyModelEnsMeanBG]]
-    inherit = VerifyModelBase
+    inherit = VerifyModel, BATCH
     script = $origin/applications/VerifyModelEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
     [[[job]]]
       execution time limit = PT{{modelEnsSeconds}}S
   [[VerifyObsEnsMeanBG]]
-    inherit = VerifyObsBase
+    inherit = VerifyObs, BATCH
     script = $origin/applications/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}" "hofx"
     [[[job]]]
       execution time limit = PT{{obsEnsSeconds}}S
   [[CleanHofXEnsMeanBG]]
-    inherit = CleanBase
+    inherit = Clean, CleanHofX
     script = $origin/applications/CleanHofXEnsMeanBG.csh "1" "0" "BG"
 
 
 ## various kinds of ensembles
 {% for state in ['BG', 'AN']%}
   [[HofX{{state}}]]
-    inherit = HofXBase
   [[VerifyModel{{state}}]]
-    inherit = VerifyModelBase
   [[CompareModel{{state}}]]
-    inherit = CompareBase
   [[VerifyObs{{state}}]]
-    inherit = VerifyObsBase
   [[CompareObs{{state}}]]
-    inherit = CompareBase
   [[CleanHofX{{state}}]]
-    inherit = CleanBase
+    inherit = CleanHofX
 {% endfor %}
 
 {% for mem in EnsVerifyMembers %}
   # ensemble of backgrounds and analyses (including single-member deterministic)
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
-    inherit = HofX{{state}}
+    inherit = HofX, HofX{{state}}, BATCH
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIHofX{{state}}.csh "{{mem}}" "0" "{{state}}" "hofx"
     script = $origin/applications/HofX{{state}}.csh "{{mem}}" "0" "{{state}}"
   [[VerifyModel{{state}}{{mem}}]]
-    inherit = VerifyModel{{state}}
+    inherit = VerifyModel, VerifyModel{{state}}, BATCH
     script = $origin/applications/VerifyModel{{state}}.csh "{{mem}}" "0" "{{state}}" "0"
   [[CompareModel{{state}}{{mem}}]]
-    inherit = CompareModel{{state}}
+    inherit = Compare, CompareModel{{state}}, SingleBatch
     script = $origin/applications/CompareModel{{state}}.csh "{{mem}}" "0" "{{state}}"
   [[VerifyObs{{state}}{{mem}}]]
-    inherit = VerifyObs{{state}}
+    inherit = VerifyObs, VerifyObs{{state}}, BATCH
     script = $origin/applications/VerifyObs{{state}}.csh "{{mem}}" "0" "{{state}}" "0" "hofx"
   [[CompareObs{{state}}{{mem}}]]
-    inherit = CompareObs{{state}}
+    inherit = Compare, CompareObs{{state}}, SingleBatch
     script = $origin/applications/CompareObs{{state}}.csh "{{mem}}" "0" "{{state}}" "hofx"
   [[CleanHofX{{state}}{{mem}}]]
-    inherit = CleanHofX{{state}}
+    inherit = Clean, CleanHofX{{state}}
     script = $origin/applications/CleanHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
   {% endfor %}
 {% endfor %}
 
   [[HofXEnsFC]]
-    inherit = HofXBase
   [[VerifyModelEnsFC]]
-    inherit = VerifyModelBase
   [[VerifyObsEnsFC]]
-    inherit = VerifyObsBase
   [[CleanHofXEnsFC]]
-    inherit = CleanBase
+    inherit = CleanHofX
 {% for mem in EnsVerifyMembers %}
   # ensemble of extended forecasts from ensemble of analyses
   {% for dt in extLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
-    inherit = HofXEnsFC
+    inherit = HofX, HofXEnsFC, BATCH
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC" "hofx"
     script = $origin/applications/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
-    inherit = VerifyModelEnsFC
+    inherit = VerifyModel, VerifyModelEnsFC, BATCH
     script = $origin/applications/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
   [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
-    inherit = VerifyObsEnsFC
+    inherit = VerifyObs, VerifyObsEnsFC, BATCH
     script = $origin/applications/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0" "hofx"
   [[CleanHofXEnsFC{{mem}}-{{dt}}hr]]
-    inherit = CleanHofXEnsFC
+    inherit = Clean, CleanHofXEnsFC
     script = $origin/applications/CleanHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   {% endfor %}
 {% endfor %}

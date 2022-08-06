@@ -118,8 +118,7 @@ class HofX(Component):
 
     tasks = [
 '''
-  [[HofXBase]]
-    inherit = BATCH
+  [[HofX]]
 '''+task.job()+task.directives()]
 
     self.exportTasks(tasks)
