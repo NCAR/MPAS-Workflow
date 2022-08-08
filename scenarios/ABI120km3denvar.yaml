@@ -5,13 +5,14 @@ workflow:
   VerifyEnsMeanBG: True
 observations:
   resource: PANDACArchive
-  PANDACArchive:
-    instrumentsAllowingBiasCorrection:
-    - abi_g16
-    IODADirectory:
-      variational:
-        abi_g16: /glade/p/mmm/parc/ivette/pandac/Observations/abi/ioda/SUPEROBBING59
-  initialVARBCcoeff: /glade/scratch/ivette/pandac/ivette_3denvar_OIE120km_WarmStart_ABI_G16_VarBC_2/CyclingDA/2018051418/dbOut
+  resources:
+    PANDACArchive:
+      instrumentsAllowingBiasCorrection:
+      - abi_g16
+      IODADirectory:
+        variational:
+          abi_g16: /glade/p/mmm/parc/ivette/pandac/Observations/abi/ioda/SUPEROBBING59
+    initialVARBCcoeff: /glade/scratch/ivette/pandac/ivette_3denvar_OIE120km_WarmStart_ABI_G16_VarBC_2/CyclingDA/2018051418/dbOut
 experiment:
   name: '3denvar_OIE120km_WarmStart_ABI'
 members:

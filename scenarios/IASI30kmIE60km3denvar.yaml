@@ -5,28 +5,29 @@ workflow:
   VerifyEnsMeanBG: True
 observations:
   resource: PANDACArchive
-  PANDACArchive:
-    instrumentsAllowingBiasCorrection:
-    - iasi_metop-a
-    - iasi_metop-b
-    - iasi_metop-c
-    IODADirectory:
-      variational:
-        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
-        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-      hofx:
-        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
-        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-    IODASuperObGrid:
-      abi_g16: 15X15
-      ahi_himawari8: 15X15
+  resources:
+    PANDACArchive:
+      instrumentsAllowingBiasCorrection:
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+      IODADirectory:
+        variational:
+          iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+          iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+          iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+          abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+          ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        hofx:
+          abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+          ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15
 experiment:
   name: '3denvar_O30kmIE60km_WarmStart_IASI_6h_TEST_2-outer_60-inner'
 members:

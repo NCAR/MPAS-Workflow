@@ -5,16 +5,17 @@ workflow:
   VerifyEnsMeanBG: True
 observations:
   resource: PANDACArchive
-  PANDACArchive:
-    instrumentsAllowingBiasCorrection:
-    - iasi_metop-a
-    - iasi_metop-b
-    - iasi_metop-c
-    IODADirectory:
-      variational:
-        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
-        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
-        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+  resources:
+    PANDACArchive:
+      instrumentsAllowingBiasCorrection:
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+      IODADirectory:
+        variational:
+          iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+          iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+          iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
 experiment:
   name: '3denvar_OIE120km_WarmStart_IASI'
 members:
