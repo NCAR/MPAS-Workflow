@@ -103,7 +103,6 @@ cd ${self_WorkDir}
 
 # Default templated variables based on the input arguments.
 set deleteZerothForecast = deleteZerothForecastTEMPLATE
-set self_icStateDir      = $StateDirsTEMPLATE[$ArgMember]
 
 # Input parameters can further change for the first DA cycle inside this script.
 set self_FCIntervalHR = ${ArgFCIntervalHR}
@@ -135,9 +134,9 @@ endif
 if ( ${self_IAU} == True ) then
   set IAUDate = `$advanceCYMDH ${thisCycleDate} -${IAUoutIntervalHR}`
   setenv IAUDate ${IAUDate}
-  set BGFileExt = `$TimeFmtChange ${IAUDate}`.00.00.nc   	# analysis - 3h [YYYY-MM-DD_HH.00.00]
-  set BGFile   = ${prevCyclingFCDir}/${FCFilePrefix}.${BGFileExt}	# mpasout at (analysis - 3h)
-  set BGFileA  = ${CyclingDAInDir}/${BGFilePrefix}.${icFileExt}	# bg at the analysis time
+  set BGFileExt = `$TimeFmtChange ${IAUDate}`.00.00.nc    # analysis - 3h [YYYY-MM-DD_HH.00.00]
+  set BGFile   = ${prevCyclingFCDir}/${FCFilePrefix}.${BGFileExt}    # mpasout at (analysis - 3h)
+  set BGFileA  = ${CyclingDAInDir}/${BGFilePrefix}.${icFileExt}	  # bg at the analysis time
   echo ""
   echo "IAU needs two background files:"
   echo "IC: ${BGFile}"
@@ -147,17 +146,17 @@ if ( ${self_IAU} == True ) then
     mv ./${icFile} ${icFile}_nonIAU
 
     echo "IAU starts from ${IAUDate}."
-    set StartDate  = `$TimeFmtChange ${IAUDate}`:00:00	# YYYYMMDDHH => YYYY-MM-DD_HH:00:00
+    set StartDate  = `$TimeFmtChange ${IAUDate}`:00:00      # YYYYMMDDHH => YYYY-MM-DD_HH:00:00
     # Compute analysis increments (AmB)
-    ln -sfv ${initialState} ${ANFilePrefix}.${icFileExt}		# an.YYYY-MM-DD_HH.00.00.nc
-    ln -sfv ${BGFileA}      ${BGFilePrefix}.${icFileExt}		# bg.YYYY-MM-DD_HH.00.00.nc
+    ln -sfv ${initialState} ${ANFilePrefix}.${icFileExt}    # an.YYYY-MM-DD_HH.00.00.nc
+    ln -sfv ${BGFileA}      ${BGFilePrefix}.${icFileExt}    # bg.YYYY-MM-DD_HH.00.00.nc
     setenv myCommand "${create_amb_in_nc} ${thisValidDate}" # ${IAU_window_s}"
     echo "$myCommand"
     ${myCommand}
     set famb = AmB.`$TimeFmtChange ${IAUDate}`.00.00.nc
-    ls -lL $famb						|| exit
+    ls -lL $famb || exit 1
     # Initial condition (mpasin.YYYY-MM-DD_HH.00.00.nc)
-    ln -sfv ${BGFile} ${ICFilePrefix}.${BGFileExt}		|| exit
+    ln -sfv ${BGFile} ${ICFilePrefix}.${BGFileExt} || exit 1
   else		# either analysis or background does not exist; IAU is off.
     echo "IAU was on, but no input files. So it is off and initialized at ${thisValidDate}."
     set self_IAU          = False

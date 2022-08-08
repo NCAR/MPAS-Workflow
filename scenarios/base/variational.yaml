@@ -248,7 +248,7 @@ variational:
       bumpCovVBalDir: None
     60km:
       bumpCovDir: /glade/scratch/bjung/pandac/20220712_build/60km.NICAS_00
-      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220712_build/60km.CMAT_00/mpas.stddev.2018-04-15_00.00.00.nc
+      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220712_build/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
       bumpCovVBalDir: /glade/scratch/bjung/pandac/20220712_build/60km.VBAL_00
     120km:
       bumpCovDir: /glade/scratch/bjung/pandac/20220712_build/NICAS_00
@@ -283,11 +283,19 @@ variational:
           memory: 45
       60km: #120 inner total
         3denvar:
-          baseSeconds: 350
-          secondsPerEnVarMember: 8
+          # single-precision bundle build
           nodes: 6
           PEPerNode: 32
           memory: 109
+          baseSeconds: 200
+          secondsPerEnVarMember: 10
+        3dhybrid:
+          # single-precision bundle build
+          nodes: 6
+          PEPerNode: 32
+          memory: 109
+          baseSeconds: 250
+          secondsPerEnVarMember: 10
         3dvar:
           baseSeconds: 1200
           nodes: 6
@@ -296,11 +304,25 @@ variational:
     60km: #60 inner total
       60km:
         3denvar:
-          baseSeconds: 500
-          secondsPerEnVarMember: 7
-          nodes: 6
-          PEPerNode: 32
-          memory: 109
+          # double-precision bundle build
+          ##nodes: 6
+          ##PEPerNode: 32
+          ##memory: 45
+          ##baseSeconds: 200
+          ##secondsPerEnVarMember: 6
+          # single-precision bundle build
+          nodes: 4
+          PEPerNode: 36
+          memory: 45
+          baseSeconds: 200
+          secondsPerEnVarMember: 6
+        3dhybrid:
+          # single-precision bundle build (approximated from 3denvar)
+          nodes: 4
+          PEPerNode: 36
+          memory: 45
+          baseSeconds: 250
+          secondsPerEnVarMember: 6
         3dvar:
           baseSeconds: 500
           nodes: 6

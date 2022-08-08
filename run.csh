@@ -23,6 +23,7 @@ set ValidRunConfigs = ( \
   60kmEDA \
   30km-60km3denvar \
   30km-60km3denvarSpecifiedEnsemble \
+  30km-60km3dhybridSpecifiedEnsemble \
   RealTime \
   GenerateObs \
   GenerateGFSAnalyses \
