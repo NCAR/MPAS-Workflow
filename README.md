@@ -22,79 +22,68 @@ Starting a cycling experiment on the Cheyenne HPC
 
  git clone https://github.com/NCAR/MPAS-Workflow
 
- #modify configuration as needed in scenarios/ and config/
+ #modify configuration as needed in `scenarios/*.yaml`, `scenarios/defaults/*.yaml`, or
+ # `test/testinput/*.yaml`
 
  source env-setup/cheyenne.csh
  #OR
  source env-setup/cheyenne.sh
 
- ./Run.py {{runConfig}}
+ ./Run.py {{scenarioConfig}}
  #OR
  ./test.csh
 ```
 
-`{{runConfig}}` is a yaml-based configuration file, examples of which are given in
+`{{scenarioConfig}}` is a yaml-based configuration file, examples of which are given in
 `scenarios/*.yaml` and `test/testinput/*.yaml`
 
 It is required to set the `work` and `run` directories in $HOME/.cylc/global.rc as follows:
 ```
 [hosts]
   [[localhost]]
-    work directory = /glade/scratch/USERNAME/cylc-run
-    run directory = /glade/scratch/USERNAME/cylc-run
+    work directory = /glade/scratch/USER/cylc-run
+    run directory = /glade/scratch/USER/cylc-run
     [[[batch systems]]]
       [[[[pbs]]]]
         job name length maximum = 236
 ```
-`USERNAME` must be filled in with your user-name.  It is possible to choose different locations for
-the cylc `work` and `run` directories, as long as you also modify `cylcWorkDir` in `drivers/Cycle.csh`. It is
+`USER` must be filled in with your user-name.  It is
 recommended to set `job name length maximum` to a large value.
 
 
 Configuration Files
 -------------------
 
-The files under the `config/` and `scenarios/` directories describe the configuration for the
-entire workflow.  Some files are designed to be modified by users, and others mostly by developers.
+The files under the `scenarios/` directories describe the configuration for a particular instance
+of an `MPAS-Workflow` `Cylc` suite.  The `scenarios/defaults/*.yaml` describe some default
+`resource`-based options that users may select in their experiment scenario `yaml` (e.g., 
+`scenarios/*.yaml`.  Both the `defaults` and the particular scenario selected are parsed with
+python-based classes in the `initialize/components/` directory.  Each `component` is associated
+with a particular root `yaml` node.  For example, `Variational.py` parses the configuration of the
+`variational` node, `Forecast.py` parses the `forecast` node, and so on.  The basic (i.e.,
+`non-resource`) options available for each root `yaml` node are described either as class member
+variables or in the class `__init__` method.  The appropriate `yaml` layouts for `resource` options
+(e.g., `variational.job` `externalanalyses.resources`, `observations.resources`, `forecast.job`)
+are demonstrated in `scenarios/defaults/*.yaml`.  `resource` options are also parsed in the
+`initialize/components/` python classes.
 
-### User-modifiable configuration
-
-`config/builds.csh`: describes the build directories for critical applications
-
-`config/scenario.csh`: selection of a particular experiment scenario
-
-For many `csh` scripts located under `config/` and `config/applications`, there is a one-to-one
-correspondance with yaml files located under `scenarios/defaults/`. For those configuration components,
-the `csh` script is used to parse the `yaml` and/or the identically named section of the scenario
-`yaml` file (e.g., `scenarios/3dvar_OIE120km_WarmStart.yaml`). The `base` scenario `yaml`'s contain
-the default values and documentation for each user-configurable setting.  Those `base`
-configuration sections are as follows:
-
-#### cross-application settings
-
-`scenarios/defaults/experiment.yaml`: experiment naming conventions
+#### cross-application `resource` options
 
 `scenarios/defaults/externalanalyses.csh`: controls how external DA system analysis files are produced,
 including online vs. offline.  External analyses are used for verification and for optionally
-initializing a cold-start forecast at the first cylce of an experiment.
+initializing a cold-start forecast at the first cycle of an experiment.
 
 `scenarios/defaults/firstbackground.csh`: controls how the first DA cycle background state is supplied,
 including online vs. offline and deterministic vs. ensemble
-
-`scenarios/defaults/job.yaml`: account and queue selection
 
 `scenarios/defaults/model.yaml`: model mesh settings
 
 `scenarios/defaults/observations.yaml`: observation source data
 
-`scenarios/defaults/staticstream.csh`: controls how the static stream file is supplied.  Defaults to
+`scenarios/defaults/staticstream.yaml`: controls how the static stream file is supplied.  Defaults to
 using the externalanalyses from the first cycle
 
-`scenarios/defaults/workflow.yaml`: cylc task selection and date bounds
-
-#### application-specific settings
-
-`scenarios/defaults/ensvariational.yaml`
+#### application-specific `resource` options
 
 `scenarios/defaults/forecast.yaml`
 
@@ -110,12 +99,13 @@ using the externalanalyses from the first cycle
 
 `scenarios/defaults/verifymodel.yaml`
 
-While users can directly modify those `base` `yaml`'s to achieve their desired configuration,
-it is recommended to modify one of the existing full scenarios located directly under `scenarios/`
-or create a new scenario by copying one of the default scenarios to a new file.  Doing so allows
-each user to easily distinguish their custom experimental settings from the the GitHub HEAD branch,
-while being able to merge recent repository changes without conflict.  Users may select a
-particular scenario, including a custom one of their own making, within `config/scenario.csh`.
+It is recommended only to modify the `default` `yaml`'s in order to add or change the `resource`
+settings.  Otherwise it is recommended for users to modify their selected abridged scenario `yaml`,
+i.e., `scenarios/*.yaml`.  Another possible user workflow is to create a new scenario by copying
+one of the default scenarios to a new file.  Doing so allows each user to easily distinguish their
+custom experimental settings from the the GitHub HEAD branch, while being able to merge upstream
+repository changes without conflict.  Users may select a particular scenario, including a custom
+one of their own making, with the aforementioned command, `./Run.py {{scenarioConfig}}`.
 
 
 ### Developer-modifiable configuration
@@ -125,19 +115,15 @@ outside the design envelope of MPAS-Workflow for which they will need to be exte
 refactored.  It is best practice to discuss such modifications that benefit multiple users via
 GitHub issues, and then submit pull requests.
 
-`setupExperiment/generateExperiment.csh`: produces `cofig/experiment.csh`, which is a global description of the
-workflow file structure and file-naming conventions used across multiple applications, partially
-derived from `config/naming.csh`
-
-`config/environmentJEDI.csh`: run-time environment used across compiled executables
+`config/environmentJEDI.csh`: run-time environment used across compiled mpas-bundle executables
 
 `config/tools.csh`: initializes python tools for workflow task management
 
-If a developer wishes to add a new configuration key beyond the current available options, the
-recommended procedure is to add the key, default value, and description in one of the `base`
-`yaml` files, then parse the option in the corresponding `config/*.csh` file.  Developers
-are referred to the many existing examples and it is recommended to discuss additional options
-to be merged back into the GitHub repository via GitHub issues.
+If a developer wishes to add a new `yaml` key beyond the current available options, the
+recommended procedure is to add the option in the appropriate python class, following the examples
+in `initialize/components/*.py`.  Developers are referred to the many existing examples and it is
+recommended to discuss additional options to be merged back into the GitHub repository via GitHub
+issues and pull requests.
 
 
 #### MPAS (`config/mpas/`)
@@ -182,34 +168,9 @@ further populated by scripts templated on `PrepJEDI.csh` and/or `PrepVariational
 
 
 
-Main driver: drivers/Cycle.csh
-------------------------------
-Creates a new cylc suite file, then runs it. Users need not modify this file.
+Main driver: Run.py
+-------------------
 
-There are additional main drivers in the `drivers/` directory.  They are used to handle non-cycling
-workflows, i.e., where only externally sourced data is used as input.
-
-Developers who wish to add new cylc tasks, or modify the relationships between tasks, may modify
-`drivers/Cycle.csh` and/or the files in the `include` directory:
-- `include/criticalpath.rc`: controls all elements of the critical path for all `CriticalPathType`
-options.  Allows for re-use of `include/forecast.rc` and `include/da.rc` according to the user
-selections.  Those latter two scripts describe all the intra-forecast and intra-da dependencies,
-respectively, independent of tasks in other categories.
-- `include/verifyobs.rc` and `include/verifymodel.rc`: describe the dependencies between `HofX`,
-`Verify*`, `Compare*`, and other kinds of tasks that produce verification statistics files.  These
-include dependencies on tasks in `include/tasks/cycling.rc` that produce the data to be verified.
-Multiple aspects of verification are controlled via the `workflow` section of the scenario
-configuration. Full descriptions of all verification options are available in
-`scenarios/defaults/workflow.yaml`.
-- `include/tasks/*.rc`: describes all cylc tasks that can be selected under the `[[dependencies]]`
-node of `drivers/Cycle.csh` or any other driver. All task dependencies are described in one of
-`criticalpath.rc`, `verifyobs.rc`, `verifymodel.rc`, or files included therein.
-
-See `scenarios/defaults/workflow.yaml` for user-selectable options that control `drivers/Cycle.csh`.
-
-
-Super driver: Run.py
---------------------
 `Run.py` initiates one of the suites (`suites/*.rc`) for either a single scenario or a list of
 scenarios, each of which must be described in a scenario configuration file.  Other than for
 automated testing (`test/testinput/test.yaml`), most of the scenario configurations
@@ -226,73 +187,87 @@ example, execute the following from the command-line:
   ./test.csh
 ```
 
+`Run.py` parses the selected `{{scenarioConfig}}`, automatically generates many
+`Cylc` `include/*/auto/*.rc` files and `config/auto/*.csh` environment variable files, and finally
+initiates the `Cylc` suite by executing `drive.csh`. Users need not modify `Run.py` or `drive.csh`.
+
+There are additional aspects of the driver in `drive.csh`, `initialize/`, and `suites/*.rc`.  For
+most users and developers, only `initialize/components` will need to be consulted and/or modified. 
+
+Developers who wish to add new `Cylc` tasks, or modify the relationships between tasks, may modify
+`include/dependencies/*.rc`, `include/tasks/*.rc`, or `initialize/components/*.py`.
+
+- `include/dependencies/criticalpath.rc`: controls the relationships between the critical path task
+  elements for the `suites/Cycle.rc` suite, in particular for all possible `CriticalPathType`
+  options.  Allows for re-use of `include/tasks/auto/forecast.rc` and `include/tasks/auto/da.rc`
+  (generated automatically from from `initialize/components/Forecast.py` and
+  `initialize/components/DA.py`) according to the user's scenario `yaml` selections.
+- `include/dependencies/verifyobs.rc` and `include/dependencies/verifymodel.rc`: describe the
+  dependencies between `HofX`, `Verify*`, `Compare*`, and other kinds of tasks that produce
+  verification statistics files.  These include dependencies on tasks in
+  `include/tasks/auto/forecast.rc` and `include/tasks/auto/da.rc` that produce the data to be
+  verified.  Multiple aspects of verification are controlled via the `workflow` section of the
+  scenario configuration. Full descriptions of all verification options are available in
+  `initialize/components/Workflow.py`.
+- `include/tasks/verify.rc`: describes particular instances of verification-related `Cylc` tasks.
+  This file differs from the base task descriptions, which are automatically generated by
+`initialize/components/*.py` in the following locations:
+  - `include/tasks/auto/extendedforecast.rc`
+  - `include/tasks/auto/hofx.rc`
+  - `include/tasks/auto/verifymodel.rc`
+  - `include/tasks/auto/verifyobs.rc`
+- `include/tasks/base.rc`: contains some base `Cylc` task descriptors that are inherited
+  by child tasks. Look for the `inherit` keyword for examples.
 
 
 Templated workflow tasks
 ------------------------
 
-These scripts (`applications/*.csh`) serve as templates for multiple workflow components. The
-cylc actual task scripts that are selected via `include/tasks/*.rc` are generated by performing
-sed substitution within `SetupWorkflow.csh` and `applications/AppAndVerify.csh`. Here we give a
-brief summary of the design and templating for each task script.
+These scripts (`applications/*.csh`) serve as templates for multiple workflow components. In some
+cases, the actual `Cylc` task scripts that are selected within `include/tasks/*.rc` and
+`include/tasks/auto/*.rc` are generated by performing sed substitution within `SetupWorkflow.csh`
+and `applications/AppAndVerify.csh`. Here we give a brief summary of the design and templating for
+each application script.
 
 `CleanHofx.csh`: used to generate `CleanHofX*.csh` scripts, which clean `HofX` working directories
 (e.g., `Verification/fc/*`) in order to reduce experiment disk resource requirements.
 
-`CleanVariational.csh`: used to generate `CleanCyclingDA.csh`, which cleans expensive and
-easily reproducible files from the `CyclingDA` working directories in order to reduce experiment
-disk resource requirements.  This is more important for EDA experiments than for single-state
-deterministic cycling.
-
-`EnsembleOfVariational.csh`: used in the `EDAInstance*` cylc task; executes the
-`mpasjedi_eda` application.  Similar to `Variational.csh`, except that the EDA is conducted in
-a single executable.  Multiple `EDAInstance*` members with a small number of sub-members can
-be conducted simultaneously if it is beneficial to group members instead of running them all
-independently like what is achieved via `DAMember*` tasks.  Users are referred to
-`scenarios/defaults/variational.yaml` for configuration information.
-
-`forecast.csh`: used to generate all forecast scripts, e.g., `CyclingFC.csh` and `ExtendedMeanFC.csh`,
-which execute `mpas_atmosphere` forecasts across a templated time range with state output at a
-templated interval. Takes `Variational` analyses or cold-start initial conditions (IC) as inputs.
+`forecast.csh`: used to generate all forecast scripts, e.g., `Forecast.csh` and
+`ExtendedMeanFC.csh`, which execute `mpas_atmosphere` for a command-line-argument controlled time
+duration and state output interval. Takes `Variational` analyses or external analyses processed
+as cold-start initial conditions (IC) as inputs.
 
 `HofX.csh`: used to generate all `HofX*` scripts, e.g., `HofXBG.csh`, `HofXMeanFC.csh`, and
 `HofXEnsMeanBG.csh`.  Each of those executes the `mpasjedi_hofx3d` application. Templated w.r.t.
 the input state directory and prefix, allowing it to read any forecast state written through the
 `MPAS-Atmosphere` `da_state` stream.
 
-`PrepJEDI.csh`: substitutes commonly repeated sections in the `yaml` file for all MPAS-JEDI
+`PrepJEDI.csh`: substitutes commonly repeated sections in the `yaml` file for multiple MPAS-JEDI
 applications. Templated w.r.t. the application type (i.e., `variational`, `hofx`) and application
-name (e.g., `3denvar`, `hofx`). Prepares `namelist.atmosphere`, `streams.atmosphere`, and
+name (e.g., `3denvar`, `3dvar`, `hofx`). Prepares `namelist.atmosphere`, `streams.atmosphere`, and
 `stream_list.atmosphere.*`.  Links required static files and graph info files that describe MPI
 partitioning.
-
-`PrepVariational.csh`: further modifies the application `yaml` file(s) for the `Variational` task
-
-`Variational.csh`: used in the `DAMember*` cylc task; executes the `mpasjedi_variational`
-application.  Templated w.r.t. the background state prefix and directory. Reads one output
-forecast state from a `CyclingFCMember*` task, as coded in `SetupWorkflow.csh`.  Multiple instances
-can be launched in parallel to conduct an ensemble of data assimilations (EDA).  See
-`scenarios/defaults/variational.yaml` for configuration information.
 
 `verifyobs.csh`: used to generate scripts that verify observation-database output from `HofX` and
 `Variational`-type tasks.
 
-`verifymodel.csh`: used to generate scripts that verify model forecast states with respect to GFS
-analyses.
+`verifymodel.csh`: used to generate scripts that verify model forecast states with respect to
+external analyses (i.e., configurable via `initialize/components/ExternalAnalyses.py`).
 
 
 Non-templated workflow tasks
 ----------------------------
-These scripts (`applications/*.csh`) are used as-is without sed substitution.  They are copied to
-the experiment workflow directory by `SetupWorkflow.csh`.
+These scripts (also located at `applications/*.csh`) are used as-is without sed substitution.
+They are copied to the experiment workflow directory by `SetupWorkflow.csh` or by
+`applications/AppAndVerify.csh`.
 
-`ExternalAnalysisToMPAS.csh`: generates cold-start IC files from GFS analyses
+`ExternalAnalysisToMPAS.csh`: generates cold-start IC files from ungribbed external analyses
 
 `GenerateABEInflation.csh`: generates Adaptive Background Error Inflation (ABEI) factors based on
 all-sky IR brightness temperature `H(x_mean)` and `H_clear(x_mean)` from GOES-16 ABI and Himawari-8
 AHI
 
-`GetWarmStartIC.csh`: generates links to pre-generated warm-start IC files
+`LinkWarmStartBackgrounds.csh`: generates links to pre-generated warm-start IC files
 
 `MeanBackground.csh`: calculates the mean of ensemble background states
 
@@ -300,24 +275,49 @@ AHI
 
 `ObsToIODA.csh`: converts BUFR and PrepBUFR observation files to IODANC format
 
-`RTPPInflation.csh`: performs Relaxation To Prior Perturbation (RTPP) inflation, taking as input two
-ensembles, one each of background states and analysis states
+`RTPPInflation.csh`: performs Relaxation To Prior Perturbation (RTPP), taking as input the
+background and analysis ensembles of the ensemble of `Variational*` tasks
+
+`Variational`-related:
+ - `CleanVariational.csh`: optionally cleans expensive and reproducible files from the `CyclingDA`
+   working directories in order to reduce experiment disk resource requirements.  This is most
+   important for EDA experiments than for single-state deterministic cycling. The relevant scenario
+   option is `variational.retainObsFeedback`.
+
+ - `EnsembleOfVariational.csh`: used in the `EDA*` `Cylc` task; executes the
+   `mpasjedi_eda` application.  Similar to `Variational.csh`, except that the EDA is conducted in
+   a single executable.  Multiple `EDA*` members with a small number of sub-members can
+   be conducted simultaneously if it is beneficial to group members instead of running them all
+   independently like what is achieved via `Variational*` member tasks.
+
+ - `PrepVariational.csh`: further modifies the application `yaml` file(s) for the `Variational`
+   task. The primary function is to populate the background error covariance and EDA-relevant
+   entries.
+
+ - `Variational.csh`: used in the `Variational*` `Cylc` task; executes the `mpasjedi_variational`
+   application.  Reads one output forecast state from a `Forecast*` task.  Multiple instances
+   can be launched in parallel to conduct an ensemble of data assimilations (EDA).
+
 
 
 Non-task shell scripts
 ----------------------
-`applications/AppAndVerify.csh`: generate "Application" and "Verification" cylc-task shell scripts
-from the templated workflow task scripts via `sed` substitution
+`applications/AppAndVerify.csh`: generate "Application" and "Verification" `Cylc`-task shell scripts
+from the templated workflow task scripts via `sed` substitution.  Note that although this script
+performs sed substitution on some non-templated `*Variational.csh` scripts, those scripts are
+completely non-templated.  Only the `Variational` verification and `PrepJEDIVaritional.csh` scripts
+are templated.
 
 `getCycleVars.csh`: defines cycle-specific variables, such as multiple formats of the valid date,
 and date-resolved directories
 
 `SetupWorkflow.csh`:
-1. Generate the experiment directory
-2. Copy the current config and scenarios directories to the experiment workflow directory
-   so that a record is kept of all settings
-3. Copy non-templated task scripts to the experiment directory
-4. Generate cylc-task shell scripts from via templated substitution of
+1. Source the experiment directory info from `config/auto/experiment.csh`
+2. Copy non-templated application scripts to the experiment directory
+
+3. Copy the `config`, `include`, `scenarios`, `suites`, `test`, and `tools` directories
+   to the experiment workflow directory so that a record is kept of all settings
+4. Generate application shell scripts via templated substitution of
    `applications/AppAndVerify.csh`, then execution of application-specific
    `applications/AppAndVerify*.csh` scripts
 
@@ -356,10 +356,10 @@ those dealing with complex operations on model state data are often better-handl
 executables.
 
 
-Notes on cylc
--------------
-Full documentation on cylc can be found [here](https://cylc.github.io/documentation/). Below are
-some useful cylc commands to get new users started.
+Notes on `Cylc`
+---------------
+Full documentation on `Cylc` can be found [here](https://cylc.github.io/documentation/). Below are
+some useful `Cylc` commands to get new users started.
 
 1. Print a list of active suites
 ```shell
@@ -374,7 +374,7 @@ cylc gscan
 Double-click an individual suite in order to see detailed information or navigate between suites
 using the drop-down menus.  From the GUI, it is easy to perform actions on the entire suite or
 individual tasks, e.g., hold, resume, kill, trigger.  It is also possible to interrogate the
-real-time progress of the cylc tasks being executed, and in some cases the next tasks that will be
+real-time progress of the `Cylc` tasks being executed, and in some cases the next tasks that will be
 triggered. There are multiple views available, including a flow chart view that is useful for new
 users to learn the dependencies between tasks.
 
@@ -406,11 +406,12 @@ cylctriggerstatus SUITENAME STATUS
 A note about disk management
 ----------------------------
 This workflow includes capability for automated deletion of some intermediate files.  The default
-behavior is to keep all files, but that can be modified by setting the variational.retainObsFeedback
-and/or hofx.retainObsFeedback options to False.  If data storage is still a problem, it is
-recommended to remove the `Cycling*` directories of an experiment after all desired verification has
-completed. The model- and observation-space statistical summary files in the `Verification`
-directory are orders of magnitude smaller than the full model states and instrument feedback files.
+behavior is to keep all files, but that can be modified by setting the
+`variational.retainObsFeedback` and/or `hofx.retainObsFeedback` options to False.  If data storage
+is still a problem, it is recommended to remove the `Cycling*/` directories of an experiment after
+all desired verification has completed. The model- and observation-space statistical summary files
+generated under the `Verification/` directory are orders of magnitude smaller than the full model
+states and instrument feedback files.
 
 
 References
