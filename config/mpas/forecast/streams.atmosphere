@@ -39,6 +39,7 @@
 <stream name="diagnostics"
         type="output"
         precision="{{PRECISION}}"
+        clobber_mode="truncate"
         filename_template="diag.$Y-$M-$D_$h.$m.$s.nc"
         io_type="pnetcdf,cdf5"
         clobber_mode="overwrite"

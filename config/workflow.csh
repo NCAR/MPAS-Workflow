@@ -19,6 +19,8 @@ $setLocal finalCyclePoint
 $setLocal CriticalPathType
 
 # verification
+$setLocal VerifyAgainstObservations
+$setLocal VerifyAgainstExternalAnalyses
 $setLocal VerifyDeterministicDA
 $setLocal CompareDA2Benchmark
 $setLocal VerifyExtendedMeanFC

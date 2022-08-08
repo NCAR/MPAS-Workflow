@@ -127,7 +127,10 @@ conda activate npl
 
 
 ## Data assimilation and supporting tasks (critical path)
-  # (Ens)DataAssim => Post => Finished => Clean
+  # Pre => (Ens)DataAssim => Post => Finished => Clean
+  [[PreDataAssim]]
+    [[[job]]]
+      batch system = background
   [[DataAssimPost]]
     inherit = BACKGROUND
   [[DataAssimFinished]]
@@ -247,7 +250,7 @@ conda activate npl
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = {{GFSAnalysisRetry}}
-  [[GetGFSanalysisFromFTP]]
+  [[GetGFSAnalysisFromFTP]]
     inherit = BATCH
     script = $origin/GetGFSAnalysisFromFTP.csh
     [[[job]]]
@@ -307,20 +310,24 @@ conda activate npl
     inherit = HofXBase
   [[VerifyModelMeanFC]]
     inherit = VerifyModelBase
+  [[VerifyObsMeanFC]]
+    inherit = VerifyModelBase
+  [[CleanHofXMeanFC]]
+    inherit = CleanBase
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofXMeanFC
     env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "hofx"
     script = $origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
-  [[CleanHofXMeanFC{{dt}}hr]]
-    inherit = CleanBase
-    script = $origin/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
   [[VerifyObsMeanFC{{dt}}hr]]
-    inherit = VerifyObsBase
+    inherit = VerifyObsMeanFC
     script = $origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0" "hofx"
   [[VerifyModelMeanFC{{dt}}hr]]
     inherit = VerifyModelMeanFC
     script = $origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC" "0"
+  [[CleanHofXMeanFC{{dt}}hr]]
+    inherit = CleanHofXMeanFC
+    script = $origin/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
 {% endfor %}
 
 
@@ -383,8 +390,8 @@ conda activate npl
   [[CleanHofX{{state}}]]
     inherit = CleanBase
 {% endfor %}
-{% for mem in EnsVerifyMembers %}
 
+{% for mem in EnsVerifyMembers %}
   # ensemble of backgrounds and analyses (including single-member deterministic)
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
@@ -407,29 +414,34 @@ conda activate npl
     inherit = CleanHofX{{state}}
     script = $origin/CleanHofX{{state}}.csh "{{mem}}" "0" "{{state}}"
   {% endfor %}
+{% endfor %}
 
-
+  [[HofXEnsFC]]
+    inherit = HofXBase
+  [[VerifyModelEnsFC]]
+    inherit = VerifyModelBase
+  [[VerifyObsEnsFC]]
+    inherit = VerifyObsBase
+  [[CleanHofXEnsFC]]
+    inherit = CleanBase
+{% for mem in EnsVerifyMembers %}
   # ensemble of extended forecasts from ensemble of analyses
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
     script = $origin/ExtendedEnsFC.csh "{{mem}}" "{{ExtendedFCOutIntervalHR}}" "{{ExtendedFCLengthHR}}" "False"
-  [[HofXEnsFC{{mem}}]]
-    inherit = HofXBase
-  [[VerifyModelEnsFC{{mem}}]]
-    inherit = VerifyModelBase
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
-    inherit = HofXEnsFC{{mem}}
+    inherit = HofXEnsFC
     env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC" "hofx"
     script = $origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
-    inherit = VerifyModelEnsFC{{mem}}
+    inherit = VerifyModelEnsFC
     script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
   [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
-    inherit = VerifyObsBase
+    inherit = VerifyObsEnsFC
     script = $origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0" "hofx"
   [[CleanHofXEnsFC{{mem}}-{{dt}}hr]]
-    inherit = CleanBase
+    inherit = CleanHofXEnsFC
     script = $origin/CleanHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   {% endfor %}
 {% endfor %}

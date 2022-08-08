@@ -44,24 +44,24 @@ firstbackground:
     GFS:
       common:
         PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished"
-      120km:
+      120km: # only available 20180414T18, 20200723T18
         directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/SingleFCFirstCycle/{{FirstCycleDate}}"
         staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
-      60km:
+      60km: # only available 20180414T18, 20200723T18
         directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/SingleFCFirstCycle/{{FirstCycleDate}}"
         staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
-      30km:
+      30km: # only available 20180414T18
         directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/SingleFCFirstCycle/{{FirstCycleDate}}"
         staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
     LaggedGEFS:
       common:
         PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished"
-      120km:
+      120km: # only available 20180414T18, 20200723T18
         directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/EnsFCFirstCycle/{{FirstCycleDate}}"
         staticDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
         maxMembers: 80
         memberFormat: "/{:02d}"
-      60km:
+      60km: # only available 20180414T18, 20200723T18
         directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/EnsFCFirstCycle/{{FirstCycleDate}}"
         staticDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
         maxMembers: 80

@@ -1,0 +1,58 @@
+  # ... for background-duration forecast from deterministic analysis or ensemble of analyses
+{% if VerifyBGMembers or (VerifyEnsMeanBG and nMembers == 1)%}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => VerifyModelBG
+        {{PrepareExternalAnalysis}} => VerifyModelBG
+    {% if CompareBG2Benchmark %}
+        VerifyModelBG:succeed-all => CompareModelBG
+    {% endif %}
+      '''
+{% endif %}
+
+
+  # ... for mean of ensemble of backgrounds and ensemble spread (bg only for obs, bg+an for model)
+{% if VerifyEnsMeanBG and nMembers > 1 %}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => MeanBackground
+        MeanBackground => VerifyModelEnsMeanBG
+        {{PrepareExternalAnalysis}} => VerifyModelEnsMeanBG
+  {% if DiagnoseEnsSpreadBG %}
+        DataAssimFinished => VerifyModelEnsMeanBG
+        VerifyModelEnsMeanBG => {{CleanDataAssim}}
+  {% endif %}
+      '''
+{% endif %}
+
+
+  # ... for ensemble of analyses
+{% if VerifyANMembers %}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+        DataAssimFinished => VerifyModelAN
+        {{PrepareExternalAnalysis}} => VerifyModelAN
+      '''
+{% endif %}
+
+
+  # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
+  # note: assumes that obs and verifying analyses are available at extended forecast times
+{% if VerifyExtendedMeanFC %}
+    [[[{{ExtendedMeanFCTimes}}]]]
+      graph = '''
+        DataAssimFinished => MeanAnalysis => ExtendedMeanFC
+        ExtendedMeanFC => VerifyModelMeanFC
+      '''
+{% endif %}
+
+
+  # ... for extended forecast from ensemble of analyses
+  # note: assumes that obs and verifying analyses are available at extended forecast times
+{% if VerifyExtendedEnsFC %}
+    [[[{{ExtendedEnsFCTimes}}]]]
+      graph = '''
+        DataAssimFinished => ExtendedEnsFC
+        ExtendedEnsFC:succeed-all => VerifyModelEnsFC
+      '''
+{% endif %}

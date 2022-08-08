@@ -24,7 +24,7 @@ externalanalyses:
     PrepareExternalAnalysis: "LinkExternalAnalysis => ExternalAnalysisReady"
 
   GFS:
-    PANDAC:
+    PANDAC: # only available 20180415T00-20180525T00
       120km:
         externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/GFSAna"
       60km:

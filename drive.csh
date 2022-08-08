@@ -74,6 +74,7 @@ else
   # initialCyclePoint
   set ForecastTimes = +PT${DA2FCOffsetHR}H/PT${CyclingWindowHR}H
 endif
+set GenerateTimes = PT${CyclingWindowHR}H
 
 set cylcWorkDir = /glade/scratch/${USER}/cylc-run
 mkdir -p ${cylcWorkDir}
@@ -91,6 +92,7 @@ cat >! suite.rc << EOF
 {% set finalCyclePoint   = "${finalCyclePoint}" %}
 {% set AnalysisTimes = "${AnalysisTimes}" %}
 {% set ForecastTimes = "${ForecastTimes}" %}
+{% set GenerateTimes = "${GenerateTimes}" %}
 {% set DA2FCOffsetHR = "${DA2FCOffsetHR}" %}
 {% set FC2DAOffsetHR = "${FC2DAOffsetHR}" %}
 {% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
@@ -100,6 +102,7 @@ cat >! suite.rc << EOF
 {% set FCLengthHR = ${FCLengthHR} %} #integer
 {% set ExtendedFCOutIntervalHR = ${ExtendedFCOutIntervalHR} %} #integer
 {% set ExtendedFCLengthHR = ${ExtendedFCLengthHR} %} #integer
+{% set ExtendedFCLengths = range(0, ExtendedFCLengthHR+ExtendedFCOutIntervalHR, ExtendedFCOutIntervalHR) %}
 
 # observation information
 {% set observationsResource = "${observations__resource}" %}
@@ -108,6 +111,7 @@ cat >! suite.rc << EOF
 # members
 {% set nMembers = ${nMembers} %} #integer
 {% set allMembers = range(1, nMembers+1, 1) %}
+{% set EnsVerifyMembers = allMembers %}
 
 # variational
 {% set EDASize = ${EDASize} %} #integer
@@ -186,6 +190,8 @@ cat >! suite.rc << EOF
 
 # task selection controls
 {% set CriticalPathType = "${CriticalPathType}" %}
+{% set VerifyAgainstObservations = ${VerifyAgainstObservations} %} #bool
+{% set VerifyAgainstExternalAnalyses = ${VerifyAgainstExternalAnalyses} %} #bool
 {% set VerifyDeterministicDA = ${VerifyDeterministicDA} %} #bool
 {% set CompareDA2Benchmark = ${CompareDA2Benchmark} %} #bool
 {% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %} #bool
@@ -233,11 +239,32 @@ cat >! suite.rc << EOF
 {% endif %}
 
   [[dependencies]]
-## (1) Critical Path
+
+{% if CriticalPathType == "GenerateExternalAnalyses" %}
+## (i) External analyses generation for a historical period
+    [[[{{GenerateTimes}}]]]
+      graph = {{PrepareExternalAnalysis}}
+
+{% elif CriticalPathType == "GenerateObs" %}
+## (ii) Observation generation for a historical period
+    [[[{{GenerateTimes}}]]]
+      graph = {{PrepareObservations}}
+
+{% else %}
+
+## (iii.a) Critical path
 %include include/criticalpath.rc
 
-## (2) Verification
-%include include/verification.rc
+## (iii.b) Verification
+  {% if VerifyAgainstExternalAnalyses %}
+%include include/verifymodel.rc
+  {% endif %}
+
+  {% if VerifyAgainstObservations %}
+%include include/verifyobs.rc
+  {% endif %}
+
+{% endif %}
 
 [runtime]
 %include include/tasks.rc

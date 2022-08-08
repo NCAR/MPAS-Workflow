@@ -1,15 +1,19 @@
         ## Pre-DA
         # observation processing
-        {{PrepareObservations}} => InitDataAssim
+        {{PrepareObservations}} => PreDataAssim
 
         # inflation
 {% if ABEInflation %}
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] =>
         MeanBackground =>
         HofXEnsMeanBG =>
-        GenerateABEInflation => InitDataAssim
+        GenerateABEInflation => PreDataAssim
         GenerateABEInflation => CleanHofXEnsMeanBG
 {% endif %}
+
+
+        # init
+        PreDataAssim => InitDataAssim
 
         ## Data assimilation
 {% if EDASize > 1 %}

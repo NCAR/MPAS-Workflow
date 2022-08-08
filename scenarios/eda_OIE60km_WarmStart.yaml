@@ -1,10 +1,12 @@
 workflow:
   firstCyclePoint: 20180414T18
   initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180415T00
+  finalCyclePoint: 20180514T18
   VerifyDeterministicDA: False
-  VerifyEnsMeanBG: False
-  DiagnoseEnsSpreadBG: False
+  VerifyEnsMeanBG: True
+  DiagnoseEnsSpreadBG: True
+  VerifyAgainstObservations: False
+  VerifyAgainstExternalAnalyses: True
 model:
   outerMesh: 60km
   innerMesh: 60km
@@ -26,8 +28,14 @@ variational:
           nodes: 6
           PEPerNode: 32
           memory: 45
-          baseSeconds: 220
-          secondsPerEnVarMember: 3
+          baseSeconds: 200
+          secondsPerEnVarMember: 6
+          #if single-precision mpas-jedi
+          #nodes: 4
+          #PEPerNode: 36
+          #memory: 45
+          #baseSeconds: 200
+          #secondsPerEnVarMember: 6
 hofx:
   maxIODAPoolSize: 3
 rtpp:

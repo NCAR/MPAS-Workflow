@@ -1,0 +1,30 @@
+workflow:
+  # test a recent date
+  firstCyclePoint: 20180415T00
+  initialCyclePoint: 20180415T00
+  finalCyclePoint: 20180524T18
+  CriticalPathType: GenerateObs
+  maxActiveCyclePoints: 60
+observations:
+  resource: GladeRDAOnline
+  convertToIODAObservations:
+  - prepbufr
+  - satwnd
+  - gpsro
+  - 1bamua
+  - 1bmhs
+  - airsev
+experiment:
+  ExperimentName: 'GenerateObs'
+  ExperimentUserPrefix: ''
+job:
+  CPQueueName: economy
+  NCPQueueName: economy
+#TODO: make it so that model and variational are not necessary
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+variational:
+  DAType: 3dvar
+  nInnerIterations: [0,]

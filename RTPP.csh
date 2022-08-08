@@ -210,8 +210,8 @@ EOF
 
     ## copy original analysis files for diagnosing RTPP behavior
     if ($PMatrix == Pa) then
-      set memDir = "."`${memberDir} 2 $member "${flowMemFmt}"`
-      set tempAnalysisCopyDir = ${anDir}/${memDir}
+      set memDir = `${memberDir} 2 $member "${flowMemFmt}"`
+      set tempAnalysisCopyDir = ./${anDir}${memDir}
 
       # Restore ${ensPFileBeforeRTPP} with original files if ${tempAnalysisCopyDir}/${ensPFile} already exists
       if ( -f "${tempAnalysisCopyDir}/${ensPFile}" ) then

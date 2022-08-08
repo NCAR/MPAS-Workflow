@@ -10,7 +10,7 @@
       graph = '''
 %include include/da.rc
         # depends on previous Forecast
-        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => InitDataAssim
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => PreDataAssim
   {% if GetGDASAnalysis %}
         GetGDASanalysis
   {% endif %}
