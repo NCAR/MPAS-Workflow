@@ -4,7 +4,6 @@ date
 
 # Process arguments
 # =================
-## args
 # ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
 
@@ -16,6 +15,9 @@ set ArgFCLengthHR = "$3"
 
 # ArgIAU: bool, whether to engage IAU (True/False)
 set ArgIAU = "$4"
+
+# ArgMesh: str, mesh name, one of allMeshesJinja, only applicable to FirstCycleDate
+set ArgMesh = "$5"
 
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
@@ -39,15 +41,62 @@ source config/tools.csh
 source config/model.csh
 source config/builds.csh
 source config/environmentJEDI.csh
-source config/applications/forecast.csh
+source config/applications/forecast.csh "$ArgMesh"
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-# templated work directory
-set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
+# mesh-dependent and thisValidDate-dependent settings
+if ( ${thisValidDate} == ${FirstCycleDate} ) then
+  set do_DAcycling = "false"
+  if ("$ArgMesh" == "$outerMesh") then
+    # templated work directory
+    set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
+    set self_icStateDir = $ExternalAnalysisDirOuter
+    set self_icStatePrefix = $externalanalyses__filePrefixOuter
+    set nCells = $nCellsOuter
+# not used presently
+#  else if ("$ArgMesh" == "$innerMesh") then
+#    set self_WorkDir = ${FirstBackgroundDirInner}
+#    set self_icStateDir = $ExternalAnalysisDirInner
+#    set self_icStatePrefix = $externalanalyses__filePrefixInner
+#    set nCells = $nCellsInner
+#  else if ("$ArgMesh" == "$ensembleMesh") then
+#    set self_WorkDir = ${FirstBackgroundDirEnsemble}
+#    set self_icStateDir = $ExternalAnalysisDirEnsemble
+#    set self_icStatePrefix = $externalanalyses__filePrefixEnsemble
+#    set nCells = $nCellsEnsemble
+  endif
+else
+  ## ALL forecasts after the first cycle date use this sub-branch (must be outerMesh)
+  set do_DAcycling = "true"
+
+  # templated work directory
+  set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
+
+  # other templated variables
+  set self_icStateDir = $StateDirsTEMPLATE[$ArgMember]
+
+  # static variables
+  set self_icStatePrefix = ${ANFilePrefix}
+
+  set nCells = $nCellsOuter
+endif
+
+set icFileExt = ${thisMPASFileDate}.nc
+set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
+
+if ( ${thisValidDate} == ${FirstCycleDate} ) then
+  # use cold-start IC for static stream
+  set memberStaticFieldsFile = ${initialState}
+else
+  # use previously generated IC for static stream
+  set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
+  set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
+endif
+
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
@@ -61,73 +110,59 @@ set self_FCIntervalHR = ${ArgFCIntervalHR}
 set self_FCLengthHR   = ${ArgFCLengthHR}
 set StartDate = ${thisMPASNamelistDate}
 
-# static variables
-set self_icStatePrefix = ${ANFilePrefix}
 
 # ================================================================================================
 
-## copy static fields and link initial forecast state
+## initial forecast file
+set icFile = ${ICFilePrefix}.${icFileExt}
+if( -e ${icFile} ) rm ./${icFile}
+ln -sfv ${initialState} ./${icFile}
+
+## static fields file
 rm ${localStaticFieldsPrefix}*.nc
 rm ${localStaticFieldsPrefix}*.nc-lock
 set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ${localStaticFieldsFile}
-set icFileExt = ${thisMPASFileDate}.nc
-set icFile = ${ICFilePrefix}.${icFileExt}
-if( -e ${icFile} ) rm ./${icFile}
-if ( ${thisValidDate} == ${FirstCycleDate} ) then
-  set initialState = ${ExternalAnalysisDir}/$externalanalyses__filePrefix.${icFileExt}
-  set do_DAcycling = "false"
-  set memberStaticFieldsFile = ${initialState}
-  set self_IAU = False
-else
-  set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
-  set do_DAcycling = "true"
-  set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
-  set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
-  set firstIAUDate = `$advanceCYMDH ${FirstCycleDate} ${IAUoutIntervalHR}`
-  if ($thisValidDate < $firstIAUDate) then
-    set self_IAU = False
-  else
-    set self_IAU = ${ArgIAU}
-  endif
-endif
-
-ln -sfv ${initialState} ./${icFile}
 ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 # We can start IAU only from the second DA cycle (otherwise, 3hrly background forecast is not available yet.)
-if ( ${self_IAU} == True ) then 
- set IAUDate = `$advanceCYMDH ${thisCycleDate} -${IAUoutIntervalHR}`
- setenv IAUDate ${IAUDate}
- set BGFileExt = `$TimeFmtChange ${IAUDate}`.00.00.nc   	# analysis - 3h [YYYY-MM-DD_HH.00.00]
- set BGFile   = ${prevCyclingFCDir}/${FCFilePrefix}.${BGFileExt}	# mpasout at (analysis - 3h)
- set BGFileA  = ${CyclingDAInDir}/${BGFilePrefix}.${icFileExt}	# bg at the analysis time
- echo ""
- echo "IAU needs two background files:"
- echo "IC: ${BGFile}"
- echo "bg: ${BGFileA}"
+set self_IAU = False
+set firstIAUDate = `$advanceCYMDH ${FirstCycleDate} ${IAUoutIntervalHR}`
+if ($thisValidDate >= $firstIAUDate) then
+  set self_IAU = ${ArgIAU}
+endif
+if ( ${self_IAU} == True ) then
+  set IAUDate = `$advanceCYMDH ${thisCycleDate} -${IAUoutIntervalHR}`
+  setenv IAUDate ${IAUDate}
+  set BGFileExt = `$TimeFmtChange ${IAUDate}`.00.00.nc   	# analysis - 3h [YYYY-MM-DD_HH.00.00]
+  set BGFile   = ${prevCyclingFCDir}/${FCFilePrefix}.${BGFileExt}	# mpasout at (analysis - 3h)
+  set BGFileA  = ${CyclingDAInDir}/${BGFilePrefix}.${icFileExt}	# bg at the analysis time
+  echo ""
+  echo "IAU needs two background files:"
+  echo "IC: ${BGFile}"
+  echo "bg: ${BGFileA}"
 
- if ( -e ${BGFile} && -e ${BGFileA} ) then
-  mv ./${icFile} ${icFile}_nonIAU
+  if ( -e ${BGFile} && -e ${BGFileA} ) then
+    mv ./${icFile} ${icFile}_nonIAU
 
-  echo "IAU starts from ${IAUDate}."
-  set StartDate  = `$TimeFmtChange ${IAUDate}`:00:00	# YYYYMMDDHH => YYYY-MM-DD_HH:00:00
-  # Compute analysis increments (AmB)
-  ln -sfv ${initialState} ${ANFilePrefix}.${icFileExt}		# an.YYYY-MM-DD_HH.00.00.nc
-  ln -sfv ${BGFileA}      ${BGFilePrefix}.${icFileExt}		# bg.YYYY-MM-DD_HH.00.00.nc
-  setenv myCommand "${create_amb_in_nc} ${thisValidDate}" # ${IAU_window_s}"
-  echo "$myCommand"
-  ${myCommand}
-  set famb = AmB.`$TimeFmtChange ${IAUDate}`.00.00.nc
-  ls -lL $famb						|| exit
-  # Initial condition (mpasin.YYYY-MM-DD_HH.00.00.nc)
-  ln -sfv ${BGFile} ${ICFilePrefix}.${BGFileExt}		|| exit
- else		# either analysis or background does not exist; IAU is off.
-  echo "IAU was on, but no input files. So it is off and initialized at ${thisValidDate}."
-  set self_IAU          = False
-  set self_FCLengthHR   = ${CyclingWindowHR}
- endif
+    echo "IAU starts from ${IAUDate}."
+    set StartDate  = `$TimeFmtChange ${IAUDate}`:00:00	# YYYYMMDDHH => YYYY-MM-DD_HH:00:00
+    # Compute analysis increments (AmB)
+    ln -sfv ${initialState} ${ANFilePrefix}.${icFileExt}		# an.YYYY-MM-DD_HH.00.00.nc
+    ln -sfv ${BGFileA}      ${BGFilePrefix}.${icFileExt}		# bg.YYYY-MM-DD_HH.00.00.nc
+    setenv myCommand "${create_amb_in_nc} ${thisValidDate}" # ${IAU_window_s}"
+    echo "$myCommand"
+    ${myCommand}
+    set famb = AmB.`$TimeFmtChange ${IAUDate}`.00.00.nc
+    ls -lL $famb						|| exit
+    # Initial condition (mpasin.YYYY-MM-DD_HH.00.00.nc)
+    ln -sfv ${BGFile} ${ICFilePrefix}.${BGFileExt}		|| exit
+  else		# either analysis or background does not exist; IAU is off.
+    echo "IAU was on, but no input files. So it is off and initialized at ${thisValidDate}."
+    set self_IAU          = False
+    set self_FCLengthHR   = ${CyclingWindowHR}
+  endif
 endif
 
 ## link MPAS mesh graph info
@@ -152,11 +187,11 @@ end
 ## copy/modify dynamic streams file
 if( -e ${StreamsFile}) rm ${StreamsFile}
 cp -v $ModelConfigDir/$AppName/${StreamsFile} .
-sed -i 's@nCells@'${nCells}'@' ${StreamsFile}
-sed -i 's@outputInterval@'${self_FCIntervalHR}':00:00@' ${StreamsFile}
-sed -i 's@StaticFieldsPrefix@'${localStaticFieldsPrefix}'@' ${StreamsFile}
-sed -i 's@ICFilePrefix@'${ICFilePrefix}'@' ${StreamsFile}
-sed -i 's@FCFilePrefix@'${FCFilePrefix}'@' ${StreamsFile}
+sed -i 's@{{nCells}}@'${nCells}'@' ${StreamsFile}
+sed -i 's@{{outputInterval}}@'${self_FCIntervalHR}':00:00@' ${StreamsFile}
+sed -i 's@{{StaticFieldsPrefix}}@'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@{{ICFilePrefix}}@'${ICFilePrefix}'@' ${StreamsFile}
+sed -i 's@{{FCFilePrefix}}@'${FCFilePrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 ## Update sea-surface variables from GFS/GEFS analyses
@@ -167,7 +202,7 @@ if ( "${updateSea}" == "True" ) then
   ## sea/ocean surface files
   # TODO: move sea directory configuration to yamls
   setenv seaMaxMembers 20
-  setenv deterministicSeaAnaDir ${ExternalAnalysisDir}
+  setenv deterministicSeaAnaDir ${ExternalAnalysisDirOuter}
   setenv deterministicSeaMemFmt " "
   setenv deterministicSeaFilePrefix x1.${nCells}.init
 

@@ -31,6 +31,7 @@ ln -sfv ${externalanalyses__Vtable} Vtable
 rm ${NamelistFileWPS}
 cp -v $ModelConfigDir/$AppName/${NamelistFileWPS} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
+sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileWPS
 
 # Run the executable
 # ==================

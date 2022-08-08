@@ -13,6 +13,14 @@ $setLocal outerMesh
 $setLocal innerMesh
 $setLocal ensembleMesh
 
+setenv nCellsOuter "`$getLocalOrNone nCells.$outerMesh`"
+setenv nCellsInner "`$getLocalOrNone nCells.$innerMesh`"
+setenv nCellsEnsemble "`$getLocalOrNone nCells.$ensembleMesh`"
+
+# list of all meshes formatted to be fed to a jinja2 command
+set allMeshesJinja = '["'$outerMesh'", "'$innerMesh'", "'$ensembleMesh'"]'
+
+# MeshesDescriptor used for automated experiment naming conventions
 setenv MeshesDescriptor O
 if ("$outerMesh" != "$innerMesh") then
   setenv MeshesDescriptor ${MeshesDescriptor}${outerMesh}
@@ -25,10 +33,6 @@ if ("$innerMesh" != "$ensembleMesh") then
   #setenv MeshesDescriptor ${MeshesDescriptor}${innerMesh}
 endif
 setenv MeshesDescriptor ${MeshesDescriptor}E${ensembleMesh}
-
-setenv nCellsOuter "`$getLocalOrNone nCells.$outerMesh`"
-setenv nCellsInner "`$getLocalOrNone nCells.$innerMesh`"
-setenv nCellsEnsemble "`$getLocalOrNone nCells.$ensembleMesh`"
 
 $setLocal ${outerMesh}.TimeStep
 $setLocal ${outerMesh}.DiffusionLengthScale

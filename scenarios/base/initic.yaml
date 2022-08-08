@@ -8,11 +8,11 @@ initic:
     #  PEPerNode: int
     30km:
       seconds: 60
-      nodes: 1
+      nodes: 4
       PEPerNode: 36
     60km:
       seconds: 60
-      nodes: 1
+      nodes: 2
       PEPerNode: 36
     120km:
       seconds: 60

@@ -10,51 +10,83 @@ source config/scenario.csh externalanalyses
 $setNestedExternalanalyses resource
 
 # outer
-foreach parameter (externalDirectory filePrefix Vtable PrepareExternalAnalysis)
-  set p = "`$getLocalOrNone $externalanalyses__resource.$outerMesh.${parameter}`"
+set name = Outer
+set mesh = "$outerMesh"
+set ncells = "$nCellsOuter"
+foreach parameter (externalDirectory filePrefix Vtable UngribPrefix PrepareExternalAnalysisTasks)
+  set p = "`$getLocalOrNone $externalanalyses__resource.$mesh.${parameter}`"
   if ("$p" == None) then
     set p = "`$getLocalOrNone $externalanalyses__resource.common.${parameter}`"
   endif
   if ("$p" == None) then
     set p = "`$getLocalOrNone defaults.${parameter}`"
   endif
-  set externalanalyses__${parameter} = "$p"
+  if ("$parameter" == filePrefix) then
+    set externalanalyses__${parameter}${name} = `echo "$p" | sed 's@{{nCells}}@'$ncells'@'`
+  else if ("$parameter" == PrepareExternalAnalysisTasks) then
+    set tmp = ""
+    foreach task ($p)
+      set tmp = "$tmp"`echo '"'$task'"' | sed 's@mesh@'$mesh'@g'`", "
+    end
+    set externalanalyses__${parameter}${name} = "$tmp"
+  else
+    set externalanalyses__${parameter}${name} = "$p"
+  endif
 end
 
-set externalanalyses__filePrefix = `echo "$externalanalyses__filePrefix" | sed 's@{{nCells}}@'$nCellsOuter'@'`
+# assume UngribPrefix and Vtable are always identical across meshes
+set externalanalyses__UngribPrefix = "$externalanalyses__UngribPrefixOuter"
+unset externalanalyses__UngribPrefixOuter
 
-#if ("$externalanalyses_externalDirectory" == None && "$externalanalyses_PrepareExternalAnalysis" == ExternalAnalysisReady) then
-#  echo "externalanalyses (ERROR): one of externalDirectory or PrepareExternalAnalysis must be defined"
-#  exit 1
-#endif
-
+set externalanalyses__Vtable = "$externalanalyses__VtableOuter"
+unset externalanalyses__VtableOuter
 
 # inner
-foreach parameter (externalDirectory filePrefix)
-  set p = "`$getLocalOrNone $externalanalyses__resource.$innerMesh.${parameter}`"
+set name = Inner
+set mesh = "$innerMesh"
+set ncells = "$nCellsInner"
+foreach parameter (externalDirectory filePrefix PrepareExternalAnalysisTasks)
+  set p = "`$getLocalOrNone $externalanalyses__resource.$mesh.${parameter}`"
   if ("$p" == None) then
     set p = "`$getLocalOrNone $externalanalyses__resource.common.${parameter}`"
   endif
   if ("$p" == None) then
     set p = "`$getLocalOrNone defaults.${parameter}`"
   endif
-  set externalanalyses__${parameter}Inner = "$p"
+  if ("$parameter" == filePrefix) then
+    set externalanalyses__${parameter}${name} = `echo "$p" | sed 's@{{nCells}}@'$ncells'@'`
+  else if ("$parameter" == PrepareExternalAnalysisTasks) then
+    set tmp = ""
+    foreach task ($p)
+      set tmp = "$tmp"`echo '"'$task'"' | sed 's@mesh@'$mesh'@g'`", "
+    end
+    set externalanalyses__${parameter}${name} = "$tmp"
+  else
+    set externalanalyses__${parameter}${name} = "$p"
+  endif
 end
-
-set externalanalyses__filePrefixInner = `echo "$externalanalyses__filePrefixInner" | sed 's@{{nCells}}@'$nCellsInner'@'`
-
 
 # ensemble
-foreach parameter (externalDirectory filePrefix)
-  set p = "`$getLocalOrNone $externalanalyses__resource.$ensembleMesh.${parameter}`"
+set name = Ensemble
+set mesh = "$ensembleMesh"
+set ncells = "$nCellsEnsemble"
+foreach parameter (externalDirectory filePrefix PrepareExternalAnalysisTasks)
+  set p = "`$getLocalOrNone $externalanalyses__resource.$mesh.${parameter}`"
   if ("$p" == None) then
     set p = "`$getLocalOrNone $externalanalyses__resource.common.${parameter}`"
   endif
   if ("$p" == None) then
     set p = "`$getLocalOrNone defaults.${parameter}`"
   endif
-  set externalanalyses__${parameter}Ensemble = "$p"
+  if ("$parameter" == filePrefix) then
+    set externalanalyses__${parameter}${name} = `echo "$p" | sed 's@{{nCells}}@'$ncells'@'`
+  else if ("$parameter" == PrepareExternalAnalysisTasks) then
+    set tmp = ""
+    foreach task ($p)
+      set tmp = "$tmp"`echo '"'$task'"' | sed 's@mesh@'$mesh'@g'`", "
+    end
+    set externalanalyses__${parameter}${name} = "$tmp"
+  else
+    set externalanalyses__${parameter}${name} = "$p"
+  endif
 end
-
-set externalanalyses__filePrefixEnsemble = `echo "$externalanalyses__filePrefixEnsemble" | sed 's@{{nCells}}@'$nCellsEnsemble'@'`
-

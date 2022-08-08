@@ -9,15 +9,6 @@ set thisCycleDate = $FirstCycleDate
 set thisValidDate = $thisCycleDate
 source ./getCycleVars.csh
 
-## next date from which first background is initialized
-set nextFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} +${CyclingWindowHR}`
-setenv nextFirstCycleDate ${nextFirstCycleDate}
-set Nyy = `echo ${nextFirstCycleDate} | cut -c 1-4`
-set Nmm = `echo ${nextFirstCycleDate} | cut -c 5-6`
-set Ndd = `echo ${nextFirstCycleDate} | cut -c 7-8`
-set Nhh = `echo ${nextFirstCycleDate} | cut -c 9-10`
-set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
-
 set member = 1
 while ( $member <= $nMembers )
   echo ""

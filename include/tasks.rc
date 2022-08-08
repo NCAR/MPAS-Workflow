@@ -219,14 +219,13 @@ conda activate npl
     inherit = CompareBase
     script = $origin/CompareObsDA.csh "1" "0" "DA" "variational"
 
-
 ## Forecast (critical path)
   [[Forecast]]
     inherit = ForecastBase
 {% for mem in allMembers %}
   [[ForecastMember{{mem}}]]
     inherit = Forecast
-    script = $origin/Forecast.csh "{{mem}}" "{{FCOutIntervalHR}}" "{{FCLengthHR}}" "{{forecastIAU}}"
+    script = $origin/Forecast.csh "{{mem}}" "{{FCOutIntervalHR}}" "{{FCLengthHR}}" "{{forecastIAU}}" "{{outerMesh}}"
     [[[job]]]
       execution retry delays = {{CyclingFCRetry}}
 {% endfor %}
@@ -256,11 +255,6 @@ conda activate npl
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = {{GFSAnalysisRetry}}
-  [[LinkExternalAnalysis]]
-    inherit = BATCH
-    script = $origin/LinkExternalAnalysis.csh
-    [[[job]]]
-      execution time limit = PT30S
 
   [[UngribExternalAnalysis]]
     inherit = BATCH
@@ -273,9 +267,17 @@ conda activate npl
     [[[directives]]]
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
-  [[ExternalAnalysisToMPAS]]
+
+{% for mesh in allMeshes %}
+  [[LinkExternalAnalysis-{{mesh}}]]
     inherit = BATCH
-    script = $origin/ExternalAnalysisToMPAS.csh
+    script = $origin/LinkExternalAnalysis.csh "{{mesh}}"
+    [[[job]]]
+      execution time limit = PT30S
+
+  [[ExternalAnalysisToMPAS-{{mesh}}]]
+    inherit = BATCH
+    script = $origin/ExternalAnalysisToMPAS.csh "{{mesh}}"
     [[[job]]]
       execution time limit = PT{{InitICSeconds}}S
       execution retry delays = {{InitializationRetry}}
@@ -283,6 +285,8 @@ conda activate npl
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select={{InitICNodes}}:ncpus={{InitICPEPerNode}}:mpiprocs={{InitICPEPerNode}}
+{% endfor %}
+
   [[ExternalAnalysisReady]]
     inherit = BACKGROUND
   [[GetGDASanalysis]]
@@ -305,7 +309,7 @@ conda activate npl
       -l = select=1:ncpus=36:mpiprocs=36
   [[ExtendedMeanFC]]
     inherit = ExtendedFCBase
-    script = $origin/ExtendedMeanFC.csh "1" "{{ExtendedFCOutIntervalHR}}" "{{ExtendedFCLengthHR}}" "False"
+    script = $origin/ExtendedMeanFC.csh "1" "{{ExtendedFCOutIntervalHR}}" "{{ExtendedFCLengthHR}}" "False" "{{outerMesh}}"
   [[HofXMeanFC]]
     inherit = HofXBase
   [[VerifyModelMeanFC]]
@@ -428,7 +432,7 @@ conda activate npl
   # ensemble of extended forecasts from ensemble of analyses
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
-    script = $origin/ExtendedEnsFC.csh "{{mem}}" "{{ExtendedFCOutIntervalHR}}" "{{ExtendedFCLengthHR}}" "False"
+    script = $origin/ExtendedEnsFC.csh "{{mem}}" "{{ExtendedFCOutIntervalHR}}" "{{ExtendedFCLengthHR}}" "False" "{{outerMesh}}"
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
     inherit = HofXEnsFC

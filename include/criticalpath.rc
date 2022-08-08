@@ -1,7 +1,15 @@
 # firstCyclePoint
 {% if initialCyclePoint == firstCyclePoint %}
     [[[R1]]]
-      graph = {{PrepareFirstBackground}}
+      graph = '''
+        # prepare first DA background state
+        {{PrepareExternalAnalysisOuter}} => {{PrepareFirstBackgroundOuter}}
+
+        # prepare analyses (init) files (for dual-mesh Variational) for reading to
+        # static and input stream in all cycles for inner and ensemble geometries
+        {{PrepareExternalAnalysisInner}}
+        {{PrepareExternalAnalysisEnsemble}}
+      '''
 {% endif %}
 
 # all other cycles

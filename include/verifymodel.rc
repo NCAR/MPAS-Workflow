@@ -3,7 +3,7 @@
     [[[{{AnalysisTimes}}]]]
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => VerifyModelBG
-        {{PrepareExternalAnalysis}} => VerifyModelBG
+        {{PrepareExternalAnalysisOuter}} => VerifyModelBG
     {% if CompareBG2Benchmark %}
         VerifyModelBG:succeed-all => CompareModelBG
     {% endif %}
@@ -17,7 +17,7 @@
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => MeanBackground
         MeanBackground => VerifyModelEnsMeanBG
-        {{PrepareExternalAnalysis}} => VerifyModelEnsMeanBG
+        {{PrepareExternalAnalysisOuter}} => VerifyModelEnsMeanBG
   {% if DiagnoseEnsSpreadBG %}
         DataAssimFinished => VerifyModelEnsMeanBG
         VerifyModelEnsMeanBG => {{CleanDataAssim}}
@@ -31,7 +31,7 @@
     [[[{{AnalysisTimes}}]]]
       graph = '''
         DataAssimFinished => VerifyModelAN
-        {{PrepareExternalAnalysis}} => VerifyModelAN
+        {{PrepareExternalAnalysisOuter}} => VerifyModelAN
       '''
 {% endif %}
 

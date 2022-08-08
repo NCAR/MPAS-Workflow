@@ -372,12 +372,12 @@ while ( $member <= ${nMembers} )
   foreach localStaticFieldsFile ($localStaticFieldsFileList)
     @ iMesh++
 
-    set StaticFieldsFile = ${localStaticFieldsFile}${memSuffix}
-    rm ${StaticFieldsFile}
+    set localStatic = ${localStaticFieldsFile}${memSuffix}
+    rm ${localStatic}
 
-    set StaticMemDir = `${memberDir} 2 $member "${staticMemFmt}"`
-    set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${StaticMemDir}/$StaticFieldsFileList[$iMesh]
-    ln -sfv ${memberStaticFieldsFile} ${StaticFieldsFile}
+    set staticMemDir = `${memberDir} 2 $member "${staticMemFmt}"`
+    set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${staticMemDir}/$StaticFieldsFileList[$iMesh]
+    ln -sfv ${memberStaticFieldsFile} ${localStatic}
   end
 
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
@@ -412,27 +412,32 @@ while ( $member <= ${nMembers} )
   rm ${TemplateFieldsFileOuter}${memSuffix}
   ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
 
-  # use localStaticFieldsFileInner as the TemplateFieldsFileInner
-  # NOTE: not perfect for EDA if static fields differ between members,
-  #       but dual-res EDA not working yet anyway
   if ($nCellsOuter != $nCellsInner) then
     set tFile = ${TemplateFieldsFileInner}${memSuffix}
     rm $tFile
 
-    ## next date from which first background is initialized
-    set nextFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} +${CyclingWindowHR}`
-    setenv nextFirstCycleDate ${nextFirstCycleDate}
-    set Nyy = `echo ${nextFirstCycleDate} | cut -c 1-4`
-    set Nmm = `echo ${nextFirstCycleDate} | cut -c 5-6`
-    set Ndd = `echo ${nextFirstCycleDate} | cut -c 7-8`
-    set Nhh = `echo ${nextFirstCycleDate} | cut -c 9-10`
-    set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
+    # use localStaticFieldsFileInner as the TemplateFieldsFileInner
+    # NOTE: not perfect for EDA if static fields differ between members,
+    #       but dual-res EDA not working yet anyway
+    cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
 
-    #modify "Inner" initial forecast file
-    # TODO: capture the naming convention for FirstCyclingFCDir somewhere else
-    set memDir = `${memberDir} $nMembers 1`
-    set FirstCyclingFCDir = ${CyclingFCWorkDir}/${FirstCycleDate}${memDir}/Inner
-    cp -v ${FirstCyclingFCDir}/${self_StatePrefix}.${nextFirstFileDate}.nc $tFile
+    # modify xtime
+    # TODO: handle errors from python executions, e.g.:
+    # '''
+    #     import netCDF4 as nc
+    # ImportError: No module named netCDF4
+    # '''
+    echo "${updateXTIME} $tFile ${thisCycleDate}"
+    ${updateXTIME} $tFile ${thisCycleDate}
+  endif
+
+  if ($nCellsOuter != $nCellsEnsemble && $nCellsInner != $nCellsEnsemble) then
+    set tFile = ${TemplateFieldsFileEnsemble}${memSuffix}
+    rm $tFile
+
+    # use localStaticFieldsFileInner as the TemplateFieldsFileInner
+    cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
+
     # modify xtime
     # TODO: handle errors from python executions, e.g.:
     # '''
@@ -447,7 +452,7 @@ while ( $member <= ${nMembers} )
     if (${memSuffix} != "") then
       cp ${StreamsFile_} ${StreamsFile_}${memSuffix}
     endif
-    sed -i 's@TemplateFieldsMember@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
+    sed -i 's@{{TemplateFieldsMember}}@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
     sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
   end
   sed -i 's@{{StreamsFileMember}}@'${memSuffix}'@' $yamlFileList[$member]

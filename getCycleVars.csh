@@ -18,6 +18,9 @@ set CyclingDADirs = (${CyclingDADir})
 set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})
 
 set ExternalAnalysisDir = ${ExternalAnalysisWorkDir}/${thisValidDate}
+set ExternalAnalysisDirOuter = ${ExternalAnalysisWorkDirOuter}/${thisValidDate}
+set ExternalAnalysisDirInner = ${ExternalAnalysisWorkDirInner}/${thisValidDate}
+set ExternalAnalysisDirEnsemble = ${ExternalAnalysisWorkDirEnsemble}/${thisValidDate}
 
 set prevCyclingDADir = ${CyclingDAWorkDir}/${prevCycleDate}
 set CyclingFCDir = ${CyclingFCWorkDir}/${thisCycleDate}

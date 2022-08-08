@@ -30,7 +30,7 @@ source config/workflow.csh
 
 # application-specific settings, including resource requests
 source config/applications/ensvariational.csh
-source config/applications/forecast.csh
+source config/applications/forecast.csh $outerMesh
 source config/applications/hofx.csh
 source config/applications/initic.csh
 source config/applications/rtpp.csh
@@ -112,6 +112,8 @@ cat >! suite.rc << EOF
 {% set nMembers = ${nMembers} %} #integer
 {% set allMembers = range(1, nMembers+1, 1) %}
 {% set EnsVerifyMembers = allMembers %}
+{% set allMeshes = ${allMeshesJinja} %} #list
+{% set outerMesh = "$outerMesh" %}
 
 # variational
 {% set EDASize = ${EDASize} %} #integer
@@ -168,10 +170,17 @@ cat >! suite.rc << EOF
 {% set HofXPEPerNode = "${hofx__PEPerNode}" %}
 {% set HofXMemory = "${hofx__memory}" %}
 
-## Mini-workflow that prepares a cold-start initial condition file from an external analysis
-{% set PrepareExternalAnalysis = "${externalanalyses__PrepareExternalAnalysis}" %}
+## Mini-workflows that prepare cold-start initial condition files from an external analysis
+{% set PrepareExternalAnalysisTasksOuter = [${externalanalyses__PrepareExternalAnalysisTasksOuter}] %}
+{% set PrepareExternalAnalysisOuter = " => ".join(PrepareExternalAnalysisTasksOuter) %}
 
-{% set PrepareFirstBackground = PrepareExternalAnalysis+" => ${firstbackground__PrepareFirstBackgroundOuter}" %}
+{% set PrepareExternalAnalysisTasksInner = [${externalanalyses__PrepareExternalAnalysisTasksInner}] %}
+{% set PrepareExternalAnalysisInner = " => ".join(PrepareExternalAnalysisTasksInner) %}
+
+{% set PrepareExternalAnalysisTasksEnsemble = [${externalanalyses__PrepareExternalAnalysisTasksEnsemble}] %}
+{% set PrepareExternalAnalysisEnsemble = " => ".join(PrepareExternalAnalysisTasksEnsemble) %}
+
+{% set PrepareFirstBackgroundOuter = "${firstbackground__PrepareFirstBackgroundOuter}" %}
 
 {% set InitICSeconds = "${initic__seconds}" %}
 {% set InitICNodes = "${initic__nodes}" %}
@@ -214,7 +223,7 @@ cat >! suite.rc << EOF
 {% endif %}
 
 # Use external analysis for sea surface updating
-{% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysis %}
+{% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysisOuter %}
 
 
 [meta]
@@ -243,7 +252,7 @@ cat >! suite.rc << EOF
 {% if CriticalPathType == "GenerateExternalAnalyses" %}
 ## (i) External analyses generation for a historical period
     [[[{{GenerateTimes}}]]]
-      graph = {{PrepareExternalAnalysis}}
+      graph = {{PrepareExternalAnalysisOuter}}
 
 {% elif CriticalPathType == "GenerateObs" %}
 ## (ii) Observation generation for a historical period

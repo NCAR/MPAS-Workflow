@@ -153,6 +153,9 @@ setenv ObsWorkDir ${ExperimentDirectory}/\$obsWorkDir
 setenv ${DataAssim}WorkDir ${ExperimentDirectory}/\$dataAssimWorkDir
 
 setenv ${Forecast}WorkDir ${ExperimentDirectory}/\$forecastWorkDir
+#setenv FirstBackgroundDirOuter ${ExperimentDirectory}/\$forecastWorkDir/template-$outerMesh/${FirstCycleDate}
+#setenv FirstBackgroundDirInner ${ExperimentDirectory}/\$forecastWorkDir/template-$innerMesh/${FirstCycleDate}
+#setenv FirstBackgroundDirEnsemble ${ExperimentDirectory}/\$forecastWorkDir/template-$ensembleMesh/${FirstCycleDate}
 
 setenv CyclingInflationWorkDir ${ExperimentDirectory}/\$cyclingInflationWorkDir
 setenv RTPPWorkDir ${ExperimentDirectory}/\$rTPPWorkDir
@@ -161,9 +164,10 @@ setenv ABEInflationWorkDir ${ExperimentDirectory}/\$aBEInflationWorkDir
 setenv ExtendedFCWorkDir ${ExperimentDirectory}/\$extendedFCWorkDir
 setenv VerificationWorkDir ${ExperimentDirectory}/\$verificationWorkDir
 
-setenv ExternalAnalysisWorkDir ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}/${outerMesh}
-setenv ExternalAnalysisWorkDirInner ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}/${innerMesh}
-setenv ExternalAnalysisWorkDirEnsemble ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}/${ensembleMesh}
+setenv ExternalAnalysisWorkDir ${ExperimentDirectory}/\$externalAnalysisWorkDir/${externalanalyses__resource}
+setenv ExternalAnalysisWorkDirOuter ${ExperimentDirectory}/\$externalAnalysisWorkDir/${outerMesh}
+setenv ExternalAnalysisWorkDirInner ${ExperimentDirectory}/\$externalAnalysisWorkDir/${innerMesh}
+setenv ExternalAnalysisWorkDirEnsemble ${ExperimentDirectory}/\$externalAnalysisWorkDir/${ensembleMesh}
 
 ## benchmark experiment archive
 setenv Benchmark${DataAssim}WorkDir ${benchmark__ExperimentDirectory}/\$dataAssimWorkDir
@@ -189,7 +193,7 @@ set hh = `echo ${FirstCycleDate} | cut -c 9-10`
 setenv FirstFileDate \${yy}-\${mm}-\${dd}_\${hh}.00.00
 
 setenv StaticFieldsDirOuter \`echo "$firstbackground__staticDirectoryOuter" \
-  | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDir}'@' \
+  | sed 's@{{ExternalAnalysisWorkDir}}@'\${ExternalAnalysisWorkDirOuter}'@' \
   | sed 's@{{FirstCycleDate}}@'${FirstCycleDate}'@' \
   \`
 setenv StaticFieldsDirInner \`echo "$firstbackground__staticDirectoryInner" \

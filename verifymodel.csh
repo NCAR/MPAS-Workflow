@@ -84,7 +84,7 @@ set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $ExternalAnalysisDir/$externalanalyses__filePrefix"
+  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $ExternalAnalysisDirOuter/$externalanalyses__filePrefixOuter"
 
   if ($ArgNMembers > 1) then
     #Note: ensemble diagnostics only work for BG/AN verification, not extended ensemble forecasts
