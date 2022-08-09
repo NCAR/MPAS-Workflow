@@ -87,13 +87,13 @@ class Experiment(Component):
         mO = meshes['Outer'].name
         name_ = 'O'+mO
         mI = ''
-        if meshes.has('Inner'):
-          mI = meshes['Inner']
+        if 'Inner' in meshes:
+          mI = meshes['Inner'].name
           if mI != mO:
             name_ += 'I'+mI
-        if meshes.has('Ensemble'):
-          mE = meshes['Ensemble']
-          if mE != mO and mE != MI:
+        if 'Ensemble' in meshes:
+          mE = meshes['Ensemble'].name
+          if mE != mO and mE != mI:
             name_ += 'E'+mE
 
         name += '_'+name_
