@@ -1,26 +1,29 @@
 workflow:
   # test a recent date
   firstCyclePoint: 20220316T00
-  initialCyclePoint: 20220720T00
-  finalCyclePoint: 20250720T18
+  initialCyclePoint: 20220808T18
+  finalCyclePoint: 20250723T18
   InitializationType: ColdStart
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
   maxActiveCyclePoints: 1
 observations:
-  resource: NCEPFTPOnline
+  resource: NCEPFTPOnline #GladeRDAOnline
 experiment:
   ExperimentName: 'RealTime'
 model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-  AnalysisSource: GFSfromNCEPFTPOnline
+  AnalysisSource: GFSfromNCEPFTPOnline # GFSfromRDAOnline
   GetGDASAnalysis: True
 variational:
   DAType: 3dvar
   nInnerIterations: [60,]
   biasCorrection: True
+  covariance:
+    120km:
+      bumpCovStdDevFile: /glade/scratch/bjung/pandac/20220712_build/CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
 job:
   CPQueueName: premium
   NCPQueueName: economy

@@ -7,8 +7,12 @@ workflow:
   VerifyEnsMeanBG: True
 observations:
   resource: PANDACArchive
+  PANDACArchive:
+    IODADirectory:
+      variational:
+        ahi_himawari8: /glade/p/mmm/parc/ivette/pandac/Observations/ahi/ioda/SUPEROBBING59  
 experiment:
-  ExperimentName: '3denvar_OIE120km_WarmStart_BENCHMARK_DOUBLE'
+  ExperimentName: '3denvar_OIE120km_WarmStart_AHIrawsuperobbing59x59'
 model:
   outerMesh: 120km
   innerMesh: 120km
@@ -16,9 +20,12 @@ model:
 variational:
   DAType: 3denvar
   nInnerIterations: [60,]
+  biasCorrection: False
+  experimentalObservations: [
+    ahi_himawari8,
+  ]
 job:
   CPQueueName: premium
   NCPQueueName: economy
-builds:
-# default build directory
-  commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_12JUL2022
+verifyobs:
+  pyVerifyDir: /glade/work/ivette/pandac/mpas-jedi/graphics
