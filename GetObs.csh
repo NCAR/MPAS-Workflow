@@ -51,8 +51,14 @@ foreach inst ( ${convertToIODAObservations} )
     else if ( ${inst} == prepbufr ) then
        setenv THIS_FILE prepbufr.gdas.${ccyy}${mmdd}.t${hh}z.nr.48h
        if ( ! -e ${THIS_FILE}) then
-          echo "Source file: ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE}"
-          cp -p ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE} .
+          if ( -e ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE} ) then
+             echo "Source file: ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE}"
+             cp -p ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE} .
+          else
+             setenv THIS_FILE prepbufr.gdas.${ccyy}${mmdd}${hh}.nr
+             echo "Source file: ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE}"
+             cp -p ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE} .
+          endif
        endif
        # use obs errors embedded in prepbufr file
        if ( -e obs_errtable ) then

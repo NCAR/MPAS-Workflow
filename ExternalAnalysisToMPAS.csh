@@ -107,6 +107,11 @@ if ( $status != 0 ) then
   exit 1
 endif
 
+# Remove original and ungribbed analyses
+# ================================
+rm -r gfs.t${hh}z.pgrb2.0p25.f000
+rm -r GFS:${yy}-${mm}-${dd}_${hh}
+
 date
 
 exit 0
