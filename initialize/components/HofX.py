@@ -62,7 +62,7 @@ class HofX(Component):
     # method for the tropopause pressure determination used in the
     # cloud detection filter for infrared observations
     # OPTIONS: thompson, wmo (currently the build code only works for thompson)
-    'tropprsMethod': ['thompson', str],
+    'tropprsMethod': ['thompson', str, ['thompson', 'wmo']],
 
     ## maxIODAPoolSize
     # maximum number of IO pool members in IODA writer class

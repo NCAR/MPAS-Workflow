@@ -11,8 +11,8 @@ class Build(Component):
     ## compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
     # the executables described herein
-    # OPTIONS: gnu-openmpi/10.1.0, intel-impi/19.1.1
-    'compiler used': ['gnu-openmpi/10.1.0', str],
+    'compiler used': ['gnu-openmpi/10.1.0', str,
+      ['gnu-openmpi/10.1.0', 'intel-impi/19.1.1']],
   }
 
   def __init__(self, config, model=None):

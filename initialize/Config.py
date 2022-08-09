@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from collections.abc import Iterable
 from copy import deepcopy
 import yaml
 
@@ -30,7 +31,7 @@ class Config():
 
     return t, d
 
-  def get(self, dotSeparatedKey, t=None):
+  def get(self, dotSeparatedKey, t=None, options=None):
     '''
     get dictionary value for nested dot-separated key
     e.g., get('top.next') tries to retrieve self._table['top']['next']
@@ -53,6 +54,12 @@ class Config():
     if v is not None:
       if v == 'None': v = None
 
+    if options is not None and v is not None:
+      assert isinstance(options, Iterable) and not isinstance(options, str), (
+        'options must be a list of valid values or not present at all, not '+str(options))
+      assert v in options, ('invalid value for '+dotSeparatedKey+': '+str(v)+
+        '; choose one of '+str(options))
+
     if t is not None and v is not None:
       return t(v)
     else:
@@ -61,21 +68,21 @@ class Config():
   def __getitem__(self, key:str):
     return self.get(key)
 
-  def getOrDefault(self, key, default, t=None):
+  def getOrDefault(self, key, default, t=None, options=None):
     '''option to provide default value as second argument'''
-    v = self.get(key, t)
+    v = self.get(key, t, options)
     if v is None:
       return default
     else:
       return v
 
-  def has(self, key, t=None):
-    '''determine if config node is available'''
-    v = self.get(key, t)
+  def has(self, key, t=None, options=None):
+    '''determine if config node is available and has valid value'''
+    v = self.get(key, t, options)
     return (v is not None)
 
-  def getOrDie(self, key, t=None):
+  def getOrDie(self, key, t=None, options=None):
     '''throw error if node is not available'''
-    v = self.get(key, t)
+    v = self.get(key, t, options)
     assert v is not None, ('key ('+key+') is invalid or has None value')
     return v

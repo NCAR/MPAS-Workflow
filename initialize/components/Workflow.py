@@ -12,13 +12,13 @@ class Workflow(Component):
     'final cycle point': ['20180514T18', str],
 
     # interval between `da` analyses
-    'CyclingWindowHR': [6, int],
+    'CyclingWindowHR': [6, int, [6]],
 
     # window of observations included in AN/BG verification
-    'DAVFWindowHR': [6, int],
+    'DAVFWindowHR': [6, int, [6]],
 
     # window of observations included in forecast verification
-    'FCVFWindowHR': [6, int],
+    'FCVFWindowHR': [6, int, [6]],
 
     # maximum consecutive cycle points to be active at any time
     'max active cycle points': [4, int],
@@ -27,7 +27,7 @@ class Workflow(Component):
     # task selection
     ################
     ## CriticalPathType: controls dependencies between and chilrdren of
-    #                   `da` and `forecast` mini-workflows
+    #                   `da` and `forecast` mini-workflows for Cycle suite
     # OPTIONS:
     # + Normal - run both the `da` and `forecast` mini-workflows, each with a dependency on the
     #            previous instance of the other
@@ -42,16 +42,6 @@ class Workflow(Component):
     # + Reforecast
     #   - run only the `forecast` mini-workflow in the critical path, and also verification
     #   - requires CyclingDA analysis files or links to already be present in ExperimentDirectory
-    # + GenerateExternalAnalyses
-    #   - runs only the PrepareExternalAnalysis mini-workflow
-    #   - no dependencies between cycles
-    # + GenerateObs
-    #   - runs only the PrepareObservations mini-workflow
-    #   - no dependencies between cycles
-    # + ForecastFromExternalAnalyses
-    #   - runs PrepareExternalAnalysis mini-workflow and ExtendedFCFromExternalAnalysis
-    #   - no dependencies between cycles
-    #
     # Users may choose whether to run the verification concurrently with and
     # dependent on the critical path tasks (`Normal`), or as an independent post-processing step
     # (`Bypass`). `Normal` and `Bypass` cover most use-cases for "continuous cycling" experiments.
@@ -69,7 +59,7 @@ class Workflow(Component):
     # and file naming conventions.  It is recommended to run at least one `Normal` experiment to
     # demonstrate the correct directory structure before trying either of the `Reanalysis` or
     # `Reforecast` options.
-    'CriticalPathType': ['Normal', str],
+    'CriticalPathType': ['Normal', str, ['Normal', 'Bypass', 'Reanalysis', 'Reforecast']],
 
     ## VerifyAgainstObservations: whether to verify against observations using
     #    HofX applications evaluated at model forecasts or analysis states

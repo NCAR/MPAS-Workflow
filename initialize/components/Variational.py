@@ -37,8 +37,7 @@ class Variational(Component):
 
   requiredVariables = {
     ## DAType [Required Parameter]
-    # OPTIONS: 3dvar, 3denvar, 3dhybrid
-    'DAType': str,
+    'DAType': [str, ['3dvar', '3denvar', '3dhybrid']],
   }
 
   optionalVariables = {
@@ -56,12 +55,13 @@ class Variational(Component):
     'nInnerIterations': [[60], list],
 
     ## MinimizerAlgorithm
-    # OPTIONS: DRIPCG, DRPLanczos, DRPBlockLanczos
     # see classes derived from oops/src/oops/assimilation/Minimizer.h for all options
     # Notes about DRPBlockLanczos:
     # + still experimental, and not reliable for this experiment
     # + only available when EDASize > 1
-    'MinimizerAlgorithm': ['DRIPCG', str],
+    'MinimizerAlgorithm': ['DRIPCG', str,
+      ['DRIPCG', 'DRPLanczos', 'DRPBlockLanczos']
+    ],
 
     ## SelfExclusion, whether exclude own background from the ensemble B perturbations in EnVar during EDA cycling
     'SelfExclusion': [True, bool],
@@ -90,8 +90,7 @@ class Variational(Component):
 
     ## ABEIChannel
     # ABI and AHI channel used to determine the inflation factor
-    # OPTIONS: 8, 9, 10
-    'ABEIChannel': [8, int],
+    'ABEIChannel': [8, int, [8, 9, 10]],
 
     ## observations
     # observation types assimilated in the variational application
@@ -133,7 +132,7 @@ class Variational(Component):
     # method for the tropopause pressure determination used in the
     # cloud detection filter for infrared observations
     # OPTIONS: thompson, wmo (currently the build code only works for thompson)
-    'tropprsMethod': ['thompson', str],
+    'tropprsMethod': ['thompson', str, ['thompson', 'wmo']],
 
     ## maxIODAPoolSize
     # maximum number of IO pool members in IODA writer class
@@ -193,8 +192,8 @@ class Variational(Component):
       # localization
       r1 = 'ensemble.localization'
       r2 = meshes['Ensemble'].name
-      self._setOrDie('.'.join([r1, r2, 'bumpLocPrefix']), str, 'bumpLocPrefix')
-      self._setOrDie('.'.join([r1, r2, 'bumpLocDir']), str, 'bumpLocDir')
+      self._setOrDie('.'.join([r1, r2, 'bumpLocPrefix']), str, None, 'bumpLocPrefix')
+      self._setOrDie('.'.join([r1, r2, 'bumpLocDir']), str, None, 'bumpLocDir')
 
       # forecasts
       if NN > 1:
@@ -242,12 +241,12 @@ class Variational(Component):
     # covariance
     if DAType == '3dvar' or DAType == '3dhybrid':
       r = meshes['Inner'].name
-      self._setOrDie('covariance.bumpCovControlVariables', list, 'bumpCovControlVariables')
-      self._setOrDie('covariance.bumpCovPrefix', str, 'bumpCovPrefix')
-      self._setOrDie('covariance.bumpCovVBalPrefix', str, 'bumpCovVBalPrefix')
-      self._setOrDie('.'.join(['covariance', r, 'bumpCovDir']), str, 'bumpCovDir')
-      self._setOrDie('.'.join(['covariance', r, 'bumpCovStdDevFile']), str, 'bumpCovStdDevFile')
-      self._setOrDie('.'.join(['covariance', r, 'bumpCovVBalDir']), str, 'bumpCovVBalDir')
+      self._setOrDie('covariance.bumpCovControlVariables', list, None, 'bumpCovControlVariables')
+      self._setOrDie('covariance.bumpCovPrefix', str, None, 'bumpCovPrefix')
+      self._setOrDie('covariance.bumpCovVBalPrefix', str, None, 'bumpCovVBalPrefix')
+      self._setOrDie('.'.join(['covariance', r, 'bumpCovDir']), str, None, 'bumpCovDir')
+      self._setOrDie('.'.join(['covariance', r, 'bumpCovStdDevFile']), str, None, 'bumpCovStdDevFile')
+      self._setOrDie('.'.join(['covariance', r, 'bumpCovVBalDir']), str, None, 'bumpCovVBalDir')
 
     ###############################
     # export for use outside python

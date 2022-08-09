@@ -24,14 +24,28 @@ class Component():
     # parse config
     ##############
     self._vtable = {}
-    for v, t in self.requiredVariables.items():
-      self._setOrDie(v, t)
+    for v, desc in self.requiredVariables.items():
+      if isinstance(desc, Iterable):
+        if len(desc) == 2:
+          self._setOrDie(v, desc[0], desc[1])
+      else:
+        self._setOrDie(v, desc)
 
-    for v, t in self.optionalVariables.items():
-      self._setOrNone(v, t)
+    for v, desc in self.optionalVariables.items():
+      if isinstance(desc, Iterable):
+        if len(desc) == 2:
+          self._setOrNone(v, desc[0], desc[1])
+      else:
+        self._setOrNone(v, desc)
 
-    for v, a in self.variablesWithDefaults.items():
-      self._setOrDefault(v, a[0], a[1])
+    for v, desc in self.variablesWithDefaults.items():
+      if isinstance(desc, Iterable):
+        if len(desc) == 2:
+          self._setOrDefault(v, desc[0], desc[1])
+        elif len(desc) == 3:
+          self._setOrDefault(v, desc[0], desc[1], desc[2])
+      else:
+        self._setOrDefault(v, desc)
 
   def _msg(self, text):
     print(self.logPrefix+text)
@@ -48,20 +62,20 @@ class Component():
     self._vtable[v] = value
 
   ## methods for setting _vtable values from self._conf
-  def _setOrDie(self, v, t=None, vout=None):
+  def _setOrDie(self, v, t=None, options=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-    self._vtable[v_] = self._conf.getOrDie(v, t)
+    self._vtable[v_] = self._conf.getOrDie(v, t, options)
 
-  def _setOrNone(self, v, t=None, vout=None):
+  def _setOrNone(self, v, t=None, options=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-    self._vtable[v_] = self._conf.get(v, t)
+    self._vtable[v_] = self._conf.get(v, t, options)
 
-  def _setOrDefault(self, v, default, t=None, vout=None):
+  def _setOrDefault(self, v, default, t=None, options=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-    self._vtable[v_] = self._conf.getOrDefault(v, default, t)
+    self._vtable[v_] = self._conf.getOrDefault(v, default, t, options)
 
   ## general purpose nested extract methods
   def extractResource(self, resource:tuple, key:str, t=None):
