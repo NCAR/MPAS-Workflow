@@ -1,5 +1,6 @@
   obs filters:
   - filter: PreQC
+    maxvalue: 0
 #  Useflag check #amsua-n15
   - filter: Bounds Check
     filter variables:
@@ -16,7 +17,6 @@
     minvalue: 1.0e-12
     action:
       name: reject
-    maxvalue: 0
   - filter: GOMsaver
     filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n15.nc4
   - filter: Background Check
