@@ -220,13 +220,13 @@ variational:
       #  bumpLocDir: str
       30km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_12JUL2022code
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_10AUG2022code
       60km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_12JUL2022code
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_10AUG2022code
       120km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_12JUL2022code
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_10AUG2022code
 
   # externally-produced background covariance files (var or hybrid)
   covariance:
