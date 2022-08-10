@@ -30,6 +30,7 @@ set ValidRunConfigs = ( \
   IASI120km3denvar \
   IASI30kmIE60km3denvar \
   ABI120km3denvar \
+  AHI120km3denvar \
 )
 set ArgRunConfig = $1
 

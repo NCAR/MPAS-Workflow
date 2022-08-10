@@ -10,9 +10,9 @@ observations:
   - satwnd
   - gpsro
   - 1bamua
+  - airsev
   #- mtiasi
   #- 1bmhs
-  #- airsev
   #- cris
 
 ## GDAS observations error table
