@@ -24,6 +24,11 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS"
+  job:
+    30km:
+      60km:
+        3denvar:
+          memory: 45
 job:
   CPQueueName: economy
   NCPQueueName: economy
