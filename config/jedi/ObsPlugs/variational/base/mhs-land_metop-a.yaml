@@ -1,0 +1,17 @@
+- obs space:
+    <<: *ObsSpace
+    name: mhs-land_metop-a
+    obsdatain:
+      obsfile: {{InDBDir}}/mhs_metop-a_obs_{{thisValidDate}}.h5
+    obsdataout:
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_mhs-land_metop-a.h5
+    simulated variables: [brightness_temperature]
+    channels: &mhs_metop-a_channels 1-5
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: mhs_metop-a
+  get values:
+    <<: *GetValues

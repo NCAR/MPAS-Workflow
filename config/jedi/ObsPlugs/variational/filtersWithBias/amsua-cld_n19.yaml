@@ -1,0 +1,40 @@
+  obs filters:
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_n19.nc4
+  - filter: Background Check
+    threshold: 3
+    <<: *multiIterationFilter
+  - filter: BlackList
+    filter variables:
+    - name: brightness_temperature
+      channels: 1-4,15
+    action:
+      name: assign error
+      error function:
+        name: ObsErrorModelRamp@ObsFunction
+        channels: 1-4,15
+        options:
+          channels: 1-4,15
+          xvar:
+            name: CLWRetSymmetricMW@ObsFunction
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [ObsValue, HofX]
+              bias_application: ObsValue
+          x0:    [ 0.030, 0.030, 0.030, 0.030, 0.030 ]
+          x1:    [ 0.59,  0.60,  0.44,  0.51,  0.26 ]
+          err0:  [ 3.47,  2.78,  2.08,  0.87,  4.90 ]
+          err1:  [ 31.11, 42.10, 14.21,  3.21, 15.14]
+    <<: *multiIterationFilter
+  - filter: Gaussian_Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}
+  - filter: Domain Check
+    filter variables:
+    - name: brightness_temperature
+      channels: 1-4,15
+    where:
+    - variable:
+        name: water_area_fraction@GeoVaLs
+      minvalue: 1.0
+    <<: *multiIterationFilter
