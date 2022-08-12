@@ -43,12 +43,6 @@
       graph = '''
         DataAssimFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
         ExtendedForecastFinished => VerifyModelMeanFC
-
-        # need analyses at all verified forecast lengths
-{% for dt in ExtendedFCLengths %}
-  {% set prep = "[PT"+dt+"+H] => ".join(PrepareExternalAnalysisTasksOuter)+"[PT"+dt+"H]" %}
-        {{prep}} => VerifyModelMeanFC{{dt}}hr
-{% endfor %}
       '''
 {% endif %}
 
@@ -60,13 +54,5 @@
       graph = '''
         DataAssimFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
         ExtendedForecastFinished => VerifyModelEnsFC
-
-        # need analyses at all verified forecast lengths
-{% for dt in ExtendedFCLengths %}
-  {% set prep = "[PT"+dt+"+H] => ".join(PrepareExternalAnalysisTasksOuter)+"[PT"+dt+"H]" %}
-  {% for mem in EnsVerifyMembers %}
-        {{prep}} => VerifyModelEnsFC{{mem}}-{{dt}}hr
-  {% endfor %}
-{% endfor %}
       '''
 {% endif %}

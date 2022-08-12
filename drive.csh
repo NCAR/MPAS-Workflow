@@ -267,20 +267,12 @@ cat >! suite.rc << EOF
         ExtendedForecastFinished => HofXMeanFC
         HofXMeanFC:succeed-all => VerifyObsMeanFC
         VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
-  {% for dt in ExtendedFCLengths %}
-        PrepareObservations[+PT{dt}H] => HofXMeanFC{{dt}}hr
-  {% endfor %}
       '''
 
     # model-space
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
         ExtendedForecastFinished => VerifyModelMeanFC
-        # need analyses at all verified forecast lengths
-{% for dt in ExtendedFCLengths %}
-  {% set prep = "[PT"+dt+"+H] => ".join(PrepareExternalAnalysisTasksOuter)+"[PT"+dt+"H]" %}
-        {{prep}} => VerifyModelMeanFC{{dt}}hr
-{% endfor %}
       '''
 {% endif %}
 

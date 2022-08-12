@@ -256,7 +256,7 @@ conda activate npl
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = {{GFSAnalysisRetry}}
-  [[GetGFSanalysisFromFTP]]
+  [[GetGFSAnalysisFromFTP]]
     inherit = BATCH
     script = $origin/GetGFSAnalysisFromFTP.csh
     [[[job]]]
