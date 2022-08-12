@@ -29,8 +29,14 @@ externalanalyses:
   resource: "GFS.RDA"
 variational:
   DAType: 3dvar
-  nInnerIterations: [15,]
+  nInnerIterations: [30,]
   biasCorrection: True
+  job:
+    30km:
+      60km:
+        3dvar:
+          memory: 45
+
 job:
   CPQueueName: economy
   NCPQueueName: economy

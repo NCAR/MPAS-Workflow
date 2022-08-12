@@ -102,6 +102,7 @@ cost function:
               prefix: {{bumpLocPrefix}}
               strategy: common
               load_nicas_local: true
+              lev2d: last
               verbosity: main
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
