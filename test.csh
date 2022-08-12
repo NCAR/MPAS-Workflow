@@ -1,3 +1,3 @@
 #!/bin/csh -f
 
-./run.csh test
+./run.csh 30km-60km3dhybridSpecifiedEnsemble
