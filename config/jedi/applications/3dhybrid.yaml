@@ -48,7 +48,10 @@ cost function:
     covariance model: hybrid
     components:
     - weight:
-        value: {{staticCovarianceWeight}}
+        #value: {{staticCovarianceWeight}}
+        date: *analysisDate
+        filename: /glade/scratch/bjung/pandac/20220712_build/60km.allsky_hybrid/hyb_coef_sta_0p00_clouds_0p25_others.nc
+        stream name: control
       covariance:
         covariance model: SABER
         saber blocks:
@@ -88,7 +91,10 @@ cost function:
           input variables: *ctlvars
           output variables: *incvars
     - weight:
-        value: {{ensembleCovarianceWeight}}
+        #value: {{ensembleCovarianceWeight}}
+        date: *analysisDate
+        filename: /glade/scratch/bjung/pandac/20220712_build/60km.allsky_hybrid/hyb_coef_ens_1p00_clouds_0p75_otehrs.nc
+        stream name: control
       covariance:
         covariance model: ensemble
         localization:

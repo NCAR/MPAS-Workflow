@@ -18,6 +18,7 @@ externalanalyses:
   resource: "GFS.PANDAC"
 variational:
   DAType: 3dhybrid
+  biasCorrection: True
   ensembleCovarianceWeight: 0.75
   staticCovarianceWeight: 0.25
   nInnerIterations: [60,60,]
@@ -44,3 +45,5 @@ observations:
     IODASuperObGrid:
       abi_g16: 15X15
       ahi_himawari8: 15X15
+verifyobs:
+  pyVerifyDir: /glade/work/jban/pandac/fix_input/graphics_20220413

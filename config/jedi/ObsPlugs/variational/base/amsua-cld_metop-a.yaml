@@ -6,7 +6,7 @@
     obsdataout:
       obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua-cld_metop-a.h5
     simulated variables: [brightness_temperature]
-    channels: &amsua-cld_metop-a_channels 1-5,15
+    channels: &amsua-cld_metop-a_channels 1-4,15
   obs error: *ObsErrorDiagonal
   obs operator:
     <<: *cloudyCRTMObsOperator
