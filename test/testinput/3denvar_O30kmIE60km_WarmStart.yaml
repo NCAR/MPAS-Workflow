@@ -38,6 +38,11 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS"
+  job:
+    30km:
+      60km:
+        3denvar:
+          memory: 45
 workflow:
   first cycle point: 20180414T18
   # Note: only run for 1 cycle to reduce cost

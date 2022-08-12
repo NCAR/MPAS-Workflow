@@ -2,7 +2,6 @@ externalanalyses:
   resource: "GFS.RDA"
 experiment:
   name: '3dvar_O30kmIE60km_ColdStart_TEST'
-
 firstbackground:
   resource: "ForecastFromAnalysis"
 hpc:
@@ -26,8 +25,13 @@ observations:
   resource: GladeRDAOnline
 variational:
   DAType: 3dvar
-  nInnerIterations: [15,]
+  nInnerIterations: [30,]
   biasCorrection: True
+  job:
+    30km:
+      60km:
+        3dvar:
+          memory: 45
 workflow:
   # test a recent date
   first cycle point: 20220201T00

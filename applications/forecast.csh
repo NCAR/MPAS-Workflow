@@ -7,13 +7,13 @@ date
 # ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
 
-# ArgFCLengthHR: forecast length (hours)
-set ArgFCLengthHR = "$2" 	# fcLengthHRTEMPLATE
+# ArgFCLengthHR: int, total forecast duration (hr)
+set ArgFCLengthHR = "$2"
 
-# ArgFCIntervalHR: forecast output interval (hours)
-set ArgFCIntervalHR = "$3" 	# fcIntervalHRTEMPLATE
+# ArgFCIntervalHR: int, forecast output interval (hr)
+set ArgFCIntervalHR = "$3"
 
-# ArgIAU: whether this forecast has IAU
+# ArgIAU: bool, whether to engage IAU (True/False)
 set ArgIAU = "$4"
 
 # ArgMesh: str, mesh name, one of model.meshes, not currently used
@@ -108,43 +108,42 @@ ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
 cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 # We can start IAU only from the second DA cycle (otherwise, 3hrly background forecast is not available yet.)
+set self_IAU = False
 set firstIAUDate = `$advanceCYMDH ${FirstCycleDate} ${IAUoutIntervalHR}`
-if ($thisValidDate < $firstIAUDate) then
-  set self_IAU = False
-else
+if ($thisValidDate >= $firstIAUDate) then
   set self_IAU = ${ArgIAU}
 endif
 if ( ${self_IAU} == True ) then
- set IAUDate = `$advanceCYMDH ${thisCycleDate} -${IAUoutIntervalHR}`
- setenv IAUDate ${IAUDate}
- set BGFileExt = `$TimeFmtChange ${IAUDate}`.00.00.nc   	# analysis - 3h [YYYY-MM-DD_HH.00.00]
- set BGFile   = ${prevCyclingFCDir}/${FCFilePrefix}.${BGFileExt}	# mpasout at (analysis - 3h)
- set BGFileA  = ${CyclingDAInDir}/${BGFilePrefix}.${icFileExt}	# bg at the analysis time
- echo ""
- echo "IAU needs two background files:"
- echo "IC: ${BGFile}"
- echo "bg: ${BGFileA}"
+  set IAUDate = `$advanceCYMDH ${thisCycleDate} -${IAUoutIntervalHR}`
+  setenv IAUDate ${IAUDate}
+  set BGFileExt = `$TimeFmtChange ${IAUDate}`.00.00.nc    # analysis - 3h [YYYY-MM-DD_HH.00.00]
+  set BGFile   = ${prevCyclingFCDir}/${FCFilePrefix}.${BGFileExt}    # mpasout at (analysis - 3h)
+  set BGFileA  = ${CyclingDAInDir}/${BGFilePrefix}.${icFileExt}	  # bg at the analysis time
+  echo ""
+  echo "IAU needs two background files:"
+  echo "IC: ${BGFile}"
+  echo "bg: ${BGFileA}"
 
- if ( -e ${BGFile} && -e ${BGFileA} ) then
-  mv ./${icFile} ${icFile}_nonIAU
+  if ( -e ${BGFile} && -e ${BGFileA} ) then
+    mv ./${icFile} ${icFile}_nonIAU
 
-  echo "IAU starts from ${IAUDate}."
-  set StartDate  = `$TimeFmtChange ${IAUDate}`:00:00	# YYYYMMDDHH => YYYY-MM-DD_HH:00:00
-  # Compute analysis increments (AmB)
-  ln -sfv ${initialState} ${ANFilePrefix}.${icFileExt}		# an.YYYY-MM-DD_HH.00.00.nc
-  ln -sfv ${BGFileA}      ${BGFilePrefix}.${icFileExt}		# bg.YYYY-MM-DD_HH.00.00.nc
-  setenv myCommand "${create_amb_in_nc} ${thisValidDate}" # ${IAU_window_s}"
-  echo "$myCommand"
-  ${myCommand}
-  set famb = AmB.`$TimeFmtChange ${IAUDate}`.00.00.nc
-  ls -lL $famb						|| exit
-  # Initial condition (mpasin.YYYY-MM-DD_HH.00.00.nc)
-  ln -sfv ${BGFile} ${ICFilePrefix}.${BGFileExt}		|| exit
- else		# either analysis or background does not exist; IAU is off.
-  echo "IAU was on, but no input files. So it is off and initialized at ${thisValidDate}."
-  set self_IAU          = False
-  set self_FCLengthHR   = ${CyclingWindowHR}
- endif
+    echo "IAU starts from ${IAUDate}."
+    set StartDate  = `$TimeFmtChange ${IAUDate}`:00:00      # YYYYMMDDHH => YYYY-MM-DD_HH:00:00
+    # Compute analysis increments (AmB)
+    ln -sfv ${initialState} ${ANFilePrefix}.${icFileExt}    # an.YYYY-MM-DD_HH.00.00.nc
+    ln -sfv ${BGFileA}      ${BGFilePrefix}.${icFileExt}    # bg.YYYY-MM-DD_HH.00.00.nc
+    setenv myCommand "${create_amb_in_nc} ${thisValidDate}" # ${IAU_window_s}"
+    echo "$myCommand"
+    ${myCommand}
+    set famb = AmB.`$TimeFmtChange ${IAUDate}`.00.00.nc
+    ls -lL $famb || exit 1
+    # Initial condition (mpasin.YYYY-MM-DD_HH.00.00.nc)
+    ln -sfv ${BGFile} ${ICFilePrefix}.${BGFileExt} || exit 1
+  else		# either analysis or background does not exist; IAU is off.
+    echo "IAU was on, but no input files. So it is off and initialized at ${thisValidDate}."
+    set self_IAU          = False
+    set self_FCLengthHR   = ${CyclingWindowHR}
+  endif
 endif
 
 ## link MPAS mesh graph info
