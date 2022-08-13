@@ -109,8 +109,9 @@ endif
 
 # Remove original and ungribbed analyses
 # ================================
-rm -r gfs.t${hh}z.pgrb2.0p25.f000
-rm -r GFS:${yy}-${mm}-${dd}_${hh}
+echo "Removing original and ungribbed ${externalanalyses__UngribPrefix} analyses from ${ExternalAnalysisDir}"
+rm -r ${ExternalAnalysisDir}/gfs.t${hh}z.pgrb2.0p25.f000
+rm -r ${ExternalAnalysisDir}/${externalanalyses__UngribPrefix}:${yy}-${mm}-${dd}_${hh}
 
 date
 
