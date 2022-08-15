@@ -10,6 +10,14 @@ model:
   outerMesh: 30km
   innerMesh: 60km
   ensembleMesh: 60km
+  # Need x1.655362.static.nc to include var2d, con, oa{1,2,3,4}, and ol{1,2,3,4} fields
+  # alternatively could use /glade/work/liuz/pandac/prepare_mpas/mpas_static_30km/x1.655362.static.nc,
+  # but no such file exists for 60km mesh.  This might skew comparisons to 30km GFS analyses produced
+  # offline using /glade/work/liuz/pandac/prepare_mpas/mpas_static_30km/x1.655362.static.nc.  The
+  # ultimate action item then is to look deeper into the x1.*.static.nc file generation process,
+  # and determine if it is viable to bring into the workflow.  Ideally those files should be
+  # generated using the same MPAS-A code version as is used in the initic and forecast applications.
+  GraphInfoDir: /glade/work/duda/static_moved_to_campaign
 firstbackground:
   resource: "ForecastFromAnalysis"
 externalanalyses:
@@ -17,3 +25,4 @@ externalanalyses:
 variational:
   DAType: 3dvar
   biasCorrection: True
+  nInnerIterations: [60,60]
