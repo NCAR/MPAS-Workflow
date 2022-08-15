@@ -22,8 +22,6 @@ class StaticStream(Component):
     ###################
     # derived variables
     ###################
-    csh = []
-
     resource = self['resource']
 
     FirstFileDate = dt.datetime.strptime(FirstCycleDate, dtf.cycleFmt).strftime(dtf.MPASFileFmt)
@@ -50,24 +48,18 @@ class StaticStream(Component):
       n = 'StaticFieldsDir'+name
       self._set(n, self['directory'+name].replace(
         '{{ExternalAnalysesWorkDir}}', naming['ExternalAnalysesWorkDir']+'/'+mesh))
-      csh.append(n)
+      self._cshVars.append(n)
 
       n = 'StaticFieldsFile'+name
       self._set(n, self['filePrefix'+name]+'.'+FirstFileDate+'.nc')
-      csh.append(n)
+      self._cshVars.append(n)
 
     staticMemFmt = self.extractResource(('resources', resource, meshes['Outer'].name), 'memberFormat', str)
     self._set('staticMemFmt', staticMemFmt)
-    csh.append('staticMemFmt')
+    self._cshVars.append('staticMemFmt')
 
     # check for uniform static stream used across members (maxMembers is None) or valid members.n
     maxMembers = self.extractResource(('resources', resource, meshes['Outer'].name), 'maxMembers', int)
     if maxMembers is not None:
       assert (members.n <= int(maxMembers)), (
         self._msg('invalid members.n => '+str(members.n)))
-
-
-    ###############################
-    # export for use outside python
-    ###############################
-    self.exportVarsToCsh(csh)

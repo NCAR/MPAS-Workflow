@@ -37,20 +37,13 @@ class RTPP(Component):
 
     active = (relaxationFactor > 0. and members.n > 1)
 
-    ###############################
-    # export for use outside python
-    ###############################
     if active:
-      csh = list(self._vtable.keys())
-      self.exportVarsToCsh(csh)
+      self._cshVars += list(self._vtable.keys())
 
     ########################
     # tasks and dependencies
     ########################
-    self.tasks = ['#']
-    self.dependencies = ['#']
     if active:
-
       attr = {
         'retry': {'t': str},
         'baseSeconds': {'t': int},
@@ -66,7 +59,7 @@ class RTPP(Component):
       job._set('seconds', job['baseSeconds'] + job['secondsPerMember'] * members.n)
       task = TaskFactory[hpc.system](job)
 
-      self.tasks += ['''
+      da._tasks += ['''
   [[PrepRTPP]]
     # note: does not depend on any other tasks
     inherit = '''+da.groupName+''', SingleBatch
@@ -83,6 +76,6 @@ class RTPP(Component):
     inherit = '''+da.clean+''', Clean
     script = $origin/applications/CleanRTPP.csh''']
 
-      self.dependencies += ['''
+      da._dependencies += ['''
         PrepRTPP => RTPP
         '''+da.post+''' => RTPP => '''+da.finished]

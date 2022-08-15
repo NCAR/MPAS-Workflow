@@ -26,38 +26,40 @@ from initialize.components.VerifyObs import VerifyObs
 
 class Cycle(Suite):
   def __init__(self, conf:Config):
-    hpc = HPC(conf)
-    workflow = Workflow(conf)
+    c = {}
+    c['hpc'] = HPC(conf)
+    c['workflow'] = Workflow(conf)
 
-    model = Model(conf)
-    build = Build(conf, model)
-    meshes = model.getMeshes()
-    obs = Observations(conf, hpc)
-    members = Members(conf)
+    c['model'] = Model(conf)
+    c['build'] = Build(conf, c['model'])
+    meshes = c['model'].getMeshes()
+    c['obs'] = Observations(conf, c['hpc'])
+    c['members'] = Members(conf)
 
-    ea = ExternalAnalyses(conf, hpc, meshes)
-    fb = FirstBackground(conf, meshes, members, workflow['FirstCycleDate'])
+    c['ea'] = ExternalAnalyses(conf, c['hpc'], meshes)
+    c['fb'] = FirstBackground(conf, meshes, c['members'], c['workflow']['FirstCycleDate'])
 
-    ic = InitIC(conf, hpc, meshes)
-    hofx = HofX(conf, hpc, meshes, model)
-    da = DA(conf, hpc, obs, meshes, model, members, workflow)
-    fc = Forecast(conf, hpc, meshes['Outer'], members, workflow)
-    extfc = ExtendedForecast(conf, hpc, members, fc)
+    c['ic'] = InitIC(conf, c['hpc'], meshes)
+    c['hofx'] = HofX(conf, c['hpc'], meshes, c['model'])
+    c['da'] = DA(conf, c['hpc'], c['obs'], meshes, c['model'], c['members'], c['workflow'])
+    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['workflow'])
+    c['extfc'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'])
 
     #if conf.has('verifymodel'): # TODO: make verifymodel optional
-    vmodel = VerifyModel(conf, hpc, meshes['Outer'], members)
+    c['vmodel'] = VerifyModel(conf, c['hpc'], meshes['Outer'], c['members'])
 
     #if conf.has('verifyobs'): # TODO: make verifyobs optional
-    vobs = VerifyObs(conf, hpc, members)
+    c['vobs'] = VerifyObs(conf, c['hpc'], c['members'])
 
-    exp = Experiment(conf, hpc, meshes, da.var, members, da.rtpp)
+    c['exp'] = Experiment(conf, c['hpc'], meshes, c['da'].var, c['members'], c['da'].rtpp)
 
-    #namedComponents = [da.var, da.rtpp, da.var.abei, fc, extfc, vobs, vmodel, obs, ea]
-    #naming = Naming(conf, exp, namedComponents)
-    naming = Naming(conf, exp)
+    c['naming'] = Naming(conf, c['exp'])
 
-    ss = StaticStream(conf, meshes, members, workflow['FirstCycleDate'], naming)
+    c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['naming'])
 
     #if conf.has('benchmark'): # TODO: make benchmark optional,
     # and depend on whether verifyobs/verifymodel are selected
-    bench = Benchmark(conf, hpc, exp, naming)
+    c['bench'] = Benchmark(conf, c['hpc'], c['exp'], c['naming'])
+
+    for c_ in c.values():
+      c_.export()

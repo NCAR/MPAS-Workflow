@@ -48,9 +48,5 @@ class HPC(Component):
     print(' '.join(cmd))
     sub = subprocess.run(cmd)
 
-    ###############################
-    # export for use outside python
-    ###############################
     # TODO: have all dependent classes take an HPC object as an argument, do not export
-    cylc = list(self._vtable.keys())
-    self.exportVarsToCylc(cylc)
+    self._cylcVars = list(self._vtable.keys())

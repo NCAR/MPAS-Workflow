@@ -24,36 +24,39 @@ from initialize.components.VerifyObs import VerifyObs
 
 class ForecastFromExternalAnalyses(Suite):
   def __init__(self, conf:Config):
-    hpc = HPC(conf)
-    workflow = Workflow(conf)
+    c = {}
+    c['hpc'] = HPC(conf)
+    c['workflow'] = Workflow(conf)
 
-    model = Model(conf)
-    build = Build(conf, model)
-    meshes = model.getMeshes()
-    obs = Observations(conf, hpc)
-    members = Members(conf)
+    c['model'] = Model(conf)
+    meshes = c['model'].getMeshes()
 
-    ea = ExternalAnalyses(conf, hpc, meshes)
+    c['build'] = Build(conf, c['model'])
+    c['obs'] = Observations(conf, c['hpc'])
+    c['members'] = Members(conf)
 
-    ic = InitIC(conf, hpc, meshes)
-    hofx = HofX(conf, hpc, meshes, model)
-    fc = Forecast(conf, hpc, meshes['Outer'], members, workflow)
-    extfc = ExtendedForecast(conf, hpc, members, fc,)
+    c['ea'] = ExternalAnalyses(conf, c['hpc'], meshes)
+
+    c['ic'] = InitIC(conf, c['hpc'], meshes)
+    c['hofx'] = HofX(conf, c['hpc'], meshes, c['model'])
+    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['workflow'])
+    c['extfc'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'])
 
     #if conf.has('verifymodel'): # TODO: make verifymodel optional
-    vmodel = VerifyModel(conf, hpc, meshes['Outer'], members)
+    c['vmodel'] = VerifyModel(conf, c['hpc'], meshes['Outer'], c['members'])
 
     #if conf.has('verifyobs'): # TODO: make verifyobs optional
-    vobs = VerifyObs(conf, hpc, members)
+    c['vobs'] = VerifyObs(conf, c['hpc'], c['members'])
 
-    exp = Experiment(conf, hpc)
+    c['exp'] = Experiment(conf, c['hpc'])
 
-    #namedComponents = [fc, extfc, vobs, vmodel, obs, ea]
-    #naming = Naming(conf, exp, namedComponents)
-    naming = Naming(conf, exp)
+    c['naming'] = Naming(conf, c['exp'])
 
-    ss = StaticStream(conf, meshes, members, workflow['FirstCycleDate'], naming)
+    c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['naming'])
 
     #if conf.has('benchmark'): # TODO: make benchmark optional,
     # and depend on whether verifyobs/verifymodel are selected
-    bench = Benchmark(conf, hpc, exp, naming)
+    c['bench'] = Benchmark(conf, c['hpc'], c['exp'], c['naming'])
+
+    for c_ in c.values():
+      c_.export()

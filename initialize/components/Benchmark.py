@@ -37,12 +37,8 @@ class Benchmark(Component):
       self._set('Benchmark'+v,
         value.replace(exp['ExperimentDirectory'], benchDir))
 
-    ###############################
-    # export for use outside python
-    ###############################
-    csh = list(self._vtable.keys())
-    self.exportVarsToCsh(csh)
-    self.exportVarsToCylc(['compare da to benchmark', 'compare bg to benchmark'])
+    self._cshVars = list(self._vtable.keys())
+    self._cylcVars = ['compare da to benchmark', 'compare bg to benchmark']
 
     ########################
     # tasks and dependencies
@@ -56,8 +52,6 @@ class Benchmark(Component):
     job = Resource(self._conf, attr, ('job', 'compare'))
     task = TaskFactory[hpc.system](job)
 
-    tasks = ['''
+    self._tasks = ['''
   [[Compare]]
 '''+task.job()+task.directives()]
-
-    self.exportTasks(tasks)

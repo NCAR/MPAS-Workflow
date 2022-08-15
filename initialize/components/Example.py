@@ -32,22 +32,17 @@ class Example(Component):
     ###################
     # derived variables
     ###################
-
-    # EMPTY
-
-    ###############################
-    # export for use outside python
-    ###############################
-    #cylc = list(self._vtable.keys())
-    #self.exportVarsToCylc(cylc)
-
-    #csh = list(self._vtable.keys())
-    #self.exportVarsToCsh(csh)
+    self._cshVars = list(self._vtable.keys())
+    self._cylcVars = list(self._vtable.keys())
 
     ########################
     # tasks and dependencies
     ########################
-    #tasks = ['']
-    #self.exportTasks(tasks)
-    #dependencies = ['']
-    #self.exportDependencies(dependencies)
+    self._tasks = ['''
+  [[Example0]]
+  [[Example1]]
+''']
+
+    self._dependencies = ['''
+  Example0 => Example1
+''']

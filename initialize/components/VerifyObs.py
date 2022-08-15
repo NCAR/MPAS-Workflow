@@ -15,13 +15,12 @@ class VerifyObs(Component):
   def __init__(self, config, hpc, members):
     super().__init__(config)
 
+    ###################
+    # derived variables
+    ###################
     self._set('ObsDiagnosticsDir', self.diagnosticsDir)
 
-    ###############################
-    # export for use outside python
-    ###############################
-    csh = list(self._vtable.keys())
-    self.exportVarsToCsh(csh)
+    self._cshVars = list(self._vtable.keys())
 
     ########################
     # tasks and dependencies
@@ -42,7 +41,7 @@ class VerifyObs(Component):
     task = TaskFactory[hpc.system](job)
 
     self.groupName = self.__class__.__name__
-    tasks = ['''
+    self._tasks = ['''
   [['''+self.groupName+''']]
 '''+task.job()+task.directives()+'''
 
@@ -54,5 +53,3 @@ class VerifyObs(Component):
   {% set obsEnsSeconds = '''+str(job['seconds'])+''' %}
 {% endif %}
 ''']
-
-    self.exportTasks(tasks)

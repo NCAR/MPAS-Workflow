@@ -22,16 +22,13 @@ class ExternalAnalyses(Component):
   def __init__(self, config, hpc, meshes):
     super().__init__(config)
 
-    csh = []
-    cylc = ['GetGDASAnalysis']
-
     ###################
     # derived variables
     ###################
     resourceName = 'externalanalyses__resource'
     resource = self['resource']
     self._set(resourceName, resource)
-    csh.append(resourceName)
+    self._cshVars.append(resourceName)
 
     if resource is not None:
       for name, m in meshes.items():
@@ -53,7 +50,7 @@ class ExternalAnalyses(Component):
 
             # first add variable as a list of tasks
             variable = key+name
-            cylc.append(variable)
+            self._cylcVars.append(variable)
             self._set(variable, values)
 
             # then add as a joined string with dependencies between subtasks (" => ")
@@ -62,7 +59,7 @@ class ExternalAnalyses(Component):
             # value: [a, b] becomes "a => b"
             variable = variable.replace('Tasks','')
             value = " => ".join(values)
-            cylc.append(variable)
+            self._cylcVars.append(variable)
             self._set(variable, value)
             continue
 
@@ -79,18 +76,14 @@ class ExternalAnalyses(Component):
               value = value.replace('{{nCells}}', nCells)
 
             self._set(variable, value)
-            csh.append(variable)
+            self._cshVars.append(variable)
 
       # Use external analysis for sea surface updating
       variable = 'PrepareSeaSurfaceUpdate'
       self._set(variable, self['PrepareExternalAnalysisOuter'])
-      cylc.append(variable)
+      self._cylcVars.append(variable)
 
-    ###############################
-    # export for use outside python
-    ###############################
-    self.exportVarsToCsh(csh)
-    self.exportVarsToCylc(cylc)
+    self._cylcVars += ['GetGDASAnalysis']
 
     ########################
     # tasks and dependencies
@@ -110,7 +103,7 @@ class ExternalAnalyses(Component):
     ungribtask = TaskFactory[hpc.system](ungribjob)
 
     self.groupName = self.__class__.__name__
-    tasks = [
+    self._tasks = [
 '''## Analyses generated outside MPAS-Workflow
   [['''+self.groupName+''']]
   [[GetGFSAnalysisFromRDA]]
@@ -143,7 +136,7 @@ class ExternalAnalyses(Component):
     inherit = '''+self.groupName+''', BACKGROUND''']
 
     for mesh in list(set([mesh.name for mesh in meshes.values()])):
-      tasks += [
+      self._tasks += [
 '''
   [[LinkExternalAnalysis-'''+mesh+''']]
     inherit = LinkExternalAnalyses, SingleBatch
@@ -151,5 +144,3 @@ class ExternalAnalyses(Component):
     [[[job]]]
       execution time limit = PT30S
       execution retry delays = 1*PT30S''']
-
-    self.exportTasks(tasks)

@@ -16,16 +16,13 @@ class FirstBackground(Component):
   def __init__(self, config, meshes, members, FirstCycleDate):
     super().__init__(config)
 
-    csh = []
-    cylc = []
-
     ###################
     # derived variables
     ###################
     resourceName = 'firstbackground__resource'
     resource = self['resource']
     self._set(resourceName, resource)
-    csh.append(resourceName)
+    self._cshVars.append(resourceName)
 
     # check for valid members.n
     maxMembers = self.extractResourceOrDie(('resources', resource, meshes['Outer'].name), 'maxMembers', int)
@@ -46,28 +43,22 @@ class FirstBackground(Component):
         if key == 'PrepareFirstBackground':
           # push back cylc mini-workflow
           variable = key+name
-          cylc.append(variable)
+          self._cylcVars.append(variable)
         else:
           # auto-generated csh variables
           if key == 'directory' and isinstance(value, str):
             value = value.replace('{{FirstCycleDate}}', FirstCycleDate)
 
           variable = 'firstbackground__'+key+name
-          csh.append(variable)
+          self._cshVars.append(variable)
 
         self._set(variable, value)
-
-    ###############################
-    # export for use outside python
-    ###############################
-    self.exportVarsToCsh(csh)
-    self.exportVarsToCylc(cylc)
 
     ########################
     # tasks and dependencies
     ########################
     self.groupName = self.__class__.__name__
-    tasks = ['''
+    self._tasks = ['''
   [['''+self.groupName+''']]
   [[LinkWarmStartBackgrounds]]
     inherit = '''+self.groupName+''', SingleBatch
@@ -78,5 +69,3 @@ class FirstBackground(Component):
       #       independent task for each member)
       execution time limit = PT10M
       execution retry delays = 1*PT5S''']
-
-    self.exportTasks(tasks)

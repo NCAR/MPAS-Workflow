@@ -44,8 +44,4 @@ class Naming(Component):
       self._set(v, value)
       self.directories[v] = value
 
-    ###############################
-    # export for use outside python
-    ###############################
-    csh = list(self._vtable.keys())
-    self.exportVarsToCsh(csh)
+    self._cshVars = list(self._vtable.keys())

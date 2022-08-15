@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from copy import deepcopy
+
 from initialize.Component import Component
 
 class Mesh():
@@ -18,17 +20,17 @@ class Model(Component):
   }
 
   optionalVariables = {
-  ## outerMesh [Required Parameter]
-  # variational outer loop, forecast, HofX, verification
+    ## outerMesh [Required Parameter]
+    # variational outer loop, forecast, HofX, verification
     'outerMesh': str,
 
-  ## innerMesh [Optional, used in Variational]
-  # variational inner loop
+    ## innerMesh [Optional, used in Variational]
+    # variational inner loop
     'innerMesh': str,
 
-  ## ensembleMesh [Optional, used in Variational]
-  # variational ensemble, rtpp
-  # note: mpas-jedi requires innerMesh and ensembleMesh to be equal at this time
+    ## ensembleMesh [Optional, used in Variational]
+    # variational ensemble, rtpp
+    # note: mpas-jedi requires innerMesh and ensembleMesh to be equal at this time
     'ensembleMesh': str,
   }
 
@@ -70,7 +72,7 @@ class Model(Component):
     self._set('NamelistFileInit', 'namelist.init_'+MPASCore)
     self._set('NamelistFileWPS', 'namelist.wps')
 
-    self.meshes = {}
+    self.__meshes = {}
     for typ in ['outer', 'inner', 'ensemble']:
       m = typ+'Mesh'
       Typ = typ.capitalize()
@@ -80,7 +82,7 @@ class Model(Component):
         self._set('nCells'+Typ, self._conf.getOrDie('resources.'+name+'.nCells'))
         nCells = self['nCells'+Typ]
 
-        self.meshes[Typ] = Mesh(name, nCells)
+        self.__meshes[Typ] = Mesh(name, nCells)
 
         self._set('InitFilePrefix'+Typ, 'x1.'+str(nCells)+'.init')
         self._set(typ+'StreamsFile', StreamsFile+'_'+name)
@@ -92,11 +94,7 @@ class Model(Component):
           self._set('TimeStep', self._conf.getOrDie('resources.'+name+'.TimeStep'))
           self._set('DiffusionLengthScale', self._conf.getOrDie('resources.'+name+'.DiffusionLengthScale'))
 
-    ###############################
-    # export for use outside python
-    ###############################
-    csh = list(self._vtable.keys())
-    self.exportVarsToCsh(csh)
+    self._cshVars = list(self._vtable.keys())
 
   def getMeshes(self):
-    return self.meshes
+    return deepcopy(self.__meshes)

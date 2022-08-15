@@ -15,6 +15,14 @@ class Component():
     self.lower = self.__class__.__name__.lower()
     self.logPrefix = self.__class__.__name__+': '
 
+    ######################################################
+    # initialize exportable variables, tasks, dependencies
+    ######################################################
+    self._cshVars = []
+    self._cylcVars = []
+    self._tasks = []
+    self._dependencies = []
+
     ###################
     # extract SubConfig
     ###################
@@ -47,8 +55,20 @@ class Component():
       else:
         self._setOrDefault(v, desc)
 
+  def export(self):
+    '''
+    export for use outside python
+    '''
+    self._msg('export()')
+    self.__exportTasks()
+    self.__exportDependencies()
+    self.__exportVarsToCsh()
+    self.__exportVarsToCylc()
+    return
+
   def _msg(self, text):
     print(self.logPrefix+text)
+    return
 
   def __getitem__(self, key):
     '''
@@ -60,22 +80,26 @@ class Component():
   def _set(self, v, value):
     'basic _vtable set method'
     self._vtable[v] = value
+    return
 
   ## methods for setting _vtable values from self._conf
   def _setOrDie(self, v, t=None, options=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
     self._vtable[v_] = self._conf.getOrDie(v, t, options)
+    return
 
   def _setOrNone(self, v, t=None, options=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
     self._vtable[v_] = self._conf.get(v, t, options)
+    return
 
   def _setOrDefault(self, v, default, t=None, options=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
     self._vtable[v_] = self._conf.getOrDefault(v, default, t, options)
+    return
 
   ## general purpose nested extract methods
   def extractResource(self, resource:tuple, key:str, t=None):
@@ -108,11 +132,12 @@ class Component():
   ## export methods
   @staticmethod
   def write(filename, Str):
-     if len(Str) == 0: return
-     #self._msg('Creating '+filename)
-     with open(filename, 'w') as f:
-       f.writelines(Str)
-       f.close()
+    if len(Str) == 0: return
+    #self._msg('Creating '+filename)
+    with open(filename, 'w') as f:
+      f.writelines(Str)
+      f.close()
+    return
 
   # csh variables
   @staticmethod
@@ -132,7 +157,8 @@ class Component():
     else:
       return ['setenv '+vvar+' "'+str(value)+'"\n']
 
-  def exportVarsToCsh(self, variables):
+  def __exportVarsToCsh(self):
+    variables = self._cshVars
     if len(variables) == 0: return
     Str = ['''#!/bin/csh -f
 ######################################################
@@ -147,6 +173,7 @@ set config_'''+self.lower+''' = 1
     for v in variables:
       Str += self.varToCsh(v, self._vtable[v])
     self.write('config/auto/'+self.lower+'.csh', Str)
+    return
 
   # cylc variables
   @staticmethod
@@ -161,17 +188,23 @@ set config_'''+self.lower+''' = 1
     else:
       return ['{% set '+vvar+' = '+str(value)+' %}\n']
 
-  def exportVarsToCylc(self, variables):
+  def __exportVarsToCylc(self):
+    variables = self._cylcVars
     if len(variables) == 0: return
     Str = []
     for v in variables:
       Str += self.varToCylc(v, self._vtable[v])
     self.write('include/variables/auto/'+self.lower+'.rc', Str)
+    return
 
   # cylc dependencies
-  def exportDependencies(self, text):
-    self.write('include/dependencies/auto/'+self.lower+'.rc', text)
+  def __exportDependencies(self):
+    if len(self._dependencies) == 0: return
+    self.write('include/dependencies/auto/'+self.lower+'.rc', self._dependencies)
+    return
 
   # cylc tasks
-  def exportTasks(self, text):
-    self.write('include/tasks/auto/'+self.lower+'.rc', text)
+  def __exportTasks(self):
+    if len(self._tasks) == 0: return
+    self.write('include/tasks/auto/'+self.lower+'.rc', self._tasks)
+    return

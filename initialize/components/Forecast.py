@@ -65,7 +65,7 @@ class Forecast(Component):
     task = TaskFactory[hpc.system](self.job)
 
     self.groupName = 'ForecastFamily'
-    tasks = ['''
+    self._tasks = ['''
   [['''+self.groupName+''']]
   [[ColdForecast]]
     inherit = '''+self.groupName+'''
@@ -91,7 +91,7 @@ class Forecast(Component):
       # DeleteZerothForecast (True), not used anywhere else in the workflow
       WarmArgs = '"'+str(mm)+'" "'+str(lengthHR)+'" "'+str(outIntervalHR)+'" "'+str(IAU)+'" "'+mesh.name+'" "True" "True" "'+str(updateSea)+'"'
 
-      tasks += ['''
+      self._tasks += ['''
   [[ColdForecast'''+str(mm)+''']]
     inherit = ColdForecast, BATCH
     script = $origin/applications/ColdForecast.csh '''+ColdArgs+'''
@@ -99,13 +99,9 @@ class Forecast(Component):
     inherit = Forecast, BATCH
     script = $origin/applications/Forecast.csh '''+WarmArgs]
 
-    self.exportTasks(tasks)
-
-    dependencies = ['''
+    self._dependencies = ['''
         # ensure there is a valid sea-surface update file before forecast
         {{PrepareSeaSurfaceUpdate}} => Forecast
 
         # all members must succeed in order to proceed
         Forecast:succeed-all => ForecastFinished''']
-
-    self.exportDependencies(dependencies)

@@ -127,6 +127,7 @@ class Experiment(Component):
     self._set('mainScriptDir', self['ExperimentDirectory']+'/'+self.PackageBaseName)
     self._set('ConfigDir', self['mainScriptDir']+'/config')
     self._set('ModelConfigDir', self['mainScriptDir']+'/config/mpas')
+    self._set('title', self.PackageBaseName+'--'+self['SuiteName'])
 
     self._msg('')
     self._msg('======================================================================')
@@ -146,12 +147,5 @@ class Experiment(Component):
 
     self._msg('')
 
-    ###############################
-    # export for use outside python
-    ###############################
-    csh = ['cylcWorkDir', 'SuiteName', 'ExperimentDirectory', 'mainScriptDir', 'ConfigDir', 'ModelConfigDir']
-    self.exportVarsToCsh(csh)
-
-    self._set('title', self.PackageBaseName+'--'+self['SuiteName'])
-    cylc = ['mainScriptDir', 'title']
-    self.exportVarsToCylc(cylc)
+    self._cshVars = ['cylcWorkDir', 'SuiteName', 'ExperimentDirectory', 'mainScriptDir', 'ConfigDir', 'ModelConfigDir']
+    self._cylcVars = ['mainScriptDir', 'title']

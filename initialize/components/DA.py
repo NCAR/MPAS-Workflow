@@ -31,7 +31,7 @@ class DA(Component):
     self.clean = 'CleanDA' # family
 
     self.groupName = 'DAFamily'
-    tasks = ['''
+    self._tasks = ['''
   ## data assimilation task markers
   [['''+self.groupName+''']]
   [['''+self.pre+''']]
@@ -47,7 +47,7 @@ class DA(Component):
   [['''+self.clean+''']]
     inherit = '''+self.groupName]
 
-    dependencies = ['''
+    self._dependencies = ['''
         # pre => init => execute:succeed-all => post => finished => clean
         # pre-da observation processing
         {{'''+obs.workflow+'''}} => '''+self.pre+'''
@@ -66,12 +66,9 @@ class DA(Component):
         '''+self.post+''' => '''+self.finished+''' => '''+self.clean]
 
     self.var = Variational(config, hpc, meshes, model, members, workflow, self)
-    tasks += self.var.tasks
-    dependencies += self.var.dependencies
-
     self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self)
-    tasks += self.rtpp.tasks
-    dependencies += self.rtpp.dependencies
 
-    self.exportTasks(tasks)
-    self.exportDependencies(dependencies)
+  def export(self):
+    self.var.export()
+    self.rtpp.export()
+    super().export()

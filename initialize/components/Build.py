@@ -89,8 +89,4 @@ class Build(Component):
     self._set('meanStateExe', 'average_netcdf_files_parallel_mpas_gnu-openmpi.x')
     self._set('meanStateBuildDir', '/glade/work/guerrett/pandac/work/meanState')
 
-    ###############################
-    # export for use outside python
-    ###############################
-    csh = list(self._vtable.keys())
-    self.exportVarsToCsh(csh)
+    self._cshVars = list(self._vtable.keys())

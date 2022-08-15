@@ -92,12 +92,7 @@ class HofX(Component):
     self._set('NamelistFileList', [model['outerNamelistFile']])
 
     # all csh variables above
-    csh = list(self._vtable.keys())
-
-    ###############################
-    # export for use outside python
-    ###############################
-    self.exportVarsToCsh(csh)
+    self._cshVars = list(self._vtable.keys())
 
     ########################
     # tasks and dependencies
@@ -116,9 +111,7 @@ class HofX(Component):
     job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
     task = TaskFactory[hpc.system](job)
 
-    tasks = [
+    self._tasks = [
 '''
   [[HofX]]
 '''+task.job()+task.directives()]
-
-    self.exportTasks(tasks)

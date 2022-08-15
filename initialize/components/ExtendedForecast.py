@@ -45,14 +45,9 @@ class ExtendedForecast(Component):
     self._set('extLengths', extLengths)
     self._set('nExtOuts', len(extLengths))
 
-    cylc = ['extMeanTimes', 'extEnsTimes',
+    self._cylcVars = ['extMeanTimes', 'extEnsTimes',
       'extMeanTimesList', 'extEnsTimesList',
       'EnsVerifyMembers', 'extIntervHR', 'extLengths', 'nExtOuts']
-
-    ###############################
-    # export for use outside python
-    ###############################
-    self.exportVarsToCylc(cylc)
 
     ########################
     # tasks and dependencies
@@ -78,7 +73,7 @@ class ExtendedForecast(Component):
     meantask = TaskFactory[hpc.system](meanjob)
 
     self.groupName = self.__class__.__name__
-    tasks = ['''
+    self._tasks = ['''
   [['''+self.groupName+''']]
 '''+fctask.job()+fctask.directives()+'''
 
@@ -106,9 +101,7 @@ class ExtendedForecast(Component):
     inherit = '''+self.groupName]
 
     for mm in EnsVerifyMembers:
-      tasks += ['''
+      self._tasks += ['''
   [[ExtendedFC'''+str(mm)+''']]
     inherit = ExtendedEnsFC, BATCH
     script = $origin/applications/ExtendedEnsFC.csh "'''+str(mm)+'''" "'''+str(lengthHR)+'''" "'''+str(outIntervalHR)+'''" "False" "'''+forecast.mesh.name+'''" "True" "False" "False"''']
-
-    self.exportTasks(tasks)

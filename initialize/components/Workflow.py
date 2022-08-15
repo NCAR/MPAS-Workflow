@@ -166,11 +166,5 @@ class Workflow(Component):
       # restartCyclePoint
       self._set('ForecastTimes', '+PT'+str(DA2FCOffsetHR)+'H/PT'+str(CyclingWindowHR)+'H')
 
-
-    ###############################
-    # export for use outside python
-    ###############################
-    csh = list(self._vtable.keys())
-    cylc = list(self._vtable.keys())
-    self.exportVarsToCsh(csh)
-    self.exportVarsToCylc(cylc)
+    self._cshVars = list(self._vtable.keys())
+    self._cylcVars = list(self._vtable.keys())

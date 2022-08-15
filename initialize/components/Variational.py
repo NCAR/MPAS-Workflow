@@ -248,11 +248,7 @@ class Variational(Component):
       self._setOrDie('.'.join(['covariance', r, 'bumpCovStdDevFile']), str, None, 'bumpCovStdDevFile')
       self._setOrDie('.'.join(['covariance', r, 'bumpCovVBalDir']), str, None, 'bumpCovVBalDir')
 
-    ###############################
-    # export for use outside python
-    ###############################
-    csh = list(self._vtable.keys())
-    self.exportVarsToCsh(csh)
+    self._cshVars = list(self._vtable.keys())
 
     ########################
     # tasks and dependencies
@@ -296,7 +292,7 @@ class Variational(Component):
     abeijob = Resource(self._conf, attr, ('abei.job', meshes['Outer'].name))
     abeitask = TaskFactory[hpc.system](abeijob)
 
-    self.tasks = ['''
+    da._tasks += ['''
   ## variational tasks
   [[InitVariational]]
     inherit = '''+da.init+''', SingleBatch
@@ -323,7 +319,7 @@ class Variational(Component):
     if EDASize == 1:
       # single instance or ensemble of Variational(s)
       for mm in range(1, NN+1, 1):
-        self.tasks += ['''
+        da._tasks += ['''
   [[Variational'''+str(mm)+''']]
     inherit = '''+da.execute+''', Variationals, BATCH
     script = $origin/applications/Variational.csh "'''+str(mm)+'"']
@@ -331,14 +327,13 @@ class Variational(Component):
     else:
       # single instance or ensemble of EnsembleOfVariational(s)
       for instance in range(1, nDAInstances+1, 1):
-        self.tasks += ['''
+        da._tasks += ['''
   [[EDA'''+str(instance)+''']]
     inherit = '''+da.execute+''', Variationals, BATCH
     script = \$origin/applications/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
-    self.dependencies = ['#']
     if self['ABEInflation']:
-      self.dependencies += ['''
+      da._dependencies += ['''
         # abei
         '''+da.pre+''' =>
         MeanBackground =>

@@ -26,15 +26,13 @@ class InitIC(Component):
     task = TaskFactory[hpc.system](job)
 
     self.groupName = self.__class__.__name__
-    tasks = ['''
+    self._tasks = ['''
   [['''+self.groupName+']]']
 
     for mesh in list(set([mesh.name for mesh in meshes.values()])):
-      tasks += [
+      self._tasks += [
 '''
   [[ExternalAnalysisToMPAS-'''+mesh+''']]
     inherit = '''+self.groupName+''', BATCH
     script = $origin/applications/ExternalAnalysisToMPAS.csh "'''+mesh+'''"
 '''+task.job()+task.directives()]
-
-    self.exportTasks(tasks)

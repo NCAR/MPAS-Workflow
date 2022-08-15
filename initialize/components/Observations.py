@@ -68,17 +68,14 @@ class Observations(Component):
     self._set('diagPrefix', self.diagPrefix)
 
     # all csh variables above
-    csh = list(self._vtable.keys())
-
-    # cylc variables below
-    cylc = []
+    self._cshVars = list(self._vtable.keys())
 
     # PrepareObservationsTasks is a list of strings
     key = 'PrepareObservationsTasks'
     values = self.extractResourceOrDie(('resources', resource), key, list)
 
     # first add variable as a list of tasks
-    cylc.append(key)
+    self._cylcVars.append(key)
     self._set(key, values)
 
     # then add as a joined string with dependencies between subtasks (" => ")
@@ -86,21 +83,15 @@ class Observations(Component):
     # value: [a, b] becomes "a => b"
     key = 'PrepareObservations'
     value = " => ".join(values)
-    cylc.append(key)
+    self._cylcVars.append(key)
     self._set(key, value)
     self.workflow = key
    
-    ###############################
-    # export for use outside python
-    ###############################
-    self.exportVarsToCsh(csh)
-    self.exportVarsToCylc(cylc)
-
     ########################
     # tasks and dependencies
     ########################
     self.groupName = self.__class__.__name__
-    tasks = ['''
+    self._tasks = ['''
   [['''+self.groupName+''']]
   [[GetObs]]
     inherit = '''+self.groupName+''', SingleBatch
@@ -126,5 +117,3 @@ class Observations(Component):
       -l = select=1:ncpus=1:mem=10GB
   [[ObsReady]]
     inherit = '''+self.groupName+''', BACKGROUND''']
-
-    self.exportTasks(tasks)

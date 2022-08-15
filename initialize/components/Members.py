@@ -21,8 +21,5 @@ class Members(Component):
       self._set('nMembers', n)
       self.n = n
 
-    ###############################
-    # export for use outside python
-    ###############################
-    self.exportVarsToCsh(['nMembers'])
-    self.exportVarsToCylc(['nMembers'])
+    self._cshVars = ['nMembers']
+    self._cylcVars = ['nMembers']
