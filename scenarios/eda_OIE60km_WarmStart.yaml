@@ -20,22 +20,6 @@ variational:
   DAType: 3denvar
   SelfExclusion: True
   maxIODAPoolSize: 3
-  job:
-    60km:
-      60km:
-        #NOTE: increase memory and time when instruments are added beyond conv + clear-amsua
-        3denvar:
-          nodes: 6
-          PEPerNode: 32
-          memory: 45
-          baseSeconds: 200
-          secondsPerEnVarMember: 6
-          #if single-precision mpas-jedi
-          #nodes: 4
-          #PEPerNode: 36
-          #memory: 45
-          #baseSeconds: 200
-          #secondsPerEnVarMember: 6
 hofx:
   maxIODAPoolSize: 3
 rtpp:
