@@ -2,7 +2,6 @@
 
 from initialize.Config import Config
 from initialize.Suite import Suite
-from initialize.components.Benchmark import Benchmark
 from initialize.components.Build import Build
 from initialize.components.Experiment import Experiment
 from initialize.components.HPC import HPC
@@ -27,9 +26,8 @@ class GenerateExternalAnalyses(Suite):
     c['exp'] = Experiment(conf, c['hpc'])
     c['naming'] = Naming(conf, c['exp'])
 
-    # TODO: make members, benchmark optional, modify getCycleVars
+    # TODO: make members optional, modify getCycleVars
     c['members'] = Members(conf)
-    c['bench'] = Benchmark(conf, c['hpc'], c['exp'], c['naming'])
 
     for c_ in c.values():
       c_.export()

@@ -8,7 +8,7 @@ class Benchmark(Component):
   ObsCompareDir = 'CompareToBenchmark/obs'
   ModelCompareDir = 'CompareToBenchmark/model'
   optionalVariables = {
-    'experiment directory': str,
+    'directory': str,
   }
   variablesWithDefaults = {
     ## compare DA to benchmark: compare verification statistics files between two experiments
@@ -21,21 +21,14 @@ class Benchmark(Component):
   }
 
 
-  def __init__(self, config, hpc, exp, naming):
+  def __init__(self, config, hpc):
     super().__init__(config)
 
     ###################
     # derived variables
     ###################
-    self._set('benchmark__ExperimentDirectory', self['experiment directory'])
     self._set('ObsCompareDir', self.ObsCompareDir)
     self._set('ModelCompareDir', self.ModelCompareDir)
-
-    for v, value in naming.directories.items():
-      benchDir = self['experiment directory']
-      if benchDir is None: benchDir = exp['ExperimentDirectory']
-      self._set('Benchmark'+v,
-        value.replace(exp['ExperimentDirectory'], benchDir))
 
     self._cshVars = list(self._vtable.keys())
     self._cylcVars = ['compare da to benchmark', 'compare bg to benchmark']

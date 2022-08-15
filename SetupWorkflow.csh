@@ -48,10 +48,8 @@ cd ${mainScriptDir}
 # workflow provides CyclingWindowHR, DAVFWindowHR, FCVFWindowHR, FirstCycleDate
 source config/auto/workflow.csh
 
-# getCycleVars provides FCFilePrefix, ANFilePrefix
-set thisCycleDate = ${FirstCycleDate}
-set thisValidDate = ${FirstCycleDate}
-source ./getCycleVars.csh
+# naming provides FCFilePrefix, ANFilePrefix
+source config/auto/naming.csh
 
 # externalanalyses provides externalanalyses__*
 source config/auto/externalanalyses.csh

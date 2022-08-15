@@ -5,23 +5,10 @@
 # requires thisCycleDate and thisValidDate to be set externally
 
 source config/tools.csh
-source config/auto/benchmark.csh
 source config/auto/members.csh
 source config/auto/model.csh
 source config/auto/naming.csh
 source config/auto/workflow.csh
-
-# cross-application prefixes and directories
-setenv RSTFilePrefix restart
-setenv ICFilePrefix mpasin
-setenv FCFilePrefix mpasout
-setenv DIAGFilePrefix diag
-setenv ANFilePrefix an
-setenv BGFilePrefix bg
-setenv forecastSubDir fc
-setenv analysisSubDir an
-setenv backgroundSubDir bg
-setenv OrigFileSuffix _orig
 
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 #set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`

@@ -14,7 +14,6 @@ from initialize.components.StaticStream import StaticStream
 from initialize.components.Workflow import Workflow
 
 # applications
-from initialize.components.Benchmark import Benchmark
 from initialize.components.InitIC import InitIC
 from initialize.components.ExtendedForecast import ExtendedForecast
 from initialize.components.Forecast import Forecast
@@ -53,10 +52,6 @@ class ForecastFromExternalAnalyses(Suite):
     c['naming'] = Naming(conf, c['exp'])
 
     c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['naming'])
-
-    #if conf.has('benchmark'): # TODO: make benchmark optional,
-    # and depend on whether verifyobs/verifymodel are selected
-    c['bench'] = Benchmark(conf, c['hpc'], c['exp'], c['naming'])
 
     for c_ in c.values():
       c_.export()

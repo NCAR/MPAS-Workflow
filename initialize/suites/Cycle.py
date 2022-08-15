@@ -51,15 +51,15 @@ class Cycle(Suite):
     #if conf.has('verifyobs'): # TODO: make verifyobs optional
     c['vobs'] = VerifyObs(conf, c['hpc'], c['members'])
 
-    c['exp'] = Experiment(conf, c['hpc'], meshes, c['da'].var, c['members'], c['da'].rtpp)
-
-    c['naming'] = Naming(conf, c['exp'])
-
-    c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['naming'])
-
     #if conf.has('benchmark'): # TODO: make benchmark optional,
     # and depend on whether verifyobs/verifymodel are selected
-    c['bench'] = Benchmark(conf, c['hpc'], c['exp'], c['naming'])
+    c['bench'] = Benchmark(conf, c['hpc'])
+
+    c['exp'] = Experiment(conf, c['hpc'], meshes, c['da'].var, c['members'], c['da'].rtpp)
+
+    c['naming'] = Naming(conf, c['exp'], c['bench'])
+
+    c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['naming'])
 
     for c_ in c.values():
       c_.export()
