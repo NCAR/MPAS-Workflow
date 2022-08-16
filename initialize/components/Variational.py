@@ -12,8 +12,8 @@ class ABEI(Component):
 class Variational(Component):
   defaults = 'scenarios/defaults/variational.yaml'
   workDir = 'CyclingDA'
-#  analysisPrefix = 'an'
-#  backgroundPrefix = 'bg'
+  analysisPrefix = 'an'
+  backgroundPrefix = 'bg'
 
   ## benchmarkObservations
   # base set of observation types assimilated in all experiments
@@ -150,6 +150,11 @@ class Variational(Component):
 
   def __init__(self, config, hpc, meshes, model, members, workflow, da): #, forecast):
     super().__init__(config)
+
+    if members.n > 1:
+      memFmt = '/mem{:03d}'
+    else:
+      memFmt = ''
 
     #self.abei = ABEI()
 
@@ -340,3 +345,29 @@ class Variational(Component):
         HofXEnsMeanBG =>
         GenerateABEInflation => '''+da.init+'''
         GenerateABEInflation => CleanHofXEnsMeanBG''']
+
+    #########
+    # outputs
+    #########
+    self.inputs = {}
+    self.inputs['members'] = []
+    self.outputs = {}
+    self.outputs['members'] = []
+    for mm in range(1, NN+1, 1):
+      self.inputs['members'].append({
+        'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+memFmt.format(mm),
+        'prefix': self.backgroundPrefix,
+      })
+      self.outputs['members'].append({
+        'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+memFmt.format(mm),
+        'prefix': self.analysisPrefix,
+      })
+
+    self.inputs['mean'] = {
+        'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+'/mean',
+        'prefix': self.backgroundPrefix,
+    }
+    self.outputs['mean'] = {
+        'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+'/mean',
+        'prefix': self.analysisPrefix,
+    }

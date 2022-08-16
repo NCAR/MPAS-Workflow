@@ -1,12 +1,21 @@
 #!/bin/csh -f
 
-## experiment provides mainScriptDir
+## load the workflow settings
+
+# experiment provides mainScriptDir
 source config/auto/experiment.csh
+
+# workflow provides CyclingWindowHR, DAVFWindowHR, FCVFWindowHR, FirstCycleDate
+source config/auto/workflow.csh
+
+# naming provides FCFilePrefix, ANFilePrefix
+source config/auto/naming.csh
 
 set standaloneApplications = ( \
   CleanRTPP.csh \
   EnsembleOfVariational.csh \
   ExternalAnalysisToMPAS.csh \
+  Forecast.csh \
   GenerateABEInflation.csh \
   GetGDASAnalysisFromFTP.csh \
   GetGFSAnalysisFromRDA.csh \
@@ -41,21 +50,6 @@ foreach part ($configParts)
   cp -rP $part ${mainScriptDir}/
 end
 
-cd ${mainScriptDir}
-
-## load the workflow settings
-
-# workflow provides CyclingWindowHR, DAVFWindowHR, FCVFWindowHR, FirstCycleDate
-source config/auto/workflow.csh
-
-# naming provides FCFilePrefix, ANFilePrefix
-source config/auto/naming.csh
-
-# externalanalyses provides externalanalyses__*
-source config/auto/externalanalyses.csh
-
-cd -
-
 set AppAndVerify = AppAndVerify
 
 ## PrepJEDIVariational, Variational, VerifyObsDA, VerifyModelDA*, CleanVariational
@@ -74,59 +68,6 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
 chmod 744 ${WrapperScript}
 ${WrapperScript}
 rm ${WrapperScript}
-
-
-## ColdForecast
-if ("$externalanalyses__resource" != None) then
-  echo "Making ColdForecast job script"
-  set JobScript=${mainAppDir}/ColdForecast.csh
-  sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
-      -e 's@StateDirsTEMPLATE@ExternalAnalysisDirOuters@' \
-      -e 's@StatePrefixTEMPLATE@'${externalanalyses__filePrefixOuter}'@' \
-      applications/forecast.csh > ${JobScript}
-  chmod 744 ${JobScript}
-endif
-
-## Forecast
-echo "Making Forecast job script"
-set JobScript=${mainAppDir}/Forecast.csh
-sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
-    -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
-    -e 's@StatePrefixTEMPLATE@'${ANFilePrefix}'@' \
-    applications/forecast.csh > ${JobScript}
-chmod 744 ${JobScript}
-
-
-## ExtendedMeanFC
-echo "Making ExtendedMeanFC job script"
-set JobScript=${mainAppDir}/ExtendedMeanFC.csh
-sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
-    -e 's@StateDirsTEMPLATE@MeanAnalysisDirs@' \
-    -e 's@StatePrefixTEMPLATE@'${ANFilePrefix}'@' \
-    applications/forecast.csh > ${JobScript}
-chmod 744 ${JobScript}
-
-
-## ExtendedEnsFC
-echo "Making ExtendedEnsFC job script"
-set JobScript=${mainAppDir}/ExtendedEnsFC.csh
-sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
-    -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
-    -e 's@StatePrefixTEMPLATE@'${ANFilePrefix}'@' \
-    applications/forecast.csh > ${JobScript}
-chmod 744 ${JobScript}
-
-
-## ExtendedFCFromExternalAnalysis
-if ("$externalanalyses__resource" != None) then
-  echo "Making ExtendedFCFromExternalAnalysis job script"
-  set JobScript=${mainAppDir}/ExtendedFCFromExternalAnalysis.csh
-  sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
-      -e 's@StateDirsTEMPLATE@ExternalAnalysisDirOuters@' \
-      -e 's@StatePrefixTEMPLATE@'${externalanalyses__filePrefixOuter}'@' \
-      applications/forecast.csh > ${JobScript}
-  chmod 744 ${JobScript}
-endif
 
 ## PrepJEDIHofX{{state}}, HofX{{state}}, CleanHofX{{state}}
 ## VerifyObs{{state}}, CompareObs{{state}},

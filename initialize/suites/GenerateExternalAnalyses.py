@@ -22,7 +22,7 @@ class GenerateExternalAnalyses(Suite):
     c['model'] = Model(conf)
     c['build'] = Build(conf, c['model'])
     c['ea'] = ExternalAnalyses(conf, c['hpc'], c['model'].getMeshes())
-    c['ic'] = InitIC(conf, c['hpc'], c['model'].getMeshes())
+    c['ic'] = InitIC(conf, c['hpc'], c['model'].getMeshes(), c['ea'])
     c['exp'] = Experiment(conf, c['hpc'])
     c['naming'] = Naming(conf, c['exp'])
 

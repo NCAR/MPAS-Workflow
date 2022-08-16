@@ -59,7 +59,7 @@ class Component():
     '''
     export for use outside python
     '''
-    self._msg('export()')
+    #self._msg('export()')
     self.__exportTasks()
     self.__exportDependencies()
     self.__exportVarsToCsh()

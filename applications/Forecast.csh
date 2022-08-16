@@ -28,6 +28,15 @@ set ArgDeleteZerothForecast = "$7"
 # ArgUpdateSea: whether to update the sea surface fields with values from an external analysis (True/False)
 set ArgUpdateSea = "$8"
 
+# ArgWorkDir: where the forecast will be executed
+set ArgWorkDir = "$9"
+
+# ArgICStateDir: where the initial condition state is located
+set ArgICStateDir = "$10"
+
+# ArgICStatePrefix: prefix of the initial condition state
+set ArgICStatePrefix = "$11"
+
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
 set isNotInt = ($status)
@@ -55,14 +64,18 @@ set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
+
+# substitute thisCycleDate/thisValidDate in ArgWorkDir and ArgICStateDir as needed
+set self_WorkDir = ${ExperimentDirectory}/`echo "${ArgWorkDir}" \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+  `
+
+set self_icStateDir = ${ExperimentDirectory}/`echo "${ArgICStateDir}" \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+  | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+  `
+
 source ./getCycleVars.csh
-
-# templated work directory
-set self_WorkDir = "$WorkDirsTEMPLATE[$ArgMember]"
-
-# other templated variables
-set self_icStateDir = "$StateDirsTEMPLATE[$ArgMember]"
-set self_icStatePrefix = "StatePrefixTEMPLATE"
 
 # nCells
 if ("$ArgMesh" == "$outerMesh") then
@@ -76,7 +89,7 @@ endif
 
 # initialState
 set icFileExt = ${thisMPASFileDate}.nc
-set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
+set initialState = ${self_icStateDir}/${ArgICStatePrefix}.${icFileExt}
 
 # use previously generated init file for static stream
 set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
@@ -183,7 +196,10 @@ if ("${ArgUpdateSea}" == True) then
   ## sea/ocean surface files
   # TODO: move sea directory configuration to yamls
   setenv seaMaxMembers 20
-  setenv deterministicSeaAnaDir ${ExternalAnalysisDirOuter}
+  set EADir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \
+    | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+    `
+  setenv deterministicSeaAnaDir ${EADir}
   setenv deterministicSeaMemFmt " "
   setenv deterministicSeaFilePrefix x1.${nCells}.init
 

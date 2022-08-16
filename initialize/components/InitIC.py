@@ -7,7 +7,7 @@ from initialize.util.Task import TaskFactory
 class InitIC(Component):
   defaults = 'scenarios/defaults/initic.yaml'
 
-  def __init__(self, config, hpc, meshes):
+  def __init__(self, config, hpc, meshes, ea):
     super().__init__(config)
 
     ########################
@@ -29,10 +29,24 @@ class InitIC(Component):
     self._tasks = ['''
   [['''+self.groupName+']]']
 
-    for mesh in list(set([mesh.name for mesh in meshes.values()])):
+    for name, m in meshes.items():
+      initArgs = '"'+ea['ExternalAnalysesDir'+name]+'"'
+      initArgs += ' "'+ea['externalanalyses__filePrefix'+name]+'"'
+      initArgs += ' "'+str(m.nCells)+'"'
+      initArgs += ' "'+ea.WorkDir+'"'
       self._tasks += [
 '''
-  [[ExternalAnalysisToMPAS-'''+mesh+''']]
+  [[ExternalAnalysisToMPAS-'''+m.name+''']]
     inherit = '''+self.groupName+''', BATCH
-    script = $origin/applications/ExternalAnalysisToMPAS.csh "'''+mesh+'''"
+    script = $origin/applications/ExternalAnalysisToMPAS.csh '''+initArgs+'''
 '''+task.job()+task.directives()]
+
+    #########
+    # outputs
+    #########
+    self.outputs = {}
+    for name, m in meshes.items():
+      self.outputs[name] = [{
+        'directory': ea['ExternalAnalysesDir'+name],
+        'prefix': ea['externalanalyses__filePrefix'+name],
+      }]

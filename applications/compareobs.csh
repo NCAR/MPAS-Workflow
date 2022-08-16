@@ -44,6 +44,7 @@ endif
 # Setup environment
 # =================
 source config/auto/benchmark.csh
+source config/auto/experiment.csh
 source config/auto/verifyobs.csh
 source config/tools.csh
 module load nccmp

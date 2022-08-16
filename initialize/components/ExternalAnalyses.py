@@ -7,7 +7,7 @@ from initialize.util.Task import TaskFactory
 class ExternalAnalyses(Component):
   defaults = 'scenarios/defaults/externalanalyses.yaml'
   workDir = 'ExternalAnalyses'
-  optionalVariables = {
+  requiredVariables = {
     ## resource:
     # used to select from among available options (e.g., see defaults)
     # must be in quotes
@@ -30,58 +30,64 @@ class ExternalAnalyses(Component):
     self._set(resourceName, resource)
     self._cshVars.append(resourceName)
 
-    if resource is not None:
-      for name, m in meshes.items():
-        mesh = m.name
-        nCells = str(m.nCells)
+    # WorkDir is where external analysis files are linked/downloaded, e.g., in grib format
+    self.WorkDir = self.workDir+'/'+resource+'/{{thisValidDate}}'
 
-        for (key, t) in [
-         ['directory', str],
-         ['filePrefix', str],
-         ['PrepareExternalAnalysisTasks', list],
-         ['Vtable', str],
-         ['UngribPrefix', str],
-        ]:
-          value = self.extractResource(('resources', resource, mesh), key, t)
+    for name, m in meshes.items():
+      mesh = m.name
+      nCells = str(m.nCells)
+      # 'ExternalAnalysesDir'+name is where external analyses converted to MPAS meshes are
+      # created and/or stored
+      self._set('ExternalAnalysesDir'+name, self.workDir+'/'+mesh+'/{{thisValidDate}}')
+      self._cshVars.append('ExternalAnalysesDir'+name)
 
-          if key == 'PrepareExternalAnalysisTasks':
-            # push back cylc mini-workflow variables
-            values = [task.replace('{{mesh}}',mesh) for task in value]
+      for (key, t) in [
+       ['directory', str],
+       ['filePrefix', str],
+       ['PrepareExternalAnalysisTasks', list],
+       ['Vtable', str],
+       ['UngribPrefix', str],
+      ]:
+        value = self.extractResource(('resources', resource, mesh), key, t)
 
-            # first add variable as a list of tasks
-            variable = key+name
-            self._cylcVars.append(variable)
-            self._set(variable, values)
+        if key == 'PrepareExternalAnalysisTasks':
+          # push back cylc mini-workflow variables
+          values = [task.replace('{{mesh}}',mesh) for task in value]
 
-            # then add as a joined string with dependencies between subtasks (" => ")
-            # e.g.,
-            # variable: PrepareExternalAnalysisTasksOuter becomes PrepareExternalAnalysisOuter
-            # value: [a, b] becomes "a => b"
-            variable = variable.replace('Tasks','')
-            value = " => ".join(values)
-            self._cylcVars.append(variable)
-            self._set(variable, value)
-            continue
+          # first add variable as a list of tasks
+          variable = key+name
+          self._cylcVars.append(variable)
+          self._set(variable, values)
 
-          else:
-            # auto-generated csh variables
-            variable = 'externalanalyses__'+key+name
-            if key in ['Vtable','UngribPrefix']:
-              if name == 'Outer':
-                variable = 'externalanalyses__'+key
-              else:
-                continue
-            
-            if key == 'filePrefix' and isinstance(value, str):
-              value = value.replace('{{nCells}}', nCells)
+          # then add as a joined string with dependencies between subtasks (" => ")
+          # e.g.,
+          # variable: PrepareExternalAnalysisTasksOuter becomes PrepareExternalAnalysisOuter
+          # value: [a, b] becomes "a => b"
+          variable = variable.replace('Tasks','')
+          value = " => ".join(values)
+          self._cylcVars.append(variable)
+          self._set(variable, value)
+          continue
 
-            self._set(variable, value)
-            self._cshVars.append(variable)
+        else:
+          # auto-generated csh variables
+          variable = 'externalanalyses__'+key+name
+          if key in ['Vtable','UngribPrefix']:
+            if name == 'Outer':
+              variable = 'externalanalyses__'+key
+            else:
+              continue
+          
+          if key == 'filePrefix' and isinstance(value, str):
+            value = value.replace('{{nCells}}', nCells)
 
-      # Use external analysis for sea surface updating
-      variable = 'PrepareSeaSurfaceUpdate'
-      self._set(variable, self['PrepareExternalAnalysisOuter'])
-      self._cylcVars.append(variable)
+          self._set(variable, value)
+          self._cshVars.append(variable)
+
+    # Use external analysis for sea surface updating
+    variable = 'PrepareSeaSurfaceUpdate'
+    self._set(variable, self['PrepareExternalAnalysisOuter'])
+    self._cylcVars.append(variable)
 
     self._cylcVars += ['GetGDASAnalysis']
 
@@ -103,18 +109,19 @@ class ExternalAnalyses(Component):
     ungribtask = TaskFactory[hpc.system](ungribjob)
 
     self.groupName = self.__class__.__name__
+
     self._tasks = [
 '''## Analyses generated outside MPAS-Workflow
   [['''+self.groupName+''']]
   [[GetGFSAnalysisFromRDA]]
     inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/GetGFSAnalysisFromRDA.csh
+    script = $origin/applications/GetGFSAnalysisFromRDA.csh "'''+self.WorkDir+'''"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+getRetry+'''
   [[GetGFSanalysisFromFTP]]
     inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/GetGFSAnalysisFromFTP.csh
+    script = $origin/applications/GetGFSAnalysisFromFTP.csh "'''+self.WorkDir+'''"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+getRetry+'''
@@ -127,7 +134,7 @@ class ExternalAnalyses(Component):
 
   [[UngribExternalAnalysis]]
     inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/UngribExternalAnalysis.csh
+    script = $origin/applications/UngribExternalAnalysis.csh "'''+self.WorkDir+'''"
 '''+ungribtask.job()+ungribtask.directives()+'''
 
   [[LinkExternalAnalyses]]
@@ -135,12 +142,26 @@ class ExternalAnalyses(Component):
   [[ExternalAnalysisReady]]
     inherit = '''+self.groupName+''', BACKGROUND''']
 
-    for mesh in list(set([mesh.name for mesh in meshes.values()])):
+    for name, m in meshes.items():
+      linkArgs = '"'+self['ExternalAnalysesDir'+name]+'"'
+      linkArgs += ' "'+str(self['externalanalyses__directory'+name])+'"'
+      linkArgs += ' "'+self['externalanalyses__filePrefix'+name]+'"'
+
       self._tasks += [
 '''
-  [[LinkExternalAnalysis-'''+mesh+''']]
+  [[LinkExternalAnalysis-'''+m.name+''']]
     inherit = LinkExternalAnalyses, SingleBatch
-    script = $origin/applications/LinkExternalAnalysis.csh "'''+mesh+'''"
+    script = $origin/applications/LinkExternalAnalysis.csh '''+linkArgs+'''
     [[[job]]]
       execution time limit = PT30S
       execution retry delays = 1*PT30S''']
+
+    #########
+    # outputs
+    #########
+    self.outputs = {}
+    for name, m in meshes.items():
+      self.outputs[name] = [{
+        'directory': self['ExternalAnalysesDir'+name],
+        'prefix': self['externalanalyses__filePrefix'+name],
+      }]

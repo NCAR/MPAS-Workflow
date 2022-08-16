@@ -23,7 +23,7 @@ class ExtendedForecast(Component):
     'ensTimes': ['T00', str],
   }
 
-  def __init__(self, config, hpc, members, forecast):
+  def __init__(self, config, hpc, members, forecast, extAnaIC:list, meanAnaIC:dict, ensAnaIC:list):
     super().__init__(config)
 
     ###################
@@ -72,6 +72,30 @@ class ExtendedForecast(Component):
     meanjob = Resource(self._conf, attr, ('job', 'meananalysis'))
     meantask = TaskFactory[hpc.system](meanjob)
 
+    extAnaArgs = '"1"'
+    extAnaArgs += ' "'+str(lengthHR)+'"'
+    extAnaArgs += ' "'+str(outIntervalHR)+'"'
+    extAnaArgs += ' "False"'
+    extAnaArgs += ' "'+forecast.mesh.name+'"'
+    extAnaArgs += ' "False"'
+    extAnaArgs += ' "False"'
+    extAnaArgs += ' "False"'
+    extAnaArgs += ' "'+self.workDir+'/{{thisCycleDate}}/mean"'
+    extAnaArgs += ' "'+extAnaIC[0]['directory']+'"'
+    extAnaArgs += ' "'+extAnaIC[0]['prefix']+'"'
+
+    meanAnaArgs = '"1"'
+    meanAnaArgs += ' "'+str(lengthHR)+'"'
+    meanAnaArgs += ' "'+str(outIntervalHR)+'"'
+    meanAnaArgs += ' "False"'
+    meanAnaArgs += ' "'+forecast.mesh.name+'"'
+    meanAnaArgs += ' "True"'
+    meanAnaArgs += ' "False"'
+    meanAnaArgs += ' "False"'
+    meanAnaArgs += ' "'+self.workDir+'/{{thisCycleDate}}/mean"'
+    meanAnaArgs += ' "'+meanAnaIC['directory']+'"'
+    meanAnaArgs += ' "'+meanAnaIC['prefix']+'"'
+
     self.groupName = self.__class__.__name__
     self._tasks = ['''
   [['''+self.groupName+''']]
@@ -80,7 +104,7 @@ class ExtendedForecast(Component):
   ## from external analysis
   [[ExtendedFCFromExternalAnalysis]]
     inherit = '''+self.groupName+''', BATCH
-    script = $origin/applications/ExtendedFCFromExternalAnalysis.csh "1" "'''+str(lengthHR)+'''" "'''+str(outIntervalHR)+'''" "False" "'''+forecast.mesh.name+'''" "False" "False" "False"
+    script = $origin/applications/Forecast.csh '''+extAnaArgs+'''
 
   # TODO: move MeanAnalysis somewhere else
   ## from mean analysis (including single-member deterministic)
@@ -90,7 +114,7 @@ class ExtendedForecast(Component):
 '''+meantask.job()+meantask.directives()+'''
   [[ExtendedMeanFC]]
     inherit = '''+self.groupName+''', BATCH
-    script = $origin/applications/ExtendedMeanFC.csh "1" "'''+str(lengthHR)+'''" "'''+str(outIntervalHR)+'''" "False" "'''+forecast.mesh.name+'''" "True" "False" "False"
+    script = $origin/applications/Forecast.csh '''+meanAnaArgs+'''
 
 
   [[ExtendedForecastFinished]]
@@ -100,8 +124,37 @@ class ExtendedForecast(Component):
   [[ExtendedEnsFC]]
     inherit = '''+self.groupName]
 
+    memFmt = '/mem{:03d}'
     for mm in EnsVerifyMembers:
+      ensAnaArgs = '"'+str(mm)+'"'
+      ensAnaArgs += ' "'+str(lengthHR)+'"'
+      ensAnaArgs += ' "'+str(outIntervalHR)+'"'
+      ensAnaArgs += ' "False"'
+      ensAnaArgs += ' "'+forecast.mesh.name+'"'
+      ensAnaArgs += ' "True"'
+      ensAnaArgs += ' "False"'
+      ensAnaArgs += ' "False"'
+      ensAnaArgs += ' "'+self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm)+'"'
+      ensAnaArgs += ' "'+ensAnaIC[mm-1]['directory']+'"'
+      ensAnaArgs += ' "'+ensAnaIC[mm-1]['prefix']+'"'
+
       self._tasks += ['''
   [[ExtendedFC'''+str(mm)+''']]
     inherit = ExtendedEnsFC, BATCH
-    script = $origin/applications/ExtendedEnsFC.csh "'''+str(mm)+'''" "'''+str(lengthHR)+'''" "'''+str(outIntervalHR)+'''" "False" "'''+forecast.mesh.name+'''" "True" "False" "False"''']
+    script = $origin/applications/Forecast.csh '''+ensAnaArgs]
+
+    #########
+    # outputs
+    #########
+    self.outputs = {}
+    self.outputs['members'] = []
+    for mm in range(1, members.n+1, 1):
+      self.outputs['members'].append({
+        'directory': self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
+        'prefix': forecast.forecastPrefix,
+      })
+
+    self.outputs['mean'] = {
+        'directory': self.workDir+'/{{thisCycleDate}}/mean',
+        'prefix': forecast.forecastPrefix,
+    }

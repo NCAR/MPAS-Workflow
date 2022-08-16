@@ -5,7 +5,7 @@ staticstream:
     # can be overridden in either a `common` or `{{mesh}}``-specific block
     defaults:
       ## directory (required): location of static stream file
-      directory: "{{ExternalAnalysesWorkDir}}/{{FirstCycleDate}}"
+      directory: "{{ExternalAnalysesDir}}/{{FirstCycleDate}}"
 
       ## filePrefix: prefix of static stream file
       filePrefix: "x1.{{nCells}}.init"

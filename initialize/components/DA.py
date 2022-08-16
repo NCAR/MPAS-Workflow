@@ -66,7 +66,8 @@ class DA(Component):
         '''+self.post+''' => '''+self.finished+''' => '''+self.clean]
 
     self.var = Variational(config, hpc, meshes, model, members, workflow, self)
-    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self)
+    self.outputs = self.var.outputs
+    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self, self.var.inputs['members'], self.var.outputs['members'])
 
   def export(self):
     self.var.export()

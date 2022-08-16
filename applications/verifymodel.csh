@@ -39,6 +39,7 @@ endif
 # Setup environment
 # =================
 source config/tools.csh
+source config/auto/experiment.csh
 source config/auto/externalanalyses.csh
 source config/auto/model.csh
 source config/auto/verifymodel.csh
@@ -80,10 +81,14 @@ set mainScript = DiagnoseModelStatistics
 ln -fs ${pyVerifyDir}/${mainScript}.py ./
 set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 
+set EADir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \
+  | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+  `
+
 set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $ExternalAnalysisDirOuter/$externalanalyses__filePrefixOuter"
+  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $EADir/$externalanalyses__filePrefixOuter"
 
   if ($ArgNMembers > 1) then
     #Note: ensemble diagnostics only work for BG/AN verification, not extended ensemble forecasts

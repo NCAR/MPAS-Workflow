@@ -1,11 +1,18 @@
 #!/bin/csh -f
 # Get GFS analysis (0-h forecast) for cold start initial conditions
 
+# Process arguments
+# =================
+## args
+# ArgWorkDir: my location
+set ArgWorkDir = "$1"
+
 date
 
 # Setup environment
 # =================
 source config/auto/build.csh
+source config/auto/experiment.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -20,8 +27,9 @@ set gribFile = gfs.t${hh}z.pgrb2.${res}.f${fhour}
 
 source ./getCycleVars.csh
 
-# static work directory
-set WorkDir = ${ExternalAnalysisDir}
+set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
+  | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+  `
 echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}

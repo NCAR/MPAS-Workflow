@@ -16,7 +16,7 @@ class StaticStream(Component):
     'resource': str,
   }
 
-  def __init__(self, config, meshes, members, FirstCycleDate, naming):
+  def __init__(self, config, meshes, members, FirstCycleDate, ea, exp):
     super().__init__(config)
 
     ###################
@@ -45,10 +45,14 @@ class StaticStream(Component):
       #############################
       # static stream file settings
       #############################
-      n = 'StaticFieldsDir'+name
-      self._set(n, self['directory'+name].replace(
-        '{{ExternalAnalysesWorkDir}}', naming['ExternalAnalysesWorkDir']+'/'+mesh))
-      self._cshVars.append(n)
+      dirName = 'StaticFieldsDir'+name
+      self._set(dirName, self['directory'+name].replace(
+          '{{ExternalAnalysesDir}}',
+          exp['directory']+'/'+ea['ExternalAnalysesDir'+name].replace(
+            '/{{thisValidDate}}', '')
+        )
+      )
+      self._cshVars.append(dirName)
 
       n = 'StaticFieldsFile'+name
       self._set(n, self['filePrefix'+name]+'.'+FirstFileDate+'.nc')

@@ -8,10 +8,13 @@
 
 set suite = "$1"
 
-echo "$0 (INFO): Generating the MPAS-Workflow task scripts"
-# Create the cylc task scripts
+echo "$0 (INFO): Generating the scenario-specific MPAS-Workflow directory"
+
+# Create/copy the applications task scripts
 echo "./SetupWorkflow.csh"
 ./SetupWorkflow.csh
+
+# Get experiment variables
 source config/auto/experiment.csh
 
 ## Change to the cylc suite directory

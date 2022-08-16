@@ -39,11 +39,16 @@ class Cycle(Suite):
     c['ea'] = ExternalAnalyses(conf, c['hpc'], meshes)
     c['fb'] = FirstBackground(conf, meshes, c['members'], c['workflow']['FirstCycleDate'])
 
-    c['ic'] = InitIC(conf, c['hpc'], meshes)
+    c['ic'] = InitIC(conf, c['hpc'], meshes, c['ea'])
     c['hofx'] = HofX(conf, c['hpc'], meshes, c['model'])
     c['da'] = DA(conf, c['hpc'], c['obs'], meshes, c['model'], c['members'], c['workflow'])
-    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['workflow'])
-    c['extfc'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'])
+    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['workflow'],
+                c['ea'].outputs['Outer'],
+                c['da'].outputs['members'])
+    c['extfc'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
+                c['ea'].outputs['Outer'],
+                c['da'].outputs['mean'],
+                c['da'].outputs['members'])
 
     #if conf.has('verifymodel'): # TODO: make verifymodel optional
     c['vmodel'] = VerifyModel(conf, c['hpc'], meshes['Outer'], c['members'])
@@ -56,10 +61,9 @@ class Cycle(Suite):
     c['bench'] = Benchmark(conf, c['hpc'])
 
     c['exp'] = Experiment(conf, c['hpc'], meshes, c['da'].var, c['members'], c['da'].rtpp)
+    c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['ea'], c['exp'])
 
     c['naming'] = Naming(conf, c['exp'], c['bench'])
-
-    c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['naming'])
 
     for c_ in c.values():
       c_.export()

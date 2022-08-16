@@ -167,4 +167,13 @@ class Workflow(Component):
       self._set('ForecastTimes', '+PT'+str(DA2FCOffsetHR)+'H/PT'+str(CyclingWindowHR)+'H')
 
     self._cshVars = list(self._vtable.keys())
+
+    # substitution variables to be passed directly to task scripts instead of parsed with Jinja2
+    substitutionVars = [
+      'thisValidDate',
+      'thisCycleDate',
+    ]
+    for v in substitutionVars:
+      # create cylc variable named v, with value '{{'+v+'}}', overriding Jinja2
+      self._set(v, '{{'+v+'}}')
     self._cylcVars = list(self._vtable.keys())

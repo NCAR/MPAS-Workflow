@@ -21,7 +21,7 @@ class RTPP(Component):
     'retainOriginalAnalyses': [False, bool],
   }
 
-  def __init__(self, config, hpc, ensMesh, members, da):
+  def __init__(self, config, hpc, ensMesh, members, da, ensBackgrounds:list, ensAnalyses:list):
     super().__init__(config)
 
     ###################

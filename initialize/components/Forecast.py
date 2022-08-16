@@ -10,7 +10,7 @@ class Forecast(Component):
 #  RSTFilePrefix = 'restart'
 #  ICFilePrefix = 'mpasin'
 #
-#  FCFilePrefix = 'mpasout'
+  forecastPrefix = 'mpasout'
 #  fcDir = 'fc'
 #  DIAGFilePrefix = 'diag'
 
@@ -24,8 +24,13 @@ class Forecast(Component):
     'IAU': [False, bool],
   }
 
-  def __init__(self, config, hpc, mesh, members, workflow):
+  def __init__(self, config, hpc, mesh, members, workflow, coldIC:list, warmIC:list):
     super().__init__(config)
+
+    if members.n > 1:
+      memFmt = '/mem{:03d}'
+    else:
+      memFmt = ''
 
     self.mesh = mesh
 
@@ -84,17 +89,37 @@ class Forecast(Component):
       # DACycling (False), IC ~is not~ a DA analysis for which re-coupling is required
       # DeleteZerothForecast (True), not used anywhere else in the workflow
       # updateSea (False) is not needed since the IC is already an external analysis
-      ColdArgs = '"'+str(mm)+'" "'+str(lengthHR)+'" "'+str(outIntervalHR)+'" "False" "'+mesh.name+'" "False" "True" "False"'
+      ColdArgs = '"1"'
+      ColdArgs += ' "'+str(lengthHR)+'"'
+      ColdArgs += ' "'+str(outIntervalHR)+'"'
+      ColdArgs += ' "False"'
+      ColdArgs += ' "'+mesh.name+'"'
+      ColdArgs += ' "False"'
+      ColdArgs += ' "True"'
+      ColdArgs += ' "False"'
+      ColdArgs += ' "'+self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm)+'"'
+      ColdArgs += ' "'+coldIC[0]['directory']+'"'
+      ColdArgs += ' "'+coldIC[0]['prefix']+'"'
 
       # WarmArgs explanation
       # DACycling (True), IC ~is~ a DA analysis for which re-coupling is required
       # DeleteZerothForecast (True), not used anywhere else in the workflow
-      WarmArgs = '"'+str(mm)+'" "'+str(lengthHR)+'" "'+str(outIntervalHR)+'" "'+str(IAU)+'" "'+mesh.name+'" "True" "True" "'+str(updateSea)+'"'
+      WarmArgs = '"'+str(mm)+'"'
+      WarmArgs += ' "'+str(lengthHR)+'"'
+      WarmArgs += ' "'+str(outIntervalHR)+'"'
+      WarmArgs += ' "'+str(IAU)+'"'
+      WarmArgs += ' "'+mesh.name+'"'
+      WarmArgs += ' "True"'
+      WarmArgs += ' "True"'
+      WarmArgs += ' "'+str(updateSea)+'"'
+      WarmArgs += ' "'+self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm)+'"'
+      WarmArgs += ' "'+warmIC[mm-1]['directory']+'"'
+      WarmArgs += ' "'+warmIC[mm-1]['prefix']+'"'
 
       self._tasks += ['''
   [[ColdForecast'''+str(mm)+''']]
     inherit = ColdForecast, BATCH
-    script = $origin/applications/ColdForecast.csh '''+ColdArgs+'''
+    script = $origin/applications/Forecast.csh '''+ColdArgs+'''
   [[Forecast'''+str(mm)+''']]
     inherit = Forecast, BATCH
     script = $origin/applications/Forecast.csh '''+WarmArgs]
@@ -105,3 +130,19 @@ class Forecast(Component):
 
         # all members must succeed in order to proceed
         Forecast:succeed-all => ForecastFinished''']
+
+    #########
+    # outputs
+    #########
+    self.outputs = {}
+    self.outputs['members'] = []
+    for mm in range(1, members.n+1, 1):
+      self.outputs['members'].append({
+        'directory': self.workDir+'/[[prevCycleDate]]'+memFmt.format(mm),
+        'prefix': self.forecastPrefix,
+      })
+
+    #self.outputs['mean'] = {
+    #    'directory': self.workDir+'/[[prevCycleDate]]/mean',
+    #    'prefix': self.forecastPrefix,
+    #}

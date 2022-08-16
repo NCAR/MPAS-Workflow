@@ -3,8 +3,17 @@
 # Process arguments
 # =================
 ## args
-# ArgMesh: str, mesh name, one of model.meshes
-set ArgMesh = "$1"
+# ArgWorkDir: my location
+set ArgWorkDir = "$1"
+
+# ArgFilePrefix: prefix for output file
+set ArgFilePrefix = "$2"
+
+# ArgNCells: number of horizontal mesh cells
+set ArgNCells = "$3"
+
+# ArgExternalAnalysesDir: location of external analyses
+set ArgExternalAnalysesDir = "$4"
 
 date
 
@@ -21,28 +30,12 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-# static work directory
-
-if ("$ArgMesh" == "$outerMesh") then
-  set WorkDir = ${ExternalAnalysisDirOuter}
-  set nCells = $nCellsOuter
-  set filePrefix = $externalanalyses__filePrefixOuter
-
-else if ("$ArgMesh" == "$innerMesh") then
-  set WorkDir = ${ExternalAnalysisDirInner}
-  set nCells = $nCellsInner
-  set filePrefix = $externalanalyses__filePrefixInner
-
-else if ("$ArgMesh" == "$ensembleMesh") then
-  set WorkDir = ${ExternalAnalysisDirEnsemble}
-  set nCells = $nCellsEnsemble
-  set filePrefix = $externalanalyses__filePrefixEnsemble
-
-else
-  echo "$0 (ERROR): invalid ArgMesh ($ArgMesh)"
-  exit 1
-endif
-
+set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
+  | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+  `
+set ExternalAnalysesDir = ${ExperimentDirectory}/`echo "$ArgExternalAnalysesDir" \
+  | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+  `
 echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
@@ -52,7 +45,7 @@ cd ${WorkDir}
 # ================================================================================================
 
 # only need to continue if output file does not already exist
-set outputFile = $filePrefix.$thisMPASFileDate.nc
+set outputFile = $ArgFilePrefix.$thisMPASFileDate.nc
 
 if ( -e $outputFile ) then
   echo "$0 (INFO): outputFile ($outputFile) already exists, exiting with success"
@@ -66,12 +59,12 @@ endif
 # ================================================================================================
 
 ## link ungribbed files
-ln -sfv ${ExternalAnalysisDir}/${externalanalyses__UngribPrefix}* ./
+ln -sfv ${ExternalAnalysesDir}/${externalanalyses__UngribPrefix}* ./
 
 ## link MPAS mesh graph info and static field
-rm ./x1.${nCells}.graph.info*
-ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
-ln -sfv $GraphInfoDir/x1.${nCells}.static.nc .
+rm ./x1.${ArgNCells}.graph.info*
+ln -sfv $GraphInfoDir/x1.${ArgNCells}.graph.info* .
+ln -sfv $GraphInfoDir/x1.${ArgNCells}.static.nc .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -82,14 +75,14 @@ end
 ## copy/modify dynamic streams file
 rm ${StreamsFileInit}
 cp -v $ModelConfigDir/initic/${StreamsFileInit} .
-sed -i 's@{{nCells}}@'${nCells}'@' ${StreamsFileInit}
+sed -i 's@{{nCells}}@'${ArgNCells}'@' ${StreamsFileInit}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}
 cp -v $ModelConfigDir/initic/${NamelistFileInit} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
-sed -i 's@nCells@'${nCells}'@' $NamelistFileInit
+sed -i 's@nCells@'${ArgNCells}'@' $NamelistFileInit
 sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileInit
 
 # Run the executable

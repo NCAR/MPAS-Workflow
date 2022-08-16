@@ -124,6 +124,7 @@ class Experiment(Component):
 
     ## absolute experiment directory
     self._set('ExperimentDirectory', ParentDirectory+'/'+suiteName)
+    self._set('directory', ParentDirectory+'/'+suiteName)
     self._set('mainScriptDir', self['ExperimentDirectory']+'/'+self.PackageBaseName)
     self._set('ConfigDir', self['mainScriptDir']+'/config')
     self._set('ModelConfigDir', self['mainScriptDir']+'/config/mpas')

@@ -21,8 +21,7 @@ class GenerateObs(Suite):
     c['exp'] = Experiment(conf, c['hpc'])
     c['naming'] = Naming(conf, c['exp'])
 
-    # TODO: make model, members optional, modify getCycleVars
-    c['model'] = Model(conf)
+    # TODO: make members optional, modify getCycleVars
     c['members'] = Members(conf)
 
     for c_ in c.values():

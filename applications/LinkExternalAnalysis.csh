@@ -4,14 +4,21 @@
 # Process arguments
 # =================
 ## args
-# ArgMesh: str, mesh name, one of model.meshes
-set ArgMesh = "$1"
+# ArgWorkDir: my location
+set ArgWorkDir = "$1"
+
+# ArgExternalDirectory: location of external files
+set ArgExternalDirectory = "$2"
+
+# ArgFilePrefix: common prefix for external/local files
+set ArgFilePrefix = "$3"
 
 date
 
 # Setup environment
 # =================
 source config/auto/build.csh
+source config/auto/experiment.csh
 source config/auto/externalanalyses.csh
 source config/auto/model.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -21,36 +28,19 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-if ("$ArgMesh" == "$outerMesh") then
-  set WorkDir = ${ExternalAnalysisDirOuter}
-  set filePrefix = $externalanalyses__filePrefixOuter
-  set directory = `echo "$externalanalyses__directoryOuter" \
-    | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
-    `
-else if ("$ArgMesh" == "$innerMesh") then
-  set WorkDir = ${ExternalAnalysisDirInner}
-  set filePrefix = $externalanalyses__filePrefixInner
-  set directory = `echo "$externalanalyses__directoryInner" \
-    | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
-    `
-else if ("$ArgMesh" == "$ensembleMesh") then
-  set WorkDir = ${ExternalAnalysisDirEnsemble}
-  set filePrefix = $externalanalyses__filePrefixEnsemble
-  set directory = `echo "$externalanalyses__directoryEnsemble" \
-    | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
-    `
-else
-  echo "$0 (ERROR): invalid ArgMesh ($ArgMesh)"
-  exit 1
-endif
-
+set WorkDir = "${ExperimentDirectory}/"`echo "$ArgWorkDir" \
+  | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+  `
+set directory = `echo "$ArgExternalDirectory" \
+  | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+  `
 echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
 
 # ================================================================================================
 
-ln -sfv $directory/$filePrefix.$thisMPASFileDate.nc ./
+ln -sfv $directory/$ArgFilePrefix.$thisMPASFileDate.nc ./
 
 date
 
