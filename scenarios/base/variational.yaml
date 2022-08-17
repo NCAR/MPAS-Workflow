@@ -22,7 +22,7 @@ variational:
 ## maxIODAPoolSize
 # maximum number of IO pool members in IODA writer class
 # OPTIONS: 1 to NPE, default: 10
-  maxIODAPoolSize: 10
+  maxIODAPoolSize: 1
 
 ##ensembleCovarianceWeight and staticCovarianceWeight
 # weights of ensemble and static components of the background errorcovariance
