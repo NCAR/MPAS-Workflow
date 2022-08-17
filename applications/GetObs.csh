@@ -2,11 +2,18 @@
 # Get observations for a cold start experiment
 # from the NCEP FTP BUFR/PrepBUFR files or CISL RDA archived NCEP BUFR files
 
+# Process arguments
+# =================
+## args
+# ArgWorkDir: my location
+set ArgWorkDir = "$1"
+
 date
 
 # Setup environment
 # =================
 source config/auto/build.csh
+source config/auto/experiment.csh
 source config/auto/observations.csh
 source config/auto/workflow.csh
 set yyyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -17,11 +24,12 @@ set thisCycleDate = ${yyyymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-# templated work directory
-set WorkDir = ${ObsDir}
-echo "WorkDir = ${WorkDir}"
-mkdir -p ${WorkDir}
-cd ${WorkDir}
+set self_WorkDir = "${ExperimentDirectory}/"`echo "$ArgWorkDir" \
+  | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+  `
+echo "WorkDir = ${self_WorkDir}"
+mkdir -p ${self_WorkDir}
+cd ${self_WorkDir}
 
 # ================================================================================================
 

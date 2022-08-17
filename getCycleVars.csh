@@ -25,9 +25,6 @@ set thisISO8601Date = ${yy}-${mm}-${dd}T${hh}:00:00Z
 # Date-dependent directory names
 # ==============================
 
-## Observations
-set ObsDir = ${ObservationsWorkDir}/${thisValidDate}
-
 ## DA
 # Variational
 set CyclingDADir = ${VariationalWorkDir}/${thisCycleDate}
@@ -52,9 +49,6 @@ end
 
 # ABEI
 set CyclingABEInflationDir = ${ABEIWorkDir}/${thisCycleDate}
-
-# RTPP
-set CyclingRTPPDir = ${RTPPWorkDir}/${thisCycleDate}
 
 ## Forecast
 set CyclingFCDir = ${ForecastWorkDir}/${thisCycleDate}

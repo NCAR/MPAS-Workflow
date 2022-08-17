@@ -53,6 +53,9 @@ class Observations(Component):
   def __init__(self, config, hpc):
     super().__init__(config)
 
+    # WorkDir is where non-IODA-formatted observation files are linked/downloaded, then converted
+    self.WorkDir = self.workDir+'/{{thisValidDate}}'
+
     ###################
     # derived variables
     ###################
@@ -95,13 +98,13 @@ class Observations(Component):
   [['''+self.groupName+''']]
   [[GetObs]]
     inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/GetObs.csh
+    script = $origin/applications/GetObs.csh "'''+self.WorkDir+'''"
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = '''+self['getRetry']+'''
   [[ObsToIODA]]
     inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/ObsToIODA.csh
+    script = $origin/applications/ObsToIODA.csh "'''+self.WorkDir+'''"
     [[[job]]]
       execution time limit = PT600S
       execution retry delays = '''+self['convertRetry']+'''

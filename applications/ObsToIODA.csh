@@ -1,6 +1,12 @@
 #!/bin/csh -f
 #Convert CISL RDA archived NCEP BUFR files to IODA-v2 format based on Jamie Bresch (NCAR/MMM) script rda_obs2ioda.csh
 
+# Process arguments
+# =================
+## args
+# ArgWorkDir: my location
+set ArgWorkDir = "$1"
+
 date
 
 # Setup environment
@@ -16,11 +22,12 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-# templated work directory
-set WorkDir = ${ObsDir}
-echo "WorkDir = ${WorkDir}"
-mkdir -p ${WorkDir}
-cd ${WorkDir}
+set self_WorkDir = "${ExperimentDirectory}/"`echo "$ArgWorkDir" \
+  | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
+  `
+echo "WorkDir = ${self_WorkDir}"
+mkdir -p ${self_WorkDir}
+cd ${self_WorkDir}
 
 # ================================================================================================
 

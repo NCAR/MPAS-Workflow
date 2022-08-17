@@ -24,6 +24,9 @@ class RTPP(Component):
   def __init__(self, config, hpc, ensMesh, members, da, ensBackgrounds:list, ensAnalyses:list):
     super().__init__(config)
 
+    # WorkDir is where RTPP is executed
+    self.WorkDir = self.workDir+'/{{thisCycleDate}}'
+
     ###################
     # derived variables
     ###################
@@ -63,18 +66,18 @@ class RTPP(Component):
   [[PrepRTPP]]
     # note: does not depend on any other tasks
     inherit = '''+da.groupName+''', SingleBatch
-    script = $origin/applications/PrepRTPP.csh
+    script = $origin/applications/PrepRTPP.csh "'''+self.WorkDir+'''"
     [[[job]]]
       execution time limit = PT1M
       execution retry delays = '''+job['retry']+'''
   [[RTPP]]
     inherit = '''+da.groupName+''', BATCH
-    script = $origin/applications/RTPP.csh
+    script = $origin/applications/RTPP.csh "'''+self.WorkDir+'''"
 '''+task.job()+task.directives()+'''
 
   [[CleanRTPP]]
     inherit = '''+da.clean+''', Clean
-    script = $origin/applications/CleanRTPP.csh''']
+    script = $origin/applications/CleanRTPP.csh "'''+self.WorkDir+'"']
 
       da._dependencies += ['''
         PrepRTPP => RTPP

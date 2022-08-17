@@ -1,9 +1,16 @@
 #!/bin/csh -f
 
+# Process arguments
+# =================
+## args
+# ArgWorkDir: my location
+set ArgWorkDir = "$1"
+
 date
 
 # Setup environment
 # =================
+source config/auto/experiment.csh
 source config/auto/rtpp.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -12,7 +19,9 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # static work directory
-set self_WorkDir = $CyclingRTPPDir
+set self_WorkDir = "${ExperimentDirectory}/"`echo "$ArgWorkDir" \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+  `
 echo "WorkDir = ${self_WorkDir}"
 cd ${self_WorkDir}
 

@@ -1,5 +1,11 @@
 #!/bin/csh -f
 
+# Process arguments
+# =================
+## args
+# ArgWorkDir: my location
+set ArgWorkDir = "$1"
+
 date
 
 # Setup environment
@@ -25,7 +31,9 @@ if (${nMembers} < 2) then
 endif
 
 # static work directory
-set self_WorkDir = $CyclingRTPPDir
+set self_WorkDir = "${ExperimentDirectory}/"`echo "$ArgWorkDir" \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+  `
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
