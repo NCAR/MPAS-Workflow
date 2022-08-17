@@ -42,7 +42,7 @@ setenv RTPPBuildDir ${commonBuild}/bin
 # ----------
 setenv InitEXE mpas_init_${MPASCore}
 setenv InitBuildDir ${commonBuild}/bin
-setenv ForecastTopBuildDir ${commonBuild}
+setenv ForecastTopBuildDir /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_10AUG2022_single
 
 # use forecast executable built in the bundle
 setenv ForecastBuildDir ${ForecastTopBuildDir}/bin

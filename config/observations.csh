@@ -18,6 +18,6 @@ $setLocal CRTMTABLES
 $setLocal InterpolationType
 
 # static directories for bias correction files
-set fixedCoeff = /glade/work/jban/pandac/fix_input/satbias
-set fixedTlapmeanCov = /glade/work/jban/pandac/fix_input/satbias/2018
-set initialVARBCcoeff = /glade/work/jban/pandac/fix_input/satbias/2018
+set fixedCoeff        = /glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias
+set fixedTlapmeanCov  = /glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias/2018
+set initialVARBCcoeff = /glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias/2018

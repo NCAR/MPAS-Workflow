@@ -1,6 +1,6 @@
   obs filters:
-  - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_mhs-ocean_n18.nc4
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_mhs-ocean_n18.nc4
   - filter: Background Check
     threshold: 3
     <<: *multiIterationFilter

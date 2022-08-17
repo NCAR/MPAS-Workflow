@@ -117,37 +117,37 @@ observations:
       #TODO: update to locations of files with new DateTime format
       variational:
         ##anchor
-        aircraft: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        gnssroref: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        satwind: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        satwnd: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        sfc: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        sondes: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
+        aircraft: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        gnssroref: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        satwind: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        satwnd: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        sfc: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        sondes: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
 
         ## amsua
-        amsua_aqua: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        amsua_metop-a: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        amsua_metop-b: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        amsua_n15: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        amsua_n18: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        amsua_n19: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        amsua-cld_aqua: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        amsua-cld_metop-a: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        amsua-cld_metop-b: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        amsua-cld_n15: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        amsua-cld_n18: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
-        amsua-cld_n19: /glade/scratch/jban/pandac/obs_220127/2018/raw_obs
+        amsua_aqua: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        amsua_metop-a: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        amsua_metop-b: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        amsua_n15: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        amsua_n18: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        amsua_n19: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        amsua-cld_aqua: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        amsua-cld_metop-a: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        amsua-cld_metop-b: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        amsua-cld_n15: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        amsua-cld_n18: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        amsua-cld_n19: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
 
         ## mhs
-        mhs_metop-a: /glade/scratch/jban/pandac/obs_220127/2018/bias_corr
-        mhs_metop-b: /glade/scratch/jban/pandac/obs_220127/2018/bias_corr
-        mhs_n18: /glade/scratch/jban/pandac/obs_220127/2018/bias_corr
-        mhs_n19: /glade/scratch/jban/pandac/obs_220127/2018/bias_corr
+        mhs_metop-a: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/bias_corr
+        mhs_metop-b: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/bias_corr
+        mhs_n18: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/bias_corr
+        mhs_n19: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/bias_corr
 
-        mhs-land_metop-a: /glade/scratch/jban/pandac/obs_220127/2018/bias_corr
-        mhs-land_metop-b: /glade/scratch/jban/pandac/obs_220127/2018/bias_corr
-        mhs-land_n18: /glade/scratch/jban/pandac/obs_220127/2018/bias_corr
-        mhs-land_n19: /glade/scratch/jban/pandac/obs_220127/2018/bias_corr
+        mhs-land_metop-a: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/bias_corr
+        mhs-land_metop-b: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/bias_corr
+        mhs-land_n18: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/bias_corr
+        mhs-land_n19: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/bias_corr
 
         ## abi
         abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB59X59_no-bias-correct

@@ -265,5 +265,5 @@
       name: reject
   - filter: Gaussian_Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
-  - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_metop-b.nc4
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_metop-b.nc4
