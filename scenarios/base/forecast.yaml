@@ -22,10 +22,10 @@ forecast:
       #baseSeconds: 60
       #secondsPerForecastHR: 120
       # more efficient
-      nodes: 4
-      PEPerNode: 36
+      nodes: 8
+      PEPerNode: 32
       baseSeconds: 60
-      secondsPerForecastHR: 250
+      secondsPerForecastHR: 150
     60km:
       # faster turnaround
       #nodes: 4

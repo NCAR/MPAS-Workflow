@@ -16,6 +16,7 @@ module use $OPT/modulefiles/core
 module load jedi/${BuildCompiler}
 module load json
 module load json-schema-validator
+module load atlas/ecmwf-0.29.0
 limit stacksize unlimited
 setenv OOPS_TRACE 0
 setenv OOPS_DEBUG 0

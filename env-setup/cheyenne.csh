@@ -1,4 +1,5 @@
 source /etc/profile.d/modules.csh
+module unload python
 module load conda/latest
 conda activate npl
 
