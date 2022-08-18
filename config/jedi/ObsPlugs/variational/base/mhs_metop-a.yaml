@@ -4,12 +4,12 @@
     obsdatain:
       obsfile: {{InDBDir}}/mhs_metop-a_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_mhs-ocean_metop-a.h5
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_mhs_metop-a.h5
     simulated variables: [brightness_temperature]
-    channels: &mhs_metop-a_channels 1-5
+    channels: &mhs_metop-a_channels 3-5
   obs error: *ObsErrorDiagonal
   obs operator:
-    <<: *cloudyCRTMObsOperator
+    <<: *clearCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: mhs_metop-a

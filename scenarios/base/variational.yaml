@@ -79,19 +79,19 @@ variational:
   - amsua_n15
   - amsua_n18
   - amsua_n19
-  - amsua-cld_n15
-  - amsua-cld_n18
-  - amsua-cld_n19
-  - amsua-cld_metop-a
-  - amsua-cld_metop-b
+#  - amsua-cld_n15
+#  - amsua-cld_n18
+#  - amsua-cld_n19
+#  - amsua-cld_metop-a
+#  - amsua-cld_metop-b
   - mhs_n19
   - mhs_n18
   - mhs_metop-a
   - mhs_metop-b
-  - mhs-land_n19
-  - mhs-land_n18
-  - mhs-land_metop-a
-  - mhs-land_metop-b
+#  - mhs-land_n19
+#  - mhs-land_n18
+#  - mhs-land_metop-a
+#  - mhs-land_metop-b
 
 ## experimentalObservations
 # observation types assimilated in variational application instances
@@ -307,7 +307,7 @@ variational:
           nodes: 6
           PEPerNode: 32
           memory: 109
-          baseSeconds: 1250
+          baseSeconds: 700
           secondsPerEnVarMember: 10
         3dvar:
           baseSeconds: 1200

@@ -1,47 +1,10 @@
   obs filters:
-#  - filter: GOMsaver
-#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_mhs-ocean_n18.nc4
+  - filter: PreQC
+    maxvalue: 0
   - filter: Background Check
     threshold: 3
     <<: *multiIterationFilter
-  - filter: BlackList
-    filter variables:
-    - name: brightness_temperature
-      channels: 1-5
-    action:
-      name: assign error
-      error function:
-        name: ObsErrorModelQuad@ObsFunction
-        channels: 1-5
-        options:
-          channels: 1-5
-          xvar:
-            name: SIRetSymmetricMW@ObsFunction
-            options:
-              siret_ch90: 1
-              siret_ch150: 2
-              siret_types: [ObsValue, HofX]
-              bias_application: ObsValue
-          a:    [ 0.05, 0.02, 0.01, 0.01, 0.02 ]
-          b:    [ 0.14, 0.14, 0.14, 0.14, 0.14 ]
-          err0:  [ 3.90, 3.35, 2.87, 2.19, 1.62 ]
-          err1:  [ 16.78, 36.89, 14.76, 24.49, 32.07]
-    <<: *multiIterationFilter
-# so far use ncdiag. comment it out once using raw obs
-#  - filter: Gaussian_Thinning
-#    horizontal_mesh: {{RADTHINDISTANCE}}
-  - filter: Domain Check
-    filter variables:
-    - name: brightness_temperature
-      channels: 3-5
-    where:
-    - variable:
-        name: water_area_fraction@GeoVaLs
-      minvalue: 1.0
-    <<: *multiIterationFilter
-  - filter: Bounds Check
-    filter variables:
-    - name: brightness_temperature
-      channels: 1-2
-    minvalue: 650.0
-    <<: *multiIterationFilter
+#  - filter: Gaussian Thinning
+#    horizontal_mesh: RADTHINDISTANCE #km
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_mhs_n18.nc4

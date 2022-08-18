@@ -4,12 +4,12 @@
     obsdatain:
       obsfile: {{InDBDir}}/mhs_n18_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_mhs-ocean_n18.h5
+      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_mhs_n18.h5
     simulated variables: [brightness_temperature]
-    channels: &mhs_n18_channels 1-5
+    channels: &mhs_n18_channels 3-5
   obs error: *ObsErrorDiagonal
   obs operator:
-    <<: *cloudyCRTMObsOperator
+    <<: *clearCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: mhs_n18
