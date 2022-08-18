@@ -1,6 +1,6 @@
 workflow:
   firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180414T18
+  initialCyclePoint: 20180417T12
   finalCyclePoint: 20180514T18
   CriticalPathType: Normal
   VerifyDeterministicDA: True
