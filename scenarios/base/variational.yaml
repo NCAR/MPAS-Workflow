@@ -84,10 +84,10 @@ variational:
 #  - amsua-cld_n19
 #  - amsua-cld_metop-a
 #  - amsua-cld_metop-b
-  - mhs_n19
-  - mhs_n18
-  - mhs_metop-a
-  - mhs_metop-b
+#  - mhs_n19
+#  - mhs_n18
+#  - mhs_metop-a
+#  - mhs_metop-b
 #  - mhs-land_n19
 #  - mhs-land_n18
 #  - mhs-land_metop-a

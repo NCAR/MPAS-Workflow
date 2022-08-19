@@ -8,7 +8,7 @@ experiment:
 # Note: when using with run.csh and for multiple simultaneously running scenarios, setting
 # ExperimentName explicitly for all scenarios is the safest way to ensure that two scenarios do not
 # have identically auto-generated ExperimentName's
-  ExperimentName: amsua_mhs_clrsky
+  ExperimentName: amsua_clrsky
 
 ## ParentDirectory will be constructd using
 # set ParentDirectory = ${ParentDirectoryPrefix}/${ExperimentUser}/${ParentDirectorySuffix}
