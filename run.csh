@@ -29,8 +29,7 @@ set ValidRunConfigs = ( \
   GenerateGFSAnalyses \
   IASI120km3denvar \
   IASI30kmIE60km3denvar \
-  ABI120km3denvar \
-  AHI120km3denvar \
+  ABIAHI120km3denvar.yaml \
 )
 set ArgRunConfig = $1
 
