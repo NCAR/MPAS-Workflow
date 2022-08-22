@@ -24,11 +24,11 @@ $setLocal convertToIODAObservations
 $setLocal GDASObsErrtable
 $setLocal CRTMTABLES
 $setLocal InterpolationType
+$setLocal initialVARBCcoeff
+$setLocal fixedTlapmeanCov
 
 # static directories for bias correction files
 set fixedCoeff = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
-set fixedTlapmeanCov = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
-set initialVARBCcoeff = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
 
 $setLocal job.get__retry
 $setLocal job.convert__retry
