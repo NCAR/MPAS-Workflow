@@ -25,10 +25,10 @@ class Observations(Component):
       'satwnd',
       'gpsro',
       '1bamua',
-      #'mtiasi'
-      #'1bmhs'
-      #'airsev'
-      #'cris'
+      'airsev',
+      #'mtiasi',
+      #'1bmhs',
+      #'cris',
     ], list],
 
     # cylc retry strings for "GetObs" and "ObsToIODA" tasks

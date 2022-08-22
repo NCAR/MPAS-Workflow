@@ -249,7 +249,7 @@ variational:
           nodes: 4
           PEPerNode: 32
           memory: 45GB
-          baseSeconds: 200
+          baseSeconds: 300
         ensemble:
           3denvar:
             nodesPerMember: 3

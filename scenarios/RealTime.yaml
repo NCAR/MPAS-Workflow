@@ -1,8 +1,8 @@
 workflow:
   # test a recent date
   first cycle point: 20220316T00
-  restart cycle point: 20220720T00
-  final cycle point: 20250720T18
+  restart cycle point: 20220817T18
+  final cycle point: 20250817T18
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
   max active cycle points: 1
