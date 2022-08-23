@@ -72,29 +72,35 @@ class ExtendedForecast(Component):
     meanjob = Resource(self._conf, attr, ('job', 'meananalysis'))
     meantask = TaskFactory[hpc.system](meanjob)
 
-    extAnaArgs = '"1"'
-    extAnaArgs += ' "'+str(lengthHR)+'"'
-    extAnaArgs += ' "'+str(outIntervalHR)+'"'
-    extAnaArgs += ' "False"'
-    extAnaArgs += ' "'+forecast.mesh.name+'"'
-    extAnaArgs += ' "False"'
-    extAnaArgs += ' "False"'
-    extAnaArgs += ' "False"'
-    extAnaArgs += ' "'+self.workDir+'/{{thisCycleDate}}/mean"'
-    extAnaArgs += ' "'+extAnaIC[0]['directory']+'"'
-    extAnaArgs += ' "'+extAnaIC[0]['prefix']+'"'
+    args = [
+      1,
+      lengthHR,
+      outIntervalHR,
+      False,
+      forecast.mesh.name,
+      False,
+      False,
+      False,
+      self.workDir+'/{{thisCycleDate}}/mean',
+      extAnaIC[0]['directory'],
+      extAnaIC[0]['prefix'],
+    ]
+    extAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-    meanAnaArgs = '"1"'
-    meanAnaArgs += ' "'+str(lengthHR)+'"'
-    meanAnaArgs += ' "'+str(outIntervalHR)+'"'
-    meanAnaArgs += ' "False"'
-    meanAnaArgs += ' "'+forecast.mesh.name+'"'
-    meanAnaArgs += ' "True"'
-    meanAnaArgs += ' "False"'
-    meanAnaArgs += ' "False"'
-    meanAnaArgs += ' "'+self.workDir+'/{{thisCycleDate}}/mean"'
-    meanAnaArgs += ' "'+meanAnaIC['directory']+'"'
-    meanAnaArgs += ' "'+meanAnaIC['prefix']+'"'
+    args = [
+      1,
+      lengthHR,
+      outIntervalHR,
+      False,
+      forecast.mesh.name,
+      True,
+      False,
+      False,
+      self.workDir+'/{{thisCycleDate}}/mean',
+      meanAnaIC['directory'],
+      meanAnaIC['prefix'],
+    ]
+    meanAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
     self.groupName = self.__class__.__name__
     self._tasks = ['''
@@ -126,17 +132,20 @@ class ExtendedForecast(Component):
 
     memFmt = '/mem{:03d}'
     for mm in EnsVerifyMembers:
-      ensAnaArgs = '"'+str(mm)+'"'
-      ensAnaArgs += ' "'+str(lengthHR)+'"'
-      ensAnaArgs += ' "'+str(outIntervalHR)+'"'
-      ensAnaArgs += ' "False"'
-      ensAnaArgs += ' "'+forecast.mesh.name+'"'
-      ensAnaArgs += ' "True"'
-      ensAnaArgs += ' "False"'
-      ensAnaArgs += ' "False"'
-      ensAnaArgs += ' "'+self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm)+'"'
-      ensAnaArgs += ' "'+ensAnaIC[mm-1]['directory']+'"'
-      ensAnaArgs += ' "'+ensAnaIC[mm-1]['prefix']+'"'
+      args = [
+        mm,
+        lengthHR,
+        outIntervalHR,
+        False,
+        forecast.mesh.name,
+        True,
+        False,
+        False,
+        self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
+        ensAnaIC[mm-1]['directory'],
+        ensAnaIC[mm-1]['prefix'],
+      ]
+      ensAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
       self._tasks += ['''
   [[ExtendedFC'''+str(mm)+''']]

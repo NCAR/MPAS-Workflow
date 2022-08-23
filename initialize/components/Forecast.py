@@ -89,32 +89,39 @@ class Forecast(Component):
       # DACycling (False), IC ~is not~ a DA analysis for which re-coupling is required
       # DeleteZerothForecast (True), not used anywhere else in the workflow
       # updateSea (False) is not needed since the IC is already an external analysis
-      ColdArgs = '"1"'
-      ColdArgs += ' "'+str(lengthHR)+'"'
-      ColdArgs += ' "'+str(outIntervalHR)+'"'
-      ColdArgs += ' "False"'
-      ColdArgs += ' "'+mesh.name+'"'
-      ColdArgs += ' "False"'
-      ColdArgs += ' "True"'
-      ColdArgs += ' "False"'
-      ColdArgs += ' "'+self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm)+'"'
-      ColdArgs += ' "'+coldIC[0]['directory']+'"'
-      ColdArgs += ' "'+coldIC[0]['prefix']+'"'
+      args = [
+        1,
+        lengthHR,
+        outIntervalHR,
+        False,
+        mesh.name,
+        False,
+        True,
+        False,
+        self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
+        coldIC[0]['directory'],
+        coldIC[0]['prefix'],
+      ]
+      ColdArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
 
       # WarmArgs explanation
       # DACycling (True), IC ~is~ a DA analysis for which re-coupling is required
       # DeleteZerothForecast (True), not used anywhere else in the workflow
-      WarmArgs = '"'+str(mm)+'"'
-      WarmArgs += ' "'+str(lengthHR)+'"'
-      WarmArgs += ' "'+str(outIntervalHR)+'"'
-      WarmArgs += ' "'+str(IAU)+'"'
-      WarmArgs += ' "'+mesh.name+'"'
-      WarmArgs += ' "True"'
-      WarmArgs += ' "True"'
-      WarmArgs += ' "'+str(updateSea)+'"'
-      WarmArgs += ' "'+self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm)+'"'
-      WarmArgs += ' "'+warmIC[mm-1]['directory']+'"'
-      WarmArgs += ' "'+warmIC[mm-1]['prefix']+'"'
+      args = [
+        mm,
+        lengthHR,
+        outIntervalHR,
+        IAU,
+        mesh.name,
+        True,
+        True,
+        updateSea,
+        self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
+        warmIC[mm-1]['directory'],
+        warmIC[mm-1]['prefix'],
+      ]
+      WarmArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
       self._tasks += ['''
   [[ColdForecast'''+str(mm)+''']]
