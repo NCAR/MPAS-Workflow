@@ -300,6 +300,7 @@ conda activate npl
       execution retry delays = {{GFSAnalysisRetry}}
 
 ## Verification: extended forecast from mean analysis (including single-member deterministic)
+  [[ExtendedForecastFinished]]
   [[MeanAnalysis]]
     inherit = BATCH
     script = $origin/MeanAnalysis.csh
@@ -373,8 +374,6 @@ conda activate npl
 
 
 ## Verification: various kinds of ensembles
-  [[ExtendedEnsFC]]
-    inherit = ExtendedFCBase, BATCH
 {% for state in ['BG', 'AN']%}
   [[HofX{{state}}]]
     inherit = HofXBase, BATCH
@@ -415,8 +414,10 @@ conda activate npl
   {% endfor %}
 {% endfor %}
 
-{% for mem in EnsVerifyMembers %}
   # ensemble of extended forecasts from ensemble of analyses
+  [[ExtendedEnsFC]]
+    inherit = ExtendedFCBase, BATCH
+{% for mem in EnsVerifyMembers %}
   [[ExtendedFC{{mem}}]]
     inherit = ExtendedEnsFC
     script = $origin/ExtendedEnsFC.csh "{{mem}}" "{{ExtendedFCOutIntervalHR}}" "{{ExtendedFCLengthHR}}" "False" "{{outerMesh}}"
