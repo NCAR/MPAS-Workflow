@@ -46,8 +46,12 @@
 %include include/tasks/auto/benchmark.rc
 %include include/tasks/auto/externalanalyses.rc
 %include include/tasks/auto/initic.rc
+{% if VerifyAgainstObservations %}
 %include include/tasks/auto/observations.rc
+{% endif %}
+{% if VerifyAgainstExternalAnalyses or VerifyAgainstObservations %}
 %include include/tasks/verify.rc
+{% endif %}
 
 [visualization]
   initial cycle point = {{restartCyclePoint}}

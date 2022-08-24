@@ -43,11 +43,11 @@ class ExtendedForecast(Component):
     extLengths = range(0, lengthHR+outIntervalHR, outIntervalHR)
     self._set('extIntervHR', outIntervalHR)
     self._set('extLengths', extLengths)
-    self._set('nExtOuts', len(extLengths))
+    #self._set('nExtOuts', len(extLengths))
 
     self._cylcVars = ['extMeanTimes', 'extEnsTimes',
       'extMeanTimesList', 'extEnsTimesList',
-      'EnsVerifyMembers', 'extIntervHR', 'extLengths', 'nExtOuts']
+      'EnsVerifyMembers', 'extIntervHR', 'extLengths']#, 'nExtOuts']
 
     ########################
     # tasks and dependencies

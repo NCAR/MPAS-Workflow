@@ -40,7 +40,7 @@
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedMeanFC %}
   {% for TIME in extMeanTimesList %}
-    [[[R{{nExtOuts}}/{{TIME}}/PT{{extIntervHR}}H]]]
+    [[[{{TIME}}/PT{{extIntervHR}}H]]]
       graph = '''
         {{PrepareExternalAnalysisOuter}}
       '''
@@ -59,7 +59,7 @@
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedEnsFC and nMembers > 1 %}
   {% for TIME in extEnsTimesList %}
-    [[[R{{nExtOuts}}/{{TIME}}/PT{{extIntervHR}}H]]]
+    [[[{{TIME}}/PT{{extIntervHR}}H]]]
       graph = '''
         {{PrepareExternalAnalysisOuter}}
       '''
