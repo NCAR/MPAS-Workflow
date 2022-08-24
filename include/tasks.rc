@@ -114,7 +114,6 @@ conda activate npl
   [[ObsToIODA]]
     inherit = ObsToIODA-0hr
   [[ObsReady]]
-    inherit = ObsReady-0hr
 
 
 ## Data assimilation and supporting tasks (critical path)
@@ -290,7 +289,6 @@ conda activate npl
     inherit = ExternalAnalysisToMPAS-{{mesh}}-0hr
 {% endfor %}
   [[ExternalAnalysisReady]]
-    inherit = ExternalAnalysisReady-0hr
 
   [[GetGDASanalysis]]
     inherit = BATCH

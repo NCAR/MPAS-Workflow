@@ -215,8 +215,8 @@ cat >! suite.rc << EOF
 {% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
 
 ## Mini-workflow that prepares observations for IODA ingest
-{% if observationsResource == "PANDACArchive" %}
-  # assume that IODA observation files are already available for PANDACArchive case
+{% if observationsResource in ["PANDACArchive", "GenerateObs"] %}
+  # assume that IODA observation files are already available for pre-generated cases
   {% set PrepareObservationsTasks = ["ObsReady"] %}
 {% else %}
   {% set PrepareObservationsTasks = ["GetObs", "ObsToIODA", "ObsReady"] %}

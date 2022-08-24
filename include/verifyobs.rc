@@ -61,7 +61,11 @@
 {% if VerifyExtendedMeanFC %}
   {% for dt in ExtendedFCLengths %}
     {% set ds = "-"+(dt|string)+"hr" %}
-    {% set prep = (ds+" => ").join(PrepareObservationsTasks)+ds %}
+    {% if dt == 0 %}
+      {% set prep = (ds+":succeed-all => ").join(PrepareObservationsTasks)+ds %}
+    {% else %}
+      {% set prep = (ds+" => ").join(PrepareObservationsTasks)+ds %}
+    {% endif %}
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
         {{prep}}
@@ -79,7 +83,11 @@
 {% if VerifyExtendedEnsFC and nMembers > 1 %}
   {% for dt in ExtendedFCLengths %}
     {% set ds = "-"+(dt|string)+"hr" %}
-    {% set prep = (ds+" => ").join(PrepareObservationsTasks)+ds %}
+    {% if dt == 0 %}
+      {% set prep = (ds+":succeed-all => ").join(PrepareObservationsTasks)+ds %}
+    {% else %}
+      {% set prep = (ds+" => ").join(PrepareObservationsTasks)+ds %}
+    {% endif %}
     [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
         {{prep}}
