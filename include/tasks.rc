@@ -83,15 +83,17 @@ conda activate npl
   [[Null]]
 
 ## Observations
-  [[GetObs]]
-    inherit = BATCH
-    script = $origin/GetObs.csh
+  [[Observations]]
+{% for dt in ExtendedFCLengths %}
+  [[GetObs-{{dt}}hr]]
+    inherit = Observations, BATCH
+    script = $origin/GetObs.csh "{{dt}}"
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = {{GetObsRetry}}
-  [[ObsToIODA]]
-    inherit = BATCH
-    script = $origin/ObsToIODA.csh
+  [[ObsToIODA-{{dt}}hr]]
+    inherit = Observations, BATCH
+    script = $origin/ObsToIODA.csh "{{dt}}"
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = {{InitializationRetry}}
@@ -104,7 +106,15 @@ conda activate npl
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select=1:ncpus=1:mem=10GB
+  [[ObsReady-{{dt}}hr]]
+    inherit = Observations
+{% endfor %}
+  [[GetObs]]
+    inherit = GetObs-0hr
+  [[ObsToIODA]]
+    inherit = ObsToIODA-0hr
   [[ObsReady]]
+    inherit = ObsReady-0hr
 
 
 ## Data assimilation and supporting tasks (critical path)
@@ -219,22 +229,25 @@ conda activate npl
       #       independent task for each member)
       execution time limit = PT10M
       execution retry delays = {{InitializationRetry}}
-  [[GetGFSAnalysisFromRDA]]
-    inherit = BATCH
-    script = $origin/GetGFSAnalysisFromRDA.csh
-    [[[job]]]
-      execution time limit = PT20M
-      execution retry delays = {{GFSAnalysisRetry}}
-  [[GetGFSAnalysisFromFTP]]
-    inherit = BATCH
-    script = $origin/GetGFSAnalysisFromFTP.csh
-    [[[job]]]
-      execution time limit = PT20M
-      execution retry delays = {{GFSAnalysisRetry}}
 
-  [[UngribExternalAnalysis]]
-    inherit = BATCH
-    script = $origin/UngribExternalAnalysis.csh
+  # external analyses
+  [[ExternalAnalyses]]
+{% for dt in ExtendedFCLengths %}
+  [[GetGFSAnalysisFromRDA-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = $origin/GetGFSAnalysisFromRDA.csh "{{dt}}"
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = {{GFSAnalysisRetry}}
+  [[GetGFSAnalysisFromFTP-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = $origin/GetGFSAnalysisFromFTP.csh "{{dt}}"
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = {{GFSAnalysisRetry}}
+  [[UngribExternalAnalysis-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = $origin/UngribExternalAnalysis.csh "{{dt}}"
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = {{InitializationRetry}}
@@ -243,17 +256,15 @@ conda activate npl
     [[[directives]]]
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
-
-{% for mesh in allMeshes %}
-  [[LinkExternalAnalysis-{{mesh}}]]
-    inherit = BATCH
-    script = $origin/LinkExternalAnalysis.csh "{{mesh}}"
+  {% for mesh in allMeshes %}
+  [[LinkExternalAnalysis-{{mesh}}-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = $origin/LinkExternalAnalysis.csh "{{mesh}}" "{{dt}}"
     [[[job]]]
       execution time limit = PT30S
-
-  [[ExternalAnalysisToMPAS-{{mesh}}]]
-    inherit = BATCH
-    script = $origin/ExternalAnalysisToMPAS.csh "{{mesh}}"
+  [[ExternalAnalysisToMPAS-{{mesh}}-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = $origin/ExternalAnalysisToMPAS.csh "{{mesh}}" "{{dt}}"
     [[[job]]]
       execution time limit = PT{{InitICSeconds}}S
       execution retry delays = {{InitializationRetry}}
@@ -261,9 +272,26 @@ conda activate npl
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select={{InitICNodes}}:ncpus={{InitICPEPerNode}}:mpiprocs={{InitICPEPerNode}}
+  {% endfor %}
+  [[ExternalAnalysisReady-{{dt}}hr]]
+    inherit = ExternalAnalyses
 {% endfor %}
 
+  [[GetGFSAnalysisFromRDA]]
+    inherit = GetGFSAnalysisFromRDA-0hr
+  [[GetGFSAnalysisFromFTP]]
+    inherit = GetGFSAnalysisFromFTP-0hr
+  [[UngribExternalAnalysis]]
+    inherit = UngribExternalAnalysis-0hr
+{% for mesh in allMeshes %}
+  [[LinkExternalAnalysis-{{mesh}}]]
+    inherit = LinkExternalAnalysis-{{mesh}}-0hr
+  [[ExternalAnalysisToMPAS-{{mesh}}]]
+    inherit = ExternalAnalysisToMPAS-{{mesh}}-0hr
+{% endfor %}
   [[ExternalAnalysisReady]]
+    inherit = ExternalAnalysisReady-0hr
+
   [[GetGDASanalysis]]
     inherit = BATCH
     script = $origin/GetGDASanalysis.csh
