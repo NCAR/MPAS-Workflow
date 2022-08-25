@@ -35,7 +35,9 @@ conda activate npl
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select={{CyclingFCNodes}}:ncpus={{CyclingFCPEPerNode}}:mpiprocs={{CyclingFCPEPerNode}}
+  [[ExtendedForecast]]
   [[ExtendedFCBase]]
+    inherit = ExtendedForecast
     [[[job]]]
       execution time limit = PT{{ExtendedFCSeconds}}S
     [[[directives]]]
@@ -299,6 +301,7 @@ conda activate npl
 
 ## Verification: extended forecast from mean analysis (including single-member deterministic)
   [[ExtendedForecastFinished]]
+    inherit = ExtendedForecast
   [[MeanAnalysis]]
     inherit = BATCH
     script = $origin/MeanAnalysis.csh
