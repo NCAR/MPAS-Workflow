@@ -54,7 +54,6 @@ end
 if ( ! -e include/tasks/auto/hofxbase.rc ) then
 cat >! include/tasks/auto/hofxbase.rc << EOF
   [[HofXBase]]
-    inherit = BATCH
     [[[job]]]
       execution time limit = PT${seconds_}S
       execution retry delays = ${retry}

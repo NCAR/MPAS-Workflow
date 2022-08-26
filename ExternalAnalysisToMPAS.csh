@@ -6,6 +6,16 @@
 # ArgMesh: str, mesh name, one of model.allMeshes
 set ArgMesh = "$1"
 
+# ArgDT: int, valid time offset beyond CYLC_TASK_CYCLE_POINT in hours
+set ArgDT = "$2"
+
+set test = `echo $ArgDT | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
+
 date
 
 # Setup environment
@@ -16,10 +26,11 @@ source config/builds.csh
 source config/environmentJEDI.csh
 source config/applications/initic.csh
 source config/externalanalyses.csh
+source config/tools.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
-set thisValidDate = ${thisCycleDate}
+set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
 # static work directory

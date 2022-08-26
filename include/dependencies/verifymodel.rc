@@ -39,18 +39,19 @@
   # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedMeanFC %}
-  {% for TIME in ExtendedMeanFCTimesList %}
-    [[[R{{nExtFCOuts}}/{{TIME}}/PT{{extFCIntervHR}}H]]]
+  {% for dt in ExtendedFCLengths %}
+    {% set ds = "-"+(dt|string)+"hr" %}
+    {% if dt == 0 %}
+      {% set prep = (ds+":succeed-all => ").join(PrepareExternalAnalysisTasksOuter)+ds %}
+    {% else %}
+      {% set prep = (ds+" => ").join(PrepareExternalAnalysisTasksOuter)+ds %}
+    {% endif %}
+    [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
-        {{PrepareExternalAnalysisOuter}}
-      '''
-    {% for dt in ExtendedFCLengths %}
-    [[[{{TIME}}]]]
-      graph = '''
+        {{prep}}
         ExtendedForecastFinished => VerifyModelMeanFC{{dt}}hr
-        ExternalAnalysisReady[PT{{dt}}H] => VerifyModelMeanFC{{dt}}hr
+        ExternalAnalysisReady-{{dt}}hr => VerifyModelMeanFC{{dt}}hr
       '''
-    {% endfor %}
   {% endfor %}
 {% endif %}
 
@@ -58,19 +59,20 @@
   # ... for extended forecast from ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedEnsFC and nMembers > 1 %}
-  {% for TIME in ExtendedEnsFCTimesList %}
-    [[[R{{nExtFCOuts}}/{{TIME}}/PT{{extFCIntervHR}}H]]]
+  {% for dt in ExtendedFCLengths %}
+    {% set ds = "-"+(dt|string)+"hr" %}
+    {% if dt == 0 %}
+      {% set prep = (ds+":succeed-all => ").join(PrepareExternalAnalysisTasksOuter)+ds %}
+    {% else %}
+      {% set prep = (ds+" => ").join(PrepareExternalAnalysisTasksOuter)+ds %}
+    {% endif %}
+    [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
-        {{PrepareExternalAnalysisOuter}}
-      '''
-    {% for dt in ExtendedFCLengths %}
-    [[[{{TIME}}]]]
-      graph = '''
-      {% for mem in EnsVerifyMembers %}
+        {{prep}}
+    {% for mem in EnsVerifyMembers %}
         ExtendedForecastFinished => VerifyModelEnsFC{{mem}}-{{dt}}hr
-        ExternalAnalysisReady[PT{{dt}}H] => VerifyModelEnsFC{{mem}}-{{dt}}hr
-      {% endfor %}
-      '''
+        ExternalAnalysisReady-{{dt}}hr => VerifyModelEnsFC{{mem}}-{{dt}}hr
     {% endfor %}
+      '''
   {% endfor %}
 {% endif %}

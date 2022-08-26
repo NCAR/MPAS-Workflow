@@ -32,9 +32,10 @@ end
 if ( ! -e include/tasks/auto/initic.rc ) then
 cat >! include/tasks/auto/initic.rc << EOF
 {% for mesh in allMeshes %}
-  [[ExternalAnalysisToMPAS-{{mesh}}]]
-    inherit = BATCH
-    script = \$origin/ExternalAnalysisToMPAS.csh "{{mesh}}"
+  {% for dt in ExtendedFCLengths %}
+  [[ExternalAnalysisToMPAS-{{mesh}}-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = \$origin/ExternalAnalysisToMPAS.csh "{{mesh}}" "{{dt}}"
     [[[job]]]
       execution time limit = PT${seconds_}S
       execution retry delays = ${retry}
@@ -42,6 +43,9 @@ cat >! include/tasks/auto/initic.rc << EOF
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select=${nodes_}:ncpus=${PEPerNode_}:mpiprocs=${PEPerNode_}
+  {% endfor %}
+  [[ExternalAnalysisToMPAS-{{mesh}}]]
+    inherit = ExternalAnalysisToMPAS-{{mesh}}-0hr
 {% endfor %}
 EOF
 

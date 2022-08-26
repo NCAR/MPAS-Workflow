@@ -38,9 +38,6 @@
       '''
 {% elif CriticalPathType == "Bypass" %}
   {% set CleanDataAssim = 'Null' %}
-    [[[{{AnalysisTimes}}]]]
-      graph = DataAssimFinished
-
     [[[{{ForecastTimes}}]]]
       graph = ForecastFinished
 

@@ -178,7 +178,7 @@ cat >! include/tasks/auto/variational.rc << EOF
 {% endif %}
 
   [[CleanVariational]]
-    inherit = CleanBase
+    inherit = CleanBase, BATCH
     script = \$origin/CleanVariational.csh
 EOF
 

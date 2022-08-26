@@ -67,7 +67,6 @@ setenv seconds $seconds
 if ( ! -e include/tasks/auto/forecast.rc ) then
 cat >! include/tasks/auto/forecast.rc << EOF
   [[ForecastBase]]
-    inherit = BATCH
     [[[job]]]
       execution time limit = PT${seconds}S
       execution retry delays = ${retry}
@@ -77,9 +76,9 @@ cat >! include/tasks/auto/forecast.rc << EOF
       -A = {{CPAccountNumber}}
       -l = select=${nodes_}:ncpus=${PEPerNode_}:mpiprocs=${PEPerNode_}
   [[Forecast]]
-    inherit = ForecastBase
+    inherit = ForecastBase, BATCH
   [[ColdForecast]]
-    inherit = ForecastBase
+    inherit = ForecastBase, BATCH
 {% for mem in range(1, $nMembers+1, 1) %}
   [[ColdForecastMember{{mem}}]]
     inherit = ColdForecast
@@ -88,7 +87,6 @@ cat >! include/tasks/auto/forecast.rc << EOF
     inherit = Forecast
     script = \$origin/Forecast.csh "{{mem}}" "${FCLengthHR}" "${FCOutIntervalHR}" "${forecast__IAU}" "${outerMesh}" "True" "True"
   [[ForecastFinished]]
-    inherit = BACKGROUND
 {% endfor %}
 EOF
 
@@ -115,8 +113,9 @@ endif
 
 if ( ! -e include/tasks/auto/extendedforecast.rc ) then
 cat >! include/tasks/auto/extendedforecast.rc << EOF
+  [[ExtendedForecast]]
   [[ExtendedFCBase]]
-    inherit = BATCH
+    inherit = ExtendedForecast, BATCH
     [[[job]]]
       execution time limit = PT${seconds}S
     [[[directives]]]
@@ -132,7 +131,7 @@ cat >! include/tasks/auto/extendedforecast.rc << EOF
 
   ## from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
-    inherit = BATCH
+    inherit = ExtendedForecast, BATCH
     script = \$origin/MeanAnalysis.csh
     [[[job]]]
       execution time limit = PT5M
@@ -155,7 +154,7 @@ cat >! include/tasks/auto/extendedforecast.rc << EOF
 {% endfor %}
 
   [[ExtendedForecastFinished]]
-    inherit = BACKGROUND
+    inherit = ExtendedForecast
 EOF
 
 endif

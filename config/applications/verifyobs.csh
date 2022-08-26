@@ -32,7 +32,6 @@ setenv verifyobsens__seconds $seconds
 if ( ! -e include/tasks/auto/verifyobsbase.rc ) then
 cat >! include/tasks/auto/verifyobsbase.rc << EOF
   [[VerifyObsBase]]
-    inherit = BATCH
     [[[job]]]
       execution time limit = PT${baseSeconds_}S
       execution retry delays = ${retry}

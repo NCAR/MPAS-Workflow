@@ -48,15 +48,17 @@ endif
 
 if ( ! -e include/tasks/auto/observations.rc ) then
 cat >! include/tasks/auto/observations.rc << EOF
-  [[GetObs]]
-    inherit = BATCH
-    script = \$origin/GetObs.csh
+  [[Observations]]
+{% for dt in ExtendedFCLengths %}
+  [[GetObs-{{dt}}hr]]
+    inherit = Observations, BATCH
+    script = \$origin/GetObs.csh "{{dt}}"
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = ${get__retry}
-  [[ObsToIODA]]
-    inherit = BATCH
-    script = \$origin/ObsToIODA.csh
+  [[ObsToIODA-{{dt}}hr]]
+    inherit = Observations, BATCH
+    script = \$origin/ObsToIODA.csh "{{dt}}"
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = ${convert__retry}
@@ -69,8 +71,15 @@ cat >! include/tasks/auto/observations.rc << EOF
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
       -l = select=1:ncpus=1:mem=10GB
+  [[ObsReady-{{dt}}hr]]
+    inherit = Observations
+{% endfor %}
+  [[GetObs]]
+    inherit = GetObs-0hr
+  [[ObsToIODA]]
+    inherit = ObsToIODA-0hr
   [[ObsReady]]
-    inherit = BACKGROUND
+    inherit = Observations
 EOF
 
 endif

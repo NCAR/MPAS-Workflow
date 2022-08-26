@@ -61,7 +61,7 @@ cat >! include/tasks/auto/rtpp.rc << EOF
       -A = {{CPAccountNumber}}
       -l = select=${nodes_}:ncpus=${PEPerNode_}:mpiprocs=${PEPerNode_}:mem=${memory_}GB
   [[CleanRTPP]]
-    inherit = CleanBase
+    inherit = CleanBase, BATCH
     script = \$origin/CleanRTPP.csh
 EOF
 

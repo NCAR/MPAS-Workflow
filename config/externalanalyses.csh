@@ -108,28 +108,23 @@ end
 if ( ! -e include/tasks/auto/externalanalyses.rc ) then
 cat >! include/tasks/auto/externalanalyses.rc << EOF
 ## Analyses generated outside MPAS-Workflow
-  [[GetGFSAnalysisFromRDA]]
-    inherit = BATCH
-    script = \$origin/GetGFSAnalysisFromRDA.csh
+  [[ExternalAnalyses]]
+{% for dt in ExtendedFCLengths %}
+  [[GetGFSAnalysisFromRDA-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = \$origin/GetGFSAnalysisFromRDA.csh "{{dt}}"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = $externalanalyses__retry
-  [[GetGFSAnalysisFromFTP]]
-    inherit = BATCH
-    script = \$origin/GetGFSAnalysisFromFTP.csh
+  [[GetGFSAnalysisFromFTP-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = \$origin/GetGFSAnalysisFromFTP.csh "{{dt}}"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = $externalanalyses__retry
-  [[GetGDASAnalysisFromFTP]]
-    inherit = BATCH
-    script = \$origin/GetGDASAnalysisFromFTP.csh
-    [[[job]]]
-      execution time limit = PT45M
-      execution retry delays = $externalanalyses__retry
-
-  [[UngribExternalAnalysis]]
-    inherit = BATCH
-    script = \$origin/UngribExternalAnalysis.csh
+  [[UngribExternalAnalysis-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = \$origin/UngribExternalAnalysis.csh "{{dt}}"
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = 2*PT30S
@@ -139,17 +134,41 @@ cat >! include/tasks/auto/externalanalyses.rc << EOF
       -q = {{CPQueueName}}
       -A = {{CPAccountNumber}}
 
-{% for mesh in allMeshes %}
-  [[LinkExternalAnalysis-{{mesh}}]]
-    inherit = BATCH
-    script = \$origin/LinkExternalAnalysis.csh "{{mesh}}"
+  {% for mesh in allMeshes %}
+  [[LinkExternalAnalysis-{{mesh}}-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = \$origin/LinkExternalAnalysis.csh "{{mesh}}" "{{dt}}"
     [[[job]]]
       execution time limit = PT30S
       execution retry delays = $externalanalyses__retry
+  {% endfor %}
+
+  [[ExternalAnalysisReady-{{dt}}hr]]
+    inherit = ExternalAnalyses
+
 {% endfor %}
 
+  [[GetGFSAnalysisFromRDA]]
+    inherit = GetGFSAnalysisFromRDA-0hr
+  [[GetGFSAnalysisFromFTP]]
+    inherit = GetGFSAnalysisFromFTP-0hr
+  [[UngribExternalAnalysis]]
+    inherit = UngribExternalAnalysis-0hr
+{% for mesh in allMeshes %}
+  [[LinkExternalAnalysis-{{mesh}}]]
+    inherit = LinkExternalAnalysis-{{mesh}}-0hr
+{% endfor %}
   [[ExternalAnalysisReady]]
-    inherit = BACKGROUND
+    inherit = ExternalAnalyses
+
+  [[GetGDASAnalysisFromFTP]]
+    inherit = ExternalAnalyses, BATCH
+    script = \$origin/GetGDASAnalysisFromFTP.csh
+    [[[job]]]
+      execution time limit = PT45M
+      execution retry delays = $externalanalyses__retry
+
+
 EOF
 
 endif

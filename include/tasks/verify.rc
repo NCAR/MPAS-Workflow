@@ -5,34 +5,26 @@
 
 ## DA
   [[VerifyObsDA]]
-    inherit = VerifyObsBase
+    inherit = VerifyObsBase, BATCH
     script = $origin/VerifyObsDA.csh "1" "0" "DA" "0" "variational"
   [[CompareObsDA]]
-    inherit = CompareBase
+    inherit = CompareBase, BATCH
     script = $origin/CompareObsDA.csh "1" "0" "DA" "variational"
 
 ## extended forecast from mean/deterministic state
-  [[HofXMeanFC]]
-    inherit = HofXBase
-  [[VerifyModelMeanFC]]
-    inherit = VerifyModelBase
-  [[VerifyObsMeanFC]]
-    inherit = VerifyObsBase
-  [[CleanHofXMeanFC]]
-    inherit = CleanBase
 {% for dt in ExtendedFCLengths %}
   [[HofXMeanFC{{dt}}hr]]
-    inherit = HofXMeanFC
+    inherit = HofXBase, BATCH
     env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "hofx"
     script = $origin/HofXMeanFC.csh "1" "{{dt}}" "FC"
   [[VerifyObsMeanFC{{dt}}hr]]
-    inherit = VerifyObsMeanFC
+    inherit = VerifyObsBase, BATCH
     script = $origin/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0" "hofx"
   [[VerifyModelMeanFC{{dt}}hr]]
-    inherit = VerifyModelMeanFC
+    inherit = VerifyModelBase, BATCH
     script = $origin/VerifyModelMeanFC.csh "1" "{{dt}}" "FC" "0"
   [[CleanHofXMeanFC{{dt}}hr]]
-    inherit = CleanHofXMeanFC
+    inherit = CleanBase, BATCH
     script = $origin/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
 {% endfor %}
 
@@ -49,41 +41,41 @@
       -A = {{NCPAccountNumber}}
       -l = select=1:ncpus=36:mpiprocs=36
   [[HofXEnsMeanBG]]
-    inherit = HofXBase
+    inherit = HofXBase, BATCH
     env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsMeanBG.csh "1" "0" "BG" "hofx"
     script = $origin/HofXEnsMeanBG.csh "1" "0" "BG"
     [[[directives]]]
       -q = {{EnsMeanBGQueueName}}
       -A = {{EnsMeanBGAccountNumber}}
   [[VerifyModelEnsMeanBG]]
-    inherit = VerifyModelBase
+    inherit = VerifyModelBase, BATCH
     script = $origin/VerifyModelEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}"
     [[[job]]]
       execution time limit = PT{{modelEnsSeconds}}S
   [[VerifyObsEnsMeanBG]]
-    inherit = VerifyObsBase
+    inherit = VerifyObsBase, BATCH
     script = $origin/VerifyObsEnsMeanBG.csh "1" "0" "BG" "{{nEnsSpreadMem}}" "hofx"
     [[[job]]]
       execution time limit = PT{{obsEnsSeconds}}S
   [[CleanHofXEnsMeanBG]]
-    inherit = CleanBase
+    inherit = CleanBase, BATCH
     script = $origin/CleanHofXEnsMeanBG.csh "1" "0" "BG"
 
 
 ## various kinds of ensembles
 {% for state in ['BG', 'AN']%}
   [[HofX{{state}}]]
-    inherit = HofXBase
+    inherit = HofXBase, BATCH
   [[VerifyModel{{state}}]]
-    inherit = VerifyModelBase
+    inherit = VerifyModelBase, BATCH
   [[CompareModel{{state}}]]
-    inherit = CompareBase
+    inherit = CompareBase, BATCH
   [[VerifyObs{{state}}]]
-    inherit = VerifyObsBase
+    inherit = VerifyObsBase, BATCH
   [[CompareObs{{state}}]]
-    inherit = CompareBase
+    inherit = CompareBase, BATCH
   [[CleanHofX{{state}}]]
-    inherit = CleanBase
+    inherit = CleanBase, BATCH
 {% endfor %}
 
 {% for mem in EnsVerifyMembers %}
@@ -111,29 +103,21 @@
   {% endfor %}
 {% endfor %}
 
-  [[HofXEnsFC]]
-    inherit = HofXBase
-  [[VerifyModelEnsFC]]
-    inherit = VerifyModelBase
-  [[VerifyObsEnsFC]]
-    inherit = VerifyObsBase
-  [[CleanHofXEnsFC]]
-    inherit = CleanBase
 {% for mem in EnsVerifyMembers %}
   # ensemble of extended forecasts from ensemble of analyses
   {% for dt in ExtendedFCLengths %}
   [[HofXEnsFC{{mem}}-{{dt}}hr]]
-    inherit = HofXEnsFC
+    inherit = HofXBase, BATCH
     env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC" "hofx"
     script = $origin/HofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   [[VerifyModelEnsFC{{mem}}-{{dt}}hr]]
-    inherit = VerifyModelEnsFC
+    inherit = VerifyModelBase, BATCH
     script = $origin/VerifyModelEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0"
   [[VerifyObsEnsFC{{mem}}-{{dt}}hr]]
-    inherit = VerifyObsEnsFC
+    inherit = VerifyObsBase, BATCH
     script = $origin/VerifyObsEnsFC.csh "{{mem}}" "{{dt}}" "FC" "0" "hofx"
   [[CleanHofXEnsFC{{mem}}-{{dt}}hr]]
-    inherit = CleanHofXEnsFC
+    inherit = CleanBase, BATCH
     script = $origin/CleanHofXEnsFC.csh "{{mem}}" "{{dt}}" "FC"
   {% endfor %}
 {% endfor %}

@@ -1,12 +1,8 @@
 ## Data assimilation and supporting tasks (critical path)
   # Pre => (Ens)DataAssim => Post => Finished => Clean
   [[PreDataAssim]]
-    [[[job]]]
-      batch system = background
   [[DataAssimPost]]
-    inherit = BACKGROUND
   [[DataAssimFinished]]
-    inherit = BACKGROUND
 
 # variational tasks
 %include include/tasks/auto/variational.rc

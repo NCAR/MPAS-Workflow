@@ -36,7 +36,6 @@ setenv verifymodelens__seconds $seconds
 if ( ! -e include/tasks/auto/verifymodelbase.rc ) then
 cat >! include/tasks/auto/verifymodelbase.rc << EOF
   [[VerifyModelBase]]
-    inherit = BATCH
     [[[job]]]
       execution time limit = PT${baseSeconds_}S
       execution retry delays = ${retry}
