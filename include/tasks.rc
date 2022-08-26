@@ -116,6 +116,7 @@ conda activate npl
   [[ObsToIODA]]
     inherit = ObsToIODA-0hr
   [[ObsReady]]
+    inherit = Observations
 
 
 ## Data assimilation and supporting tasks (critical path)
@@ -291,19 +292,21 @@ conda activate npl
     inherit = ExternalAnalysisToMPAS-{{mesh}}-0hr
 {% endfor %}
   [[ExternalAnalysisReady]]
+    inherit = ExternalAnalyses
 
   [[GetGDASanalysis]]
-    inherit = BATCH
+    inherit = ExternalAnalyses, BATCH
     script = $origin/GetGDASanalysis.csh
     [[[job]]]
       execution time limit = PT45M
       execution retry delays = {{GFSAnalysisRetry}}
 
+
 ## Verification: extended forecast from mean analysis (including single-member deterministic)
   [[ExtendedForecastFinished]]
     inherit = ExtendedForecast
   [[MeanAnalysis]]
-    inherit = BATCH
+    inherit = ExtendedForecast, BATCH
     script = $origin/MeanAnalysis.csh
     [[[job]]]
       execution time limit = PT5M
