@@ -307,7 +307,7 @@ variational:
           nodes: 6
           PEPerNode: 32
           memory: 109
-          baseSeconds: 700
+          baseSeconds: 640
           secondsPerEnVarMember: 10
         3dvar:
           baseSeconds: 1200

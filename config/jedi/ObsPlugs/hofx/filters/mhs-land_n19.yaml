@@ -1,0 +1,9 @@
+  obs filters:
+  - filter: Domain Check
+    filter variables:
+    - name: brightness_temperature
+      channels: *mhs_n19_channels
+    where:
+    - variable:
+        name: land_area_fraction@GeoVaLs
+      minvalue: 1.0

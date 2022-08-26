@@ -7,7 +7,7 @@
       obsfile: {{OutDBDir}}/{{obsPrefix}}_ahi_himawari8.h5
     simulated variables: [brightness_temperature]
     channels: &ahi_channels 7-16
-  obs error: *ObsErrorDiagonal
+#  obs error: *ObsErrorDiagonal
   obs operator:
     <<: *cloudyCRTMObsOperator
     obs options:
