@@ -35,9 +35,6 @@
 
 {% elif CriticalPathType == "Bypass" %}
   {% set CleanDataAssim = 'Null' %}
-    [[[{{AnalysisTimes}}]]]
-      graph = DataAssimFinished
-
     [[[{{ForecastTimes}}]]]
       graph = ForecastFinished
 
@@ -60,4 +57,18 @@
 
 {% else %}
     {{ raise('CriticalPathType is not valid') }}
+{% endif %}
+
+# optional extended forecasts for verification
+{% if VerifyExtendedMeanFC %}
+    [[[{{ExtendedMeanFCTimes}}]]]
+      graph = '''
+        DataAssimFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
+      '''
+{% endif %}
+{% if VerifyExtendedEnsFC and nMembers > 1 %}
+    [[[{{ExtendedEnsFCTimes}}]]]
+      graph = '''
+        DataAssimFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
+      '''
 {% endif %}
