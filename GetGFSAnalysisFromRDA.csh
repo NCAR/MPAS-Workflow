@@ -26,6 +26,7 @@ set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
+set prevValidDate = `$advanceCYMDH ${thisCycleDate} -6`
 
 set res = 0p25
 set fhour = 000
@@ -48,8 +49,23 @@ rm -rf GRIBFILE.*
 echo "Getting GFS analysis from RDA"
 # RDA GFS forecasts directory
 set GFSgribdirRDA = /gpfs/fs1/collections/rda/data/ds084.1
+
+if ( ! -e ${GFSgribdirRDA}/${gribFile} ) then
+   set preVyymmdd = `echo ${prevValidDate} | cut -c 1-8`
+   set preVyy = `echo ${prevValidDate} | cut -c 1-4`
+   set preVhh = `echo ${prevValidDate} | cut -c 9-10`
+   set nexTfhour = 006
+   set gribFile = ${preVyy}/${preVyymmdd}/gfs.${res}.${preVyymmdd}${preVhh}.f${nexTfhour}.grib2
+endif
+
 # link ungribbed GFS
 ./${linkWPS} ${GFSgribdirRDA}/${gribFile}
+
+# check if the gribFile was linked
+if ( ! -e "GRIBFILE.AAA") then
+   echo "GRIBFILE.AAA is not in folder -- exiting"
+   exit 1
+endif
 
 date
 

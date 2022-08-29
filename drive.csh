@@ -241,7 +241,7 @@ cat >! suite.rc << EOF
   # and to avoid over-utilization of login nodes
   # hint: execute 'ps aux | grep $USER' to check your login node overhead
   # default: 3
-{% if CriticalPathType != "Normal" %}
+{% if CriticalPathType not in ["Normal", "GetGDASanalysis"] %}
   max active cycle points = 20
 {% else %}
   max active cycle points = {{maxActiveCyclePoints}}
