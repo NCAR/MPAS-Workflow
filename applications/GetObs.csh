@@ -28,12 +28,16 @@ source config/auto/observations.csh
 source config/auto/workflow.csh
 source config/tools.csh
 set yyyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
-set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
-set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 5-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yyyymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
+
 source ./getCycleVars.csh
+
+set yyyymmdd = `echo ${thisValidDate} | cut -c 1-8`
+set ccyy = `echo ${thisValidDate} | cut -c 1-4`
+set mmdd = `echo ${thisValidDate} | cut -c 5-8`
+set hh = `echo ${thisValidDate} | cut -c 9-10`
 
 set self_WorkDir = "${ExperimentDirectory}/"`echo "$ArgWorkDir" \
   | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \

@@ -25,16 +25,19 @@ source config/auto/build.csh
 source config/auto/experiment.csh
 source config/tools.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
-set yy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 
+source ./getCycleVars.csh
+
+set yymmdd = `echo ${thisValidDate} | cut -c 1-8`
+set yy = `echo ${thisValidDate} | cut -c 1-4`
+set hh = `echo ${thisValidDate} | cut -c 9-10`
+
 set res = 0p25
 set fhour = 000
 set gribFile = ${yy}/${yymmdd}/gfs.${res}.${yymmdd}${hh}.f${fhour}.grib2
-
-source ./getCycleVars.csh
 
 set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
   | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \

@@ -29,13 +29,16 @@ set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 
+source ./getCycleVars.csh
+
+set yymmdd = `echo ${thisValidDate} | cut -c 1-8`
+set hh = `echo ${thisValidDate} | cut -c 9-10`
+
 set res = 0p25
 set fhour = 000
 # url for GFS data
 set gfs_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gfs.${yymmdd}/${hh}/atmos
 set gribFile = gfs.t${hh}z.pgrb2.${res}.f${fhour}
-
-source ./getCycleVars.csh
 
 set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
   | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
