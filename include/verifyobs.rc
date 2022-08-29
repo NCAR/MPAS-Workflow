@@ -61,8 +61,8 @@
 {% if VerifyExtendedMeanFC %}
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
-        DataAssimFinished => MeanAnalysis => ExtendedMeanFC
-        ExtendedMeanFC => HofXMeanFC
+#        DataAssimFinished => MeanAnalysis => ExtendedMeanFC
+#        ExtendedMeanFC => HofXMeanFC
         HofXMeanFC:succeed-all => VerifyObsMeanFC
         VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
       '''

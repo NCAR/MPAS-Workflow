@@ -9,11 +9,11 @@ job:
 
 # CP*: used for all critical path jobs, single or multi-node, multi-processor only
   CPAccountNumber: NMMM0043
-  CPQueueName: regular
+  CPQueueName: premium
 
 # NCP*: used non-critical path jobs, single or multi-node, multi-processor only
   NCPAccountNumber: NMMM0043
-  NCPQueueName: regular
+  NCPQueueName: premium
 
 # EnsMeanBG*: settings for ensemble mean BG calculation, useful when it becomes time-critical
   EnsMeanBGAccountNumber: NMMM0043

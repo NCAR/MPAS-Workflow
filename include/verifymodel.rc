@@ -41,8 +41,9 @@
 {% if VerifyExtendedMeanFC %}
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
-        DataAssimFinished => MeanAnalysis => ExtendedMeanFC
-        ExtendedMeanFC => VerifyModelMeanFC
+#        DataAssimFinished => MeanAnalysis => ExtendedMeanFC
+#        ExtendedMeanFC => VerifyModelMeanFC
+        VerifyModelMeanFC
       '''
 {% endif %}
 
