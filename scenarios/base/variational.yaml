@@ -270,8 +270,7 @@ variational:
 
   # resource requirements
   job:
-    # TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
-    # TODO: update with latest resource requirements following GetValues refactoring
+    ## FORMAT
     #{{outerMesh}}:
     #  {{innerMesh}}:
     #    {{DAType}}: # i.e., 3dvar, 3denvar, 3dhybrid, 4denvar, etc...
@@ -281,76 +280,82 @@ variational:
     #      nodes: int
     #      PEPerNode: int
     #      memory: int
+    ## All resource requests below are based on
+    # + single-precision bundle build
+    # + sondes, aircraft, sfc, gnssro, satwind, 6 clear amsua
+    # These are starting points.  When more memory is needed (e.g., more observations, more EnVar
+    # memmbers) than is available in default resource requests below, use more nodes and keep
+    # the product of (nodes x PEPerNode) constant. If (nodes x PEPerNode) is modifed, new
+    # localization or covariance files may be needed.
     30km:
-      30km: #120 inner total
+      # Assuming 120 total inner iterations
+      30km:
         3denvar:
+          nodes: 64
+          PEPerNode: 8
+          memory: 45
           baseSeconds: 1500
           secondsPerEnVarMember: 5
-          nodes: 64
-          PEPerNode: 8
-          memory: 45
         3dvar:
-          baseSeconds: 1500
           nodes: 64
           PEPerNode: 8
           memory: 45
-      60km: #120 inner total
+          baseSeconds: 1500
+      60km:
         3denvar:
-          # single-precision bundle build
           nodes: 6
           PEPerNode: 32
-          memory: 109
-          baseSeconds: 200
-          secondsPerEnVarMember: 10
+          memory: 45
+          baseSeconds: 400
+          secondsPerEnVarMember: 9
         3dhybrid:
-          # single-precision bundle build
           nodes: 6
           PEPerNode: 32
           memory: 109
           baseSeconds: 640
           secondsPerEnVarMember: 10
         3dvar:
-          baseSeconds: 1200
           nodes: 6
           PEPerNode: 32
-          memory: 109
-    60km: #60 inner total
+          memory: 45
+          baseSeconds: 500
+    60km:
+      # Assuming 60 total inner iterations
       60km:
         3denvar:
+          nodes: 4
+          PEPerNode: 36
+          memory: 45
+          baseSeconds: 200
+          secondsPerEnVarMember: 6
           # double-precision bundle build
           ##nodes: 6
           ##PEPerNode: 32
           ##memory: 45
           ##baseSeconds: 200
           ##secondsPerEnVarMember: 6
-          # single-precision bundle build
-          nodes: 4
-          PEPerNode: 36
-          memory: 45
-          baseSeconds: 200
-          secondsPerEnVarMember: 6
         3dhybrid:
-          # single-precision bundle build (approximated from 3denvar)
           nodes: 4
           PEPerNode: 36
           memory: 45
           baseSeconds: 950
           secondsPerEnVarMember: 6
         3dvar:
-          baseSeconds: 500
           nodes: 6
           PEPerNode: 32
-          memory: 109
-    120km: #60 inner total
+          memory: 45
+          baseSeconds: 250
+    120km:
+      # Assuming 60 total inner iterations
       120km:
         3denvar:
-          baseSeconds: 360
+          nodes: 4
+          PEPerNode: 32
+          memory: 45
+          baseSeconds: 200
           secondsPerEnVarMember: 5
-          nodes: 4
-          PEPerNode: 32
-          memory: 45
         3dvar:
-          baseSeconds: 360
           nodes: 4
           PEPerNode: 32
           memory: 45
+          baseSeconds: 200
