@@ -69,7 +69,7 @@ class DA(Component):
     self.outputs = self.var.outputs
     self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self, self.var.inputs['members'], self.var.outputs['members'])
 
-  def export(self):
-    self.var.export()
-    self.rtpp.export()
-    super().export()
+  def export(self, components):
+    self.var.export(components)
+    self.rtpp.export(components)
+    super().export(components)

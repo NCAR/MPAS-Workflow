@@ -21,6 +21,7 @@ class ExternalAnalyses(Component):
 
   def __init__(self, config, hpc, meshes):
     super().__init__(config)
+    self.meshes = meshes
 
     ###################
     # derived variables
@@ -33,13 +34,13 @@ class ExternalAnalyses(Component):
     # WorkDir is where external analysis files are linked/downloaded, e.g., in grib format
     self.WorkDir = self.workDir+'/'+resource+'/{{thisValidDate}}'
 
-    for name, m in meshes.items():
+    for typ, m in meshes.items():
       mesh = m.name
       nCells = str(m.nCells)
-      # 'ExternalAnalysesDir'+name is where external analyses converted to MPAS meshes are
+      # 'ExternalAnalysesDir'+typ is where external analyses converted to MPAS meshes are
       # created and/or stored
-      self._set('ExternalAnalysesDir'+name, self.workDir+'/'+mesh+'/{{thisValidDate}}')
-      self._cshVars.append('ExternalAnalysesDir'+name)
+      self._set('ExternalAnalysesDir'+typ, self.workDir+'/'+mesh+'/{{thisValidDate}}')
+      self._cshVars.append('ExternalAnalysesDir'+typ)
 
       for (key, t) in [
        ['directory', str],
@@ -55,7 +56,7 @@ class ExternalAnalyses(Component):
           values = [task.replace('{{mesh}}',mesh) for task in value]
 
           # first add variable as a list of tasks
-          variable = key+name
+          variable = key+typ
           self._cylcVars.append(variable)
           self._set(variable, values)
 
@@ -71,9 +72,9 @@ class ExternalAnalyses(Component):
 
         else:
           # auto-generated csh variables
-          variable = 'externalanalyses__'+key+name
+          variable = 'externalanalyses__'+key+typ
           if key in ['Vtable','UngribPrefix']:
-            if name == 'Outer':
+            if typ == 'Outer':
               variable = 'externalanalyses__'+key
             else:
               continue
@@ -94,7 +95,7 @@ class ExternalAnalyses(Component):
     ########################
     # tasks and dependencies
     ########################
-    getRetry = self.extractResourceOrDie(('resources', resource), 'job.GetAnalysisFrom.retry', str)
+    self.__getRetry = self.extractResourceOrDie(('resources', resource), 'job.GetAnalysisFrom.retry', str)
 
     attr = {
       'seconds': {'def': 300},
@@ -106,62 +107,95 @@ class ExternalAnalyses(Component):
       'account': {'def': hpc['CriticalAccount']},
     }
     ungribjob = Resource(self._conf, attr, ('job', 'ungrib'))
-    ungribtask = TaskFactory[hpc.system](ungribjob)
+    self.__ungribtask = TaskFactory[hpc.system](ungribjob)
 
     self.groupName = self.__class__.__name__
-
-    self._tasks = [
-'''## Analyses generated outside MPAS-Workflow
-  [['''+self.groupName+''']]
-  [[GetGFSAnalysisFromRDA]]
-    inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/GetGFSAnalysisFromRDA.csh "'''+self.WorkDir+'''"
-    [[[job]]]
-      execution time limit = PT20M
-      execution retry delays = '''+getRetry+'''
-  [[GetGFSanalysisFromFTP]]
-    inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/GetGFSAnalysisFromFTP.csh "'''+self.WorkDir+'''"
-    [[[job]]]
-      execution time limit = PT20M
-      execution retry delays = '''+getRetry+'''
-  [[GetGDASAnalysisFromFTP]]
-    inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/GetGDASAnalysisFromFTP.csh
-    [[[job]]]
-      execution time limit = PT45M
-      execution retry delays = '''+getRetry+'''
-
-  [[UngribExternalAnalysis]]
-    inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/UngribExternalAnalysis.csh "'''+self.WorkDir+'''"
-'''+ungribtask.job()+ungribtask.directives()+'''
-
-  [[LinkExternalAnalyses]]
-    inherit = '''+self.groupName+'''
-  [[ExternalAnalysisReady]]
-    inherit = '''+self.groupName+''', BACKGROUND''']
-
-    for name, m in meshes.items():
-      linkArgs = '"'+self['ExternalAnalysesDir'+name]+'"'
-      linkArgs += ' "'+str(self['externalanalyses__directory'+name])+'"'
-      linkArgs += ' "'+self['externalanalyses__filePrefix'+name]+'"'
-
-      self._tasks += [
-'''
-  [[LinkExternalAnalysis-'''+m.name+''']]
-    inherit = LinkExternalAnalyses, SingleBatch
-    script = $origin/applications/LinkExternalAnalysis.csh '''+linkArgs+'''
-    [[[job]]]
-      execution time limit = PT30S
-      execution retry delays = 1*PT30S''']
 
     #########
     # outputs
     #########
     self.outputs = {}
-    for name, m in meshes.items():
-      self.outputs[name] = [{
-        'directory': self['ExternalAnalysesDir'+name],
-        'prefix': self['externalanalyses__filePrefix'+name],
+    for typ, m in meshes.items():
+      self.outputs[typ] = [{
+        'directory': self['ExternalAnalysesDir'+typ],
+        'prefix': self['externalanalyses__filePrefix'+typ],
       }]
+
+  def export(self, components):
+    if 'extendedforecast' in components:
+      dtOffsets=components['extendedforecast']['extLengths']
+    else:
+      dtOffsets=[0]
+
+    meshTypes = []
+    meshNames = []
+    for typ, m in self.meshes.items():
+      if m.name not in meshNames:
+        meshNames.append(m.name)
+        meshTypes.append(typ)
+
+    self._tasks = [
+'''## Analyses generated outside MPAS-Workflow
+  [['''+self.groupName+''']]
+  [[GetGDASAnalysisFromFTP]]
+    inherit = '''+self.groupName+''', SingleBatch
+    script = $origin/applications/GetGDASAnalysisFromFTP.csh
+    [[[job]]]
+      execution time limit = PT45M
+      execution retry delays = '''+self.__getRetry]
+
+    for dt in dtOffsets:
+      dtStr = str(dt)
+      dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
+      self._tasks += ['''
+  [[GetGFSAnalysisFromRDA-'''+dtStr+'''hr]]
+    inherit = '''+self.groupName+''', SingleBatch
+    script = $origin/applications/GetGFSAnalysisFromRDA.csh '''+dt_work_Args+'''
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = '''+self.__getRetry+'''
+  [[GetGFSAnalysisFromFTP-'''+dtStr+'''hr]]
+    inherit = '''+self.groupName+''', SingleBatch
+    script = $origin/applications/GetGFSAnalysisFromFTP.csh '''+dt_work_Args+'''
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = '''+self.__getRetry+'''
+  [[UngribExternalAnalysis-'''+dtStr+'''hr]]
+    inherit = '''+self.groupName+''', SingleBatch
+    script = $origin/applications/UngribExternalAnalysis.csh '''+dt_work_Args+'''
+'''+self.__ungribtask.job()+self.__ungribtask.directives()+'''
+  [[ExternalAnalysisReady-'''+dtStr+'''hr]]
+    inherit = '''+self.groupName]
+
+      for typ, name in zip(meshTypes, meshNames):
+        args = [
+          dt,
+          self['ExternalAnalysesDir'+typ],
+          self['externalanalyses__directory'+typ],
+          self['externalanalyses__filePrefix'+typ],
+        ]
+        linkArgs = ' '.join(['"'+str(a)+'"' for a in args])
+        self._tasks += ['''
+  [[LinkExternalAnalysis-'''+name+'''-'''+dtStr+'''hr]]
+    inherit = '''+self.groupName+''', SingleBatch
+    script = $origin/applications/LinkExternalAnalysis.csh '''+linkArgs+'''
+    [[[job]]]
+      execution time limit = PT30S
+      execution retry delays = 1*PT30S''']
+
+    self._tasks += ['''
+  [[GetGFSAnalysisFromRDA]]
+    inherit = GetGFSAnalysisFromRDA-0hr
+  [[GetGFSAnalysisFromFTP]]
+    inherit = GetGFSAnalysisFromFTP-0hr
+  [[UngribExternalAnalysis]]
+    inherit = UngribExternalAnalysis-0hr
+  [[ExternalAnalysisReady]]
+    inherit = '''+self.groupName]
+
+    for typ, name in zip(meshTypes, meshNames):
+      self._tasks += ['''
+  [[LinkExternalAnalysis-'''+name+''']]
+    inherit = LinkExternalAnalysis-'''+name+'''-0hr''']
+
+    super().export(components)

@@ -7,8 +7,10 @@ from initialize.util.Task import TaskFactory
 class InitIC(Component):
   defaults = 'scenarios/defaults/initic.yaml'
 
-  def __init__(self, config, hpc, meshes, ea):
+  def __init__(self, config, hpc, meshes, externalanalyses):
     super().__init__(config)
+
+    self.meshes = meshes
 
     ########################
     # tasks and dependencies
@@ -23,30 +25,57 @@ class InitIC(Component):
       'account': {'def': hpc['CriticalAccount']},
     }
     job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
-    task = TaskFactory[hpc.system](job)
+    self.__task = TaskFactory[hpc.system](job)
 
-    self.groupName = self.__class__.__name__
-    self._tasks = ['''
-  [['''+self.groupName+']]']
-
-    for name, m in meshes.items():
-      initArgs = '"'+ea['ExternalAnalysesDir'+name]+'"'
-      initArgs += ' "'+ea['externalanalyses__filePrefix'+name]+'"'
-      initArgs += ' "'+str(m.nCells)+'"'
-      initArgs += ' "'+ea.WorkDir+'"'
-      self._tasks += [
-'''
-  [[ExternalAnalysisToMPAS-'''+m.name+''']]
-    inherit = '''+self.groupName+''', BATCH
-    script = $origin/applications/ExternalAnalysisToMPAS.csh '''+initArgs+'''
-'''+task.job()+task.directives()]
+    self.groupName = externalanalyses.groupName
 
     #########
     # outputs
     #########
     self.outputs = {}
-    for name, m in meshes.items():
-      self.outputs[name] = [{
-        'directory': ea['ExternalAnalysesDir'+name],
-        'prefix': ea['externalanalyses__filePrefix'+name],
+    for typ, m in meshes.items():
+      self.outputs[typ] = [{
+        'directory': externalanalyses['ExternalAnalysesDir'+typ],
+        'prefix': externalanalyses['externalanalyses__filePrefix'+typ],
       }]
+
+  def export(self, components):
+    if 'extendedforecast' in components:
+      dtOffsets=components['extendedforecast']['extLengths']
+    else:
+      dtOffsets=[0]
+
+    meshTypes = []
+    meshNames = []
+    meshNCells = []
+    for typ, m in self.meshes.items():
+      if m.name not in meshNames:
+        meshTypes.append(typ)
+        meshNames.append(m.name)
+        meshNCells.append(m.nCells)
+
+    self._tasks = []
+    for (typ, name, nCells) in zip(meshTypes, meshNames, meshNCells):
+      for dt in dtOffsets:
+        dtStr = str(dt)
+        args = [
+          dt,
+          components['externalanalyses']['ExternalAnalysesDir'+typ],
+          components['externalanalyses']['externalanalyses__filePrefix'+typ],
+          nCells,
+          components['externalanalyses'].WorkDir,
+        ]
+        initArgs = ' '.join(['"'+str(a)+'"' for a in args])
+        self._tasks += [
+'''
+  [[ExternalAnalysisToMPAS-'''+name+'''-'''+dtStr+'''hr]]
+    inherit = '''+self.groupName+''', BATCH
+    script = $origin/applications/ExternalAnalysisToMPAS.csh '''+initArgs+'''
+'''+self.__task.job()+self.__task.directives()]
+
+      self._tasks += [
+'''
+  [[ExternalAnalysisToMPAS-'''+name+''']]
+    inherit = ExternalAnalysisToMPAS-'''+name+'''-0hr''']
+
+    super().export(components)

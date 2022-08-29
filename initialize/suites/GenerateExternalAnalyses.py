@@ -21,8 +21,8 @@ class GenerateExternalAnalyses(Suite):
     c['workflow'] = Workflow(conf)
     c['model'] = Model(conf)
     c['build'] = Build(conf, c['model'])
-    c['ea'] = ExternalAnalyses(conf, c['hpc'], c['model'].getMeshes())
-    c['ic'] = InitIC(conf, c['hpc'], c['model'].getMeshes(), c['ea'])
+    c['externalanalyses'] = ExternalAnalyses(conf, c['hpc'], c['model'].getMeshes())
+    c['ic'] = InitIC(conf, c['hpc'], c['model'].getMeshes(), c['externalanalyses'])
     c['exp'] = Experiment(conf, c['hpc'])
     c['naming'] = Naming(conf, c['exp'])
 
@@ -30,4 +30,4 @@ class GenerateExternalAnalyses(Suite):
     c['members'] = Members(conf)
 
     for c_ in c.values():
-      c_.export()
+      c_.export(c)

@@ -25,4 +25,4 @@ class GenerateObs(Suite):
     c['members'] = Members(conf)
 
     for c_ in c.values():
-      c_.export()
+      c_.export(c)

@@ -115,7 +115,7 @@ class ExtendedForecast(Component):
   # TODO: move MeanAnalysis somewhere else
   ## from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
-    inherit = '''+self.groupName+''', Mean, BATCH
+    inherit = '''+self.groupName+''', BATCH
     script = $origin/applications/MeanAnalysis.csh
 '''+meantask.job()+meantask.directives()+'''
   [[ExtendedMeanFC]]
@@ -124,7 +124,7 @@ class ExtendedForecast(Component):
 
 
   [[ExtendedForecastFinished]]
-    inherit = '''+self.groupName+''', BACKGROUND
+    inherit = '''+self.groupName+'''
 
   ## from ensemble of analyses
   [[ExtendedEnsFC]]

@@ -4,8 +4,18 @@
 # Process arguments
 # =================
 ## args
+# ArgDT: int, valid time offset beyond CYLC_TASK_CYCLE_POINT in hours
+set ArgDT = "$1"
+
 # ArgWorkDir: my location
-set ArgWorkDir = "$1"
+set ArgWorkDir = "$2"
+
+set test = `echo $ArgDT | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
 
 date
 
@@ -14,12 +24,12 @@ date
 source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/observations.csh
+source config/tools.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
-set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
-set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`
+set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
-set thisValidDate = ${thisCycleDate}
+set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
 set self_WorkDir = "${ExperimentDirectory}/"`echo "$ArgWorkDir" \

@@ -55,7 +55,7 @@ class Component():
       else:
         self._setOrDefault(v, desc)
 
-  def export(self):
+  def export(self, components):
     '''
     export for use outside python
     '''

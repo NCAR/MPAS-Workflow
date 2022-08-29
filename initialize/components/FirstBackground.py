@@ -29,7 +29,7 @@ class FirstBackground(Component):
     assert members.n > 0 and members.n <= maxMembers, (
       self._msg('invalid members.n => '+str(members.n)))
 
-    for name, m in meshes.items():
+    for typ, m in meshes.items():
       mesh = m.name
       nCells = str(m.nCells)
 
@@ -42,14 +42,14 @@ class FirstBackground(Component):
         value = self.extractResource(('resources', resource, mesh), key, t)
         if key == 'PrepareFirstBackground':
           # push back cylc mini-workflow
-          variable = key+name
+          variable = key+typ
           self._cylcVars.append(variable)
         else:
           # auto-generated csh variables
           if key == 'directory' and isinstance(value, str):
             value = value.replace('{{FirstCycleDate}}', FirstCycleDate)
 
-          variable = 'firstbackground__'+key+name
+          variable = 'firstbackground__'+key+typ
           self._cshVars.append(variable)
 
         self._set(variable, value)

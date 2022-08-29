@@ -81,7 +81,7 @@ class Forecast(Component):
 '''+task.job()+task.directives()+'''
 
   [[ForecastFinished]]
-    inherit = '''+self.groupName+''', BACKGROUND''']
+    inherit = '''+self.groupName]
 
     for mm in range(1, members.n+1, 1):
       # ColdArgs explanation

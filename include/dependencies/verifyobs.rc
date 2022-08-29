@@ -60,20 +60,21 @@
   # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedMeanFC %}
-  {% for TIME in extMeanTimesList %}
-    [[[{{TIME}}/PT{{extIntervHR}}H]]]
+  {% for dt in extLengths %}
+    {% set ds = "-"+(dt|string)+"hr" %}
+    {% if dt == 0 %}
+      {% set prep = (ds+":succeed-all => ").join(PrepareObservationsTasks)+ds %}
+    {% else %}
+      {% set prep = (ds+" => ").join(PrepareObservationsTasks)+ds %}
+    {% endif %}
+    [[[{{extMeanTimes}}]]]
       graph = '''
-        {{PrepareObservations}}
-      '''
-    {% for dt in extLengths %}
-    [[[{{TIME}}]]]
-      graph = '''
+        {{prep}}
         ExtendedForecastFinished => HofXMeanFC{{dt}}hr
-        ObsReady[PT{{dt}}H] => HofXMeanFC{{dt}}hr
+        ObsReady-{{dt}}hr => HofXMeanFC{{dt}}hr
         HofXMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
         VerifyObsMeanFC{{dt}}hr => CleanHofXMeanFC{{dt}}hr
       '''
-    {% endfor %}
   {% endfor %}
 {% endif %}
 
@@ -81,21 +82,22 @@
   # ... for extended forecast from ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedEnsFC and nMembers > 1 %}
-  {% for TIME in extEnsTimesList %}
-    [[[{{TIME}}/PT{{extIntervHR}}H]]]
+  {% for dt in extLengths %}
+    {% set ds = "-"+(dt|string)+"hr" %}
+    {% if dt == 0 %}
+      {% set prep = (ds+":succeed-all => ").join(PrepareObservationsTasks)+ds %}
+    {% else %}
+      {% set prep = (ds+" => ").join(PrepareObservationsTasks)+ds %}
+    {% endif %}
+    [[[{{extEnsTimes}}]]]
       graph = '''
-        {{PrepareObservations}}
-      '''
-    {% for dt in extLengths %}
-    [[[{{TIME}}]]]
-      graph = '''
-      {% for mem in EnsVerifyMembers %}
+        {{prep}}
+    {% for mem in EnsVerifyMembers %}
         ExtendedForecastFinished => HofXEnsFC{{mem}}-{{dt}}hr
-        ObsReady[PT{{dt}}H] => HofXEnsFC{{mem}}-{{dt}}hr
+        ObsReady-{{dt}}hr => HofXEnsFC{{mem}}-{{dt}}hr
         HofXEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
         VerifyObsEnsFC{{mem}}-{{dt}}hr => CleanHofXEnsFC{{mem}}-{{dt}}hr
-      {% endfor %}
-      '''
     {% endfor %}
+      '''
   {% endfor %}
 {% endif %}

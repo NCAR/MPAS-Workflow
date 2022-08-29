@@ -111,7 +111,7 @@ class HofX(Component):
     job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
     task = TaskFactory[hpc.system](job)
 
-    self._tasks = [
-'''
-  [[HofX]]
+    self.groupName = self.__class__.__name__
+    self._tasks = ['''
+  [['''+self.groupName+''']]
 '''+task.job()+task.directives()]

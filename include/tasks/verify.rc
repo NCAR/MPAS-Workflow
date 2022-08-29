@@ -3,7 +3,7 @@
 %include include/tasks/auto/verifymodel.rc
 %include include/tasks/auto/verifyobs.rc
 
-## DA
+### DA observations
   [[VerifyObsDA]]
     inherit = VerifyObs, BATCH
     script = $origin/applications/VerifyObsDA.csh "1" "0" "DA" "0" "variational"
@@ -11,12 +11,12 @@
     inherit = Compare, SingleBatch
     script = $origin/applications/CompareObsDA.csh "1" "0" "DA" "variational"
 
+### States
 ## extended forecast from mean/deterministic state
   [[HofXMeanFC]]
   [[VerifyModelMeanFC]]
   [[VerifyObsMeanFC]]
   [[CleanHofXMeanFC]]
-    inherit = CleanHofX
 {% for dt in extLengths %}
   [[HofXMeanFC{{dt}}hr]]
     inherit = HofX, HofXMeanFC, BATCH
@@ -35,6 +35,7 @@
 
 
 ## ensemble mean background
+  [[Mean]]
   [[MeanBackground]]
     inherit = Mean, BATCH
     script = $origin/applications/MeanBackground.csh
@@ -63,7 +64,7 @@
     [[[job]]]
       execution time limit = PT{{obsEnsSeconds}}S
   [[CleanHofXEnsMeanBG]]
-    inherit = Clean, CleanHofX
+    inherit = Clean
     script = $origin/applications/CleanHofXEnsMeanBG.csh "1" "0" "BG"
 
 
@@ -75,7 +76,6 @@
   [[VerifyObs{{state}}]]
   [[CompareObs{{state}}]]
   [[CleanHofX{{state}}]]
-    inherit = CleanHofX
 {% endfor %}
 
 {% for mem in EnsVerifyMembers %}
@@ -107,7 +107,6 @@
   [[VerifyModelEnsFC]]
   [[VerifyObsEnsFC]]
   [[CleanHofXEnsFC]]
-    inherit = CleanHofX
 {% for mem in EnsVerifyMembers %}
   # ensemble of extended forecasts from ensemble of analyses
   {% for dt in extLengths %}

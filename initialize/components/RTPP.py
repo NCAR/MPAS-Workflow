@@ -76,7 +76,7 @@ class RTPP(Component):
 '''+task.job()+task.directives()+'''
 
   [[CleanRTPP]]
-    inherit = '''+da.clean+''', Clean
+    inherit = Clean, '''+da.clean+'''
     script = $origin/applications/CleanRTPP.csh "'''+self.WorkDir+'"']
 
       da._dependencies += ['''

@@ -90,21 +90,32 @@ class Observations(Component):
     self._set(key, value)
     self.workflow = key
    
-    ########################
-    # tasks and dependencies
-    ########################
     self.groupName = self.__class__.__name__
+    self.Queue = hpc['CriticalQueue']
+    self.Account = hpc['CriticalAccount']
+
+  def export(self, components):
+    if 'extendedforecast' in components:
+      dtOffsets=components['extendedforecast']['extLengths']
+    else:
+      dtOffsets=[0]
+
     self._tasks = ['''
-  [['''+self.groupName+''']]
-  [[GetObs]]
+  [['''+self.groupName+''']]''']
+    for dt in dtOffsets:
+      dtStr = str(dt)
+      dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
+
+      self._tasks += ['''
+  [[GetObs-'''+dtStr+'''hr]]
     inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/GetObs.csh "'''+self.WorkDir+'''"
+    script = $origin/applications/GetObs.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = '''+self['getRetry']+'''
-  [[ObsToIODA]]
+  [[ObsToIODA-'''+dtStr+'''hr]]
     inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/ObsToIODA.csh "'''+self.WorkDir+'''"
+    script = $origin/applications/ObsToIODA.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT600S
       execution retry delays = '''+self['convertRetry']+'''
@@ -115,8 +126,18 @@ class Observations(Component):
       # Note: memory for ObsToIODA may need to be increased when hyperspectral and/or
       #       geostationary instruments are added
       -m = ae
-      -q = '''+hpc['CriticalQueue']+'''
-      -A = '''+hpc['CriticalAccount']+'''
+      -q = '''+self.Queue+'''
+      -A = '''+self.Account+'''
       -l = select=1:ncpus=1:mem=10GB
+  [[ObsReady-'''+dtStr+'''hr]]
+    inherit = '''+self.groupName]
+
+    self._tasks += ['''
+  [[GetObs]]
+    inherit = GetObs-0hr
+  [[ObsToIODA]]
+    inherit = ObsToIODA-0hr
   [[ObsReady]]
-    inherit = '''+self.groupName+''', BACKGROUND''']
+    inherit = '''+self.groupName]
+
+    super().export(components)

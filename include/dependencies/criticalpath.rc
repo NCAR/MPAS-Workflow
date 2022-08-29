@@ -36,11 +36,14 @@
         GetGDASAnalysisFromFTP
   {% endif %}
       '''
+
 {% elif CriticalPathType == "Reanalysis" %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
 %include include/dependencies/auto/da.rc
       '''
+    [[[{{ForecastTimes}}]]]
+      graph = ForecastFinished
 
 {% elif CriticalPathType == "Reforecast" %}
     [[[{{ForecastTimes}}]]]
@@ -49,7 +52,9 @@
       '''
 
 {% elif CriticalPathType == "Bypass" %}
-  # nothing to do
+    [[[{{ForecastTimes}}]]]
+      graph = ForecastFinished
+
 {% else %}
     {{ raise('CriticalPathType is not valid') }}
 {% endif %}

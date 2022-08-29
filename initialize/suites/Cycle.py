@@ -36,17 +36,17 @@ class Cycle(Suite):
     c['obs'] = Observations(conf, c['hpc'])
     c['members'] = Members(conf)
 
-    c['ea'] = ExternalAnalyses(conf, c['hpc'], meshes)
+    c['externalanalyses'] = ExternalAnalyses(conf, c['hpc'], meshes)
     c['fb'] = FirstBackground(conf, meshes, c['members'], c['workflow']['FirstCycleDate'])
 
-    c['ic'] = InitIC(conf, c['hpc'], meshes, c['ea'])
+    c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
     c['hofx'] = HofX(conf, c['hpc'], meshes, c['model'])
     c['da'] = DA(conf, c['hpc'], c['obs'], meshes, c['model'], c['members'], c['workflow'])
     c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['workflow'],
-                c['ea'].outputs['Outer'],
+                c['externalanalyses'].outputs['Outer'],
                 c['da'].outputs['members'])
-    c['extfc'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
-                c['ea'].outputs['Outer'],
+    c['extendedforecast'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
+                c['externalanalyses'].outputs['Outer'],
                 c['da'].outputs['mean'],
                 c['da'].outputs['members'])
 
@@ -61,9 +61,9 @@ class Cycle(Suite):
     c['bench'] = Benchmark(conf, c['hpc'])
 
     c['exp'] = Experiment(conf, c['hpc'], meshes, c['da'].var, c['members'], c['da'].rtpp)
-    c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['ea'], c['exp'])
+    c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['externalanalyses'], c['exp'])
 
     c['naming'] = Naming(conf, c['exp'], c['bench'])
 
     for c_ in c.values():
-      c_.export()
+      c_.export(c)

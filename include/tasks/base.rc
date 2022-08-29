@@ -4,17 +4,6 @@
     [[[environment]]]
       origin = {{mainScriptDir}}
 
-## Default settings for background and batch-submitted tasks. Currently
-## these are the only two task classifications used.  All new tasks
-## should inherit directly or indirectly from one of these two.
-  [[BACKGROUND]]
-    # These should be very small overhead and few in number; typically these
-    # only act as placeholders in the suite to facilitate transitions between
-    # complex combinations of BATCH tasks
-    [[[job]]]
-      batch system = background
-      execution time limit = PT30S
-
   [[BATCH]]
     # load conda + activate npl
     init-script = '''
@@ -58,6 +47,3 @@ conda activate npl
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = 2*PT15S
-
-  [[CleanHofX]]
-  [[Mean]]
