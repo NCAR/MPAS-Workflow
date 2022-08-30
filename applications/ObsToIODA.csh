@@ -25,12 +25,14 @@ source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/observations.csh
 source config/tools.csh
-set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
-set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-4`
+set ccyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set thisCycleDate = ${yymmdd}${hh}
+set thisCycleDate = ${ccyymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
+
 source ./getCycleVars.csh
+
+set ccyy = `echo ${thisValidDate} | cut -c 1-4`
 
 set self_WorkDir = "${ExperimentDirectory}/"`echo "$ArgWorkDir" \
   | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
