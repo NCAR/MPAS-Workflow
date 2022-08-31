@@ -9,7 +9,7 @@
     channels: &mhs_metop-b_channels 1-5
   obs error: *ObsErrorDiagonal
   obs operator:
-    <<: *cloudyCRTMObsOperator
+    <<: *clearCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: mhs_metop-b

@@ -6,8 +6,8 @@
     obsdataout:
       obsfile: {{OutDBDir}}/{{obsPrefix}}_amsua_n18.h5
     simulated variables: [brightness_temperature]
-    channels: &amsua_n18_channels 5-14
-  obs error: *ObsErrorDiagonal
+    channels: &amsua_n18_channels 5-12
+#  obs error: *ObsErrorDiagonal
   obs operator:
     <<: *clearCRTMObsOperator
     obs options:
