@@ -10,9 +10,9 @@ observations:
   - satwnd
   - gpsro
   - 1bamua
+  - airsev
   #- mtiasi
   #- 1bmhs
-  #- airsev
   #- cris
 
 ## GDAS observations error table
@@ -29,6 +29,7 @@ observations:
     - amsua_aqua
     - amsua_metop-a
     - amsua_metop-b
+    - amsua_metop-c
     - amsua_n15
     - amsua_n18
     - amsua_n19
@@ -51,6 +52,7 @@ observations:
     - amsua_aqua
     - amsua_metop-a
     - amsua_metop-b
+    - amsua_metop-c
     - amsua_n15
     - amsua_n18
     - amsua_n19
@@ -241,13 +243,27 @@ observations:
       amsua-cld_n15: amsua_n15
       amsua-cld_n18: amsua_n18
       amsua-cld_n19: amsua_n19
+      abi-clr_g16: abi_g16
+      ahi-clr_himawari8: ahi_himawari8
 
     IODADirectory:
       variational:
         common: /glade/p/mmm/parc/guerrett/pandac/fixed_input/GenerateObs/Observations
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
 
       hofx:
         common: /glade/p/mmm/parc/guerrett/pandac/fixed_input/GenerateObs/Observations
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+
+    IODASuperObGrid:
+      abi_g16: 15X15
+      ahi_himawari8: 15X15
 
 
 ## CRTM
@@ -257,3 +273,7 @@ observations:
 # controls the horizontal interpolation used in variational and hofx applications
 # OPTIONS: bump, unstructured
   InterpolationType: unstructured
+
+# static directory for bias correction files
+  initialVARBCcoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
+  fixedTlapmeanCov: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018

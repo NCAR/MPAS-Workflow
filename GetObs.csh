@@ -2,6 +2,19 @@
 # Get observations for a cold start experiment
 # from the NCEP FTP BUFR/PrepBUFR files or CISL RDA archived NCEP BUFR files
 
+# Process arguments
+# =================
+## args
+# ArgDT: int, valid time offset beyond CYLC_TASK_CYCLE_POINT in hours
+set ArgDT = "$1"
+
+set test = `echo $ArgDT | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
+
 date
 
 # Setup environment
@@ -10,13 +23,17 @@ source config/workflow.csh
 source config/observations.csh
 source config/experiment.csh
 source config/builds.csh
-set yyyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
-set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
-set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`
+source config/tools.csh
+set ccyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set thisCycleDate = ${yyyymmdd}${hh}
-set thisValidDate = ${thisCycleDate}
+set thisCycleDate = ${ccyymmdd}${hh}
+set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
+
 source ./getCycleVars.csh
+
+set ccyymmdd = `echo ${thisValidDate} | cut -c 1-8`
+set ccyy = `echo ${thisValidDate} | cut -c 1-4`
+set hh = `echo ${thisValidDate} | cut -c 9-10`
 
 # templated work directory
 set WorkDir = ${ObsDir}
@@ -35,7 +52,7 @@ foreach inst ( ${convertToIODAObservations} )
     echo "Getting ${inst} from RDA"
     # for satwnd observations
     if ( ${inst} == satwnd ) then
-       setenv THIS_FILE gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
+       setenv THIS_FILE gdas.${inst}.t${hh}z.${ccyymmdd}.bufr
        if ( ! -e ${THIS_FILE}) then
           echo "Source file: ${satwndBUFRDirectory}/bufr/${ccyy}/${THIS_FILE}"
           cp -p ${satwndBUFRDirectory}/bufr/${ccyy}/${THIS_FILE} .
@@ -49,10 +66,16 @@ foreach inst ( ${convertToIODAObservations} )
        endif
     # for prepbufr observations
     else if ( ${inst} == prepbufr ) then
-       setenv THIS_FILE prepbufr.gdas.${ccyy}${mmdd}.t${hh}z.nr.48h
+       setenv THIS_FILE prepbufr.gdas.${thisValidDate}.nr
        if ( ! -e ${THIS_FILE}) then
-          echo "Source file: ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE}"
-          cp -p ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE} .
+          if ( -e ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE} ) then
+             echo "Source file: ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE}"
+             cp -p ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE} .
+          else
+             setenv THIS_FILE prepbufr.gdas.${ccyymmdd}.t${hh}z.nr.48h
+             echo "Source file: ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE}"
+             cp -p ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE} .
+          endif
        endif
        # use obs errors embedded in prepbufr file
        if ( -e obs_errtable ) then
@@ -65,21 +88,21 @@ foreach inst ( ${convertToIODAObservations} )
     # for all other observations
     else
        # set the specific file to be extracted from the tar file
-       setenv THIS_FILE gdas.${inst}.t${hh}z.${ccyy}${mmdd}.bufr
+       setenv THIS_FILE gdas.${inst}.t${hh}z.${ccyymmdd}.bufr
        if ( ${inst} == 'cris' && ${ccyy} >= '2021' ) then
           # cris file name became crisf4 since 2021
-          setenv THIS_FILE gdas.${inst}f4.t${hh}z.${ccyy}${mmdd}.bufr
+          setenv THIS_FILE gdas.${inst}f4.t${hh}z.${ccyymmdd}.bufr
        endif
-       set THIS_TAR_FILE = ${defaultBUFRDirectory}/${inst}/${ccyy}/${inst}.${ccyy}${mmdd}.tar.gz
+       set THIS_TAR_FILE = ${defaultBUFRDirectory}/${inst}/${ccyy}/${inst}.${ccyymmdd}.tar.gz
        if ( ${inst} == 'cris' && ${ccyy} >= '2021' ) then
           # cris file name became crisf4 since 2021
-          set THIS_TAR_FILE = ${defaultBUFRDirectory}/${inst}/${ccyy}/${inst}f4.${ccyy}${mmdd}.tar.gz
+          set THIS_TAR_FILE = ${defaultBUFRDirectory}/${inst}/${ccyy}/${inst}f4.${ccyymmdd}.tar.gz
        endif
        # if the observation file does not exist, untar it
        # whether in the sub-directory or current directory
        if ( ! -e ${THIS_FILE}) then
           # some tar files contain sub-directory
-          set THIS_TAR_DIR = ${ccyy}${mmdd}.${inst}
+          set THIS_TAR_DIR = ${ccyymmdd}.${inst}
           tar -x -f ${THIS_TAR_FILE} ${THIS_TAR_DIR}/${THIS_FILE}
           if ( $status == 0 ) then
              echo "Source file: tar -x -f ${THIS_TAR_FILE} ${THIS_TAR_DIR}/${THIS_FILE}"
@@ -100,7 +123,7 @@ foreach inst ( ${convertToIODAObservations} )
           if ( ${got_file} == false && ${inst} == airsev ) then
              # try again with another dir name
              # typo in the archived directory name
-             set THIS_TAR_DIR = ${ccyy}${mmdd}.airssev
+             set THIS_TAR_DIR = ${ccyymmdd}.airssev
              tar -x -f ${THIS_TAR_FILE} ${THIS_TAR_DIR}/${THIS_FILE}
              if ( $status == 0 ) then
                 set SUB_DIR = true
@@ -121,7 +144,7 @@ foreach inst ( ${convertToIODAObservations} )
   else if ( "${observations__resource}" == "NCEPFTPOnline" ) then
     echo "Getting ${inst} from the NCEP FTP"
     # url for GDAS data
-    set gdas_ftp = https://ftpprd.ncep.noaa.gov/data/nccf/com/obsproc/prod/gdas.${yyyymmdd}
+    set gdas_ftp = https://ftpprd.ncep.noaa.gov/data/nccf/com/obsproc/prod/gdas.${ccyymmdd}
     # set name for the observation type
     if ( ${inst} == prepbufr ) then
       set THIS_FILE = gdas.t${hh}z.${inst}.nr
