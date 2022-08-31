@@ -215,12 +215,13 @@ cat >! suite.rc << EOF
 {% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
 
 ## Mini-workflow that prepares observations for IODA ingest
-{% if observationsResource == "PANDACArchive" %}
-  # assume that IODA observation files are already available for PANDACArchive case
-  {% set PrepareObservations = "ObsReady" %}
+{% if observationsResource in ["PANDACArchive", "GenerateObs"] %}
+  # assume that IODA observation files are already available for pre-generated cases
+  {% set PrepareObservationsTasks = ["ObsReady"] %}
 {% else %}
-  {% set PrepareObservations = "GetObs => ObsToIODA => ObsReady" %}
+  {% set PrepareObservationsTasks = ["GetObs", "ObsToIODA", "ObsReady"] %}
 {% endif %}
+{% set PrepareObservations = " => ".join(PrepareObservationsTasks) %}
 
 # Use external analysis for sea surface updating
 {% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysisOuter %}

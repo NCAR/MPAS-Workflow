@@ -1,6 +1,19 @@
 #!/bin/csh -f
 #Convert CISL RDA archived NCEP BUFR files to IODA-v2 format based on Jamie Bresch (NCAR/MMM) script rda_obs2ioda.csh
 
+# Process arguments
+# =================
+## args
+# ArgDT: int, valid time offset beyond CYLC_TASK_CYCLE_POINT in hours
+set ArgDT = "$1"
+
+set test = `echo $ArgDT | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
+
 date
 
 # Setup environment
@@ -8,13 +21,15 @@ date
 source config/observations.csh
 source config/experiment.csh
 source config/builds.csh
-set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
-set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
-set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`
+source config/tools.csh
+set ccyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set thisCycleDate = ${yymmdd}${hh}
-set thisValidDate = ${thisCycleDate}
+set thisCycleDate = ${ccyymmdd}${hh}
+set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
+
 source ./getCycleVars.csh
+
+set ccyy = `echo ${thisValidDate} | cut -c 1-4`
 
 # templated work directory
 set WorkDir = ${ObsDir}
