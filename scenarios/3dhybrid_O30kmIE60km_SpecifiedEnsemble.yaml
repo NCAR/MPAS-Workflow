@@ -1,12 +1,22 @@
 workflow:
   firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180514T18
-  CriticalPathType: Normal
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
-  VerifyAgainstObservations: False
-  VerifyAgainstExternalAnalyses: True
+  initialCyclePoint: 20180502T00
+  finalCyclePoint: 20180504T00
+  CriticalPathType: Bypass
+  VerifyDeterministicDA: False
+  VerifyEnsMeanBG: False
+  VerifyAgainstObservations: True
+  VerifyAgainstExternalAnalyses: False
+
+  VerifyExtendedMeanFC: True
+  ExtendedFCLengthHR: 240
+  ExtendedFCOutIntervalHR: 24
+  ExtendedMeanFCTimes: T00
+  maxActiveCyclePoints: 30
+
+hofx:
+  maxIODAPoolSize: 1
+  retainObsFeedback: True
 
 model:
   outerMesh: 30km
@@ -33,17 +43,17 @@ observations:
   PANDACArchive:
     IODADirectory:
       variational:
-        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
-        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_const-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_const-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_const-bias-correct
       hofx:
-        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
-        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_const-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_const-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_const-bias-correct
     IODASuperObGrid:
       abi_g16: 15X15
       ahi_himawari8: 15X15
-verifyobs:
-  pyVerifyDir: /glade/work/jban/pandac/fix_input/graphics_20220413_clr
+#verifyobs:
+#  pyVerifyDir: /glade/work/jban/pandac/fix_input/graphics_20220413_clr

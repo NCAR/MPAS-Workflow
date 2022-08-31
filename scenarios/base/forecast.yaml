@@ -16,16 +16,16 @@ forecast:
     #  nodes: int
     #  PEPerNode: int
     30km:
-      # faster turnaround
-      #nodes: 16
-      #PEPerNode: 32
-      #baseSeconds: 60
-      #secondsPerForecastHR: 120
-      # more efficient
-      nodes: 8
+      # for 10-d FC
+      nodes: 16
       PEPerNode: 32
-      baseSeconds: 60
-      secondsPerForecastHR: 100
+      baseSeconds: 150
+      secondsPerForecastHR: 50
+      # more efficient for cycling 6-h FC
+      #nodes: 8
+      #PEPerNode: 32
+      #baseSeconds: 300
+      #secondsPerForecastHR: 80
     60km:
       # faster turnaround
       #nodes: 4

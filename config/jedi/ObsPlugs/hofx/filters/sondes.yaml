@@ -2,10 +2,10 @@
   - filter: PreQC
     maxvalue: 3
 # avoids large ObsError values polluting plots of ObsError
-  - filter: Bounds Check
-    filter variables:
-    - name: specific_humidity
-    test variables:
-    - name: specific_humidity@ObsErrorData
-    minvalue: 0.0
-    maxvalue: 1.0
+#  - filter: Bounds Check
+#    filter variables:
+#    - name: specific_humidity
+#    test variables:
+#    - name: specific_humidity@ObsErrorData
+#    minvalue: 0.0
+#    maxvalue: 1.0

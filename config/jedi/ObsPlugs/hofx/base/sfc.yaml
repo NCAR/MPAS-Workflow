@@ -6,7 +6,7 @@
     obsdataout:
       obsfile: {{OutDBDir}}/{{obsPrefix}}_sfc.h5
     simulated variables: [surface_pressure]
-  obs error: *ObsErrorDiagonal
+#  obs error: *ObsErrorDiagonal
   obs operator:
     name: SfcPCorrected
     da_psfc_scheme: UKMO   # or WRFDA
