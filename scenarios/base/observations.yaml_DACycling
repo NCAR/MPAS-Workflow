@@ -109,10 +109,6 @@ observations:
       mhs-land_metop-b: mhs_metop-b
       mhs-land_n18: mhs_n18
       mhs-land_n19: mhs_n19
-      mhs-ocean_metop-a: mhs_metop-a
-      mhs-ocean_metop-b: mhs_metop-b
-      mhs-ocean_n18: mhs_n18
-      mhs-ocean_n19: mhs_n19
 
       abi-clr_g16: abi_g16
       ahi-clr_himawari8: ahi_himawari8
@@ -188,23 +184,11 @@ observations:
         amsua-cld_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
         amsua-cld_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
 
-        ## mhs clear-sky radiance after preQC filter with ncdiag files
+        ## mhs
         mhs_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
         mhs_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
         mhs_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
         mhs_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-
-        ## mhs all-sky radiance over water with ncdiag files
-        mhs-ocean_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        mhs-ocean_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        mhs-ocean_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        mhs-ocean_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-
-        ## mhs all-sky radiance over land with ncdiag files
-        mhs-land_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        mhs-land_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        mhs-land_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
-        mhs-land_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
 
         ## abi
         abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
