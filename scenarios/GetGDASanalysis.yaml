@@ -1,8 +1,8 @@
 workflow:
   # test a recent date
   firstCyclePoint: 20220819T00
-  initialCyclePoint: 20220829T06
-  finalCyclePoint: 20250524T18
+  initialCyclePoint: 20220915T12
+  finalCyclePoint: 20250912T12
   CriticalPathType: GetGDASanalysis
   maxActiveCyclePoints: 1
 experiment:
