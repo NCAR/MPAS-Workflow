@@ -2,9 +2,13 @@
     <<: *ObsSpace
     name: amsua-cld_aqua
     obsdatain:
-      obsfile: {{InDBDir}}/amsua_aqua_obs_{{thisValidDate}}.h5
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/amsua_aqua_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: {{OutDBDir}}/{{obsPrefix}}_amsua-cld_aqua.h5
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_amsua-cld_aqua.h5
     simulated variables: [brightness_temperature]
     channels: &amsua-cld_aqua_channels 1-4,15
   obs error: *ObsErrorDiagonal
