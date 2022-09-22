@@ -39,6 +39,9 @@ cd ${WorkDir}
 
 # ================================================================================================
 
+# Remove log files from previous executions
+rm -rf log_*
+
 if ( "${observations__resource}" == "PANDACArchive" ) then
   echo "$0 (INFO): PANDACArchive observations are already in IODA format, exiting"
   exit 0
@@ -51,7 +54,7 @@ setenv SPLIThourly "-split"
 # observations as in GSI
 setenv noGSIQCFilters "-noqc"
 
-foreach gdasfile ( *"gdas"* )
+foreach gdasfile ( ${convertToIODAObservations} )
    echo "Running ${obs2iodaEXEC} for ${gdasfile}"
    # link SpcCoeff files for converting IR radiances to brightness temperature
    if ( ${gdasfile} =~ *"cris"* && ${ccyy} >= '2021' ) then
