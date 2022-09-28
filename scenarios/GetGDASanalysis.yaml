@@ -1,0 +1,27 @@
+workflow:
+  # test a recent date
+  firstCyclePoint: 20220819T00
+  initialCyclePoint: 20220915T12
+  finalCyclePoint: 20250912T12
+  CriticalPathType: GetGDASanalysis
+  maxActiveCyclePoints: 1
+experiment:
+  ExperimentName: 'DownloadGDASAnalysis'
+  ExperimentUserPrefix: ''
+job:
+  CPQueueName: economy
+  NCPQueueName: economy
+# needed variables for the experiment to run
+externalanalyses:
+  resource: "GFS.RDA"
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+variational:
+  DAType: 3dvar
+  nInnerIterations: [0,]
+firstbackground:
+  resource: "ForecastFromAnalysis"
+observations:
+  resource: PANDACArchive
