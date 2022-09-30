@@ -2,9 +2,13 @@
     <<: *ObsSpace
     name: abi-clr_g16
     obsdatain:
-      obsfile: {{InDBDir}}/abi_g16_obs_{{thisValidDate}}.h5
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/abi_g16_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_abi-clr_g16.h5
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_abi-clr_g16.h5
     simulated variables: [brightness_temperature]
     channels: &clrabi_channels 8-10
   obs error: *ObsErrorDiagonal
