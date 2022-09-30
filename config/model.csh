@@ -37,9 +37,6 @@ setenv MeshesDescriptor ${MeshesDescriptor}E${ensembleMesh}
 $setLocal ${outerMesh}.TimeStep
 $setLocal ${outerMesh}.DiffusionLengthScale
 
-# Get GDAS analyses
-$setLocal GetGDASAnalysis
-
 $setLocal GraphInfoDir
 
 $setNestedModel precision
