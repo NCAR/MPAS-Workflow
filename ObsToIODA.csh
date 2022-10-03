@@ -40,7 +40,7 @@ cd ${WorkDir}
 # ================================================================================================
 
 # Remove log files from previous executions
-rm -rf log-*
+rm log-*
 
 if ( "${observations__resource}" == "PANDACArchive" ) then
   echo "$0 (INFO): PANDACArchive observations are already in IODA format, exiting"
