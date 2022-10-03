@@ -2,9 +2,13 @@
     <<: *ObsSpace
     name: ahi_himawari8
     obsdatain:
-      obsfile: {{InDBDir}}/ahi_himawari8_obs_{{thisValidDate}}.h5
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/ahi_himawari8_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: {{OutDBDir}}/{{obsPrefix}}_ahi_himawari8.h5
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_ahi_himawari8.h5
     simulated variables: [brightness_temperature]
     channels: &ahi_channels 7-16
   obs error: *ObsErrorDiagonal

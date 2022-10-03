@@ -106,7 +106,6 @@ cat >! suite.rc << EOF
 
 # observation information
 {% set observationsResource = "${observations__resource}" %}
-{% set GetGDASAnalysis = ${GetGDASAnalysis} %} #bool
 
 # members
 {% set nMembers = ${nMembers} %} #integer
@@ -256,6 +255,10 @@ cat >! suite.rc << EOF
     [[[{{GenerateTimes}}]]]
       graph = {{PrepareObservations}}
 
+{% elif CriticalPathType == "GetGDASanalysis" %}
+## (iii) Download GDAS Analysis from NCEP FTP
+    [[[{{GenerateTimes}}]]]
+      graph = GetGDASanalysis
 {% else %}
 
 ## (iii.a) Critical path

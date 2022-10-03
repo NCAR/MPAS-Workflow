@@ -39,10 +39,6 @@ model:
     TimeStep: 720.0
     DiffusionLengthScale: 120000.0
 
-## Download GDAS Analysis
-# OPTIONS: True/False
-  GetGDASAnalysis: False
-
 ## GraphInfoDir
 # directory containing x1.{{nCells}}.graph.info* files
   GraphInfoDir: /glade/p/mmm/parc/liuz/pandac_common/static_from_duda
