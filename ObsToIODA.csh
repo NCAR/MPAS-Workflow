@@ -75,28 +75,28 @@ foreach gdasfile ( *"gdas."* )
    ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
    set inst = `echo "$gdasfile" | cut -d'.' -f2`
    if ( ${gdasfile} =~ *"mtiasi"* ) then
-     ./${obs2iodaEXEC} ${SPLIThourly} ${gdasfile} >&! log-convert_${inst}
+     ./${obs2iodaEXEC} ${SPLIThourly} ${gdasfile} >&! log-converter_${inst}
    else if ( ${gdasfile} =~ *"prepbufr"* ) then
      set inst = `echo "$gdasfile" | cut -d'.' -f1`
      # run obs2ioda for preburf with additional QC as in GSI
-     ./${obs2iodaEXEC} ${gdasfile} >&! log-convert_${inst}
+     ./${obs2iodaEXEC} ${gdasfile} >&! log-converter_${inst}
      # for surface obs, run obs2ioda for prepbufr without additional QC
      mkdir -p sfc
      cd sfc
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
-     ./${obs2iodaEXEC} ${noGSIQCFilters} ../${gdasfile} >&! log-convert_sfc
+     ./${obs2iodaEXEC} ${noGSIQCFilters} ../${gdasfile} >&! log-converter_sfc
      # replace surface obs file with file created without additional QC
      mv sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
      cd ..
      rm -rf sfc
    else
-     ./${obs2iodaEXEC} ${gdasfile} >&! log-convert_${inst}
+     ./${obs2iodaEXEC} ${gdasfile} >&! log-converter_${inst}
    endif
    # Check status
    # ============
-   grep "all done!" log-convert_${inst}
+   grep "all done!" log-converter_${inst}
    if ( $status != 0 ) then
-     echo "$0 (ERROR): Pre-processing observations to IODA-v2 failed" > ./FAIL-convert_${inst}
+     echo "$0 (ERROR): Pre-processing observations to IODA-v2 failed" > ./FAIL-converter_${inst}
      exit 1
    endif
   # remove BURF/PrepBUFR files
