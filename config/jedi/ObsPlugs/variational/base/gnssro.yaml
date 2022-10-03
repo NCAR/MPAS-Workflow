@@ -1,0 +1,17 @@
+- obs space:
+    <<: *ObsSpace
+    name: GnssroBndROPP1D
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/gnssro_obs_{{thisValidDate}}.h5
+    obsdataout:
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssro.h5
+    simulated variables: [bending_angle]
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    name: GnssroBndROPP1D
+  get values:
+    <<: *GetValues

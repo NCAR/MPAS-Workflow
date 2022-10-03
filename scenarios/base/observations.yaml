@@ -96,6 +96,7 @@ observations:
         ##anchor
         aircraft: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         gnssroref: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        gnssro: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         satwind: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         sfc: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         sondes: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
@@ -137,6 +138,7 @@ observations:
         ## anchor
         aircraft: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         gnssroref: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        gnssro: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         satwind: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         sfc: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         sondes: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
