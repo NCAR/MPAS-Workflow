@@ -5,6 +5,10 @@
       engine:
         type: H5File
         obsfile: {{InDBDir}}/gnssrobndropp1d_obs_{{thisValidDate}}.h5
+      obsgrouping:
+        group variables: [ record_number ]
+        sort variable: impact_height
+        sort order: ascending
     obsdataout:
       engine:
         type: H5File
