@@ -39,6 +39,7 @@ observations:
 
     IODAPrefix:
       gnssroref: gnssro
+      gnssrobndropp1d: gnssro
 
     IODADirectory:
       variational:
@@ -62,6 +63,7 @@ observations:
 
     IODAPrefix:
       gnssroref: gnssro
+      gnssrobndropp1d: gnssro
       amsua-cld_aqua: amsua_aqua
       amsua-cld_metop-a: amsua_metop-a
       amsua-cld_metop-b: amsua_metop-b
@@ -81,6 +83,7 @@ observations:
 
     IODAPrefix:
       gnssroref: gnssro
+      gnssrobndropp1d: gnssro
       amsua-cld_aqua: amsua_aqua
       amsua-cld_metop-a: amsua_metop-a
       amsua-cld_metop-b: amsua_metop-b
@@ -96,7 +99,7 @@ observations:
         ##anchor
         aircraft: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         gnssroref: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
-        gnssro: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        gnssrobndropp1d: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         satwind: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         sfc: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         sondes: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
@@ -138,7 +141,7 @@ observations:
         ## anchor
         aircraft: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         gnssroref: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
-        gnssro: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        gnssrobndropp1d: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         satwind: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         sfc: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
         sondes: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
@@ -192,6 +195,7 @@ observations:
 
     IODAPrefix:
       gnssroref: gnssro
+      gnssrobndropp1d: gnssro
       amsua-cld_aqua: amsua_aqua
       amsua-cld_metop-a: amsua_metop-a
       amsua-cld_metop-b: amsua_metop-b

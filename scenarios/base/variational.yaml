@@ -68,6 +68,7 @@ variational:
 # anchor
   - aircraft
   - gnssroref
+#  - gnssrobndropp1d
   - satwind
   - satwnd
   - sfc

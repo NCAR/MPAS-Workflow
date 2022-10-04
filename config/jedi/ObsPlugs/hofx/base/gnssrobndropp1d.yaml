@@ -4,11 +4,11 @@
     obsdatain:
       engine:
         type: H5File
-        obsfile: {{InDBDir}}/gnssro_obs_{{thisValidDate}}.h5
+        obsfile: {{InDBDir}}/gnssrobndropp1d_obs_{{thisValidDate}}.h5
     obsdataout:
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssro.h5
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_gnssrobndropp1d.h5
     simulated variables: [bending_angle]
   obs error: *ObsErrorDiagonal
   obs operator:

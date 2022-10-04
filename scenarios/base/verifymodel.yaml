@@ -1,5 +1,5 @@
 verifymodel:
-  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics_departureSignChange
+  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics_highResGNSSRO
 
 ## mesh-specific settings
   # resource requirements

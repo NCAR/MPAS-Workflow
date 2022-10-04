@@ -14,5 +14,5 @@
       minvalue: -200.0
       maxvalue: 200.0
   - filter: ROobserror
-    variable: refractivity
+    #variable: refractivity
     errmodel: NCEP

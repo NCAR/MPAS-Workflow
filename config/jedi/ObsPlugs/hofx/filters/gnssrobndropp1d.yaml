@@ -2,7 +2,7 @@
   - filter: Domain Check
     where:
     - variable:
-        name: altitude@MetaData
+        name: impact_height@MetaData
       minvalue: 0.0
       maxvalue: 30000.0
     - variable:
@@ -13,10 +13,16 @@
         name: geoid_height_above_reference_ellipsoid@MetaData
       minvalue: -200.0
       maxvalue: 200.0
+  - filter: Bounds Check
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: occulting_sat_id@MetaData
+      is_in: 3-5
+    test variables:
+    - name: impact_height@MetaData
+    minvalue: 8000
   - filter: ROobserror
-    variable: bending_angle
+    #variable: bending_angle
     errmodel: ECMWF
-    <<: *multiIterationFilter
-  - filter: Background Check
-    threshold: 3.0
-    <<: *multiIterationFilter
