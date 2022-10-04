@@ -69,6 +69,7 @@ variational:
   - aircraft
   - gnssroref
 #  - gnssrobndropp1d
+#  - gnssrobndnbam
   - satwind
   - satwnd
   - sfc

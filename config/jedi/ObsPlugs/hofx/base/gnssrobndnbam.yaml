@@ -1,0 +1,26 @@
+- obs space:
+    <<: *ObsSpace
+    name: GnssroBndNBAM
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/gnssrobndnbam_obs_{{thisValidDate}}.h5
+      obsgrouping:
+        group variables: [ record_number ]
+        sort variable: impact_height
+        sort order: ascending
+    obsdataout:
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_gnssrobndnbam.h5
+    simulated variables: [bending_angle]
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    name: GnssroBndNBAM
+    obs options:
+      use_compress: 1
+      sr_steps: 2
+      vertlayer: full
+      super_ref_qc: NBAM
+  get values:
+    <<: *GetValues
