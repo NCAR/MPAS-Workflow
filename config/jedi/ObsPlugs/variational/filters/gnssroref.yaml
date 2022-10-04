@@ -14,7 +14,8 @@
       minvalue: -200.0
       maxvalue: 200.0
   - filter: ROobserror
-    #variable: refractivity
+    filter variables:
+    - name: refractivity
     errmodel: NCEP
     <<: *multiIterationFilter
   - filter: Background Check
