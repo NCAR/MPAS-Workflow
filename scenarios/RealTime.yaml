@@ -1,8 +1,8 @@
 workflow:
   # test a recent date
   firstCyclePoint: 20220316T00
-  initialCyclePoint: 20220817T18
-  finalCyclePoint: 20250817T18
+  initialCyclePoint: 20220915T00
+  finalCyclePoint: 20250916T18
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
   maxActiveCyclePoints: 1
@@ -21,11 +21,16 @@ firstbackground:
   resource: "ForecastFromAnalysis"
 externalanalyses:
   resource: "GFS.NCEPFTP"
-  GetGDASAnalysis: True
 variational:
   DAType: 3dvar
   nInnerIterations: [60,]
   biasCorrection: True
+  job:
+    120km:
+      # Assuming 60 total inner iterations
+      120km:
+        3dvar:
+          baseSeconds: 400
 job:
   CPQueueName: premium
   NCPQueueName: economy

@@ -5,9 +5,9 @@ externalanalyses:
   # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC"
   resource: None
 
-  ## Download GDAS Analysis
-  # OPTIONS: True/False
-  GetGDASAnalysis: False
+#  ## Download GDAS Analysis
+#  # OPTIONS: True/False
+#  GetGDASAnalysis: False
 
   ## defaults:
   # default resource values
@@ -62,5 +62,13 @@ externalanalyses:
         - "ExternalAnalysisToMPAS-mesh"
         - "ExternalAnalysisReady"
         Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
-        retry: '80*PT5M'
+        retry: '40*PT10M'
+
+  GDAS:
+    NCEPFTP:
+      common:
+        PrepareExternalAnalysisTasks:
+        - "GetGDASAnalysisFromFTP"
+        #Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
+        retry: '40*PT10M'
 

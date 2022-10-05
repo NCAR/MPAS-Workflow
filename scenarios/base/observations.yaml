@@ -5,7 +5,7 @@ observations:
 
   job:
     # cylc retry strings for "GetObs" and "ObsToIODA" tasks
-    get__retry: '80*PT5M'
+    get__retry: '40*PT10M'
     convert__retry: '2*PT30S'
 
 ## convertToIODAObservations

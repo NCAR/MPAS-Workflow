@@ -13,9 +13,9 @@ observations:
     - iasi_metop-c
     IODADirectory:
       variational:
-        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
-        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
-        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
 experiment:
   ExperimentName: '3denvar_OIE120km_WarmStart_IASI'
 members:
@@ -40,20 +40,13 @@ variational:
     iasi_metop-b,
   ]
   # for a 6h obs file
-  #job:
-  #  120km:
-  #    120km:
-  #      3denvar:
-  #        baseSeconds: 3000
-  #        nodes: 8
-  #        PEPerNode: 16
-  #        memory: 109
-  # for a 1h obs file
   job:
     120km:
       120km:
         3denvar:
-          baseSeconds: 1200
+          baseSeconds: 900
+          nodes: 8
+          PEPerNode: 16
           memory: 109
 job:
   CPQueueName: premium

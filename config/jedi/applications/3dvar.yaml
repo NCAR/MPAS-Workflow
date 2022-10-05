@@ -17,7 +17,7 @@ variational:
 {{VariationalIterations}}
 final:
   diagnostics:
-    departures: depan
+    departures: oman
 cost function:
   cost type: 3D-Var
   window begin: {{windowBegin}}
