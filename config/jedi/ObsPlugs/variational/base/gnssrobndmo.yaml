@@ -1,0 +1,22 @@
+- obs space:
+    <<: *ObsSpace
+    name: GnssroBendMetOffice
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/gnssrobndmo_obs_{{thisValidDate}}.h5
+      obsgrouping:
+        group variables: [ record_number ]
+    obsdataout:
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrobndmo.h5
+    simulated variables: [bending_angle]
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    name: GnssroBendMetOffice
+    vert_interp_ops: true
+    pseudo_ops: true
+    min_temp_grad: 1.0e-6
+  get values:
+    <<: *GetValues
