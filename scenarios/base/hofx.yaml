@@ -12,6 +12,7 @@ hofx:
   - gnssrobndropp1d
   - gnssrobndnbam
   - gnssrobndmo
+  - gnssrobndmo-nopseudo
   - satwind
   - satwnd
   - sfc
