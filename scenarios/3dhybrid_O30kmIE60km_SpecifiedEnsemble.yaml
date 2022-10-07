@@ -33,7 +33,7 @@ variational:
       resource: "PANDAC.EDA"
   maxIODAPoolSize: 1
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70_GNSSROHofX'
+  ExpSuffix: '_ensB-SE80+RTPP70_GNSSROHofX_logP'
 
 observations:
   resource: PANDACArchive

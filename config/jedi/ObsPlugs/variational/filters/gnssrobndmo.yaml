@@ -4,7 +4,7 @@
     - variable:
         name: impact_height@MetaData
       minvalue: 0.0
-      maxvalue: 26000.0
+      maxvalue: 30000.0
     - variable:
         name: earth_radius_of_curvature@MetaData
       minvalue: 6250000.0
