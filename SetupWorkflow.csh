@@ -26,6 +26,7 @@ set workflowParts = ( \
   PrepVariational.csh \
   EnsembleOfVariational.csh \
   include \
+  ThinnedObsOut.csh \
 )
 foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
@@ -52,6 +53,7 @@ sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
     -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
     -e 's@wrapStateTypeTEMPLATE@DA@' \
     -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
+    -e 's@wrapObservationsListTEMPLATE@observations@' \
     ${AppAndVerify}.csh > ${WrapperScript}
 chmod 744 ${WrapperScript}
 ${WrapperScript}
@@ -91,10 +93,10 @@ chmod 744 ${JobScript}
 ## PrepJEDIHofX{{state}}, HofX{{state}}, CleanHofX{{state}}
 ## VerifyObs{{state}}, CompareObs{{state}},
 ## VerifyModel{{state}}, CompareModel{{state}}
-foreach state (AN BG EnsMeanBG MeanFC EnsFC)
+foreach state (AN BG EnsMeanBG MeanFC EnsFC QC)
   if (${state} == AN) then
     set TemplateVariables = (CyclingDAOutDirs ${ANFilePrefix} ${DAVFWindowHR})
-  else if (${state} == BG) then
+  else if (${state} == BG || ${state} == QC) then
     set TemplateVariables = (prevCyclingFCDirs ${FCFilePrefix} ${DAVFWindowHR})
   else if (${state} == EnsMeanBG) then
     set TemplateVariables = (MeanBackgroundDirs ${FCFilePrefix} ${DAVFWindowHR})
@@ -102,6 +104,11 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
     set TemplateVariables = (ExtendedMeanFCDirs ${FCFilePrefix} ${FCVFWindowHR})
   else if (${state} == EnsFC) then
     set TemplateVariables = (ExtendedEnsFCDirs ${FCFilePrefix} ${FCVFWindowHR})
+  endif
+  if (${state} == QC) then
+    set obsListName = observationsToThinning
+  else
+    set obsListName = observations
   endif
   set taskBaseScript = HofX${state}
   set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh
@@ -113,6 +120,7 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
       -e 's@wrapStatePrefixTEMPLATE@'$TemplateVariables[2]'@' \
       -e 's@wrapStateTypeTEMPLATE@'${state}'@' \
       -e 's@wrapWindowHRTEMPLATE@'$TemplateVariables[3]'@' \
+      -e 's@wrapObservationsListTEMPLATE@'${obsListName}'@' \
       ${AppAndVerify}.csh > ${WrapperScript}
   chmod 744 ${WrapperScript}
   ${WrapperScript}

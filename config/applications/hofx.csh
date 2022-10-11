@@ -27,6 +27,9 @@ $setLocal radianceThinningDistance
 $setLocal tropprsMethod
 $setLocal maxIODAPoolSize
 
+$setLocal removeThinnedObs
+$setLocal observationsToThinning
+
 ## clean
 $setLocal retainObsFeedback
 
@@ -35,3 +38,9 @@ $setNestedHofx job.${outerMesh}.seconds
 $setNestedHofx job.${outerMesh}.nodes
 $setNestedHofx job.${outerMesh}.PEPerNode
 $setNestedHofx job.${outerMesh}.memory
+
+## jobqc
+$setNestedHofx jobqc.${outerMesh}.secondsqc
+$setNestedHofx jobqc.${outerMesh}.nodesqc
+$setNestedHofx jobqc.${outerMesh}.PEPerNodeqc
+$setNestedHofx jobqc.${outerMesh}.memoryqc

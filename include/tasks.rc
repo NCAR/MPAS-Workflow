@@ -200,6 +200,25 @@ conda activate npl
     inherit = CleanBase, BATCH
     script = $origin/CleanRTPP.csh
 
+  # remove thinned observations
+  [[HofXQC]]
+    inherit = BATCH
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIHofXQC.csh "1" "0" "BG" "hofx"
+    script = $origin/HofXQC.csh "1" "0" "BG"
+    [[[job]]]
+      execution time limit = PT{{HofXQCSeconds}}S
+      execution retry delays = {{HofXRetry}}
+    [[[directives]]]
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select={{HofXQCNodes}}:ncpus={{HofXQCPEPerNode}}:mpiprocs={{HofXQCPEPerNode}}:mem={{HofXQCMemory}}GB
+  [[ThinnedObsOut]]
+    inherit = BATCH
+    script = $origin/ThinnedObsOut.csh
+    [[[job]]]
+      execution time limit = PT45M
+      execution retry delays = {{VariationalRetry}}
+
   # verification
   [[VerifyObsDA]]
     inherit = VerifyObsBase, BATCH

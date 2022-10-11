@@ -65,6 +65,8 @@ setenv bgDir $BGFilePrefix
 
 setenv OrigFileSuffix _orig
 
+setenv qcDir qc
+
 ## observation-space
 # for obs, geovals, and hofx-diagnostics
 setenv obsPrefix      obsout

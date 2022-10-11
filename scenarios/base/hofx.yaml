@@ -68,6 +68,22 @@ hofx:
 # OPTIONS: True/False
   retainObsFeedback: True
 
+## removeThinnedObs
+# whether to remove observations after the thinning QC
+# OPTIONS: True/False
+  removeThinnedObs: False
+
+# observationsToThin
+# observations to which to apply the thinning QC
+# OPTIONS: see list below
+  observationsToThinning: [None]
+ # IR satellite-based
+  #- iasi_metop-a
+  #- iasi_metop-b
+  #- iasi_metop-c
+  #- cris_npp
+  #- cris_n20
+
 ## mesh-specific settings
   # resource requirements
   job:
@@ -91,3 +107,24 @@ hofx:
       nodes: 1
       PEPerNode: 36
       memory: 109
+  jobqc:
+    #{{outerMesh}}:
+    #  seconds: int
+    #  nodes: int
+    #  PEPerNode: int
+    #  memory: int
+    30km:
+      secondsqc: 600
+      nodesqc: 2
+      PEPerNodeqc: 36
+      memoryqc: 109
+    60km:
+      secondsqc: 300
+      nodesqc: 1
+      PEPerNodeqc: 36
+      memoryqc: 109
+    120km:
+      secondsqc: 300
+      nodesqc: 1
+      PEPerNodeqc: 36
+      memoryqc: 109

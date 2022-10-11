@@ -11,6 +11,12 @@
         GenerateABEInflation => CleanHofXEnsMeanBG
 {% endif %}
 
+{% if removeThinnedObs %}
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXQC
+        {{PrepareObservations}} => HofXQC
+        HofXQC => ThinnedObsOut
+        ThinnedObsOut => PreDataAssim
+{% endif %}
 
         # init
         PreDataAssim => InitDataAssim

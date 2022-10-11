@@ -35,6 +35,9 @@ set VerifyEnsMeanBGDirs = (${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleD
 set VerifyMeanANDirs = (${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
 set VerifyMeanFCDirs = (${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
 
+set VerifyQCDirs = (${VerificationWorkDir}/${qcDir}/${thisCycleDate})
+set BenchmarkVerifyQCDirs = (${BenchmarkVerificationWorkDir}/${qcDir}/${thisCycleDate})
+
 #set BenchmarkVerifyEnsMeanBGDirs = (${BenchmarkVerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate})
 #set BenchmarkVerifyMeanANDirs = (${BenchmarkVerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
 #set BenchmarkVerifyMeanFCDirs = (${BenchmarkVerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})

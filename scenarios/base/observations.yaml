@@ -129,9 +129,9 @@ observations:
         ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
 
         ## iasi
-        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
-        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
-        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
 
       hofx:
         ## anchor
@@ -170,9 +170,9 @@ observations:
         ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB101X101_no-bias-correct
 
         ## iasi
-        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
-        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
-        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
 
     IODASuperObGrid:
       abi_g16: 59X59

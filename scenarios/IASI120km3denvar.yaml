@@ -13,9 +13,13 @@ observations:
     - iasi_metop-c
     IODADirectory:
       variational:
-        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+      hofx:
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
+        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/1h
 experiment:
   ExperimentName: '3denvar_OIE120km_WarmStart_IASI'
 model:
@@ -52,6 +56,12 @@ job:
 verifyobs:
   pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics
 hofx:
-  job:
+  removeThinnedObs: True
+  observationsToThinning:
+  - iasi_metop-b
+  jobqc:
     120km:
-      seconds: 500
+      secondsqc: 900
+      nodesqc: 8
+      PEPerNodeqc: 16
+      memoryqc: 109

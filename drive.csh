@@ -123,6 +123,9 @@ cat >! suite.rc << EOF
 {% set RTPPRelaxationFactor = ${rtpp__relaxationFactor} %}
 {% set ABEInflation = ${ABEInflation} %}
 
+# remove thinned observations
+{% set removeThinnedObs = ${removeThinnedObs} %}
+
 # common job controls
 {% set CPQueueName = "${CPQueueName}" %}
 {% set CPAccountNumber = "${CPAccountNumber}" %}
@@ -168,6 +171,11 @@ cat >! suite.rc << EOF
 {% set HofXNodes = "${hofx__nodes}" %}
 {% set HofXPEPerNode = "${hofx__PEPerNode}" %}
 {% set HofXMemory = "${hofx__memory}" %}
+
+{% set HofXQCSeconds = "${hofx__secondsqc}" %}
+{% set HofXQCNodes = "${hofx__nodesqc}" %}
+{% set HofXQCPEPerNode = "${hofx__PEPerNodeqc}" %}
+{% set HofXQCMemory = "${hofx__memoryqc}" %}
 
 ## Mini-workflows that prepare cold-start initial condition files from an external analysis
 {% set PrepareExternalAnalysisTasksOuter = [${externalanalyses__PrepareExternalAnalysisTasksOuter}] %}

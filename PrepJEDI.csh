@@ -180,7 +180,7 @@ mkdir -p ${OutDBDir}
 
 date
 
-foreach instrument ($observations)
+foreach instrument (${observationsListTEMPLATE})
   echo "Retrieving data for ${instrument} observations"
   # need to change to mainScriptDir for getObservationsOrNone to work
   cd ${mainScriptDir}
@@ -275,7 +275,7 @@ set $key = (`$getObservationsOrNone ${observations__resource}.${key}`)
 cd ${self_WorkDir}
 
 set found = 0
-foreach instrument ($observations)
+foreach instrument (${observationsListTEMPLATE})
   echo "Preparing YAML for ${instrument} observations"
   set obsFileMissingCount=0
   # check that instrument string matches at least one non-broken observation file link
