@@ -216,8 +216,12 @@ conda activate npl
     inherit = BATCH
     script = $origin/ThinnedObsOut.csh
     [[[job]]]
-      execution time limit = PT45M
-      execution retry delays = {{VariationalRetry}}
+      execution time limit = PT15M
+      execution retry delays = {{HofXRetry}}
+    [[[directives]]]
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select={{HofXNodes}}:ncpus={{HofXPEPerNode}}:mpiprocs={{HofXPEPerNode}}
 
   # verification
   [[VerifyObsDA]]

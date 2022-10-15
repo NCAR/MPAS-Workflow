@@ -1,5 +1,5 @@
 #!/bin/csh -f
-# Remove observations after applying the thinning QC during the HOFX application
+# Remove observations after applying the Gaussian thinning QC during the HofX application
 
 date
 
@@ -9,6 +9,7 @@ source config/model.csh
 source config/experiment.csh
 source config/builds.csh
 source config/applications/hofx.csh
+source config/tools.csh
 set ccyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${ccyymmdd}${hh}
@@ -19,25 +20,30 @@ source ./getCycleVars.csh
 set ccyymmdd = `echo ${thisValidDate} | cut -c 1-8`
 set hh = `echo ${thisValidDate} | cut -c 9-10`
 
-# static work directory
-set WorkDir = ${ObsDir}
+# work directory
+set WorkDir = ${VerifyQCDirs}/dbOut
 echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
 
 # ================================================================================================
+set mainScript="createNewIODAv2"
+set observationsList = ($observationsToThinning)
 
-echo "observationsToThinning = " ${observationsToThinning}
-#set fhour = 000
+set success = 1
+while ( $success != 0 )
 
-#echo "Getting GDAS atm and sfc analyses from the NCEP FTP"
-# url for GDAS data
-#set gdas_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gdas.${ccyymmdd}/${hh}/atmos
-#set gdasAnaInfix = (atm sfc sfluxgrb)
+  mv log.${mainScript} log.${mainScript}_LAST
+  echo "$create_newIODAv2_afterThinning -d ${thisValidDate} -o "${observationsList}" -w ${WorkDir}" | tee ./myCommand
+  $create_newIODAv2_afterThinning -d ${thisValidDate} -o "${observationsList}" -w ${WorkDir} >& log.${mainScript}
+  set success = $?
+end
 
-#foreach anaInfix ($gdasAnaInfix)
-
-#end
+grep "Finished __main__ successfully" log.${mainScript}
+if ( $status != 0 ) then
+  echo "ERROR in $0 : ${mainScript} failed" > ./FAIL
+  exit 1
+endif
 
 date
 

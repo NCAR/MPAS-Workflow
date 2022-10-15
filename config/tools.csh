@@ -17,6 +17,7 @@ set pyTools = ( \
   substituteEnsembleBTemplate \
   TimeFmtChange \
   updateXTIME \
+  create_newIODAv2_afterThinning \
 )
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"

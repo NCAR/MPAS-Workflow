@@ -333,7 +333,10 @@ foreach instrument (${observationsListTEMPLATE})
     endif
   end
 end
-if ($found == 0) then
+if ( $found == 0 && "${instrument}" =~ *"iasi"* ) then
+  echo "WARNING in $0 : ${instrument} not available --> skipping this date" > ./SKIP-PrepJEDI${ArgAppType}
+  exit 0
+else if ($found == 0 ) then
   echo "ERROR in $0 : no observation data is available for this date" > ./FAIL
   exit 1
 endif
