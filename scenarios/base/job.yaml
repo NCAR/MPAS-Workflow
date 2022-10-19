@@ -20,8 +20,6 @@ job:
 
 # SingleProc*: used for single-processor jobs, both critical and non-critical paths
 # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
-  #SingleProcAccountNumber: NMMM0015
-  #SingleProcQueueName: share
   SingleProcAccountNumber: NMMM0015
   SingleProcQueueName: "casper@casper-pbs"
 
