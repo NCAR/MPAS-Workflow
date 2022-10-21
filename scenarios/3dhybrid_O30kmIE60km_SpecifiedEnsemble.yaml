@@ -1,17 +1,18 @@
 workflow:
   firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180415T00
+  initialCyclePoint: 20180415T00
+  finalCyclePoint: 20180514T18
   CriticalPathType: Bypass
-  VerifyDeterministicDA: True
+  VerifyDeterministicDA: False
   VerifyEnsMeanBG: True
   VerifyAgainstObservations: True
-  VerifyAgainstExternalAnalyses: True
+  VerifyAgainstExternalAnalyses: False
+  maxActiveCyclePoints: 40
 
 job:
-  CPQueueName: premium
-  NCPQueueName: premium
-  EnsMeanBGQueueName: premium
+  CPQueueName: economy
+  NCPQueueName: economy
+  EnsMeanBGQueueName: economy
 
 model:
   outerMesh: 30km
@@ -33,7 +34,7 @@ variational:
       resource: "PANDAC.EDA"
   maxIODAPoolSize: 1
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70_GNSSROHofX_logP'
+  ExpSuffix: '_ensB-SE80+RTPP70_GNSSROHofX_logPLevels'
 
 observations:
   resource: PANDACArchive
