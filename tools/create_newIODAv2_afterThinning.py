@@ -356,6 +356,11 @@ if __name__ == '__main__':
       obsTypeIn.append(obs)
 
   num_cores = len(obsTypeIn)
+  if num_cores == 0:
+    print('No observation file available for this date')
+    print('Finished '+__name__+' successfully')
+    sys.exit()
+
   with joblib.parallel_backend(backend="threading"):
     parallel = Parallel(n_jobs=num_cores, verbose=50)
     print(parallel([delayed(main)(DATE, obsTypeIn[i], workDir) for i in range(len(obsTypeIn))]))
