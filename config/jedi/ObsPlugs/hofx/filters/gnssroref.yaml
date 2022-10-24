@@ -13,7 +13,81 @@
         name: geoid_height_above_reference_ellipsoid@MetaData
       minvalue: -200.0
       maxvalue: 200.0
-  - filter: ROobserror
+#  - filter: ROobserror
+#    filter variables:
+#    - name: refractivity
+#    errmodel: NCEP
+  ## Scale ObsError based on ObsValue
+  # NXTro
+  - filter: Perform Action
     filter variables:
     - name: refractivity
-    errmodel: NCEP
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: 30.0
+      maxvalue: 90.0
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/altitude
+          scale_factor_var:
+            name: ObsValue/refractivity
+          xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
+          # based on RMS (bias included)
+          #errors: [0.035, 0.025, 0.014, 0.007, 0.006, 0.006, 0.007, 0.010, 0.010, 0.011, 0.011, 0.011, 0.013]
+          # based on STD
+          errors: [0.035, 0.025, 0.014, 0.007, 0.006, 0.006, 0.006, 0.007, 0.007, 0.008, 0.008, 0.009, 0.011]
+  # Tro
+  - filter: Perform Action
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: -30.0
+      maxvalue:  30.0
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/altitude
+          scale_factor_var:
+            name: ObsValue/refractivity
+          xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
+          # based on RMS (bias included)
+          #errors: [0.060, 0.043, 0.029, 0.014, 0.007, 0.008, 0.012, 0.023, 0.020, 0.025, 0.027, 0.027, 0.029]
+          # based on STD
+          errors: [0.060, 0.043, 0.029, 0.014, 0.007, 0.006, 0.007, 0.009, 0.010, 0.009, 0.008, 0.008, 0.011]
+  # SXTro
+  - filter: Perform Action
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: -90.0
+      maxvalue: -30.0
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/altitude
+          scale_factor_var:
+            name: ObsValue/refractivity
+          xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
+          # based on RMS (bias included)
+          #errors: [0.039, 0.027, 0.015, 0.008, 0.008, 0.007, 0.011, 0.013, 0.009, 0.008, 0.012, 0.017, 0.021]
+          # based on STD
+          errors: [0.039, 0.027, 0.015, 0.008, 0.008, 0.007, 0.008, 0.008, 0.007, 0.008, 0.011, 0.015, 0.018]
+
+  - filter: Background Check
+    threshold: 10.0
+    <<: *multiIterationFilter
