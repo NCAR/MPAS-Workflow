@@ -16,8 +16,13 @@ $setLocal convertToIODAObservations
 $setLocal GDASObsErrtable
 $setLocal CRTMTABLES
 $setLocal InterpolationType
-$setLocal initialVARBCcoeff
-$setLocal fixedTlapmeanCov
+#$setLocal initialVARBCcoeff
+#$setLocal fixedTlapmeanCov
 
 # static directories for bias correction files
-set fixedCoeff = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
+#set fixedCoeff = /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed
+
+# liuz test
+setenv fixedCoeff        /glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias
+setenv fixedTlapmeanCov  /glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias/2018
+setenv initialVARBCcoeff /glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias/2018

@@ -1,0 +1,88 @@
+# settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
+workflow:
+  firstCyclePoint: 20180414T18
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180420T00
+  CriticalPathType: Normal
+  VerifyDeterministicDA: True
+  VerifyEnsMeanBG: True
+  VerifyAgainstObservations: True
+  VerifyAgainstExternalAnalyses: True
+  maxActiveCyclePoints: 40
+
+#job:
+#  CPQueueName: economy
+#  NCPQueueName: economy
+#  EnsMeanBGQueueName: economy
+
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+hofx:
+  maxIODAPoolSize: 1
+variational:
+  DAType: 3dhybrid
+  biasCorrection: True
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  nInnerIterations: [60,60,]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.EDA"
+  maxIODAPoolSize: 1
+  benchmarkObservations:
+# anchor
+  - aircraft
+#  - gnssroref
+#  - gnssrobndropp1d
+#  - gnssrobndnbam
+  - gnssrobndmo # checking performance of BendMetOffice
+#  - gnssrobndmo-nopseudo
+  - satwind
+  - satwnd
+  - sfc
+  - sondes
+# MW satellite-based
+  - amsua_aqua
+  - amsua_metop-a
+  - amsua_metop-b
+  - amsua_n15
+  - amsua_n18
+  - amsua_n19
+
+  # resource requirements
+  job:
+    30km:
+      60km:
+        3dhybrid:
+          nodes: 6
+          PEPerNode: 32
+          memory: 109
+          baseSeconds: 700
+          secondsPerEnVarMember: 10
+
+experiment:
+  ExpSuffix: '_ensB-SE80+RTPP70_BendMetOffice_logP'
+
+observations:
+  resource: PANDACArchive
+  PANDACArchive:
+    IODADirectory:
+      variational:
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_const-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_const-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_const-bias-correct
+      hofx:
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_const-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_const-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+    IODASuperObGrid:
+      abi_g16: 15X15
+      ahi_himawari8: 15X15
