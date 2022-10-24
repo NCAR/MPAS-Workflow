@@ -21,6 +21,15 @@ model:
   ensembleMesh: 60km
 firstbackground:
   resource: "PANDAC.GFS"
+
+forecast:
+  job:
+    30km:
+      nodes: 4
+      PEPerNode: 36
+      baseSeconds: 60
+      secondsPerForecastHR: 300
+
 externalanalyses:
   resource: "GFS.PANDAC"
 hofx:
