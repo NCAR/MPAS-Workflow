@@ -3,35 +3,25 @@
 if ( $?config_environmentJEDI ) exit 0
 setenv config_environmentJEDI 1
 
-## BuildCompiler
-# {compiler}-{mpi-implementation} combination that selects the JEDI module used to build
-# the executables described in config/builds.csh
-# OPTIONS: gnu-openmpi, intel-impi
-setenv BuildCompiler 'gnu-openmpi/10.1.0'
+# default is gnu-openmpi
 
-source /etc/profile.d/modules.csh
-setenv OPT /glade/work/jedipara/cheyenne/opt/modules
+source /etc/profile.d/modules.csh  # note: needed on non-computing nodes, MPAS-Workflow
 module purge
-module use $OPT/modulefiles/core
-module load jedi/${BuildCompiler}
-module load json
-module load json-schema-validator
-module load atlas/ecmwf-0.29.0 # temp. patch until JEDI stack recovers
+module unuse /glade/u/apps/ch/modulefiles/default/compilers
+setenv MODULEPATH_ROOT /glade/work/jedipara/cheyenne/spack-stack/modulefiles
+module use /glade/work/jedipara/cheyenne/spack-stack/modulefiles/compilers
+module use /glade/work/jedipara/cheyenne/spack-stack/modulefiles/misc
+
 limit stacksize unlimited
+module use /glade/work/jedipara/cheyenne/spack-stack/spack-stack-v1/envs/skylab-2.0.0-gnu-10.1.0/install/modulefiles/Core
+module load stack-gcc/10.1.0
+module load stack-openmpi/4.1.1
+module load jedi-mpas-env/1.0.0
+module list
+
 setenv OOPS_TRACE 0
 setenv OOPS_DEBUG 0
 #setenv OOPS_TRAPFPE 1
 setenv GFORTRAN_CONVERT_UNIT 'big_endian:101-200'
 setenv F_UFMTENDIAN 'big:101-200'
 setenv OMP_NUM_THREADS 1
-
-## CustomPIO
-# whether to unload the JEDI module PIO module
-# A custom PIO build (outside JEDI modules) must be used consistently across all MPAS-JEDI and
-# MPAS-Model executable builds
-set CustomPIO = False
-if ( CustomPIO == True ) then
-  module unload pio
-endif
-
-module list
