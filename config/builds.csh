@@ -92,5 +92,5 @@ setenv iodaupgradeBuildDir ${commonBuild}/bin
 
 # Mean state calculator
 # ---------------------
-setenv meanStateExe      average_netcdf_files_parallel_mpas_gnu-openmpi.x
-setenv meanStateBuildDir /glade/work/guerrett/pandac/work/meanState
+setenv meanStateExe      average_netcdf_files_parallel_mpas.x
+setenv meanStateBuildDir /glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1
