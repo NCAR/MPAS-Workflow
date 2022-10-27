@@ -122,12 +122,12 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 
 # We can start IAU only from the second DA cycle (otherwise, 3hrly background forecast is not available yet.)
 set self_IAU = False
-set firstIAUDate = `$advanceCYMDH ${FirstCycleDate} ${IAUoutIntervalHR}`
+set firstIAUDate = `$advanceCYMDH ${FirstCycleDate} ${self_FCIntervalHR}`
 if ($thisValidDate >= $firstIAUDate) then
   set self_IAU = ${ArgIAU}
 endif
 if ( ${self_IAU} == True ) then
-  set IAUDate = `$advanceCYMDH ${thisCycleDate} -${IAUoutIntervalHR}`
+  set IAUDate = `$advanceCYMDH ${thisCycleDate} -${self_FCIntervalHR}`
   setenv IAUDate ${IAUDate}
   set BGFileExt = `$TimeFmtChange ${IAUDate}`.00.00.nc    # analysis - 3h [YYYY-MM-DD_HH.00.00]
   set BGFile   = ${prevCyclingFCDir}/${FCFilePrefix}.${BGFileExt}    # mpasout at (analysis - 3h)
