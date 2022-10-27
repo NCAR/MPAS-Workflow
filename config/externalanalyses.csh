@@ -7,9 +7,6 @@ source config/model.csh
 
 source config/scenario.csh externalanalyses
 
-# Get GDAS analyses
-$setLocal GetGDASAnalysis
-
 setenv externalanalyses__resource "`$getLocalOrNone resource`"
 if ("$externalanalyses__resource" == None) then
   exit 0
@@ -187,8 +184,6 @@ cat >! include/variables/auto/externalanalyses.rc << EOF
 
 # Use external analysis for sea surface updating
 {% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysisOuter %}
-
-{% set GetGDASAnalysis = ${GetGDASAnalysis} %} #bool
 EOF
 
 endif
