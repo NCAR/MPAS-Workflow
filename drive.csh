@@ -256,22 +256,6 @@ cat >! suite.rc << EOF
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
 
-{% if VerifyExtendedMeanFC %}
-    # obs-space
-    [[[{{ExtendedMeanFCTimes}}]]]
-      graph = '''
-        ExtendedForecastFinished => HofXMeanFC
-        HofXMeanFC:succeed-all => VerifyObsMeanFC
-        VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
-      '''
-
-    # model-space
-    [[[{{ExtendedMeanFCTimes}}]]]
-      graph = '''
-        ExtendedForecastFinished => VerifyModelMeanFC
-      '''
-{% endif %}
-
 {% elif CriticalPathType == "GenerateObs" %}
 ## (iii) Observation generation for a historical period
     [[[{{GenerateTimes}}]]]
