@@ -109,7 +109,7 @@ EOF
   if ( $iOuter == 1 ) then
 cat >>! ${thisSEDF} << EOF
 ${indent}  diagnostics:\
-${indent}    departures: depbg\
+${indent}    departures: ombg\
 EOF
 
   endif

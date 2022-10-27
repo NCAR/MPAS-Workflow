@@ -11,32 +11,29 @@ class HPC(Component):
     'top directory': ['/glade/scratch', str],
     'TMPDIR': ['/glade/scratch/{{USER}}/temp', str],
 
-    # TODO: place these configuration elements in a resource
+    # TODO: place these configuration elements in a user- and/or hpc-specific resource
     ## *Account
-    # OPTIONS: NMMM0015, NMMM0043
-    #Note: NMMM0043 is not available on casper
+    # EXAMPLES: NMMM0015, NMMM0043
 
     ## *Queue
     # Cheyenne Options: economy, regular, premium
     # Casper Options: casper@casper-pbs
 
     # Critical*: used for all critical path jobs, single or multi-node, multi-processor only
-    'CriticalAccount': ['NMMM0043', str],
+    'CriticalAccount': ['NMMM0015', str],
     'CriticalQueue': ['regular', str],
 
     # NonCritical*: used non-critical path jobs, single or multi-node, multi-processor only
-    'NonCriticalAccount': ['NMMM0043', str],
+    'NonCriticalAccount': ['NMMM0015', str],
     'NonCriticalQueue': ['economy', str],
 
     # SingleProc*: used for single-processor jobs, both critical and non-critical paths
     # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
-    #SingleProcAccount': ['NMMM0043', str],
-    #SingleProcQueue': ['share', str],
     'SingleProcAccount': ['NMMM0015', str],
     'SingleProcQueue': ['casper@casper-pbs', str],
 
     # EnsMeanBG*: settings for ensemble mean BG calculation; useful for override when time-critical
-    'EnsMeanBGAccount': ['NMMM0043', str],
+    'EnsMeanBGAccount': ['NMMM0015', str],
     'EnsMeanBGQueue': ['economy', str],
   }
   def __init__(self, config):

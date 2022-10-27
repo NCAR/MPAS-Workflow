@@ -2,11 +2,14 @@
     <<: *ObsSpace
     name: iasi_metop-b
     obsdatain:
-      obsfile: {{InDBDir}}/iasi_metop-b_obs_{{thisValidDate}}.h5
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/iasi_metop-b_obs_{{thisValidDate}}.h5
       max frame size: 80000
     obsdataout:
-      obsfile: {{OutDBDir}}/{{obsPrefix}}_iasi_metop-b.h5
-      max frame size: 80000
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_iasi_metop-b.h5
     simulated variables: [brightness_temperature]
     channels: &iasi_metop-b_channels 16,38,49,51,55,57,59,61,63,66,70,72,74,79,81,83,85,87,104,106,109,111,113,116,119,122,125,128,131,133,135,138,141,144,146,148,151,154,157,159,161,163,167,170,173,176,180,185,187,193,199,205,207,210,212,214,217,219,222,224,226,230,232,236,239,243,246,249,252,254,260,262,265,267,275,282,294,296,299,303,306,323,327,329,335,345,347,350,354,356,360,366,371,373,375,377,379,381,383,386,389,398,401,404,407,410,414,416,426,428,432,434,439,445,457,515,546,552,559,566,571,573,646,662,668,756,867,906,921,1027,1046,1121,1133,1191,1194,1271,1479,1509,1513,1521,1536,1574,1579,1585,1587,1626,1639,1643,1652,1658,1671,1786,1805,1884,1991,2019,2094,2119,2213,2239,2271,2321,2398,2701,2889,2958,2993,3002,3049,3105,3110,5381,5399,5480
 # using a subset of 174 from these 616 channels (where use_flag = 1) to reduce computational cost

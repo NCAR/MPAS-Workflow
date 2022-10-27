@@ -43,6 +43,9 @@ cd ${self_WorkDir}
 
 # ================================================================================================
 
+# Remove log files from previous executions
+rm log-*
+
 if ( "${observations__resource}" == "PANDACArchive" ) then
   echo "$0 (INFO): PANDACArchive observations are already in IODA format, exiting"
   exit 0
@@ -55,7 +58,7 @@ setenv SPLIThourly "-split"
 # observations as in GSI
 setenv noGSIQCFilters "-noqc"
 
-foreach gdasfile ( *"gdas"* )
+foreach gdasfile ( *"gdas."* )
    echo "Running ${obs2iodaEXE} for ${gdasfile}"
    # link SpcCoeff files for converting IR radiances to brightness temperature
    if ( ${gdasfile} =~ *"cris"* && ${ccyy} >= '2021' ) then
@@ -74,28 +77,30 @@ foreach gdasfile ( *"gdas"* )
    # ==================
    rm ./${obs2iodaEXE}
    ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXE} ./
+   set inst = `echo "$gdasfile" | cut -d'.' -f2`
    if ( ${gdasfile} =~ *"mtiasi"* ) then
-     ./${obs2iodaEXE} ${SPLIThourly} ${gdasfile} >&! log_${gdasfile}
+     ./${obs2iodaEXE} ${SPLIThourly} ${gdasfile} >&! log-converter_${inst}
    else if ( ${gdasfile} =~ *"prepbufr"* ) then
+     set inst = `echo "$gdasfile" | cut -d'.' -f1`
      # run obs2ioda for preburf with additional QC as in GSI
-     ./${obs2iodaEXE} ${gdasfile} >&! log_${gdasfile}
+     ./${obs2iodaEXE} ${gdasfile} >&! log-converter_${inst}
      # for surface obs, run obs2ioda for prepbufr without additional QC
      mkdir -p sfc
      cd sfc
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXE} ./
-     ./${obs2iodaEXE} ${noGSIQCFilters} ../${gdasfile} >&! log_sfc
+     ./${obs2iodaEXE} ${noGSIQCFilters} ../${gdasfile} >&! log-converter_sfc
      # replace surface obs file with file created without additional QC
      mv sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
      cd ..
      rm -rf sfc
    else
-     ./${obs2iodaEXE} ${gdasfile} >&! log_${gdasfile}
+     ./${obs2iodaEXE} ${gdasfile} >&! log-converter_${inst}
    endif
    # Check status
    # ============
-   grep "all done!" log_${gdasfile}
+   grep "all done!" log-converter_${inst}
    if ( $status != 0 ) then
-     echo "$0 (ERROR): Pre-processing observations to IODA-v2 failed" > ./FAIL-converter
+     echo "$0 (ERROR): Pre-processing observations to IODA-v2 failed" > ./FAIL-converter_${inst}
      exit 1
    endif
   # remove BURF/PrepBUFR files
@@ -116,14 +121,14 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
     if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
       set ty_obs = ${ty}_obs_${thisValidDate}.h5
       set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
-      ./${iodaupgradeEXE} ${ty_obs} ${ty_obs_base}_tmp.h5 >&! log_${ty}_upgrade
+      ./${iodaupgradeEXE} ${ty_obs} ${ty_obs_base}_tmp.h5 >&! log-upgrade_${ty}
       rm -rf $ty_obs
       mv ${ty_obs_base}_tmp.h5 $ty_obs
       # Check status
       # ============
-      grep "Success!" log_${ty}_upgrade
+      grep "Success!" log-upgrade_${ty}
       if ( $status != 0 ) then
-        echo "$0 (ERROR): ioda-upgrade failed for $ty" > ./FAIL-${ty}_upgrade
+        echo "$0 (ERROR): ioda-upgrade failed for $ty" > ./FAIL-upgrade_${ty}
         exit 1
       endif
     endif

@@ -1,8 +1,4 @@
 externalanalyses:
-  ## Download GDAS Analysis
-  # OPTIONS: True/False
-  GetGDASAnalysis: False
-
   resources:
     ## defaults:
     # default resource values
@@ -63,4 +59,11 @@ externalanalyses:
           Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
           job:
             GetAnalysisFrom:
-              retry: '80*PT5M'
+              retry: '40*PT10M'
+    GDAS:
+      NCEPFTP:
+        common:
+          PrepareExternalAnalysisTasks:
+          - "GetGDASAnalysisFromFTP"
+          #Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
+          retry: '40*PT10M'

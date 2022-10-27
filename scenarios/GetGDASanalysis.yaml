@@ -1,0 +1,19 @@
+suite: GenerateExternalAnalyses
+
+externalanalyses:
+  resource: "GDAS.NCEPFTP"
+experiment:
+  name: 'DownloadGDASAnalysis'
+  prefix: ''
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+workflow:
+  # test a recent date
+  first cycle point: 20220819T00
+  final cycle point: 20250912T12
+  max active cycle points: 1
+
+# needed variables for the experiment to run, even though we do not run init_atmosphere
+model:
+  outerMesh: 120km

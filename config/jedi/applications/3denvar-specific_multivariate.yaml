@@ -28,7 +28,7 @@ variational:
 {{VariationalIterations}}
 final:
   diagnostics:
-    departures: depan
+    departures: oman
 cost function:
   cost type: 3D-Var
   window begin: {{windowBegin}}
@@ -48,10 +48,9 @@ cost function:
     covariance model: ensemble
     localization:
       localization method: SABER
-      saber block:
+      saber central block:
         saber block name: BUMP_NICAS
-        input variables: *incvars
-        output variables: *incvars
+        active variables: *incvars
         bump:
           datadir: {{bumpLocDir}}
           prefix: {{bumpLocPrefix}}

@@ -6,16 +6,16 @@ class Build(Component):
   variablesWithDefaults = {
     ## mpas bundle
     # mpas-bundle build directory
-    'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_10AUG2022_single', str],
+    'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_25OCT2022_single', str],
 
     # optional double-precision build
-    #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_10AUG2022', str],
+    #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_25OCT2022', str],
 
     ## compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
     # the executables described herein
-    'compiler used': ['gnu-openmpi/10.1.0', str,
-      ['gnu-openmpi/10.1.0', 'intel-impi/19.1.1']],
+    'compiler used': ['gnu-openmpi', str,
+      ['gnu-openmpi', 'intel-impi']],
   }
 
   def __init__(self, config, model=None):
@@ -86,7 +86,7 @@ class Build(Component):
 
     # Mean state calculator
     # ---------------------
-    self._set('meanStateExe', 'average_netcdf_files_parallel_mpas_gnu-openmpi.x')
-    self._set('meanStateBuildDir', '/glade/work/guerrett/pandac/work/meanState')
+    self._set('meanStateExe', 'average_netcdf_files_parallel_mpas.x')
+    self._set('meanStateBuildDir', '/glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1')
 
     self._cshVars = list(self._vtable.keys())

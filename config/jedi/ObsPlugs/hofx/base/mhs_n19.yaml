@@ -2,9 +2,13 @@
     <<: *ObsSpace
     name: mhs_n19
     obsdatain:
-      obsfile: {{InDBDir}}/mhs_n19_obs_{{thisValidDate}}.h5
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/mhs_n19_obs_{{thisValidDate}}.h5
     obsdataout:
-      obsfile: {{OutDBDir}}/{{obsPrefix}}_mhs_n19.h5
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_mhs_n19.h5
     simulated variables: [brightness_temperature]
     channels: &mhs_n19_channels 1-5
   obs error: *ObsErrorDiagonal

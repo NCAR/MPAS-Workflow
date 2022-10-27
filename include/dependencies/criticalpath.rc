@@ -30,13 +30,6 @@
         DAFinished[-PT{{DA2FCOffsetHR}}H] => Forecast
       '''
 
-    [[[{{AnalysisTimes}}]]]
-      graph = '''
-  {% if GetGDASAnalysis %}
-        GetGDASAnalysisFromFTP
-  {% endif %}
-      '''
-
 {% elif CriticalPathType == "Reanalysis" %}
     [[[{{AnalysisTimes}}]]]
       graph = '''

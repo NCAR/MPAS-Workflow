@@ -114,6 +114,7 @@
         channels: *amsua_n18_channels
         options:
           channels: *amsua_n18_channels
+          sensor: amsua_n18
           obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
           obserr_dtempf: [0.500, 2.000, 1.000, 2.000, 4.500]
 #  Situation dependent Check
@@ -241,8 +242,8 @@
       options:
         channels: *amsua_n18_channels
         sensor: amsua_n18
-        use_flag: [ -1, -1, -1, -1, -1,
-                     1,  1, -1, -1, -1,
+        use_flag: [ -1, -1, -1, -1,  1,
+                     1,  1,  1,  1, -1,
                     -1, -1, -1, -1, -1 ]
     maxvalue: 1.0e-12
     action:
@@ -257,8 +258,8 @@
       channels: *amsua_n18_channels
       options:
         channels: *amsua_n18_channels
-        use_flag: [ -1, -1, -1, -1, -1,
-                     1,  1, -1, -1, -1,
+        use_flag: [ -1, -1, -1, -1,  1,
+                     1,  1,  1,  1, -1,
                     -1, -1, -1, -1, -1 ]
     minvalue: 1.0e-12
     action:
