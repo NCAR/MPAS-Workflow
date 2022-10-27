@@ -9,7 +9,7 @@ source setupExperiment/${ArgExpConfigType}.csh
 set workflowParts = ( \
   GetGFSAnalysisFromRDA.csh \
   GetGFSAnalysisFromFTP.csh \
-  GetGDASanalysis.csh \
+  GetGDASAnalysisFromFTP.csh \
   LinkExternalAnalysis.csh \
   UngribExternalAnalysis.csh \
   ExternalAnalysisToMPAS.csh \
