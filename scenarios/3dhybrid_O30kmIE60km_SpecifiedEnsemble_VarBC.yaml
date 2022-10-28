@@ -69,17 +69,11 @@ variational:
     30km:
       60km:
         3dhybrid:
-          nodes: 4
-          PEPerNode: 36
+          nodes: 6
+          PEPerNode: 32
           memory: 109
-          baseSeconds: 800
-          secondsPerEnVarMember: 30
-#liuz - requires 192 PE localization (exist) and static B files (exist?)
-#          nodes: 6
-#          PEPerNode: 32
-#          memory: 109
-#          baseSeconds: 700
-#          secondsPerEnVarMember: 10
+          baseSeconds: 700
+          secondsPerEnVarMember: 20
 
 experiment:
   ExpSuffix: '_ensB-SE80+RTPP70_BendMetOffice_logP'
