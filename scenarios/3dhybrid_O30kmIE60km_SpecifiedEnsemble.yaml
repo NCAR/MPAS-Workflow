@@ -2,11 +2,22 @@ workflow:
   firstCyclePoint: 20180414T18
   initialCyclePoint: 20180414T18
   finalCyclePoint: 20180514T18
-  CriticalPathType: Normal
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
+  CriticalPathType: Normal #Bypass
+  VerifyDeterministicDA: True #False
+  VerifyEnsMeanBG: True #False
   VerifyAgainstObservations: True
-  VerifyAgainstExternalAnalyses: True
+  VerifyAgainstExternalAnalyses: True #False
+
+  VerifyExtendedMeanFC: False
+  ExtendedFCLengthHR: 24
+  ExtendedFCOutIntervalHR: 24
+  ExtendedMeanFCTimes: T12
+  maxActiveCyclePoints: 20
+
+hofx:
+  maxIODAPoolSize: 1
+  retainObsFeedback: True
+  removeThinnedObs: False
 
 model:
   outerMesh: 30km
@@ -18,25 +29,86 @@ externalanalyses:
   resource: "GFS.PANDAC"
 variational:
   DAType: 3dhybrid
+  biasCorrection: True
+  tropprsMethod: thompson
+  experimentalObservations: [
+    iasi_metop-a,
+    iasi_metop-b,
+    mhs_n19,
+    mhs_n18,
+    mhs_metop-a,
+    mhs_metop-b,
+  ]
   ensembleCovarianceWeight: 0.75
   staticCovarianceWeight: 0.25
   nInnerIterations: [60,60,]
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
+  job:
+    30km:
+      60km:
+        3dhybrid:
+          baseSeconds: 10000
+          nodes: 8
+          PEPerNode: 16
+          memory: 109
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70'
+  ExperimentName: '3dhybrid_ensB-SE80+RTPP70_MHS_IASI_2'
 
 observations:
   resource: PANDACArchive
   PANDACArchive:
+    instrumentsAllowingBiasCorrection:
+    - iasi_metop-a
+    - iasi_metop-b
+    - mhs_metop-a
+    - mhs_metop-b
+    - mhs_n18
+    - mhs_n19
+    IODAPrefix:
+      mhs-land_metop-a: mhs_metop-a
+      mhs-land_metop-b: mhs_metop-b
+      mhs-land_n18: mhs_n18
+      mhs-land_n19: mhs_n19
+      mhs-ocean_metop-a: mhs_metop-a
+      mhs-ocean_metop-b: mhs_metop-b
+      mhs-ocean_n18: mhs_n18
+      mhs-ocean_n19: mhs_n19
     IODADirectory:
       variational:
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h_thinned
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h_thinned
         abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
         abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
         ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
         ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        ## mhs
+        mhs_metop-a: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/no_bias
+        mhs_metop-b: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/no_bias
+        mhs_n18: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/no_bias
+        mhs_n19: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/no_bias
+        mhs-land_metop-a: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/no_bias
+        mhs-land_metop-b: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/no_bias
+        mhs-land_n18: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/no_bias
+        mhs-land_n19: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/no_bias
       hofx:
+        ## mhs clear-sky radiance after preQC filter with ncdiag files
+        mhs_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        ## mhs all-sky radiance over water with ncdiag files
+        mhs-ocean_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs-ocean_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs-ocean_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs-ocean_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        ## mhs all-sky radiance over land with ncdiag files
+        mhs-land_metop-a: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs-land_metop-b: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs-land_n18: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        mhs-land_n19: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/bias_corr
+        ## abi
         abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
         abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
         ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
@@ -44,3 +116,10 @@ observations:
     IODASuperObGrid:
       abi_g16: 15X15
       ahi_himawari8: 15X15
+job:
+  CPQueueName: premium
+  NCPQueueName: premium
+verifyobs:
+  pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics
+#builds:
+#  commonBuild: /glade/p/mmm/parc/liuz/pandac_hybrid/20220810_mpas_bundle_SP/build

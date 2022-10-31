@@ -54,7 +54,7 @@ endif
 echo "WorkDir = ${self_WorkDir}"
 cd ${self_WorkDir}
 
-# Skip date if the observation does not exist for this date 
+# Skip date if the observation does not exist for this date
 if ( -e "SKIP-PrepJEDIhofx" ) then
   echo "WARNING in $0 : observation file not available --> skipping this date" > ./SKIP-HoxF
   exit 0

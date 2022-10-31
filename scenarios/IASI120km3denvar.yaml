@@ -1,9 +1,9 @@
 workflow:
   firstCyclePoint: 20180414T18
   initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180514T18
-  VerifyDeterministicDA: False
-  VerifyEnsMeanBG: False
+  finalCyclePoint: 20180415T00
+  VerifyDeterministicDA: True
+  VerifyEnsMeanBG: True
   maxActiveCyclePoints: 20
 observations:
   resource: PANDACArchive
@@ -14,15 +14,15 @@ observations:
     - iasi_metop-c
     IODADirectory:
       variational:
-        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h_thinned
+        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h_thinned
         iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
       hofx:
         iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
         iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
         iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
 experiment:
-  ExperimentName: '3denvar_OIE120km_WarmStart_IASI_Thinning_exp4newobs_1'
+  ExperimentName: '3denvar_OIE120km_WarmStart_IASI_newThinnnedOBS_TEST_20201030'
 model:
   outerMesh: 120km
   innerMesh: 120km
@@ -33,31 +33,32 @@ externalanalyses:
   resource: "GFS.PANDAC"
 variational:
   DAType: 3denvar
-  nInnerIterations: [60,]
+  nInnerIterations: [15]
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS"
-#  biasCorrection: True
-#  tropprsMethod: thompson
-#  experimentalObservations: [
-#    iasi_metop-b,
-#  ]
+  biasCorrection: True
+  tropprsMethod: thompson
+  experimentalObservations: [
+    iasi_metop-a,
+    iasi_metop-b,
+  ]
   # for a 6h obs file
-#  job:
-#    120km:
-#      120km:
-#        3denvar:
-#          baseSeconds: 900
-#          nodes: 8
-#          PEPerNode: 16
-#          memory: 109
+  job:
+    120km:
+      120km:
+        3denvar:
+          baseSeconds: 900
+          nodes: 8
+          PEPerNode: 16
+          memory: 109
 job:
   CPQueueName: premium
   NCPQueueName: premium
 verifyobs:
   pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics
 hofx:
-  removeThinnedObs: True
+  removeThinnedObs: False
   observationsToThinning:
   - iasi_metop-a
   - iasi_metop-b
