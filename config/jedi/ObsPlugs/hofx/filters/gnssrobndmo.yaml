@@ -22,7 +22,7 @@
   # NXTro
 #  - filter: Perform Action
 #    filter variables:
-#    - name: refractivity
+#    - name: bending_angle
 #    where:
 #    - variable:
 #        name: MetaData/latitude
@@ -30,7 +30,7 @@
 #      maxvalue: 90.0
 #    # reject where refractivity is assimilated
 #    - variable:
-#        name: MetaData/altitude
+#        name: MetaData/impact_height
 #      minvalue: 0.0
 #      maxvalue: 15000.0
 #    action:
@@ -58,7 +58,7 @@
   # Tro
 #  - filter: Perform Action
 #    filter variables:
-#    - name: refractivity
+#    - name: bending_angle
 #    where:
 #    - variable:
 #        name: MetaData/latitude
@@ -66,7 +66,7 @@
 #      maxvalue:  30.0
 #    # reject where refractivity is assimilated
 #    - variable:
-#        name: MetaData/altitude
+#        name: MetaData/impact_height
 #      minvalue: 0.0
 #      maxvalue: 12500.0
 #    action:
@@ -94,7 +94,7 @@
   # SXTro
 #  - filter: Perform Action
 #    filter variables:
-#    - name: refractivity
+#    - name: bending_angle
 #    where:
 #    - variable:
 #        name: MetaData/latitude
@@ -102,7 +102,7 @@
 #      maxvalue: -30.0
 #    # reject where refractivity is assimilated
 #    - variable:
-#        name: MetaData/altitude
+#        name: MetaData/impact_height
 #      minvalue: 0.0
 #      maxvalue: 12500.0
 #    action:
