@@ -64,5 +64,7 @@ cost function:
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:
+    obs perturbations: {{ObsPerturbations}}
+    post qc perturbations: true
     observers:
 {{Observers}}

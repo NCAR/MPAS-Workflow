@@ -1,5 +1,4 @@
 _obs space: &ObsSpace
-  obs perturbations post qc: {{ObsPerturbations}}
   obs perturbations seed: 1
   io pool:
     max pool size: {{maxIODAPoolSize}}
