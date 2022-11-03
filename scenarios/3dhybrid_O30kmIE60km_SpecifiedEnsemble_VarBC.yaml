@@ -2,7 +2,7 @@
 workflow:
   firstCyclePoint: 20180414T18
   initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180420T00
+  finalCyclePoint: 20180430T00
   CriticalPathType: Normal
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
@@ -47,7 +47,7 @@ variational:
   benchmarkObservations:
 # anchor
   - aircraft
-#  - gnssroref
+  - gnssroref
 #  - gnssrobndropp1d
 #  - gnssrobndnbam
   - gnssrobndmo # checking performance of BendMetOffice
@@ -76,7 +76,7 @@ variational:
           secondsPerEnVarMember: 20
 
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70_BendMetOffice_logP'
+  ExpSuffix: '_ensB-SE80+RTPP70_RefNCEP_BendMetOffice'
 
 observations:
   resource: PANDACArchive

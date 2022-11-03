@@ -2,10 +2,6 @@
   - filter: Domain Check
     where:
     - variable:
-        name: MetaData/impact_height
-      minvalue: 0.0
-      maxvalue: 30000.0
-    - variable:
         name: MetaData/earth_radius_of_curvature
       minvalue: 6250000.0
       maxvalue: 6450000.0
@@ -20,6 +16,21 @@
   #  <<: *multiIterationFilter
   ## Scale ObsError based on ObsValue
   # NXTro
+  - filter: Perform Action
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: 30.0
+      maxvalue: 90.0
+    # reject where refractivity is assimilated
+    - variable:
+        name: MetaData/altitude
+      minvalue: 0.0
+      maxvalue: 15000.0
+    action:
+      name: reject
   - filter: Perform Action
     filter variables:
     - name: bending_angle
@@ -38,9 +49,24 @@
           scale_factor_var:
             name: ObsValue/bending_angle
           xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
-          # based on STD
+          # based on STD (bias removed)
           errors: [0.100, 0.130, 0.080, 0.040, 0.020, 0.019, 0.015, 0.014, 0.013, 0.012, 0.012, 0.013, 0.014]
   # Tro
+  - filter: Perform Action
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: -30.0
+      maxvalue:  30.0
+    # reject where refractivity is assimilated
+    - variable:
+        name: MetaData/altitude
+      minvalue: 0.0
+      maxvalue: 12500.0
+    action:
+      name: reject
   - filter: Perform Action
     filter variables:
     - name: bending_angle
@@ -59,9 +85,24 @@
           scale_factor_var:
             name: ObsValue/bending_angle
           xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
-          # based on STD
+          # based on STD (bias removed)
           errors: [0.100, 0.240, 0.150, 0.075, 0.025, 0.016, 0.017, 0.027, 0.027, 0.023, 0.020, 0.020, 0.020]
   # SXTro
+  - filter: Perform Action
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: -90.0
+      maxvalue: -30.0
+    # reject where refractivity is assimilated
+    - variable:
+        name: MetaData/altitude
+      minvalue: 0.0
+      maxvalue: 12500.0
+    action:
+      name: reject
   - filter: Perform Action
     filter variables:
     - name: bending_angle
@@ -80,7 +121,7 @@
           scale_factor_var:
             name: ObsValue/bending_angle
           xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
-          # based on STD
+          # based on STD (bias removed)
           errors: [0.060, 0.150, 0.090, 0.040, 0.023, 0.023, 0.017, 0.017, 0.015, 0.016, 0.017, 0.019, 0.020]
 
   - filter: Background Check
