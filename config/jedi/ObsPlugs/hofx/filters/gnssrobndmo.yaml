@@ -21,6 +21,7 @@
   ## Scale ObsError based on ObsValue
   # NXTro
 #  - filter: Perform Action
+#    defer to post: true
 #    filter variables:
 #    - name: bending_angle
 #    where:
@@ -57,6 +58,7 @@
           errors: [0.100, 0.130, 0.080, 0.040, 0.020, 0.019, 0.015, 0.014, 0.013, 0.012, 0.012, 0.013, 0.014]
   # Tro
 #  - filter: Perform Action
+#    defer to post: true
 #    filter variables:
 #    - name: bending_angle
 #    where:
@@ -93,6 +95,7 @@
           errors: [0.100, 0.240, 0.150, 0.075, 0.025, 0.016, 0.017, 0.027, 0.027, 0.023, 0.020, 0.020, 0.020]
   # SXTro
 #  - filter: Perform Action
+#    defer to post: true
 #    filter variables:
 #    - name: bending_angle
 #    where:
