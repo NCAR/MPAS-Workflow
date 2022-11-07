@@ -76,7 +76,7 @@ variational:
           secondsPerEnVarMember: 20
 
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70_RefNCEP_BendMetOffice'
+  ExpSuffix: '_ensB-SE80+RTPP70_RefNCEP_BendMetOffice_satwindError'
 
 observations:
   resource: PANDACArchive
