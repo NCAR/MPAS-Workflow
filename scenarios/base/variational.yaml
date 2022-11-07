@@ -67,10 +67,10 @@ variational:
   benchmarkObservations:
 # anchor
   - aircraft
-  - gnssroref
+  - gnssroref # lower-middle troposphere, where bias is small
 #  - gnssrobndropp1d
 #  - gnssrobndnbam
-#  - gnssrobndmo
+  - gnssrobndmo # upper troposphere, stratosphere
 #  - gnssrobndmo-nopseudo
   - satwind
   - satwnd
