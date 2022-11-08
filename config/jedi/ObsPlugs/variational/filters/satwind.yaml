@@ -78,7 +78,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [3.5, 3.3, 4.0, 4.7, 4.8, 4.7, 5.0, 4.0]
+          errors: [  3.5,   3.3,   4.0,   4.7,   4.8,   4.7,   5.0,   4.0]
   - filter: Perform Action
     filter variables:
     - name: northward_wind
@@ -95,7 +95,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [3.1, 2.9, 3.6, 4.4, 4.6, 4.5, 4.4, 4.1]
+          errors: [  3.1,   2.9,   3.6,   4.4,   4.6,   4.5,   4.4,   4.1]
 
   #Tro
   - filter: Perform Action
@@ -114,7 +114,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [2.8, 3.0, 7.3, 6.7, 6.0, 4.8, 4.6, 4.5]
+          errors: [  2.8,   3.0,   7.3,   6.7,   6.0,   4.8,   4.6,   4.5]
   - filter: Perform Action
     filter variables:
     - name: northward_wind
@@ -131,7 +131,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [2.3, 2.3, 4.3, 4.3, 4.4, 4.2, 4.0, 4.5]
+          errors: [  2.3,   2.3,   4.3,   4.3,   4.4,   4.2,   4.0,   4.5]
 
 
   #SXTro
@@ -151,7 +151,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [3.1, 2.7, 4.3, 5.0, 5.0, 5.3, 5.5, 3.5]
+          errors: [  3.1,   2.7,   4.3,   5.0,   5.0,   5.3,   5.5,   3.5]
   - filter: Perform Action
     filter variables:
     - name: northward_wind
@@ -168,7 +168,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [2.7, 2.5, 3.6, 4.2, 4.5, 4.9, 5.0, 3.3]
+          errors: [  2.7,   2.5,   3.6,   4.2,   4.5,   4.9,   5.0,   3.3]
 
 #  # Reject eastward wind where northward wind was rejected and vice versa.
 #  - filter: RejectList
