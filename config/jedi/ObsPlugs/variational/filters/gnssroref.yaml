@@ -13,23 +13,8 @@
         name: MetaData/geoid_height_above_reference_ellipsoid
       minvalue: -200.0
       maxvalue: 200.0
-      _error levels: &gnssrorefErrorLevels [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
-      # based on RMS (bias included)
-      _NXTro errors: &gnssrorefNXTroErrors [0.035, 0.025, 0.014, 0.007, 0.006, 0.006, 0.007, 0.009, 0.010, 0.011, 0.014, 0.016, 0.019]
-      _Tro errors: &gnssrorefTroErrors     [0.060, 0.043, 0.029, 0.014, 0.007, 0.008, 0.011, 0.023, 0.021, 0.026, 0.030, 0.030, 0.030]
-      _SXTro errors: &gnssrorefSXTroErrors [0.039, 0.027, 0.015, 0.008, 0.008, 0.007, 0.010, 0.011, 0.009, 0.010, 0.014, 0.017, 0.025]
 
-      # based on STD (bias removed)
-      #_NXTro errors: &gnssrorefNXTroErrors [0.035, 0.025, 0.014, 0.007, 0.006, 0.006, 0.006, 0.007, 0.007, 0.007, 0.007, 0.008, 0.011]
-      #_Tro errors: &gnssrorefTroErrors     [0.060, 0.043, 0.029, 0.014, 0.007, 0.006, 0.007, 0.009, 0.010, 0.009, 0.008, 0.008, 0.011]
-      #_SXTro errors: &gnssrorefSXTroErrors [0.039, 0.027, 0.015, 0.008, 0.008, 0.007, 0.008, 0.008, 0.007, 0.008, 0.011, 0.015, 0.025]
-
-#  - filter: ROobserror
-#    filter variables:
-#    - name: refractivity
-#    errmodel: NCEP
-  ## Scale ObsError based on ObsValue
-  # NXTro
+  # reject where mean bias is large relative to STD
   - filter: Perform Action
     defer to post: true
     filter variables:
@@ -37,22 +22,51 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: 30.0
-      maxvalue: 90.0
-    # reject when RMS and STD deviate
+      minvalue: -90.0
+      maxvalue: -60.0
+    - variable:
+        name: MetaData/altitude
+      minvalue: 25000.0
+    action:
+      name: reject
+  - filter: Perform Action
+    defer to post: true
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: -60.0
+      maxvalue:  60.0
     - variable:
         name: MetaData/altitude
       minvalue: 15000.0
-      maxvalue: 30000.0
     action:
       name: reject
+  - filter: Perform Action
+    defer to post: true
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue:  60.0
+      maxvalue:  90.0
+    - variable:
+        name: MetaData/altitude
+      minvalue: 25000.0
+    action:
+      name: reject
+
+  ## Scale ObsError based on ObsValue
+  # NPol
   - filter: Perform Action
     filter variables:
     - name: refractivity
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: 30.0
+      minvalue: 60.0
       maxvalue: 90.0
     action:
       name: assign error
@@ -63,26 +77,30 @@
             name: MetaData/altitude
           scale_factor_var:
             name: ObsValue/refractivity
-          xvals: *gnssrorefErrorLevels
-          errors: *gnssrorefNXTroErrors
+          xvals: *gnssroErrorLevels
+          errors: *gnssrorefNPolErrors
+  # NMid
+  - filter: Perform Action
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: 30.0
+      maxvalue: 60.0
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/altitude
+          scale_factor_var:
+            name: ObsValue/refractivity
+          xvals: *gnssroErrorLevels
+          errors: *gnssrorefNMidErrors
   # Tro
   - filter: Perform Action
-    defer to post: true
-    filter variables:
-    - name: refractivity
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: -30.0
-      maxvalue:  30.0
-    # reject when RMS and STD deviate
-    - variable:
-        name: MetaData/altitude
-      minvalue: 15000.0
-      maxvalue: 30000.0
-    action:
-      name: reject
-  - filter: Perform Action
     filter variables:
     - name: refractivity
     where:
@@ -99,32 +117,16 @@
             name: MetaData/altitude
           scale_factor_var:
             name: ObsValue/refractivity
-          xvals: *gnssrorefErrorLevels
+          xvals: *gnssroErrorLevels
           errors: *gnssrorefTroErrors
-  # SXTro
-  - filter: Perform Action
-    defer to post: true
-    filter variables:
-    - name: refractivity
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: -90.0
-      maxvalue: -30.0
-    # reject when RMS and STD deviate
-    - variable:
-        name: MetaData/altitude
-      minvalue: 15000.0
-      maxvalue: 30000.0
-    action:
-      name: reject
+  # SMid
   - filter: Perform Action
     filter variables:
     - name: refractivity
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -90.0
+      minvalue: -60.0
       maxvalue: -30.0
     action:
       name: assign error
@@ -135,8 +137,28 @@
             name: MetaData/altitude
           scale_factor_var:
             name: ObsValue/refractivity
-          xvals: *gnssrorefErrorLevels
-          errors: *gnssrorefSXTroErrors
+          xvals: *gnssroErrorLevels
+          errors: *gnssrorefSMidErrors
+  # SPol
+  - filter: Perform Action
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: -90.0
+      maxvalue: -60.0
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/altitude
+          scale_factor_var:
+            name: ObsValue/refractivity
+          xvals: *gnssroErrorLevels
+          errors: *gnssrorefSPolErrors
 
   - filter: Background Check
     threshold: 3.0
