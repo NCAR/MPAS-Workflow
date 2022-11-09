@@ -13,6 +13,17 @@
         name: MetaData/geoid_height_above_reference_ellipsoid
       minvalue: -200.0
       maxvalue: 200.0
+      _error levels: &gnssrobndmoErrorLevels [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
+      # based on RMS (bias included)
+      _NXTro errors: &gnssrobndmoNXTroErrors [0.100, 0.130, 0.080, 0.040, 0.020, 0.019, 0.015, 0.014, 0.013, 0.012, 0.012, 0.013, 0.015]
+      _Tro errors: &gnssrobndmoTroErrors     [0.100, 0.260, 0.150, 0.075, 0.025, 0.016, 0.017, 0.027, 0.024, 0.023, 0.022, 0.022, 0.022]
+      _SXTro errors: &gnssrobndmoSXTroErrors [0.040, 0.150, 0.090, 0.040, 0.023, 0.023, 0.017, 0.017, 0.015, 0.016, 0.017, 0.019, 0.020]
+
+      # based on STD (bias removed)
+      #_NXTro errors: &gnssrobndmoNXTroErrors [0.100, 0.130, 0.080, 0.040, 0.020, 0.019, 0.015, 0.014, 0.013, 0.012, 0.012, 0.013, 0.014]
+      #_Tro errors: &gnssrobndmoTroErrors     [0.100, 0.240, 0.150, 0.075, 0.025, 0.016, 0.017, 0.027, 0.024, 0.023, 0.020, 0.020, 0.020]
+      #_SXTro errors: &gnssrobndmoSXTroErrors [0.040, 0.150, 0.090, 0.040, 0.023, 0.023, 0.017, 0.017, 0.015, 0.016, 0.017, 0.019, 0.020]
+
   #- filter: ROobserror
   #  filter variables:
   #  - name: bending_angle
@@ -53,11 +64,8 @@
             name: MetaData/impact_height
           scale_factor_var:
             name: ObsValue/bending_angle
-          xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
-          # based on RMS (bias included)
-          errors: [0.100, 0.130, 0.080, 0.040, 0.020, 0.019, 0.015, 0.014, 0.013, 0.012, 0.012, 0.013, 0.015]
-          # based on STD (bias removed)
-          #errors: [0.100, 0.130, 0.080, 0.040, 0.020, 0.019, 0.015, 0.014, 0.013, 0.012, 0.012, 0.013, 0.014]
+          xvals: *gnssrobndmoErrorLevels
+          errors: *gnssrobndmoNXTroErrors
   # Tro
   - filter: Perform Action
     defer to post: true
@@ -92,11 +100,8 @@
             name: MetaData/impact_height
           scale_factor_var:
             name: ObsValue/bending_angle
-          xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
-          # based on RMS (bias included)
-          errors: [0.100, 0.260, 0.150, 0.075, 0.025, 0.016, 0.017, 0.027, 0.024, 0.023, 0.022, 0.022, 0.022]
-          # based on STD (bias removed)
-          #errors: [0.100, 0.240, 0.150, 0.075, 0.025, 0.016, 0.017, 0.027, 0.024, 0.023, 0.020, 0.020, 0.020]
+          xvals: *gnssrobndmoErrorLevels
+          errors: *gnssrobndmoTroErrors
   # SXTro
   - filter: Perform Action
     defer to post: true
@@ -131,11 +136,8 @@
             name: MetaData/impact_height
           scale_factor_var:
             name: ObsValue/bending_angle
-          xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
-          # based on RMS (bias included)
-          errors: [0.040, 0.150, 0.090, 0.040, 0.023, 0.023, 0.017, 0.017, 0.015, 0.016, 0.017, 0.019, 0.020]
-          # based on STD (bias removed)
-          #errors: [0.040, 0.150, 0.090, 0.040, 0.023, 0.023, 0.017, 0.017, 0.015, 0.016, 0.017, 0.019, 0.020]
+          xvals: *gnssrobndmoErrorLevels
+          errors: *gnssrobndmoSXTroErrors
 
   - filter: Background Check
     threshold: 3.0
