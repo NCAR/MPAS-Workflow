@@ -13,13 +13,7 @@
         name: MetaData/geoid_height_above_reference_ellipsoid
       minvalue: -200.0
       maxvalue: 200.0
-  #- filter: ROobserror
-  #  filter variables:
-  #  - name: bending_angle
-  #  errmodel: ECMWF
-  #  <<: *multiIterationFilter
-  ## Scale ObsError based on ObsValue
-  # NXTro
+  # reject where refractivity is assimilated
   - filter: Perform Action
     defer to post: true
     filter variables:
@@ -27,22 +21,51 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: 30.0
-      maxvalue: 90.0
-    # reject where refractivity is assimilated
+      minvalue: -90.0
+      maxvalue: -60.0
     - variable:
         name: MetaData/impact_height
-      minvalue: 0.0
+      maxvalue: 25000.0
+    action:
+      name: reject
+  - filter: Perform Action
+    defer to post: true
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: -60.0
+      maxvalue:  60.0
+    - variable:
+        name: MetaData/impact_height
       maxvalue: 15000.0
     action:
       name: reject
+  - filter: Perform Action
+    defer to post: true
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue:  60.0
+      maxvalue:  90.0
+    - variable:
+        name: MetaData/impact_height
+      maxvalue: 25000.0
+    action:
+      name: reject
+
+  ## Scale ObsError based on ObsValue
+  # NPol
   - filter: Perform Action
     filter variables:
     - name: bending_angle
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: 30.0
+      minvalue: 60.0
       maxvalue: 90.0
     action:
       name: assign error
@@ -53,29 +76,30 @@
             name: MetaData/impact_height
           scale_factor_var:
             name: ObsValue/bending_angle
-          xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
-          # based on RMS (bias included)
-          errors: [0.100, 0.130, 0.080, 0.040, 0.020, 0.019, 0.015, 0.014, 0.013, 0.012, 0.012, 0.013, 0.015]
-          # based on STD (bias removed)
-          #errors: [0.100, 0.130, 0.080, 0.040, 0.020, 0.019, 0.015, 0.014, 0.013, 0.012, 0.012, 0.013, 0.014]
+          xvals: *gnssroErrorLevels
+          errors: *gnssrobndmoNPolErrors
+  # NMid
+  - filter: Perform Action
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: 30.0
+      maxvalue: 60.0
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/impact_height
+          scale_factor_var:
+            name: ObsValue/bending_angle
+          xvals: *gnssroErrorLevels
+          errors: *gnssrobndmoNMidErrors
   # Tro
   - filter: Perform Action
-    defer to post: true
-    filter variables:
-    - name: bending_angle
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: -30.0
-      maxvalue:  30.0
-    # reject where refractivity is assimilated
-    - variable:
-        name: MetaData/impact_height
-      minvalue: 0.0
-      maxvalue: 15000.0
-    action:
-      name: reject
-  - filter: Perform Action
     filter variables:
     - name: bending_angle
     where:
@@ -92,35 +116,16 @@
             name: MetaData/impact_height
           scale_factor_var:
             name: ObsValue/bending_angle
-          xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
-          # based on RMS (bias included)
-          errors: [0.100, 0.260, 0.150, 0.075, 0.025, 0.016, 0.017, 0.027, 0.024, 0.023, 0.022, 0.022, 0.022]
-          # based on STD (bias removed)
-          #errors: [0.100, 0.240, 0.150, 0.075, 0.025, 0.016, 0.017, 0.027, 0.024, 0.023, 0.020, 0.020, 0.020]
-  # SXTro
-  - filter: Perform Action
-    defer to post: true
-    filter variables:
-    - name: bending_angle
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: -90.0
-      maxvalue: -30.0
-    # reject where refractivity is assimilated
-    - variable:
-        name: MetaData/impact_height
-      minvalue: 0.0
-      maxvalue: 15000.0
-    action:
-      name: reject
+          xvals: *gnssroErrorLevels
+          errors: *gnssrobndmoTroErrors
+  # SMid
   - filter: Perform Action
     filter variables:
     - name: bending_angle
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -90.0
+      minvalue: -60.0
       maxvalue: -30.0
     action:
       name: assign error
@@ -131,11 +136,28 @@
             name: MetaData/impact_height
           scale_factor_var:
             name: ObsValue/bending_angle
-          xvals: [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
-          # based on RMS (bias included)
-          errors: [0.040, 0.150, 0.090, 0.040, 0.023, 0.023, 0.017, 0.017, 0.015, 0.016, 0.017, 0.019, 0.020]
-          # based on STD (bias removed)
-          #errors: [0.040, 0.150, 0.090, 0.040, 0.023, 0.023, 0.017, 0.017, 0.015, 0.016, 0.017, 0.019, 0.020]
+          xvals: *gnssroErrorLevels
+          errors: *gnssrobndmoSMidErrors
+  # SPol
+  - filter: Perform Action
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: -90.0
+      maxvalue: -60.0
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/impact_height
+          scale_factor_var:
+            name: ObsValue/bending_angle
+          xvals: *gnssroErrorLevels
+          errors: *gnssrobndmoSPolErrors
 
   - filter: Background Check
     threshold: 3.0
