@@ -18,6 +18,7 @@ _member: &memberConfig
   state variables: &incvars [{{AnalysisVariables}}]
   stream name: ensemble
 {{ObsAnchors}}
+{{ObsErrorAnchors}}
 output:
   filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis
