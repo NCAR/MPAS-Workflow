@@ -15,7 +15,8 @@
       maxvalue: 200.0
 
   # reject where mean bias is large relative to STD
-  - filter: Perform Action
+  # SPol
+  - filter: RejectList
     defer to post: true
     filter variables:
     - name: refractivity
@@ -26,10 +27,9 @@
       maxvalue: -60.0
     - variable:
         name: MetaData/altitude
-      minvalue: 25000.0
-    action:
-      name: reject
-  - filter: Perform Action
+      minvalue: *gnssroSPolTransition
+  # SMid, Tro, NMid
+  - filter: RejectList
     defer to post: true
     filter variables:
     - name: refractivity
@@ -40,10 +40,9 @@
       maxvalue:  60.0
     - variable:
         name: MetaData/altitude
-      minvalue: 15000.0
-    action:
-      name: reject
-  - filter: Perform Action
+      minvalue: *gnssroSMidTroNMidTransition
+  # NPol
+  - filter: RejectList
     defer to post: true
     filter variables:
     - name: refractivity
@@ -54,9 +53,7 @@
       maxvalue:  90.0
     - variable:
         name: MetaData/altitude
-      minvalue: 25000.0
-    action:
-      name: reject
+      minvalue: *gnssroNPolTransition
 
   ## Scale ObsError based on ObsValue
   # NPol

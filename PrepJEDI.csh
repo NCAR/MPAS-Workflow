@@ -355,14 +355,35 @@ rm ${thisSEDF}
 set prevYAML = $thisYAML
 
 # (iii) insert re-usable YAML anchors
+## ObsAnchors
 set sedstring = ObsAnchors
+set template = jedi/${ArgAppType}/${sedstring}.yaml
 set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
 /{{${sedstring}}}/c\
 EOF
 
 # substitute with line breaks
-set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${sedstring}.yaml
+set SUBYAML=${ConfigDir}/${template}
+sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+echo '_blank: null' >> ${thisSEDF}
+
+# insert into prevYAML
+set thisYAML = insert${sedstring}.yaml
+sed -f ${thisSEDF} $prevYAML >! $thisYAML
+rm ${thisSEDF}
+set prevYAML = $thisYAML
+
+## ErrorAnchors
+set sedstring = ErrorAnchors
+set template = jedi/ObsPlugs/${sedstring}.yaml
+set thisSEDF = ${sedstring}SEDF.yaml
+cat >! ${thisSEDF} << EOF
+/{{${sedstring}}}/c\
+EOF
+
+# substitute with line breaks
+set SUBYAML=${ConfigDir}/${template}
 sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
 echo '_blank: null' >> ${thisSEDF}
 
@@ -373,6 +394,7 @@ rm ${thisSEDF}
 set prevYAML = $thisYAML
 
 
+# (iv) direct substitutions
 ## Horizontal interpolation type
 sed -i 's@{{InterpolationType}}@'${InterpolationType}'@g' $thisYAML
 
