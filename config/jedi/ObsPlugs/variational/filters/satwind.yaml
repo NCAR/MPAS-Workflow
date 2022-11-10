@@ -2,91 +2,15 @@
   - filter: PreQC
     maxvalue: 3
 
-#  # Observation Range Sanity Check
-#  - filter: Bounds Check
-#    filter variables:
-#    - name: eastward_wind
-#    - name: northward_wind
-#    minvalue: -130
-#    maxvalue: 130
-#    action:
-#      name: reject
-#  #
-#  - filter: Bounds Check
-#    filter variables:
-#    - name: eastward_wind
-#    - name: northward_wind
-#    test variables:
-#    - name: Velocity@ObsFunction
-#    maxvalue: 130.0
-#    action:
-#      name: reject
-
-#  # Reject when pressure greater than 925 mb.
-#  - filter: Bounds Check
-#    filter variables:
-#    - name: eastward_wind
-#    - name: northward_wind
-#    test variables:
-#    - name: MetaData/air_pressure
-#    maxvalue: 92500
-
-#  # MODIS-Aqua/Terra (257) and (259), reject when pressure less than 125 mb.
-#  - filter: Bounds Check
-#    filter variables:
-#    - name: eastward_wind
-#    - name: northward_wind
-#    test variables:
-#    - name: MetaData/air_pressure
-#    minvalue: 12500
-
-#  # Reject when pressure is more than 50 mb above tropopause.
-#  - filter: Difference Check
-#    filter variables:
-#    - name: eastward_wind
-#    - name: northward_wind
-#    reference: TropopauseEstimate@ObsFunction
-#    value: MetaData/air_pressure
-#    minvalue: -5000                    # 50 hPa above tropopause level, negative p-diff
-#    action:
-#      name: reject
-
-#  # Difference check surface_pressure and ObsValue/air_pressure, if less than 100 hPa, reject.
-#  - filter: Difference Check
-#    filter variables:
-#    - name: eastward_wind
-#    - name: northward_wind
-#    reference: GeoVaLs/surface_pressure
-#    value: MetaData/air_pressure
-#    maxvalue: -10000
-
-  # Assign the observation error based on pressure
-  #NXTro
+  # Assign the observation error based on pressure for each ObsType
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: 30.0
-      maxvalue: 90.0
-    action:
-      name: assign error
-      error function:
-        name: ObsFunction/ObsErrorModelStepwiseLinear
-        options:
-          xvar:
-            name: MetaData/air_pressure
-          xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [  3.5,   3.3,   4.0,   4.7,   4.8,   4.7,   5.0,   4.0]
-  - filter: Perform Action
-    filter variables:
     - name: northward_wind
     where:
     - variable:
-        name: MetaData/latitude
-      minvalue: 30.0
-      maxvalue: 90.0
+        name: ObsType/eastward_wind
+      is_in: 240
     action:
       name: assign error
       error function:
@@ -94,35 +18,17 @@
         options:
           xvar:
             name: MetaData/air_pressure
-          xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [  3.1,   2.9,   3.6,   4.4,   4.6,   4.5,   4.4,   4.1]
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType240Errors
 
-  #Tro
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: -30.0
-      maxvalue: 30.0
-    action:
-      name: assign error
-      error function:
-        name: ObsFunction/ObsErrorModelStepwiseLinear
-        options:
-          xvar:
-            name: MetaData/air_pressure
-          xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [  2.8,   3.0,   7.3,   6.7,   6.0,   4.8,   4.6,   4.5]
-  - filter: Perform Action
-    filter variables:
     - name: northward_wind
     where:
     - variable:
-        name: MetaData/latitude
-      minvalue: -30.0
-      maxvalue:  30.0
+        name: ObsType/eastward_wind
+      is_in: 241
     action:
       name: assign error
       error function:
@@ -130,36 +36,17 @@
         options:
           xvar:
             name: MetaData/air_pressure
-          xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [  2.3,   2.3,   4.3,   4.3,   4.4,   4.2,   4.0,   4.5]
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType241Errors
 
-
-  #SXTro
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: -90.0
-      maxvalue: -30.0
-    action:
-      name: assign error
-      error function:
-        name: ObsFunction/ObsErrorModelStepwiseLinear
-        options:
-          xvar:
-            name: MetaData/air_pressure
-          xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [  3.1,   2.7,   4.3,   5.0,   5.0,   5.3,   5.5,   3.5]
-  - filter: Perform Action
-    filter variables:
     - name: northward_wind
     where:
     - variable:
-        name: MetaData/latitude
-      minvalue: -90.0
-      maxvalue: -30.0
+        name: ObsType/eastward_wind
+      is_in: 242
     action:
       name: assign error
       error function:
@@ -167,24 +54,260 @@
         options:
           xvar:
             name: MetaData/air_pressure
-          xvals: [100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
-          errors: [  2.7,   2.5,   3.6,   4.2,   4.5,   4.9,   5.0,   3.3]
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType242Errors
 
-#  # Reject eastward wind where northward wind was rejected and vice versa.
-#  - filter: RejectList
-#    filter variables:
-#    - name: northward_wind
-#    where:
-#    - variable: QCflagsData/eastward_wind
-#      minvalue: 1
-#    defer to post: true
-#  - filter: RejectList
-#    filter variables:
-#    - name: eastward_wind
-#    where:
-#    - variable: QCflagsData/northward_wind
-#      minvalue: 1
-#    defer to post: true
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 243
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType243Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 244
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType244Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 245
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType245Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 246
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType246Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 247
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType247Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 250
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType250Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 251
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType251Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 252
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType252Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 253
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType253Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 254
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType254Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 257
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType257Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 258
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType258Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 259
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType259Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
+      is_in: 260
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType260Errors
 
   - filter: Background Check
     threshold: 3.0
