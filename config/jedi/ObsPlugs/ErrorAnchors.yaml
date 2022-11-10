@@ -1,10 +1,13 @@
 _gnssro:
+  # latitude band-specific transition heights (m) from gnssrorefncep (below) to gnssrobndmo (above)
   _transitions:
     _NPol: &gnssroNPolTransition 18000.
     _SMidTroNMid: &gnssroSMidTroNMidTransition 15000.
     _SPol: &gnssroSPolTransition 20000.
   _errors:
+    # heights (m) for observation error interpolation
     _levels: &gnssroErrorLevels [0.000, 2500., 5000., 7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
+    # latitude band-specific ObsValue-normalized observation errors, i.e., (O-B)/O (unitless)
     _refncep:
       # based on RMS (bias included)
       _NPol: &gnssrorefncepNPolErrors [0.027, 0.018, 0.012, 0.006, 0.007, 0.004, 0.004, 0.004, 0.004, 0.005, 0.006, 0.008, 0.011]
