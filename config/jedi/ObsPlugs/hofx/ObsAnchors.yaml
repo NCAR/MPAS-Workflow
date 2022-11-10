@@ -68,7 +68,7 @@ _satwind errors:
     _240: &satwindObsType240Errors [  1.4,   1.7,   2.3,   4.6, 9999., 9999., 9999., 9999.] # GOES SW
     _241: &satwindObsType241Errors [9999., 9999., 9999., 9999., 9999., 9999., 9999., 9999.] # India, no training data (update later)
     _242: &satwindObsType242Errors [  1.6,   1.9,   3.8, 9999., 9999., 9999., 9999., 9999.] # JMA Vis
-    _243: &satwindObsType243Errors [  3.7,   3.3    6.6, 9999., 9999., 9999., 9999., 9999.] # EUMETSAT Vis
+    _243: &satwindObsType243Errors [  3.7,   3.3,   6.6, 9999., 9999., 9999., 9999., 9999.] # EUMETSAT Vis
     _244: &satwindObsType244Errors [  3.2,   2.9,   3.0,   3.3,   4.0,   4.5,   4.7, 9999.] # AVHRR
     _245: &satwindObsType245Errors [  1.5,   2.0,   3.0,   3.3,   3.6,   3.9,   4.2,   5.1] # GOES IR
     _246: &satwindObsType246Errors [ 15.0,   7.5,   3.5,   3.5,   3.8,   4.0,   4.3,   5.0] # GOES WV cloud top
