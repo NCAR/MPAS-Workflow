@@ -38,7 +38,7 @@ observations:
     #- iasi_metop-c
 
     IODAPrefix:
-      gnssroref: gnssro
+      gnssrorefncep: gnssro
       gnssrobndropp1d: gnssro
       gnssrobndnbam: gnssro
       gnssrobndmo: gnssro
@@ -65,7 +65,7 @@ observations:
     #- iasi_metop-c
 
     IODAPrefix:
-      gnssroref: gnssro
+      gnssrorefncep: gnssro
       gnssrobndropp1d: gnssro
       gnssrobndnbam: gnssro
       gnssrobndmo: gnssro
@@ -99,7 +99,7 @@ observations:
     - amsua-cld_n19
 
     IODAPrefix:
-      gnssroref: gnssro
+      gnssrorefncep: gnssro
       gnssrobndropp1d: gnssro
       gnssrobndnbam: gnssro
       gnssrobndmo: gnssro
@@ -118,7 +118,7 @@ observations:
       variational:
         ##anchor
         aircraft: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
-        gnssroref: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        gnssrorefncep: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
         gnssrobndropp1d: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
         gnssrobndnbam: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
         gnssrobndmo: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
@@ -164,7 +164,7 @@ observations:
       hofx:
         ## anchor
         aircraft: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
-        gnssroref: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
+        gnssrorefncep: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
         gnssrobndropp1d: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
         gnssrobndnbam: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
         gnssrobndmo: /glade/p/mmm/parc/liuz/pandac_hybrid/obs_220127/2018/raw_obs
@@ -222,7 +222,7 @@ observations:
     - amsua_n19
 
     IODAPrefix:
-      gnssroref: gnssro
+      gnssrorefncep: gnssro
       gnssrobndropp1d: gnssro
       gnssrobndnbam: gnssro
       gnssrobndmo: gnssro

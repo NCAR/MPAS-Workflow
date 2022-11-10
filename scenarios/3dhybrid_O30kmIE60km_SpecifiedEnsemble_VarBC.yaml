@@ -47,7 +47,7 @@ variational:
   benchmarkObservations:
 # anchor
   - aircraft
-  - gnssroref
+  - gnssrorefncep
 #  - gnssrobndropp1d
 #  - gnssrobndnbam
   - gnssrobndmo # checking performance of BendMetOffice
