@@ -7,6 +7,7 @@ _iteration: &iterationConfig
   gradient norm reduction: 1e-3
   obs perturbations: {{ObsPerturbations}}
 {{ObsAnchors}}
+{{ObsErrorAnchors}}
 output:
   filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis

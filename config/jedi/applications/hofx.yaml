@@ -1,4 +1,5 @@
 {{ObsAnchors}}
+{{ObsErrorAnchors}}
 window begin: {{windowBegin}}
 window length: {{windowLength}}
 geometry:
