@@ -13,51 +13,6 @@
         name: MetaData/geoid_height_above_reference_ellipsoid
       minvalue: -200.0
       maxvalue: 200.0
-
-  # reject where mean bias is large relative to STD
-  - filter: Perform Action
-    defer to post: true
-    filter variables:
-    - name: refractivity
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: -90.0
-      maxvalue: -60.0
-    - variable:
-        name: MetaData/altitude
-      minvalue: 25000.0
-    action:
-      name: reject
-  - filter: Perform Action
-    defer to post: true
-    filter variables:
-    - name: refractivity
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: -60.0
-      maxvalue:  60.0
-    - variable:
-        name: MetaData/altitude
-      minvalue: 15000.0
-    action:
-      name: reject
-  - filter: Perform Action
-    defer to post: true
-    filter variables:
-    - name: refractivity
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue:  60.0
-      maxvalue:  90.0
-    - variable:
-        name: MetaData/altitude
-      minvalue: 25000.0
-    action:
-      name: reject
-
   ## Scale ObsError based on ObsValue
   # NPol
   - filter: Perform Action
@@ -78,7 +33,7 @@
           scale_factor_var:
             name: ObsValue/refractivity
           xvals: *gnssroErrorLevels
-          errors: *gnssrorefNPolErrors
+          errors: *gnssrorefncepNPolErrors
   # NMid
   - filter: Perform Action
     filter variables:
@@ -98,7 +53,7 @@
           scale_factor_var:
             name: ObsValue/refractivity
           xvals: *gnssroErrorLevels
-          errors: *gnssrorefNMidErrors
+          errors: *gnssrorefncepNMidErrors
   # Tro
   - filter: Perform Action
     filter variables:
@@ -118,7 +73,7 @@
           scale_factor_var:
             name: ObsValue/refractivity
           xvals: *gnssroErrorLevels
-          errors: *gnssrorefTroErrors
+          errors: *gnssrorefncepTroErrors
   # SMid
   - filter: Perform Action
     filter variables:
@@ -138,7 +93,7 @@
           scale_factor_var:
             name: ObsValue/refractivity
           xvals: *gnssroErrorLevels
-          errors: *gnssrorefSMidErrors
+          errors: *gnssrorefncepSMidErrors
   # SPol
   - filter: Perform Action
     filter variables:
@@ -158,8 +113,8 @@
           scale_factor_var:
             name: ObsValue/refractivity
           xvals: *gnssroErrorLevels
-          errors: *gnssrorefSPolErrors
+          errors: *gnssrorefncepSPolErrors
 
   - filter: Background Check
-    threshold: 3.0
+    threshold: 10.0
     <<: *multiIterationFilter
