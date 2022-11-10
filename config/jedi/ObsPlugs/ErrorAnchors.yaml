@@ -37,29 +37,35 @@ _gnssro:
 
 _satwind:
   _errors:
+    # observation error bounds outside of which locations will be filtered for variational applications
+    _minValue: &satwindMinError 1.3
+    _maxValue: &satwindMaxError 20.
+
+    # pressures (Pa) for observation error interpolation
     _levels: &satwindErrorLevels [   100000, 80000, 65000, 50000, 40000, 30000, 20000, 10000]
+
+    # absolute observation errors (m/s) by ObsType
     _ObsTypes:
-      # ObsType codes correspond to NOAA practices in GSI src/read_satwnd.F90
-      # 9999. is entered where the PreQC filter removes all locations
-      # Double the adjacent real value is used in the missing transition point adjacent to 9999.
-      # in order to yield valid interpolated values. Sometimes that means the sole 9999.
-      # bottom/top boundary value is replaced by double the adjacent real value.  If the PreQC
-      # filter is turned off, then those heights need to have valid values to avoid polluting
-      # post-processing statistics.
-      _240: &satwindObsType240Errors [  1.4,   1.7,   2.3,   4.6, 9999., 9999., 9999., 9999.] # GOES SW
-      _241: &satwindObsType241Errors [9999., 9999., 9999., 9999., 9999., 9999., 9999., 9999.] # India, no training data (update later)
-      _242: &satwindObsType242Errors [  1.6,   1.9,   3.8, 9999., 9999., 9999., 9999., 9999.] # JMA Vis
-      _243: &satwindObsType243Errors [  3.7,   3.3,   6.6, 9999., 9999., 9999., 9999., 9999.] # EUMETSAT Vis
-      _244: &satwindObsType244Errors [  3.2,   2.9,   3.0,   3.3,   4.0,   4.5,   4.7, 9999.] # AVHRR
+      # ObsType codes correspond to NOAA practices in GSI source code (src/read_satwnd.F90)
+      # -999. is entered where the PreQC filter (based on GSI) removes all locations, which
+      # allows for a sharp transition region where valid positive observation errors are provided.
+      # If the PreQC filter is removed, then heights with -999. either (1) need to have valid values
+      # or (2) need to be filtered out by other means in order to avoid polluting post-processed
+      # statistics.
+      _240: &satwindObsType240Errors [  1.4,   1.7,   2.3, -999., -999., -999., -999., -999.] # GOES SW
+      _241: &satwindObsType241Errors [-999., -999., -999., -999., -999., -999., -999., -999.] # India, no training data (update later)
+      _242: &satwindObsType242Errors [  1.6,   1.9,   3.8, -999., -999., -999., -999., -999.] # JMA Vis
+      _243: &satwindObsType243Errors [  3.7,   3.3, -999., -999., -999., -999., -999., -999.] # EUMETSAT Vis
+      _244: &satwindObsType244Errors [  3.2,   2.9,   3.0,   3.3,   4.0,   4.5,   4.7, -999.] # AVHRR
       _245: &satwindObsType245Errors [  1.5,   2.0,   3.0,   3.3,   3.6,   3.9,   4.2,   5.1] # GOES IR
-      _246: &satwindObsType246Errors [ 15.0,   7.5,   3.5,   3.5,   3.8,   4.0,   4.3,   5.0] # GOES WV cloud top
-      _247: &satwindObsType247Errors [9999.,   6.6,   3.3,   3.6,   3.6,   3.8,   3.9, 9999.] # GOES WV deep layer (clear)
-      _250: &satwindObsType250Errors [9999.,   5.4,   2.7,   2.9,   3.2,   3.4,   3.5,   3.6] # JMA WV deep layer (clear)
-      _251: &satwindObsType251Errors [  1.5,   1.8,   2.7,   5.4, 9999., 9999., 9999., 9999.] # GOES Vis
-      _252: &satwindObsType252Errors [9999.,   2.3,   2.5,   2.7,   3.0,   3.3,   3.4,   3.4] # JMA IR, U&V differ
-      _253: &satwindObsType253Errors [9999.,   3.6,   4.0,   5.2,   5.8,   5.5,   4.8,   5.8] # EUMETSAT IR, U&V differ
-      _254: &satwindObsType254Errors [9999.,  15.0,   7.5,   7.5,   7.0,   5.7,   4.7,   6.0] # EUMETSAT WV deep layer (clear), U&V differ
+      _246: &satwindObsType246Errors [-999.,   7.5,   3.5,   3.5,   3.8,   4.0,   4.3,   5.0] # GOES WV cloud top
+      _247: &satwindObsType247Errors [-999., -999.,   3.3,   3.6,   3.6,   3.8,   3.9, -999.] # GOES WV deep layer (clear)
+      _250: &satwindObsType250Errors [-999., -999.,   2.7,   2.9,   3.2,   3.4,   3.5,   3.6] # JMA WV deep layer (clear)
+      _251: &satwindObsType251Errors [  1.5,   1.8,   2.7, -999., -999., -999., -999., -999.] # GOES Vis
+      _252: &satwindObsType252Errors [-999.,   2.3,   2.5,   2.7,   3.0,   3.3,   3.4,   3.4] # JMA IR, U&V differ
+      _253: &satwindObsType253Errors [-999.,   3.6,   4.0,   5.2,   5.8,   5.5,   4.8,   5.8] # EUMETSAT IR, U&V differ
+      _254: &satwindObsType254Errors [-999., -999.,   7.5,   7.5,   7.0,   5.7,   4.7,   6.0] # EUMETSAT WV deep layer (clear), U&V differ
       _257: &satwindObsType257Errors [  3.2,   2.9,   3.0,   3.1,   3.3,   4.1,   5.2,  10.4] # MODIS IR
-      _258: &satwindObsType258Errors [9999., 9999.,   6.0,   3.0,   3.1,   5.0,   5.2,  10.4] # MODIS WV cloud top, U&V differ
-      _259: &satwindObsType259Errors [9999., 9999.,   5.6,   2.8,   3.1,   3.8,   6.0,  12.0] # MODIS WV deep layer (clear)
-      _260: &satwindObsType260Errors [9999., 9999., 9999., 9999., 9999., 9999., 9999., 9999.] # VIIRS IR, no training data (update later)
+      _258: &satwindObsType258Errors [-999., -999., -999.,   3.0,   3.1,   5.0,   5.2,  10.4] # MODIS WV cloud top, U&V differ
+      _259: &satwindObsType259Errors [-999., -999., -999.,   2.8,   3.1,   3.8,   6.0,  12.0] # MODIS WV deep layer (clear)
+      _260: &satwindObsType260Errors [-999., -999., -999., -999., -999., -999., -999., -999.] # VIIRS IR, no training data (update later)
