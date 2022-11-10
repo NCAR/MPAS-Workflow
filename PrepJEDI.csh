@@ -357,7 +357,7 @@ set prevYAML = $thisYAML
 # (iii) insert re-usable YAML anchors
 ## ObsAnchors
 set sedstring = ObsAnchors
-set template = jedi/${ArgAppType}/${sedstring}.yaml
+set template = jedi/ObsPlugs/${ArgAppType}/${sedstring}.yaml
 set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
 /{{${sedstring}}}/c\
@@ -374,8 +374,9 @@ sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
 
-## ErrorAnchors
-set sedstring = ErrorAnchors
+
+## ObsErrorAnchors
+set sedstring = ObsErrorAnchors
 set template = jedi/ObsPlugs/${sedstring}.yaml
 set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
