@@ -244,6 +244,24 @@
     where:
     - variable:
         name: ObsType/eastward_wind
+      is_in: 255
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindObsType255Errors
+
+  - filter: Perform Action
+    filter variables:
+    - name: eastward_wind
+    - name: northward_wind
+    where:
+    - variable:
+        name: ObsType/eastward_wind
       is_in: 257
     action:
       name: assign error
