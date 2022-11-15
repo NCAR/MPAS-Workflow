@@ -1,41 +1,41 @@
 _gnssro:
   # latitude band-specific transition heights (m) from gnssrorefncep (below) to gnssrobndmo (above)
-  _transitions:
-    _NPol: &gnssroNPolTransition 18000.
-    _SMidTroNMid: &gnssroSMidTroNMidTransition 15000.
-    _SPol: &gnssroSPolTransition 25000.
-  _errors:
+  transitions:
+    NPol: &gnssroNPolTransition 18000.
+    SMidTroNMid: &gnssroSMidTroNMidTransition 15000.
+    SPol: &gnssroSPolTransition 25000.
+  errors:
     # heights (m) for observation error interpolation
-    _levels: &gnssroErrorLevels       [    0.,  2500.,  5000.,  7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
+    levels: &gnssroErrorLevels       [    0.,  2500.,  5000.,  7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
     # latitude band-specific ObsValue-normalized observation errors, i.e., (O-B)/O (unitless)
-    _refncep:
+    refncep:
       # based on RMS (bias included)
-      #_NPol: &gnssrorefncepNPolErrors [ 0.027,  0.018,  0.012,  0.006,  0.007,  0.004,  0.004,  0.004,  0.004,  0.005,  0.006,  0.008,  0.011] # actual 6-hr OMF values without background check
-      _NPol: &gnssrorefncepNPolErrors [ 0.018,  0.012,  0.008,  0.004,  0.004,  0.003,  0.004,  0.004,  0.004,  0.005,  0.006,  0.008,  0.011] # tuned values in response to degraded background fits to sondes and GFS analyis T vs. RefNCEP error parameterization (smaller)
+      #NPol: &gnssrorefncepNPolErrors [ 0.027,  0.018,  0.012,  0.006,  0.007,  0.004,  0.004,  0.004,  0.004,  0.005,  0.006,  0.008,  0.011] # actual 6-hr OMF values without background check
+      NPol: &gnssrorefncepNPolErrors [ 0.018,  0.012,  0.008,  0.004,  0.004,  0.003,  0.004,  0.004,  0.004,  0.005,  0.006,  0.008,  0.011] # tuned values in response to degraded background fits to sondes and GFS analyis T vs. RefNCEP error parameterization (smaller)
 
-      _NMid: &gnssrorefncepNMidErrors [ 0.040,  0.030,  0.016,  0.007,  0.006,  0.007,  0.008,  0.011,  0.012,  0.013,  0.016,  0.018,  0.022]
-      _Tro: &gnssrorefncepTroErrors   [ 0.060,  0.043,  0.029,  0.014,  0.007,  0.008,  0.011,  0.023,  0.021,  0.026,  0.030,  0.030,  0.030]
-      _SMid: &gnssrorefncepSMidErrors [ 0.045,  0.032,  0.017,  0.007,  0.008,  0.008,  0.012,  0.012,  0.009,  0.010,  0.013,  0.018,  0.020]
-      _SPol: &gnssrorefncepSPolErrors [ 0.035,  0.022,  0.011,  0.007,  0.009,  0.005,  0.005,  0.005,  0.006,  0.007,  0.011,  0.016,  0.028]
-      #_NXTro: &gnssrorefncepNXTroErrors [ 0.035,  0.025,  0.014,  0.007,  0.006,  0.006,  0.007,  0.009,  0.010,  0.011,  0.014,  0.016,  0.019]
-      #_SXTro: &gnssrorefncepSXTroErrors [ 0.039,  0.027,  0.015,  0.008,  0.008,  0.007,  0.010,  0.011,  0.009,  0.010,  0.014,  0.017,  0.025]
+      NMid: &gnssrorefncepNMidErrors [ 0.040,  0.030,  0.016,  0.007,  0.006,  0.007,  0.008,  0.011,  0.012,  0.013,  0.016,  0.018,  0.022]
+      Tro: &gnssrorefncepTroErrors   [ 0.060,  0.043,  0.029,  0.014,  0.007,  0.008,  0.011,  0.023,  0.021,  0.026,  0.030,  0.030,  0.030]
+      SMid: &gnssrorefncepSMidErrors [ 0.045,  0.032,  0.017,  0.007,  0.008,  0.008,  0.012,  0.012,  0.009,  0.010,  0.013,  0.018,  0.020]
+      SPol: &gnssrorefncepSPolErrors [ 0.035,  0.022,  0.011,  0.007,  0.009,  0.005,  0.005,  0.005,  0.006,  0.007,  0.011,  0.016,  0.028]
+      #NXTro: &gnssrorefncepNXTroErrors [ 0.035,  0.025,  0.014,  0.007,  0.006,  0.006,  0.007,  0.009,  0.010,  0.011,  0.014,  0.016,  0.019]
+      #SXTro: &gnssrorefncepSXTroErrors [ 0.039,  0.027,  0.015,  0.008,  0.008,  0.007,  0.010,  0.011,  0.009,  0.010,  0.014,  0.017,  0.025]
 
       # based on STD (bias removed)
-      #_NXTro: &gnssrorefncepNXTroErrors [ 0.035,  0.025,  0.014,  0.007,  0.006,  0.006,  0.006,  0.007,  0.007,  0.007,  0.007,  0.008,  0.011]
-      #_Tro: &gnssrorefncepTroErrors     [ 0.060,  0.043,  0.029,  0.014,  0.007,  0.006,  0.007,  0.009,  0.010,  0.009,  0.008,  0.008,  0.011]
-      #_SXTro: &gnssrorefncepSXTroErrors [ 0.039,  0.027,  0.015,  0.008,  0.008,  0.007,  0.008,  0.008,  0.007,  0.008,  0.011,  0.015,  0.025]
+      #NXTro: &gnssrorefncepNXTroErrors [ 0.035,  0.025,  0.014,  0.007,  0.006,  0.006,  0.006,  0.007,  0.007,  0.007,  0.007,  0.008,  0.011]
+      #Tro: &gnssrorefncepTroErrors     [ 0.060,  0.043,  0.029,  0.014,  0.007,  0.006,  0.007,  0.009,  0.010,  0.009,  0.008,  0.008,  0.011]
+      #SXTro: &gnssrorefncepSXTroErrors [ 0.039,  0.027,  0.015,  0.008,  0.008,  0.007,  0.008,  0.008,  0.007,  0.008,  0.011,  0.015,  0.025]
 
-    _bndmo:
+    bndmo:
       # based on RMS (bias included)
-      _NPol: &gnssrobndmoNPolErrors   [ 0.150,  0.095,  0.062,  0.032,  0.022,  0.015,  0.010,  0.010,  0.011,  0.011,  0.012,  0.012,  0.013]
-      _NMid: &gnssrobndmoNMidErrors   [ 0.080,  0.160,  0.090,  0.040,  0.020,  0.022,  0.019,  0.017,  0.017,  0.016,  0.016,  0.017,  0.020]
-      _Tro: &gnssrobndmoTroErrors     [ 0.100,  0.260,  0.150,  0.075,  0.025,  0.016,  0.017,  0.027,  0.024,  0.023,  0.022,  0.022,  0.022]
-      _SMid: &gnssrobndmoSMidErrors   [ 0.040,  0.170,  0.100,  0.040,  0.020,  0.028,  0.020,  0.020,  0.017,  0.018,  0.018,  0.019,  0.020]
-      _SPol: &gnssrobndmoSPolErrors   [ 0.040,  0.090,  0.065,  0.033,  0.025,  0.020,  0.011,  0.011,  0.012,  0.014,  0.016,  0.025,  0.033]
-      #_NXTro: &gnssrobndmoNXTroErrors [ 0.100,  0.130,  0.080,  0.040,  0.020,  0.019,  0.015,  0.014,  0.013,  0.012,  0.012,  0.013,  0.015]
-      #_SXTro: &gnssrobndmoSXTroErrors [ 0.040,  0.150,  0.090,  0.040,  0.023,  0.023,  0.017,  0.017,  0.015,  0.016,  0.017,  0.019,  0.020]
+      NPol: &gnssrobndmoNPolErrors   [ 0.150,  0.095,  0.062,  0.032,  0.022,  0.015,  0.010,  0.010,  0.011,  0.011,  0.012,  0.012,  0.013]
+      NMid: &gnssrobndmoNMidErrors   [ 0.080,  0.160,  0.090,  0.040,  0.020,  0.022,  0.019,  0.017,  0.017,  0.016,  0.016,  0.017,  0.020]
+      Tro: &gnssrobndmoTroErrors     [ 0.100,  0.260,  0.150,  0.075,  0.025,  0.016,  0.017,  0.027,  0.024,  0.023,  0.022,  0.022,  0.022]
+      SMid: &gnssrobndmoSMidErrors   [ 0.040,  0.170,  0.100,  0.040,  0.020,  0.028,  0.020,  0.020,  0.017,  0.018,  0.018,  0.019,  0.020]
+      SPol: &gnssrobndmoSPolErrors   [ 0.040,  0.090,  0.065,  0.033,  0.025,  0.020,  0.011,  0.011,  0.012,  0.014,  0.016,  0.025,  0.033]
+      #NXTro: &gnssrobndmoNXTroErrors [ 0.100,  0.130,  0.080,  0.040,  0.020,  0.019,  0.015,  0.014,  0.013,  0.012,  0.012,  0.013,  0.015]
+      #SXTro: &gnssrobndmoSXTroErrors [ 0.040,  0.150,  0.090,  0.040,  0.023,  0.023,  0.017,  0.017,  0.015,  0.016,  0.017,  0.019,  0.020]
 
       # based on STD (bias removed)
-      #_NXTro: &gnssrobndmoNXTroErrors [ 0.100,  0.130,  0.080,  0.040,  0.020,  0.019,  0.015,  0.014,  0.013,  0.012,  0.012,  0.013,  0.014]
-      #_Tro: &gnssrobndmoTroErrors     [ 0.100,  0.240,  0.150,  0.075,  0.025,  0.016,  0.017,  0.027,  0.024,  0.023,  0.020,  0.020,  0.020]
-      #_SXTro: &gnssrobndmoSXTroErrors [ 0.040,  0.150,  0.090,  0.040,  0.023,  0.023,  0.017,  0.017,  0.015,  0.016,  0.017,  0.019,  0.020]
+      #NXTro: &gnssrobndmoNXTroErrors [ 0.100,  0.130,  0.080,  0.040,  0.020,  0.019,  0.015,  0.014,  0.013,  0.012,  0.012,  0.013,  0.014]
+      #Tro: &gnssrobndmoTroErrors     [ 0.100,  0.240,  0.150,  0.075,  0.025,  0.016,  0.017,  0.027,  0.024,  0.023,  0.020,  0.020,  0.020]
+      #SXTro: &gnssrobndmoSXTroErrors [ 0.040,  0.150,  0.090,  0.040,  0.023,  0.023,  0.017,  0.017,  0.015,  0.016,  0.017,  0.019,  0.020]
