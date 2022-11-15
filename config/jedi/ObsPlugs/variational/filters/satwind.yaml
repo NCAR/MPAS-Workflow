@@ -334,8 +334,8 @@
     - name: eastward_wind
     - name: northward_wind
     test variables:
-    - name: eastward_wind@ObsErrorData
-    - name: northward_wind@ObsErrorData
+    - name: ObsErrorData/eastward_wind
+    - name: ObsErrorData/northward_wind
     minvalue: *satwindMinError
     maxvalue: *satwindMaxError
     flag all filter variables if any test variable is out of bounds: false
