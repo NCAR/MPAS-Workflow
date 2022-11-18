@@ -186,7 +186,7 @@
       options:
         sensor: amsua_metop-c
         channels: *amsua_metop-c_channels
-        threshold: &amsua_metop-cBGRelThresh
+        threshold: *amsua_metop-cBGRelThresh
         obserr_bound_latitude:
           name: ObsErrorFactorLatRad@ObsFunction
           options:

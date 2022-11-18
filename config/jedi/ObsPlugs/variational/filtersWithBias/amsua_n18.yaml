@@ -186,7 +186,7 @@
       options:
         sensor: amsua_n18
         channels: *amsua_n18_channels
-        threshold: &amsua_n18BGRelThresh
+        threshold: *amsua_n18BGRelThresh
         obserr_bound_latitude:
           name: ObsErrorFactorLatRad@ObsFunction
           options:
