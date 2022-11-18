@@ -32,3 +32,24 @@ _get values: &GetValues
   nnearest: 3
 _multi iteration filter: &multiIterationFilter
   apply at iterations: 0,1,2,3,4,5
+_background check relative thresholds:
+  abi_g16: &abi_g16BGRelThresh 3.0
+  ahi_himawari8: &ahi_himawari8BGRelThresh 3.0
+  aircraft: &aircraftBGRelThresh 3.0
+  amsua_aqua: &amsua_aquaBGRelThresh 3.0
+  amsua_metop-a: &amsua_metop-aBGRelThresh 3.0
+  amsua_metop-b: &amsua_metop-bBGRelThresh 3.0
+  amsua_metop-c: &amsua_metop-cBGRelThresh 3.0
+  amsua_n15: &amsua_n15BGRelThresh 3.0
+  amsua_n18: &amsua_n18BGRelThresh 3.0
+  amsua_n19: &amsua_n19BGRelThresh 3.0
+  gnssrobndmo: &gnssrobndmoBGRelThresh 3.0
+  gnssrobndnbam: &gnssrobndnbamBGRelThresh 3.0
+  gnssrobndropp1d: &gnssrobndropp1dBGRelThresh 3.0
+  gnssrorefncep: &gnssrorefncepBGRelThresh 3.0
+  iasi_metop-a: &iasi_metop-aBGRelThresh 3.0
+  iasi_metop-b: &iasi_metop-bBGRelThresh 3.0
+  iasi_metop-c: &iasi_metop-cBGRelThresh 3.0
+  satwind: &satwindBGRelThresh 3.0
+  sfc: &sfcBGRelThresh 3.0
+  sondes: &sondesBGRelThresh 3.0
