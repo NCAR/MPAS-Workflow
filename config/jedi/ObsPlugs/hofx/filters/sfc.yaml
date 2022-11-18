@@ -5,3 +5,6 @@
     reference: station_elevation@MetaData
     value: surface_altitude@GeoVaLs
     threshold: 200.0
+  - filter: Background Check
+    threshold: *sfcBGRelThresh
+    <<: *multiIterationFilter

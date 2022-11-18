@@ -16,5 +16,5 @@
     action:
       name: reject
   - filter: Background Check
-    threshold: 3.0
+    threshold: *iasi_metop-cBGRelThresh
     <<: *multiIterationFilter

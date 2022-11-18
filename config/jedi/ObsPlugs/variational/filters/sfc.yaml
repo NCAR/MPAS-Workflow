@@ -6,5 +6,5 @@
     value: surface_altitude@GeoVaLs
     threshold: 200.0
   - filter: Background Check
-    threshold: 3.0
+    threshold: *sfcBGRelThresh
     <<: *multiIterationFilter

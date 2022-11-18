@@ -13,6 +13,9 @@
 #      channels: *amsua-cld_n18_channels
 #    minvalue: 170.0
 #    maxvalue: 300.0
+  - filter: Background Check
+    threshold: *amsua_n18BGRelThresh
+    <<: *multiIterationFilter
   - filter: GOMsaver
     filename: {{OutDBDir}}/{{geoPrefix}}_amsua-cld_n18.nc4
   - filter: YDIAGsaver

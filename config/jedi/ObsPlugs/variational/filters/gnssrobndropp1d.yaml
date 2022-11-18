@@ -29,5 +29,5 @@
     errmodel: ECMWF
     <<: *multiIterationFilter
   - filter: Background Check
-    threshold: 3.0
+    threshold: *gnssrobndropp1dBGRelThresh
     <<: *multiIterationFilter

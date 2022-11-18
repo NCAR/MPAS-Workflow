@@ -2,7 +2,7 @@
   - filter: PreQC
     maxvalue: 0
   - filter: Background Check
-    threshold: 3
+    threshold: *amsua_aquaBGRelThresh
     <<: *multiIterationFilter
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: {{RADTHINDISTANCE}}

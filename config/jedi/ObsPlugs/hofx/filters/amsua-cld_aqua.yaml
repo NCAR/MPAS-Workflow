@@ -13,6 +13,9 @@
 #      channels: *amsua-cld_aqua_channels
 #    minvalue: 170.0
 #    maxvalue: 300.0
+  - filter: Background Check
+    threshold: *amsua_aquaBGRelThresh
+    <<: *multiIterationFilter
   - filter: GOMsaver
     filename: {{OutDBDir}}/{{geoPrefix}}_amsua-cld_aqua.nc4
   - filter: YDIAGsaver

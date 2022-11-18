@@ -1,6 +1,9 @@
   obs filters:
   - filter: PreQC
     maxvalue: 0
+  - filter: Background Check
+    threshold: *mhs_metop-aBGRelThresh
+    <<: *multiIterationFilter
   - filter: GOMsaver
     filename: {{OutDBDir}}/{{geoPrefix}}_mhs_metop-a.nc4
   - filter: YDIAGsaver 

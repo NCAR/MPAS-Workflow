@@ -66,7 +66,7 @@
             options:
               channels: *abi_g16_channels
   - filter: Background Check
-    threshold: 3.0
+    threshold: *abi_g16BGRelThresh
     <<: *multiIterationFilter
 ## Ignore cloud-affected pixels in 1st iteration
 #  - filter: Domain Check

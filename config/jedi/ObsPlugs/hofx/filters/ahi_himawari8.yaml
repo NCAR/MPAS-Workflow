@@ -44,6 +44,9 @@
             channels: *ahi_channels
             options:
               channels: *ahi_channels
+  - filter: Background Check
+    threshold: *ahi_himawari8BGRelThresh
+    <<: *multiIterationFilter
   - filter: GOMsaver
     filename: {{OutDBDir}}/{{geoPrefix}}_ahi_himawari8.nc4
   - filter: YDIAGsaver

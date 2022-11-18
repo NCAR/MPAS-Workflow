@@ -116,5 +116,5 @@
           errors: *gnssrorefncepSPolErrors
 
   - filter: Background Check
-    threshold: 10.0
+    threshold: *gnssrorefncepBGRelThresh
     <<: *multiIterationFilter

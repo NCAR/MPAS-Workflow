@@ -52,6 +52,9 @@
             channels: *abi_channels
             options:
               channels: *abi_channels
+  - filter: Background Check
+    threshold: *abi_g16BGRelThresh
+    <<: *multiIterationFilter
   - filter: GOMsaver
     filename: {{OutDBDir}}/{{geoPrefix}}_abi_g16.nc4
   - filter: YDIAGsaver

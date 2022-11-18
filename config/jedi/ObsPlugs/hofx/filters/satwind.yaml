@@ -328,7 +328,7 @@
           errors: *satwindObsType260Errors
 
   - filter: Background Check
-    threshold: 10.0
+    threshold: *satwindBGRelThresh
     <<: *multiIterationFilter
 
   - filter: Gaussian Thinning

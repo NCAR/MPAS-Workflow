@@ -1,3 +1,6 @@
   obs filters:
   - filter: PreQC
     maxvalue: 3
+  - filter: Background Check
+    threshold: *aircraftBGRelThresh
+    <<: *multiIterationFilter

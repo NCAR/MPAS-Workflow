@@ -2,5 +2,5 @@
   - filter: PreQC
     maxvalue: 3
   - filter: Background Check
-    threshold: 3.0
+    threshold: *aircraftBGRelThresh
     <<: *multiIterationFilter

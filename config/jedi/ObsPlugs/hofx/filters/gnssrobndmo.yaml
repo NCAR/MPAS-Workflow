@@ -116,5 +116,5 @@
           errors: *gnssrobndmoSPolErrors
 
   - filter: Background Check
-    threshold: 10.0
+    threshold: *gnssrobndmoBGRelThresh
     <<: *multiIterationFilter

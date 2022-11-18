@@ -341,7 +341,7 @@
     flag all filter variables if any test variable is out of bounds: false
 
   - filter: Background Check
-    threshold: 3.0
+    threshold: *satwindBGRelThresh
     <<: *multiIterationFilter
 
   - filter: Gaussian Thinning

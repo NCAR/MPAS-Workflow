@@ -51,7 +51,7 @@
             options:
               channels: *ahi_himawari8_channels
   - filter: Background Check
-    threshold: 3.0
+    threshold: *ahi_himawari8BGRelThresh
     <<: *multiIterationFilter
   - filter: GOMsaver
     filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi_himawari8.nc4

@@ -13,6 +13,9 @@
 #      channels: *amsua-cld_metop-b_channels
 #    minvalue: 170.0
 #    maxvalue: 300.0
+  - filter: Background Check
+    threshold: *amsua_metop-bBGRelThresh
+    <<: *multiIterationFilter
   - filter: GOMsaver
     filename: {{OutDBDir}}/{{geoPrefix}}_amsua-cld_metop-b.nc4
   - filter: YDIAGsaver

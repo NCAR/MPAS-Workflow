@@ -28,5 +28,5 @@
     - name: bending_angle
     errmodel: NBAM
   - filter: Background Check
-    threshold: 10.0
+    threshold: *gnssrobndnbamBGRelThresh
     <<: *multiIterationFilter

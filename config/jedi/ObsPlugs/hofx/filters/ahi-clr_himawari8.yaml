@@ -7,6 +7,9 @@
     - variable:
         name: cloud_area_fraction@MetaData
       maxvalue: 0.05
+  - filter: Background Check
+    threshold: *ahi_himawari8BGRelThresh
+    <<: *multiIterationFilter
   - filter: GOMsaver
     filename: {{OutDBDir}}/{{geoPrefix}}_ahi-clr_himawari8.nc4
   - filter: YDIAGsaver
