@@ -13,6 +13,7 @@
         name: MetaData/geoid_height_above_reference_ellipsoid
       minvalue: -200.0
       maxvalue: 200.0
+
   # reject where refractivity is assimilated
   # SPol
   - filter: RejectList
@@ -22,11 +23,11 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -90.0
-      maxvalue: -60.0
+      minvalue: *minSPol
+      maxvalue: *maxSPol
     - variable:
         name: MetaData/impact_height
-      maxvalue: *gnssroSPolTransition
+      minvalue: *gnssroSPolTransition
   # SMid, Tro, NMid
   - filter: RejectList
     defer to post: true
@@ -35,11 +36,11 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -60.0
-      maxvalue:  60.0
+      minvalue: *minSMid
+      maxvalue: *maxNMid
     - variable:
         name: MetaData/impact_height
-      maxvalue: *gnssroSMidTroNMidTransition
+      minvalue: *gnssroSMidTroNMidTransition
   # NPol
   - filter: RejectList
     defer to post: true
@@ -48,11 +49,11 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue:  60.0
-      maxvalue:  90.0
+      minvalue: *minNPol
+      maxvalue: *maxNPol
     - variable:
         name: MetaData/impact_height
-      maxvalue: *gnssroNPolTransition
+      minvalue: *gnssroNPolTransition
 
   ## Scale ObsError based on ObsValue
   # NPol
@@ -62,8 +63,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: 60.0
-      maxvalue: 90.0
+      minvalue: *minNPol
+      maxvalue: *maxNPol
     action:
       name: assign error
       error function:
@@ -82,8 +83,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: 30.0
-      maxvalue: 60.0
+      minvalue: *minNMid
+      maxvalue: *maxNMid
     action:
       name: assign error
       error function:
@@ -102,8 +103,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -30.0
-      maxvalue:  30.0
+      minvalue: *minTro
+      maxvalue: *maxTro
     action:
       name: assign error
       error function:
@@ -122,8 +123,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -60.0
-      maxvalue: -30.0
+      minvalue: *minSMid
+      maxvalue: *maxSMid
     action:
       name: assign error
       error function:
@@ -142,8 +143,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -90.0
-      maxvalue: -60.0
+      minvalue: *minSPol
+      maxvalue: *maxSPol
     action:
       name: assign error
       error function:

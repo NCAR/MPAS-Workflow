@@ -1,3 +1,32 @@
+_named latitude bands:
+  NPol:
+    min: &minNPol 60.
+    max: &maxNPol 90.
+  NXTro:
+    min: &minNXTro 30.
+    max: &maxNXTro 90.
+  NMid:
+    min: &minNMid 30.
+    max: &maxNMid 60.
+  NTro:
+    min: &minNTro  5.
+    max: &maxNTro 30.
+  Tro:
+    min: &minTro -30.
+    max: &maxTro  30.
+  STro:
+    min: &minSTro -30.
+    max: &maxSTro  -5.
+  SMid:
+    min: &minSMid -60.
+    max: &maxSMid -30.
+  SXTro:
+    min: &minSXTro -90.
+    max: &maxSXTro -30.
+  SPol:
+    min: &minSPol -90.
+    max: &maxSPol -60.
+
 _gnssro:
   # latitude band-specific transition heights (m) from gnssrorefncep (below) to gnssrobndmo (above)
   transitions:
@@ -8,7 +37,7 @@ _gnssro:
     # heights (m) for observation error interpolation
     levels: &gnssroErrorLevels       [    0.,  2500.,  5000.,  7500., 10000., 12500., 15000., 17500., 20000., 22500., 25000., 27500., 30000.]
     # latitude band-specific ObsValue-normalized observation errors, i.e., (O-B)/O (unitless)
-    refncep:
+    refncep by named latitude band:
       # based on RMS (bias included)
       #NPol: &gnssrorefncepNPolErrors [ 0.027,  0.018,  0.012,  0.006,  0.007,  0.004,  0.004,  0.004,  0.004,  0.005,  0.006,  0.008,  0.011] # actual 6-hr OMF values without background check
       NPol: &gnssrorefncepNPolErrors [ 0.018,  0.012,  0.008,  0.004,  0.004,  0.003,  0.004,  0.004,  0.004,  0.005,  0.006,  0.008,  0.011] # tuned values in response to degraded background fits to sondes and GFS analyis T vs. RefNCEP error parameterization (smaller)
@@ -25,7 +54,7 @@ _gnssro:
       #Tro: &gnssrorefncepTroErrors     [ 0.060,  0.043,  0.029,  0.014,  0.007,  0.006,  0.007,  0.009,  0.010,  0.009,  0.008,  0.008,  0.011]
       #SXTro: &gnssrorefncepSXTroErrors [ 0.039,  0.027,  0.015,  0.008,  0.008,  0.007,  0.008,  0.008,  0.007,  0.008,  0.011,  0.015,  0.025]
 
-    bndmo:
+    bndmo by named latitude band:
       # based on RMS (bias included)
       NPol: &gnssrobndmoNPolErrors   [ 0.150,  0.095,  0.062,  0.032,  0.022,  0.015,  0.010,  0.010,  0.011,  0.011,  0.012,  0.012,  0.013]
       NMid: &gnssrobndmoNMidErrors   [ 0.080,  0.160,  0.090,  0.040,  0.020,  0.022,  0.019,  0.017,  0.017,  0.016,  0.016,  0.017,  0.020]
@@ -49,32 +78,112 @@ _satwind:
     # pressures (Pa) for observation error interpolation
     levels: &satwindErrorLevels [  100000., 80000., 65000., 50000., 40000., 30000., 20000., 10000.]
 
-    # absolute observation errors (m/s) by ObsType
-    ObsTypes:
-      # ObsType codes correspond to NOAA practices in GSI source code (src/read_satwnd.F90)
-      # [SATID]: applicable BUFR satellite ID's are listed in brackets
-      # satwnd only: indicates only available via conversion from BUFR, not PrepBUFR, in obs2ioda-v2;
-      #   otherwise may be available via both or only PrepBUFR
-      # See https://www.nco.ncep.noaa.gov/sib/jeff/CodeFlag_0_STDv31_LOC7.html
-      # 999. is entered where the PreQC filter (based on GSI) removes all locations, which
-      # allows for a sharp transition region to zero-weighted Jo terms. If the PreQC filter is
-      # removed, then heights with 999. either (1) need to have valid values or (2) need to be
-      # filtered out by other means in order to avoid polluting post-processed statistics.
-      240: &satwindObsType240Errors [  1.4,    1.7,    2.3,   999.,   999.,   999.,   999.,   999.] # GOES IR SW [259, 270]; satwnd only
-      241: &satwindObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # India, no training data (update later)
-      242: &satwindObsType242Errors [  1.6,    1.9,    3.8,   999.,   999.,   999.,   999.,   999.] # JMA Vis [171, 172, 173, 174]
-      243: &satwindObsType243Errors [  3.7,    3.3,   999.,   999.,   999.,   999.,   999.,   999.] # EUMETSAT Vis [55, 70]
-      244: &satwindObsType244Errors [  3.2,    2.9,    3.0,    3.3,    4.0,    4.5,    4.7,   999.] # AVHRR [3, 4, 5, 206, 207, 209, 223]
-      245: &satwindObsType245Errors [  1.5,    2.0,    3.0,    3.3,    3.6,    3.9,    4.2,    5.1] # GOES IR LW [259, 270]
-      246: &satwindObsType246Errors [ 999.,    7.5,    3.5,    3.5,    3.8,    4.0,    4.3,    5.0] # GOES WV cloud top [259, 270]
-      247: &satwindObsType247Errors [ 999.,   999.,    3.3,    3.6,    3.6,    3.8,    3.9,   999.] # GOES WV deep layer (clear) [259, 270]
-      250: &satwindObsType250Errors [ 999.,   999.,    2.7,    2.9,    3.2,    3.4,    3.5,    3.6] # JMA WV deep layer (clear) [171, 172, 173, 174]
-      251: &satwindObsType251Errors [  1.5,    1.8,    2.7,   999.,   999.,   999.,   999.,   999.] # GOES Vis [259, 270]; satwnd only
-      252: &satwindObsType252Errors [ 999.,    2.3,    2.5,    2.7,    3.0,    3.3,    3.4,    3.4] # JMA IR, U&V differ [171, 172, 173, 174]
-      253: &satwindObsType253Errors [ 999.,    3.6,    4.0,    5.2,    5.8,    5.5,    4.8,    5.8] # EUMETSAT IR, U&V differ [55, 70]
-      254: &satwindObsType254Errors [ 999.,   999.,    7.5,    7.5,    7.0,    5.7,    4.7,    6.0] # EUMETSAT WV deep layer (clear), U&V differ [55, 70]
-      255: &satwindObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # LEOGEO, no training data (update later) [854]; satwnd only
-      257: &satwindObsType257Errors [  3.2,    2.9,    3.0,    3.1,    3.3,    4.1,    5.2,   10.4] # MODIS IR [783, 784]
-      258: &satwindObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   10.4] # MODIS WV cloud top, U&V differ [783, 784]
-      259: &satwindObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   12.0] # MODIS WV deep layer (clear) [783, 784]
-      260: &satwindObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # VIIRS IR, no training data (update later) [224, 225]
+    # ObsType codes correspond to NOAA practices in GSI source code (src/read_satwnd.F90)
+    # [SATID]: applicable BUFR satellite ID's are listed in brackets
+    # satwnd only: indicates only available via conversion from BUFR, not PrepBUFR, in obs2ioda-v2;
+    #   otherwise may be available via both or only PrepBUFR
+    # See https://www.nco.ncep.noaa.gov/sib/jeff/CodeFlag_0_STDv31_LOC7.html
+    #240 - GOES IR SW [259, 270]; satwnd only
+    #241 - India, no training data (update later)
+    #242 - JMA Vis [171, 172, 173, 174]
+    #243 - EUMETSAT Vis [55, 70]
+    #244 - AVHRR [3, 4, 5, 206, 207, 209, 223]
+    #245 - GOES IR LW [259, 270]
+    #246 - GOES WV cloud top [259, 270]
+    #247 - GOES WV deep layer (clear) [259, 270]
+    #250 - JMA WV deep layer (clear) [171, 172, 173, 174]
+    #251 - GOES Vis [259, 270]; satwnd only
+    #252 - JMA IR, U&V differ [171, 172, 173, 174]
+    #253 - EUMETSAT IR, U&V differ [55, 70]
+    #254 - EUMETSAT WV deep layer (clear), U&V differ [55, 70]
+    #255 - LEOGEO, no training data (update later) [854]; satwnd only
+    #257 - MODIS IR [783, 784]
+    #258 - MODIS WV cloud top, U&V differ [783, 784]
+    #259 - MODIS WV deep layer (clear) [783, 784]
+    #260 - VIIRS IR, no training data (update later) [224, 225]
+
+    # absolute observation errors (m/s)
+    # 999. is entered where the PreQC filter (based on GSI) removes all locations, which
+    # allows for a sharp transition region to zero-weighted Jo terms. If the PreQC filter is
+    # removed, then heights with 999. either (1) need to have valid values or (2) need to be
+    # filtered out by other means in order to avoid polluting post-processed statistics.
+    by ObsType:
+      # caused degradation in tropics for 6-hr forecasted GFS analysis U/V
+      240: &satwindObsType240Errors [  1.4,    1.7,    2.3,   999.,   999.,   999.,   999.,   999.]
+      241: &satwindObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+      242: &satwindObsType242Errors [  1.6,    1.9,    3.8,   999.,   999.,   999.,   999.,   999.]
+      243: &satwindObsType243Errors [  3.7,    3.3,   999.,   999.,   999.,   999.,   999.,   999.]
+      244: &satwindObsType244Errors [  3.2,    2.9,    3.0,    3.3,    4.0,    4.5,    4.7,   999.]
+      245: &satwindObsType245Errors [  1.5,    2.0,    3.0,    3.3,    3.6,    3.9,    4.2,    5.1]
+      246: &satwindObsType246Errors [ 999.,    7.5,    3.5,    3.5,    3.8,    4.0,    4.3,    5.0]
+      247: &satwindObsType247Errors [ 999.,   999.,    3.3,    3.6,    3.6,    3.8,    3.9,   999.]
+      250: &satwindObsType250Errors [ 999.,   999.,    2.7,    2.9,    3.2,    3.4,    3.5,    3.6]
+      251: &satwindObsType251Errors [  1.5,    1.8,    2.7,   999.,   999.,   999.,   999.,   999.]
+      252: &satwindObsType252Errors [ 999.,    2.3,    2.5,    2.7,    3.0,    3.3,    3.4,    3.4]
+      253: &satwindObsType253Errors [ 999.,    3.6,    4.0,    5.2,    5.8,    5.5,    4.8,    5.8]
+      254: &satwindObsType254Errors [ 999.,   999.,    7.5,    7.5,    7.0,    5.7,    4.7,    6.0]
+      255: &satwindObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+      257: &satwindObsType257Errors [  3.2,    2.9,    3.0,    3.1,    3.3,    4.1,    5.2,   10.4]
+      258: &satwindObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   10.4]
+      259: &satwindObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   12.0]
+      260: &satwindObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+    by named latitude band and ObsType:
+      NXTro:
+        240: &satwindNXTroObsType240Errors [  1.4,    1.7,    2.3,   999.,   999.,   999.,   999.,   999.]
+        241: &satwindNXTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+        242: &satwindNXTroObsType242Errors [  1.6,    1.9,    3.8,   999.,   999.,   999.,   999.,   999.]
+        243: &satwindNXTroObsType243Errors [  3.7,    3.3,   999.,   999.,   999.,   999.,   999.,   999.]
+        244: &satwindNXTroObsType244Errors [  3.2,    2.9,    3.0,    3.3,    4.0,    4.5,    4.7,   999.]
+        245: &satwindNXTroObsType245Errors [  1.5,    2.0,    3.0,    3.3,    3.6,    3.9,    4.2,    5.1]
+        246: &satwindNXTroObsType246Errors [ 999.,    7.5,    3.5,    3.5,    3.8,    4.0,    4.3,    5.0]
+        247: &satwindNXTroObsType247Errors [ 999.,   999.,    3.3,    3.6,    3.6,    3.8,    3.9,   999.]
+        250: &satwindNXTroObsType250Errors [ 999.,   999.,    2.7,    2.9,    3.2,    3.4,    3.5,    3.6]
+        251: &satwindNXTroObsType251Errors [  1.5,    1.8,    2.7,   999.,   999.,   999.,   999.,   999.]
+        252: &satwindNXTroObsType252Errors [ 999.,    2.3,    2.5,    2.7,    3.0,    3.3,    3.4,    3.4]
+        253: &satwindNXTroObsType253Errors [ 999.,    3.6,    4.0,    5.2,    5.8,    5.5,    4.8,    5.8]
+        254: &satwindNXTroObsType254Errors [ 999.,   999.,    7.5,    7.5,    7.0,    5.7,    4.7,    6.0]
+        255: &satwindNXTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+        257: &satwindNXTroObsType257Errors [  3.2,    2.9,    3.0,    3.1,    3.3,    4.1,    5.2,   10.4]
+        258: &satwindNXTroObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   10.4]
+        259: &satwindNXTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   12.0]
+        260: &satwindNXTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+
+      Tro:
+        240: &satwindTroObsType240Errors [  1.4,    1.7,    2.3,   999.,   999.,   999.,   999.,   999.]
+        241: &satwindTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+        242: &satwindTroObsType242Errors [  1.6,    1.9,    3.8,   999.,   999.,   999.,   999.,   999.]
+        243: &satwindTroObsType243Errors [  3.7,    3.3,   999.,   999.,   999.,   999.,   999.,   999.]
+        244: &satwindTroObsType244Errors [  3.2,    2.9,    3.0,    3.3,    4.0,    4.5,    4.7,   999.]
+        245: &satwindTroObsType245Errors [  1.5,    2.0,    3.0,    3.3,    3.6,    3.9,    4.2,    5.1]
+        246: &satwindTroObsType246Errors [ 999.,    7.5,    3.5,    3.5,    3.8,    4.0,    4.3,    5.0]
+        247: &satwindTroObsType247Errors [ 999.,   999.,    3.3,    3.6,    3.6,    3.8,    3.9,   999.]
+        250: &satwindTroObsType250Errors [ 999.,   999.,    2.7,    2.9,    3.2,    3.4,    3.5,    3.6]
+        251: &satwindTroObsType251Errors [  1.5,    1.8,    2.7,   999.,   999.,   999.,   999.,   999.]
+        252: &satwindTroObsType252Errors [ 999.,    2.3,    2.5,    2.7,    3.0,    3.3,    3.4,    3.4]
+        253: &satwindTroObsType253Errors [ 999.,    3.6,    4.0,    5.2,    5.8,    5.5,    4.8,    5.8]
+        254: &satwindTroObsType254Errors [ 999.,   999.,    7.5,    7.5,    7.0,    5.7,    4.7,    6.0]
+        255: &satwindTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+        257: &satwindTroObsType257Errors [  3.2,    2.9,    3.0,    3.1,    3.3,    4.1,    5.2,   10.4]
+        258: &satwindTroObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   10.4]
+        259: &satwindTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   12.0]
+        260: &satwindTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+
+      SXTro:
+        240: &satwindSXTroObsType240Errors [  1.4,    1.7,    2.3,   999.,   999.,   999.,   999.,   999.]
+        241: &satwindSXTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+        242: &satwindSXTroObsType242Errors [  1.6,    1.9,    3.8,   999.,   999.,   999.,   999.,   999.]
+        243: &satwindSXTroObsType243Errors [  3.7,    3.3,   999.,   999.,   999.,   999.,   999.,   999.]
+        244: &satwindSXTroObsType244Errors [  3.2,    2.9,    3.0,    3.3,    4.0,    4.5,    4.7,   999.]
+        245: &satwindSXTroObsType245Errors [  1.5,    2.0,    3.0,    3.3,    3.6,    3.9,    4.2,    5.1]
+        246: &satwindSXTroObsType246Errors [ 999.,    7.5,    3.5,    3.5,    3.8,    4.0,    4.3,    5.0]
+        247: &satwindSXTroObsType247Errors [ 999.,   999.,    3.3,    3.6,    3.6,    3.8,    3.9,   999.]
+        250: &satwindSXTroObsType250Errors [ 999.,   999.,    2.7,    2.9,    3.2,    3.4,    3.5,    3.6]
+        251: &satwindSXTroObsType251Errors [  1.5,    1.8,    2.7,   999.,   999.,   999.,   999.,   999.]
+        252: &satwindSXTroObsType252Errors [ 999.,    2.3,    2.5,    2.7,    3.0,    3.3,    3.4,    3.4]
+        253: &satwindSXTroObsType253Errors [ 999.,    3.6,    4.0,    5.2,    5.8,    5.5,    4.8,    5.8]
+        254: &satwindSXTroObsType254Errors [ 999.,   999.,    7.5,    7.5,    7.0,    5.7,    4.7,    6.0]
+        255: &satwindSXTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+        257: &satwindSXTroObsType257Errors [  3.2,    2.9,    3.0,    3.1,    3.3,    4.1,    5.2,   10.4]
+        258: &satwindSXTroObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   10.4]
+        259: &satwindSXTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   12.0]
+        260: &satwindSXTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
