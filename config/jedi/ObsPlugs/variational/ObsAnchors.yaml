@@ -47,9 +47,9 @@ _background check relative thresholds:
   gnssrobndnbam: &gnssrobndnbamBGRelThresh 3.0
   gnssrobndropp1d: &gnssrobndropp1dBGRelThresh 3.0
   gnssrorefncep: &gnssrorefncepBGRelThresh 3.0
-  iasi_metop-a: &iasi_metop-aBGRelThresh 3.0
-  iasi_metop-b: &iasi_metop-bBGRelThresh 3.0
-  iasi_metop-c: &iasi_metop-cBGRelThresh 3.0
+  iasi_metop-a: &iasi_metop-aBGRelThresh 3.0 # no impact for filtersWithBias -> modify ObsErrorBoundIR
+  iasi_metop-b: &iasi_metop-bBGRelThresh 3.0 # no impact for filtersWithBias -> modify ObsErrorBoundIR
+  iasi_metop-c: &iasi_metop-cBGRelThresh 3.0 # no impact for filtersWithBias -> modify ObsErrorBoundIR
   satwind: &satwindBGRelThresh 3.0
   sfc: &sfcBGRelThresh 3.0
   sondes: &sondesBGRelThresh 3.0
