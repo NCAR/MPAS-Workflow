@@ -40,6 +40,11 @@ _background check relative thresholds:
   iasi_metop-a: &iasi_metop-aBGRelThresh 10.0
   iasi_metop-b: &iasi_metop-bBGRelThresh 10.0
   iasi_metop-c: &iasi_metop-cBGRelThresh 10.0
+  mhs_metop-a: &mhs_metop-aBGRelThresh 10.0
+  mhs_metop-b: &mhs_metop-bBGRelThresh 10.0
+  mhs_metop-c: &mhs_metop-cBGRelThresh 10.0
+  mhs_n18: &mhs_n18BGRelThresh 10.0
+  mhs_n19: &mhs_n19BGRelThresh 10.0
   satwind: &satwindBGRelThresh 10.0
   sfc: &sfcBGRelThresh 10.0
   sondes: &sondesBGRelThresh 10.0
