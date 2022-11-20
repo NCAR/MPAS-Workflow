@@ -109,82 +109,82 @@ _satwind:
     # filtered out by other means in order to avoid polluting post-processed statistics.
     by ObsType:
       # caused degradation in tropics for 6-hr forecasted GFS analysis U/V
-      240: &satwindObsType240Errors [  1.4,    1.7,    2.3,   999.,   999.,   999.,   999.,   999.]
-      241: &satwindObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
-      242: &satwindObsType242Errors [  1.6,    1.9,    3.8,   999.,   999.,   999.,   999.,   999.]
-      243: &satwindObsType243Errors [  3.7,    3.3,   999.,   999.,   999.,   999.,   999.,   999.]
-      244: &satwindObsType244Errors [  3.2,    2.9,    3.0,    3.3,    4.0,    4.5,    4.7,   999.]
-      245: &satwindObsType245Errors [  1.5,    2.0,    3.0,    3.3,    3.6,    3.9,    4.2,    5.1]
-      246: &satwindObsType246Errors [ 999.,    7.5,    3.5,    3.5,    3.8,    4.0,    4.3,    5.0]
-      247: &satwindObsType247Errors [ 999.,   999.,    3.3,    3.6,    3.6,    3.8,    3.9,   999.]
-      250: &satwindObsType250Errors [ 999.,   999.,    2.7,    2.9,    3.2,    3.4,    3.5,    3.6]
-      251: &satwindObsType251Errors [  1.5,    1.8,    2.7,   999.,   999.,   999.,   999.,   999.]
-      252: &satwindObsType252Errors [ 999.,    2.3,    2.5,    2.7,    3.0,    3.3,    3.4,    3.4]
-      253: &satwindObsType253Errors [ 999.,    3.6,    4.0,    5.2,    5.8,    5.5,    4.8,    5.8]
-      254: &satwindObsType254Errors [ 999.,   999.,    7.5,    7.5,    7.0,    5.7,    4.7,    6.0]
-      255: &satwindObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
-      257: &satwindObsType257Errors [  3.2,    2.9,    3.0,    3.1,    3.3,    4.1,    5.2,   999.]
-      258: &satwindObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   999.]
-      259: &satwindObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   999.]
-      260: &satwindObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+      _240: &satwindObsType240Errors [  1.4,    1.7,    2.3,   999.,   999.,   999.,   999.,   999.]
+      _241: &satwindObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+      _242: &satwindObsType242Errors [  1.6,    1.9,    3.8,   999.,   999.,   999.,   999.,   999.]
+      _243: &satwindObsType243Errors [  3.7,    3.3,   999.,   999.,   999.,   999.,   999.,   999.]
+      _244: &satwindObsType244Errors [  3.2,    2.9,    3.0,    3.3,    4.0,    4.5,    4.7,   999.]
+      _245: &satwindObsType245Errors [  1.5,    2.0,    3.0,    3.3,    3.6,    3.9,    4.2,    5.1]
+      _246: &satwindObsType246Errors [ 999.,    7.5,    3.5,    3.5,    3.8,    4.0,    4.3,    5.0]
+      _247: &satwindObsType247Errors [ 999.,   999.,    3.3,    3.6,    3.6,    3.8,    3.9,   999.]
+      _250: &satwindObsType250Errors [ 999.,   999.,    2.7,    2.9,    3.2,    3.4,    3.5,    3.6]
+      _251: &satwindObsType251Errors [  1.5,    1.8,    2.7,   999.,   999.,   999.,   999.,   999.]
+      _252: &satwindObsType252Errors [ 999.,    2.3,    2.5,    2.7,    3.0,    3.3,    3.4,    3.4]
+      _253: &satwindObsType253Errors [ 999.,    3.6,    4.0,    5.2,    5.8,    5.5,    4.8,    5.8]
+      _254: &satwindObsType254Errors [ 999.,   999.,    7.5,    7.5,    7.0,    5.7,    4.7,    6.0]
+      _255: &satwindObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
+      _257: &satwindObsType257Errors [  3.2,    2.9,    3.0,    3.1,    3.3,    4.1,    5.2,   999.]
+      _258: &satwindObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   999.]
+      _259: &satwindObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   999.]
+      _260: &satwindObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
     by named latitude band and ObsType:
       NXTro:
-        240: &satwindNXTroObsType240Errors [  1.8,    2.2,    3.2,   999.,   999.,   999.,   999.,   999.] # satwnd
-        241: &satwindNXTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        242: &satwindNXTroObsType242Errors [  2.1,    2.3,    3.8,   999.,   999.,   999.,   999.,   999.] # satwind
-        243: &satwindNXTroObsType243Errors [  3.8,    3.5,   999.,   999.,   999.,   999.,   999.,   999.] # satwind
-        244: &satwindNXTroObsType244Errors [  2.8,    2.6,    2.8,    3.1,    4.0,    4.2,    2.2,   999.] # satwnd
-        245: &satwindNXTroObsType245Errors [  1.7,    2.2,    3.2,    3.4,    3.6,    3.9,    3.9,    4.0] # satwind, satwnd
-        246: &satwindNXTroObsType246Errors [ 999.,    7.5,    3.3,    3.5,    3.8,    3.9,    4.0,    3.8] # satwind
-        247: &satwindNXTroObsType247Errors [ 999.,   999.,    3.2,    3.6,    3.8,    3.9,    3.9,   999.] # satwnd
-        250: &satwindNXTroObsType250Errors [ 999.,   999.,    2.7,    3.0,    3.2,    3.7,    3.9,    3.4] # satwind
-        251: &satwindNXTroObsType251Errors [  1.7,    2.2,    3.0,   999.,   999.,   999.,   999.,   999.] # satwnd
-        252: &satwindNXTroObsType252Errors [ 999.,    2.6,    2.6,    2.7,    3.1,    3.4,    3.7,    3.1] # satwind
-        253: &satwindNXTroObsType253Errors [ 999.,    4.0,    4.3,    5.1,    5.3,    5.5,    5.6,   13.0] # satwind
-        254: &satwindNXTroObsType254Errors [ 999.,   999.,    7.0,    6.2,    6.2,    5.3,    5.7,   12.0] # satwind
-        255: &satwindNXTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        257: &satwindNXTroObsType257Errors [  2.8,    2.6,    2.7,    2.8,    3.3,    4.1,    5.2,   999.] # satwind
-        258: &satwindNXTroObsType258Errors [ 999.,   999.,   999.,    2.8,    3.3,    4.0,    5.2,   999.] # satwind
-        259: &satwindNXTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   999.] # satwind
-        260: &satwindNXTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+        _240: &satwindNXTroObsType240Errors [  1.8,    2.2,    3.2,   999.,   999.,   999.,   999.,   999.] # satwnd
+        _241: &satwindNXTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+        _242: &satwindNXTroObsType242Errors [  2.1,    2.3,    3.8,   999.,   999.,   999.,   999.,   999.] # satwind
+        _243: &satwindNXTroObsType243Errors [  3.8,    3.5,   999.,   999.,   999.,   999.,   999.,   999.] # satwind
+        _244: &satwindNXTroObsType244Errors [  2.8,    2.6,    2.8,    3.1,    4.0,    4.2,    2.2,   999.] # satwnd
+        _245: &satwindNXTroObsType245Errors [  1.7,    2.2,    3.2,    3.4,    3.6,    3.9,    3.9,    4.0] # satwind, satwnd
+        _246: &satwindNXTroObsType246Errors [ 999.,    7.5,    3.3,    3.5,    3.8,    3.9,    4.0,    3.8] # satwind
+        _247: &satwindNXTroObsType247Errors [ 999.,   999.,    3.2,    3.6,    3.8,    3.9,    3.9,   999.] # satwnd
+        _250: &satwindNXTroObsType250Errors [ 999.,   999.,    2.7,    3.0,    3.2,    3.7,    3.9,    3.4] # satwind
+        _251: &satwindNXTroObsType251Errors [  1.7,    2.2,    3.0,   999.,   999.,   999.,   999.,   999.] # satwnd
+        _252: &satwindNXTroObsType252Errors [ 999.,    2.6,    2.6,    2.7,    3.1,    3.4,    3.7,    3.1] # satwind
+        _253: &satwindNXTroObsType253Errors [ 999.,    4.0,    4.3,    5.1,    5.3,    5.5,    5.6,   13.0] # satwind
+        _254: &satwindNXTroObsType254Errors [ 999.,   999.,    7.0,    6.2,    6.2,    5.3,    5.7,   12.0] # satwind
+        _255: &satwindNXTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+        _257: &satwindNXTroObsType257Errors [  2.8,    2.6,    2.7,    2.8,    3.3,    4.1,    5.2,   999.] # satwind
+        _258: &satwindNXTroObsType258Errors [ 999.,   999.,   999.,    2.8,    3.3,    4.0,    5.2,   999.] # satwind
+        _259: &satwindNXTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   999.] # satwind
+        _260: &satwindNXTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
 
       Tro:
-        240: &satwindTroObsType240Errors [  1.3,    1.6,    1.7,   999.,   999.,   999.,   999.,   999.] # satwnd
-        241: &satwindTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        242: &satwindTroObsType242Errors [  1.5,    1.8,    3.8,   999.,   999.,   999.,   999.,   999.] # satwind
-        243: &satwindTroObsType243Errors [  3.0,    2.8,   999.,   999.,   999.,   999.,   999.,   999.] # satwind
-        244: &satwindTroObsType244Errors [  3.2,    2.9,    3.0,    3.3,    4.0,    4.5,    4.7,   999.] # none
-        245: &satwindTroObsType245Errors [  1.3,    1.7,    2.2,    2.4,    3.0,    4.0,    4.0,    5.2] # satwnd, satwind
-        246: &satwindTroObsType246Errors [ 999.,    7.5,    3.5,    3.4,    3.8,    4.0,    4.3,    5.0] # satwind
-        247: &satwindTroObsType247Errors [ 999.,   999.,    3.0,    2.7,    3.0,    3.6,    3.8,   999.] # satwnd
-        250: &satwindTroObsType250Errors [ 999.,   999.,    2.7,    2.7,    2.8,    3.2,    3.4,    3.5] # satwind
-        251: &satwindTroObsType251Errors [  1.4,    1.6,    2.3,   999.,   999.,   999.,   999.,   999.] # satwnd
-        252: &satwindTroObsType252Errors [ 999.,    2.3,    2.3,    2.5,    2.7,    3.1,    3.3,    3.5] # satwind
-        253: &satwindTroObsType253Errors [ 999.,    3.6,    4.0,    5.2,    5.8,    5.0,    4.3,    5.8] # satwind
-        254: &satwindTroObsType254Errors [ 999.,   999.,    7.5,    7.5,    7.0,    5.7,    4.5,    5.8] # satwind, U>>V
-        255: &satwindTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        257: &satwindTroObsType257Errors [  3.2,    2.9,    3.0,    3.1,    3.3,    4.1,    5.2,   999.] # none
-        258: &satwindTroObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   999.] # none
-        259: &satwindTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   999.] # none
-        260: &satwindTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+        _240: &satwindTroObsType240Errors [  1.3,    1.6,    1.7,   999.,   999.,   999.,   999.,   999.] # satwnd
+        _241: &satwindTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+        _242: &satwindTroObsType242Errors [  1.5,    1.8,    3.8,   999.,   999.,   999.,   999.,   999.] # satwind
+        _243: &satwindTroObsType243Errors [  3.0,    2.8,   999.,   999.,   999.,   999.,   999.,   999.] # satwind
+        _244: &satwindTroObsType244Errors [  3.2,    2.9,    3.0,    3.3,    4.0,    4.5,    4.7,   999.] # none
+        _245: &satwindTroObsType245Errors [  1.3,    1.7,    2.2,    2.4,    3.0,    4.0,    4.0,    5.2] # satwnd, satwind
+        _246: &satwindTroObsType246Errors [ 999.,    7.5,    3.5,    3.4,    3.8,    4.0,    4.3,    5.0] # satwind
+        _247: &satwindTroObsType247Errors [ 999.,   999.,    3.0,    2.7,    3.0,    3.6,    3.8,   999.] # satwnd
+        _250: &satwindTroObsType250Errors [ 999.,   999.,    2.7,    2.7,    2.8,    3.2,    3.4,    3.5] # satwind
+        _251: &satwindTroObsType251Errors [  1.4,    1.6,    2.3,   999.,   999.,   999.,   999.,   999.] # satwnd
+        _252: &satwindTroObsType252Errors [ 999.,    2.3,    2.3,    2.5,    2.7,    3.1,    3.3,    3.5] # satwind
+        _253: &satwindTroObsType253Errors [ 999.,    3.6,    4.0,    5.2,    5.8,    5.0,    4.3,    5.8] # satwind
+        _254: &satwindTroObsType254Errors [ 999.,   999.,    7.5,    7.5,    7.0,    5.7,    4.5,    5.8] # satwind, U>>V
+        _255: &satwindTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+        _257: &satwindTroObsType257Errors [  3.2,    2.9,    3.0,    3.1,    3.3,    4.1,    5.2,   999.] # none
+        _258: &satwindTroObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   999.] # none
+        _259: &satwindTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   999.] # none
+        _260: &satwindTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
 
       SXTro:
-        240: &satwindSXTroObsType240Errors [  1.6,    2.1,    2.6,   999.,   999.,   999.,   999.,   999.] # satwnd
-        241: &satwindSXTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        242: &satwindSXTroObsType242Errors [  1.8,    2.0,    3.8,   999.,   999.,   999.,   999.,   999.] # satwind
-        243: &satwindSXTroObsType243Errors [  3.7,    2.7,   999.,   999.,   999.,   999.,   999.,   999.] # satwind
-        244: &satwindSXTroObsType244Errors [  4.0,    3.2,    3.2,    3.4,    3.9,    4.7,    4.7,   999.] # satwnd
-        #245: &satwindSXTroObsType245Errors [  1.8,    2.2,    3.3,    4.0,    4.4,    4.8,    5.7,    5.1] # satwnd
-        245: &satwindSXTroObsType245Errors [  1.5,    2.0,    3.0,    3.5,    3.6,    4.1,    4.8,    4.5] # satwind
-        246: &satwindSXTroObsType246Errors [ 999.,    7.5,    3.5,    3.8,    3.8,    4.4,    5.0,    4.8] # satwind
-        247: &satwindSXTroObsType247Errors [ 999.,   999.,    3.8,    4.0,    4.1,    4.7,    5.3,   999.] # satwnd
-        250: &satwindSXTroObsType250Errors [ 999.,   999.,    3.0,    3.1,    3.5,    3.8,    3.8,    3.3] # satwind
-        251: &satwindSXTroObsType251Errors [  1.6,    2.0,    2.2,   999.,   999.,   999.,   999.,   999.] # satwnd
-        252: &satwindSXTroObsType252Errors [ 999.,    2.4,    2.7,    3.2,    3.5,    3.7,    3.7,    2.9] # satwind
-        253: &satwindSXTroObsType253Errors [ 999.,    2.7,    3.8,    5.2,    5.8,    6.3,    7.0,    7.1] # satwind
-        254: &satwindSXTroObsType254Errors [ 999.,   999.,    6.5,    7.0,    6.8,    6.1,    7.0,   11.0] # satwind, U>V
-        255: &satwindSXTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        257: &satwindSXTroObsType257Errors [  4.1,    3.2,    3.2,    3.2,    3.4,    4.1,    5.2,   999.] # satwind
-        258: &satwindSXTroObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   999.] # satwind
-        259: &satwindSXTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    4.0,    6.0,   999.] # satwind
-        260: &satwindSXTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+        _240: &satwindSXTroObsType240Errors [  1.6,    2.1,    2.6,   999.,   999.,   999.,   999.,   999.] # satwnd
+        _241: &satwindSXTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+        _242: &satwindSXTroObsType242Errors [  1.8,    2.0,    3.8,   999.,   999.,   999.,   999.,   999.] # satwind
+        _243: &satwindSXTroObsType243Errors [  3.7,    2.7,   999.,   999.,   999.,   999.,   999.,   999.] # satwind
+        _244: &satwindSXTroObsType244Errors [  4.0,    3.2,    3.2,    3.4,    3.9,    4.7,    4.7,   999.] # satwnd
+        #_245: &satwindSXTroObsType245Errors [  1.8,    2.2,    3.3,    4.0,    4.4,    4.8,    5.7,    5.1] # satwnd
+        _245: &satwindSXTroObsType245Errors [  1.5,    2.0,    3.0,    3.5,    3.6,    4.1,    4.8,    4.5] # satwind
+        _246: &satwindSXTroObsType246Errors [ 999.,    7.5,    3.5,    3.8,    3.8,    4.4,    5.0,    4.8] # satwind
+        _247: &satwindSXTroObsType247Errors [ 999.,   999.,    3.8,    4.0,    4.1,    4.7,    5.3,   999.] # satwnd
+        _250: &satwindSXTroObsType250Errors [ 999.,   999.,    3.0,    3.1,    3.5,    3.8,    3.8,    3.3] # satwind
+        _251: &satwindSXTroObsType251Errors [  1.6,    2.0,    2.2,   999.,   999.,   999.,   999.,   999.] # satwnd
+        _252: &satwindSXTroObsType252Errors [ 999.,    2.4,    2.7,    3.2,    3.5,    3.7,    3.7,    2.9] # satwind
+        _253: &satwindSXTroObsType253Errors [ 999.,    2.7,    3.8,    5.2,    5.8,    6.3,    7.0,    7.1] # satwind
+        _254: &satwindSXTroObsType254Errors [ 999.,   999.,    6.5,    7.0,    6.8,    6.1,    7.0,   11.0] # satwind, U>V
+        _255: &satwindSXTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+        _257: &satwindSXTroObsType257Errors [  4.1,    3.2,    3.2,    3.2,    3.4,    4.1,    5.2,   999.] # satwind
+        _258: &satwindSXTroObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   999.] # satwind
+        _259: &satwindSXTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    4.0,    6.0,   999.] # satwind
+        _260: &satwindSXTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
