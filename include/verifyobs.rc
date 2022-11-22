@@ -1,7 +1,7 @@
   # ... for deterministic DA in observation space only (OMB+OMA together)
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
-{% if CriticalPathType in ["Normal", "Reanalysis"] and VerifyDeterministicDA and nMembers < 2 %}
+{% if CriticalPathType in ["Normal", "Reanalysis", "Bypass"] and VerifyDeterministicDA and nMembers < 2 %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         DataAssimFinished => VerifyObsDA
