@@ -1,5 +1,5 @@
 verifymodel:
-  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics_highResGNSSRO
+  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics_highResGNSSRO_satwindObsType
 
 ## mesh-specific settings
   # resource requirements
