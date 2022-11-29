@@ -76,7 +76,7 @@ variational:
           secondsPerEnVarMember: 20
 
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70_RefNCEP_BendMetOffice_MidPol'
+  ExpSuffix: '_ensB-SE80+RTPP70_RefNCEP_BendMetOffice_MidPol_1stDoaDob'
 
 observations:
   resource: PANDACArchive
