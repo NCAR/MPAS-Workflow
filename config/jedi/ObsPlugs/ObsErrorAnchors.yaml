@@ -124,11 +124,11 @@ _satwind:
     # filtered out by other means in order to avoid polluting post-processed statistics.
     doadob by named latitude band and ObsType 1st training:
       # commands used to modify diagnostic output:
-      # set tmp = $analysisDir/tmp
+      # set tmp = $analysisDir/satwind
       # echo '# satwind' > $tmp
       # cd $analysisDir/satwind_analyses/BinValAxisProfile/ObsError/data
       # grep 'doadob.*ObsType' P_*-ObsType2*.yaml | sed 's@.*yaml:\ \+@@' >> $tmp
-      # vi tmp
+      # vi $tmp
       # :.,$s@doadob\ \(.*\):@\ \ \ \ \ \ \1: \&\1Error@
       #
       # echo '# satwnd' >> $tmp
@@ -270,7 +270,7 @@ _sondes:
     levels: &sondesErrorLevels [500., 1000., 2500., 5000., 10000., 20000., 30000., 40000., 50000., 65000., 80000., 100000.]
 
     # commands used to modify diagnostic output:
-    # set tmp = $analysisDir/tmp
+    # set tmp = $analysisDir/sondes
     # echo 'absolute doadob:' > $tmp
     # cd $analysisDir/sondes_analyses/BinValAxisProfile/ObsError/data
     # grep 'doadob' P_*Tro*.yaml | sed 's@.*yaml:\ \+@@' >> $tmp
@@ -286,7 +286,7 @@ _sondes:
     # :.,$s@\(\d\d\)\.\(\d\+\)@\.\1\2@gc
     # :%s@\ \.@\ 0\.@g
 
-    # latitude band-specific observation errors, i.e., (O-B)/O (unitless)
+    # latitude band-specific observation errors
     absolute doadob:
       NXTro_T: &sondesNXTro_TError [2.872, 2.229, 1.536, 1.25, 1.171, 1.32, 0.9619, 0.7426, 0.7573, 0.8307, 0.9335, 1.372]
       NXTro_U: &sondesNXTro_UError [3.238, 2.97, 2.546, 2.528, 2.599, 2.813, 2.745, 2.478, 2.195, 1.998, 1.914, 1.881]
@@ -315,7 +315,7 @@ _aircraft:
     levels: &aircraftErrorLevels [500., 1000., 2500., 5000., 10000., 20000., 30000., 40000., 50000., 65000., 80000., 100000.]
 
     # commands used to modify diagnostic output:
-    # set tmp = $analysisDir/tmp
+    # set tmp = $analysisDir/aircraft
     # echo 'absolute doadob:' > $tmp
     # cd $analysisDir/aircraft_analyses/BinValAxisProfile/ObsError/data
     # grep 'doadob' P_*Tro*.yaml | sed 's@.*yaml:\ \+@@' >> $tmp
@@ -331,6 +331,7 @@ _aircraft:
     # :.,$s@\(\d\d\)\.\(\d\+\)@\.\1\2@gc
     # :%s@\ \.@\ 0\.@g
 
+    # latitude band-specific observation errors
     absolute doadob:
       NXTro_T: &aircraftNXTro_TError [999.0, 999.0, 999.0, 999.0, 2.402, 1.049, 0.8801, 0.7989, 0.8042, 0.8702, 1.021, 1.382]
       NXTro_U: &aircraftNXTro_UError [999.0, 999.0, 999.0, 999.0, 3.086, 2.846, 2.745, 2.513, 2.385, 2.338, 2.398, 2.409]
@@ -343,6 +344,8 @@ _aircraft:
       Tro_U: &aircraftTro_UError [999.0, 999.0, 999.0, 999.0, 1.829, 2.631, 2.575, 2.338, 2.14, 2.054, 2.21, 2.227]
       Tro_V: &aircraftTro_VError [999.0, 999.0, 999.0, 999.0, 4.249, 2.736, 2.63, 2.363, 2.177, 2.061, 2.168, 2.168]
       #Tro_qv: &aircraftTro_qvError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 0.0001342, 0.0002677, 0.0005069, 0.0008864, 0.001547, 0.001676]
+
+    # latitude band-specific ObsValue-normalized observation errors, i.e., (O-B)/O (unitless)
     relative doadob:
       NXTro_qv: &aircraftNXTro_qvError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 0.6882, 1.022, 1.232, 1.338, 1.121, 0.541]
       SXTro_qv: &aircraftSXTro_qvError *sondesSXTro_qvError
