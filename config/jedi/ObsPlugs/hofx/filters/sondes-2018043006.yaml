@@ -1,8 +1,1 @@
-  get values:
-    <<: *GetValues
-  obs filters:
-  - filter: PreQC
-    maxvalue: 3
-  - filter: Background Check
-    threshold: *sondesBGRelThresh
-    <<: *multiIterationFilter
+../../variational/filters/sondes-2018043006.yaml
