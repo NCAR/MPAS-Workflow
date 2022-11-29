@@ -3,11 +3,11 @@
     maxvalue: 3
 
   # Assign the observation error based on pressure for each ObsType
+  ## U
   # NXTro
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -24,12 +24,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType240Errors
+          errors: *satwindNXTroObsType240_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -46,12 +45,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType241Errors
+          errors: *satwindNXTroObsType241_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -68,12 +66,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType242Errors
+          errors: *satwindNXTroObsType242_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -90,12 +87,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType243Errors
+          errors: *satwindNXTroObsType243_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -112,12 +108,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType244Errors
+          errors: *satwindNXTroObsType244_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -134,12 +129,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType245Errors
+          errors: *satwindNXTroObsType245_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -156,12 +150,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType246Errors
+          errors: *satwindNXTroObsType246_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -178,12 +171,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType247Errors
+          errors: *satwindNXTroObsType247_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -200,12 +192,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType250Errors
+          errors: *satwindNXTroObsType250_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -222,12 +213,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType251Errors
+          errors: *satwindNXTroObsType251_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -244,12 +234,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType252Errors
+          errors: *satwindNXTroObsType252_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -266,12 +255,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType253Errors
+          errors: *satwindNXTroObsType253_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -288,12 +276,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType254Errors
+          errors: *satwindNXTroObsType254_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -310,12 +297,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType255Errors
+          errors: *satwindNXTroObsType255_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -332,12 +318,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType257Errors
+          errors: *satwindNXTroObsType257_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -354,12 +339,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType258Errors
+          errors: *satwindNXTroObsType258_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -376,12 +360,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType259Errors
+          errors: *satwindNXTroObsType259_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -398,14 +381,13 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType260Errors
+          errors: *satwindNXTroObsType260_UError
 
 
   # Tro
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -422,12 +404,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType240Errors
+          errors: *satwindTroObsType240_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -444,12 +425,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType241Errors
+          errors: *satwindTroObsType241_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -466,12 +446,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType242Errors
+          errors: *satwindTroObsType242_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -488,12 +467,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType243Errors
+          errors: *satwindTroObsType243_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -510,12 +488,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType244Errors
+          errors: *satwindTroObsType244_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -532,12 +509,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType245Errors
+          errors: *satwindTroObsType245_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -554,12 +530,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType246Errors
+          errors: *satwindTroObsType246_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -576,12 +551,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType247Errors
+          errors: *satwindTroObsType247_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -598,12 +572,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType250Errors
+          errors: *satwindTroObsType250_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -620,12 +593,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType251Errors
+          errors: *satwindTroObsType251_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -642,12 +614,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType252Errors
+          errors: *satwindTroObsType252_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -664,12 +635,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType253Errors
+          errors: *satwindTroObsType253_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -686,12 +656,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType254Errors
+          errors: *satwindTroObsType254_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -708,12 +677,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType255Errors
+          errors: *satwindTroObsType255_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -730,12 +698,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType257Errors
+          errors: *satwindTroObsType257_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -752,12 +719,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType258Errors
+          errors: *satwindTroObsType258_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -774,12 +740,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType259Errors
+          errors: *satwindTroObsType259_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -796,14 +761,13 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType260Errors
+          errors: *satwindTroObsType260_UError
 
 
   # SXTro
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -820,12 +784,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType240Errors
+          errors: *satwindSXTroObsType240_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -842,12 +805,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType241Errors
+          errors: *satwindSXTroObsType241_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -864,12 +826,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType242Errors
+          errors: *satwindSXTroObsType242_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -886,12 +847,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType243Errors
+          errors: *satwindSXTroObsType243_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -908,12 +868,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType244Errors
+          errors: *satwindSXTroObsType244_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -930,12 +889,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType245Errors
+          errors: *satwindSXTroObsType245_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -952,12 +910,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType246Errors
+          errors: *satwindSXTroObsType246_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -974,12 +931,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType247Errors
+          errors: *satwindSXTroObsType247_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -996,12 +952,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType250Errors
+          errors: *satwindSXTroObsType250_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -1018,12 +973,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType251Errors
+          errors: *satwindSXTroObsType251_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -1040,12 +994,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType252Errors
+          errors: *satwindSXTroObsType252_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -1062,12 +1015,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType253Errors
+          errors: *satwindSXTroObsType253_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -1084,12 +1036,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType254Errors
+          errors: *satwindSXTroObsType254_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -1106,12 +1057,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType255Errors
+          errors: *satwindSXTroObsType255_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -1128,12 +1078,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType257Errors
+          errors: *satwindSXTroObsType257_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -1150,12 +1099,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType258Errors
+          errors: *satwindSXTroObsType258_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -1172,12 +1120,11 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType259Errors
+          errors: *satwindSXTroObsType259_UError
 
   - filter: Perform Action
     filter variables:
     - name: eastward_wind
-    - name: northward_wind
     where:
     - variable:
         name: MetaData/latitude
@@ -1194,7 +1141,1147 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType260Errors
+          errors: *satwindSXTroObsType260_UError
+
+  ## V
+  # NXTro
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 240
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType240_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 241
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType241_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 242
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType242_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 243
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType243_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 244
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType244_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 245
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType245_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 246
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType246_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 247
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType247_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 250
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType250_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 251
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType251_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 252
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType252_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 253
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType253_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 254
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType254_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 255
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType255_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 257
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType257_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 258
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType258_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 259
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType259_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 260
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindNXTroObsType260_VError
+
+
+  # Tro
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 240
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType240_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 241
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType241_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 242
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType242_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 243
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType243_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 244
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType244_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 245
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType245_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 246
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType246_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 247
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType247_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 250
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType250_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 251
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType251_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 252
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType252_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 253
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType253_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 254
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType254_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 255
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType255_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 257
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType257_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 258
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType258_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 259
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType259_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 260
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindTroObsType260_VError
+
+
+  # SXTro
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 240
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType240_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 241
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType241_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 242
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType242_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 243
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType243_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 244
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType244_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 245
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType245_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 246
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType246_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 247
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType247_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 250
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType250_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 251
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType251_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 252
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType252_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 253
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType253_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 254
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType254_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 255
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType255_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 257
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType257_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 258
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType258_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 259
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType259_VError
+
+  - filter: Perform Action
+    filter variables:
+    - name: northward_wind
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    - variable:
+        name: ObsType/northward_wind
+      is_in: 260
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/air_pressure
+          xvals: *satwindErrorLevels
+          errors: *satwindSXTroObsType260_VError
 
   - filter: Background Check
     threshold: *satwindBGRelThresh

@@ -76,7 +76,8 @@ _satwind:
     max: &satwindMaxError 20.
 
     # pressures (Pa) for observation error interpolation
-    levels: &satwindErrorLevels [  100000., 80000., 65000., 50000., 40000., 30000., 20000., 10000.]
+    levels: &satwindErrorLevels [10000., 20000., 30000., 40000., 50000., 65000., 80000., 100000.]
+    default: &satwindDefaultError [ 2.1, 2.7, 3.0, 2.6, 2.1, 1.8, 1.6, 1.4]
 
     # ObsType codes correspond to NOAA practices in GSI source code (src/read_satwnd.F90)
     # [SATID]: applicable BUFR satellite ID's are listed in brackets
@@ -88,8 +89,8 @@ _satwind:
     #242 - JMA Vis [171, 172, 173, 174]
     #243 - EUMETSAT Vis [55, 70]
     #244 - AVHRR [3, 4, 5, 206, 207, 209, 223], no tropics
-    #245 - GOES IR LW [259, 270]
-    #246 - GOES WV cloud top [259, 270]
+    #245 - GOES IR LW [259, 270]; more data from satwnd, use for training
+    #246 - GOES WV cloud top [259, 270]; more data from satwind, use for training
     #247 - GOES WV deep layer (clear) [259, 270]
     #250 - JMA WV deep layer (clear) [171, 172, 173, 174]
     #251 - GOES Vis [259, 270]; satwnd only
@@ -107,84 +108,143 @@ _satwind:
     # allows for a sharp transition region to zero-weighted Jo terms. If the PreQC filter is
     # removed, then heights with 999. either (1) need to have valid values or (2) need to be
     # filtered out by other means in order to avoid polluting post-processed statistics.
-    by ObsType:
-      # caused degradation in tropics for 6-hr forecasted GFS analysis U/V
-      _240: &satwindObsType240Errors [  1.4,    1.7,    2.3,   999.,   999.,   999.,   999.,   999.]
-      _241: &satwindObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
-      _242: &satwindObsType242Errors [  1.6,    1.9,    3.8,   999.,   999.,   999.,   999.,   999.]
-      _243: &satwindObsType243Errors [  3.7,    3.3,   999.,   999.,   999.,   999.,   999.,   999.]
-      _244: &satwindObsType244Errors [  3.2,    2.9,    3.0,    3.3,    4.0,    4.5,    4.7,   999.]
-      _245: &satwindObsType245Errors [  1.5,    2.0,    3.0,    3.3,    3.6,    3.9,    4.2,    5.1]
-      _246: &satwindObsType246Errors [ 999.,    7.5,    3.5,    3.5,    3.8,    4.0,    4.3,    5.0]
-      _247: &satwindObsType247Errors [ 999.,   999.,    3.3,    3.6,    3.6,    3.8,    3.9,   999.]
-      _250: &satwindObsType250Errors [ 999.,   999.,    2.7,    2.9,    3.2,    3.4,    3.5,    3.6]
-      _251: &satwindObsType251Errors [  1.5,    1.8,    2.7,   999.,   999.,   999.,   999.,   999.]
-      _252: &satwindObsType252Errors [ 999.,    2.3,    2.5,    2.7,    3.0,    3.3,    3.4,    3.4]
-      _253: &satwindObsType253Errors [ 999.,    3.6,    4.0,    5.2,    5.8,    5.5,    4.8,    5.8]
-      _254: &satwindObsType254Errors [ 999.,   999.,    7.5,    7.5,    7.0,    5.7,    4.7,    6.0]
-      _255: &satwindObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
-      _257: &satwindObsType257Errors [  3.2,    2.9,    3.0,    3.1,    3.3,    4.1,    5.2,   999.]
-      _258: &satwindObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   999.]
-      _259: &satwindObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   999.]
-      _260: &satwindObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.]
-    by named latitude band and ObsType:
-      NXTro:
-        _240: &satwindNXTroObsType240Errors [  1.8,    2.2,    3.2,   999.,   999.,   999.,   999.,   999.] # satwnd
-        _241: &satwindNXTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        _242: &satwindNXTroObsType242Errors [  2.1,    2.3,    3.8,   999.,   999.,   999.,   999.,   999.] # satwind
-        _243: &satwindNXTroObsType243Errors [  3.8,    3.5,   999.,   999.,   999.,   999.,   999.,   999.] # satwind
-        _244: &satwindNXTroObsType244Errors [  2.8,    2.6,    2.8,    3.1,    4.0,    4.2,    2.2,   999.] # satwnd
-        _245: &satwindNXTroObsType245Errors [  1.7,    2.2,    3.2,    3.4,    3.6,    3.9,    3.9,    4.0] # satwind, satwnd
-        _246: &satwindNXTroObsType246Errors [ 999.,    7.5,    3.3,    3.5,    3.8,    3.9,    4.0,    3.8] # satwind
-        _247: &satwindNXTroObsType247Errors [ 999.,   999.,    3.2,    3.6,    3.8,    3.9,    3.9,   999.] # satwnd
-        _250: &satwindNXTroObsType250Errors [ 999.,   999.,    2.7,    3.0,    3.2,    3.7,    3.9,    3.4] # satwind
-        _251: &satwindNXTroObsType251Errors [  1.7,    2.2,    3.0,   999.,   999.,   999.,   999.,   999.] # satwnd
-        _252: &satwindNXTroObsType252Errors [ 999.,    2.6,    2.6,    2.7,    3.1,    3.4,    3.7,    3.1] # satwind
-        _253: &satwindNXTroObsType253Errors [ 999.,    4.0,    4.3,    5.1,    5.3,    5.5,    5.6,   13.0] # satwind
-        _254: &satwindNXTroObsType254Errors [ 999.,   999.,    7.0,    6.2,    6.2,    5.3,    5.7,   12.0] # satwind
-        _255: &satwindNXTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        _257: &satwindNXTroObsType257Errors [  2.8,    2.6,    2.7,    2.8,    3.3,    4.1,    5.2,   999.] # satwind
-        _258: &satwindNXTroObsType258Errors [ 999.,   999.,   999.,    2.8,    3.3,    4.0,    5.2,   999.] # satwind
-        _259: &satwindNXTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   999.] # satwind
-        _260: &satwindNXTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+    doadob by named latitude band and ObsType 1st training:
+      # commands used to modify diagnostic output:
+      # set tmp = $analysisDir/tmp
+      # echo '# satwind' > $tmp
+      # cd $analysisDir/satwind_analyses/BinValAxisProfile/ObsError/data
+      # grep 'doadob.*ObsType' P_*-ObsType2*.yaml | sed 's@.*yaml:\ \+@@' >> $tmp
+      # vi tmp
+      # :.,$s@doadob\ \(.*\):@\ \ \ \ \ \ \1: \&\1Error@
+      #
+      # echo '# satwnd' >> $tmp
+      # cd $analysisDir/satwnd_analyses/BinValAxisProfile/ObsError/data
+      # grep 'doadob.*ObsType' P_*-ObsType2*.yaml | sed 's@.*yaml:\ \+@@' | sed 's@satwnd@satwind@' >> $tmp
+      # vi $tmp
+      # :%s@doadob\ \(.*\):@\ \ \ \ \ \ \1: \&\1Error@
+      # :%s@\[999\.0,\ 999\.0,\ 999.0,\ 999\.0,@\[@
 
-      Tro:
-        _240: &satwindTroObsType240Errors [  1.3,    1.6,    1.7,   999.,   999.,   999.,   999.,   999.] # satwnd
-        _241: &satwindTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        _242: &satwindTroObsType242Errors [  1.5,    1.8,    3.8,   999.,   999.,   999.,   999.,   999.] # satwind
-        _243: &satwindTroObsType243Errors [  3.0,    2.8,   999.,   999.,   999.,   999.,   999.,   999.] # satwind
-        _244: &satwindTroObsType244Errors [  3.2,    2.9,    3.0,    3.3,    4.0,    4.5,    4.7,   999.] # none
-        _245: &satwindTroObsType245Errors [  1.3,    1.7,    2.2,    2.4,    3.0,    4.0,    4.0,    5.2] # satwnd, satwind
-        _246: &satwindTroObsType246Errors [ 999.,    7.5,    3.5,    3.4,    3.8,    4.0,    4.3,    5.0] # satwind
-        _247: &satwindTroObsType247Errors [ 999.,   999.,    3.0,    2.7,    3.0,    3.6,    3.8,   999.] # satwnd
-        _250: &satwindTroObsType250Errors [ 999.,   999.,    2.7,    2.7,    2.8,    3.2,    3.4,    3.5] # satwind
-        _251: &satwindTroObsType251Errors [  1.4,    1.6,    2.3,   999.,   999.,   999.,   999.,   999.] # satwnd
-        _252: &satwindTroObsType252Errors [ 999.,    2.3,    2.3,    2.5,    2.7,    3.1,    3.3,    3.5] # satwind
-        _253: &satwindTroObsType253Errors [ 999.,    3.6,    4.0,    5.2,    5.8,    5.0,    4.3,    5.8] # satwind
-        _254: &satwindTroObsType254Errors [ 999.,   999.,    7.5,    7.5,    7.0,    5.7,    4.5,    5.8] # satwind, U>>V
-        _255: &satwindTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        _257: &satwindTroObsType257Errors [  3.2,    2.9,    3.0,    3.1,    3.3,    4.1,    5.2,   999.] # none
-        _258: &satwindTroObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   999.] # none
-        _259: &satwindTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    3.8,    6.0,   999.] # none
-        _260: &satwindTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+      # satwind
+      satwindNXTro-ObsType242_U: &satwindNXTro-ObsType242_UError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.764, 1.595]
+      satwindNXTro-ObsType242_V: &satwindNXTro-ObsType242_VError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.759, 1.6]
+      satwindNXTro-ObsType243_U: &satwindNXTro-ObsType243_UError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.662, 1.468]
+      satwindNXTro-ObsType243_V: &satwindNXTro-ObsType243_VError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.694, 1.499]
+      #satwindNXTro-ObsType245_U: &satwindNXTro-ObsType245_UError [2.747, 3.247, 3.356, 2.971, 2.585, 2.369, 1.735, 1.583]
+      #satwindNXTro-ObsType245_V: &satwindNXTro-ObsType245_VError [3.375, 3.325, 3.281, 2.927, 2.565, 2.347, 1.74, 1.506]
+      satwindNXTro-ObsType246_U: &satwindNXTro-ObsType246_UError [3.206, 3.241, 3.323, 3.078, 2.65, 2.309, 999.0, 999.0]
+      satwindNXTro-ObsType246_V: &satwindNXTro-ObsType246_VError [3.167, 3.314, 3.254, 3.029, 2.625, 2.4, 999.0, 999.0]
+      satwindNXTro-ObsType250_U: &satwindNXTro-ObsType250_UError [2.683, 2.934, 2.865, 2.627, 2.354, 2.212, 999.0, 999.0]
+      satwindNXTro-ObsType250_V: &satwindNXTro-ObsType250_VError [2.713, 3.037, 3.049, 2.689, 2.326, 2.126, 999.0, 999.0]
+      satwindNXTro-ObsType252_U: &satwindNXTro-ObsType252_UError [2.444, 2.888, 2.808, 2.561, 2.299, 2.065, 1.936, 999.0]
+      satwindNXTro-ObsType252_V: &satwindNXTro-ObsType252_VError [2.54, 3.047, 2.969, 2.605, 2.288, 2.112, 1.949, 999.0]
+      satwindNXTro-ObsType253_U: &satwindNXTro-ObsType253_UError [4.066, 3.664, 3.493, 3.075, 2.623, 2.222, 1.929, 999.0]
+      satwindNXTro-ObsType253_V: &satwindNXTro-ObsType253_VError [1.821, 3.346, 3.301, 2.921, 2.522, 2.075, 1.901, 999.0]
+      satwindNXTro-ObsType254_U: &satwindNXTro-ObsType254_UError [3.462, 3.572, 3.463, 3.193, 2.765, 2.588, 999.0, 999.0]
+      satwindNXTro-ObsType254_V: &satwindNXTro-ObsType254_VError [3.297, 3.384, 3.257, 3.074, 2.652, 2.429, 999.0, 999.0]
+      satwindNXTro-ObsType257_U: &satwindNXTro-ObsType257_UError [999.0, 999.0, 3.405, 2.801, 2.458, 2.265, 2.068, 1.957]
+      satwindNXTro-ObsType257_V: &satwindNXTro-ObsType257_VError [999.0, 999.0, 3.242, 2.833, 2.404, 2.321, 2.033, 1.95]
+      satwindNXTro-ObsType258_U: &satwindNXTro-ObsType258_UError [999.0, 2.891, 3.159, 2.72, 2.38, 999.0, 999.0, 999.0]
+      satwindNXTro-ObsType258_V: &satwindNXTro-ObsType258_VError [999.0, 6.619, 3.503, 2.869, 2.438, 999.0, 999.0, 999.0]
+      satwindNXTro-ObsType259_U: &satwindNXTro-ObsType259_UError [999.0, 999.0, 2.971, 2.588, 2.312, 999.0, 999.0, 999.0]
+      satwindNXTro-ObsType259_V: &satwindNXTro-ObsType259_VError [999.0, 999.0, 3.078, 2.583, 2.278, 999.0, 999.0, 999.0]
+      satwindSXTro-ObsType242_U: &satwindSXTro-ObsType242_UError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.564, 1.439]
+      satwindSXTro-ObsType242_V: &satwindSXTro-ObsType242_VError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.625, 1.452]
+      satwindSXTro-ObsType243_U: &satwindSXTro-ObsType243_UError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.45, 1.4]
+      satwindSXTro-ObsType243_V: &satwindSXTro-ObsType243_VError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.458, 1.398]
+      #satwindSXTro-ObsType245_U: &satwindSXTro-ObsType245_UError [2.632, 3.089, 3.157, 2.913, 2.59, 2.14, 1.58, 1.288]
+      #satwindSXTro-ObsType245_V: &satwindSXTro-ObsType245_VError [3.267, 3.07, 3.144, 2.617, 2.375, 2.051, 1.52, 1.196]
+      satwindSXTro-ObsType246_U: &satwindSXTro-ObsType246_UError [2.681, 3.155, 3.212, 2.95, 2.685, 2.082, 999.0, 999.0]
+      satwindSXTro-ObsType246_V: &satwindSXTro-ObsType246_VError [3.057, 3.182, 3.178, 2.84, 2.533, 2.234, 999.0, 999.0]
+      satwindSXTro-ObsType250_U: &satwindSXTro-ObsType250_UError [2.787, 2.811, 2.73, 2.538, 2.261, 2.168, 999.0, 999.0]
+      satwindSXTro-ObsType250_V: &satwindSXTro-ObsType250_VError [2.733, 2.883, 2.845, 2.639, 2.374, 2.152, 999.0, 999.0]
+      satwindSXTro-ObsType252_U: &satwindSXTro-ObsType252_UError [2.655, 2.724, 2.694, 2.493, 2.308, 2.053, 1.834, 999.0]
+      satwindSXTro-ObsType252_V: &satwindSXTro-ObsType252_VError [2.74, 2.889, 2.86, 2.595, 2.342, 1.997, 1.831, 999.0]
+      satwindSXTro-ObsType253_U: &satwindSXTro-ObsType253_UError [3.111, 3.678, 3.447, 2.944, 2.584, 2.044, 1.693, 999.0]
+      satwindSXTro-ObsType253_V: &satwindSXTro-ObsType253_VError [4.313, 3.525, 3.136, 2.801, 2.383, 1.967, 1.693, 999.0]
+      satwindSXTro-ObsType254_U: &satwindSXTro-ObsType254_UError [3.605, 3.628, 3.361, 3.179, 2.652, 2.43, 999.0, 999.0]
+      satwindSXTro-ObsType254_V: &satwindSXTro-ObsType254_VError [4.867, 3.398, 3.144, 2.969, 2.498, 2.328, 999.0, 999.0]
+      satwindSXTro-ObsType257_U: &satwindSXTro-ObsType257_UError [999.0, 3.675, 3.07, 2.679, 2.463, 2.276, 2.068, 2.046]
+      satwindSXTro-ObsType257_V: &satwindSXTro-ObsType257_VError [999.0, 3.469, 2.974, 2.711, 2.462, 2.297, 2.088, 2.077]
+      satwindSXTro-ObsType258_U: &satwindSXTro-ObsType258_UError [999.0, 2.601, 3.086, 2.634, 2.473, 999.0, 999.0, 999.0]
+      satwindSXTro-ObsType258_V: &satwindSXTro-ObsType258_VError [999.0, 2.641, 3.016, 2.597, 2.388, 999.0, 999.0, 999.0]
+      satwindSXTro-ObsType259_U: &satwindSXTro-ObsType259_UError [999.0, 5.459, 3.277, 2.557, 2.299, 999.0, 999.0, 999.0]
+      satwindSXTro-ObsType259_V: &satwindSXTro-ObsType259_VError [999.0, 5.131, 3.31, 2.556, 2.384, 999.0, 999.0, 999.0]
+      satwindTro-ObsType242_U: &satwindTro-ObsType242_UError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.533, 1.311]
+      satwindTro-ObsType242_V: &satwindTro-ObsType242_VError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.504, 1.308]
+      satwindTro-ObsType243_U: &satwindTro-ObsType243_UError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.546, 1.232]
+      satwindTro-ObsType243_V: &satwindTro-ObsType243_VError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 1.523, 1.272]
+      #satwindTro-ObsType245_U: &satwindTro-ObsType245_UError [2.96, 3.032, 3.254, 3.083, 2.479, 2.068, 1.622, 1.288]
+      #satwindTro-ObsType245_V: &satwindTro-ObsType245_VError [3.19, 3.036, 3.066, 2.785, 2.493, 2.046, 1.619, 1.231]
+      satwindTro-ObsType246_U: &satwindTro-ObsType246_UError [3.061, 3.052, 3.255, 3.085, 2.607, 2.446, 999.0, 999.0]
+      satwindTro-ObsType246_V: &satwindTro-ObsType246_VError [3.077, 3.041, 3.183, 2.881, 2.658, 2.515, 999.0, 999.0]
+      satwindTro-ObsType250_U: &satwindTro-ObsType250_UError [2.447, 2.541, 2.578, 2.44, 2.262, 2.136, 999.0, 999.0]
+      satwindTro-ObsType250_V: &satwindTro-ObsType250_VError [2.607, 2.703, 2.768, 2.474, 2.25, 2.171, 999.0, 999.0]
+      satwindTro-ObsType252_U: &satwindTro-ObsType252_UError [2.427, 2.501, 2.568, 2.389, 2.147, 1.965, 1.827, 999.0]
+      satwindTro-ObsType252_V: &satwindTro-ObsType252_VError [2.546, 2.672, 2.696, 2.37, 2.095, 1.89, 1.746, 999.0]
+      satwindTro-ObsType253_U: &satwindTro-ObsType253_UError [2.99, 2.911, 3.347, 3.301, 2.634, 2.265, 2.01, 999.0]
+      satwindTro-ObsType253_V: &satwindTro-ObsType253_VError [2.976, 2.864, 3.116, 3.027, 2.52, 2.146, 1.826, 999.0]
+      satwindTro-ObsType254_U: &satwindTro-ObsType254_UError [2.944, 2.944, 3.597, 3.548, 2.811, 2.526, 999.0, 999.0]
+      satwindTro-ObsType254_V: &satwindTro-ObsType254_VError [2.949, 2.937, 3.405, 3.241, 2.749, 2.465, 999.0, 999.0]
+      #satwnd
+      satwindNXTro-ObsType240_U: &satwindNXTro-ObsType240_UError [999.0, 999.0, 999.0, 999.0, 999.0, 1.921, 1.768, 1.498]
+      satwindNXTro-ObsType240_V: &satwindNXTro-ObsType240_VError [999.0, 999.0, 999.0, 999.0, 999.0, 1.826, 1.727, 1.433]
+      satwindNXTro-ObsType244_U: &satwindNXTro-ObsType244_UError [999.0, 1.588, 3.338, 3.036, 2.526, 2.201, 2.009, 1.955]
+      satwindNXTro-ObsType244_V: &satwindNXTro-ObsType244_VError [999.0, 2.601, 3.462, 2.995, 2.5, 2.277, 2.022, 1.951]
+      satwindNXTro-ObsType245_U: &satwindNXTro-ObsType245_UError [999.0, 3.292, 3.307, 3.154, 2.617, 2.266, 1.877, 1.509]
+      satwindNXTro-ObsType245_V: &satwindNXTro-ObsType245_VError [999.0, 3.236, 3.327, 3.113, 2.652, 2.327, 1.896, 1.493]
+      #satwindNXTro-ObsType246_U: &satwindNXTro-ObsType246_UError [ 999.0, 3.202, 3.31, 999.0, 999.0, 999.0, 999.0, 999.0]
+      #satwindNXTro-ObsType246_V: &satwindNXTro-ObsType246_VError [ 999.0, 3.181, 3.406, 999.0, 999.0, 999.0, 999.0, 999.0]
+      satwindNXTro-ObsType247_U: &satwindNXTro-ObsType247_UError [ 999.0, 3.441, 3.078, 2.809, 2.578, 2.519, 999.0, 999.0]
+      satwindNXTro-ObsType247_V: &satwindNXTro-ObsType247_VError [ 999.0, 3.695, 3.141, 2.842, 2.632, 2.32, 999.0, 999.0]
+      satwindNXTro-ObsType251_U: &satwindNXTro-ObsType251_UError [ 999.0, 999.0, 999.0, 999.0, 999.0, 2.185, 1.775, 1.471]
+      satwindNXTro-ObsType251_V: &satwindNXTro-ObsType251_VError [ 999.0, 999.0, 999.0, 999.0, 999.0, 2.297, 1.733, 1.522]
+      satwindSXTro-ObsType240_U: &satwindSXTro-ObsType240_UError [ 999.0, 999.0, 999.0, 999.0, 999.0, 2.348, 1.565, 1.353]
+      satwindSXTro-ObsType240_V: &satwindSXTro-ObsType240_VError [ 999.0, 999.0, 999.0, 999.0, 999.0, 2.129, 1.55, 1.379]
+      satwindSXTro-ObsType244_U: &satwindSXTro-ObsType244_UError [ 999.0, 3.665, 3.13, 2.778, 2.419, 2.195, 1.997, 1.98]
+      satwindSXTro-ObsType244_V: &satwindSXTro-ObsType244_VError [ 999.0, 3.557, 3.106, 2.814, 2.497, 2.236, 2.011, 2.043]
+      satwindSXTro-ObsType245_U: &satwindSXTro-ObsType245_UError [ 999.0, 3.569, 3.358, 3.015, 2.484, 2.099, 1.624, 1.393]
+      satwindSXTro-ObsType245_V: &satwindSXTro-ObsType245_VError [ 999.0, 3.648, 3.346, 2.891, 2.506, 2.128, 1.625, 1.4]
+      #satwindSXTro-ObsType246_U: &satwindSXTro-ObsType246_UError [ 999.0, 3.505, 3.463, 999.0, 999.0, 999.0, 999.0, 999.0]
+      #satwindSXTro-ObsType246_V: &satwindSXTro-ObsType246_VError [ 999.0, 3.662, 3.52, 999.0, 999.0, 999.0, 999.0, 999.0]
+      satwindSXTro-ObsType247_U: &satwindSXTro-ObsType247_UError [ 999.0, 3.619, 3.177, 2.865, 2.565, 2.525, 999.0, 999.0]
+      satwindSXTro-ObsType247_V: &satwindSXTro-ObsType247_VError [ 999.0, 3.676, 3.21, 2.834, 2.504, 2.622, 999.0, 999.0]
+      satwindSXTro-ObsType251_U: &satwindSXTro-ObsType251_UError [ 999.0, 999.0, 999.0, 999.0, 999.0, 1.702, 1.546, 1.371]
+      satwindSXTro-ObsType251_V: &satwindSXTro-ObsType251_VError [ 999.0, 999.0, 999.0, 999.0, 999.0, 1.648, 1.541, 1.332]
+      satwindTro-ObsType240_U: &satwindTro-ObsType240_UError [ 999.0, 999.0, 999.0, 999.0, 999.0, 1.783, 1.452, 1.209]
+      satwindTro-ObsType240_V: &satwindTro-ObsType240_VError [ 999.0, 999.0, 999.0, 999.0, 999.0, 1.743, 1.464, 1.234]
+      satwindTro-ObsType245_U: &satwindTro-ObsType245_UError [ 999.0, 2.975, 3.264, 2.655, 2.058, 1.869, 1.489, 1.243]
+      satwindTro-ObsType245_V: &satwindTro-ObsType245_VError [ 999.0, 2.856, 2.946, 2.275, 1.954, 1.823, 1.496, 1.262]
+      #satwindTro-ObsType246_U: &satwindTro-ObsType246_UError [ 999.0, 2.843, 3.099, 999.0, 999.0, 999.0, 999.0, 999.0]
+      #satwindTro-ObsType246_V: &satwindTro-ObsType246_VError [ 999.0, 2.795, 2.984, 999.0, 999.0, 999.0, 999.0, 999.0]
+      satwindTro-ObsType247_U: &satwindTro-ObsType247_UError [ 999.0, 3.032, 2.985, 2.596, 2.306, 2.807, 999.0, 999.0]
+      satwindTro-ObsType247_V: &satwindTro-ObsType247_VError [ 999.0, 3.043, 2.872, 2.435, 2.244, 1.792, 999.0, 999.0]
+      satwindTro-ObsType251_U: &satwindTro-ObsType251_UError [ 999.0, 999.0, 999.0, 999.0, 999.0, 1.965, 1.446, 1.225]
+      satwindTro-ObsType251_V: &satwindTro-ObsType251_VError [ 999.0, 999.0, 999.0, 999.0, 999.0, 1.78, 1.479, 1.309]
 
-      SXTro:
-        _240: &satwindSXTroObsType240Errors [  1.6,    2.1,    2.6,   999.,   999.,   999.,   999.,   999.] # satwnd
-        _241: &satwindSXTroObsType241Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        _242: &satwindSXTroObsType242Errors [  1.8,    2.0,    3.8,   999.,   999.,   999.,   999.,   999.] # satwind
-        _243: &satwindSXTroObsType243Errors [  3.7,    2.7,   999.,   999.,   999.,   999.,   999.,   999.] # satwind
-        _244: &satwindSXTroObsType244Errors [  4.0,    3.2,    3.2,    3.4,    3.9,    4.7,    4.7,   999.] # satwnd
-        #_245: &satwindSXTroObsType245Errors [  1.8,    2.2,    3.3,    4.0,    4.4,    4.8,    5.7,    5.1] # satwnd
-        _245: &satwindSXTroObsType245Errors [  1.5,    2.0,    3.0,    3.5,    3.6,    4.1,    4.8,    4.5] # satwind
-        _246: &satwindSXTroObsType246Errors [ 999.,    7.5,    3.5,    3.8,    3.8,    4.4,    5.0,    4.8] # satwind
-        _247: &satwindSXTroObsType247Errors [ 999.,   999.,    3.8,    4.0,    4.1,    4.7,    5.3,   999.] # satwnd
-        _250: &satwindSXTroObsType250Errors [ 999.,   999.,    3.0,    3.1,    3.5,    3.8,    3.8,    3.3] # satwind
-        _251: &satwindSXTroObsType251Errors [  1.6,    2.0,    2.2,   999.,   999.,   999.,   999.,   999.] # satwnd
-        _252: &satwindSXTroObsType252Errors [ 999.,    2.4,    2.7,    3.2,    3.5,    3.7,    3.7,    2.9] # satwind
-        _253: &satwindSXTroObsType253Errors [ 999.,    2.7,    3.8,    5.2,    5.8,    6.3,    7.0,    7.1] # satwind
-        _254: &satwindSXTroObsType254Errors [ 999.,   999.,    6.5,    7.0,    6.8,    6.1,    7.0,   11.0] # satwind, U>V
-        _255: &satwindSXTroObsType255Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
-        _257: &satwindSXTroObsType257Errors [  4.1,    3.2,    3.2,    3.2,    3.4,    4.1,    5.2,   999.] # satwind
-        _258: &satwindSXTroObsType258Errors [ 999.,   999.,   999.,    3.0,    3.1,    5.0,    5.2,   999.] # satwind
-        _259: &satwindSXTroObsType259Errors [ 999.,   999.,   999.,    2.8,    3.1,    4.0,    6.0,   999.] # satwind
-        _260: &satwindSXTroObsType260Errors [ 999.,   999.,   999.,   999.,   999.,   999.,   999.,   999.] # none
+      # none - no training data available
+      satwindNXTro-ObsType241_UError: &satwindNXTro-ObsType241_UError *satwindDefaultError
+      satwindNXTro-ObsType255_UError: &satwindNXTro-ObsType255_UError *satwindDefaultError
+      satwindNXTro-ObsType260_UError: &satwindNXTro-ObsType260_UError *satwindDefaultError
+      satwindTro-ObsType241_UError: &satwindTro-ObsType241_UError *satwindDefaultError
+      satwindTro-ObsType244_UError: &satwindTro-ObsType244_UError *satwindDefaultError
+      satwindTro-ObsType255_UError: &satwindTro-ObsType255_UError *satwindDefaultError
+      satwindTro-ObsType257_UError: &satwindTro-ObsType257_UError *satwindDefaultError
+      satwindTro-ObsType258_UError: &satwindTro-ObsType258_UError *satwindDefaultError
+      satwindTro-ObsType259_UError: &satwindTro-ObsType259_UError *satwindDefaultError
+      satwindTro-ObsType260_UError: &satwindTro-ObsType260_UError *satwindDefaultError
+      satwindSXTro-ObsType241_UError: &satwindSXTro-ObsType241_UError *satwindDefaultError
+      satwindSXTro-ObsType255_UError: &satwindSXTro-ObsType255_UError *satwindDefaultError
+      satwindSXTroObsType260_UError: &satwindSXTroObsType260_UError *satwindDefaultError
+      satwindNXTro-ObsType241_VError: &satwindNXTro-ObsType241_VError *satwindDefaultError
+      satwindNXTro-ObsType255_VError: &satwindNXTro-ObsType255_VError *satwindDefaultError
+      satwindNXTro-ObsType260_VError: &satwindNXTro-ObsType260_VError *satwindDefaultError
+      satwindTro-ObsType241_VError: &satwindTro-ObsType241_VError *satwindDefaultError
+      satwindTro-ObsType244_VError: &satwindTro-ObsType244_VError *satwindDefaultError
+      satwindTro-ObsType255_VError: &satwindTro-ObsType255_VError *satwindDefaultError
+      satwindTro-ObsType257_VError: &satwindTro-ObsType257_VError *satwindDefaultError
+      satwindTro-ObsType258_VError: &satwindTro-ObsType258_VError *satwindDefaultError
+      satwindTro-ObsType259_VError: &satwindTro-ObsType259_VError *satwindDefaultError
+      satwindTro-ObsType260_VError: &satwindTro-ObsType260_VError *satwindDefaultError
+      satwindSXTro-ObsType241_VError: &satwindSXTro-ObsType241_VError *satwindDefaultError
+      satwindSXTro-ObsType255_VError: &satwindSXTro-ObsType255_VError *satwindDefaultError
+      satwindSXTroObsType260_VError: &satwindSXTroObsType260_VError *satwindDefaultError
