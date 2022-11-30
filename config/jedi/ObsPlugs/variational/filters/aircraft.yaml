@@ -236,7 +236,7 @@
     filter variables:
     - name: specific_humidity
     test variables:
-    - name: specific_humidity@ObsErrorData
+    - name: ObsErrorData/specific_humidity
     minvalue: 0.0
     maxvalue: 1.0
 
