@@ -14,7 +14,63 @@
       minvalue: -200.0
       maxvalue: 200.0
 
-  # reject where mean bias is large relative to STD
+  # reject where |bias| >~ 1/2 STD
+  # NPol - not currently used
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNPol
+      maxvalue: *maxNPol
+    - variable:
+        name: MetaData/altitude
+      minvalue: *gnssrorefncepNPolExcludeMin
+      maxvalue: *gnssrorefncepNPolExcludeMax
+  # NMid
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNMid
+      maxvalue: *maxNMid
+    - variable:
+        name: MetaData/altitude
+      minvalue: *gnssrorefncepNMidExcludeMin
+      maxvalue: *gnssrorefncepNMidExcludeMax
+  # Tro
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: MetaData/altitude
+      minvalue: *gnssrorefncepTroExcludeMin
+      maxvalue: *gnssrorefncepTroExcludeMax
+  # SMid
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSMid
+      maxvalue: *maxSMid
+    - variable:
+        name: MetaData/altitude
+      minvalue: *gnssrorefncepSMidExcludeMin
+      maxvalue: *gnssrorefncepSMidExcludeMax
   # SPol
   - filter: RejectList
     defer to post: true
@@ -27,33 +83,8 @@
       maxvalue: *maxSPol
     - variable:
         name: MetaData/altitude
-      minvalue: *gnssroSPolTransition
-  # SMid, Tro, NMid
-  - filter: RejectList
-    defer to post: true
-    filter variables:
-    - name: refractivity
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minSMid
-      maxvalue: *maxNMid
-    - variable:
-        name: MetaData/altitude
-      minvalue: *gnssroSMidTroNMidTransition
-  # NPol
-  - filter: RejectList
-    defer to post: true
-    filter variables:
-    - name: refractivity
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minNPol
-      maxvalue: *maxNPol
-    - variable:
-        name: MetaData/altitude
-      minvalue: *gnssroNPolTransition
+      minvalue: *gnssrorefncepSPolExcludeMin
+      maxvalue: *gnssrorefncepSPolExcludeMax
 
   ## Scale ObsError based on ObsValue
   # NPol
