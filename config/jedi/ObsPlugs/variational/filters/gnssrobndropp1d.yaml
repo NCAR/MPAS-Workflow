@@ -81,6 +81,78 @@
         name: MetaData/impact_height
       maxvalue: *gnssroSPolTransition
 
+  # reject where |bias| >~ STD
+  # NPol - not currently used
+  #- filter: RejectList
+  #  defer to post: true
+  #  filter variables:
+  #  - name: bending_angle
+  #  where:
+  #  - variable:
+  #      name: MetaData/latitude
+  #    minvalue: *minNPol
+  #    maxvalue: *maxNPol
+  #  - variable:
+  #      name: MetaData/impact_height
+  #    minvalue: *gnssrobndropp1dNPolExcludeMin
+  #    maxvalue: *gnssrobndropp1dNPolExcludeMax
+  # NMid
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNMid
+      maxvalue: *maxNMid
+    - variable:
+        name: MetaData/impact_height
+      minvalue: *gnssrobndropp1dNMidExcludeMin
+      maxvalue: *gnssrobndropp1dNMidExcludeMax
+  # Tro
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: MetaData/impact_height
+      minvalue: *gnssrobndropp1dTroExcludeMin
+      maxvalue: *gnssrobndropp1dTroExcludeMax
+  # SMid
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSMid
+      maxvalue: *maxSMid
+    - variable:
+        name: MetaData/impact_height
+      minvalue: *gnssrobndropp1dSMidExcludeMin
+      maxvalue: *gnssrobndropp1dSMidExcludeMax
+  # SPol
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSPol
+      maxvalue: *maxSPol
+    - variable:
+        name: MetaData/impact_height
+      minvalue: *gnssrobndropp1dSPolExcludeMin
+      maxvalue: *gnssrobndropp1dSPolExcludeMax
+
 ## ECMWF relative error model
 #  - filter: ROobserror
 #    filter variables:

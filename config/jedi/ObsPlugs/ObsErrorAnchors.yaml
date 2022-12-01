@@ -34,7 +34,7 @@ _named latitude bands:
     max: &maxSXTro -30.
 
 _gnssro:
-  # latitude band-specific transition heights (m) to phase out gnssrorefncep (below)
+  # latitude band-specific transition heights (m) above which to filter out gnssrorefncep
   # Determined based on cold-start forecasts initialized from GFS analyses.
   # Refractivity bias is negative and larger than STD in places where temperature bias w.r.t. GFS
   # analyses and sondes is negative (too cold).  Same behavior is more pronounced in tropics down to
@@ -53,9 +53,9 @@ _gnssro:
   # gnssrobndnbam: so far unsuccessful in cycling experiments
   transitions:
     NPol: &gnssroNPolTransition 25000.
-    NMid: &gnssroNMidTransition 20000.
-    Tro: &gnssroTroTransition 15000.
-    SMid: &gnssroSMidTransition 20000.
+    NMid: &gnssroNMidTransition 12000.
+    Tro: &gnssroTroTransition 11000.
+    SMid: &gnssroSMidTransition 13000.
     SPol: &gnssroSPolTransition 25000.
 
   errors:
@@ -129,7 +129,7 @@ _gnssro:
          0.005707, 0.006113, 0.006616, 0.007672, 0.008289, # fixed
          0.008123, 0.007624, 0.007444, 0.00725, 0.006861] # fixed
 
-      # for reference, these are the negative biases of rltv_omf: Mean((O-B)/O)
+      # for reference, these are the negative biases of rltv_omf: Mean((O-F)/O)
       # when model is unbiased or has opposite bias sign than expected from RO bias,
       # either bias should be corrected
       # or observations should be removed where |bias| >~ sigma_o
@@ -284,7 +284,25 @@ _gnssro:
         0.02811, 0.02806, 0.02914, 0.03144, 0.03272,
         0.03089, 0.02918, 0.02802, 0.02785, 0.0273]
 
-      # for reference, these are the negative biases of rltv_omf: Mean((O-B)/O)
+      # latitude band-specific exclusion zones within which to filter out gnssrobndropp1d
+      # determined by comparison of |bias| and STD of rltv_omf, excluding where
+      # |bias| >~ 1/2 STD
+      exclusions:
+        # NPol: not necessary
+        NMid:
+          min: &gnssrobndropp1dNMidExcludeMin 23000.
+          max: &gnssrobndropp1dNMidExcludeMax 26500.
+        Tro:
+          min: &gnssrobndropp1dTroExcludeMin 17000.
+          max: &gnssrobndropp1dTroExcludeMax 28000.
+        SMid:
+          min: &gnssrobndropp1dSMidExcludeMin 15000.
+          max: &gnssrobndropp1dSMidExcludeMax 20000.
+        SPol:
+          min: &gnssrobndropp1dSPolExcludeMin 28000.
+          max: &gnssrobndropp1dSPolExcludeMax 30000.
+
+      # for reference, these are the negative biases of rltv_omf: Mean((O-F)/O)
       # when model is unbiased or has opposite bias sign than expected from RO bias,
       # either bias should be corrected
       # or observations should be removed where |bias| >~ sigma_o
