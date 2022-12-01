@@ -1,62 +1,31 @@
-_named latitude bands:
-  # 7-band
-  NPol:
-    min: &minNPol 60.
-    max: &maxNPol 90.
-  NMid:
-    min: &minNMid 30.
-    max: &maxNMid 60.
-  NTro:
-    min: &minNTro  5.
-    max: &maxNTro 30.
-  ITCZ:
-    min: &minITCZ -5.
-    max: &maxITCZ  5.
-  STro:
-    min: &minSTro -30.
-    max: &maxSTro  -5.
-  SMid:
-    min: &minSMid -60.
-    max: &maxSMid -30.
-  SPol:
-    min: &minSPol -90.
-    max: &maxSPol -60.
-
-  # 3-band
-  NXTro:
-    min: &minNXTro 30.
-    max: &maxNXTro 90.
-  Tro:
-    min: &minTro -30.
-    max: &maxTro  30.
-  SXTro:
-    min: &minSXTro -90.
-    max: &maxSXTro -30.
+# application-agnostic anchors that specify observation errors
+# applicable to Variational, HofX3D
 
 _gnssro:
   # latitude band-specific transition heights (m) above which to filter out gnssrorefncep
-  # Determined based on cold-start forecasts initialized from GFS analyses.
-  # Refractivity bias is negative and larger than STD in places where temperature bias w.r.t. GFS
-  # analyses and sondes is negative (too cold).  Same behavior is more pronounced in tropics down to
-  # lower altitudes.  Since refractivity ~ P/T, negative refractivity bias should correspond to warm
-  # bias at a fixed pressure.  If one of 3D pressure or density is added as analysis variable, will
-  # need to revisit this strategy.
-  #
-  # TODO: replace refractivity as anchor observation above these transition heights
-  # until then, do not assimilate higher peaking AMSUA channels when using VarBC
-  # candidates include gnssrobndmo, gnssrobndropp1d, gnssrobndnbam
-  # gnssrobndmo: only modifies pressure and moisture; pressure not compatible with mpas-jedi
-  #   analysis variables; could use for very small impact on upper level moisture with
-  #   pressure fixed, but probably no real advantage
-  # gnssrobndropp1d: exibits some of the same bias sign and similar magnitude relative to STD as
-  #   gnssroref; requires filtering at some heights (see below)
-  # gnssrobndnbam: so far unsuccessful in cycling experiments
   transitions:
     NPol: &gnssroNPolTransition 25000.
     NMid: &gnssroNMidTransition 12000.
     Tro: &gnssroTroTransition 11000.
     SMid: &gnssroSMidTransition 13000.
     SPol: &gnssroSPolTransition 25000.
+
+    # The transition heights were determined based on cold-start forecasts initialized from GFS
+    # analyses.  Above those heights, refractivity bias is negative and larger than STD in places
+    # where temperature bias w.r.t. GFS analyses and sondes is negative (too cold).  Same behavior
+    # is more pronounced in tropics down to lower altitudes.  Since refractivity ~ P/T, negative
+    # refractivity bias should correspond to warm bias at a fixed pressure.  If one of 3D pressure
+    # or density is added as analysis variable, will need to revisit this strategy.
+    #
+    # Refractivity is replaced as the anchor observation above the transition heights.  If not
+    # replaced, then do not assimilate higher peaking AMSUA channels when using VarBC.
+    # Replacement candidates include gnssrobndmo, gnssrobndropp1d, gnssrobndnbam
+    # gnssrobndropp1d: exibits some of the same bias sign and similar magnitude relative to STD as
+    #   gnssroref; requires filtering at some heights (see below)
+    # gnssrobndmo (not fully functional): only modifies pressure and moisture; pressure not
+    #   compatible with mpas-jedi analysis variables; could use for very small impact on upper level
+    #   moisture with pressure fixed, but probably no real advantage
+    # gnssrobndnbam: so far unsuccessful in cycling experiments, even for HofX3D
 
   errors:
     # heights (m) for observation error interpolation
@@ -133,41 +102,41 @@ _gnssro:
       # when model is unbiased or has opposite bias sign than expected from RO bias,
       # either bias should be corrected
       # or observations should be removed where |bias| >~ sigma_o
-      NMid: &gnssrorefncepNMidNegBias
-       [0.05799, 0.004352, 0.002603, 0.0009924, 0.0001273,
-        -0.00006232, 0.00006721, 0.0002582, 0.0006622, 0.001526,
-        0.003042, 0.003652, 0.003622, 0.003971, 0.005486,
-        0.007037, 0.008038, 0.008676, 0.00918, 0.00941,
-        0.009828, 0.01033, 0.01223, 0.01403, 0.01461,
-        0.01493, 0.01539, 0.01593, 0.01805, 0.01784]
-      NPol: &gnssrorefncepNPolNegBias
-       [0.4992, 0.004819, 0.00287, 0.001389, 0.0003466,
-        -0.0002365, -0.0005455, -0.0008054, -0.001156, -0.001143,
-        -0.00003875, 0.0005483, 0.0004022, 0.0003499, 0.0004087,
-        0.0003522, 0.000257, 0.00001003, -0.00001532, 0.000007511,
-        0.0001068, 0.000353, 0.001073, 0.001762, 0.001996,
-        0.002533, 0.00329, 0.004613, 0.006611, 0.006121]
-      SMid: &gnssrorefncepSMidNegBias
-       [-0.6594, -0.0001506, -0.001092, -0.002291, -0.001442,
-        -0.0006793, -0.00004503, 0.0001801, 0.0003946, 0.0007765,
-        0.001566, 0.001174, 0.001887, 0.005577, 0.009718,
-        0.01146, 0.01105, 0.009383, 0.007425, 0.006105,
-        0.005336, 0.005009, 0.006191, 0.008087, 0.009343,
-        0.01051, 0.01202, 0.01338, 0.01415, 0.0138]
-      SPol: &gnssrorefncepSPolNegBias
-       [0.2294, 0.00308, 0.001895, 0.001892, 0.0006697,
-        -0.0002578, -0.0004954, -0.0005005, -0.00113, -0.001883,
-        -0.0006169, -0.0001116, -0.0002701, -0.0003492, -0.0005093,
-        -0.0004446, -0.0004013, -0.0005226, -0.0003292, -0.0002907,
-        -0.0002936, -0.0006014, -0.0005427, -0.0002494, -0.0008459,
-        -0.002023, -0.001994, -0.003748, -0.009103, -0.01328]
-      Tro: &gnssrorefncepTroNegBias
-       [-1.681, -0.003124, -0.001944, -0.005516, -0.005633,
-        -0.001436, 0.001892, 0.002585, 0.002329, 0.002376,
-        0.003093, 0.004311, 0.005479, 0.006279, 0.00847,
-        0.01297, 0.0198, 0.02233, 0.01965, 0.01941,
-        0.02153, 0.02382, 0.02647, 0.0289, 0.02955,
-        0.02915, 0.02894, 0.02913, 0.03067, 0.03046]
+      #NMid: &gnssrorefncepNMidNegBias
+      # [0.05799, 0.004352, 0.002603, 0.0009924, 0.0001273,
+      #  -0.00006232, 0.00006721, 0.0002582, 0.0006622, 0.001526,
+      #  0.003042, 0.003652, 0.003622, 0.003971, 0.005486,
+      #  0.007037, 0.008038, 0.008676, 0.00918, 0.00941,
+      #  0.009828, 0.01033, 0.01223, 0.01403, 0.01461,
+      #  0.01493, 0.01539, 0.01593, 0.01805, 0.01784]
+      #NPol: &gnssrorefncepNPolNegBias
+      # [0.4992, 0.004819, 0.00287, 0.001389, 0.0003466,
+      #  -0.0002365, -0.0005455, -0.0008054, -0.001156, -0.001143,
+      #  -0.00003875, 0.0005483, 0.0004022, 0.0003499, 0.0004087,
+      #  0.0003522, 0.000257, 0.00001003, -0.00001532, 0.000007511,
+      #  0.0001068, 0.000353, 0.001073, 0.001762, 0.001996,
+      #  0.002533, 0.00329, 0.004613, 0.006611, 0.006121]
+      #SMid: &gnssrorefncepSMidNegBias
+      # [-0.6594, -0.0001506, -0.001092, -0.002291, -0.001442,
+      #  -0.0006793, -0.00004503, 0.0001801, 0.0003946, 0.0007765,
+      #  0.001566, 0.001174, 0.001887, 0.005577, 0.009718,
+      #  0.01146, 0.01105, 0.009383, 0.007425, 0.006105,
+      #  0.005336, 0.005009, 0.006191, 0.008087, 0.009343,
+      #  0.01051, 0.01202, 0.01338, 0.01415, 0.0138]
+      #SPol: &gnssrorefncepSPolNegBias
+      # [0.2294, 0.00308, 0.001895, 0.001892, 0.0006697,
+      #  -0.0002578, -0.0004954, -0.0005005, -0.00113, -0.001883,
+      #  -0.0006169, -0.0001116, -0.0002701, -0.0003492, -0.0005093,
+      #  -0.0004446, -0.0004013, -0.0005226, -0.0003292, -0.0002907,
+      #  -0.0002936, -0.0006014, -0.0005427, -0.0002494, -0.0008459,
+      #  -0.002023, -0.001994, -0.003748, -0.009103, -0.01328]
+      #Tro: &gnssrorefncepTroNegBias
+      # [-1.681, -0.003124, -0.001944, -0.005516, -0.005633,
+      #  -0.001436, 0.001892, 0.002585, 0.002329, 0.002376,
+      #  0.003093, 0.004311, 0.005479, 0.006279, 0.00847,
+      #  0.01297, 0.0198, 0.02233, 0.01965, 0.01941,
+      #  0.02153, 0.02382, 0.02647, 0.0289, 0.02955,
+      #  0.02915, 0.02894, 0.02913, 0.03067, 0.03046]
 
     # for now train bndmo using relative omf: E[{d^f_o}^T d^f_o x y^-1]
     # fix later if 3D pressure is added as a linear GeoVar and gnssrobndmo 
@@ -228,7 +197,7 @@ _gnssro:
         0.02442, 0.02351, 0.0235, 0.02437, 0.02293]
 
     # for now train bndropp1d using relative omf: E[{d^f_o}^T d^f_o x y^-1]
-    # adjust later bndropp1d is assimilated
+    # adjust later after bndropp1d is assimilated
     bndropp1d:
       # commands used to modify diagnostic output:
       # cd $analysisDir/gnssrobndropp1d_analyses/BinValAxisProfile/rltv_omf/data
@@ -306,38 +275,73 @@ _gnssro:
       # when model is unbiased or has opposite bias sign than expected from RO bias,
       # either bias should be corrected
       # or observations should be removed where |bias| >~ sigma_o
-      NMid: &gnssrobndropp1dNMidErrors
-       [999.0, 0.003535, 0.01855, 0.01426, 0.006541,
-        0.001598, -0.0000723, -0.0005061, -0.001468, -0.002656,
-        -0.001497, 0.001602, 0.002003, 0.000259, -0.0003023,
-        0.002762, 0.005274, 0.006214, 0.006711, 0.006343,
-        0.00601, 0.004567, 0.005423, 0.009167, 0.01023,
-        0.009377, 0.007923, 0.004943, 0.0006951, -0.003716]
-      NPol: &gnssrobndropp1dNPolErrors
-       [999.0, -0.007765, 0.01906, 0.01883, 0.01088,
-        0.006627, 0.004254, 0.002552, 0.0009149, -0.002646,
-        -0.003411, -0.0003449, 0.0001463, -0.0002525, -0.0002185,
-        -0.0001462, -0.0002293, -0.0006275, -0.001619, -0.001758,
-        -0.002203, -0.002804, -0.002584, -0.001507, -0.001754,
-        -0.002417, -0.003188, -0.003396, -0.002111, -0.003375]
-      SMid: &gnssrobndropp1dSMidErrors
-       [999.0, 0.006601, 0.01539, 0.01381, 0.0008266,
-        -0.001284, -0.000131, 0.0006104, -0.000201, -0.002071,
-        -0.0009776, -0.0007108, -0.005754, -0.006146, 0.002838,
-        0.01131, 0.0149, 0.01363, 0.009828, 0.006636,
-        0.003834, 0.001088, 0.0001591, 0.002646, 0.004552,
-        0.005365, 0.006816, 0.008715, 0.01173, 0.01292]
-      SPol: &gnssrobndropp1dSPolErrors
-       [999.0, -0.004092, 0.01944, 0.01667, 0.01289,
-        0.007935, 0.003769, 0.002297, 0.002174, -0.00191,
-        -0.003954, -0.000814, -0.0002057, -0.00003215, -0.0006287,
-        -0.0006111, -0.000439, -0.0003301, -0.0004769, 0.00008015,
-        0.0004155, 0.0003184, 0.0001943, 0.002423, 0.003662,
-        0.004069, 0.005752, 0.0104, 0.01662, 0.01371]
-      Tro: &gnssrobndropp1dTroErrors
-       [999.0, 0.01737, -0.005395, 0.0152, 0.000984,
-        -0.01509, -0.01165, 0.0007249, 0.001849, -0.0005763,
-        -0.002243, -0.001843, -0.0007605, -0.001366, -0.004181,
-        -0.003439, 0.008075, 0.02381, 0.01998, 0.01307,
-        0.01337, 0.01609, 0.01897, 0.02392, 0.02666,
-        0.02506, 0.0223, 0.01878, 0.01336, 0.01056]
+      #NMid: &gnssrobndropp1dNMidNegBias
+      # [999.0, 0.003535, 0.01855, 0.01426, 0.006541,
+      #  0.001598, -0.0000723, -0.0005061, -0.001468, -0.002656,
+      #  -0.001497, 0.001602, 0.002003, 0.000259, -0.0003023,
+      #  0.002762, 0.005274, 0.006214, 0.006711, 0.006343,
+      #  0.00601, 0.004567, 0.005423, 0.009167, 0.01023,
+      #  0.009377, 0.007923, 0.004943, 0.0006951, -0.003716]
+      #NPol: &gnssrobndropp1dNPolNegBias
+      # [999.0, -0.007765, 0.01906, 0.01883, 0.01088,
+      #  0.006627, 0.004254, 0.002552, 0.0009149, -0.002646,
+      #  -0.003411, -0.0003449, 0.0001463, -0.0002525, -0.0002185,
+      #  -0.0001462, -0.0002293, -0.0006275, -0.001619, -0.001758,
+      #  -0.002203, -0.002804, -0.002584, -0.001507, -0.001754,
+      #  -0.002417, -0.003188, -0.003396, -0.002111, -0.003375]
+      #SMid: &gnssrobndropp1dSMidNegBias
+      # [999.0, 0.006601, 0.01539, 0.01381, 0.0008266,
+      #  -0.001284, -0.000131, 0.0006104, -0.000201, -0.002071,
+      #  -0.0009776, -0.0007108, -0.005754, -0.006146, 0.002838,
+      #  0.01131, 0.0149, 0.01363, 0.009828, 0.006636,
+      #  0.003834, 0.001088, 0.0001591, 0.002646, 0.004552,
+      #  0.005365, 0.006816, 0.008715, 0.01173, 0.01292]
+      #SPol: &gnssrobndropp1dSPolNegBias
+      # [999.0, -0.004092, 0.01944, 0.01667, 0.01289,
+      #  0.007935, 0.003769, 0.002297, 0.002174, -0.00191,
+      #  -0.003954, -0.000814, -0.0002057, -0.00003215, -0.0006287,
+      #  -0.0006111, -0.000439, -0.0003301, -0.0004769, 0.00008015,
+      #  0.0004155, 0.0003184, 0.0001943, 0.002423, 0.003662,
+      #  0.004069, 0.005752, 0.0104, 0.01662, 0.01371]
+      #Tro: &gnssrobndropp1dTroNegBias
+      # [999.0, 0.01737, -0.005395, 0.0152, 0.000984,
+      #  -0.01509, -0.01165, 0.0007249, 0.001849, -0.0005763,
+      #  -0.002243, -0.001843, -0.0007605, -0.001366, -0.004181,
+      #  -0.003439, 0.008075, 0.02381, 0.01998, 0.01307,
+      #  0.01337, 0.01609, 0.01897, 0.02392, 0.02666,
+      #  0.02506, 0.0223, 0.01878, 0.01336, 0.01056]
+
+_named latitude bands:
+  # 7-band
+  NPol:
+    min: &minNPol 60.
+    max: &maxNPol 90.
+  NMid:
+    min: &minNMid 30.
+    max: &maxNMid 60.
+  NTro:
+    min: &minNTro  5.
+    max: &maxNTro 30.
+  ITCZ:
+    min: &minITCZ -5.
+    max: &maxITCZ  5.
+  STro:
+    min: &minSTro -30.
+    max: &maxSTro  -5.
+  SMid:
+    min: &minSMid -60.
+    max: &maxSMid -30.
+  SPol:
+    min: &minSPol -90.
+    max: &maxSPol -60.
+
+  # 3-band
+  NXTro:
+    min: &minNXTro 30.
+    max: &maxNXTro 90.
+  Tro:
+    min: &minTro -30.
+    max: &maxTro  30.
+  SXTro:
+    min: &minSXTro -90.
+    max: &maxSXTro -30.
