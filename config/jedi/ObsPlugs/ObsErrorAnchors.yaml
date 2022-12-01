@@ -1,16 +1,49 @@
+
 # application-agnostic anchors that specify observation errors
 # applicable to Variational, HofX3D
 
-_gnssro:
-  # latitude band-specific transition heights (m) above which to filter out gnssrorefncep
-  transitions:
-    NPol: &gnssroNPolTransition 25000.
-    NMid: &gnssroNMidTransition 12000.
-    Tro: &gnssroTroTransition 11000.
-    SMid: &gnssroSMidTransition 13000.
-    SPol: &gnssroSPolTransition 25000.
+# reusable latitude bands for all observation types
+_named latitude bands:
+  # 7-band
+  NPol:
+    min: &minNPol 60.
+    max: &maxNPol 90.
+  NMid:
+    min: &minNMid 30.
+    max: &maxNMid 60.
+  NTro:
+    min: &minNTro  5.
+    max: &maxNTro 30.
+  ITCZ:
+    min: &minITCZ -5.
+    max: &maxITCZ  5.
+  STro:
+    min: &minSTro -30.
+    max: &maxSTro  -5.
+  SMid:
+    min: &minSMid -60.
+    max: &maxSMid -30.
+  SPol:
+    min: &minSPol -90.
+    max: &maxSPol -60.
 
-    # The transition heights were determined based on cold-start forecasts initialized from GFS
+  # 3-band
+  NXTro:
+    min: &minNXTro 30.
+    max: &maxNXTro 90.
+  Tro:
+    min: &minTro -30.
+    max: &maxTro  30.
+  SXTro:
+    min: &minSXTro -90.
+    max: &maxSXTro -30.
+
+_gnssro:
+  # latitude band-specific exclusion heights (m)
+  # determined by comparison of |bias| and STD of rltv_omf, excluding where
+  # |bias| >~ 1/2 STD
+  exclusions:
+    # The gnssrorefncep were justified based on cold-start forecasts initialized from GFS
     # analyses.  Above those heights, refractivity bias is negative and larger than STD in places
     # where temperature bias w.r.t. GFS analyses and sondes is negative (too cold).  Same behavior
     # is more pronounced in tropics down to lower altitudes.  Since refractivity ~ P/T, negative
@@ -26,6 +59,39 @@ _gnssro:
     #   compatible with mpas-jedi analysis variables; could use for very small impact on upper level
     #   moisture with pressure fixed, but probably no real advantage
     # gnssrobndnbam: so far unsuccessful in cycling experiments, even for HofX3D
+    refncep:
+      NPol:
+        min: &gnssrorefncepNPolExcludeMin 25000.
+        max: &gnssrorefncepNPolExcludeMax 50000.
+      NMid:
+        min: &gnssrorefncepNMidExcludeMin 12000.
+        max: &gnssrorefncepNMidExcludeMax 50000.
+      Tro:
+        min: &gnssrorefncepTroExcludeMin 11000.
+        max: &gnssrorefncepTroExcludeMax 50000.
+      SMid:
+        min: &gnssrorefncepSMidExcludeMin 13000.
+        max: &gnssrorefncepSMidExcludeMax 50000.
+      SPol:
+        min: &gnssrorefncepSPolExcludeMin 25000.
+        max: &gnssrorefncepSPolExcludeMax 50000.
+
+    bndropp1d:
+      NPol: # not strictly necessary
+        min: &gnssrobndropp1dNPolExcludeMin -99999.
+        max: &gnssrobndropp1dNPolExcludeMax -9999.
+      NMid:
+        min: &gnssrobndropp1dNMidExcludeMin 23000.
+        max: &gnssrobndropp1dNMidExcludeMax 26500.
+      Tro:
+        min: &gnssrobndropp1dTroExcludeMin 17000.
+        max: &gnssrobndropp1dTroExcludeMax 28000.
+      SMid:
+        min: &gnssrobndropp1dSMidExcludeMin 15000.
+        max: &gnssrobndropp1dSMidExcludeMax 20000.
+      SPol:
+        min: &gnssrobndropp1dSPolExcludeMin 28000.
+        max: &gnssrobndropp1dSPolExcludeMax 30000.
 
   errors:
     # heights (m) for observation error interpolation
@@ -66,7 +132,7 @@ _gnssro:
         [0.01134, 0.008736, 0.006804, 0.005485, 0.004488,
          0.003768, 0.003313, 0.002973, 0.002738, 0.002651,
          0.002713, 0.002675, 0.002562, 0.002456, 0.002435,
-         0.002444, 0.002455, 0.002449, 0.002484, 0.002524,
+         0.002444, 0.002455, 0.002449, 0.002484, 0.002524, # fixed
          0.002647, 0.002721, 0.002859, 0.003152, 0.003329, # fixed
          0.003473, 0.003616, 0.003955, 0.004236, 0.00441] # fixed
       NPol: &gnssrorefncepNPolErrors
@@ -80,7 +146,7 @@ _gnssro:
         [0.01043, 0.008028, 0.006269, 0.005114, 0.004283,
          0.003661, 0.003173, 0.002817, 0.002594, 0.002484,
          0.002558, 0.002545, 0.002474, 0.002494, 0.002534,
-         0.002522, 0.002462, 0.002392, 0.00228, 0.002252,
+         0.002522, 0.002462, 0.002392, 0.00228, 0.002252, # fixed
          0.002273, 0.002324, 0.002444, 0.00266, 0.002865, # fixed
          0.003077, 0.003306, 0.003682, 0.004037, 0.00428] # fixed
       SPol: &gnssrorefncepSPolErrors
@@ -253,24 +319,6 @@ _gnssro:
         0.02811, 0.02806, 0.02914, 0.03144, 0.03272,
         0.03089, 0.02918, 0.02802, 0.02785, 0.0273]
 
-      # latitude band-specific exclusion zones within which to filter out gnssrobndropp1d
-      # determined by comparison of |bias| and STD of rltv_omf, excluding where
-      # |bias| >~ 1/2 STD
-      exclusions:
-        # NPol: not necessary
-        NMid:
-          min: &gnssrobndropp1dNMidExcludeMin 23000.
-          max: &gnssrobndropp1dNMidExcludeMax 26500.
-        Tro:
-          min: &gnssrobndropp1dTroExcludeMin 17000.
-          max: &gnssrobndropp1dTroExcludeMax 28000.
-        SMid:
-          min: &gnssrobndropp1dSMidExcludeMin 15000.
-          max: &gnssrobndropp1dSMidExcludeMax 20000.
-        SPol:
-          min: &gnssrobndropp1dSPolExcludeMin 28000.
-          max: &gnssrobndropp1dSPolExcludeMax 30000.
-
       # for reference, these are the negative biases of rltv_omf: Mean((O-F)/O)
       # when model is unbiased or has opposite bias sign than expected from RO bias,
       # either bias should be corrected
@@ -310,38 +358,3 @@ _gnssro:
       #  -0.003439, 0.008075, 0.02381, 0.01998, 0.01307,
       #  0.01337, 0.01609, 0.01897, 0.02392, 0.02666,
       #  0.02506, 0.0223, 0.01878, 0.01336, 0.01056]
-
-_named latitude bands:
-  # 7-band
-  NPol:
-    min: &minNPol 60.
-    max: &maxNPol 90.
-  NMid:
-    min: &minNMid 30.
-    max: &maxNMid 60.
-  NTro:
-    min: &minNTro  5.
-    max: &maxNTro 30.
-  ITCZ:
-    min: &minITCZ -5.
-    max: &maxITCZ  5.
-  STro:
-    min: &minSTro -30.
-    max: &maxSTro  -5.
-  SMid:
-    min: &minSMid -60.
-    max: &maxSMid -30.
-  SPol:
-    min: &minSPol -90.
-    max: &maxSPol -60.
-
-  # 3-band
-  NXTro:
-    min: &minNXTro 30.
-    max: &maxNXTro 90.
-  Tro:
-    min: &minTro -30.
-    max: &maxTro  30.
-  SXTro:
-    min: &minSXTro -90.
-    max: &maxSXTro -30.

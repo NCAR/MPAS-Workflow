@@ -27,7 +27,7 @@
       maxvalue: *maxNPol
     - variable:
         name: MetaData/impact_height
-      maxvalue: *gnssroNPolTransition
+      maxvalue: *gnssrorefncepNPolExcludeMin
   # NMid
   - filter: RejectList
     defer to post: true
@@ -40,7 +40,7 @@
       maxvalue: *maxNMid
     - variable:
         name: MetaData/impact_height
-      maxvalue: *gnssroNMidTransition
+      maxvalue: *gnssrorefncepNMidExcludeMin
   # Tro
   - filter: RejectList
     defer to post: true
@@ -53,7 +53,7 @@
       maxvalue: *maxTro
     - variable:
         name: MetaData/impact_height
-      minvalue: *gnssroTroTransition
+      minvalue: *gnssrorefncepTroExcludeMin
   # SMid
   - filter: RejectList
     defer to post: true
@@ -66,7 +66,7 @@
       maxvalue: *maxSMid
     - variable:
         name: MetaData/impact_height
-      maxvalue: *gnssroSMidTransition
+      maxvalue: *gnssrorefncepSMidExcludeMin
   # SPol
   - filter: RejectList
     defer to post: true
@@ -79,23 +79,23 @@
       maxvalue: *maxSPol
     - variable:
         name: MetaData/impact_height
-      maxvalue: *gnssroSPolTransition
+      maxvalue: *gnssrorefncepSPolExcludeMin
 
-  # reject where |bias| >~ STD
+  # reject where |bias| >~ 1/2 STD
   # NPol - not currently used
-  #- filter: RejectList
-  #  defer to post: true
-  #  filter variables:
-  #  - name: bending_angle
-  #  where:
-  #  - variable:
-  #      name: MetaData/latitude
-  #    minvalue: *minNPol
-  #    maxvalue: *maxNPol
-  #  - variable:
-  #      name: MetaData/impact_height
-  #    minvalue: *gnssrobndropp1dNPolExcludeMin
-  #    maxvalue: *gnssrobndropp1dNPolExcludeMax
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNPol
+      maxvalue: *maxNPol
+    - variable:
+        name: MetaData/impact_height
+      minvalue: *gnssrobndropp1dNPolExcludeMin
+      maxvalue: *gnssrobndropp1dNPolExcludeMax
   # NMid
   - filter: RejectList
     defer to post: true

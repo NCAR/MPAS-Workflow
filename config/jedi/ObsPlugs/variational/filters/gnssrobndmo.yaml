@@ -26,7 +26,7 @@
       maxvalue: *maxNPol
     - variable:
         name: MetaData/impact_height
-      maxvalue: *gnssroNPolTransition
+      maxvalue: *gnssrorefncepNPolExcludeMin
   # NMid
   - filter: RejectList
     defer to post: true
@@ -39,7 +39,7 @@
       maxvalue: *maxNMid
     - variable:
         name: MetaData/impact_height
-      maxvalue: *gnssroNMidTransition
+      maxvalue: *gnssrorefncepNMidExcludeMin
   # Tro
   - filter: RejectList
     defer to post: true
@@ -52,7 +52,7 @@
       maxvalue: *maxTro
     - variable:
         name: MetaData/impact_height
-      minvalue: *gnssroTroTransition
+      minvalue: *gnssrorefncepTroExcludeMin
   # SMid
   - filter: RejectList
     defer to post: true
@@ -65,7 +65,7 @@
       maxvalue: *maxSMid
     - variable:
         name: MetaData/impact_height
-      maxvalue: *gnssroSMidTransition
+      maxvalue: *gnssrorefncepSMidExcludeMin
   # SPol
   - filter: RejectList
     defer to post: true
@@ -78,7 +78,7 @@
       maxvalue: *maxSPol
     - variable:
         name: MetaData/impact_height
-      maxvalue: *gnssroSPolTransition
+      maxvalue: *gnssrorefncepSPolExcludeMin
 
   ## Scale ObsError based on ObsValue
   # NPol
