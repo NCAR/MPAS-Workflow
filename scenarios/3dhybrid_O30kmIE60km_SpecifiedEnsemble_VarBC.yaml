@@ -48,7 +48,7 @@ variational:
 # anchor
   - aircraft
   - gnssrorefncep
-#  - gnssrobndropp1d
+  - gnssrobndropp1d
 #  - gnssrobndnbam
 #  - gnssrobndmo # checking performance of BendMetOffice
 #  - gnssrobndmo-nopseudo
@@ -76,7 +76,7 @@ variational:
           secondsPerEnVarMember: 20
 
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70_RefNCEP_MidPol_1stDoaDob'
+  ExpSuffix: '_ensB-SE80+RTPP70_RefNCEP_BndROPP1D_MidPol_1stDoaDob'
 
 observations:
   resource: PANDACArchive
