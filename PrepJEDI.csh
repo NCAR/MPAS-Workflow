@@ -355,45 +355,30 @@ rm ${thisSEDF}
 set prevYAML = $thisYAML
 
 # (iii) insert re-usable YAML anchors
-## ObsAnchors
-set sedstring = ObsAnchors
-set template = jedi/ObsPlugs/${ArgAppType}/${sedstring}.yaml
-set thisSEDF = ${sedstring}SEDF.yaml
-cat >! ${thisSEDF} << EOF
-/{{${sedstring}}}/c\
-EOF
 
-# substitute with line breaks
-set SUBYAML=${ConfigDir}/${template}
-sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
-echo '_blank: null' >> ${thisSEDF}
+# anchors that are specific to each application
+set appSpecificAnchors = (ObsAnchors)
 
-# insert into prevYAML
-set thisYAML = insert${sedstring}.yaml
-sed -f ${thisSEDF} $prevYAML >! $thisYAML
-rm ${thisSEDF}
-set prevYAML = $thisYAML
+foreach anchor ($appSpecificAnchors)
+  # prepend prevYAML with prependYAML
+  set prependYAML = jedi/ObsPlugs/${ArgAppType}/${anchor}.yaml
+  set thisYAML = insert${anchor}.yaml
+  cat ${ConfigDir}/${prependYAML} > $thisYAML
+  cat $prevYAML >> $thisYAML
+  set prevYAML = $thisYAML
+end
 
+# anchors that are common across all applications
+set appAgnosticAnchors = (ObsErrorAnchors)
 
-## ObsErrorAnchors
-set sedstring = ObsErrorAnchors
-set template = jedi/ObsPlugs/${sedstring}.yaml
-set thisSEDF = ${sedstring}SEDF.yaml
-cat >! ${thisSEDF} << EOF
-/{{${sedstring}}}/c\
-EOF
-
-# substitute with line breaks
-set SUBYAML=${ConfigDir}/${template}
-sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
-echo '_blank: null' >> ${thisSEDF}
-
-# insert into prevYAML
-set thisYAML = insert${sedstring}.yaml
-sed -f ${thisSEDF} $prevYAML >! $thisYAML
-rm ${thisSEDF}
-set prevYAML = $thisYAML
-
+foreach anchor ($appAgnosticAnchors)
+  # prepend prevYAML with prependYAML
+  set prependYAML = jedi/ObsPlugs/${anchor}.yaml
+  set thisYAML = insert${anchor}.yaml
+  cat ${ConfigDir}/${prependYAML} > $thisYAML
+  cat $prevYAML >> $thisYAML
+  set prevYAML = $thisYAML
+end
 
 # (iv) direct substitutions
 ## Horizontal interpolation type

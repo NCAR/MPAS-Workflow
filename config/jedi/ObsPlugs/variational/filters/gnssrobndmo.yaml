@@ -15,32 +15,6 @@
       maxvalue: 200.0
 
   # reject where refractivity is assimilated
-  # SPol
-  - filter: RejectList
-    defer to post: true
-    filter variables:
-    - name: bending_angle
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minSPol
-      maxvalue: *maxSPol
-    - variable:
-        name: MetaData/impact_height
-      minvalue: *gnssroSPolTransition
-  # SMid, Tro, NMid
-  - filter: RejectList
-    defer to post: true
-    filter variables:
-    - name: bending_angle
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minSMid
-      maxvalue: *maxNMid
-    - variable:
-        name: MetaData/impact_height
-      minvalue: *gnssroSMidTroNMidTransition
   # NPol
   - filter: RejectList
     defer to post: true
@@ -53,7 +27,59 @@
       maxvalue: *maxNPol
     - variable:
         name: MetaData/impact_height
-      minvalue: *gnssroNPolTransition
+      maxvalue: *gnssrorefncepNPolExcludeMin
+  # NMid
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNMid
+      maxvalue: *maxNMid
+    - variable:
+        name: MetaData/impact_height
+      maxvalue: *gnssrorefncepNMidExcludeMin
+  # Tro
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      maxvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: MetaData/impact_height
+      minvalue: *gnssrorefncepTroExcludeMin
+  # SMid
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSMid
+      maxvalue: *maxSMid
+    - variable:
+        name: MetaData/impact_height
+      maxvalue: *gnssrorefncepSMidExcludeMin
+  # SPol
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: bending_angle
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSPol
+      maxvalue: *maxSPol
+    - variable:
+        name: MetaData/impact_height
+      maxvalue: *gnssrorefncepSPolExcludeMin
 
   ## Scale ObsError based on ObsValue
   # NPol

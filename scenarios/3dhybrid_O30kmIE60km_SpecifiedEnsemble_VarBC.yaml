@@ -48,9 +48,9 @@ variational:
 # anchor
   - aircraft
   - gnssrorefncep
-#  - gnssrobndropp1d
+  - gnssrobndropp1d
 #  - gnssrobndnbam
-  - gnssrobndmo # checking performance of BendMetOffice
+#  - gnssrobndmo # checking performance of BendMetOffice
 #  - gnssrobndmo-nopseudo
   - satwind
   - satwnd
@@ -76,7 +76,7 @@ variational:
           secondsPerEnVarMember: 20
 
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70_RefNCEP_BendMetOffice_satwindError_sondesError_aircraftError'
+  ExpSuffix: '_ensB-SE80+RTPP70_RefNCEP_BndROPP1D_satwindError_sondesError_aircraftError'
 
 observations:
   resource: PANDACArchive
