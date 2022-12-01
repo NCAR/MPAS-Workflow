@@ -21,8 +21,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: 60.0
-      maxvalue: 90.0
+      minvalue: *minNPol
+      maxvalue: *maxNPol
     action:
       name: assign error
       error function:
@@ -41,8 +41,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: 30.0
-      maxvalue: 60.0
+      minvalue: *minNMid
+      maxvalue: *maxNMid
     action:
       name: assign error
       error function:
@@ -61,8 +61,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -30.0
-      maxvalue:  30.0
+      minvalue: *minTro
+      maxvalue: *maxTro
     action:
       name: assign error
       error function:
@@ -81,8 +81,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -60.0
-      maxvalue: -30.0
+      minvalue: *minSMid
+      maxvalue: *maxSMid
     action:
       name: assign error
       error function:
@@ -101,8 +101,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -90.0
-      maxvalue: -60.0
+      minvalue: *minSPol
+      maxvalue: *maxSPol
     action:
       name: assign error
       error function:

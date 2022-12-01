@@ -15,32 +15,6 @@
       maxvalue: 200.0
 
   # reject where mean bias is large relative to STD
-  # SPol
-  - filter: RejectList
-    defer to post: true
-    filter variables:
-    - name: refractivity
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: -90.0
-      maxvalue: -60.0
-    - variable:
-        name: MetaData/altitude
-      minvalue: *gnssroSPolTransition
-  # SMid, Tro, NMid
-  - filter: RejectList
-    defer to post: true
-    filter variables:
-    - name: refractivity
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: -60.0
-      maxvalue:  60.0
-    - variable:
-        name: MetaData/altitude
-      minvalue: *gnssroSMidTroNMidTransition
   # NPol
   - filter: RejectList
     defer to post: true
@@ -49,11 +23,63 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue:  60.0
-      maxvalue:  90.0
+      minvalue: *minNPol
+      maxvalue: *maxNPol
     - variable:
         name: MetaData/altitude
       minvalue: *gnssroNPolTransition
+  # NMid
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNMid
+      maxvalue: *maxNMid
+    - variable:
+        name: MetaData/altitude
+      minvalue: *gnssroNMidTransition
+  # Tro
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    - variable:
+        name: MetaData/altitude
+      minvalue: *gnssroTroTransition
+  # SMid
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSMid
+      maxvalue: *maxSMid
+    - variable:
+        name: MetaData/altitude
+      minvalue: *gnssroSMidTransition
+  # SPol
+  - filter: RejectList
+    defer to post: true
+    filter variables:
+    - name: refractivity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSPol
+      maxvalue: *maxSPol
+    - variable:
+        name: MetaData/altitude
+      minvalue: *gnssroSPolTransition
 
   ## Scale ObsError based on ObsValue
   # NPol
@@ -63,8 +89,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: 60.0
-      maxvalue: 90.0
+      minvalue: *minNPol
+      maxvalue: *maxNPol
     action:
       name: assign error
       error function:
@@ -83,8 +109,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: 30.0
-      maxvalue: 60.0
+      minvalue: *minNMid
+      maxvalue: *maxNMid
     action:
       name: assign error
       error function:
@@ -103,8 +129,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -30.0
-      maxvalue:  30.0
+      minvalue: *minTro
+      maxvalue: *maxTro
     action:
       name: assign error
       error function:
@@ -123,8 +149,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -60.0
-      maxvalue: -30.0
+      minvalue: *minSMid
+      maxvalue: *maxSMid
     action:
       name: assign error
       error function:
@@ -143,8 +169,8 @@
     where:
     - variable:
         name: MetaData/latitude
-      minvalue: -90.0
-      maxvalue: -60.0
+      minvalue: *minSPol
+      maxvalue: *maxSPol
     action:
       name: assign error
       error function:
