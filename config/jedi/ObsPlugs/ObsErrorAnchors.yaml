@@ -512,7 +512,7 @@ _satwind:
       Tro-ObsType260_U: &satwindTro-ObsType260_UError *satwindDefaultError
       SXTro-ObsType241_U: &satwindSXTro-ObsType241_UError *satwindDefaultError
       SXTro-ObsType255_U: &satwindSXTro-ObsType255_UError *satwindDefaultError
-      SXTroObsType260_U: &satwindSXTroObsType260_UError *satwindDefaultError
+      SXTro-ObsType260_U: &satwindSXTro-ObsType260_UError *satwindDefaultError
       NXTro-ObsType241_V: &satwindNXTro-ObsType241_VError *satwindDefaultError
       NXTro-ObsType255_V: &satwindNXTro-ObsType255_VError *satwindDefaultError
       NXTro-ObsType260_V: &satwindNXTro-ObsType260_VError *satwindDefaultError
