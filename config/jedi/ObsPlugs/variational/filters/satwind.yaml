@@ -24,7 +24,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType240_UError
+          errors: *satwindNXTro-ObsType240_UError
 
   - filter: Perform Action
     filter variables:
@@ -45,7 +45,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType241_UError
+          errors: *satwindNXTro-ObsType241_UError
 
   - filter: Perform Action
     filter variables:
@@ -66,7 +66,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType242_UError
+          errors: *satwindNXTro-ObsType242_UError
 
   - filter: Perform Action
     filter variables:
@@ -87,7 +87,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType243_UError
+          errors: *satwindNXTro-ObsType243_UError
 
   - filter: Perform Action
     filter variables:
@@ -108,7 +108,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType244_UError
+          errors: *satwindNXTro-ObsType244_UError
 
   - filter: Perform Action
     filter variables:
@@ -129,7 +129,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType245_UError
+          errors: *satwindNXTro-ObsType245_UError
 
   - filter: Perform Action
     filter variables:
@@ -150,7 +150,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType246_UError
+          errors: *satwindNXTro-ObsType246_UError
 
   - filter: Perform Action
     filter variables:
@@ -171,7 +171,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType247_UError
+          errors: *satwindNXTro-ObsType247_UError
 
   - filter: Perform Action
     filter variables:
@@ -192,7 +192,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType250_UError
+          errors: *satwindNXTro-ObsType250_UError
 
   - filter: Perform Action
     filter variables:
@@ -213,7 +213,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType251_UError
+          errors: *satwindNXTro-ObsType251_UError
 
   - filter: Perform Action
     filter variables:
@@ -234,7 +234,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType252_UError
+          errors: *satwindNXTro-ObsType252_UError
 
   - filter: Perform Action
     filter variables:
@@ -255,7 +255,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType253_UError
+          errors: *satwindNXTro-ObsType253_UError
 
   - filter: Perform Action
     filter variables:
@@ -276,7 +276,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType254_UError
+          errors: *satwindNXTro-ObsType254_UError
 
   - filter: Perform Action
     filter variables:
@@ -297,7 +297,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType255_UError
+          errors: *satwindNXTro-ObsType255_UError
 
   - filter: Perform Action
     filter variables:
@@ -318,7 +318,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType257_UError
+          errors: *satwindNXTro-ObsType257_UError
 
   - filter: Perform Action
     filter variables:
@@ -339,7 +339,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType258_UError
+          errors: *satwindNXTro-ObsType258_UError
 
   - filter: Perform Action
     filter variables:
@@ -360,7 +360,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType259_UError
+          errors: *satwindNXTro-ObsType259_UError
 
   - filter: Perform Action
     filter variables:
@@ -381,7 +381,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType260_UError
+          errors: *satwindNXTro-ObsType260_UError
 
 
   # Tro
@@ -404,7 +404,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType240_UError
+          errors: *satwindTro-ObsType240_UError
 
   - filter: Perform Action
     filter variables:
@@ -425,7 +425,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType241_UError
+          errors: *satwindTro-ObsType241_UError
 
   - filter: Perform Action
     filter variables:
@@ -446,7 +446,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType242_UError
+          errors: *satwindTro-ObsType242_UError
 
   - filter: Perform Action
     filter variables:
@@ -467,7 +467,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType243_UError
+          errors: *satwindTro-ObsType243_UError
 
   - filter: Perform Action
     filter variables:
@@ -488,7 +488,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType244_UError
+          errors: *satwindTro-ObsType244_UError
 
   - filter: Perform Action
     filter variables:
@@ -509,7 +509,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType245_UError
+          errors: *satwindTro-ObsType245_UError
 
   - filter: Perform Action
     filter variables:
@@ -530,7 +530,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType246_UError
+          errors: *satwindTro-ObsType246_UError
 
   - filter: Perform Action
     filter variables:
@@ -551,7 +551,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType247_UError
+          errors: *satwindTro-ObsType247_UError
 
   - filter: Perform Action
     filter variables:
@@ -572,7 +572,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType250_UError
+          errors: *satwindTro-ObsType250_UError
 
   - filter: Perform Action
     filter variables:
@@ -593,7 +593,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType251_UError
+          errors: *satwindTro-ObsType251_UError
 
   - filter: Perform Action
     filter variables:
@@ -614,7 +614,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType252_UError
+          errors: *satwindTro-ObsType252_UError
 
   - filter: Perform Action
     filter variables:
@@ -635,7 +635,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType253_UError
+          errors: *satwindTro-ObsType253_UError
 
   - filter: Perform Action
     filter variables:
@@ -656,7 +656,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType254_UError
+          errors: *satwindTro-ObsType254_UError
 
   - filter: Perform Action
     filter variables:
@@ -677,7 +677,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType255_UError
+          errors: *satwindTro-ObsType255_UError
 
   - filter: Perform Action
     filter variables:
@@ -698,7 +698,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType257_UError
+          errors: *satwindTro-ObsType257_UError
 
   - filter: Perform Action
     filter variables:
@@ -719,7 +719,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType258_UError
+          errors: *satwindTro-ObsType258_UError
 
   - filter: Perform Action
     filter variables:
@@ -740,7 +740,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType259_UError
+          errors: *satwindTro-ObsType259_UError
 
   - filter: Perform Action
     filter variables:
@@ -761,7 +761,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType260_UError
+          errors: *satwindTro-ObsType260_UError
 
 
   # SXTro
@@ -784,7 +784,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType240_UError
+          errors: *satwindSXTro-ObsType240_UError
 
   - filter: Perform Action
     filter variables:
@@ -805,7 +805,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType241_UError
+          errors: *satwindSXTro-ObsType241_UError
 
   - filter: Perform Action
     filter variables:
@@ -826,7 +826,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType242_UError
+          errors: *satwindSXTro-ObsType242_UError
 
   - filter: Perform Action
     filter variables:
@@ -847,7 +847,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType243_UError
+          errors: *satwindSXTro-ObsType243_UError
 
   - filter: Perform Action
     filter variables:
@@ -868,7 +868,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType244_UError
+          errors: *satwindSXTro-ObsType244_UError
 
   - filter: Perform Action
     filter variables:
@@ -889,7 +889,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType245_UError
+          errors: *satwindSXTro-ObsType245_UError
 
   - filter: Perform Action
     filter variables:
@@ -910,7 +910,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType246_UError
+          errors: *satwindSXTro-ObsType246_UError
 
   - filter: Perform Action
     filter variables:
@@ -931,7 +931,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType247_UError
+          errors: *satwindSXTro-ObsType247_UError
 
   - filter: Perform Action
     filter variables:
@@ -952,7 +952,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType250_UError
+          errors: *satwindSXTro-ObsType250_UError
 
   - filter: Perform Action
     filter variables:
@@ -973,7 +973,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType251_UError
+          errors: *satwindSXTro-ObsType251_UError
 
   - filter: Perform Action
     filter variables:
@@ -994,7 +994,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType252_UError
+          errors: *satwindSXTro-ObsType252_UError
 
   - filter: Perform Action
     filter variables:
@@ -1015,7 +1015,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType253_UError
+          errors: *satwindSXTro-ObsType253_UError
 
   - filter: Perform Action
     filter variables:
@@ -1036,7 +1036,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType254_UError
+          errors: *satwindSXTro-ObsType254_UError
 
   - filter: Perform Action
     filter variables:
@@ -1057,7 +1057,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType255_UError
+          errors: *satwindSXTro-ObsType255_UError
 
   - filter: Perform Action
     filter variables:
@@ -1078,7 +1078,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType257_UError
+          errors: *satwindSXTro-ObsType257_UError
 
   - filter: Perform Action
     filter variables:
@@ -1099,7 +1099,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType258_UError
+          errors: *satwindSXTro-ObsType258_UError
 
   - filter: Perform Action
     filter variables:
@@ -1120,7 +1120,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType259_UError
+          errors: *satwindSXTro-ObsType259_UError
 
   - filter: Perform Action
     filter variables:
@@ -1141,7 +1141,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType260_UError
+          errors: *satwindSXTro-ObsType260_UError
 
   ## V
   # NXTro
@@ -1164,7 +1164,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType240_VError
+          errors: *satwindNXTro-ObsType240_VError
 
   - filter: Perform Action
     filter variables:
@@ -1185,7 +1185,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType241_VError
+          errors: *satwindNXTro-ObsType241_VError
 
   - filter: Perform Action
     filter variables:
@@ -1206,7 +1206,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType242_VError
+          errors: *satwindNXTro-ObsType242_VError
 
   - filter: Perform Action
     filter variables:
@@ -1227,7 +1227,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType243_VError
+          errors: *satwindNXTro-ObsType243_VError
 
   - filter: Perform Action
     filter variables:
@@ -1248,7 +1248,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType244_VError
+          errors: *satwindNXTro-ObsType244_VError
 
   - filter: Perform Action
     filter variables:
@@ -1269,7 +1269,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType245_VError
+          errors: *satwindNXTro-ObsType245_VError
 
   - filter: Perform Action
     filter variables:
@@ -1290,7 +1290,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType246_VError
+          errors: *satwindNXTro-ObsType246_VError
 
   - filter: Perform Action
     filter variables:
@@ -1311,7 +1311,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType247_VError
+          errors: *satwindNXTro-ObsType247_VError
 
   - filter: Perform Action
     filter variables:
@@ -1332,7 +1332,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType250_VError
+          errors: *satwindNXTro-ObsType250_VError
 
   - filter: Perform Action
     filter variables:
@@ -1353,7 +1353,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType251_VError
+          errors: *satwindNXTro-ObsType251_VError
 
   - filter: Perform Action
     filter variables:
@@ -1374,7 +1374,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType252_VError
+          errors: *satwindNXTro-ObsType252_VError
 
   - filter: Perform Action
     filter variables:
@@ -1395,7 +1395,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType253_VError
+          errors: *satwindNXTro-ObsType253_VError
 
   - filter: Perform Action
     filter variables:
@@ -1416,7 +1416,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType254_VError
+          errors: *satwindNXTro-ObsType254_VError
 
   - filter: Perform Action
     filter variables:
@@ -1437,7 +1437,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType255_VError
+          errors: *satwindNXTro-ObsType255_VError
 
   - filter: Perform Action
     filter variables:
@@ -1458,7 +1458,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType257_VError
+          errors: *satwindNXTro-ObsType257_VError
 
   - filter: Perform Action
     filter variables:
@@ -1479,7 +1479,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType258_VError
+          errors: *satwindNXTro-ObsType258_VError
 
   - filter: Perform Action
     filter variables:
@@ -1500,7 +1500,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType259_VError
+          errors: *satwindNXTro-ObsType259_VError
 
   - filter: Perform Action
     filter variables:
@@ -1521,7 +1521,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindNXTroObsType260_VError
+          errors: *satwindNXTro-ObsType260_VError
 
 
   # Tro
@@ -1544,7 +1544,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType240_VError
+          errors: *satwindTro-ObsType240_VError
 
   - filter: Perform Action
     filter variables:
@@ -1565,7 +1565,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType241_VError
+          errors: *satwindTro-ObsType241_VError
 
   - filter: Perform Action
     filter variables:
@@ -1586,7 +1586,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType242_VError
+          errors: *satwindTro-ObsType242_VError
 
   - filter: Perform Action
     filter variables:
@@ -1607,7 +1607,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType243_VError
+          errors: *satwindTro-ObsType243_VError
 
   - filter: Perform Action
     filter variables:
@@ -1628,7 +1628,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType244_VError
+          errors: *satwindTro-ObsType244_VError
 
   - filter: Perform Action
     filter variables:
@@ -1649,7 +1649,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType245_VError
+          errors: *satwindTro-ObsType245_VError
 
   - filter: Perform Action
     filter variables:
@@ -1670,7 +1670,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType246_VError
+          errors: *satwindTro-ObsType246_VError
 
   - filter: Perform Action
     filter variables:
@@ -1691,7 +1691,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType247_VError
+          errors: *satwindTro-ObsType247_VError
 
   - filter: Perform Action
     filter variables:
@@ -1712,7 +1712,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType250_VError
+          errors: *satwindTro-ObsType250_VError
 
   - filter: Perform Action
     filter variables:
@@ -1733,7 +1733,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType251_VError
+          errors: *satwindTro-ObsType251_VError
 
   - filter: Perform Action
     filter variables:
@@ -1754,7 +1754,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType252_VError
+          errors: *satwindTro-ObsType252_VError
 
   - filter: Perform Action
     filter variables:
@@ -1775,7 +1775,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType253_VError
+          errors: *satwindTro-ObsType253_VError
 
   - filter: Perform Action
     filter variables:
@@ -1796,7 +1796,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType254_VError
+          errors: *satwindTro-ObsType254_VError
 
   - filter: Perform Action
     filter variables:
@@ -1817,7 +1817,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType255_VError
+          errors: *satwindTro-ObsType255_VError
 
   - filter: Perform Action
     filter variables:
@@ -1838,7 +1838,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType257_VError
+          errors: *satwindTro-ObsType257_VError
 
   - filter: Perform Action
     filter variables:
@@ -1859,7 +1859,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType258_VError
+          errors: *satwindTro-ObsType258_VError
 
   - filter: Perform Action
     filter variables:
@@ -1880,7 +1880,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType259_VError
+          errors: *satwindTro-ObsType259_VError
 
   - filter: Perform Action
     filter variables:
@@ -1901,7 +1901,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindTroObsType260_VError
+          errors: *satwindTro-ObsType260_VError
 
 
   # SXTro
@@ -1924,7 +1924,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType240_VError
+          errors: *satwindSXTro-ObsType240_VError
 
   - filter: Perform Action
     filter variables:
@@ -1945,7 +1945,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType241_VError
+          errors: *satwindSXTro-ObsType241_VError
 
   - filter: Perform Action
     filter variables:
@@ -1966,7 +1966,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType242_VError
+          errors: *satwindSXTro-ObsType242_VError
 
   - filter: Perform Action
     filter variables:
@@ -1987,7 +1987,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType243_VError
+          errors: *satwindSXTro-ObsType243_VError
 
   - filter: Perform Action
     filter variables:
@@ -2008,7 +2008,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType244_VError
+          errors: *satwindSXTro-ObsType244_VError
 
   - filter: Perform Action
     filter variables:
@@ -2029,7 +2029,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType245_VError
+          errors: *satwindSXTro-ObsType245_VError
 
   - filter: Perform Action
     filter variables:
@@ -2050,7 +2050,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType246_VError
+          errors: *satwindSXTro-ObsType246_VError
 
   - filter: Perform Action
     filter variables:
@@ -2071,7 +2071,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType247_VError
+          errors: *satwindSXTro-ObsType247_VError
 
   - filter: Perform Action
     filter variables:
@@ -2092,7 +2092,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType250_VError
+          errors: *satwindSXTro-ObsType250_VError
 
   - filter: Perform Action
     filter variables:
@@ -2113,7 +2113,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType251_VError
+          errors: *satwindSXTro-ObsType251_VError
 
   - filter: Perform Action
     filter variables:
@@ -2134,7 +2134,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType252_VError
+          errors: *satwindSXTro-ObsType252_VError
 
   - filter: Perform Action
     filter variables:
@@ -2155,7 +2155,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType253_VError
+          errors: *satwindSXTro-ObsType253_VError
 
   - filter: Perform Action
     filter variables:
@@ -2176,7 +2176,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType254_VError
+          errors: *satwindSXTro-ObsType254_VError
 
   - filter: Perform Action
     filter variables:
@@ -2197,7 +2197,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType255_VError
+          errors: *satwindSXTro-ObsType255_VError
 
   - filter: Perform Action
     filter variables:
@@ -2218,7 +2218,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType257_VError
+          errors: *satwindSXTro-ObsType257_VError
 
   - filter: Perform Action
     filter variables:
@@ -2239,7 +2239,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType258_VError
+          errors: *satwindSXTro-ObsType258_VError
 
   - filter: Perform Action
     filter variables:
@@ -2260,7 +2260,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType259_VError
+          errors: *satwindSXTro-ObsType259_VError
 
   - filter: Perform Action
     filter variables:
@@ -2281,7 +2281,7 @@
           xvar:
             name: MetaData/air_pressure
           xvals: *satwindErrorLevels
-          errors: *satwindSXTroObsType260_VError
+          errors: *satwindSXTro-ObsType260_VError
 
   # remove locations with unrealistic ObsErrorData
   # independently for eastward_wind and northward_wind
