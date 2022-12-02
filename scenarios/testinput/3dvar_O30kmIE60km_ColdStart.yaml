@@ -1,14 +1,26 @@
 workflow:
   # test a recent date
-  firstCyclePoint: 20220201T00
-  initialCyclePoint: 20220201T00
-  finalCyclePoint: 20220201T06
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
+  firstCyclePoint: 20210121T18
+  initialCyclePoint: 20210121T18
+  finalCyclePoint: 20210202T00
+  CriticalPathType: Bypass
+  VerifyDeterministicDA: False
+  VerifyEnsMeanBG: False
+  VerifyAgainstObservations: True
+  VerifyAgainstExternalAnalyses: True
+
+  VerifyExtendedMeanFC: True
+  ExtendedFCLengthHR: 168
+  ExtendedFCOutIntervalHR: 12
+  ExtendedMeanFCTimes: T00
+  maxActiveCyclePoints: 20
 observations:
   resource: GladeRDAOnline
+  convertToIODAObservations:
+  - prepbufr
+  - gpsro
 experiment:
-  ExperimentName: '3dvar_O30kmIE60km_ColdStart_TEST'
+  ExperimentName: '3dvar_O30kmIE60km_ColdStart_SIO_prepbufr_gpsro'
 model:
   outerMesh: 30km
   innerMesh: 60km
@@ -27,7 +39,7 @@ externalanalyses:
   resource: "GFS.RDA"
 variational:
   DAType: 3dvar
-  nInnerIterations: [30,]
+  nInnerIterations: [60,60]
   biasCorrection: True
   job:
     30km:
