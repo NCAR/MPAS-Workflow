@@ -614,5 +614,5 @@ _aircraft:
     # latitude band-specific ObsValue-normalized observation errors, i.e., (O-B)/O (unitless)
     relative doadob:
       NXTro_qv: &aircraftNXTro_qvError [ 999.0, 999.0, 0.6882, 1.022, 1.232, 1.338, 1.121, 0.541]
-      SXTro_qv: &aircraftSXTro_qvError *sondesSXTro_qvError # no training data available
+      SXTro_qv: &aircraftSXTro_qvError [999.0, 999.0, 0.6791, 1.232, 1.498, 2.017, 1.628, 0.4919] # no training data available, copied from sondes
       Tro_qv: &aircraftTro_qvError [ 999.0, 999.0, 0.7835, 1.036, 1.877, 1.933, 1.372, 0.552]
