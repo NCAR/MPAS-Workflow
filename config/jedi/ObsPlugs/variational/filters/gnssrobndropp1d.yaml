@@ -53,7 +53,7 @@
       maxvalue: *maxTro
     - variable:
         name: MetaData/impact_height
-      minvalue: *gnssrorefncepTroExcludeMin
+      maxvalue: *gnssrorefncepTroExcludeMin
   # SMid
   - filter: RejectList
     defer to post: true
