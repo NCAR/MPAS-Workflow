@@ -54,6 +54,10 @@ workflow:
 # + GetGDASanalysis
 #   - runs only GetGDASanalysis.csh
 #   - no dependencies between cycles
+# + OnlyHofx
+#   - runs the forecast needed for the state in the HofX application
+#   - runs the mini-worflow for the observation's preparation
+#   - runs the HofX application
 # Users may choose whether to run the verification concurrently with and
 # dependent on the critical path tasks (`Normal`), or as an independent post-processing step
 # (`Bypass`). `Normal` and `Bypass` cover most use-cases for "continuous cycling" experiments.

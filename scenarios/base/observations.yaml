@@ -1,6 +1,6 @@
 observations:
 ## resource
-# OPTIONS: PANDACArchive, GladeRDAOnline, NCEPFTPOnline, GenerateObs
+# OPTIONS: PANDACArchive, GladeRDAOnline, NCEPFTPOnline, GenerateObs, AroObs
   resource: None
 
 ## convertToIODAObservations
@@ -177,6 +177,41 @@ observations:
     IODASuperObGrid:
       abi_g16: 59X59
       ahi_himawari8: 101X101
+
+
+  AroObs:
+    instrumentsAllowingBiasCorrection: [None]
+
+    IODAPrefix:
+      gnssroref: gnssro
+      gnssarobndsioropp2d: aro
+      amsua-cld_aqua: amsua_aqua
+      amsua-cld_metop-a: amsua_metop-a
+      amsua-cld_metop-b: amsua_metop-b
+      amsua-cld_n15: amsua_n15
+      amsua-cld_n18: amsua_n18
+      amsua-cld_n19: amsua_n19
+      abi-clr_g16: abi_g16
+      ahi-clr_himawari8: ahi_himawari8
+
+    IODADirectory:
+      variational:
+        common: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+
+      hofx:
+        common: /glade/p/mmm/parc/liuz/pandac_common/newobs_2018/conv_obs
+        abi_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+        abi-clr_g16: /glade/work/guerrett/pandac/obs/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+        ahi_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        ahi-clr_himawari8: /glade/work/guerrett/pandac/obs/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+
+    IODASuperObGrid:
+      abi_g16: 15X15
+      ahi_himawari8: 15X15
 
 
   GenerateObs:

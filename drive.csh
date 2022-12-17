@@ -214,7 +214,7 @@ cat >! suite.rc << EOF
 {% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
 
 ## Mini-workflow that prepares observations for IODA ingest
-{% if observationsResource in ["PANDACArchive", "GenerateObs"] %}
+{% if observationsResource in ["PANDACArchive", "GenerateObs", "AroObs"] %}
   # assume that IODA observation files are already available for pre-generated cases
   {% set PrepareObservationsTasks = ["ObsReady"] %}
 {% else %}
@@ -259,6 +259,12 @@ cat >! suite.rc << EOF
 ## (iii) Download GDAS Analysis from NCEP FTP
     [[[{{GenerateTimes}}]]]
       graph = GetGDASanalysis
+      
+{% elif CriticalPathType == "OnlyHofX" %}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
+        {{PrepareObservations}} => HofXBG
 {% else %}
 
 ## (iii.a) Critical path
