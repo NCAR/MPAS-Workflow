@@ -42,7 +42,6 @@ cost function:
         prefix: {{bumpCovPrefix}}
         strategy: specific_univariate
         load_nicas_local: true
-#        verbosity: main
     saber outer blocks:
     - saber block name: StdDev
       input fields:
@@ -61,7 +60,6 @@ cost function:
         vbal_block:     [ true,  true,false, false,false,false,  true,false,false,false]
         vbal_diag_reg:  [ true, false,false, false,false,false, false,false,false,false]
         vbal_diag_auto: [false, false,false, false,false,false, false,false,false,false]
-#        verbosity: main
     linear variable change:
       linear variable change name: Control2Analysis
       input variables: *ctlvars
