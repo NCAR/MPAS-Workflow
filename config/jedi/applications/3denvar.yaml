@@ -57,7 +57,7 @@ cost function:
           strategy: common
           lev2d: last
           load_nicas_local: true
-          verbosity: main
+#          verbosity: main
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:
