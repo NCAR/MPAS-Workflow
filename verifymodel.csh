@@ -71,8 +71,11 @@ mkdir -p ${self_WorkDir}/${ModelDiagnosticsDir}
 cd ${self_WorkDir}/${ModelDiagnosticsDir}
 
 set other = $self_StateDir
-set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
-ln -sf ${bgFileOther} ../restart.$thisMPASFileDate.nc
+set bgStateOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
+ln -sf ${bgStateOther} ../restart.$thisMPASFileDate.nc
+
+set bgDiagnosticsOther = ${other}/${DIAGFilePrefix}.$thisMPASFileDate.nc
+ln -sf ${bgDiagnosticsOther} ../${DIAGFilePrefix}.$thisMPASFileDate.nc
 
 ln -fs ${pyVerifyDir}/*.py ./
 
@@ -84,7 +87,7 @@ set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $ExternalAnalysisDirOuter/$externalanalyses__filePrefixOuter"
+  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $ExternalAnalysisDirOuter/$externalanalyses__filePrefixOuter -rd /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAnaDiagnostics/${thisValidDate}/diag"
 
   if ($ArgNMembers > 1) then
     #Note: ensemble diagnostics only work for BG/AN verification, not extended ensemble forecasts
