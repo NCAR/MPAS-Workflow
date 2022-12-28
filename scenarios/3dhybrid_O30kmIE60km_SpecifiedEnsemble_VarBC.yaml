@@ -25,10 +25,10 @@ firstbackground:
 forecast:
   job:
     30km:
-      nodes: 4
-      PEPerNode: 36
+      nodes: 8
+      PEPerNode: 32
       baseSeconds: 60
-      secondsPerForecastHR: 300
+      secondsPerForecastHR: 150
 
 externalanalyses:
   resource: "GFS.PANDAC"
