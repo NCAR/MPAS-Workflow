@@ -37,10 +37,12 @@ cost function:
       saber block name: BUMP_NICAS
       active variables: &ctlvars [{{bumpCovControlVariables}}]
       bump:
-        datadir: {{bumpCovDir}}
-        prefix: {{bumpCovPrefix}}
-        strategy: specific_univariate
-        load_nicas_local: true
+        io:
+          data directory: {{bumpCovDir}}
+          files prefix: {{bumpCovPrefix}}
+        driver:
+          multivariate strategy: specific_univariate
+          read local nicas: true
     saber outer blocks:
     - saber block name: StdDev
       input fields:
@@ -51,14 +53,21 @@ cost function:
           stream name: control
     - saber block name: BUMP_VerticalBalance
       bump:
-        datadir: {{bumpCovVBalDir}}
-        prefix: {{bumpCovVBalPrefix}}
-        load_vbal: true
-        #load_samp_global: true
-        load_samp_local: true
-        vbal_block:     [ true,  true,false, false,false,false,  true,false,false,false]
-        vbal_diag_reg:  [ true, false,false, false,false,false, false,false,false,false]
-        vbal_diag_auto: [false, false,false, false,false,false, false,false,false,false]
+        io:
+          data directory: {{bumpCovVBalDir}}
+          files prefix: {{bumpCovVBalPrefix}}
+        drivers:
+          read local sampling: true
+          read vertical balance: true
+        vertical balance:
+          vbal:
+          - balanced variable: velocity_potential
+            unbalanced variable: stream_function
+            diagonal regression: true
+          - balanced variable: temperature
+            unbalanced variable: stream_function
+          - balanced variable: surface_pressure
+            unbalanced variable: stream_function
     linear variable change:
       linear variable change name: Control2Analysis
       input variables: *ctlvars
