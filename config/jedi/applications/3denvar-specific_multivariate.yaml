@@ -60,7 +60,6 @@ cost function:
           #io_values: [dynamic,dynamic,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
           io_values: [dynamic,cloud,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
           lev2d: last
-          verbosity: main
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:
