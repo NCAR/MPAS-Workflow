@@ -67,6 +67,5 @@ cost function:
       output variables: *incvars
   observations:
     obs perturbations: {{ObsPerturbations}}
-    post qc perturbations: true
     observers:
 {{Observers}}
