@@ -50,28 +50,24 @@ cost function:
         value: {{staticCovarianceWeight}}
       covariance:
         covariance model: SABER
-        saber blocks:
-        - saber block name: BUMP_NICAS
-          saber central block: true
-          iterative inverse: true
-          input variables: &ctlvars [{{bumpCovControlVariables}}]
-          output variables: *ctlvars
+        saber central block:
+          saber block name: BUMP_NICAS
+          active variables: &ctlvars [{{bumpCovControlVariables}}]
           bump:
             datadir: {{bumpCovDir}}
             prefix: {{bumpCovPrefix}}
             strategy: specific_univariate
             load_nicas_local: true
             verbosity: main
+        saber outer blocks:
         - saber block name: StdDev
-          input variables: *ctlvars
-          output variables: *ctlvars
-          file:
-            filename: {{bumpCovStdDevFile}}
-            date: *analysisDate
-            stream name: control
+          input fields:
+          - parameter: StdDev
+            file:
+              filename: {{bumpCovStdDevFile}}
+              date: *analysisDate
+              stream name: control
         - saber block name: BUMP_VerticalBalance
-          input variables: *ctlvars
-          output variables: *ctlvars
           bump:
             datadir: {{bumpCovVBalDir}}
             prefix: {{bumpCovVBalPrefix}}
@@ -92,10 +88,9 @@ cost function:
         covariance model: ensemble
         localization:
           localization method: SABER
-          saber block:
+          saber central block:
             saber block name: BUMP_NICAS
-            input variables: *incvars
-            output variables: *incvars
+            active variables: *incvars
             bump:
               datadir: {{bumpLocDir}}
               prefix: {{bumpLocPrefix}}
