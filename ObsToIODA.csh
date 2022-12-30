@@ -39,9 +39,6 @@ cd ${WorkDir}
 
 # ================================================================================================
 
-# Remove log files from previous executions
-rm log-*
-
 if ( "${observations__resource}" == "PANDACArchive" ) then
   echo "$0 (INFO): PANDACArchive observations are already in IODA format, exiting"
   exit 0
@@ -74,12 +71,16 @@ foreach gdasfile ( *"gdas."* )
    rm ./${obs2iodaEXEC}
    ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
    set inst = `echo "$gdasfile" | cut -d'.' -f2`
+
+   set log = log-converter_${inst}
+   rm $log
+
    if ( ${gdasfile} =~ *"mtiasi"* ) then
-     ./${obs2iodaEXEC} ${SPLIThourly} ${gdasfile} >&! log-converter_${inst}
+     ./${obs2iodaEXEC} ${SPLIThourly} ${gdasfile} >&! $log
    else if ( ${gdasfile} =~ *"prepbufr"* ) then
      set inst = `echo "$gdasfile" | cut -d'.' -f1`
      # run obs2ioda for preburf with additional QC as in GSI
-     ./${obs2iodaEXEC} ${gdasfile} >&! log-converter_${inst}
+     ./${obs2iodaEXEC} ${gdasfile} >&! $log
      # for surface obs, run obs2ioda for prepbufr without additional QC
      mkdir -p sfc
      cd sfc
@@ -90,11 +91,11 @@ foreach gdasfile ( *"gdas."* )
      cd ..
      rm -rf sfc
    else
-     ./${obs2iodaEXEC} ${gdasfile} >&! log-converter_${inst}
+     ./${obs2iodaEXEC} ${gdasfile} >&! $log
    endif
    # Check status
    # ============
-   grep "all done!" log-converter_${inst}
+   grep "all done!" $log
    if ( $status != 0 ) then
      echo "$0 (ERROR): Pre-processing observations to IODA-v2 failed" > ./FAIL-converter_${inst}
      exit 1
@@ -110,23 +111,47 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
   cd ${mainScriptDir}
   source config/environmentJEDI.csh
   cd -
-  rm ./${iodaupgradeEXEC}
-  ln -sfv ${iodaupgradeBuildDir}/${iodaupgradeEXEC} ./
+  foreach exec ($iodaUpgradeEXEC1 $iodaUpgradeEXEC2)
+    rm ./${exec}
+    ln -sfv ${iodaUpgradeBuildDir}/${exec} ./
+  end
+  set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
   set types = ( aircraft ascat profiler satwind sfc sondes satwnd )
   foreach ty ( ${types} )
     if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
       set ty_obs = ${ty}_obs_${thisValidDate}.h5
       set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
-      ./${iodaupgradeEXEC} ${ty_obs} ${ty_obs_base}_tmp.h5 >&! log-upgrade_${ty}
+
+      set ii = 1
+      set log = log-upgrade${ii}_${ty}
+      rm $log
+      ./$iodaUpgradeEXEC1 ${ty_obs} ${ty_obs_base}_tmp.h5 >&! $log
       rm -rf $ty_obs
       mv ${ty_obs_base}_tmp.h5 $ty_obs
+
       # Check status
       # ============
-      grep "Success!" log-upgrade_${ty}
+      grep "Success!" $log
       if ( $status != 0 ) then
-        echo "$0 (ERROR): ioda-upgrade failed for $ty" > ./FAIL-upgrade_${ty}
+        echo "$0 (ERROR): ${exec} failed for $ty" > ./FAIL-upgrade${ii}_${ty}
         exit 1
       endif
+
+      set ii = 2
+      set log = log-upgrade${ii}_${ty}
+      rm $log
+      ./$iodaUpgradeEXEC2 ${ty_obs} ${ty_obs_base}_tmp.h5 $iodaUpgradeV3Config >&! $log
+      rm -rf $ty_obs
+      mv ${ty_obs_base}_tmp.h5 $ty_obs
+
+      # Check status
+      # ============
+      grep "Success!" $log
+      if ( $status != 0 ) then
+        echo "$0 (ERROR): ${exec} failed for $ty" > ./FAIL-upgrade${ii}_${ty}
+        exit 1
+      endif
+
     endif
   end
 endif
