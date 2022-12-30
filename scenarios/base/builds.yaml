@@ -3,4 +3,4 @@ builds:
   #commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_28DEC2022_single
 
   # optional double-precision build
-  commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_feature--sprint-ioda-converters
+  commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--sprint-ioda-converters
