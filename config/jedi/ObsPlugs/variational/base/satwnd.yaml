@@ -14,6 +14,6 @@
   obs error: *ObsErrorDiagonal
   obs operator:
     name: VertInterp
-    observation alias file: testinput/obsop_name_map.yaml
+    observation alias file: obsop_name_map.yaml
   get values:
     <<: *GetValues

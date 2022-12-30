@@ -16,6 +16,6 @@
     da_psfc_scheme: UKMO   # or WRFDA
   linear obs operator:
     name: Identity
-    observation alias file: testinput/obsop_name_map.yaml
+    observation alias file: obsop_name_map.yaml
   get values:
     <<: *GetValues
