@@ -44,6 +44,9 @@ if ( "${observations__resource}" == "PANDACArchive" ) then
   exit 0
 endif
 
+if ( -d logs ) rm -r logs
+mkdir -p logs
+
 # write out hourly files for IASI
 setenv SPLIThourly "-split"
 
@@ -72,7 +75,7 @@ foreach gdasfile ( *"gdas."* )
    ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
    set inst = `echo "$gdasfile" | cut -d'.' -f2`
 
-   set log = log-converter_${inst}
+   set log = logs/log-converter_${inst}
    rm $log
 
    if ( ${gdasfile} =~ *"mtiasi"* ) then
@@ -85,7 +88,7 @@ foreach gdasfile ( *"gdas."* )
      mkdir -p sfc
      cd sfc
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
-     ./${obs2iodaEXEC} ${noGSIQCFilters} ../${gdasfile} >&! log-converter_sfc
+     ./${obs2iodaEXEC} ${noGSIQCFilters} ../${gdasfile} >&! logs/log-converter_sfc
      # replace surface obs file with file created without additional QC
      mv sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
      cd ..
@@ -147,7 +150,7 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
       set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
 
       set ii = 1
-      set log = log-upgrade${ii}_${ty}
+      set log = logs/log-upgrade${ii}_${ty}
       rm $log
       ./$iodaUpgradeEXEC1 ${ty_obs} ${ty_obs_base}_tmp.h5 >&! $log
       rm -rf $ty_obs
@@ -162,7 +165,7 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
       endif
 
       set ii = 2
-      set log = log-upgrade${ii}_${ty}
+      set log = logs/log-upgrade${ii}_${ty}
       rm $log
       ./$iodaUpgradeEXEC2 ${ty_obs} ${ty_obs_base}_tmp.h5 $iodaUpgradeV3Config >&! $log
       rm -rf $ty_obs
