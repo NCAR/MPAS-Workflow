@@ -116,7 +116,7 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
     ln -sfv ${iodaUpgradeBuildDir}/${exec} ./
   end
   set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
-  set types = ( aircraft ascat profiler satwind sfc sondes satwnd )
+  set types = ( aircraft ascat profiler satwind sfc sondes satwnd gnssro )
   foreach ty ( ${types} )
     if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
       set ty_obs = ${ty}_obs_${thisValidDate}.h5
