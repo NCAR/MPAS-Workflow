@@ -116,7 +116,31 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
     ln -sfv ${iodaUpgradeBuildDir}/${exec} ./
   end
   set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
-  set types = ( aircraft ascat profiler satwind sfc sondes satwnd gnssro )
+  set types = ( \
+    aircraft \
+    amsua_n15 \
+    amsua_n18 \
+    amsua_n19 \
+    amsua_aqua \
+    amsua_metop-a \
+    amsua_metop-b \
+    amsua_metop-c \
+    gnssro \
+    mhs_n18 \
+    mhs_n19 \
+    mhs_metop-a \
+    mhs_metop-b \
+    mhs_metop-c \
+    iasi_metop-a \
+    iasi_metop-b \
+    iasi_metop-c \
+    satwind \
+    satwnd \
+    sfc \
+    sondes \
+    #ascat \
+    #profiler \
+  )
   foreach ty ( ${types} )
     if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
       set ty_obs = ${ty}_obs_${thisValidDate}.h5
