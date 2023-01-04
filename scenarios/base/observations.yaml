@@ -6,14 +6,14 @@ observations:
 ## convertToIODAObservations
 # list of raw observation types to convert to IODA format, when (resource != PANDACArchive)
   convertToIODAObservations:
+  - 1bamua
+  - 1bmhs
+  - airsev
+  #- cris
+  - gpsro
+  #- mtiasi
   - prepbufr
   - satwnd
-  - gpsro
-  - 1bamua
-  - airsev
-  #- mtiasi
-  #- 1bmhs
-  #- cris
 
 ## GDAS observations error table
 # This file provides observation errors for all types of conventional and satwnd data

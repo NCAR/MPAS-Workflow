@@ -118,25 +118,11 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
     rm ./${exec}
     ln -sfv ${iodaUpgradeBuildDir}/${exec} ./
   end
-  set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
-  set types = ( \
+
+  # upgrade from IODA v1 to v2
+  set V1toV2 = ( \
     aircraft \
-    amsua_n15 \
-    amsua_n18 \
-    amsua_n19 \
-    amsua_aqua \
-    amsua_metop-a \
-    amsua_metop-b \
-    amsua_metop-c \
     gnssro \
-    mhs_n18 \
-    mhs_n19 \
-    mhs_metop-a \
-    mhs_metop-b \
-    mhs_metop-c \
-    iasi_metop-a \
-    iasi_metop-b \
-    iasi_metop-c \
     satwind \
     satwnd \
     sfc \
@@ -144,7 +130,7 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
     #ascat \
     #profiler \
   )
-  foreach ty ( ${types} )
+  foreach ty ( ${V1toV2} )
     if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
       set ty_obs = ${ty}_obs_${thisValidDate}.h5
       set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
@@ -163,6 +149,33 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
         echo "$0 (ERROR): ${exec} failed for $ty" > ./FAIL-upgrade${ii}_${ty}
         exit 1
       endif
+    endif
+  end
+
+  # upgrade from IODA v2 to v3
+  set V2toV3 = ( $V1toV2 \
+    amsua_n15 \
+    amsua_n18 \
+    amsua_n19 \
+    amsua_aqua \
+    amsua_metop-a \
+    amsua_metop-b \
+    amsua_metop-c \
+    gnssro \
+    mhs_n18 \
+    mhs_n19 \
+    mhs_metop-a \
+    mhs_metop-b \
+    mhs_metop-c \
+    iasi_metop-a \
+    iasi_metop-b \
+    iasi_metop-c \
+  )
+  set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
+  foreach ty ( ${V2toV3} )
+    if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
+      set ty_obs = ${ty}_obs_${thisValidDate}.h5
+      set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
 
       set ii = 2
       set log = logs/log-upgrade${ii}_${ty}
