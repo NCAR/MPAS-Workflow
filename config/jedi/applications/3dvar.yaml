@@ -40,7 +40,7 @@ cost function:
         io:
           data directory: {{bumpCovDir}}
           files prefix: {{bumpCovPrefix}}
-        driver:
+        drivers:
           multivariate strategy: specific_univariate
           read local nicas: true
     saber outer blocks:
