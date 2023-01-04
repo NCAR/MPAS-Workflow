@@ -127,8 +127,8 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
     satwnd \
     sfc \
     sondes \
-    #ascat \
-    #profiler \
+    ascat \
+    profiler \
   )
   foreach ty ( ${V1toV2} )
     if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
