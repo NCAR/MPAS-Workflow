@@ -1,6 +1,6 @@
 builds:
 # default build directory
-  commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_25OCT2022_single
+  commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_28DEC2022_single
 
   # optional double-precision build
-  #commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_25OCT2022
+  #commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_28DEC2022

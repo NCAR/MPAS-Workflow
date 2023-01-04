@@ -5,7 +5,6 @@ _iteration: &iterationConfig
     deallocate non-da fields: true
     interpolation type: unstructured
   gradient norm reduction: 1e-3
-  obs perturbations: {{ObsPerturbations}}
   #Several 'online diagnostics' are useful for checking the H correctness and Hessian symmetry
 #  online diagnostics:
 #    tlm taylor test: true
@@ -60,5 +59,6 @@ cost function:
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:
+    obs perturbations: {{ObsPerturbations}}
     observers:
 {{Observers}}
