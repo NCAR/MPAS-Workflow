@@ -1,14 +1,19 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 workflow:
   firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180514T18
-  CriticalPathType: Normal
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
+  initialCyclePoint: 20180418T00
+  finalCyclePoint: 20180514T00
+  CriticalPathType: Bypass
+  VerifyDeterministicDA: False
+  VerifyEnsMeanBG: False
   VerifyAgainstObservations: True
   VerifyAgainstExternalAnalyses: True
   maxActiveCyclePoints: 40
+
+  VerifyExtendedMeanFC: True
+  ExtendedFCLengthHR: 240
+  ExtendedFCOutIntervalHR: 24
+  ExtendedMeanFCTimes: T00
 
 #job:
 #  CPQueueName: economy
@@ -79,7 +84,8 @@ experiment:
   ExpSuffix: '_ensB-SE80+RTPP70_RefNCEP_BndROPP1D_MidPol_3rdDoaDob'
 
 observations:
-  resource: PANDACArchive
+  resource: GenerateObs
+  #resource: PANDACArchive
   PANDACArchive:
     IODADirectory:
       variational:
