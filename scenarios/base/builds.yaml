@@ -3,4 +3,4 @@ builds:
   commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_23JAN2023_single
 
   # optional double-precision build
-  commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_23JAN2023
+  #commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_23JAN2023
