@@ -5,7 +5,6 @@ _iteration: &iterationConfig
     deallocate non-da fields: true
     interpolation type: unstructured
   gradient norm reduction: 1e-3
-  obs perturbations: {{ObsPerturbations}}
   #Several 'online diagnostics' are useful for checking the H correctness and Hessian symmetry
 #  online diagnostics:
 #    tlm taylor test: true
@@ -52,17 +51,22 @@ cost function:
         saber block name: BUMP_NICAS
         active variables: *incvars
         bump:
-          datadir: {{bumpLocDir}}
-          prefix: {{bumpLocPrefix}}
-          strategy: specific_multivariate
-          load_nicas_local: true
-          io_keys: [temperature-temperature,spechum-spechum,uReconstructZonal-uReconstructZonal,uReconstructMeridional-uReconstructMeridional,surface_pressure-surface_pressure,qc-qc,qi-qi,qr-qr,qs-qs,qg-qg]
-          #io_values: [dynamic,dynamic,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
-          io_values: [dynamic,cloud,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
-          lev2d: last
-          verbosity: main
+          io:
+            data directory: {{bumpLocDir}}
+            files prefix: {{bumpLocPrefix}}
+          drivers:
+            multivariate strategy: specific_multivariate
+            read local nicas: true
+          model:
+            level for 2d variables: last
+          #TODO: update following keys
+          #io_keys: [temperature-temperature,spechum-spechum,uReconstructZonal-uReconstructZonal,uReconstructMeridional-uReconstructMeridional,surface_pressure-surface_pressure,qc-qc,qi-qi,qr-qr,qs-qs,qg-qg]
+          ##io_values: [dynamic,dynamic,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
+          #io_values: [dynamic,cloud,dynamic,dynamic,dynamic,cloud,cloud,cloud,cloud,cloud]
+          #lev2d: last
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:
+    obs perturbations: {{ObsPerturbations}}
     observers:
 {{Observers}}
