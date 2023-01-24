@@ -21,12 +21,12 @@ hofx:
       PEPerNode: 36
       memory: 109GB
     60km:
-      seconds: 300
+      seconds: 600
       nodes: 1
       PEPerNode: 36
       memory: 109GB
     120km:
-      seconds: 300
+      seconds: 600
       nodes: 1
       PEPerNode: 36
       memory: 109GB

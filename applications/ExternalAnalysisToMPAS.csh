@@ -59,12 +59,18 @@ cd ${WorkDir}
 set outputFile = $ArgFilePrefix.$thisMPASFileDate.nc
 
 if ( -e $outputFile ) then
-  echo "$0 (INFO): outputFile ($outputFile) already exists, exiting with success"
-  echo "$0 (INFO): if regenerating the outputFile is desired, delete the original"
+  set oSize = `du -sh $outputFile | sed 's@'$outputFile'@@'`
 
-  date
+  if ( "$oSize" != "0" ) then
+    echo "$0 (INFO): outputFile ($outputFile) already exists, exiting with success"
+    echo "$0 (INFO): if regenerating the outputFile is desired, delete the original"
 
-  exit 0
+    date
+
+    exit 0
+  endif
+
+  rm $outputFile
 endif
 
 # ================================================================================================
@@ -106,6 +112,7 @@ mpiexec ./${InitEXE}
 # ============
 grep "Finished running the init_${MPASCore} core" log.init_${MPASCore}.0000.out
 if ( $status != 0 ) then
+  rm $outputFile
   echo "ERROR in $0 : MPAS-init failed" > ./FAIL
   exit 1
 endif

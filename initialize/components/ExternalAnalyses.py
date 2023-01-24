@@ -14,10 +14,6 @@ class ExternalAnalyses(Component):
     # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC"
     'resource': str,
   }
-  variablesWithDefaults = {
-    # Get GDAS analyses
-    'GetGDASAnalysis': [False, bool]
-  }
 
   def __init__(self, config, hpc, meshes):
     super().__init__(config)

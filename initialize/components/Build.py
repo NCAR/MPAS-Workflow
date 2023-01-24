@@ -6,10 +6,10 @@ class Build(Component):
   variablesWithDefaults = {
     ## mpas bundle
     # mpas-bundle build directory
-    'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_25OCT2022_single', str],
+    'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_23JAN2023_single', str],
 
     # optional double-precision build
-    #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_25OCT2022', str],
+    #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_23JAN2023', str],
 
     ## compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
@@ -81,8 +81,9 @@ class Build(Component):
     # -----------
     self._set('obs2iodaEXE', 'obs2ioda-v2.x')
     self._set('obs2iodaBuildDir', '/glade/p/mmm/parc/ivette/pandac/fork_obs2ioda/obs2ioda/obs2ioda-v2/src')
-    self._set('iodaupgradeEXE', 'ioda-upgrade.x')
-    self._set('iodaupgradeBuildDir', self['mpas bundle']+'/bin')
+    self._set('iodaUpgradeEXE1', 'ioda-upgrade-v1-to-v2.x')
+    self._set('iodaUpgradeEXE2', 'ioda-upgrade-v2-to-v3.x')
+    self._set('iodaUpgradeBuildDir', self['mpas bundle']+'/bin')
 
     # Mean state calculator
     # ---------------------

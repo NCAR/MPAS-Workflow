@@ -20,11 +20,11 @@ class HPC(Component):
     # Casper Options: casper@casper-pbs
 
     # Critical*: used for all critical path jobs, single or multi-node, multi-processor only
-    'CriticalAccount': ['NMMM0015', str],
+    'CriticalAccount': ['NMMM0043', str],
     'CriticalQueue': ['regular', str],
 
     # NonCritical*: used non-critical path jobs, single or multi-node, multi-processor only
-    'NonCriticalAccount': ['NMMM0015', str],
+    'NonCriticalAccount': ['NMMM0043', str],
     'NonCriticalQueue': ['economy', str],
 
     # SingleProc*: used for single-processor jobs, both critical and non-critical paths
@@ -33,7 +33,7 @@ class HPC(Component):
     'SingleProcQueue': ['casper@casper-pbs', str],
 
     # EnsMeanBG*: settings for ensemble mean BG calculation; useful for override when time-critical
-    'EnsMeanBGAccount': ['NMMM0015', str],
+    'EnsMeanBGAccount': ['NMMM0043', str],
     'EnsMeanBGQueue': ['economy', str],
   }
   def __init__(self, config):

@@ -9,7 +9,7 @@ class VerifyObs(Component):
   workDir = 'Verification'
   diagnosticsDir = 'diagnostic_stats/obs'
   variablesWithDefaults = {
-    'pyVerifyDir': ['/glade/work/guerrett/pandac/fixed_input/graphics', str],
+    'pyVerifyDir': ['/glade/work/guerrett/pandac/fixed_input/graphics_ioda-conventions', str],
   }
 
   def __init__(self, config, hpc, members):
