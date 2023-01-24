@@ -15,17 +15,17 @@
       maxvalue: 200.0
 #  - filter: Bounds Check
 #    filter variables:
-#    - name: bending_angle
+#    - name: bendingAngle
 #    where:
 #    - variable:
-#        name: occulting_sat_id@MetaData
+#        name: MetaData/satelliteIdentifier
 #      is_in: 3-5
 #    test variables:
-#    - name: impact_height@MetaData
+#    - name: MetaData/impactHeightRO
 #    minvalue: 8000
   - filter: ROobserror
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     errmodel: NBAM
   - filter: Background Check
     threshold: 10.0
