@@ -9,7 +9,7 @@
       engine:
         type: H5File
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_abi-clr_g16.h5
-    simulated variables: [brightness_temperature]
+    simulated variables: [brightnessTemperature]
     channels: &clrabi_channels 8-10
   obs error: *ObsErrorDiagonal
   obs operator:

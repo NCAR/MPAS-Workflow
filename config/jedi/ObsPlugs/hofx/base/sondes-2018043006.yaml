@@ -9,9 +9,10 @@
       engine:
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_sondes.h5
-    simulated variables: [air_temperature, virtual_temperature, eastward_wind, northward_wind]
+    simulated variables: [airTemperature, virtualTemperature, windEastward, windNorthward]
   obs error: *ObsErrorDiagonal
   obs operator:
     name: VertInterp
+    observation alias file: obsop_name_map.yaml
   get values:
     <<: *GetValues
