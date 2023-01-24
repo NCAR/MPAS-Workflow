@@ -4,24 +4,24 @@
   # Assign the initial observation error, based on height/pressure
   - filter: Perform Action
     filter variables:
-    - name: eastward_wind
-    - name: northward_wind
+    - name: windEastward
+    - name: windNorthward
     action:
       name: assign error
       error function:
-        name: ObsErrorModelStepwiseLinear@ObsFunction
+        name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: air_pressure@MetaData
+            name: MetaData/pressure
           xvals: [100000, 95000, 80000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000]
           errors: [1.4, 1.5, 1.6, 1.8, 1.9, 2.0, 2.1, 2.3, 2.6, 2.8, 3.0, 3.2, 2.7, 2.4, 2.1]
   # All satellite platforms, reject when pressure greater than 950 mb.
   - filter: Bounds Check
     filter variables:
-    - name: eastward_wind
-    - name: northward_wind
+    - name: windEastward
+    - name: windNorthward
     test variables:
-    - name: air_pressure@MetaData
+    - name: MetaData/pressure
     maxvalue: 95000
     action:
       name: reject

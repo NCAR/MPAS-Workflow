@@ -2,15 +2,15 @@
   - filter: Domain Check
     where:
     - variable:
-        name: MetaData/altitude
+        name: MetaData/height
       minvalue: 0.0
       maxvalue: 30000.0
     - variable:
-        name: MetaData/earth_radius_of_curvature
+        name: MetaData/earthRadiusCurvature
       minvalue: 6250000.0
       maxvalue: 6450000.0
     - variable:
-        name: MetaData/geoid_height_above_reference_ellipsoid
+        name: MetaData/geoidUndulation
       minvalue: -200.0
       maxvalue: 200.0
 
@@ -19,70 +19,70 @@
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: refractivity
+    - name: atmosphericRefractivity
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minNPol
       maxvalue: *maxNPol
     - variable:
-        name: MetaData/altitude
+        name: MetaData/height
       minvalue: *gnssrorefncepNPolExcludeMin
       maxvalue: *gnssrorefncepNPolExcludeMax
   # NMid
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: refractivity
+    - name: atmosphericRefractivity
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minNMid
       maxvalue: *maxNMid
     - variable:
-        name: MetaData/altitude
+        name: MetaData/height
       minvalue: *gnssrorefncepNMidExcludeMin
       maxvalue: *gnssrorefncepNMidExcludeMax
   # Tro
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: refractivity
+    - name: atmosphericRefractivity
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minTro
       maxvalue: *maxTro
     - variable:
-        name: MetaData/altitude
+        name: MetaData/height
       minvalue: *gnssrorefncepTroExcludeMin
       maxvalue: *gnssrorefncepTroExcludeMax
   # SMid
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: refractivity
+    - name: atmosphericRefractivity
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minSMid
       maxvalue: *maxSMid
     - variable:
-        name: MetaData/altitude
+        name: MetaData/height
       minvalue: *gnssrorefncepSMidExcludeMin
       maxvalue: *gnssrorefncepSMidExcludeMax
   # SPol
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: refractivity
+    - name: atmosphericRefractivity
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minSPol
       maxvalue: *maxSPol
     - variable:
-        name: MetaData/altitude
+        name: MetaData/height
       minvalue: *gnssrorefncepSPolExcludeMin
       maxvalue: *gnssrorefncepSPolExcludeMax
 
@@ -90,7 +90,7 @@
   # NPol
   - filter: Perform Action
     filter variables:
-    - name: refractivity
+    - name: atmosphericRefractivity
     where:
     - variable:
         name: MetaData/latitude
@@ -102,15 +102,15 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/altitude
+            name: MetaData/height
           scale_factor_var:
-            name: ObsValue/refractivity
+            name: ObsValue/atmosphericRefractivity
           xvals: *gnssroErrorLevels
           errors: *gnssrorefncepNPolErrors
   # NMid
   - filter: Perform Action
     filter variables:
-    - name: refractivity
+    - name: atmosphericRefractivity
     where:
     - variable:
         name: MetaData/latitude
@@ -122,15 +122,15 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/altitude
+            name: MetaData/height
           scale_factor_var:
-            name: ObsValue/refractivity
+            name: ObsValue/atmosphericRefractivity
           xvals: *gnssroErrorLevels
           errors: *gnssrorefncepNMidErrors
   # Tro
   - filter: Perform Action
     filter variables:
-    - name: refractivity
+    - name: atmosphericRefractivity
     where:
     - variable:
         name: MetaData/latitude
@@ -142,15 +142,15 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/altitude
+            name: MetaData/height
           scale_factor_var:
-            name: ObsValue/refractivity
+            name: ObsValue/atmosphericRefractivity
           xvals: *gnssroErrorLevels
           errors: *gnssrorefncepTroErrors
   # SMid
   - filter: Perform Action
     filter variables:
-    - name: refractivity
+    - name: atmosphericRefractivity
     where:
     - variable:
         name: MetaData/latitude
@@ -162,15 +162,15 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/altitude
+            name: MetaData/height
           scale_factor_var:
-            name: ObsValue/refractivity
+            name: ObsValue/atmosphericRefractivity
           xvals: *gnssroErrorLevels
           errors: *gnssrorefncepSMidErrors
   # SPol
   - filter: Perform Action
     filter variables:
-    - name: refractivity
+    - name: atmosphericRefractivity
     where:
     - variable:
         name: MetaData/latitude
@@ -182,9 +182,9 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/altitude
+            name: MetaData/height
           scale_factor_var:
-            name: ObsValue/refractivity
+            name: ObsValue/atmosphericRefractivity
           xvals: *gnssroErrorLevels
           errors: *gnssrorefncepSPolErrors
 

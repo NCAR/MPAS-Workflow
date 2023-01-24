@@ -2,16 +2,16 @@
   - filter: Domain Check
     where:
     - variable:
-        name: sensor_zenith_angle@MetaData
+        name: MetaData/sensorZenithAngle
       maxvalue: 65.0
   - filter: Perform Action
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *abi_channels
 #  - filter: Domain Check
 #    where:
 #    - variable:
-#        name: cloud_area_fraction@MetaData
+#        name: MetaData/cloudAmount
 #      minvalue: 0.05
     action:
       name: assign error
@@ -42,13 +42,13 @@
         err0: [2.18, 2.06, 1.35, 3.10, 1.62, 4.11, 1.54, 1.33, 1.77, 1.94]
         err1: [28.22, 27.64, 22.93, 21.59, 14.68, 19.97, 17.25, 17.77, 25.72, 27.92]
       error function:
-        name: ObsErrorModelRamp@ObsFunction
+        name: ObsFunction/ObsErrorModelRamp
         channels: *abi_channels
         options:
           <<: *abi_g16_SymmCldFits{{ABISUPEROBGRID}}-{{HofXMeshDescriptor}}
           channels: *abi_channels
           xvar:
-            name: SymmCldImpactIR@ObsFunction
+            name: ObsFunction/SymmCldImpactIR
             channels: *abi_channels
             options:
               channels: *abi_channels

@@ -36,4 +36,7 @@ set StandardStateVariables = ( \
   pressure_p \
 )
 
-set MPASJEDIVariablesFiles = (geovars.yaml)
+set MPASJEDIVariablesFiles = (\
+  geovars.yaml \
+  obsop_name_map.yaml \
+)
