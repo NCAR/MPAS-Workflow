@@ -44,6 +44,7 @@
 [runtime]
 %include include/tasks/base.rc
 %include include/tasks/auto/benchmark.rc
+%include include/tasks/auto/extendedforecast.rc
 %include include/tasks/auto/externalanalyses.rc
 %include include/tasks/auto/initic.rc
 {% if VerifyAgainstObservations %}
