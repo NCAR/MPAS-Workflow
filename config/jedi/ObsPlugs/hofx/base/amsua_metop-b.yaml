@@ -9,7 +9,7 @@
       engine:
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_amsua_metop-b.h5
-    simulated variables: [brightness_temperature]
+    simulated variables: [brightnessTemperature]
     channels: &amsua_metop-b_channels 5-14
   obs error: *ObsErrorDiagonal
   obs operator:

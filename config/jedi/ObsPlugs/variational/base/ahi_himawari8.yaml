@@ -9,7 +9,7 @@
       engine:
         type: H5File
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_ahi_himawari8.h5
-    simulated variables: [brightness_temperature]
+    simulated variables: [brightnessTemperature]
     channels: &ahi_himawari8_channels 8-10
   obs error: *ObsErrorDiagonal
   obs operator:
