@@ -2,19 +2,19 @@
   - filter: Domain Check
     where:
     - variable:
-        name: sensor_zenith_angle@MetaData
+        name: MetaData/sensorZenithAngle
       maxvalue: 65.0
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
   - filter: Perform Action
     <<: *multiIterationFilter
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *ahi_himawari8_channels
 #  - filter: Domain Check
 #    where:
 #    - variable:
-#        name: cloud_area_fraction@MetaData
+#        name: MetaData/cloudAmount
 #      minvalue: 0.05
     action:
       name: assign error
@@ -40,13 +40,13 @@
 ## 60 km, no bias correction - copy of 30km
         <<: *ahi_himawari8_SymmCldFits15X15-30km
       error function:
-        name: ObsErrorModelRamp@ObsFunction
+        name: ObsFunction/ObsErrorModelRamp
         channels: *ahi_himawari8_channels
         options:
           <<: *ahi_himawari8_SymmCldFits{{AHISUPEROBGRID}}-{{HofXMeshDescriptor}}
           channels: *ahi_himawari8_channels
           xvar:
-            name: SymmCldImpactIR@ObsFunction
+            name: ObsFunction/SymmCldImpactIR
             channels: *ahi_himawari8_channels
             options:
               channels: *ahi_himawari8_channels
