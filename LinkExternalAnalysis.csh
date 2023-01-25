@@ -61,7 +61,11 @@ cd ${WorkDir}
 
 # ================================================================================================
 
+# link init file
 ln -sfv $externalDirectory/$filePrefix.$thisMPASFileDate.nc ./
+
+# link diag file (if available)
+ln -sfv $externalDirectory/diag.$thisMPASFileDate.nc ./
 
 date
 
