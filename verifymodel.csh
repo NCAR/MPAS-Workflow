@@ -84,11 +84,16 @@ set mainScript = DiagnoseModelStatistics
 ln -fs ${pyVerifyDir}/${mainScript}.py ./
 set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 
+setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $ExternalAnalysisDirOuter/$externalanalyses__filePrefixOuter"
+
+# additionally analyze diagnostic variables for FCScoreCards
+if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
+  setenv baseCommand "${baseCommand} -rd $ExternalAnalysisDirOuter/diag"
+endif
+
 set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $ExternalAnalysisDirOuter/$externalanalyses__filePrefixOuter -rd /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAnaDiagnostics/${thisValidDate}/diag"
-
   if ($ArgNMembers > 1) then
     #Note: ensemble diagnostics only work for BG/AN verification, not extended ensemble forecasts
     # legacy file structure (deprecated)
@@ -98,11 +103,9 @@ while ( $success != 0 )
     # latest file structure
     echo "${baseCommand} -m $ArgNMembers" | tee ./myCommand
     ${baseCommand} -m $ArgNMembers >& log.${mainScript}
-
   else
     echo "${baseCommand}" | tee ./myCommand
     ${baseCommand} >& log.${mainScript}
-
   endif
   set success = $?
 end

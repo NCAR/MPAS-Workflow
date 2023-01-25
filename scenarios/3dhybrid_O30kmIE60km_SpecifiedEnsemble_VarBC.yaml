@@ -37,6 +37,11 @@ forecast:
 
 externalanalyses:
   resource: "GFS.PANDAC"
+  GFS:
+    PANDAC: # only available 20180418T00-20180524T00
+      30km:
+        externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAnaAndDiagnostics"
+
 hofx:
   maxIODAPoolSize: 1
 variational:
