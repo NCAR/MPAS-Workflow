@@ -86,8 +86,6 @@ class ExternalAnalyses(Component):
     self._set(variable, self['PrepareExternalAnalysisOuter'])
     self._cylcVars.append(variable)
 
-    self._cylcVars += ['GetGDASAnalysis']
-
     ########################
     # tasks and dependencies
     ########################
