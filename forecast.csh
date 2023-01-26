@@ -49,7 +49,7 @@ set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
 # mesh-dependent and thisValidDate-dependent settings
-if ( ${thisValidDate} == ${FirstCycleDate} ) then
+if ( ${thisValidDate} == ${FirstCycleDate} || ${CriticalPathType} == "ColdStartForecast" ) then
   set do_DAcycling = "false"
   if ("$ArgMesh" == "$outerMesh") then
     # templated work directory
@@ -88,7 +88,7 @@ endif
 set icFileExt = ${thisMPASFileDate}.nc
 set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
 
-if ( ${thisValidDate} == ${FirstCycleDate} ) then
+if ( ${thisValidDate} == ${FirstCycleDate} || ${CriticalPathType} == "ColdStartForecast" ) then
   # use cold-start IC for static stream
   set memberStaticFieldsFile = ${initialState}
 else

@@ -31,6 +31,7 @@ set ValidRunConfigs = ( \
   IASI30kmIE60km3denvar \
   ABIAHI120km3denvar \
   GetGDASanalysis \
+  ColdStartForecast \
 )
 set ArgRunConfig = $1
 

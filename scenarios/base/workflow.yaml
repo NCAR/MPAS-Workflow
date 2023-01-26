@@ -54,6 +54,9 @@ workflow:
 # + GetGDASanalysis
 #   - runs only GetGDASanalysis.csh
 #   - no dependencies between cycles
+# + ColdStartForecast
+#   - runs the PrepareExternalAnalysis mini-workflow and also forecast and forecast verification
+#   - no dependencies between cycles
 # Users may choose whether to run the verification concurrently with and
 # dependent on the critical path tasks (`Normal`), or as an independent post-processing step
 # (`Bypass`). `Normal` and `Bypass` cover most use-cases for "continuous cycling" experiments.
