@@ -7,7 +7,7 @@
   # T
   - filter: Perform Action
     filter variables:
-    - name: air_temperature
+    - name: airTemperature
     where:
     - variable:
         name: MetaData/latitude
@@ -19,13 +19,13 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           xvals: *aircraftErrorLevels
           errors: *aircraftNXTro_TError
   # U
   - filter: Perform Action
     filter variables:
-    - name: eastward_wind
+    - name: windEastward
     where:
     - variable:
         name: MetaData/latitude
@@ -37,13 +37,13 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           xvals: *aircraftErrorLevels
           errors: *aircraftNXTro_UError
   # V
   - filter: Perform Action
     filter variables:
-    - name: northward_wind
+    - name: windNorthward
     where:
     - variable:
         name: MetaData/latitude
@@ -55,13 +55,13 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           xvals: *aircraftErrorLevels
           errors: *aircraftNXTro_VError
   # qv
   - filter: Perform Action
     filter variables:
-    - name: specific_humidity
+    - name: specificHumidity
     where:
     - variable:
         name: MetaData/latitude
@@ -73,9 +73,9 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           scale_factor_var:
-            name: ObsValue/specific_humidity
+            name: ObsValue/specificHumidity
           xvals: *aircraftErrorLevels
           errors: *aircraftNXTro_qvError
 
@@ -83,7 +83,7 @@
   # T
   - filter: Perform Action
     filter variables:
-    - name: air_temperature
+    - name: airTemperature
     where:
     - variable:
         name: MetaData/latitude
@@ -95,13 +95,13 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           xvals: *aircraftErrorLevels
           errors: *aircraftTro_TError
   # U
   - filter: Perform Action
     filter variables:
-    - name: eastward_wind
+    - name: windEastward
     where:
     - variable:
         name: MetaData/latitude
@@ -113,13 +113,13 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           xvals: *aircraftErrorLevels
           errors: *aircraftTro_UError
   # V
   - filter: Perform Action
     filter variables:
-    - name: northward_wind
+    - name: windNorthward
     where:
     - variable:
         name: MetaData/latitude
@@ -131,13 +131,13 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           xvals: *aircraftErrorLevels
           errors: *aircraftTro_VError
   # qv
   - filter: Perform Action
     filter variables:
-    - name: specific_humidity
+    - name: specificHumidity
     where:
     - variable:
         name: MetaData/latitude
@@ -149,9 +149,9 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           scale_factor_var:
-            name: ObsValue/specific_humidity
+            name: ObsValue/specificHumidity
           xvals: *aircraftErrorLevels
           errors: *aircraftTro_qvError
 
@@ -159,7 +159,7 @@
   # T
   - filter: Perform Action
     filter variables:
-    - name: air_temperature
+    - name: airTemperature
     where:
     - variable:
         name: MetaData/latitude
@@ -171,13 +171,13 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           xvals: *aircraftErrorLevels
           errors: *aircraftSXTro_TError
   # U
   - filter: Perform Action
     filter variables:
-    - name: eastward_wind
+    - name: windEastward
     where:
     - variable:
         name: MetaData/latitude
@@ -189,13 +189,13 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           xvals: *aircraftErrorLevels
           errors: *aircraftSXTro_UError
   # V
   - filter: Perform Action
     filter variables:
-    - name: northward_wind
+    - name: windNorthward
     where:
     - variable:
         name: MetaData/latitude
@@ -207,13 +207,13 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           xvals: *aircraftErrorLevels
           errors: *aircraftSXTro_VError
   # qv
   - filter: Perform Action
     filter variables:
-    - name: specific_humidity
+    - name: specificHumidity
     where:
     - variable:
         name: MetaData/latitude
@@ -225,18 +225,18 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/air_pressure
+            name: MetaData/pressure
           scale_factor_var:
-            name: ObsValue/specific_humidity
+            name: ObsValue/specificHumidity
           xvals: *aircraftErrorLevels
           errors: *aircraftSXTro_qvError
 
   # avoids large ObsError values polluting plots of ObsError
   - filter: Bounds Check
     filter variables:
-    - name: specific_humidity
+    - name: specificHumidity
     test variables:
-    - name: ObsErrorData/specific_humidity
+    - name: ObsErrorData/specificHumidity
     minvalue: 0.0
     maxvalue: 1.0
 
