@@ -1,24 +1,19 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 workflow:
   firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180418T00
-  finalCyclePoint: 20180514T00
-  CriticalPathType: Bypass
-  VerifyDeterministicDA: False
-  VerifyEnsMeanBG: False
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180514T18
+  CriticalPathType: Normal
+  VerifyDeterministicDA: True
+  VerifyEnsMeanBG: True
   VerifyAgainstObservations: True
   VerifyAgainstExternalAnalyses: True
   maxActiveCyclePoints: 40
 
-  VerifyExtendedMeanFC: True
+  VerifyExtendedMeanFC: False
   ExtendedFCLengthHR: 240
   ExtendedFCOutIntervalHR: 24
   ExtendedMeanFCTimes: T00
-
-#job:
-#  CPQueueName: economy
-#  NCPQueueName: economy
-#  EnsMeanBGQueueName: economy
 
 model:
   outerMesh: 30km
@@ -57,7 +52,7 @@ variational:
   benchmarkObservations:
 # anchor
   - aircraft
-  - gnssrorefncep
+#  - gnssrorefncep
   - gnssrobndropp1d
 #  - gnssrobndnbam
 #  - gnssrobndmo # checking performance of BendMetOffice
@@ -86,7 +81,7 @@ variational:
           secondsPerEnVarMember: 20
 
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70_RefNCEP_BndROPP1D_MidPol_3rdDoaDob'
+  ExpSuffix: '_ensB-SE80+RTPP70_BndROPP1D_MidPol_quasi-1stDoaDob'
 
 observations:
   resource: GenerateObs
