@@ -61,6 +61,7 @@
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
         DataAssimFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
+        {{PrepareExternalAnalysisOuter}} => ExtendedMeanFC
       '''
 {% endif %}
 {% if VerifyExtendedEnsFC and nMembers > 1 %}
