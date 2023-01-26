@@ -2,10 +2,10 @@
 #  Useflag check
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *iasi_metop-b_channels
     test variables:
-    - name: ChannelUseflagCheckRad@ObsFunction
+    - name: ObsFunction/ChannelUseflagCheckRad
       channels: *iasi_metop-b_channels
       options:
         channels: *iasi_metop-b_channels

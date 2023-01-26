@@ -6,14 +6,14 @@
         type: H5File
         obsfile: {{InDBDir}}/gnssrobndnbam_obs_{{thisValidDate}}.h5
       obsgrouping:
-        group variables: [ record_number ]
-        sort variable: impact_height
+        group variables: [ sequenceNumber ]
+        sort variable: impactHeightRO
         sort order: ascending
     obsdataout:
       engine:
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_gnssrobndnbam.h5
-    simulated variables: [bending_angle]
+    simulated variables: [bendingAngle]
   obs error: *ObsErrorDiagonal
   obs operator:
     name: GnssroBndNBAM

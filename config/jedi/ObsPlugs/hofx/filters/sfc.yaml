@@ -2,8 +2,8 @@
   - filter: PreQC
     maxvalue: 3
   - filter: Difference Check
-    reference: station_elevation@MetaData
-    value: surface_altitude@GeoVaLs
+    reference: MetaData/stationElevation
+    value: GeoVaLs/surface_altitude
     threshold: 200.0
   - filter: Background Check
     threshold: *sfcBGRelThresh

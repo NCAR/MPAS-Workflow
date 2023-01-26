@@ -224,13 +224,13 @@ variational:
       #  bumpLocDir: str
       30km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_10AUG2022code
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
       60km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_10AUG2022code
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
       120km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_10AUG2022code
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
 
   # externally-produced background covariance files (var or hybrid)
   covariance:
@@ -251,13 +251,13 @@ variational:
       bumpCovStdDevFile: None
       bumpCovVBalDir: None
     60km:
-      bumpCovDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20221025_prebuilt/60km.NICAS_00
-      bumpCovStdDevFile: /glade/p/mmm/parc/bjung/pandac_common/staticB/20221025_prebuilt/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20221025_prebuilt/60km.VBAL_00
+      bumpCovDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230106_prebuilt/60km.NICAS_00
+      bumpCovStdDevFile: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230106_prebuilt/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230106_prebuilt/60km.VBAL_00
     120km:
-      bumpCovDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20221025_prebuilt/NICAS_00
-      bumpCovStdDevFile: /glade/p/mmm/parc/bjung/pandac_common/staticB/20221025_prebuilt/CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20221025_prebuilt/VBAL_00
+      bumpCovDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230106_prebuilt/NICAS_00
+      bumpCovStdDevFile: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230106_prebuilt/CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230106_prebuilt/VBAL_00
 
   # resource requirements
   job:

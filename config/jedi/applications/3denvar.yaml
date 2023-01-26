@@ -6,7 +6,6 @@ _iteration: &iterationConfig
     deallocate non-da fields: true
     interpolation type: unstructured
   gradient norm reduction: 1e-3
-  obs perturbations: {{ObsPerturbations}}
   #Several 'online diagnostics' are useful for checking the H correctness and Hessian symmetry
 #  online diagnostics:
 #    tlm taylor test: true
@@ -52,14 +51,17 @@ cost function:
         saber block name: BUMP_NICAS
         active variables: *incvars
         bump:
-          datadir: {{bumpLocDir}}
-          prefix: {{bumpLocPrefix}}
-          strategy: common
-          lev2d: last
-          load_nicas_local: true
-          verbosity: main
+          io:
+            data directory: {{bumpLocDir}}
+            files prefix: {{bumpLocPrefix}}
+          drivers:
+            multivariate strategy: common
+            read local nicas: true
+          model:
+            level for 2d variables: last
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:
+    obs perturbations: {{ObsPerturbations}}
     observers:
 {{Observers}}

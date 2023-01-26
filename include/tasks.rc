@@ -263,7 +263,8 @@ conda activate npl
     inherit = ExternalAnalyses, BATCH
     script = $origin/LinkExternalAnalysis.csh "{{mesh}}" "{{dt}}"
     [[[job]]]
-      execution time limit = PT30S
+      execution retry delays = 10*PT15S
+      execution time limit = PT60S
   [[ExternalAnalysisToMPAS-{{mesh}}-{{dt}}hr]]
     inherit = ExternalAnalyses, BATCH
     script = $origin/ExternalAnalysisToMPAS.csh "{{mesh}}" "{{dt}}"

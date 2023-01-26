@@ -2,13 +2,13 @@
   - filter: Domain Check
     where:
     - variable:
-        name: sensor_zenith_angle@MetaData
+        name: MetaData/sensorZenithAngle
       maxvalue: 65.0
     - variable:
-        name: cloud_area_fraction@MetaData
+        name: MetaData/cloudAmount
       maxvalue: 0.05
 #    - variable:
-#        name: water_area_fraction@GeoVaLs
+#        name: GeoVaLs/water_area_fraction
 #      minvalue: 1.0
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}

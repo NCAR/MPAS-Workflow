@@ -1,5 +1,5 @@
 verifymodel:
-  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics_mpasScoreCard
+  pyVerifyDir: /glade/work/guerrett/pandac/fixed_input/graphics_mpasScoreCard_iodaV3_latest
 
 ## mesh-specific settings
   # resource requirements

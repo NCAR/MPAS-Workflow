@@ -1,23 +1,23 @@
   obs filters:
   - filter: Domain Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *amsua-cld_metop-b_channels
     where:
     - variable:
-        name: water_area_fraction@GeoVaLs
+        name: GeoVaLs/water_area_fraction
       minvalue: 1.0
 #  - filter: Bounds Check
 #    filter variables:
-#    - name: brightness_temperature
+#    - name: brightnessTemperature
 #      channels: *amsua-cld_metop-b_channels
 #    minvalue: 170.0
 #    maxvalue: 300.0
   - filter: Background Check
     threshold: *amsua_metop-bBGRelThresh
     <<: *multiIterationFilter
-  - filter: GOMsaver
-    filename: {{OutDBDir}}/{{geoPrefix}}_amsua-cld_metop-b.nc4
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}/{{geoPrefix}}_amsua-cld_metop-b.nc4
   - filter: YDIAGsaver
     filename: {{OutDBDir}}/{{diagPrefix}}_amsua-cld_metop-b.nc4
     filter variables:

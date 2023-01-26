@@ -4,10 +4,10 @@
 #  Useflag check #amsua-n15
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *amsua_n15_channels
     test variables:
-    - name: ChannelUseflagCheckRad@ObsFunction
+    - name: ObsFunction/ChannelUseflagCheckRad
       channels: *amsua_n15_channels
       options:
         channels: *amsua_n15_channels

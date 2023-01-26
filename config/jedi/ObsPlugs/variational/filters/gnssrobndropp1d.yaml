@@ -2,15 +2,15 @@
   - filter: Domain Check
     where:
     - variable:
-        name: MetaData/impact_height
+        name: MetaData/impactHeightRO
       minvalue: 0.0
       maxvalue: 30000.0
     - variable:
-        name: MetaData/earth_radius_of_curvature
+        name: MetaData/earthRadiusCurvature
       minvalue: 6250000.0
       maxvalue: 6450000.0
     - variable:
-        name: MetaData/geoid_height_above_reference_ellipsoid
+        name: MetaData/geoidUndulation
       minvalue: -200.0
       maxvalue: 200.0
 
@@ -19,66 +19,66 @@
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minNPol
       maxvalue: *maxNPol
     - variable:
-        name: MetaData/impact_height
+        name: MetaData/impactHeightRO
       maxvalue: *gnssrorefncepNPolExcludeMin
   # NMid
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minNMid
       maxvalue: *maxNMid
     - variable:
-        name: MetaData/impact_height
+        name: MetaData/impactHeightRO
       maxvalue: *gnssrorefncepNMidExcludeMin
   # Tro
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
       maxvalue: *minTro
       maxvalue: *maxTro
     - variable:
-        name: MetaData/impact_height
+        name: MetaData/impactHeightRO
       maxvalue: *gnssrorefncepTroExcludeMin
   # SMid
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minSMid
       maxvalue: *maxSMid
     - variable:
-        name: MetaData/impact_height
+        name: MetaData/impactHeightRO
       maxvalue: *gnssrorefncepSMidExcludeMin
   # SPol
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minSPol
       maxvalue: *maxSPol
     - variable:
-        name: MetaData/impact_height
+        name: MetaData/impactHeightRO
       maxvalue: *gnssrorefncepSPolExcludeMin
 
   # reject where |bias| >~ 1/2 STD
@@ -86,77 +86,77 @@
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minNPol
       maxvalue: *maxNPol
     - variable:
-        name: MetaData/impact_height
+        name: MetaData/impactHeightRO
       minvalue: *gnssrobndropp1dNPolExcludeMin
       maxvalue: *gnssrobndropp1dNPolExcludeMax
   # NMid
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minNMid
       maxvalue: *maxNMid
     - variable:
-        name: MetaData/impact_height
+        name: MetaData/impactHeightRO
       minvalue: *gnssrobndropp1dNMidExcludeMin
       maxvalue: *gnssrobndropp1dNMidExcludeMax
   # Tro
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minTro
       maxvalue: *maxTro
     - variable:
-        name: MetaData/impact_height
+        name: MetaData/impactHeightRO
       minvalue: *gnssrobndropp1dTroExcludeMin
       maxvalue: *gnssrobndropp1dTroExcludeMax
   # SMid
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minSMid
       maxvalue: *maxSMid
     - variable:
-        name: MetaData/impact_height
+        name: MetaData/impactHeightRO
       minvalue: *gnssrobndropp1dSMidExcludeMin
       maxvalue: *gnssrobndropp1dSMidExcludeMax
   # SPol
   - filter: RejectList
     defer to post: true
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
       minvalue: *minSPol
       maxvalue: *maxSPol
     - variable:
-        name: MetaData/impact_height
+        name: MetaData/impactHeightRO
       minvalue: *gnssrobndropp1dSPolExcludeMin
       maxvalue: *gnssrobndropp1dSPolExcludeMax
 
 ## ECMWF relative error model
 #  - filter: ROobserror
 #    filter variables:
-#    - name: bending_angle
+#    - name: bendingAngle
 #    errmodel: ECMWF
 #    <<: *multiIterationFilter
 
@@ -164,7 +164,7 @@
   # NPol
   - filter: Perform Action
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
@@ -176,15 +176,15 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/impact_height
+            name: MetaData/impactHeightRO
           scale_factor_var:
-            name: ObsValue/bending_angle
+            name: ObsValue/bendingAngle
           xvals: *gnssroErrorLevels
           errors: *gnssrobndropp1dNPolErrors
   # NMid
   - filter: Perform Action
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
@@ -196,15 +196,15 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/impact_height
+            name: MetaData/impactHeightRO
           scale_factor_var:
-            name: ObsValue/bending_angle
+            name: ObsValue/bendingAngle
           xvals: *gnssroErrorLevels
           errors: *gnssrobndropp1dNMidErrors
   # Tro
   - filter: Perform Action
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
@@ -216,15 +216,15 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/impact_height
+            name: MetaData/impactHeightRO
           scale_factor_var:
-            name: ObsValue/bending_angle
+            name: ObsValue/bendingAngle
           xvals: *gnssroErrorLevels
           errors: *gnssrobndropp1dTroErrors
   # SMid
   - filter: Perform Action
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
@@ -236,15 +236,15 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/impact_height
+            name: MetaData/impactHeightRO
           scale_factor_var:
-            name: ObsValue/bending_angle
+            name: ObsValue/bendingAngle
           xvals: *gnssroErrorLevels
           errors: *gnssrobndropp1dSMidErrors
   # SPol
   - filter: Perform Action
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     where:
     - variable:
         name: MetaData/latitude
@@ -256,9 +256,9 @@
         name: ObsFunction/ObsErrorModelStepwiseLinear
         options:
           xvar:
-            name: MetaData/impact_height
+            name: MetaData/impactHeightRO
           scale_factor_var:
-            name: ObsValue/bending_angle
+            name: ObsValue/bendingAngle
           xvals: *gnssroErrorLevels
           errors: *gnssrobndropp1dSPolErrors
 

@@ -2,30 +2,30 @@
   - filter: Domain Check
     where:
     - variable:
-        name: impact_height@MetaData
+        name: MetaData/impactHeightRO
       minvalue: 0.0
       maxvalue: 30000.0
     - variable:
-        name: earth_radius_of_curvature@MetaData
+        name: MetaData/earthRadiusCurvature
       minvalue: 6250000.0
       maxvalue: 6450000.0
     - variable:
-        name: geoid_height_above_reference_ellipsoid@MetaData
+        name: MetaData/geoidUndulation
       minvalue: -200.0
       maxvalue: 200.0
 #  - filter: Bounds Check
 #    filter variables:
-#    - name: bending_angle
+#    - name: bendingAngle
 #    where:
 #    - variable:
-#        name: occulting_sat_id@MetaData
+#        name: MetaData/satelliteIdentifier
 #      is_in: 3-5
 #    test variables:
-#    - name: impact_height@MetaData
+#    - name: MetaData/impactHeightRO
 #    minvalue: 8000
   - filter: ROobserror
     filter variables:
-    - name: bending_angle
+    - name: bendingAngle
     errmodel: NBAM
   - filter: Background Check
     threshold: *gnssrobndnbamBGRelThresh

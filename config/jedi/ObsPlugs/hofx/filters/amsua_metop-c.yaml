@@ -1,8 +1,13 @@
   obs filters:
   - filter: PreQC
     maxvalue: 0
+<<<<<<< HEAD
   - filter: Background Check
     threshold: *amsua_metop-cBGRelThresh
     <<: *multiIterationFilter
   - filter: GOMsaver
     filename: {{OutDBDir}}/{{geoPrefix}}_amsua_metop-c.nc4
+=======
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}/{{geoPrefix}}_amsua_metop-c.nc4
+>>>>>>> feature/GNSSROSensitivityTesting_iodaV3

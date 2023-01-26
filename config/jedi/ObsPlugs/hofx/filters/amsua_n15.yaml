@@ -4,5 +4,5 @@
   - filter: Background Check
     threshold: *amsua_n15BGRelThresh
     <<: *multiIterationFilter
-  - filter: GOMsaver
-    filename: {{OutDBDir}}/{{geoPrefix}}_amsua_n15.nc4
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}/{{geoPrefix}}_amsua_n15.nc4
