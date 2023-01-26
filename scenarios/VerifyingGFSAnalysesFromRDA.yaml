@@ -51,7 +51,7 @@ observations: # for optional verification
   resource: GenerateObs
 
 workflow:
-  first cycle point: 20180415T00
+  first cycle point: 20180414T18
   final cycle point: 20180524T00
   max active cycle points: 20
 
