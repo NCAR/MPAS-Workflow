@@ -252,13 +252,15 @@ cat >! suite.rc << EOF
 
 {% elif CriticalPathType == "ColdStartForecast" %}
 ## (i) External analyses generation for a historical period
+    # run forecast from GFS external analysis and verify forecast
     [[[{{GenerateTimes}}]]]
       graph = '''
-        # run forecast from GFS external analysis and verify forecast
         {{PrepareExternalAnalysisOuter}} => Forecast
         Forecast:succeed-all => ForecastFinished
-        ForecastFinished => VerifyModelBG
       '''
+  {% if VerifyAgainstExternalAnalyses %}
+%include include/verifymodel.rc
+  {% endif %}
 
 {% elif CriticalPathType == "GenerateObs" %}
 ## (ii) Observation generation for a historical period
