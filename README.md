@@ -49,6 +49,32 @@ It is required to set the `work` and `run` directories in $HOME/.cylc/global.rc 
 the cylc `work` and `run` directories, as long as you also modify `cylcWorkDir` in `drive.csh`. It is
 recommended to set `job name length maximum` to a large value.
 
+Build
+-----
+At this time the workflow does not build MPAS-Model or JEDI-MPAS.  Users must to acquire source
+code from either [JCSDA/mpas-bundle](https://github.com/JCSDA/mpas-bundle/) or
+[JCSDA-internal/mpas-bundle](https://github.com/JCSDA-internal/mpas-bundle/).  Then they must
+follow the build instructions in the corresponding repository.  Tagged releases of MPAS-Workflow
+starting with 25JAN2023 are accompanied by an mpas-bundle CMakeLists.txt (`build/CMakeLists.txt`)
+with fixed source code repository tags/hashes that are consistent with the released workflow
+version.  Users can copy that file into their mpas-bundle source code directory before executing 
+`ecbuild` in order to download the currect repository versions.
+
+Periodically the `develop` branch of MPAS-Workflow will be consistent with the source code
+`develop` branches, usually every 1-2 months.  As often as is feasible, that is when a new tagged
+release of MPAS-Workflow will be generated.
+
+As such, the current `develop` branch of MPAS-Workflow may or may not be backward compatible to
+those source code tags. For developers, unless they are absolutely sure that their workflow branch
+is consistent with a particular  set of source code `develop` branches, it is strongly recommended
+that they start their development process from the tagged source code hashes stored in
+`build/CMakeLists.txt`.  After checking out the specific source code hashes (via `ecbuild`), it is
+simple to generate their own feature or bugfix branches using, e.g.,
+`git checkout -b feature/CustomFeature`.
+
+Please contact [JJ Guerrette](mailto:guerrett@ucar.edu?subject=[GitHub]%20MPAS-Worflow) with any
+questions. The MPAS-Worklfow release procedure is subject to change in the future, which will be
+documented here.
 
 Configuration Files
 -------------------
@@ -58,7 +84,7 @@ entire workflow.  Some files are designed to be modified by users, and others mo
 
 ### User-modifiable configuration
 
-`config/builds.csh`: describes the build directories for critical applications
+`config/builds.csh`: describes external build directories for critical applications
 
 `config/scenario.csh`: selection of a particular experiment scenario
 
