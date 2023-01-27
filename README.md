@@ -51,7 +51,7 @@ recommended to set `job name length maximum` to a large value.
 
 Build
 -----
-At this time the workflow does not build MPAS-Model or JEDI-MPAS.  Users must to acquire source
+At this time the workflow does not build MPAS-Model or JEDI-MPAS.  Users must acquire source
 code from either [JCSDA/mpas-bundle](https://github.com/JCSDA/mpas-bundle/) or
 [JCSDA-internal/mpas-bundle](https://github.com/JCSDA-internal/mpas-bundle/).  Then they must
 follow the build instructions in the corresponding repository.  Tagged releases of MPAS-Workflow
@@ -66,9 +66,9 @@ release of MPAS-Workflow will be generated.
 
 As such, the current `develop` branch of MPAS-Workflow may or may not be backward compatible to
 those source code tags. For developers, unless they are absolutely sure that their workflow branch
-is consistent with a particular  set of source code `develop` branches, it is strongly recommended
+is consistent with a particular set of source code `develop` branches, it is strongly recommended
 that they start their development process from the tagged source code hashes stored in
-`build/CMakeLists.txt`.  After checking out the specific source code hashes (via `ecbuild`), it is
+`build/CMakeLists.txt`.  After checking out those specific source code hashes (via `ecbuild`), it is
 simple to generate their own feature or bugfix branches using, e.g.,
 `git checkout -b feature/CustomFeature`.
 
