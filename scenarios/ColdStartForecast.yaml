@@ -1,15 +1,15 @@
 workflow:
   # test a recent date
   firstCyclePoint: 20210121T18
-  initialCyclePoint: 20210122T06
-  finalCyclePoint: 20210202T00
-  CriticalPathType: ColdStartForecast
+  initialCyclePoint: 20210121T18
+  finalCyclePoint: 20210122T06 #20210202T00
+  CriticalPathType: ColdStartForecast_withMpasjedi #ColdStartForecast
   VerifyEnsMeanBG: True
   maxActiveCyclePoints: 20
 observations:
   resource: GladeRDAOnline
 experiment:
-  ExperimentName: '3dvar_O30kmIE60km_SIO_ColdStart_from_GFSana'
+  ExperimentName: '3dvar_O30kmIE60km_SIO_ColdStart_with_mpasjedi'
 model:
   outerMesh: 30km
   innerMesh: 60km
@@ -28,7 +28,14 @@ externalanalyses:
   resource: "GFS.RDA"
 variational:
   DAType: 3dvar
-  nInnerIterations: [60,]
+  nInnerIterations: [60,60]
+  benchmarkObservations:
+# anchor
+  - sondes
+hofx:
+  observations:
+# anchor
+  - sondes
 job:
   CPQueueName: economy
   NCPQueueName: economy

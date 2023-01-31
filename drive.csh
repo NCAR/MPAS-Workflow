@@ -262,6 +262,27 @@ cat >! suite.rc << EOF
 %include include/verifymodel.rc
   {% endif %}
 
+{% elif CriticalPathType == "ColdStartForecast_withMpasjedi" %}
+## (i) External analyses generation for a historical period
+    # run forecast from GFS external analysis and verify forecast
+    [[[{{GenerateTimes}}]]]
+      graph = '''
+        {{PrepareExternalAnalysisOuter}} => Forecast
+        Forecast:succeed-all => ForecastFinished
+      '''
+  {% if VerifyAgainstExternalAnalyses %}
+%include include/verifymodel.rc
+  {% endif %}
+
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+%include include/da.rc
+        Forecast
+        # depends on previous Forecast
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => PreDataAssim
+      '''
+
+
 {% elif CriticalPathType == "GenerateObs" %}
 ## (ii) Observation generation for a historical period
     [[[{{GenerateTimes}}]]]

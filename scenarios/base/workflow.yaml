@@ -57,6 +57,12 @@ workflow:
 # + ColdStartForecast
 #   - runs the PrepareExternalAnalysis mini-workflow and also forecast and forecast verification
 #   - no dependencies between cycles
+# + ColdStartForecast_withMpasjedi
+#   - runs the PrepareExternalAnalysis mini-workflow, forecast, DA, forecast and forecast verification
+#   - no cycling
+# + ColdStartForecast_withMpasjedi_cycling
+#   - runs the PrepareExternalAnalysis mini-workflow, forecast, DA, forecast and forecast verification
+#   - cycling
 # Users may choose whether to run the verification concurrently with and
 # dependent on the critical path tasks (`Normal`), or as an independent post-processing step
 # (`Bypass`). `Normal` and `Bypass` cover most use-cases for "continuous cycling" experiments.

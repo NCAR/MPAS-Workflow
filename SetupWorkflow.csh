@@ -67,6 +67,14 @@ sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
+## ForecastDA
+echo "Making Forecast job script"
+set JobScript=${mainScriptDir}/Forecast-DA.csh
+sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
+    -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
+    -e 's@deleteZerothForecastTEMPLATE@True@' \
+    forecast.csh > ${JobScript}
+chmod 744 ${JobScript}
 
 ## ExtendedMeanFC
 echo "Making ExtendedMeanFC job script"
