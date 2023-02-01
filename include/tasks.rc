@@ -215,7 +215,7 @@ conda activate npl
     inherit = ForecastBase
 {% for mem in allMembers %}
   [[ColdForecastMember{{mem}}]]
-    inherit = ColdForecast
+    inherit = ColdForecast, BATCH
     script = $origin/ColdForecast.csh "{{mem}}" "{{FCLengthHR}}" "{{FCOutIntervalHR}}" "False" "{{outerMesh}}" "False" "True"
     [[[job]]]
       execution retry delays = {{CyclingFCRetry}}
