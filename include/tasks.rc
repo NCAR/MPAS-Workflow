@@ -302,7 +302,7 @@ conda activate npl
     inherit = ExternalAnalyses
 
   [[ExtendedFCFromExternalAnalysis]]
-    inherit = ExtendedFCBase
+    inherit = ExtendedFCBase, BATCH
     script = $origin/ExtendedFCFromExternalAnalysis.csh "1" "{{ExtendedFCLengthHR}}" "{{ExtendedFCOutIntervalHR}}" "False" "{{outerMesh}}" "False" "False"
 
   [[GetGDASanalysis]]
