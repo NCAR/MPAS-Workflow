@@ -81,7 +81,7 @@ variational:
           secondsPerEnVarMember: 20
 
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70_BndROPP1D_MidPol_quasi-1stDoaDob'
+  ExpSuffix: '_ensB-SE80+RTPP70_BndROPP1D_MidPol_2ndDoaDob'
 
 observations:
   resource: GenerateObs
