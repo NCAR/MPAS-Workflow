@@ -1,0 +1,31 @@
+workflow:
+  # test a recent date
+  firstCyclePoint: 20180414T18
+  initialCyclePoint: 20180415T00
+  finalCyclePoint: 20180415T00
+  CriticalPathType: ForecastFromExternalAnalyses
+  maxActiveCyclePoints: 60
+  ExtendedMeanFCTimes: T00
+  ExtendedFCLengthHR: 240
+  ExtendedFCOutIntervalHR: 24
+externalanalyses:
+  resource: "GFS.RDA"
+experiment:
+  ExperimentName: 'ForecastFromGFSAnalyses'
+  ExperimentUserPrefix: ''
+model:
+  outerMesh: 60km
+#TODO: make it so that innerMesh and ensembleMesh are not needed
+  innerMesh: 60km
+  ensembleMesh: 60km
+job:
+  CPQueueName: economy
+  NCPQueueName: economy
+#TODO: make it so that firstbackground, observations, and variational are not necessary
+firstbackground:
+  resource: "ForecastFromAnalysis"
+observations:
+  resource: PANDACArchive
+variational:
+  DAType: 3dvar
+  nInnerIterations: [0,]

@@ -37,7 +37,7 @@ firstbackground:
 
   ForecastFromAnalysis:
     common:
-      PrepareFirstBackground: "Forecast:succeed-all => ForecastFinished"
+      PrepareFirstBackground: "ColdForecast:succeed-all => ForecastFinished"
       staticDirectory: "{{ExternalAnalysisWorkDir}}/{{FirstCycleDate}}"
 
   PANDAC:
