@@ -108,8 +108,8 @@ _gnssro:
     refncep:
       # commands used to modify diagnostic output:
       # cd $analysisDir/gnssrorefncep_analyses/BinValAxisProfile/RelativeObsError/data
-      # grep 'rltv_doadob' alt_*_BinValAxis_0-0min_gnssrorefncep_RelativeObsError_RMS.yaml | sed 's@.*yaml:\ \+@@' > tmp
-      # vi tmp
+      # grep 'rltv_doadob' alt_*_BinValAxis_0-0min_gnssrorefncep_RelativeObsError_RMS.yaml | sed 's@.*yaml:\ \+@@' > rltv_doadob
+      # vi rltv_doadob
       # :%s@.*gnssrorefncep\(.*\)_Ref:@\1:\ \&gnssrorefncep\1Errors@
       #
       # # use to divide relative doadob by 100 (only works when all values < 10%):
@@ -259,8 +259,8 @@ _gnssro:
     bndmo:
       # commands used to modify diagnostic output:
       # cd $analysisDir/gnssrobndmo_analyses/BinValAxisProfile/rltv_omf/data
-      # grep 'rltv_omf' impact_height_*_BinValAxis_0-0min_gnssrobndmo_rltv_omf_RMS.yaml | sed 's@.*yaml:\ \+@@' > tmp
-      # vi tmp
+      # grep 'rltv_omf' impact_height_*_BinValAxis_0-0min_gnssrobndmo_rltv_omf_RMS.yaml | sed 's@.*yaml:\ \+@@' > rltv_doadob
+      # vi rltv_doadob
       # :%s@.*gnssrobndmo\(.*\)_Bnd:@\1:\ \&gnssrobndmo\1Errors@
       #
       # # use to divide relative omf by 100:
@@ -318,8 +318,8 @@ _gnssro:
     bndropp1d:
       # commands used to modify diagnostic output:
       # cd $analysisDir/gnssrobndropp1d_analyses/BinValAxisProfile/RelativeObsError/data
-      # grep 'rltv_doadob' impact_height_*_BinValAxis_0-0min_gnssrobndropp1d_RelativeObsError_RMS.yaml | sed 's@.*yaml:\ \+@@' > tmp
-      # vi tmp
+      # grep 'rltv_doadob' impact_height_*_BinValAxis_0-0min_gnssrobndropp1d_RelativeObsError_RMS.yaml | sed 's@.*yaml:\ \+@@' > rltv_doadob
+      # vi rltv_doadob
       # :%s@.*gnssrobndropp1d\(.*\)_Bnd:@\1:\ \&gnssrobndropp1d\1Errors@
       #
       # # use to divide relative omf by 100:
@@ -336,7 +336,6 @@ _gnssro:
       # :%s@^@      @
       # :%s@^\(\ \+\d\)@\ \1@
       #
-
       # 2nd iteration (Bnd)
       NMid: &gnssrobndropp1dNMidErrors
         [999.0, 0.1069, 0.1144, 0.097, 0.07105,
