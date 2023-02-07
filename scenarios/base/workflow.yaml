@@ -51,6 +51,10 @@ workflow:
 # + GenerateObs
 #   - runs only the PrepareObservations mini-workflow
 #   - no dependencies between cycles
+# + ForecastFromExternalAnalyses
+#   - runs PrepareExternalAnalysis mini-workflow and ExtendedFCFromExternalAnalysis
+#   - no dependencies between cycles
+#
 # + GetGDASanalysis
 #   - runs only GetGDASanalysis.csh
 #   - no dependencies between cycles

@@ -95,6 +95,7 @@ cat >! suite.rc << EOF
 {% set GenerateTimes = "${GenerateTimes}" %}
 {% set DA2FCOffsetHR = "${DA2FCOffsetHR}" %}
 {% set FC2DAOffsetHR = "${FC2DAOffsetHR}" %}
+
 {% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
 {% set ExtendedEnsFCTimes = "${ExtendedEnsFCTimes}" %}
 {% set forecastIAU = ${forecast__IAU} %} #bool
@@ -258,8 +259,13 @@ cat >! suite.rc << EOF
     [[[{{GenerateTimes}}]]]
       graph = {{PrepareExternalAnalysisOuter}}
 
+{% elif CriticalPathType == "ForecastFromExternalAnalyses" %}
+## (ii) External analyses generation for a historical period
+    [[[{{ExtendedMeanFCTimes}}]]]
+      graph = {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
+
 {% elif CriticalPathType == "GenerateObs" %}
-## (ii) Observation generation for a historical period
+## (iii) Observation generation for a historical period
     [[[{{GenerateTimes}}]]]
       graph = {{PrepareObservations}}
 
@@ -269,10 +275,10 @@ cat >! suite.rc << EOF
       graph = GetGDASanalysis
 {% else %}
 
-## (iii.a) Critical path
+## (iv.a) Critical path
 %include include/criticalpath.rc
 
-## (iii.b) Verification
+## (iv.b) Verification
   {% if VerifyAgainstExternalAnalyses %}
 %include include/verifymodel.rc
   {% endif %}

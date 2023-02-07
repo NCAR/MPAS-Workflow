@@ -27,6 +27,7 @@ set ValidRunConfigs = ( \
   RealTime \
   GenerateObs \
   GenerateGFSAnalyses \
+  ForecastFromGFSAnalyses \
   IASI120km3denvar \
   IASI30kmIE60km3denvar \
   ABIAHI120km3denvar \

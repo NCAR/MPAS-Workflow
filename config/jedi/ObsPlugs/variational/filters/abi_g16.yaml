@@ -2,19 +2,19 @@
   - filter: Domain Check
     where:
     - variable:
-        name: sensor_zenith_angle@MetaData
+        name: MetaData/sensorZenithAngle
       maxvalue: 65.0
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
   - filter: Perform Action
     <<: *multiIterationFilter
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *abi_g16_channels
 #  - filter: Domain Check
 #    where:
 #    - variable:
-#        name: cloud_area_fraction@MetaData
+#        name: MetaData/cloudAmount
 #      minvalue: 0.05
     action:
       name: assign error
@@ -55,13 +55,13 @@
 ## 60 km, no bias correction - copy of 30km
         <<: *abi_g16_SymmCldFits15X15-30km
       error function:
-        name: ObsErrorModelRamp@ObsFunction
+        name: ObsFunction/ObsErrorModelRamp
         channels: *abi_g16_channels
         options:
           <<: *abi_g16_SymmCldFits{{ABISUPEROBGRID}}-{{HofXMeshDescriptor}}
           channels: *abi_g16_channels
           xvar:
-            name: SymmCldImpactIR@ObsFunction
+            name: ObsFunction/SymmCldImpactIR
             channels: *abi_g16_channels
             options:
               channels: *abi_g16_channels
@@ -72,12 +72,12 @@
 #  - filter: Domain Check
 #    <<: *multiIterationFilter
 #    filter variables:
-#    - name: brightness_temperature
+#    - name: brightnessTemperature
 #      channels: *abi_g16_channels
 #    where:
 #    - variable:
-##        name: cloud_area_fraction@MetaData
-#        name: SymmCldImpactIR@ObsFunction
+##        name: MetaData/cloudAmount
+#        name: ObsFunction/SymmCldImpactIR
 #        channels: *abi_g16_channels
 #        options:
 #          channels: *abi_g16_channels

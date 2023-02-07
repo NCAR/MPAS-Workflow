@@ -8,19 +8,25 @@ workflow:
 observations:
   resource: GladeRDAOnline
   convertToIODAObservations:
-  - prepbufr
-  - satwnd
-  - gpsro
   - 1bamua
   - 1bmhs
   - airsev
+  #- cris
+  - gpsro
+  #- mtiasi
+  - prepbufr
+  - satwnd
 experiment:
   ExperimentName: 'GenerateObs'
   ExperimentUserPrefix: ''
 job:
   CPQueueName: economy
   NCPQueueName: economy
-#TODO: make it so that model and variational are not necessary
+#TODO: make it so that below settings are not necessary
+firstbackground:
+  resource: "ForecastFromAnalysis"
+externalanalyses:
+  resource: "GFS.RDA"
 model:
   outerMesh: 120km
   innerMesh: 120km

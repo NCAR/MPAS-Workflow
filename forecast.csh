@@ -7,17 +7,23 @@ date
 # ArgMember: int, ensemble member [>= 1]
 set ArgMember = "$1"
 
-# ArgFCIntervalHR: int, forecast output interval (hr)
-set ArgFCIntervalHR = "$2"
+# ArgFCLengthHR: int, total forecast duration (hr)
+set ArgFCLengthHR = "$2"
 
-# ArgFCLengthHR: int, total forecast duration
-set ArgFCLengthHR = "$3"
+# ArgFCIntervalHR: int, forecast output interval (hr)
+set ArgFCIntervalHR = "$3"
 
 # ArgIAU: bool, whether to engage IAU (True/False)
 set ArgIAU = "$4"
 
 # ArgMesh: str, mesh name, one of allMeshesJinja, only applicable to FirstCycleDate
 set ArgMesh = "$5"
+
+# ArgDACycling: whether the initial forecast state is a DA analysis
+set ArgDACycling = "$6"
+
+# ArgDeleteZerothForecast: whether to delete zeroth-hour forecast
+set ArgDeleteZerothForecast = "$7"
 
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
@@ -48,51 +54,39 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./getCycleVars.csh
 
-# mesh-dependent and thisValidDate-dependent settings
-if ( ${thisValidDate} == ${FirstCycleDate} ) then
-  set do_DAcycling = "false"
-  if ("$ArgMesh" == "$outerMesh") then
-    # templated work directory
-    set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
-    set self_icStateDir = $ExternalAnalysisDirOuter
-    set self_icStatePrefix = $externalanalyses__filePrefixOuter
-    set nCells = $nCellsOuter
-# not used presently
-#  else if ("$ArgMesh" == "$innerMesh") then
-#    set self_WorkDir = ${FirstBackgroundDirInner}
-#    set self_icStateDir = $ExternalAnalysisDirInner
-#    set self_icStatePrefix = $externalanalyses__filePrefixInner
-#    set nCells = $nCellsInner
-#  else if ("$ArgMesh" == "$ensembleMesh") then
-#    set self_WorkDir = ${FirstBackgroundDirEnsemble}
-#    set self_icStateDir = $ExternalAnalysisDirEnsemble
-#    set self_icStatePrefix = $externalanalyses__filePrefixEnsemble
-#    set nCells = $nCellsEnsemble
-  endif
-else
-  ## ALL forecasts after the first cycle date use this sub-branch (must be outerMesh)
-  set do_DAcycling = "true"
+## ALL forecasts after the first cycle date use this sub-branch (must be outerMesh)
+# templated work directory
+set self_WorkDir = "$WorkDirsTEMPLATE[$ArgMember]"
 
-  # templated work directory
-  set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
+# other templated variables
+set self_icStateDir = "$StateDirsTEMPLATE[$ArgMember]"
 
-  # other templated variables
-  set self_icStateDir = $StateDirsTEMPLATE[$ArgMember]
+# static variables
+set self_icStatePrefix = "StatePrefixTEMPLATE"
 
-  # static variables
-  set self_icStatePrefix = ${ANFilePrefix}
-
+if ("$ArgMesh" == "$outerMesh") then
   set nCells = $nCellsOuter
+# not used presently
+#else if ("$ArgMesh" == "$innerMesh") then
+#  set self_WorkDir = ${FirstBackgroundDirInner}
+#  set self_icStateDir = $ExternalAnalysisDirInner
+#  set self_icStatePrefix = $externalanalyses__filePrefixInner
+#  set nCells = $nCellsInner
+#else if ("$ArgMesh" == "$ensembleMesh") then
+#  set self_WorkDir = ${FirstBackgroundDirEnsemble}
+#  set self_icStateDir = $ExternalAnalysisDirEnsemble
+#  set self_icStatePrefix = $externalanalyses__filePrefixEnsemble
+#  set nCells = $nCellsEnsemble
 endif
 
 set icFileExt = ${thisMPASFileDate}.nc
 set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
 
-if ( ${thisValidDate} == ${FirstCycleDate} ) then
+if ( "$ArgDACycling" == False ) then
   # use cold-start IC for static stream
   set memberStaticFieldsFile = ${initialState}
 else
-  # use previously generated IC for static stream
+  # use previously generated init file for static stream
   set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
   set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
 endif
@@ -100,9 +94,6 @@ endif
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
-
-# Default templated variables based on the input arguments.
-set deleteZerothForecast = deleteZerothForecastTEMPLATE
 
 # Input parameters can further change for the first DA cycle inside this script.
 set self_FCIntervalHR = ${ArgFCIntervalHR}
@@ -277,7 +268,8 @@ sed -i 's@fcLength@'${self_FCLengthHR}':00:00@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
-sed -i 's@configDODACycling@'${do_DAcycling}'@' $NamelistFile
+set configDODACycling = `echo "$ArgDACycling" | sed 's/\(.*\)/\L\1/'` # converts to lower-case
+sed -i 's@configDODACycling@'${configDODACycling}'@' $NamelistFile
 if ( ${self_IAU} == True ) then
   sed -i 's@{{IAU}}@on@' $NamelistFile
   echo "$0 (INFO): IAU is turned on."
@@ -330,7 +322,7 @@ else
   mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 endif
 
-if ( "$deleteZerothForecast" == "True" ) then
+if ( "$ArgDeleteZerothForecast" == "True" ) then
   # Optionally remove initial forecast file
   # =======================================
   set fcDate = ${thisValidDate}

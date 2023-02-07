@@ -31,6 +31,7 @@ set memDir = /mean
 set MeanBackgroundDirs = (${CyclingDAInDir}${memDir})
 set MeanAnalysisDirs = (${CyclingDAOutDir}${memDir})
 set ExtendedMeanFCDirs = (${ExtendedFCDir}${memDir})
+
 set VerifyEnsMeanBGDirs = (${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate})
 set VerifyMeanANDirs = (${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
 set VerifyMeanFCDirs = (${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
@@ -49,6 +50,7 @@ set CyclingDAInDirs = ()
 set CyclingDAOutDirs = ()
 
 set CyclingFCDirs = ()
+set ExternalAnalysisDirOuters = ()
 set prevCyclingFCDirs = ()
 
 set ExtendedEnsFCDirs = ()
@@ -72,6 +74,7 @@ while ( $member <= ${nMembers} )
   set CyclingDAOutDirs = ($CyclingDAOutDirs ${CyclingDAOutDir}${memDir})
 
   set CyclingFCDirs = ($CyclingFCDirs ${CyclingFCDir}${memDir})
+  set ExternalAnalysisDirOuters = ($ExternalAnalysisDirOuters ${ExternalAnalysisDirOuter}${memDir})
   set prevCyclingFCDirs = ($prevCyclingFCDirs ${prevCyclingFCDir}${memDir})
 
   set ExtendedEnsFCDirs = ($ExtendedEnsFCDirs ${ExtendedFCDir}${memDir})
