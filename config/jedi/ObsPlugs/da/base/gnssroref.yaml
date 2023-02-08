@@ -11,6 +11,7 @@
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssroref.h5
     simulated variables: [atmosphericRefractivity]
   obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLoc
   obs operator:
     name: GnssroRefNCEP
     obs options:

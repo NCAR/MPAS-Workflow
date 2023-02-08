@@ -12,6 +12,7 @@
     simulated variables: [brightnessTemperature]
     channels: &ahi_himawari8_channels 8-10
   obs error: *ObsErrorDiagonal
+  <<: *horizObsLoc
   obs operator:
     <<: *cloudyCRTMObsOperator
     obs options:

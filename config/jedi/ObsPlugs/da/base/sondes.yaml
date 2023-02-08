@@ -11,6 +11,7 @@
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_sondes.h5
     simulated variables: [airTemperature, virtualTemperature, windEastward, windNorthward, specificHumidity]
   obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLoc
   obs operator:
     name: VertInterp
     observation alias file: obsop_name_map.yaml

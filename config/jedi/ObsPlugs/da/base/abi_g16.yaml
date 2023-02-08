@@ -12,6 +12,7 @@
     simulated variables: [brightnessTemperature]
     channels: &abi_g16_channels 8-10
   obs error: *ObsErrorDiagonal
+  <<: *horizObsLoc
   obs operator:
     <<: *cloudyCRTMObsOperator
     obs options:

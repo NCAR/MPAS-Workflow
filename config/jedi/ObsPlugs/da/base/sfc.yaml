@@ -11,6 +11,7 @@
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_sfc.h5
     simulated variables: [stationPressure]
   obs error: *ObsErrorDiagonal
+  <<: *horizObsLoc #TODO: use station height for vertical localization
   obs operator:
     name: SfcPCorrected
     da_psfc_scheme: UKMO   # or WRFDA

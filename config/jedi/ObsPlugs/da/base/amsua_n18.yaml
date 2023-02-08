@@ -12,6 +12,7 @@
     simulated variables: [brightnessTemperature]
     channels: &amsua_n18_channels 1-15
   obs error: *ObsErrorDiagonal
+  <<: *horizObsLoc
   obs operator:
     <<: *clearCRTMObsOperator
     obs options:

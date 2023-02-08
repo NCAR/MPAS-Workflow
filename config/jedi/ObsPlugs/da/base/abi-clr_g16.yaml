@@ -12,6 +12,7 @@
     simulated variables: [brightnessTemperature]
     channels: &clrabi_channels 8-10
   obs error: *ObsErrorDiagonal
+  <<: *horizObsLoc
   obs operator:
     <<: *clearCRTMObsOperator
     obs options:
