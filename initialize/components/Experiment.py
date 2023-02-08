@@ -49,6 +49,14 @@ class Experiment(Component):
     # derived variables
     ###################
     suiteName = self['name']
+    if da is not None:
+      if da.var is not None:
+        self._set('DAApplication', 'Variational')
+      elif da.enkf is not None:
+        self._set('DAApplication', 'EnKF')
+    else:
+      self._set('DAApplication', None)
+
     if suiteName is None:
       name = ''
       if da is not None:
@@ -81,6 +89,7 @@ class Experiment(Component):
         elif da.enkf is not None:
           name_ = da.enkf['algorithm']+'_'+name_
           name_ += '_NMEM'+str(members.n)
+          self._set('DAApplication', 'EnKF')
 
         if da.rtpp is not None:
           if da.rtpp['relaxationFactor'] > 0.0:
@@ -154,5 +163,5 @@ class Experiment(Component):
 
     self._msg('')
 
-    self._cshVars = ['cylcWorkDir', 'SuiteName', 'ExperimentDirectory', 'mainScriptDir', 'ConfigDir', 'ModelConfigDir']
+    self._cshVars = ['cylcWorkDir', 'SuiteName', 'ExperimentDirectory', 'mainScriptDir', 'ConfigDir', 'ModelConfigDir', 'DAApplication']
     self._cylcVars = ['mainScriptDir', 'title']

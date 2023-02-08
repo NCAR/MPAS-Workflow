@@ -2,8 +2,9 @@
 
 ## load the workflow settings
 
-# experiment provides mainScriptDir
+# experiment provides mainScriptDir, DAApplication
 source config/auto/experiment.csh
+echo "DAApplication = ${DAApplication}"
 
 # workflow provides CyclingWindowHR, DAVFWindowHR, FCVFWindowHR, FirstCycleDate
 source config/auto/workflow.csh
@@ -28,6 +29,7 @@ set standaloneApplications = ( \
   ObsToIODA.csh \
   PrepRTPP.csh \
   PrepVariational.csh \
+  PrepEnKF.csh \
   RTPP.csh \
   UngribExternalAnalysis.csh \
 )
@@ -52,22 +54,29 @@ end
 
 set AppAndVerify = AppAndVerify
 
-## PrepJEDIVariational, Variational, VerifyObsDA, VerifyModelDA*, CleanVariational
-# *VerifyModelDA is non-functional and unused
-set taskBaseScript = Variational
-set WrapperScript=${mainAppDir}/${AppAndVerify}DA.csh
-sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
-    -e 's@wrapWorkDirsBenchmarkTEMPLATE@BenchmarkCyclingDADirs@' \
-    -e 's@AppScriptNameTEMPLATE@Variational@' \
-    -e 's@taskBaseScriptTEMPLATE@'${taskBaseScript}'@' \
-    -e 's@wrapStateDirsTEMPLATE@prevCyclingFCDirs@' \
-    -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
-    -e 's@wrapStateTypeTEMPLATE@DA@' \
-    -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
-    applications/${AppAndVerify}.csh > ${WrapperScript}
-chmod 744 ${WrapperScript}
-${WrapperScript}
-rm ${WrapperScript}
+if (${DAApplication} != None) then
+  ## PrepJEDIVariational, Variational, CleanVariational
+  ## OR
+  ## PrepJEDIEnKF, EnKF, CleanEnKF
+  ## PLUS
+  ## VerifyObsDA*, VerifyModelDA**
+  # * VerifyObsDA only works for single-member cycling
+  # ** VerifyModelDA is non-functional and unused
+  set taskBaseScript = ${DAApplication}
+  set WrapperScript=${mainAppDir}/${AppAndVerify}DA.csh
+  sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
+      -e 's@wrapWorkDirsBenchmarkTEMPLATE@BenchmarkCyclingDADirs@' \
+      -e 's@AppScriptNameTEMPLATE@'${DAApplication}'@' \
+      -e 's@taskBaseScriptTEMPLATE@'${taskBaseScript}'@' \
+      -e 's@wrapStateDirsTEMPLATE@prevCyclingFCDirs@' \
+      -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
+      -e 's@wrapStateTypeTEMPLATE@DA@' \
+      -e 's@wrapWindowHRTEMPLATE@'${CyclingWindowHR}'@' \
+      applications/${AppAndVerify}.csh > ${WrapperScript}
+  chmod 744 ${WrapperScript}
+  ${WrapperScript}
+  rm ${WrapperScript}
+endif
 
 ## PrepJEDIHofX{{state}}, HofX{{state}}, CleanHofX{{state}}
 ## VerifyObs{{state}}, CompareObs{{state}},
