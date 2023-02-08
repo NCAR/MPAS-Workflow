@@ -41,7 +41,7 @@ class Cycle(Suite):
 
     c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
     c['hofx'] = HofX(conf, c['hpc'], meshes, c['model'])
-    c['da'] = DA(conf, c['hpc'], c['obs'], meshes, c['model'], c['members'], c['workflow'])
+    c['da'] = DA(conf, c['hpc'], c['obs'], meshes, c['model'], c['members'], c['workflow'], c['build'])
     c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['workflow'],
                 c['externalanalyses'].outputs['Outer'],
                 c['da'].outputs['members'])
@@ -60,7 +60,7 @@ class Cycle(Suite):
     # and depend on whether verifyobs/verifymodel are selected
     c['bench'] = Benchmark(conf, c['hpc'])
 
-    c['exp'] = Experiment(conf, c['hpc'], meshes, c['da'].var, c['members'], c['da'].rtpp)
+    c['exp'] = Experiment(conf, c['hpc'], meshes, c['da'], c['members'])
     c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['externalanalyses'], c['exp'])
 
     c['naming'] = Naming(conf, c['exp'], c['bench'])

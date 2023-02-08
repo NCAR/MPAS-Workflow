@@ -2,6 +2,26 @@
 
 from initialize.Component import Component
 
+## benchmarkObservations
+# base set of observation types assimilated in all experiments
+# not included in auto-generated experiment names
+benchmarkObservations = [
+  # anchor
+  'aircraft',
+  'gnssroref',
+  'satwind',
+  'satwnd',
+  'sfc',
+  'sondes',
+  # MW satellite-based
+  'amsua_aqua',
+  'amsua_metop-a',
+  'amsua_metop-b',
+  'amsua_n15',
+  'amsua_n18',
+  'amsua_n19',
+]
+
 class Observations(Component):
   defaults = 'scenarios/defaults/observations.yaml'
   workDir = 'Observations'

@@ -5,6 +5,7 @@ from collections import OrderedDict
 from initialize.Component import Component
 from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
+from initialize.components.Observations import benchmarkObservations
 
 class ABEI(Component):
   workDir = 'CyclingInflation/ABEI'
@@ -14,26 +15,6 @@ class Variational(Component):
   workDir = 'CyclingDA'
   analysisPrefix = 'an'
   backgroundPrefix = 'bg'
-
-  ## benchmarkObservations
-  # base set of observation types assimilated in all experiments
-  # not included in auto-generated experiment names
-  benchmarkObservations = [
-    # anchor
-    'aircraft',
-    'gnssroref',
-    'satwind',
-    'satwnd',
-    'sfc',
-    'sondes',
-    # MW satellite-based
-    'amsua_aqua',
-    'amsua_metop-a',
-    'amsua_metop-b',
-    'amsua_n15',
-    'amsua_n18',
-    'amsua_n19',
-  ]
 
   requiredVariables = {
     ## DAType [Required Parameter]
@@ -165,9 +146,6 @@ class Variational(Component):
     self._set('AppName', DAType)
     self._set('appyaml', DAType+'.yaml')
     self._set('YAMLPrefix', DAType+'_')
-
-    # needed in csh experiment naming; TODO: move experiment naming to python then remove this line
-    self._set('benchmarkObservations', self.benchmarkObservations)
 
     self._set('MeshList', ['Outer', 'Inner'])
     self._set('nCellsList', [meshes['Outer'].nCells, meshes['Inner'].nCells])

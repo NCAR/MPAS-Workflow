@@ -18,6 +18,7 @@ from initialize.components.VerifyObs import VerifyObs
 from initialize.components.RTPP import RTPP
 from initialize.components.Variational import Variational
 from initialize.components.Variational import ABEI
+from initialize.components.EnKF import EnKF
 
 class Naming(Component):
   def __init__(self, config, exp:Experiment, bench=None):
@@ -29,6 +30,7 @@ class Naming(Component):
 
     namedComponents = [
       Variational,
+      EnKF,
       RTPP,
       ABEI,
       Forecast,

@@ -11,7 +11,7 @@ class DA(Component):
   Framework for all data assimilation (DA) applications.  Can be used to manage interdependent classes
   and cylc tasks, but does not execute any tasks on its own.
   '''
-  def __init__(self, config, hpc, obs, meshes, model, members, workflow):
+  def __init__(self, config, hpc, obs, meshes, model, members, workflow, build):
     super().__init__(config)
 
     ########################
@@ -65,11 +65,30 @@ class DA(Component):
         # finished after post, clean after finished
         '''+self.post+''' => '''+self.finished+''' => '''+self.clean]
 
-    self.var = Variational(config, hpc, meshes, model, members, workflow, self)
-    self.outputs = self.var.outputs
-    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self, self.var.inputs['members'], self.var.outputs['members'])
+    msg = "DA: config must contain only one of variational or enkf"
+    assert config.has('variational') or config.has('enkf'), msg
+
+    if config.has('variational'):
+      assert !config.has('enkf'), msg
+      self.var = Variational(config, hpc, meshes, model, members, workflow, self)
+      self.inputs = self.var.inputs
+      self.outputs = self.var.outputs
+    else:
+      self.var = None
+
+    if config.has('enkf'):
+      assert !config.has('variational'), msg
+      self.enkf = EnKF(config, hpc, meshes, model, members, workflow, self, build)
+      self.inputs = self.enkf.inputs
+      self.outputs = self.enkf.outputs
+    else:
+      self.enkf = None
+
+
+    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self, self.inputs['members'], self.outputs['members'])
 
   def export(self, components):
-    self.var.export(components)
+    if self.var is not None: self.var.export(components)
+    if self.enkf is not None: self.enkf.export(components)
     self.rtpp.export(components)
     super().export(components)

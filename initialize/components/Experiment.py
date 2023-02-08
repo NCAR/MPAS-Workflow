@@ -4,6 +4,7 @@ import os
 import subprocess
 
 from initialize.Component import Component
+from initialize.components.Observations import benchmarkObservations
 
 class Experiment(Component):
   PackageBaseName = 'MPAS-Workflow'
@@ -41,7 +42,7 @@ class Experiment(Component):
     'user directory child': ['pandac', str],
   }
 
-  def __init__(self, config, hpc, meshes=None, variational=None, members=None, rtpp=None):
+  def __init__(self, config, hpc, meshes=None, da=None, members=None):
     super().__init__(config)
 
     ###################
@@ -50,35 +51,40 @@ class Experiment(Component):
     suiteName = self['name']
     if suiteName is None:
       name = ''
-      if variational is not None:
-        name_ = variational['DAType']
-        for nInner in variational['nInnerIterations']:
-          name_ += '-'+str(nInner)
-        name_ += '-iter'
+      if da is not None:
+        if da.var is not None:
+          name_ = da.var['DAType']
+          for nInner in da.var['nInnerIterations']:
+            name_ += '-'+str(nInner)
+          name_ += '-iter'
 
-        for o in variational['observations']:
-          if o not in variational.benchmarkObservations:
-            name_ += '_'+o
+          for o in da.var['observations']:
+            if o not in benchmarkObservations:
+              name_ += '_'+o
 
-        if members is not None:
-          if members.n > 1:
-            name_ = 'eda_'+name_
-            if variational['EDASize'] > 1:
-              name_ += '_NMEM'+str(variational['nDAInstances'])+'x'+str(variational['EDASize'])
-              if variational['MinimizerAlgorithm'] == variational['BlockEDA']:
-                name_ += 'Block'
-            else:
-              name_ += '_NMEM'+str(members.n)
+          if members is not None:
+            if members.n > 1:
+              name_ = 'eda_'+name_
+              if da.var['EDASize'] > 1:
+                name_ += '_NMEM'+str(da.var['nDAInstances'])+'x'+str(da.var['EDASize'])
+                if da.var['MinimizerAlgorithm'] == da.var['BlockEDA']:
+                  name_ += 'Block'
+              else:
+                name_ += '_NMEM'+str(members.n)
 
-            if rtpp is not None:
-              if rtpp['relaxationFactor'] > 0.0:
-                name_ += '_RTPP'+str(rtpp['relaxationFactor'])
+              if da.var['SelfExclusion']:
+                name_ += '_SelfExclusion'
 
-            if variational['SelfExclusion']:
-              name_ += '_SelfExclusion'
+              if da.var['ABEInflation']:
+                name_ += '_ABEI_BT'+str(da.var['ABEIChannel'])
 
-            if variational['ABEInflation']:
-              name_ += '_ABEI_BT'+str(variational['ABEIChannel'])
+        elif da.enkf is not None:
+          name_ = da.enkf['algorithm']+'_'+name_
+          name_ += '_NMEM'+str(members.n)
+
+        if da.rtpp is not None:
+          if da.rtpp['relaxationFactor'] > 0.0:
+            name_ += '_RTPP'+str(da.rtpp['relaxationFactor'])
 
         name += name_
 
