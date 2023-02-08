@@ -50,12 +50,38 @@ It is required to set the `work` and `run` directories in $HOME/.cylc/global.rc 
 `USER` must be filled in with your user-name.  It is
 recommended to set `job name length maximum` to a large value.
 
+Build
+-----
+At this time the workflow does not build MPAS-Model or JEDI-MPAS.  Users must acquire source
+code from either [JCSDA/mpas-bundle](https://github.com/JCSDA/mpas-bundle/) or
+[JCSDA-internal/mpas-bundle](https://github.com/JCSDA-internal/mpas-bundle/).  Then they must
+follow the build instructions in the corresponding repository.  Tagged releases of MPAS-Workflow
+starting with 25JAN2023 are accompanied by an mpas-bundle CMakeLists.txt (`build/CMakeLists.txt`)
+with fixed source code repository tags/hashes that are consistent with the released workflow
+version.  Users can copy that file into their mpas-bundle source code directory before executing 
+`ecbuild` in order to download the currect repository versions.
+
+Periodically the `develop` branch of MPAS-Workflow will be consistent with the source code
+`develop` branches, usually every 1-2 months.  As often as is feasible, that is when a new tagged
+release of MPAS-Workflow will be generated.
+
+As such, the current `develop` branch of MPAS-Workflow may or may not be backward compatible to
+those source code tags. For developers, unless they are absolutely sure that their workflow branch
+is consistent with a particular set of source code `develop` branches, it is strongly recommended
+that they start their development process from the tagged source code hashes stored in
+`build/CMakeLists.txt`.  After checking out those specific source code hashes (via `ecbuild`), it is
+simple to generate their own feature or bugfix branches using, e.g.,
+`git checkout -b feature/CustomFeature`.
+
+Please contact [JJ Guerrette](mailto:guerrett@ucar.edu?subject=[GitHub]%20MPAS-Worflow) with any
+questions. The MPAS-Worklfow release procedure is subject to change in the future, which will be
+documented here.
 
 Configuration Files
 -------------------
 
 The files under the `scenarios/` directories describe the configuration for a particular instance
-of an `MPAS-Workflow` `Cylc` suite.  The `scenarios/defaults/*.yaml` describe some default
+of an `MPAS-Workflow` `Cylc` suite.  `scenarios/defaults/*.yaml` describe some default
 `resource`-based options that users may select in their experiment scenario `yaml` (e.g., 
 `scenarios/*.yaml`.  Both the `defaults` and the particular scenario selected are parsed with
 python-based classes in the `initialize/components/` directory.  Each `component` is associated
@@ -417,7 +443,7 @@ states and instrument feedback files.
 References
 ----------
 
-Liu, Z., Snyder, C., Guerrette, J. J., Jung, B.-J., Ban, J., Vahl, S., Wu, Y., Trémolet, Y., Auligné, T., Ménétrier, B., Shlyaeva, A., Herbener, S., Liu, E., Holdaway, D., and Johnson, B. T.: Data Assimilation for the Model for Prediction Across Scales – Atmosphere with the Joint Effort for Data assimilation Integration (JEDI-MPAS 1.0.0): EnVar implementation and evaluation, Geosci. Model Dev. Discuss. [preprint], https://doi.org/10.5194/gmd-2022-133, in review, 2022
+Liu, Z., Snyder, C., Guerrette, J. J., Jung, B.-J., Ban, J., Vahl, S., Wu, Y., Trémolet, Y., Auligné, T., Ménétrier, B., Shlyaeva, A., Herbener, S., Liu, E., Holdaway, D., and Johnson, B. T.: Data Assimilation for the Model for Prediction Across Scales – Atmosphere with the Joint Effort for Data assimilation Integration (JEDI-MPAS 1.0.0): EnVar implementation and evaluation, Geosci. Model Dev., 15, 7859–7878, https://doi.org/10.5194/gmd-15-7859-2022, 2022
 
 Oliver, H., Shin, M., Matthews, D., Sanders, O., Bartholomew, S., Clark, A., Fitzpatrick, B., van Haren, R., Hut, R., and Drost, N.: Workflow Automation for Cycling Systems, Computing in Science & Engineering, 21, 7–21, https://doi.org/10.1109/mcse.2019.2906593, 2019.
 
