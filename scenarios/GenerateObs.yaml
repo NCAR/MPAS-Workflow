@@ -1,12 +1,14 @@
 observations:
   resource: GladeRDAOnline
   convertToIODAObservations:
-  - prepbufr
-  - satwnd
-  - gpsro
   - 1bamua
   - 1bmhs
   - airsev
+  #- cris
+  - gpsro
+  #- mtiasi
+  - prepbufr
+  - satwnd
 experiment:
   ExperimentName: 'GenerateObs'
   ExperimentUserPrefix: ''
