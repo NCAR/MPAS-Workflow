@@ -145,10 +145,6 @@ echo "Starting model state preparation stage"
 # Input/Output model state preparation
 # ====================================
 
-# get source static fields
-set StaticFieldsDirList = ($StaticFieldsDirOuter $StaticFieldsDirInner)
-set StaticFieldsFileList = ($StaticFieldsFileOuter $StaticFieldsFileInner)
-
 set member = 1
 while ( $member <= ${nMembers} )
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
@@ -189,6 +185,10 @@ while ( $member <= ${nMembers} )
 
   @ member++
 end
+
+# get source static fields
+set StaticFieldsDirList = ($StaticFieldsDirOuter)
+set StaticFieldsFileList = ($StaticFieldsFileOuter)
 
 set member = 1
 while ( $member <= 1 )
