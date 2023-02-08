@@ -17,7 +17,7 @@ class EnKF(Component):
     ## solver [Required Parameter]
     # see classes derived from oops/src/oops/assimilation/LocalEnsembleSolver.h for all options
     'solver': [str,
-      ['letkf'] #, 'getkf']
+      ['LETKF'] #, 'GETKF']
     ],
   }
 

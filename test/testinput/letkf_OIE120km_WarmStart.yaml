@@ -2,6 +2,9 @@ experiment:
   name: 'letkf_OIE120km_WarmStart_TEST'
 externalanalyses:
   resource: "GFS.PANDAC"
+enkf:
+  solver: LETKF
+  retainObsFeedback: False
 firstbackground:
   resource: "PANDAC.LaggedGEFS"
 hofx:
@@ -21,11 +24,8 @@ rtpp:
   relaxationFactor: 0.8
 staticstream:
   resource: "PANDAC.LaggedGEFS"
-enkf:
-  solver: LETKF
-  retainObsFeedback: False
 workflow:
   first cycle point: 20180414T18
-  final cycle point: 20180415T06
+  final cycle point: 20180415T00
   VerifyEnsMeanBG: True
   DiagnoseEnsSpreadBG: True

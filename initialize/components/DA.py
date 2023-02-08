@@ -5,6 +5,7 @@ from collections import OrderedDict
 from initialize.Component import Component
 from initialize.components.RTPP import RTPP
 from initialize.components.Variational import Variational
+from initialize.components.EnKF import EnKF
 
 class DA(Component):
   '''
@@ -69,7 +70,7 @@ class DA(Component):
     assert config.has('variational') or config.has('enkf'), msg
 
     if config.has('variational'):
-      assert !config.has('enkf'), msg
+      assert not config.has('enkf'), msg
       self.var = Variational(config, hpc, meshes, model, members, workflow, self)
       self.inputs = self.var.inputs
       self.outputs = self.var.outputs
@@ -77,7 +78,7 @@ class DA(Component):
       self.var = None
 
     if config.has('enkf'):
-      assert !config.has('variational'), msg
+      assert not config.has('variational'), msg
       self.enkf = EnKF(config, hpc, meshes, model, members, workflow, self, build)
       self.inputs = self.enkf.inputs
       self.outputs = self.enkf.outputs
