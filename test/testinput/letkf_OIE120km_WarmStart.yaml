@@ -29,3 +29,8 @@ workflow:
   final cycle point: 20180415T00
   VerifyEnsMeanBG: True
   DiagnoseEnsSpreadBG: True
+
+#temporary until code is merged to develop
+build:
+  mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--refactorGeomIter
+  #mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--refactorGeomIter_SINGLE
