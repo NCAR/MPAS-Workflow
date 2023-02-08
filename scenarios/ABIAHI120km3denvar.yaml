@@ -11,7 +11,7 @@ observations:
       - abi_g16
       - ahi_himawari8
       IODADirectory:
-        variational:
+        da:
           abi_g16: /glade/p/mmm/parc/ivette/pandac/Observations/abi/ioda/SUPEROBBING59
           ahi_himawari8: /glade/p/mmm/parc/ivette/pandac/Observations/ahi/ioda/SUPEROBBING59
   initialVARBCcoeff: /glade/scratch/ivette/pandac/ivette_3denvar_OIE120km_WarmStart_ABIAHI_10AUG2022_SUPEROBBING59_VarBC_2022ABI_2022AHI/CyclingDA/2018051418/dbOut

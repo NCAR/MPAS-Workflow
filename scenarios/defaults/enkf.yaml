@@ -1,0 +1,50 @@
+enkf:
+  job:
+    defaults:
+      baseSeconds: 1000
+      secondsPerMember: 60
+      nodesPer10Members: 2
+      PEPerNode: 32
+      memory: 109GB
+
+      # cylc retry string
+      retry: '2*PT30S'
+
+
+    ## FORMAT
+    #{{outerMesh}}:
+    #  {{innerMesh}}:
+    #    {{DAType}}: # i.e., 3dvar, 3denvar, 3dhybrid, 4denvar, etc...
+    #      baseSeconds: int
+    #      secondsPerMember: int, default is 0
+    #      #@ seconds = $secondsPerMember * members.n + $baseSeconds
+    #      nodesPer10Members: int
+    #      PEPerNode: int
+    #      memory: int
+    ## All resource requests below are based on
+    # + single-precision bundle build
+    # + sondes, aircraft, sfc, gnssro, satwind, 6 clear amsua
+    # These are starting points.  When more memory is needed (e.g., more observations, more
+    # memmbers) than is available in default resource requests below, use more nodes and/or
+    # processors
+    30km:
+      LETKF:
+        nodesPer10Members: 4
+        PEPerNode: 36
+        memory: 109GB
+        baseSeconds: 1000
+        secondsPerMember: 60
+    60km:
+      LETKF:
+        nodesPer10Members: 2
+        PEPerNode: 36
+        memory: 109GB
+        baseSeconds: 1000
+        secondsPerMember: 60
+    120km:
+      LETKF:
+        nodesPer10Members: 1
+        PEPerNode: 36
+        memory: 109GB
+        baseSeconds: 1000
+        secondsPerMember: 60
