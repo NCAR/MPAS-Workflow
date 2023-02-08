@@ -16,7 +16,7 @@ window begin: {{windowBegin}}
 window length: {{windowLength}}
 
 background:
-{{EnsemblePbMembers}}
+{{EnsembleMembers}}
 
 increment variables: [{{AnalysisVariables}}]
 

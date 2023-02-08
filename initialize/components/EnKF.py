@@ -22,30 +22,31 @@ class EnKF(Component):
   }
 
   variablesWithDefaults = {
-    'horizontal obs localization': [
-      {
-        'localization method': 'Horizontal Gaspari-Cohn',
-        'lengthscale': 1.2e6,
-      },
-      dict],
-    'obs distribution': [
-      {
-        'name': 'Halo',
-        'halo size': 1.2e6,
-      },
-      dict],
-    'conventional obs vertical localization': [
-      {
-        'localization method': 'Vertical localization',
-        'vertical lengthscale': 6000.,
-        'ioda vertical coordinate': 'height',
-        'ioda vertical coordinate group': 'MetaData',
-        'localization function': 'Gaspari Cohn',
-      },
-      dict],
+# TODO: make these configurable?
+#    'horizontal obs localization': [
+#      {
+#        'localization method': 'Horizontal Gaspari-Cohn',
+#        'lengthscale': 1.2e6,
+#      },
+#      dict],
+#    'obs distribution': [
+#      {
+#        'name': 'Halo',
+#        'halo size': 1.2e6,
+#      },
+#      dict],
+#    'conventional obs vertical localization': [
+#      {
+#        'localization method': 'Vertical localization',
+#        'vertical lengthscale': 6000.,
+#        'ioda vertical coordinate': 'height',
+#        'ioda vertical coordinate group': 'MetaData',
+#        'localization function': 'Gaspari Cohn',
+#      },
+#      dict],
 
     ## observations
-    # observation types assimilated in the variational application
+    # observation types assimilated in the enkf application
     # Abbreviations:
     #   clr == clear-sky
     #   cld == cloudy-sky
@@ -111,9 +112,8 @@ class EnKF(Component):
     # derived variables
     ###################
     solver = self['solver']
-    self._set('AppName', solver)
+    self._set('AppName', 'enkf')
     self._set('appyaml', 'enkf.yaml')
-    self._set('YAMLPrefix', solver+'_')
     self._set('EnKFEXE', build[solver+'EXE'])
     self._set('EnKFBuildDir', build[solver+'BuildDir'])
 
@@ -163,7 +163,8 @@ class EnKF(Component):
     }
     enkfjob = Resource(self._conf, attr, ('job', r2))
     enkfjob._set('seconds', enkfjob['baseSeconds'] + enkfjob['secondsPerMember'] * NN)
-    enkfjob._set('nodes', enkfjob['nodesPer10Members'] * (NN//10))
+    nodes = max([enkfjob['nodesPer10Members'] * (NN//10), 1])
+    enkfjob._set('nodes', nodes)
     enkftask = TaskFactory[hpc.system](enkfjob)
 
     da._tasks += ['''
@@ -183,8 +184,8 @@ class EnKF(Component):
 
   [[EnKF]]
     inherit = '''+da.execute+''', BATCH
-'''+enkftask.job()+enkftask.directives()+'''
-    script = $origin/applications/EnKF.csh''']
+    script = $origin/applications/EnKF.csh
+'''+enkftask.job()+enkftask.directives()]
 
     #########
     # outputs

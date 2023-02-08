@@ -84,6 +84,8 @@ sed -i 's@{{localEnsembleDASolver}}@'${solver}'@g' $prevYAML
 # TODO:
 # Ensemble background members
 # ===========================
+set yamlFiles = enkfs.txt
+echo $appyaml > $yamlFiles
 ## yaml indentation
 set nEnsIndent = 2
 
@@ -109,12 +111,14 @@ set dir1 = `echo "${ensPbDir1}" \
 #set dir0 = "`echo "${dir0}" | sed 's@{{ExperimentDirectory}}@'${ExperimentDirectory}'@'`"
 
 # substitute Jb members
-setenv myCommand "${substituteEnsembleBTemplate} ${dir0} ${dir1} ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsIndent} $SelfExclusion"
+setenv myCommand "${substituteEnsembleBTemplate} ${dir0} ${dir1} ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsIndent} False"
 
 echo "$myCommand"
 #${substituteEnsembleBTemplate} "${ensPbDir0}" "${ensPbDir1}" ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsIndent} $SelfExclusion
 
 ${myCommand}
+
+rm $yamlFiles
 
 if ($status != 0) then
   echo "$0 (ERROR): failed to substitute ${enspbmemsed}" > ./FAIL
@@ -147,24 +151,6 @@ set StaticFieldsFileList = ($StaticFieldsFileOuter $StaticFieldsFileInner)
 
 set member = 1
 while ( $member <= ${nMembers} )
-  set memSuffix = `${memberDir} $nMembers $member "${flowMemFileFmt}"`
-
-  ## copy static fields
-  # unique StaticFieldsDir and StaticFieldsFile for each ensemble member
-  # + ensures independent ivgtyp, isltyp, etc...
-  # + avoids concurrent reading of StaticFieldsFile by all members
-  set iMesh = 0
-  foreach localStaticFieldsFile ($localStaticFieldsFileList)
-    @ iMesh++
-
-    set localStatic = ${localStaticFieldsFile}${memSuffix}
-    rm ${localStatic}
-
-    set staticMemDir = `${memberDir} 2 $member "${staticMemFmt}"`
-    set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${staticMemDir}/$StaticFieldsFileList[$iMesh]
-    ln -sfv ${memberStaticFieldsFile} ${localStatic}
-  end
-
   # TODO(JJG): centralize this directory name construction (cycle.csh?)
   set other = $self_StateDirs[$member]
   set bg = $CyclingDAInDirs[$member]
@@ -193,45 +179,43 @@ while ( $member <= ${nMembers} )
     endif
   endif
 
-  # use the member-specific background as the TemplateFieldsFileOuter for this member
+  # Remove existing analysis file, make full copy from bg file
+  # ==========================================================
+  set an = $CyclingDAOutDirs[$member]
+  mkdir -p ${an}
+  set anFile = ${an}/${ANFilePrefix}.$thisMPASFileDate.nc
+  rm ${anFile}
+  cp -v ${bgFile} ${anFile}
+
+  @ member++
+end
+
+set member = 1
+while ( $member <= 1 )
+  set memSuffix = ""
+
+  ## copy static fields
+  # unique StaticFieldsDir and StaticFieldsFile for each ensemble member
+  # + ensures independent ivgtyp, isltyp, etc...
+  # + avoids concurrent reading of StaticFieldsFile by all members
+  set iMesh = 0
+  foreach localStaticFieldsFile ($localStaticFieldsFileList)
+    @ iMesh++
+
+    set localStatic = ${localStaticFieldsFile}${memSuffix}
+    rm ${localStatic}
+
+    set staticMemDir = `${memberDir} 1 $member "${staticMemFmt}"`
+    set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${staticMemDir}/$StaticFieldsFileList[$iMesh]
+    ln -sfv ${memberStaticFieldsFile} ${localStatic}
+  end
+
+  # use the 1st member background as the TemplateFieldsFileOuter
+  set bg = $CyclingDAInDirs[$member]
+  set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+
   rm ${TemplateFieldsFileOuter}${memSuffix}
   ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
-
-  if ($nCellsOuter != $nCellsInner) then
-    set tFile = ${TemplateFieldsFileInner}${memSuffix}
-    rm $tFile
-
-    # use localStaticFieldsFileInner as the TemplateFieldsFileInner
-    # NOTE: not perfect for EDA if static fields differ between members,
-    #       but dual-res EDA not working yet anyway
-    cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
-
-    # modify xtime
-    # TODO: handle errors from python executions, e.g.:
-    # '''
-    #     import netCDF4 as nc
-    # ImportError: No module named netCDF4
-    # '''
-    echo "${updateXTIME} $tFile ${thisCycleDate}"
-    ${updateXTIME} $tFile ${thisCycleDate}
-  endif
-
-  if ($nCellsOuter != $nCellsEnsemble && $nCellsInner != $nCellsEnsemble) then
-    set tFile = ${TemplateFieldsFileEnsemble}${memSuffix}
-    rm $tFile
-
-    # use localStaticFieldsFileInner as the TemplateFieldsFileInner
-    cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
-
-    # modify xtime
-    # TODO: handle errors from python executions, e.g.:
-    # '''
-    #     import netCDF4 as nc
-    # ImportError: No module named netCDF4
-    # '''
-    echo "${updateXTIME} $tFile ${thisCycleDate}"
-    ${updateXTIME} $tFile ${thisCycleDate}
-  endif
 
   foreach StreamsFile_ ($StreamsFileList)
     if (${memSuffix} != "") then
@@ -240,15 +224,7 @@ while ( $member <= ${nMembers} )
     sed -i 's@{{TemplateFieldsMember}}@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
     sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
   end
-  sed -i 's@{{StreamsFileMember}}@'${memSuffix}'@' $yamlFileList[$member]
-
-  # Remove existing analysis file, make full copy from bg file
-  # ==========================================================
-  set an = $CyclingDAOutDirs[$member]
-  mkdir -p ${an}
-  set anFile = ${an}/${ANFilePrefix}.$thisMPASFileDate.nc
-  rm ${anFile}
-  cp -v ${bgFile} ${anFile}
+  sed -i 's@{{StreamsFileMember}}@'${memSuffix}'@' $appyaml
 
   @ member++
 end

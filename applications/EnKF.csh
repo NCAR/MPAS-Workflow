@@ -33,7 +33,7 @@ cd ${self_WorkDir}
 # build, executable, yaml
 set myBuildDir = ${EnKFBuildDir}
 set myEXE = ${EnKFEXE}
-set myYAML = ${self_WorkDir}/${appyaml}.yaml
+set myYAML = ${self_WorkDir}/${appyaml}
 
 # ================================================================================================
 
