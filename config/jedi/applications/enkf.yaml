@@ -1,0 +1,43 @@
+_member: &memberConfig
+  date: &analysisDate {{thisISO8601Date}}
+  state variables: [{{StateVariables}}]
+  stream name: background
+
+{{ObsAnchors}}
+
+geometry:
+  nml_file: {{OuterNamelistFile}}
+  streams_file: {{OuterStreamsFile}}
+  deallocate non-da fields: true
+  #interpolation type: unstructured # no Increment/State interp in enkf
+  iterator dimension: 3
+
+window begin: {{windowBegin}}
+window length: {{windowLength}}
+
+background:
+{{EnsemblePbMembers}}
+
+increment variables: [{{AnalysisVariables}}]
+
+observations:
+  observers:
+{{Observers}}
+
+driver:
+  do test prints: false
+  do posterior observer: false
+  save posterior ensemble: true
+  save posterior mean: true
+
+local ensemble DA:
+  solver: {{localEnsembleDASolver}}
+# TODO: how do inflation settings impact result?
+#  inflation:
+#    rtps: 0.5
+#    rtpp: 0.6
+#    mult: 1.1
+
+output:
+  filename: {{anStateDir}}/mem%{member}%/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis
