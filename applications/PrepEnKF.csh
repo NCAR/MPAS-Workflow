@@ -151,9 +151,15 @@ echo "Starting model state preparation stage"
 # Input/Output model state preparation
 # ====================================
 
+# mean background/analysis directories
+set member = 0
+set memDir = `${memberDir} $nMembers $member`
+mkdir -p ${backgroundSubDir}${memDir}
+mkdir -p ${analysisSubDir}${memDir}
+
+# member background/analysis directories and files
 set member = 1
 while ( $member <= ${nMembers} )
-  # TODO(JJG): centralize this directory name construction (cycle.csh?)
   set other = $self_StateDirs[$member]
   set bg = $CyclingDAInDirs[$member]
   mkdir -p ${bg}
