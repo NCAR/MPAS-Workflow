@@ -128,9 +128,8 @@ endif
 # Jo term (member dependence)
 # ===========================
 
-# member-specific state I/O and observation file output directory
-#set memDir = `${memberDir} $nMembers $member`
-#sed -i 's@{{MemberDir}}@'${memDir}'@g' $prevYAML
+# eliminate member-specific file output directory substitutions
+sed -i 's@{{MemberDir}}@@g' $prevYAML
 
 echo "Completed YAML preparation stage"
 
