@@ -4,6 +4,8 @@ externalanalyses:
   resource: "GFS.PANDAC"
 enkf:
   solver: LETKF
+  horizontal localization lengthscale: 1.2e6
+  vertical localization lengthscale: 6.e3
   retainObsFeedback: False
 firstbackground:
   resource: "PANDAC.LaggedGEFS"

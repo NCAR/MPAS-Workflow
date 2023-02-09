@@ -22,28 +22,11 @@ class EnKF(Component):
   }
 
   variablesWithDefaults = {
-# TODO: make these configurable?
-#    'horizontal obs localization': [
-#      {
-#        'localization method': 'Horizontal Gaspari-Cohn',
-#        'lengthscale': 1.2e6,
-#      },
-#      dict],
-#    'obs distribution': [
-#      {
-#        'name': 'Halo',
-#        'halo size': 1.2e6,
-#      },
-#      dict],
-#    'conventional obs vertical localization': [
-#      {
-#        'localization method': 'Vertical localization',
-#        'vertical lengthscale': 6000.,
-#        'ioda vertical coordinate': 'height',
-#        'ioda vertical coordinate group': 'MetaData',
-#        'localization function': 'Gaspari Cohn',
-#      },
-#      dict],
+    ## observation localization parameters
+    'horizontal localization method': ['Horizontal Gaspari-Cohn', str],
+    'horizontal localization lengthscale': [1.2e6, float],
+    'vertical localization function': ['Gaspari Cohn', str],
+    'vertical localization lengthscale': [6.e3, float],
 
     ## observations
     # observation types assimilated in the enkf application
@@ -154,7 +137,7 @@ class EnKF(Component):
       'retry': {'t': str},
       'baseSeconds': {'t': int},
       'secondsPerMember': {'t': int},
-      'nodesPer10Members': {'t': int},
+      'nodesPer5Members': {'t': int},
       'PEPerNode': {'t': int},
       'memory': {'def': '45GB', 't': str},
       'queue': {'def': hpc['CriticalQueue']},
@@ -163,7 +146,7 @@ class EnKF(Component):
     }
     enkfjob = Resource(self._conf, attr, ('job', r2))
     enkfjob._set('seconds', enkfjob['baseSeconds'] + enkfjob['secondsPerMember'] * NN)
-    nodes = max([enkfjob['nodesPer10Members'] * (NN//10), 1])
+    nodes = max([enkfjob['nodesPer5Members'] * (NN//5), 1])
     enkfjob._set('nodes', nodes)
     enkftask = TaskFactory[hpc.system](enkfjob)
 

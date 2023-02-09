@@ -1,13 +1,13 @@
 _hor obs localization: &HorizObsLoc
-  localization method: Horizontal Gaspari-Cohn
-  lengthscale: &HorizObsLocLengthScale 1.2e6
+  localization method: {{horizontalLocalizationMethod}}
+  lengthscale: &HorizObsLocLengthScale {{horizontalLocalizationLengthscale}}
 
 _conventional vertical localization: &HeightVertObsLoc
   localization method: Vertical localization
-  vertical lengthscale: 6000
+  vertical lengthscale: {{verticalLocalizationLengthscale}}
   ioda vertical coordinate: height
   ioda vertical coordinate group: MetaData
-  localization function: Gaspari Cohn
+  localization function: {{verticalLocalizationFunction}}
 
 _conventional obs localizations: &heightAndHorizObsLoc
   obs localizations:

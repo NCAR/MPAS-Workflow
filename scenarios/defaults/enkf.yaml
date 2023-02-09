@@ -3,7 +3,7 @@ enkf:
     defaults:
       baseSeconds: 1000
       secondsPerMember: 60
-      nodesPer10Members: 2
+      nodesPer5Members: 2
       PEPerNode: 32
       memory: 109GB
 
@@ -18,7 +18,7 @@ enkf:
     #      baseSeconds: int
     #      secondsPerMember: int, default is 0
     #      #@ seconds = $secondsPerMember * members.n + $baseSeconds
-    #      nodesPer10Members: int
+    #      nodesPer5Members: int
     #      PEPerNode: int
     #      memory: int
     ## All resource requests below are based on
@@ -29,22 +29,22 @@ enkf:
     # processors
     30km:
       LETKF:
-        nodesPer10Members: 4
-        PEPerNode: 36
+        nodesPer5Members: 16
+        PEPerNode: 32
         memory: 109GB
         baseSeconds: 1000
         secondsPerMember: 60
     60km:
       LETKF:
-        nodesPer10Members: 2
-        PEPerNode: 36
+        nodesPer5Members: 8
+        PEPerNode: 32
         memory: 109GB
         baseSeconds: 1000
         secondsPerMember: 60
     120km:
       LETKF:
-        nodesPer10Members: 1
-        PEPerNode: 36
+        nodesPer5Members: 4
+        PEPerNode: 32
         memory: 109GB
         baseSeconds: 1000
         secondsPerMember: 60
