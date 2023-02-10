@@ -128,11 +128,10 @@ class EnKF(Component):
     ########################
     # job resource settings
 
-    # EnKFs
-    # r2 = {{outerMesh}}.{{solver}}
-    r2 = meshes['Outer'].name
-    r2 += '.'+solver
-
+    # EnKFObserver
+    # r2observer = {{outerMesh}}.observer
+    r2observer = meshes['Outer'].name
+    r2observer += '.observer'
     attr = {
       'retry': {'t': str},
       'baseSeconds': {'t': int},
@@ -144,31 +143,62 @@ class EnKF(Component):
       'account': {'def': hpc['CriticalAccount']},
       'email': {'def': True, 't': bool},
     }
-    enkfjob = Resource(self._conf, attr, ('job', r2))
-    enkfjob._set('seconds', enkfjob['baseSeconds'] + enkfjob['secondsPerMember'] * NN)
-    nodes = max([enkfjob['nodesPer5Members'] * (NN//5), 1])
-    enkfjob._set('nodes', nodes)
-    enkftask = TaskFactory[hpc.system](enkfjob)
+    observerjob = Resource(self._conf, attr, ('job', r2observer))
+    observerjob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
+    nodes = max([observerjob['nodesPer5Members'] * (NN//5), 1])
+    observerjob._set('nodes', nodes)
+    observertask = TaskFactory[hpc.system](observerjob)
+
+    # EnKF solver
+    # r2solver = {{outerMesh}}.{{solver}}
+    r2solver = meshes['Outer'].name
+    r2solver += '.'+solver
+    attr = {
+      'retry': {'t': str},
+      'baseSeconds': {'t': int},
+      'secondsPerMember': {'t': int},
+      'nodesPer5Members': {'t': int},
+      'PEPerNode': {'t': int},
+      'memory': {'def': '45GB', 't': str},
+      'queue': {'def': hpc['CriticalQueue']},
+      'account': {'def': hpc['CriticalAccount']},
+      'email': {'def': True, 't': bool},
+    }
+    solverjob = Resource(self._conf, attr, ('job', r2solver))
+    solverjob._set('seconds', solverjob['baseSeconds'] + solverjob['secondsPerMember'] * NN)
+    nodes = max([solverjob['nodesPer5Members'] * (NN//5), 1])
+    solverjob._set('nodes', nodes)
+    solvertask = TaskFactory[hpc.system](solverjob)
 
     da._tasks += ['''
   ## enkf tasks
-  [[InitEnKF]]
+  [[Init'''+solver+''']]
     inherit = '''+da.init+''', SingleBatch
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIEnKF.csh "1" "0" "DA" "'''+self.lower+'''"
     script = $origin/applications/PrepEnKF.csh
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = '''+enkfjob['retry']+'''
+      execution retry delays = '''+solverjob['retry']+'''
 
   # clean
-  [[CleanEnKF]]
+  [[Clean'''+solver+''']]
     inherit = Clean, '''+da.clean+'''
     script = $origin/applications/CleanEnKF.csh
 
-  [[EnKF]]
+  [[EnKFObserver]]
+    inherit = '''+da.execute+''', BATCH
+    script = $origin/applications/EnKFObserver.csh
+'''+observertask.job()+observertask.directives()+'''
+
+  [['''+solver+''']]
     inherit = '''+da.execute+''', BATCH
     script = $origin/applications/EnKF.csh
-'''+enkftask.job()+enkftask.directives()]
+'''+solvertask.job()+solvertask.directives()]
+
+    da._dependencies += ['''
+
+        # EnKF
+        EnKFObserver => '''+solver]
 
     #########
     # outputs

@@ -30,6 +30,7 @@ set standaloneApplications = ( \
   PrepRTPP.csh \
   PrepVariational.csh \
   PrepEnKF.csh \
+  EnKFObserver.csh \
   RTPP.csh \
   UngribExternalAnalysis.csh \
 )
@@ -62,12 +63,11 @@ if (${DAApplication} != None) then
   ## VerifyObsDA*, VerifyModelDA**
   # * VerifyObsDA only works for single-member cycling
   # ** VerifyModelDA is non-functional and unused
-  set taskBaseScript = ${DAApplication}
   set WrapperScript=${mainAppDir}/${AppAndVerify}DA.csh
   sed -e 's@wrapWorkDirsTEMPLATE@CyclingDADirs@' \
       -e 's@wrapWorkDirsBenchmarkTEMPLATE@BenchmarkCyclingDADirs@' \
       -e 's@AppScriptNameTEMPLATE@'${DAApplication}'@' \
-      -e 's@taskBaseScriptTEMPLATE@'${taskBaseScript}'@' \
+      -e 's@taskBaseScriptTEMPLATE@'${DAApplication}'@' \
       -e 's@wrapStateDirsTEMPLATE@prevCyclingFCDirs@' \
       -e 's@wrapStatePrefixTEMPLATE@'${FCFilePrefix}'@' \
       -e 's@wrapStateTypeTEMPLATE@DA@' \

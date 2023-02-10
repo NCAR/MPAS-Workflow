@@ -80,5 +80,6 @@ class RTPP(Component):
     script = $origin/applications/CleanRTPP.csh "'''+self.WorkDir+'"']
 
       da._dependencies += ['''
+
         PrepRTPP => RTPP
         '''+da.post+''' => RTPP => '''+da.finished]

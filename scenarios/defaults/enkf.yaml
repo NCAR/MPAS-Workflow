@@ -27,6 +27,12 @@ enkf:
     # memmbers) than is available in default resource requests below, use more nodes and/or
     # processors
     30km:
+      observer:
+        nodesPer5Members: 4
+        PEPerNode: 32
+        memory: 45GB
+        baseSeconds: 200
+        secondsPerMember: 60
       LETKF:
         nodesPer5Members: 16
         PEPerNode: 32
@@ -34,6 +40,12 @@ enkf:
         baseSeconds: 1000
         secondsPerMember: 60
     60km:
+      observer:
+        nodesPer5Members: 2
+        PEPerNode: 32
+        memory: 45GB
+        baseSeconds: 200
+        secondsPerMember: 60
       LETKF:
         nodesPer5Members: 8
         PEPerNode: 32
@@ -41,9 +53,21 @@ enkf:
         baseSeconds: 1000
         secondsPerMember: 60
     120km:
-      LETKF:
-        nodesPer5Members: 4
+      observer:
+        # cost for record (120km, 5 members)
+        # 2 x 32 PE : 3.5 min., 31 GB, double precision...
+        nodesPer5Members: 2
         PEPerNode: 32
-        memory: 109GB
-        baseSeconds: 1000
+        memory: 45GB
+        baseSeconds: 100
+        secondsPerMember: 40
+      LETKF:
+        # cost for record (120km, 5 members)
+        # 2 x 32 PE : ???
+        # 4 x 32 PE : ???
+        # 8 x 32 PE : ???
+        nodesPer5Members: 8
+        PEPerNode: 32
+        memory: 45GB
+        baseSeconds: 2000
         secondsPerMember: 60

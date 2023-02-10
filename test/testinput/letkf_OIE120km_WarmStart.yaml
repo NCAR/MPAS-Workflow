@@ -27,10 +27,10 @@ rtpp:
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T00
-  VerifyEnsMeanBG: True
-  DiagnoseEnsSpreadBG: True
+  VerifyEnsMeanBG: False
+  DiagnoseEnsSpreadBG: False
 
 #temporary until code is merged to develop
 build:
-  mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--refactorGeomIter
-  #mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--refactorGeomIter_SINGLE
+  #mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--refactorGeomIter
+  mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--refactorGeomIter_single
