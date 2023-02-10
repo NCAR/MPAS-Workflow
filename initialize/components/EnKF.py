@@ -136,7 +136,7 @@ class EnKF(Component):
       'retry': {'t': str},
       'baseSeconds': {'t': int},
       'secondsPerMember': {'t': int},
-      'nodesPer5Members': {'t': int},
+      'nodes': {'t': int},
       'PEPerNode': {'t': int},
       'memory': {'def': '45GB', 't': str},
       'queue': {'def': hpc['CriticalQueue']},
@@ -145,8 +145,6 @@ class EnKF(Component):
     }
     observerjob = Resource(self._conf, attr, ('job', r2observer))
     observerjob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
-    nodes = max([observerjob['nodesPer5Members'] * (NN//5), 1])
-    observerjob._set('nodes', nodes)
     observertask = TaskFactory[hpc.system](observerjob)
 
     # EnKF solver
@@ -157,7 +155,7 @@ class EnKF(Component):
       'retry': {'t': str},
       'baseSeconds': {'t': int},
       'secondsPerMember': {'t': int},
-      'nodesPer5Members': {'t': int},
+      'nodes': {'t': int},
       'PEPerNode': {'t': int},
       'memory': {'def': '45GB', 't': str},
       'queue': {'def': hpc['CriticalQueue']},
@@ -166,8 +164,6 @@ class EnKF(Component):
     }
     solverjob = Resource(self._conf, attr, ('job', r2solver))
     solverjob._set('seconds', solverjob['baseSeconds'] + solverjob['secondsPerMember'] * NN)
-    nodes = max([solverjob['nodesPer5Members'] * (NN//5), 1])
-    solverjob._set('nodes', nodes)
     solvertask = TaskFactory[hpc.system](solverjob)
 
     da._tasks += ['''
