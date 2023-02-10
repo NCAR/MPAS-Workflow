@@ -86,7 +86,7 @@ class DA(Component):
       self.enkf = None
 
 
-    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self, self.inputs['members'], self.outputs['members'])
+    self.rtpp = RTPP(config, hpc, meshes['Outer'], members, self, self.inputs['members'], self.outputs['members'])
 
   def export(self, components):
     if self.var is not None: self.var.export(components)

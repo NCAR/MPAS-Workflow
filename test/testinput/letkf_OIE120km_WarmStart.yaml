@@ -18,6 +18,8 @@ members:
   n: 5
 model:
   outerMesh: 120km
+  # TODO: make inner and ensemble meshes unnecessary
+  # related to {{PrepareExternalAnalysisInner}} and {{PrepareExternalAnalysisEnsemble}}
   innerMesh: 120km
   ensembleMesh: 120km
 observations:
