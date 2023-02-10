@@ -1,0 +1,22 @@
+- obs space:
+    <<: *ObsSpace
+    name: amsua-cld_metop-a
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/amsua_metop-a_obs_{{thisValidDate}}.h5
+    obsdataout:
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua-cld_metop-a.h5
+    simulated variables: [brightnessTemperature]
+    channels: &amsua-cld_metop-a_channels 1-5,15
+  obs error: *ObsErrorDiagonal
+  <<: *horizObsLoc
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: amsua_metop-a
+  get values:
+    <<: *GetValues

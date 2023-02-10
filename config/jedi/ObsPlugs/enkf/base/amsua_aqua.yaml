@@ -1,0 +1,22 @@
+- obs space:
+    <<: *ObsSpace
+    name: amsua_aqua
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/amsua_aqua_obs_{{thisValidDate}}.h5
+    obsdataout:
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua_aqua.h5
+    simulated variables: [brightnessTemperature]
+    channels: &amsua_aqua_channels 1-15
+  obs error: *ObsErrorDiagonal
+  <<: *horizObsLoc
+  obs operator:
+    <<: *clearCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: amsua_aqua
+  get values:
+    <<: *GetValues

@@ -1,0 +1,22 @@
+- obs space:
+    <<: *ObsSpace
+    name: amsua_n15
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/amsua_n15_obs_{{thisValidDate}}.h5
+    obsdataout:
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua_n15.h5
+    simulated variables: [brightnessTemperature]
+    channels: &amsua_n15_channels 1-15
+  obs error: *ObsErrorDiagonal
+  <<: *horizObsLoc
+  obs operator:
+    <<: *clearCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: amsua_n15
+  get values:
+    <<: *GetValues

@@ -331,7 +331,10 @@ foreach instrument ($observations)
   endif
 
   foreach subdir (${AppYamlDirs})
-    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${AppCategory}/${subdir}/${instrument}
+    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${subdir}/${instrument}
+    if ( ! -f ${SUBYAML}.yaml && ! -l ${SUBYAML}.yaml ) then
+      set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${AppCategory}/${subdir}/${instrument}
+    endif
     if ( "$instrument" =~ *"sondes"* ) then
       #KLUDGE to handle missing qv for sondes at single time
       if ( ${thisValidDate} == 2018043006 ) then
