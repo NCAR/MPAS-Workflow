@@ -18,12 +18,18 @@ _nonconventional obs localizations: &horizObsLoc
   obs localizations:
   - <<: *HorizObsLoc
 
+_halo dist: &RoundRobinDistribution
+  name: RoundRobin
+
+_halo dist: &HaloDistribution
+  name: Halo
+  halo size: *HorizObsLocLengthScale
+
 _obs space: &ObsSpace
-  io pool:
-    max pool size: {{maxIODAPoolSize}}
-  distribution:
-    name: Halo
-    halo size: *HorizObsLocLengthScale
+  #io pool:
+  #  max pool size: {{maxIODAPoolSize}}
+  #  write multiple files: true
+  distribution: *{{ObsSpaceDistribution}}
 
 _obs error diagonal: &ObsErrorDiagonal
   covariance model: diagonal

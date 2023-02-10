@@ -48,18 +48,6 @@ rm ${localStaticFieldsPrefix}*.nc*
 
 # ==================================================================================================
 
-# ========================================
-# Member-dependent Observation Directories
-# ========================================
-#TODO: enable behavior to use member-specific directories?
-set member = 1
-while ( $member <= ${nMembers} )
-  set memDir = `${memberDir} $nMembers $member`
-  mkdir -p ${OutDBDir}${memDir}
-  @ member++
-end
-
-
 # ============================
 # EnKF YAML preparation
 # ============================

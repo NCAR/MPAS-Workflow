@@ -1,14 +1,16 @@
 - obs space:
     <<: *ObsSpace
     name: amsua-cld_n18
-    obsdatain:
+    _obsdatain: &ObsDataIn
       engine:
         type: H5File
         obsfile: {{InDBDir}}/amsua_n18_obs_{{thisValidDate}}.h5
-    obsdataout:
+    _obsdataout: &ObsDataOut
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua-cld_n18.h5
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua-cld_n18{{ObsOutSuffix}}.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
     simulated variables: [brightnessTemperature]
     channels: &amsua-cld_n18_channels 1-5,15
   obs error: *ObsErrorDiagonal

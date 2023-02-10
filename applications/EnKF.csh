@@ -59,7 +59,32 @@ end
 # Link+Run the executable
 # =======================
 ln -sfv ${myBuildDir}/${myEXE} ./
-mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
+
+# asObserver
+cp $myYAML observer.yaml
+sed -i 's@{{driver}}@asObserver@' observer.yaml
+sed -i 's@{{ObsSpaceDistribution}}@RoundRobinDistribution@' observer.yaml
+sed -i 's@{{ObsDataIn}}@ObsDataIn@' observer.yaml
+sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' observer.yaml
+sed -i 's@{{ObsOutSuffix}}@@' observer.yaml
+mpiexec ./${myEXE} observer.yaml ./observer.log >& observer.log.all
+
+# Check status
+# ============
+grep 'Run: Finishing oops.* with status = 0' observer.log
+if ( $status != 0 ) then
+  echo "ERROR in $0 : enkf observer failed" > ./FAIL
+  exit 1
+endif
+
+# asSolver
+cp $myYAML solver.yaml
+sed -i 's@{{driver}}@asSolver@' solver.yaml
+sed -i 's@{{ObsDataIn}}@ObsDataOut@' solver.yaml
+sed -i 's@\ \+{{ObsDataOut}}@@' solver.yaml
+sed -i 's@{{ObsOutSuffix}}@_0000@' solver.yaml
+sed -i 's@{{ObsSpaceDistribution}}@HaloDistribution@' solver.yaml
+mpiexec ./${myEXE} solver.yaml ./solver.log >& solver.log.all
 
 # above results in many extra lines in jedi.log that look like this:
 #Point: {331.052,-26.6242} distance to center: {58.1612,49.5563} = 1.20277e+07
@@ -88,9 +113,9 @@ mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
 
 # Check status
 # ============
-grep 'Run: Finishing oops.* with status = 0' jedi.log
+grep 'Run: Finishing oops.* with status = 0' solver.log
 if ( $status != 0 ) then
-  echo "ERROR in $0 : jedi application failed" > ./FAIL
+  echo "ERROR in $0 : enkf solver failed" > ./FAIL
   exit 1
 endif
 

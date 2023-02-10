@@ -1,14 +1,16 @@
 - obs space:
     <<: *ObsSpace
     name: Radiosonde
-    obsdatain:
+    _obsdatain: &ObsDataIn
       engine:
         type: H5File
         obsfile: {{InDBDir}}/sondes_obs_{{thisValidDate}}.h5
-    obsdataout:
+    _obsdataout: &ObsDataOut
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_sondes.h5
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_sondes{{ObsOutSuffix}}.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
     simulated variables: [airTemperature, virtualTemperature, windEastward, windNorthward]
   obs error: *ObsErrorDiagonal
   <<: *heightAndHorizObsLoc

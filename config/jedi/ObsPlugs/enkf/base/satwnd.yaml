@@ -1,15 +1,17 @@
 - obs space:
     <<: *ObsSpace
     name: Satwnd
-    obsdatain:
+    _obsdatain: &ObsDataIn
       engine:
         type: H5File
         obsfile: {{InDBDir}}/satwnd_obs_{{thisValidDate}}.h5
       max frame size: 80000
-    obsdataout:
+    _obsdataout: &ObsDataOut
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_satwnd.h5
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_satwnd{{ObsOutSuffix}}.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
     simulated variables: [windEastward, windNorthward]
   obs error: *ObsErrorDiagonal
   <<: *heightAndHorizObsLoc

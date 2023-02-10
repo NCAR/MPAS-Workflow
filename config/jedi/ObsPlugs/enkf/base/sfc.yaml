@@ -1,14 +1,16 @@
 - obs space:
     <<: *ObsSpace
     name: SfcPCorrected
-    obsdatain:
+    _obsdatain: &ObsDataIn
       engine:
         type: H5File
         obsfile: {{InDBDir}}/sfc_obs_{{thisValidDate}}.h5
-    obsdataout:
+    _obsdataout: &ObsDataOut
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_sfc.h5
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_sfc{{ObsOutSuffix}}.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
     simulated variables: [stationPressure]
   obs error: *ObsErrorDiagonal
   <<: *horizObsLoc #TODO: use station height for vertical localization
