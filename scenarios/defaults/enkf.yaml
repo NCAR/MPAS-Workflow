@@ -41,32 +41,40 @@ enkf:
         secondsPerMember: 300
     60km:
       observer:
-        nodes: 2
-        PEPerNode: 32
-        memory: 45GB
-        baseSeconds: 1200
-        secondsPerMember: 60
-      LETKF:
-        nodes: 16
-        PEPerNode: 32
-        memory: 45GB
-        baseSeconds: 200
-        secondsPerMember: 300
-    120km:
-      observer:
-        # cost for record (120km, 5 members, PBS JOB email)
-        # 2 x 32 PE : 1.7 min., 14.6 GB (single precision)
-        # 2 x 32 PE : 3.5 min., 31 GB (double precision)
+        # cost for record (20 members, PBS JOB email)
+        # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
         nodes: 2
         PEPerNode: 32
         memory: 45GB
         baseSeconds: 100
-        secondsPerMember: 40
+        secondsPerMember: 7
       LETKF:
-        # cost for record (120km, 5 members, PBS JOB email)
+        # cost for record (20 members, PBS JOB email)
+        # 16 x 32 PE : ??.? min., ??? GB (single precision)
+        nodes: 16
+        PEPerNode: 32
+        memory: 45GB
+        baseSeconds: 200
+        secondsPerMember: 800
+    120km:
+      observer:
+        # cost for record (5 members, PBS JOB email)
+        # 2 x 32 PE : 1.7 min., 14.6 GB (single precision)
+        # 2 x 32 PE : 3.5 min., 31 GB (double precision)
+        # cost for record (20 members, PBS JOB email)
+        # 2 x 32 PE : 3.0 min., 31.7 GB (single precision)
+        nodes: 3
+        PEPerNode: 32
+        memory: 45GB
+        baseSeconds: 100
+        secondsPerMember: 3
+      LETKF:
+        # cost for record (5 members, PBS JOB email)
         # 4 x 32 PE : > 40 min., 55 GB (single precision)
-        # 8 x 32 PE : ??.? min., ?? GB (single precision)
+        # 8 x 32 PE : 22.0 min., 93 GB (single precision)
         # 8 x 32 PE : 22.5 min., 99 GB (double precision)
+        # cost for record (20 members, PBS JOB email)
+        # 8 x 32 PE : 41.5 min., 131 GB (single precision)
         nodes: 8
         PEPerNode: 32
         memory: 45GB
