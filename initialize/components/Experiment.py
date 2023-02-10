@@ -87,9 +87,8 @@ class Experiment(Component):
                 name_ += '_ABEI_BT'+str(da.var['ABEIChannel'])
 
         elif da.enkf is not None:
-          name_ = da.enkf['algorithm']+'_'+name_
+          name_ = da.enkf['solver']+'_'+name_
           name_ += '_NMEM'+str(members.n)
-          self._set('DAApplication', 'EnKF')
 
         if da.rtpp is not None:
           if da.rtpp['relaxationFactor'] > 0.0:
