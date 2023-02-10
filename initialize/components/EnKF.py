@@ -172,7 +172,7 @@ class EnKF(Component):
 
     da._tasks += ['''
   ## enkf tasks
-  [[Init'''+solver+''']]
+  [[InitEnKF]]
     inherit = '''+da.init+''', SingleBatch
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIEnKF.csh "1" "0" "DA" "'''+self.lower+'''"
     script = $origin/applications/PrepEnKF.csh
@@ -181,7 +181,7 @@ class EnKF(Component):
       execution retry delays = '''+solverjob['retry']+'''
 
   # clean
-  [[Clean'''+solver+''']]
+  [[CleanEnKF]]
     inherit = Clean, '''+da.clean+'''
     script = $origin/applications/CleanEnKF.csh
 
@@ -190,7 +190,7 @@ class EnKF(Component):
     script = $origin/applications/EnKFObserver.csh
 '''+observertask.job()+observertask.directives()+'''
 
-  [['''+solver+''']]
+  [[EnKF]]
     inherit = '''+da.execute+''', BATCH
     script = $origin/applications/EnKF.csh
 '''+solvertask.job()+solvertask.directives()]
@@ -198,7 +198,7 @@ class EnKF(Component):
     da._dependencies += ['''
 
         # EnKF
-        EnKFObserver => '''+solver]
+        EnKFObserver => EnKF''']
 
     #########
     # outputs
