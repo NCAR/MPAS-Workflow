@@ -31,14 +31,14 @@ enkf:
         nodes: 4
         PEPerNode: 32
         memory: 45GB
-        baseSeconds: 1200
-        secondsPerMember: 60
+        baseSeconds: 100
+        secondsPerMember: 20
       LETKF:
-        nodes: 16
+        nodes: 32
         PEPerNode: 32
         memory: 45GB
         baseSeconds: 200
-        secondsPerMember: 300
+        secondsPerMember: 550
     60km:
       observer:
         # cost for record (20 members, PBS JOB email)
@@ -50,12 +50,12 @@ enkf:
         secondsPerMember: 7
       LETKF:
         # cost for record (20 members, PBS JOB email)
-        # 16 x 32 PE : ??.? min., ??? GB (single precision)
+        # 16 x 32 PE : 83.6 min., 275 GB (single precision)
         nodes: 16
         PEPerNode: 32
         memory: 45GB
         baseSeconds: 200
-        secondsPerMember: 800
+        secondsPerMember: 290
     120km:
       observer:
         # cost for record (5 members, PBS JOB email)
@@ -79,4 +79,4 @@ enkf:
         PEPerNode: 32
         memory: 45GB
         baseSeconds: 200
-        secondsPerMember: 270
+        secondsPerMember: 150
