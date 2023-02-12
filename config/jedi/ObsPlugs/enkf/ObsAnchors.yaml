@@ -18,7 +18,7 @@ _nonconventional obs localizations: &horizObsLoc
   obs localizations:
   - <<: *HorizObsLoc
 
-_halo dist: &RoundRobinDistribution
+_round robin dist: &RoundRobinDistribution
   name: RoundRobin
 
 _halo dist: &HaloDistribution
