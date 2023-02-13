@@ -293,19 +293,8 @@ foreach instrument ($observations)
   foreach i ($instrumentsAllowingBiasCorrection)
     if ("$instrument" == "$i") then
       set allowsBiasCorrection = True
-      set dateListback = (`$dateList ${FirstCycleDate} ${thisCycleDate} ${self_WindowHR}`)
-      set foundsatbias = False
-      foreach dt (${dateListback})
-        # check for satbias file at dt
-        if ( -e ${CyclingDAWorkDir}/${dt}/dbOut/satbias_${i}.h5 ) then
-          set biasCorrectionDir = ${CyclingDAWorkDir}/${dt}/dbOut
-          set foundsatbias = True
-          break
-        endif
-      end
-      # if no online updated satbias files exist, use first cycle's satbias file
-      if ($foundsatbias == False) then
-        set biasCorrectionDir = $initialVARBCcoeff
+      if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then # obs file not exsit
+          ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${CyclingDAWorkDir}/${thisValidDate}/dbOut
       endif
     endif
   end
