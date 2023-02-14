@@ -36,13 +36,9 @@ class Build(Component):
       self._set('EnsembleOfVariationalEXE', 'mpasjedi_eda.x')
       self._set('EnsembleOfVariationalBuildDir', self['mpas bundle']+'/bin')
 
-      ## LETKF
-      self._set('LETKFEXE', 'mpasjedi_letkf.x')
-      self._set('LETKFBuildDir', self['mpas bundle']+'/bin')
-
-      ## GETKF
-      self._set('GETKFEXE', 'mpasjedi_getkf.x')
-      self._set('GETKFBuildDir', self['mpas bundle']+'/bin')
+      ## EnKF
+      self._set('EnKFEXE', 'mpasjedi_enkf.x')
+      self._set('EnKFBuildDir', self['mpas bundle']+'/bin')
 
       ## HofX
       self._set('HofXEXE', 'mpasjedi_hofx3d.x')

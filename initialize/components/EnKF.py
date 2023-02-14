@@ -17,7 +17,7 @@ class EnKF(Component):
     ## solver [Required Parameter]
     # see classes derived from oops/src/oops/assimilation/LocalEnsembleSolver.h for all options
     'solver': [str,
-      ['LETKF'] #, 'GETKF']
+      ['LETKF', 'GETKF'],
     ],
   }
 
@@ -25,8 +25,11 @@ class EnKF(Component):
     ## observation localization parameters
     'horizontal localization method': ['Horizontal Gaspari-Cohn', str],
     'horizontal localization lengthscale': [1.2e6, float],
+    # LETKF
     'vertical localization function': ['Gaspari Cohn', str],
     'vertical localization lengthscale': [6.e3, float],
+    # GETKF
+    #'vertical localization lengthscale': [5.0, float],
 
     ## observations
     # observation types assimilated in the enkf application
@@ -97,8 +100,6 @@ class EnKF(Component):
     solver = self['solver']
     self._set('AppName', 'enkf')
     self._set('appyaml', 'enkf.yaml')
-    self._set('EnKFEXE', build[solver+'EXE'])
-    self._set('EnKFBuildDir', build[solver+'BuildDir'])
 
     self._set('MeshList', ['Outer'])
     self._set('nCellsList', [meshes['Outer'].nCells])

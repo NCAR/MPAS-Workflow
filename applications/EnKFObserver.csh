@@ -14,6 +14,7 @@ date
 # =================
 source config/environmentJEDI.csh
 source config/mpas/variables.csh
+source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/enkf.csh
 source config/auto/workflow.csh
