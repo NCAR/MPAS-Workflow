@@ -49,8 +49,10 @@ enkf:
         baseSeconds: 100
         secondsPerMember: 7
       LETKF:
-        # cost for record (20 members, PBS JOB email)
+        # cost for record (20 members, PBS JOB email, 3d iterator)
         # 16 x 32 PE : 83.6 min., 275 GB (single precision)
+        # cost for record (20 members, PBS JOB email, 2d iterator)
+        # 16 x 32 PE : 7.5 min., 274 GB (single precision)
         nodes: 16
         PEPerNode: 32
         memory: 45GB
@@ -69,11 +71,11 @@ enkf:
         baseSeconds: 100
         secondsPerMember: 3
       LETKF:
-        # cost for record (5 members, PBS JOB email)
+        # cost for record (5 members, PBS JOB email, 3d iterator)
         # 4 x 32 PE : > 40 min., 55 GB (single precision)
         # 8 x 32 PE : 22.0 min., 93 GB (single precision)
         # 8 x 32 PE : 22.5 min., 99 GB (double precision)
-        # cost for record (20 members, PBS JOB email)
+        # cost for record (20 members, PBS JOB email, 3d iterator)
         # 8 x 32 PE : 41.5 min., 131 GB (single precision)
         nodes: 8
         PEPerNode: 32
