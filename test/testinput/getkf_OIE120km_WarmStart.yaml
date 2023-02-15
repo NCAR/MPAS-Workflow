@@ -1,5 +1,5 @@
 experiment:
-  name: 'getkf_NMEM20_OIE120km_WarmStart_TEST'
+  name: 'getkf_OIE120km_WarmStart_TEST'
 externalanalyses:
   resource: "GFS.PANDAC"
 enkf:
@@ -15,7 +15,7 @@ hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 members:
-  n: 20
+  n: 5
 model:
   outerMesh: 120km
   # TODO: make inner and ensemble meshes unnecessary
@@ -34,5 +34,5 @@ workflow:
 
 #temporary until code is merged to develop
 build:
-  mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--lgetkf
-  #mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--lgetkf_single
+  #mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--lgetkf
+  mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--GETKFWithIncVars_single
