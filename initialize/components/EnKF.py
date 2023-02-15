@@ -101,7 +101,7 @@ class EnKF(Component):
     self._set('AppName', 'enkf')
     self._set('appyaml', 'enkf.yaml')
 
-    self._set('MeshList', ['Outer'])
+    self._set('MeshList', ['EnKF'])
     self._set('nCellsList', [meshes['Outer'].nCells])
     self._set('StreamsFileList', [model['outerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile']])
@@ -132,7 +132,7 @@ class EnKF(Component):
     # EnKFObserver
     # r2observer = {{outerMesh}}.observer
     r2observer = meshes['Outer'].name
-    r2observer += '.observer'
+    r2observer += '.'+solver+'-observer'
     attr = {
       'retry': {'t': str},
       'baseSeconds': {'t': int},

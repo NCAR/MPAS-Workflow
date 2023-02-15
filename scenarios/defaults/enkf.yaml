@@ -26,21 +26,8 @@ enkf:
     # These are starting points.  When more memory is needed (e.g., more observations, more
     # memmbers) than is available in default resource requests below, use more nodes and/or
     # processors
-    30km:
-      observer:
-        nodes: 4
-        PEPerNode: 32
-        memory: 45GB
-        baseSeconds: 100
-        secondsPerMember: 20
-      LETKF:
-        nodes: 32
-        PEPerNode: 32
-        memory: 45GB
-        baseSeconds: 200
-        secondsPerMember: 550
     60km:
-      observer:
+      LETKF-observer:
         # cost for record (20 members, PBS JOB email)
         # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
         nodes: 2
@@ -58,16 +45,24 @@ enkf:
         memory: 45GB
         baseSeconds: 200
         secondsPerMember: 290
+      GETKF-observer:
+        # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
+        # 8 x 32 PE : 13.5 min., 151 GB (single precision)
+        nodes: 8
+        PEPerNode: 32
+        memory: 45GB
+        baseSeconds: 200
+        secondsPerMember: 45
       GETKF:
-        # cost for record (20 members, PBS JOB email)
+        # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
         # 16 x 32 PE : ?.? min., ??? GB (single precision)
         nodes: 16
         PEPerNode: 32
         memory: 45GB
         baseSeconds: 200
-        secondsPerMember: 30
+        secondsPerMember: 300
     120km:
-      observer:
+      LETKF-observer:
         # cost for record (5 members, PBS JOB email)
         # 2 x 32 PE : 1.7 min., 14.6 GB (single precision)
         # 2 x 32 PE : 3.5 min., 31 GB (double precision)
@@ -90,6 +85,12 @@ enkf:
         memory: 45GB
         baseSeconds: 200
         secondsPerMember: 150
+      GETKF-observer:
+        nodes: 8
+        PEPerNode: 32
+        memory: 45GB
+        baseSeconds: 100
+        secondsPerMember: 15
       GETKF:
         # cost for record (5 members, PBS JOB email)
         # 4 x 32 PE : ?.? min., ?? GB (single precision)

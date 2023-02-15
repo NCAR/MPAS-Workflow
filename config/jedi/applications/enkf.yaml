@@ -16,12 +16,18 @@ _as solver: &asSolver
 
 {{ObsAnchors}}
 
+_letkf geometry: &LETKFGeometry
+  iterator dimension: 3
+
+_lgetkf geometry: &GETKFGeometry
+  iterator dimension: 2
+
 geometry:
-  nml_file: {{OuterNamelistFile}}
-  streams_file: {{OuterStreamsFile}}
+  <<: *{{localEnsembleDASolver}}Geometry
+  nml_file: {{EnKFNamelistFile}}
+  streams_file: {{EnKFStreamsFile}}
   deallocate non-da fields: true
   #interpolation type: unstructured # no Increment/State interp in enkf
-  iterator dimension: 3
 
 window begin: {{windowBegin}}
 window length: {{windowLength}}
