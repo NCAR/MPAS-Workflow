@@ -1,23 +1,21 @@
 - obs space:
     <<: *ObsSpace
-    name: GnssroRefNCEP
+    name: GnssroBndROPP1D
     obsdatain:
       engine:
         type: H5File
-        obsfile: {{InDBDir}}/gnssroref_obs_{{thisValidDate}}.h5
+        obsfile: {{InDBDir}}/gnssrobndropp1d_obs_{{thisValidDate}}.h5
       obsgrouping:
         group variable: "sequenceNumber"
-        sort variable: "height"
+        sort variable: "impactHeightRO"
         sort order: "ascending"
     obsdataout:
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}/{{obsPrefix}}_gnssroref.h5
-    simulated variables: [atmosphericRefractivity]
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrobndropp1d.h5
+    simulated variables: [bendingAngle]
   obs error: *ObsErrorDiagonal
   obs operator:
-    name: GnssroRefNCEP
-    obs options:
-      use_compress: 0
+    name: GnssroBndROPP1D
   get values:
     <<: *GetValues

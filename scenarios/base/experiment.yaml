@@ -27,4 +27,4 @@ experiment:
   ExperimentUserPrefix: None
 
 ## ParentDirectorySuffix
-  ParentDirectorySuffix: pandac
+  ParentDirectorySuffix: sio-cw3e

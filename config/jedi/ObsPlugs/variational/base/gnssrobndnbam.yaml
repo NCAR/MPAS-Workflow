@@ -1,0 +1,26 @@
+- obs space:
+    <<: *ObsSpace
+    name: GnssroBndNBAM
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/gnssrobndnbam_obs_{{thisValidDate}}.h5
+      obsgrouping:
+        group variable: "sequenceNumber"
+        sort variable: "impactHeightRO"
+        sort order: "ascending"
+    obsdataout:
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrobndnbam.h5
+    simulated variables: [bendingAngle]
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    name: GnssroBndNBAM
+    obs options:
+      use_compress: 1
+      sr_steps: 2 # same as default, super-refraction steps
+      vertlayer: full # or full, type of vertical layers for pressure and geopotential height
+      super_ref_qc: NBAM # same as default, or ECMWF
+  get values:
+    <<: *GetValues

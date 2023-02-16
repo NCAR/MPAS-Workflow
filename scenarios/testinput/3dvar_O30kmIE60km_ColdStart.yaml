@@ -1,14 +1,18 @@
 workflow:
   # test a recent date
-  firstCyclePoint: 20220201T00
-  initialCyclePoint: 20220201T00
-  finalCyclePoint: 20220201T06
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
+  firstCyclePoint: 20210121T18
+  initialCyclePoint: 20210121T18
+  finalCyclePoint: 20210122T00 #20210202T00
+  CriticalPathType: Normal
+  VerifyDeterministicDA: False
+  VerifyEnsMeanBG: False
 observations:
   resource: GladeRDAOnline
+  convertToIODAObservations:
+  - prepbufr
+  - gpsro
 experiment:
-  ExperimentName: '3dvar_O30kmIE60km_ColdStart_TEST'
+  ExperimentName: '3dvar_O30kmIE60km_ColdStart_TEST_prepbufr_gpsro_ref'
 model:
   outerMesh: 30km
   innerMesh: 60km
@@ -27,14 +31,37 @@ externalanalyses:
   resource: "GFS.RDA"
 variational:
   DAType: 3dvar
-  nInnerIterations: [30,]
-  biasCorrection: True
+  nInnerIterations: [60,60]
+  biasCorrection: False
+  benchmarkObservations:
+# anchor
+  - aircraft
+  - gnssroref # lower-middle troposphere, where bias is small
+#  - gnssrobndropp1d
+#  - gnssrobndropp2d
+#  - gnssrobndnbam
+  - satwind
+#  - satwnd
+  - sfc
+  - sondes
+hofx:
+  observations:
+  - aircraft
+  - gnssroref
+#  - gnssrobndropp1d
+#  - gnssrobndropp2d
+#  - gnssrobndnbam
+  - satwind
+  - sfc
+  - sondes
   job:
     30km:
       60km:
         3dvar:
-          memory: 45
-
+          memory: 109
+          nodes: 8
+          PEPerNode: 24
+          baseSeconds: 500
 job:
-  CPQueueName: economy
-  NCPQueueName: economy
+  CPQueueName: premium
+  NCPQueueName: premium
