@@ -15,8 +15,7 @@ experiment:
   ExperimentName: 'HofxGNSSROFromExternalAnalyses_GFSctrl'
   ExperimentUserPrefix: ''
 model:
-  outerMesh: 60km
-#TODO: make it so that innerMesh and ensembleMesh are not needed
+  outerMesh: 30km
   innerMesh: 60km
   ensembleMesh: 60km
 job:
