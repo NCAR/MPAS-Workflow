@@ -254,6 +254,12 @@ conda activate npl
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = {{GFSAnalysisRetry}}
+  [[GetGFSAnalysisFromSIOCW3E-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = $origin/GetGFSAnalysisFromSIOCW3E.csh "{{dt}}"
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = {{GFSAnalysisRetry}}
   [[UngribExternalAnalysis-{{dt}}hr]]
     inherit = ExternalAnalyses, BATCH
     script = $origin/UngribExternalAnalysis.csh "{{dt}}"
@@ -290,6 +296,8 @@ conda activate npl
     inherit = GetGFSAnalysisFromRDA-0hr
   [[GetGFSAnalysisFromFTP]]
     inherit = GetGFSAnalysisFromFTP-0hr
+  [[GetGFSAnalysisFromSIOCW3E]]
+    inherit = GetGFSAnalysisFromSIOCW3E-0hr
   [[UngribExternalAnalysis]]
     inherit = UngribExternalAnalysis-0hr
 {% for mesh in allMeshes %}

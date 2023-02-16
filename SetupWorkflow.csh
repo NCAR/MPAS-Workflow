@@ -6,6 +6,7 @@ source generateExperimentConfig.csh
 set workflowParts = ( \
   GetGFSAnalysisFromRDA.csh \
   GetGFSAnalysisFromFTP.csh \
+  GetGFSAnalysisFromSIOCW3E.csh \
   GetGDASanalysis.csh \
   LinkExternalAnalysis.csh \
   UngribExternalAnalysis.csh \

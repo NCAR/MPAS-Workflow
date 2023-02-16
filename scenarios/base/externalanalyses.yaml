@@ -2,7 +2,7 @@ externalanalyses:
 
   ## resource:
   # used to select one of the options below (must be in quotes)
-  # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC"
+  # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC", "GFS.SIOCW3E"
   resource: None
 
   ## defaults:
@@ -48,6 +48,14 @@ externalanalyses:
       common:
         PrepareExternalAnalysisTasks:
         - "GetGFSAnalysisFromFTP"
+        - "UngribExternalAnalysis"
+        - "ExternalAnalysisToMPAS-mesh"
+        - "ExternalAnalysisReady"
+        Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
+    SIOCW3E:
+      common:
+        PrepareExternalAnalysisTasks:
+        - "GetGFSAnalysisFromSIOCW3E"
         - "UngribExternalAnalysis"
         - "ExternalAnalysisToMPAS-mesh"
         - "ExternalAnalysisReady"
