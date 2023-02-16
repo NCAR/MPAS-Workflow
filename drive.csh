@@ -254,12 +254,16 @@ cat >! suite.rc << EOF
 {% elif CriticalPathType == "ForecastFromExternalAnalyses" %}
 ## (ii) External analyses generation for a historical period
     [[[{{ExtendedMeanFCTimes}}]]]
+      graph = {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
+
+{% elif CriticalPathType == "HofxGNSSROFromExternalAnalyses" %}
+## (ii) External analyses generation for a historical period
+    [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
         {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
         ExtendedForecastFinished => HofXBG
         {{PrepareObservations}} => HofXBG
-        HofXBG:succeed-all => VerifyObsBG
-        VerifyObsBG:succeed-all => CleanHofXBG
+        HofXBG:succeed-all => CleanHofXBG
       '''
 
 {% elif CriticalPathType == "GenerateObs" %}

@@ -62,6 +62,9 @@ observations:
 
     IODAPrefix:
       gnssroref: gnssro
+      gnssrobndnbam: gnssro
+      gnssrobndropp1d: gnssro
+      gnssrobndropp2d: gnssro
       amsua-cld_aqua: amsua_aqua
       amsua-cld_metop-a: amsua_metop-a
       amsua-cld_metop-b: amsua_metop-b

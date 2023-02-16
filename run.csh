@@ -28,6 +28,7 @@ set ValidRunConfigs = ( \
   GenerateObs \
   GenerateGFSAnalyses \
   ForecastFromGFSAnalyses \
+  HofxGNSSROFromExternalAnalyses \
   IASI120km3denvar \
   IASI30kmIE60km3denvar \
   ABIAHI120km3denvar \

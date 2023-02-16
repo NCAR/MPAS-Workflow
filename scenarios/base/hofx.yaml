@@ -9,6 +9,9 @@ hofx:
 # anchor
   - aircraft
   - gnssroref
+  - gnssrobndnbam
+  - gnssrobndropp1d
+  - gnssrobndropp2d
   - satwind
   - satwnd
   - sfc

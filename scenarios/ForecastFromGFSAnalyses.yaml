@@ -1,18 +1,17 @@
 workflow:
   # test a recent date
-  firstCyclePoint: 20220111T00
-  initialCyclePoint: 20220111T06
-  finalCyclePoint: 20220324T00
+  firstCyclePoint: 20180414T18
+  initialCyclePoint: 20180415T00
+  finalCyclePoint: 20180415T00
   CriticalPathType: ForecastFromExternalAnalyses
-  VerifyEnsMeanBG: True
   maxActiveCyclePoints: 60
   ExtendedMeanFCTimes: T00
-  ExtendedFCLengthHR: 6
-  ExtendedFCOutIntervalHR: 6
+  ExtendedFCLengthHR: 240
+  ExtendedFCOutIntervalHR: 24
 externalanalyses:
-  resource: "GFS.SIOCW3E"
+  resource: "GFS.RDA"
 experiment:
-  ExperimentName: 'ForecastFromGFSAnalyses_SIOCW3E'
+  ExperimentName: 'ForecastFromGFSAnalyses'
   ExperimentUserPrefix: ''
 model:
   outerMesh: 60km
@@ -26,7 +25,7 @@ job:
 firstbackground:
   resource: "ForecastFromAnalysis"
 observations:
-  resource: GladeRDAOnline
+  resource: PANDACArchive
 variational:
   DAType: 3dvar
   nInnerIterations: [0,]
