@@ -6,7 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/gnssrobndropp2d_obs_{{thisValidDate}}.h5
       obsgrouping:
-        group variable: "sequenceNumber"
+        group variables: "sequenceNumber"
         sort variable: "impactHeightRO"
         sort order: "ascending"
     obsdataout:
