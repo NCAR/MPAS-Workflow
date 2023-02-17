@@ -4,7 +4,6 @@
 
 # experiment provides mainScriptDir, DAApplication
 source config/auto/experiment.csh
-echo "DAApplication = ${DAApplication}"
 
 # workflow provides CyclingWindowHR, DAVFWindowHR, FCVFWindowHR, FirstCycleDate
 source config/auto/workflow.csh
