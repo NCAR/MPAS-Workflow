@@ -49,7 +49,7 @@ cp $myYAML solver.yaml
 sed -i 's@{{driver}}@asSolver@' solver.yaml
 sed -i 's@{{ObsDataIn}}@ObsDataOut@' solver.yaml
 sed -i 's@\ \+{{ObsDataOut}}@@' solver.yaml
-sed -i 's@{{ObsOutSuffix}}@_0000@' solver.yaml
+sed -i 's@{{ObsOutSuffix}}@@' solver.yaml
 sed -i 's@{{ObsSpaceDistribution}}@HaloDistribution@' solver.yaml
 mpiexec ./${myEXE} solver.yaml ./solver.log >& solver.log.all
 
