@@ -5,12 +5,13 @@
       engine:
         type: H5File
         obsfile: {{InDBDir}}/satwnd_obs_{{thisValidDate}}.h5
-      max frame size: 80000
     _obsdataout: &ObsDataOut
       engine:
         type: H5File
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_satwnd{{ObsOutSuffix}}.h5
-    obsdatain: *{{ObsDataIn}}
+    obsdatain:
+      <<: *{{ObsDataIn}}
+      max frame size: 80000
     {{ObsDataOut}}
     simulated variables: [windEastward, windNorthward]
   obs error: *ObsErrorDiagonal
