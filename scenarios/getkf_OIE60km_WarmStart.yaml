@@ -1,0 +1,32 @@
+externalanalyses:
+  resource: "GFS.PANDAC"
+enkf:
+  solver: GETKF
+  horizontal localization lengthscale: 1.2e6
+  vertical localization lengthscale: 10.0 # modellevel
+  retainObsFeedback: False
+firstbackground:
+  resource: "PANDAC.LaggedGEFS"
+hofx:
+  retainObsFeedback: False
+members:
+  n: 20
+model:
+  outerMesh: 60km
+  # TODO: make inner and ensemble meshes unnecessary
+  # related to {{PrepareExternalAnalysisInner}} and {{PrepareExternalAnalysisEnsemble}}
+  innerMesh: 60km
+  ensembleMesh: 60km
+observations:
+  resource: PANDACArchive
+rtpp:
+  relaxationFactor: 0.8
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180415T00
+  VerifyEnsMeanBG: True
+  DiagnoseEnsSpreadBG: True
+
+#temporary until code is merged to develop
+build:
+  mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--GETKFWithIncVars_single
