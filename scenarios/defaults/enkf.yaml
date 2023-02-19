@@ -55,9 +55,10 @@ enkf:
         secondsPerMember: 45
       GETKF:
         # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
-        # 16 x 32 PE : ?.? min., ??? GB (single precision)
+        # 16 x 8 PE : 86.5 min., 480 GB (single precision), 109GB/node
+        # 16 x 16 PE : 77.0 min., 878 GB (single precision), 109GB/node
         nodes: 16
-        PEPerNode: 32
+        PEPerNode: 8
         memory: 45GB
         baseSeconds: 200
         secondsPerMember: 300
