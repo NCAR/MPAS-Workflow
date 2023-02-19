@@ -9,9 +9,6 @@ firstbackground:
   resource: "PANDAC.LaggedGEFS"
 hofx:
   retainObsFeedback: False
-hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
 members:
   n: 20
 model:
@@ -32,5 +29,4 @@ workflow:
 
 #temporary until code is merged to develop
 build:
-  #mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--refactorGeomIter
-  mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--refactorGeomIter_single
+  mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--GETKFWithIncVars_single
