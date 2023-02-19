@@ -21,20 +21,20 @@ class HPC(Component):
 
     # Critical*: used for all critical path jobs, single or multi-node, multi-processor only
     'CriticalAccount': ['NMMM0043', str],
-    'CriticalQueue': ['regular', str],
+    'CriticalQueue': ['regular', str, ['economy', 'regular', 'premium']],
 
     # NonCritical*: used non-critical path jobs, single or multi-node, multi-processor only
     'NonCriticalAccount': ['NMMM0043', str],
-    'NonCriticalQueue': ['economy', str],
+    'NonCriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
 
     # SingleProc*: used for single-processor jobs, both critical and non-critical paths
     # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
     'SingleProcAccount': ['NMMM0015', str],
-    'SingleProcQueue': ['casper@casper-pbs', str],
+    'SingleProcQueue': ['casper@casper-pbs', str, ['casper@casper-pbs']],
 
     # EnsMeanBG*: settings for ensemble mean BG calculation; useful for override when time-critical
     'EnsMeanBGAccount': ['NMMM0043', str],
-    'EnsMeanBGQueue': ['economy', str],
+    'EnsMeanBGQueue': ['economy', str, ['economy', 'regular', 'premium']],
   }
   def __init__(self, config):
     super().__init__(config)
