@@ -29,17 +29,9 @@ class Task():
 
 
 class PBSPro(Task):
+  # TODO: need some way to make 36 PE only apply to cheyenne and not all PBSPro applications
+  maxProcPerNode = 36
   def directives(self):
-    nodes = self.r.getOrDefault('nodes', None)
-    if nodes is not None:
-      PEPerNode = self.r['PEPerNode']
-      memory = self.r.getOrDefault('memory', None)
-      select = str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)
-      if memory is not None:
-        select += ':mem='+memory
-    else:
-      select = None
-
     unique = {}
     unique['q'] = self.r['queue']
     unique['A'] = self.r['account']
@@ -53,7 +45,20 @@ class PBSPro(Task):
     text = '''
     [[[directives]]]'''+flags
 
-    if select is not None:
+    nodes = self.r.getOrDefault('nodes', None, int)
+    if nodes is not None:
+      PEPerNode = self.r['PEPerNode']
+      threads = self.r.getOrDefault('threads', 1, int)
+      assert threads*PEPerNode <= self.maxProcPerNode, (
+        'PBSPro: too many processors requested -->'+str(threads*PEPerNode))
+
+      memory = self.r.getOrDefault('memory', None)
+      select = str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)
+      if threads > 1:
+        select = str(nodes)+':ncpus='+str(self.maxProcPerNode)+':mpiprocs='+str(PEPerNode)+':ompthreads='+str(threads)
+      if memory is not None:
+        select += ':mem='+memory
+
       text += '''
       -l = select='''+select
 

@@ -158,6 +158,7 @@ class EnKF(Component):
       'secondsPerMember': {'t': int},
       'nodes': {'t': int},
       'PEPerNode': {'t': int},
+      'threads': {'def': 1, 't': int},
       'memory': {'def': '45GB', 't': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
@@ -166,6 +167,10 @@ class EnKF(Component):
     solverjob = Resource(self._conf, attr, ('job', r2solver))
     solverjob._set('seconds', solverjob['baseSeconds'] + solverjob['secondsPerMember'] * NN)
     solvertask = TaskFactory[hpc.system](solverjob)
+
+    self._set('solverThreads', solverjob.get('threads'))
+    self._cshVars.append('solverThreads')
+
 
     da._tasks += ['''
   ## enkf tasks

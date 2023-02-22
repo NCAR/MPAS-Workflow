@@ -34,6 +34,8 @@ set myBuildDir = ${EnKFBuildDir}
 set myEXE = ${EnKFEXE}
 set myYAML = ${self_WorkDir}/${appyaml}
 
+setenv OMP_NUM_THREADS ${solverThreads}
+
 # ================================================================================================
 
 ## change to run directory

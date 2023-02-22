@@ -1,10 +1,11 @@
 enkf:
   job:
     defaults:
+      nodes: 2
+      PEPerNode: 32
+      threads: 1
       baseSeconds: 1000
       secondsPerMember: 60
-      nodesPer5Members: 2
-      PEPerNode: 32
       memory: 109GB
 
       # cylc retry string
@@ -14,12 +15,13 @@ enkf:
     ## FORMAT
     #{{outerMesh}}:
     #  {{solver}}: # i.e., LETKF, GETKF
+    #    nodes: int
+    #    PEPerNode: int
+    #    threads: int
+    #    #@ seconds = $secondsPerMember * members.n + $baseSeconds
+    #    memory: int
     #    baseSeconds: int
     #    secondsPerMember: int, default is 0
-    #    #@ seconds = $secondsPerMember * members.n + $baseSeconds
-    #    nodesPer5Members: int
-    #    PEPerNode: int
-    #    memory: int
     ## All resource requests below are based on
     # + single-precision bundle build
     # + sondes, aircraft, sfc, gnssro, satwind, 6 clear amsua
@@ -42,6 +44,7 @@ enkf:
         # 16 x 32 PE : 7.5 min., 274 GB (single precision)
         nodes: 16
         PEPerNode: 32
+        threads: 1
         memory: 45GB
         baseSeconds: 200
         secondsPerMember: 290
@@ -59,6 +62,7 @@ enkf:
         # 16 x 16 PE : 77.0 min., 878 GB (single precision), 109GB/node
         nodes: 16
         PEPerNode: 8
+        threads: 1
         memory: 45GB
         baseSeconds: 200
         secondsPerMember: 300
@@ -83,6 +87,7 @@ enkf:
         # 8 x 32 PE : 41.5 min., 131 GB (single precision)
         nodes: 8
         PEPerNode: 32
+        threads: 1
         memory: 45GB
         baseSeconds: 200
         secondsPerMember: 150
@@ -99,7 +104,8 @@ enkf:
         # 4 x 32 PE : ?.? min., ?? GB (single precision)
         # 8 x 32 PE : ?.? min., ?? GB (single precision)
         nodes: 8
-        PEPerNode: 32
+        PEPerNode: 16
+        threads: 2
         memory: 45GB
         baseSeconds: 200
-        secondsPerMember: 30
+        secondsPerMember: 300
