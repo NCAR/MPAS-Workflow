@@ -87,7 +87,7 @@ class Experiment(Component):
                 name_ += '_ABEI_BT'+str(da.var['ABEIChannel'])
 
         elif da.enkf is not None:
-          name_ = da.enkf['solver']+'_'+name_
+          name_ = da.enkf['solver']
           name_ += '_NMEM'+str(members.n)
 
         if da.rtpp is not None:
