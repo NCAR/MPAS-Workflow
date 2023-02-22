@@ -34,5 +34,4 @@ workflow:
 
 #temporary until code is merged to develop
 build:
-  #mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--refactorGeomIter
-  mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--refactorGeomIter_single
+  mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--EnKFStats_single
