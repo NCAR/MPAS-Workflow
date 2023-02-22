@@ -12,6 +12,10 @@ class DA(Component):
   Framework for all data assimilation (DA) applications.  Can be used to manage interdependent classes
   and cylc tasks, but does not execute any tasks on its own.
   '''
+  workDir = 'CyclingDA'
+  analysisPrefix = 'an'
+  backgroundPrefix = 'bg'
+
   def __init__(self, config, hpc, obs, meshes, model, members, workflow, build):
     super().__init__(config)
 
@@ -66,26 +70,55 @@ class DA(Component):
         # finished after post, clean after finished
         '''+self.post+''' => '''+self.finished+''' => '''+self.clean]
 
+    ## DA
+    # application
     msg = "DA: config must contain only one of variational or enkf"
     assert config.has('variational') or config.has('enkf'), msg
 
     if config.has('variational'):
       assert not config.has('enkf'), msg
       self.var = Variational(config, hpc, meshes, model, members, workflow, self)
-      self.inputs = self.var.inputs
-      self.outputs = self.var.outputs
+      if members.n > 1:
+        memFmt = '/mem{:03d}'
+      else:
+        # TODO: eliminate this branch, may require modifications to verification
+        #   in the end, verification should just take the inputs/outputs defined below
+        memFmt = ''
     else:
       self.var = None
 
     if config.has('enkf'):
       assert not config.has('variational'), msg
       self.enkf = EnKF(config, hpc, meshes, model, members, workflow, self, build)
-      self.inputs = self.enkf.inputs
-      self.outputs = self.enkf.outputs
+      memFmt = '/mem{:03d}'
     else:
       self.enkf = None
 
+    # inputs/outputs
+    self.inputs = {}
+    self.inputs['members'] = []
+    self.outputs = {}
+    self.outputs['members'] = []
+    for mm in range(1, members.n+1, 1):
+      self.inputs['members'].append({
+        'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+memFmt.format(mm),
+        'prefix': self.backgroundPrefix,
+      })
+      self.outputs['members'].append({
+        'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+memFmt.format(mm),
+        'prefix': self.analysisPrefix,
+      })
 
+    self.inputs['mean'] = {
+        'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+'/mean',
+        'prefix': self.backgroundPrefix,
+    }
+    self.outputs['mean'] = {
+        'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+'/mean',
+        'prefix': self.analysisPrefix,
+    }
+
+    ## RTPP
     self.rtpp = RTPP(config, hpc, meshes['Outer'], members, self, self.inputs['members'], self.outputs['members'])
 
   def export(self, components):

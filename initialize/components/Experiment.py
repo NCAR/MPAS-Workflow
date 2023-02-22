@@ -61,56 +61,56 @@ class Experiment(Component):
       name = ''
       if da is not None:
         if da.var is not None:
-          name_ = da.var['DAType']
+          daName = da.var['DAType']
           for nInner in da.var['nInnerIterations']:
-            name_ += '-'+str(nInner)
-          name_ += '-iter'
+            daName += '-'+str(nInner)
+          daName += '-iter'
 
           for o in da.var['observations']:
             if o not in benchmarkObservations:
-              name_ += '_'+o
+              daName += '_'+o
 
           if members is not None:
             if members.n > 1:
-              name_ = 'eda_'+name_
+              daName = 'eda_'+daName
               if da.var['EDASize'] > 1:
-                name_ += '_NMEM'+str(da.var['nDAInstances'])+'x'+str(da.var['EDASize'])
+                daName += '_NMEM'+str(da.var['nDAInstances'])+'x'+str(da.var['EDASize'])
                 if da.var['MinimizerAlgorithm'] == da.var['BlockEDA']:
-                  name_ += 'Block'
+                  daName += 'Block'
               else:
-                name_ += '_NMEM'+str(members.n)
+                daName += '_NMEM'+str(members.n)
 
               if da.var['SelfExclusion']:
-                name_ += '_SelfExclusion'
+                daName += '_SelfExclusion'
 
               if da.var['ABEInflation']:
-                name_ += '_ABEI_BT'+str(da.var['ABEIChannel'])
+                daName += '_ABEI_BT'+str(da.var['ABEIChannel'])
 
         elif da.enkf is not None:
-          name_ = da.enkf['solver']
-          name_ += '_NMEM'+str(members.n)
+          daName = da.enkf['solver']
+          daName += '_NMEM'+str(members.n)
 
         if da.rtpp is not None:
           if da.rtpp['relaxationFactor'] > 0.0:
-            name_ += '_RTPP'+str(da.rtpp['relaxationFactor'])
+            daName += '_RTPP'+str(da.rtpp['relaxationFactor'])
 
-        name += name_
+        name += daName
 
       if meshes is not None:
-        name_ = ''
+        meshName = ''
         mO = meshes['Outer'].name
-        name_ = 'O'+mO
+        meshName = 'O'+mO
         mI = ''
         if 'Inner' in meshes:
           mI = meshes['Inner'].name
           if mI != mO:
-            name_ += 'I'+mI
+            meshName += 'I'+mI
         if 'Ensemble' in meshes:
           mE = meshes['Ensemble'].name
           if mE != mO and mE != mI:
-            name_ += 'E'+mE
+            meshName += 'E'+mE
 
-        name += '_'+name_
+        name += '_'+meshName
 
       assert name != '', ('Must give a valid name')
 

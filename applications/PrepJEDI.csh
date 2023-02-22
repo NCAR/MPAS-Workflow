@@ -250,7 +250,7 @@ end
 if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
   set biasCorrectionDir = $initialVARBCcoeff
 else
-  set biasCorrectionDir = ${VariationalWorkDir}/$prevValidDate/dbOut
+  set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/dbOut
 endif
 
 # =============
@@ -311,8 +311,8 @@ foreach instrument ($observations)
       set foundsatbias = False
       foreach dt (${dateListback})
         # check for satbias file at dt
-        if ( -e ${VariationalWorkDir}/${dt}/dbOut/satbias_${i}.h5 ) then
-          set biasCorrectionDir = ${VariationalWorkDir}/${dt}/dbOut
+        if ( -e ${DAWorkDir}/${dt}/dbOut/satbias_${i}.h5 ) then
+          set biasCorrectionDir = ${DAWorkDir}/${dt}/dbOut
           set foundsatbias = True
           break
         endif

@@ -9,9 +9,6 @@ from initialize.components.Observations import benchmarkObservations
 
 class EnKF(Component):
   defaults = 'scenarios/defaults/enkf.yaml'
-  workDir = 'CyclingDA'
-  analysisPrefix = 'an'
-  backgroundPrefix = 'bg'
 
   requiredVariables = {
     ## solver [Required Parameter]
@@ -92,7 +89,6 @@ class EnKF(Component):
 
     NN = members.n
     assert NN > 1, ('members.n must be greater than 1')
-    memFmt = '/mem{:03d}'
 
     ###################
     # derived variables
@@ -201,29 +197,3 @@ class EnKF(Component):
 
         # EnKF
         EnKFObserver => EnKF''']
-
-    #########
-    # outputs
-    #########
-    self.inputs = {}
-    self.inputs['members'] = []
-    self.outputs = {}
-    self.outputs['members'] = []
-    for mm in range(1, NN+1, 1):
-      self.inputs['members'].append({
-        'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+memFmt.format(mm),
-        'prefix': self.backgroundPrefix,
-      })
-      self.outputs['members'].append({
-        'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+memFmt.format(mm),
-        'prefix': self.analysisPrefix,
-      })
-
-    self.inputs['mean'] = {
-        'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+'/mean',
-        'prefix': self.backgroundPrefix,
-    }
-    self.outputs['mean'] = {
-        'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+'/mean',
-        'prefix': self.analysisPrefix,
-    }
