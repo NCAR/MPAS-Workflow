@@ -1,10 +1,10 @@
-externalanalyses:
-  resource: "GFS.PANDAC"
 enkf:
   solver: LETKF
   horizontal localization lengthscale: 1.2e6
   vertical localization lengthscale: 6.e3
   retainObsFeedback: False
+externalanalyses:
+  resource: "GFS.PANDAC"
 firstbackground:
   resource: "PANDAC.LaggedGEFS"
 hofx:
@@ -24,8 +24,8 @@ rtpp:
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T00
-  VerifyEnsMeanBG: True
-  DiagnoseEnsSpreadBG: True
+  VerifyEnsMeanBG: False
+  DiagnoseEnsSpreadBG: False
 
 #temporary until code is merged to develop
 build:
