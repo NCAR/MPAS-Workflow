@@ -84,6 +84,9 @@ set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
 
 if ( "$ArgDACycling" == False ) then
   # use cold-start IC for static stream
+  set self_icStateDir = $ExternalAnalysisDirOuter
+  set self_icStatePrefix = $externalanalyses__filePrefixOuter
+  set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
   set memberStaticFieldsFile = ${initialState}
 else
   # use previously generated init file for static stream
@@ -270,6 +273,9 @@ sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 set configDODACycling = `echo "$ArgDACycling" | sed 's/\(.*\)/\L\1/'` # converts to lower-case
 sed -i 's@configDODACycling@'${configDODACycling}'@' $NamelistFile
+if ( "$ArgDACycling" == False ) then
+  sed -i 's/!    /    /g' $NamelistFile
+endif
 if ( ${self_IAU} == True ) then
   sed -i 's@{{IAU}}@on@' $NamelistFile
   echo "$0 (INFO): IAU is turned on."

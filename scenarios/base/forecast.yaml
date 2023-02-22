@@ -4,6 +4,16 @@ forecast:
 # OPTIONS: True/False
   updateSea: True
 
+## doDACycling
+# whether to do cycling DA or not
+# OPTIONS: True/False
+  doDACycling: True
+
+## deleteZerothForecast
+# whether to delete the zero hour forecast
+# OPTIONS: True/False
+  deleteZerothForecast: True
+
 # whether or not to activate IAU 
   IAU: False
 

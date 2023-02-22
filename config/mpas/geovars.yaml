@@ -19,6 +19,9 @@ fields:
   - field name: geopotential_height
     mpas template field: theta
 
+  - field name: geopotential_height_levels
+    mpas template field: w
+
   - field name: surface_geopotential_height
     mpas template field: u10
 

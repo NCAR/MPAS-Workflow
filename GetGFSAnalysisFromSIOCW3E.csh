@@ -35,7 +35,7 @@ set vhour = `echo ${thisValidDate} | cut -c 9-10`
 
 set res = 0p25
 set fhour = 000
-set gribFile = gfs.${thisValidDate}/gfs.t${vhour}z.pgrb2b.${res}.f${fhour}
+set gribFile = gfs.${thisValidDate}/gfs.t${vhour}z.pgrb2.${res}.f${fhour}
 
 # static work directory
 set WorkDir = ${ExternalAnalysisDir}

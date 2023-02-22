@@ -36,6 +36,7 @@ endif
 # Setup environment
 # =================
 source config/experiment.csh
+source config/workflow.csh
 source config/tools.csh
 source config/builds.csh
 source config/environmentJEDI.csh
@@ -87,8 +88,13 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 set bg = ./${bgDir}
 mkdir -p ${bg}
 
-set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$thisMPASFileDate.nc
 set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+
+if ( ${CriticalPathType} == "HofxGNSSROFromExternalAnalyses" ) then
+  set bgFileOther = $CyclingFCDirs[$ArgMember]/${self_StatePrefix}.$thisMPASFileDate.nc
+else
+  set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$thisMPASFileDate.nc
+endif
 
 rm ${bgFile}${OrigFileSuffix} ${bgFile}
 ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}

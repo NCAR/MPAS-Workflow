@@ -99,6 +99,8 @@ cat >! suite.rc << EOF
 {% set ExtendedMeanFCTimes = "${ExtendedMeanFCTimes}" %}
 {% set ExtendedEnsFCTimes = "${ExtendedEnsFCTimes}" %}
 {% set forecastIAU = ${forecast__IAU} %} #bool
+{% set doDACycling = ${doDACycling} %} #bool
+{% set deleteZerothForecast = ${deleteZerothForecast} %} #bool
 {% set FCOutIntervalHR = ${FCOutIntervalHR} %} #integer
 {% set FCLengthHR = ${FCLengthHR} %} #integer
 {% set ExtendedFCOutIntervalHR = ${ExtendedFCOutIntervalHR} %} #integer
@@ -260,8 +262,8 @@ cat >! suite.rc << EOF
 ## (ii) External analyses generation for a historical period
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
-        {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
-        ExtendedForecastFinished => HofXBG
+        {{PrepareExternalAnalysisOuter}} => Forecast
+        Forecast:succeed-all => ForecastFinished => HofXBG
         {{PrepareObservations}} => HofXBG
         HofXBG:succeed-all => CleanHofXBG
       '''

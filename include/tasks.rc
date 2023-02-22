@@ -221,7 +221,7 @@ conda activate npl
       execution retry delays = {{CyclingFCRetry}}
   [[ForecastMember{{mem}}]]
     inherit = Forecast, BATCH
-    script = $origin/Forecast.csh "{{mem}}" "{{FCLengthHR}}" "{{FCOutIntervalHR}}" "{{forecastIAU}}" "{{outerMesh}}" "True" "True"
+    script = $origin/Forecast.csh "{{mem}}" "{{FCLengthHR}}" "{{FCOutIntervalHR}}" "{{forecastIAU}}" "{{outerMesh}}" "{{doDACycling}}" "{{deleteZerothForecast}}"
     [[[job]]]
       execution retry delays = {{CyclingFCRetry}}
 {% endfor %}

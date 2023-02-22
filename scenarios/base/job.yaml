@@ -7,21 +7,21 @@ job:
 # Casper Options: casper@casper-pbs
 
 # CP*: used for all critical path jobs, single or multi-node, multi-processor only
-  CPAccountNumber: UCSD0041
+  CPAccountNumber: NMMM0043
   CPQueueName: regular
 
 # NCP*: used non-critical path jobs, single or multi-node, multi-processor only
-  NCPAccountNumber: UCSD0041
+  NCPAccountNumber: NMMM0043
   NCPQueueName: economy
 
 # EnsMeanBG*: settings for ensemble mean BG calculation, useful when it becomes time-critical
-  EnsMeanBGAccountNumber: UCSD0041
+  EnsMeanBGAccountNumber: NMMM0043
   EnsMeanBGQueueName: economy
 
 # SingleProc*: used for single-processor jobs, both critical and non-critical paths
 # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
-  SingleProcAccountNumber: UCSD0041
-  SingleProcQueueName: economy
+  SingleProcAccountNumber: NMMM0015
+  SingleProcQueueName: "casper@casper-pbs"
 
 ## *Retry
 # various retry counts for different types of tasks

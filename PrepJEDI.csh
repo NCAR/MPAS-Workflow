@@ -160,6 +160,9 @@ foreach NamelistFile_ ($NamelistFileList)
   sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'${TimeStep}'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' ${NamelistFile_}
+  if ("$ArgAppType" == hofx && ${CriticalPathType} == "HofxGNSSROFromExternalAnalyses" ) then
+    sed -i 's/!    /    /g' ${NamelistFile_}
+  endif
 end
 
 ## MPASJEDI variable configs

@@ -11,6 +11,8 @@ source config/workflow.csh
 source config/scenario.csh forecast
 
 $setLocal updateSea
+$setLocal doDACycling
+$setLocal deleteZerothForecast
 
 ## IAU
 $setNestedForecast IAU

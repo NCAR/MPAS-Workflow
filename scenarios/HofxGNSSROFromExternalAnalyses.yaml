@@ -2,25 +2,31 @@ workflow:
   # test a recent date
   firstCyclePoint: 20220111T00
   initialCyclePoint: 20220111T00
-  finalCyclePoint: 20220111T00 #20220324T00
+  finalCyclePoint: 20220324T00
   CriticalPathType: HofxGNSSROFromExternalAnalyses
   VerifyEnsMeanBG: True
-  maxActiveCyclePoints: 1 #60
+  maxActiveCyclePoints: 72
   ExtendedMeanFCTimes: T00
   ExtendedFCLengthHR: 6
   ExtendedFCOutIntervalHR: 6
 externalanalyses:
   resource: "GFS.SIOCW3E"
 experiment:
-  ExperimentName: 'HofxGNSSROFromExternalAnalyses_GFSctrl'
+  ExperimentName: 'HofxGNSSROFromExternalAnalyses_GFSctrl_sondes_ref_ropp1d_ropp2d'
   ExperimentUserPrefix: ''
 model:
   outerMesh: 30km
   innerMesh: 60km
   ensembleMesh: 60km
 job:
-  CPQueueName: regular
-  NCPQueueName: regular
+  CPAccountNumber: UCSD0041
+  CPQueueName: premium
+  NCPAccountNumber: UCSD0041
+  NCPQueueName: premium
+  EnsMeanBGAccountNumber: UCSD0041
+  EnsMeanBGQueueName: premium
+  SingleProcAccountNumber: UCSD0041
+  SingleProcQueueName: premium
 #TODO: make it so that firstbackground, observations, and variational are not necessary
 firstbackground:
   resource: "ForecastFromAnalysis"
@@ -29,13 +35,16 @@ observations:
   convertToIODAObservations:
   - gpsro
   - prepbufr
+forecast:
+  doDACycling: False
+  deleteZerothForecast: False
 variational:
   DAType: 3dvar
   nInnerIterations: [0,]
 hofx:
   observations:
   - gnssroref
-  - gnssrobndnbam
+#  - gnssrobndnbam
   - gnssrobndropp1d
   - gnssrobndropp2d
   - sondes
