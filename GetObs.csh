@@ -48,7 +48,7 @@ set satwndBUFRDirectory = /gpfs/fs1/collections/rda/data/ds351.0
 set PrepBUFRDirectory = /gpfs/fs1/collections/rda/data/ds337.0
 
 foreach inst ( ${convertToIODAObservations} )
-  if ( "${observations__resource}" == "GladeRDAOnline" ) then
+  if ( "${observations__resource}" == "GladeRDAOnline" || "${observations__resource}" == "AroObs" ) then
     echo "Getting ${inst} from RDA"
     # for satwnd observations
     if ( ${inst} == satwnd ) then
