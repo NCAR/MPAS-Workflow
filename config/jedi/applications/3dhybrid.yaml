@@ -58,7 +58,7 @@ cost function:
               data directory: {{bumpCovDir}}
               files prefix: {{bumpCovPrefix}}
             drivers:
-              multivariate strategy: specific_univariate
+              multivariate strategy: univariate
               read local nicas: true
         saber outer blocks:
         - saber block name: StdDev
@@ -103,7 +103,7 @@ cost function:
                 data directory: {{bumpLocDir}}
                 files prefix: {{bumpLocPrefix}}
               drivers:
-                multivariate strategy: common
+                multivariate strategy: duplicated
                 read local nicas: true
               model:
                 level for 2d variables: last
