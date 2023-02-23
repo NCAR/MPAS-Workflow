@@ -44,6 +44,15 @@ variational:
 #  - satwnd
   - sfc
   - sondes
+  job:
+    30km:
+      60km:
+        3denvar:
+          nodes: 6
+          PEPerNode: 32
+          memory: 109
+          baseSeconds: 900
+          secondsPerEnVarMember: 9
 hofx:
   observations:
   - aircraft
@@ -54,14 +63,6 @@ hofx:
   - satwind
   - sfc
   - sondes
-  job:
-    30km:
-      60km:
-        3dvar:
-          memory: 109
-          nodes: 12
-          PEPerNode: 24
-          baseSeconds: 900
 job:
   CPQueueName: premium
   NCPQueueName: premium
