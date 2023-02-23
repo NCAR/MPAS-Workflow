@@ -125,10 +125,6 @@ class EnKF(Component):
     ########################
     # job resource settings
 
-    # EnKFObserver
-    # r2observer = {{outerMesh}}.observer
-    r2observer = meshes['Outer'].name
-    r2observer += '.'+solver+'-observer'
     attr = {
       'retry': {'t': str},
       'baseSeconds': {'t': int},
@@ -140,6 +136,11 @@ class EnKF(Component):
       'account': {'def': hpc['CriticalAccount']},
       'email': {'def': True, 't': bool},
     }
+
+    # EnKFObserver
+    # r2observer = {{outerMesh}}.observer
+    r2observer = meshes['Outer'].name
+    r2observer += '.'+solver+'.observer'
     observerjob = Resource(self._conf, attr, ('job', r2observer))
     observerjob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
     observertask = TaskFactory[hpc.system](observerjob)
@@ -147,19 +148,11 @@ class EnKF(Component):
     # EnKF solver
     # r2solver = {{outerMesh}}.{{solver}}
     r2solver = meshes['Outer'].name
-    r2solver += '.'+solver
-    attr = {
-      'retry': {'t': str},
-      'baseSeconds': {'t': int},
-      'secondsPerMember': {'t': int},
-      'nodes': {'t': int},
-      'PEPerNode': {'t': int},
-      'threads': {'def': 1, 't': int},
-      'memory': {'def': '45GB', 't': str},
-      'queue': {'def': hpc['CriticalQueue']},
-      'account': {'def': hpc['CriticalAccount']},
-      'email': {'def': True, 't': bool},
-    }
+    r2solver += '.'+solver+'.solver'
+
+    # add threads attribute
+    attr['threads'] = {'def': 1, 't': int}
+
     solverjob = Resource(self._conf, attr, ('job', r2solver))
     solverjob._set('seconds', solverjob['baseSeconds'] + solverjob['secondsPerMember'] * NN)
     solvertask = TaskFactory[hpc.system](solverjob)

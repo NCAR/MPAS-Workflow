@@ -15,13 +15,21 @@ enkf:
     ## FORMAT
     #{{outerMesh}}:
     #  {{solver}}: # i.e., LETKF, GETKF
-    #    nodes: int
-    #    PEPerNode: int
-    #    threads: int
-    #    #@ seconds = $secondsPerMember * members.n + $baseSeconds
-    #    memory: int
-    #    baseSeconds: int
-    #    secondsPerMember: int, default is 0
+    #    observer:
+    #      nodes: int
+    #      PEPerNode: int
+    #      #@ seconds = $secondsPerMember * members.n + $baseSeconds
+    #      memory: int
+    #      baseSeconds: int
+    #      secondsPerMember: int, default is 0
+    #    solver:
+    #      nodes: int
+    #      PEPerNode: int
+    #      threads: int
+    #      #@ seconds = $secondsPerMember * members.n + $baseSeconds
+    #      memory: int
+    #      baseSeconds: int
+    #      secondsPerMember: int, default is 0
     ## All resource requests below are based on
     # + single-precision bundle build
     # + sondes, aircraft, sfc, gnssro, satwind, 6 clear amsua
@@ -29,83 +37,89 @@ enkf:
     # memmbers) than is available in default resource requests below, use more nodes and/or
     # processors
     60km:
-      LETKF-observer:
-        # cost for record (20 members, PBS JOB email)
-        # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
-        nodes: 2
-        PEPerNode: 32
-        memory: 45GB
-        baseSeconds: 100
-        secondsPerMember: 7
       LETKF:
-        # cost for record (20 members, PBS JOB email, 3d iterator)
-        # 16 x 32 PE : 83.6 min., 275 GB (single precision)
-        # cost for record (20 members, PBS JOB email, 2d iterator)
-        # 16 x 32 PE : 7.5 min., 274 GB (single precision)
-        nodes: 16
-        PEPerNode: 32
-        threads: 1
-        memory: 45GB
-        baseSeconds: 200
-        secondsPerMember: 290
-      GETKF-observer:
-        # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
-        # 8 x 32 PE : 13.5 min., 151 GB (single precision)
-        nodes: 8
-        PEPerNode: 32
-        memory: 45GB
-        baseSeconds: 200
-        secondsPerMember: 45
+        observer:
+          # cost for record (20 members, PBS JOB email)
+          # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
+          nodes: 2
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 100
+          secondsPerMember: 7
+        solver:
+          # cost for record (20 members, PBS JOB email, single precision)
+          # 16 x 32 PE, 3d iterator : 83.6 min., 275 GB
+          # 16 x 32 PE, 3d iterator (no vert loc.) : 108 min., 314 GB
+          # 16 x 32 PE, 2d iterator (no vert loc.) : 7.5 min., 274 GB
+          nodes: 16
+          PEPerNode: 32
+          threads: 1
+          memory: 45GB
+          baseSeconds: 200
+          secondsPerMember: 290
       GETKF:
-        # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
-        # 16 x 8 PE : 86.5 min., 480 GB (single precision), 109GB/node
-        # 16 x 16 PE : 77.0 min., 878 GB (single precision), 109GB/node
-        nodes: 16
-        PEPerNode: 8
-        threads: 1
-        memory: 45GB
-        baseSeconds: 200
-        secondsPerMember: 300
+        observer:
+          # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
+          # 8 x 32 PE : 13.5 min., 151 GB (single precision)
+          nodes: 8
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 200
+          secondsPerMember: 45
+        solver:
+          # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email, single precision)
+          # 16 x 8 PE : 86.5 min., 480 GB, 109GB/node
+          # 16 x 8 PE x 2 omp : 90.5 min., 480 GB, 45GB/node
+          # 16 x 8 PE x 4 omp : 92.5 min., 480 GB, 45GB/node
+          # 16 x 16 PE : 77.0 min., 878 GB, 109GB/node
+          nodes: 16
+          PEPerNode: 8
+          threads: 2
+          memory: 45GB
+          baseSeconds: 200
+          secondsPerMember: 500
     120km:
-      LETKF-observer:
-        # cost for record (5 members, PBS JOB email)
-        # 2 x 32 PE : 1.7 min., 14.6 GB (single precision)
-        # 2 x 32 PE : 3.5 min., 31 GB (double precision)
-        # cost for record (20 members, PBS JOB email)
-        # 2 x 32 PE : 3.0 min., 31.7 GB (single precision)
-        nodes: 3
-        PEPerNode: 32
-        memory: 45GB
-        baseSeconds: 100
-        secondsPerMember: 3
       LETKF:
-        # cost for record (5 members, PBS JOB email, 3d iterator)
-        # 4 x 32 PE : > 40 min., 55 GB (single precision)
-        # 8 x 32 PE : 22.0 min., 93 GB (single precision)
-        # 8 x 32 PE : 22.5 min., 99 GB (double precision)
-        # cost for record (20 members, PBS JOB email, 3d iterator)
-        # 8 x 32 PE : 41.5 min., 131 GB (single precision)
-        nodes: 8
-        PEPerNode: 32
-        threads: 1
-        memory: 45GB
-        baseSeconds: 200
-        secondsPerMember: 150
-      GETKF-observer:
-        # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
-        # 8 x 32 PE : 12.2 min., 118 GB (single precision)
-        nodes: 8
-        PEPerNode: 32
-        memory: 45GB
-        baseSeconds: 100
-        secondsPerMember: 45
+        observer:
+          # cost for record (5 members, PBS JOB email)
+          # 2 x 32 PE : 1.7 min., 14.6 GB (single precision)
+          # 2 x 32 PE : 3.5 min., 31 GB (double precision)
+          # cost for record (20 members, PBS JOB email)
+          # 2 x 32 PE : 3.0 min., 31.7 GB (single precision)
+          nodes: 3
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 100
+          secondsPerMember: 3
+        solver:
+          # cost for record (5 members, PBS JOB email, 3d iterator)
+          # 4 x 32 PE : > 40 min., 55 GB (single precision)
+          # 8 x 32 PE : 22.0 min., 93 GB (single precision)
+          # 8 x 32 PE : 22.5 min., 99 GB (double precision)
+          # cost for record (20 members, PBS JOB email, 3d iterator)
+          # 8 x 32 PE : 41.5 min., 131 GB (single precision)
+          nodes: 8
+          PEPerNode: 32
+          threads: 1
+          memory: 45GB
+          baseSeconds: 200
+          secondsPerMember: 150
       GETKF:
-        # cost for record (5 members, PBS JOB email)
-        # 4 x 32 PE : ?.? min., ?? GB (single precision)
-        # 8 x 32 PE : ?.? min., ?? GB (single precision)
-        nodes: 8
-        PEPerNode: 16
-        threads: 2
-        memory: 45GB
-        baseSeconds: 200
-        secondsPerMember: 300
+        observer:
+          # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
+          # 8 x 32 PE : 12.2 min., 118 GB (single precision)
+          nodes: 8
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 100
+          secondsPerMember: 45
+        solver:
+          # cost for record (5 members, PBS JOB email)
+          # 4 x 32 PE : ?.? min., ?? GB (single precision)
+          # 8 x 32 PE : ?.? min., ?? GB (single precision)
+          nodes: 8
+          PEPerNode: 16
+          threads: 2
+          memory: 45GB
+          baseSeconds: 200
+          secondsPerMember: 300
