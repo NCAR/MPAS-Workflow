@@ -33,6 +33,7 @@ set ValidRunConfigs = ( \
   IASI30kmIE60km3denvar \
   ABIAHI120km3denvar \
   GetGDASanalysis \
+  ARO3dvarO30kmIE60km \
 )
 set ArgRunConfig = $1
 
