@@ -166,7 +166,7 @@ so that users modify it at run-time as needed.
 
 E.g., `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*`
 
-`config/mpas/forecast/*`: tasks derived from `forecast.csh`
+`config/mpas/forecast/*`: tasks using `Forecast.csh`
 
 `config/mpas/hofx/*`: tasks derived from `HofX.csh`
 
@@ -220,8 +220,9 @@ initiates the `Cylc` suite by executing `drive.csh`. Users need not modify `Run.
 There are additional aspects of the driver in `drive.csh`, `initialize/`, and `suites/*.rc`.  For
 most users and developers, only `initialize/components` will need to be consulted and/or modified. 
 
-Developers who wish to add new `Cylc` tasks, or modify the relationships between tasks, may modify
-`include/dependencies/*.rc`, `include/tasks/*.rc`, or `initialize/components/*.py`.
+Developers who wish to add new `Cylc` tasks, or change the relationships between tasks, may wish to
+modify `include/dependencies/*.rc`, `include/tasks/*.rc`, or `initialize/components/*.py`, or in
+rare cases, create their own suite.
 
 - `include/dependencies/criticalpath.rc`: controls the relationships between the critical path task
   elements for the `suites/Cycle.rc` suite, in particular for all possible `CriticalPathType`
@@ -258,11 +259,6 @@ each application script.
 `CleanHofx.csh`: used to generate `CleanHofX*.csh` scripts, which clean `HofX` working directories
 (e.g., `Verification/fc/*`) in order to reduce experiment disk resource requirements.
 
-`forecast.csh`: used to generate all forecast scripts, e.g., `Forecast.csh` and
-`ExtendedMeanFC.csh`, which execute `mpas_atmosphere` for a command-line-argument controlled time
-duration and state output interval. Takes `Variational` analyses or external analyses processed
-as cold-start initial conditions (IC) as inputs.
-
 `HofX.csh`: used to generate all `HofX*` scripts, e.g., `HofXBG.csh`, `HofXMeanFC.csh`, and
 `HofXEnsMeanBG.csh`.  Each of those executes the `mpasjedi_hofx3d` application. Templated w.r.t.
 the input state directory and prefix, allowing it to read any forecast state written through the
@@ -288,6 +284,13 @@ They are copied to the experiment workflow directory by `SetupWorkflow.csh` or b
 `applications/AppAndVerify.csh`.
 
 `ExternalAnalysisToMPAS.csh`: generates cold-start IC files from ungribbed external analyses
+
+`Forecast.csh`: used for all forecast-related `Cylc` tasks, e.g., `Forecast` and `ExtendedMeanFC`,
+which execute `mpas_atmosphere` for a command-line-argument controlled time duration and state
+output interval. Many more command-line arguments allow for extensive flexibility in the types of
+tasks to which this script can apply.  See initialize/components/Forecast.py and ExtendedForecast.py
+for multiple use-cases.  Takes `Variational` analyses, or external analyses processed as cold-start
+initial conditions (IC), as inputs.
 
 `GenerateABEInflation.csh`: generates Adaptive Background Error Inflation (ABEI) factors based on
 all-sky IR brightness temperature `H(x_mean)` and `H_clear(x_mean)` from GOES-16 ABI and Himawari-8
@@ -339,8 +342,7 @@ and date-resolved directories
 
 `SetupWorkflow.csh`:
 1. Source the experiment directory info from `config/auto/experiment.csh`
-2. Copy non-templated application scripts to the experiment directory
-
+2. Copy some non-templated application scripts to the experiment directory
 3. Copy the `config`, `include`, `scenarios`, `suites`, `test`, and `tools` directories
    to the experiment workflow directory so that a record is kept of all settings
 4. Generate application shell scripts via templated substitution of
