@@ -1,0 +1,3 @@
+  obs filters:
+  - filter: GOMsaver
+    filename: {{OutDBDir}}/{{geoPrefix}}_gnssarobndropp2d.nc4

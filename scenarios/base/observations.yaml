@@ -1,6 +1,6 @@
 observations:
 ## resource
-# OPTIONS: PANDACArchive, GladeRDAOnline, NCEPFTPOnline, GenerateObs
+# OPTIONS: PANDACArchive, GladeRDAOnline, NCEPFTPOnline, GenerateObs, AroObs
   resource: None
 
 ## convertToIODAObservations
@@ -232,8 +232,8 @@ observations:
       gnssroref: gnssro
       gnssrobndnbam: gnssro
       gnssrobndropp1d: gnssro
-      gnssrobndropp2d: gnssro
-      gnssarobndropp2d: gnssaro
+      gnssrobndropp2d: gnssaro
+      gnssarobndsioropp2d: gnssaro
       amsua-cld_aqua: amsua_aqua
       amsua-cld_metop-a: amsua_metop-a
       amsua-cld_metop-b: amsua_metop-b
@@ -248,13 +248,15 @@ observations:
         common: "{{ObsWorkDir}}"
 
         ## aro
-        gnssarobndropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf
+        gnssrobndropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf
+        gnssarobndsioropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf
 
       hofx:
         common: "{{ObsWorkDir}}"
 
         ## aro
-        gnssarobndropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf
+        gnssrobndropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf
+        gnssarobndsioropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf
 
     IODASuperObGrid:
       abi_g16: 59X59
