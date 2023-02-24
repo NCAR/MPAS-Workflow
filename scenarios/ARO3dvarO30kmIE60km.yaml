@@ -12,7 +12,7 @@ observations:
 #  - prepbufr
   - gpsro
 experiment:
-  ExperimentName: '3dvar_O30kmIE60km_ARO_bndsioropp2d' #_otherBuild
+  ExperimentName: '3dvar_O30kmIE60km_ARO_bndsioropp2d_otherBuild'
 model:
   outerMesh: 30km
   innerMesh: 60km
@@ -82,5 +82,5 @@ job:
   CPQueueName: premium
   NCPQueueName: premium
 builds:
-  commonBuild: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230223
-  # /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230223_geopFromObs
+  commonBuild: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230223_geopFromObs
+  # /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230223

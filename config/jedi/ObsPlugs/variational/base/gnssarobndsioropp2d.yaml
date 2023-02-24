@@ -12,7 +12,7 @@
     obsdataout:
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}/{{obsPrefix}}_gnssarobndsioropp2d.h5
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssarobndsioropp2d.h5
     simulated variables: [bendingAngle]
   obs error: *ObsErrorDiagonal
   obs operator:
