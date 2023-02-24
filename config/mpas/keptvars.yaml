@@ -1,0 +1,49 @@
+#
+# (C) Copyright 2023 UCAR
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+
+# This yaml will be exercised when "geometry.deallocate non-da fields" is true.
+# The variables included in "fields" will be kept in memory (mpas_domain) 
+# for a given mpas-jedi application, while other fields will be deallocated 
+# from mpas_domain to save the memory.
+
+fields:
+  - re_cloud
+  - re_ice
+  - re_snow
+  - cldfrac
+  - lai
+  - u10
+  - v10
+  - q2
+  - t2m
+  - pressure_p
+  - pressure
+  - pressure_base
+  - surface_pressure
+  - rho
+  - theta
+  - temperature
+  - relhum
+  - spechum
+  - u
+  - uReconstructZonal
+  - uReconstructMeridional
+  - stream_function
+  - velocity_potential
+  - landmask
+  - xice
+  - snowc
+  - skintemp
+  - ivgtyp
+  - isltyp
+  - snowh
+  - vegfra
+  - lai
+  - smois
+  - tslb
+  - vorticity
+  - w
