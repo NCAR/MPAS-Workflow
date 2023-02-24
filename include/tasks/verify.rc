@@ -68,7 +68,7 @@
     script = $origin/applications/CleanHofXEnsMeanBG.csh "1" "0" "BG"
 
 
-## various kinds of ensembles
+## various kinds of member-specific (including single-member deterministic) states
 {% for state in ['BG', 'AN']%}
   [[HofX{{state}}]]
   [[VerifyModel{{state}}]]
@@ -79,7 +79,7 @@
 {% endfor %}
 
 {% for mem in EnsVerifyMembers %}
-  # ensemble of backgrounds and analyses (including single-member deterministic)
+  # ensemble of backgrounds and analyses
   {% for state in ['BG', 'AN']%}
   [[HofX{{state}}{{mem}}]]
     inherit = HofX, HofX{{state}}, BATCH

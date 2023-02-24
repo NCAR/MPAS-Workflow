@@ -1,5 +1,5 @@
 variational:
-## mesh-specific settings
+  ## mesh-specific settings
   ensemble: #(envar or hybrid)
     forecasts:
       ## resource (required)
@@ -145,7 +145,6 @@ variational:
 
       # cylc retry string
       retry: '2*PT30S'
-
 
     ## FORMAT
     #{{outerMesh}}:
