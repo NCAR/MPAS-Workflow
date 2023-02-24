@@ -32,16 +32,16 @@ variational:
 
 ### EDA
 # an ensemble of variational data assimilations (EDA) will be carried out
-# whenever firstbackground.nMembers > 1
+# whenever members.n > 1
 
-# One can modify EDASize such that nMemberss=(EDASize * nDAInstances)
-# nMembers is also the number of forecasts used to represent the flow-dependent background
+# One can modify EDASize such that members.n=(EDASize * nDAInstances)
+# members.n is also the number of forecasts used to represent the flow-dependent background
 # error covariance when DAType is 3denvar or 3dhybrid
 
 ## EDASize
 # ensemble size of each DA instance
 # DEFAULT: 1
-#   1: ensemble of nDAInstances independent Variational applications (nMembers independent
+#   1: ensemble of nDAInstances independent Variational applications (members.n independent
 #      jobs), each with 1 background state member per DA job
 # > 1: ensemble of nDAInstances independent EnsembleOfVariational applications, each with EDASize
 #      background state members per DA job
@@ -257,6 +257,16 @@ variational:
 
   # resource requirements
   job:
+    # cylc retry string
+    retry: '2*PT30S'
+
+    defaults:
+      baseSeconds: 1500
+      secondsPerEnVarMember: 10
+      nodes: 8
+      PEPerNode: 16
+      memory: 109
+
     ## FORMAT
     #{{outerMesh}}:
     #  {{innerMesh}}:

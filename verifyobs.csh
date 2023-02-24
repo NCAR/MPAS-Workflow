@@ -83,7 +83,7 @@ while ( $success != 0 )
 
   mv log.${mainScript} log.${mainScript}_LAST
   setenv baseCommand "python ${mainScript}.py -n ${NUMPROC} -p ${self_WorkDir}/${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} -app $ArgAppType"
-if ("$ArgAppType" == variational) then 
+if ("$ArgAppType" == variational) then
   setenv baseCommand "$baseCommand -nout $nOuterIterations"
 endif
 

@@ -9,6 +9,8 @@ observations:
   resource: GladeRDAOnline
 experiment:
   ExperimentName: '3dvar_O30kmIE60km_ColdStart_TEST'
+members:
+  n: 1
 model:
   outerMesh: 30km
   innerMesh: 60km

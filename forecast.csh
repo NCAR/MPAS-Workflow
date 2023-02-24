@@ -16,13 +16,13 @@ set ArgFCIntervalHR = "$3"
 # ArgIAU: bool, whether to engage IAU (True/False)
 set ArgIAU = "$4"
 
-# ArgMesh: str, mesh name, one of allMeshesJinja, only applicable to FirstCycleDate
+# ArgMesh: str, mesh name, one of model.allMeshes, not currently used
 set ArgMesh = "$5"
 
-# ArgDACycling: whether the initial forecast state is a DA analysis
+# ArgDACycling: whether the initial forecast state is a DA analysis (True/False)
 set ArgDACycling = "$6"
 
-# ArgDeleteZerothForecast: whether to delete zeroth-hour forecast
+# ArgDeleteZerothForecast: whether to delete zeroth-hour forecast (True/False)
 set ArgDeleteZerothForecast = "$7"
 
 ## arg checks
@@ -44,10 +44,11 @@ source config/experiment.csh
 source config/externalanalyses.csh
 source config/firstbackground.csh
 source config/tools.csh
+source config/members.csh
 source config/model.csh
 source config/builds.csh
 source config/environmentJEDI.csh
-source config/applications/forecast.csh "$ArgMesh"
+source config/applications/forecast.csh # "$ArgMesh"
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -82,14 +83,9 @@ endif
 set icFileExt = ${thisMPASFileDate}.nc
 set initialState = ${self_icStateDir}/${self_icStatePrefix}.${icFileExt}
 
-if ( "$ArgDACycling" == False ) then
-  # use cold-start IC for static stream
-  set memberStaticFieldsFile = ${initialState}
-else
-  # use previously generated init file for static stream
-  set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
-  set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
-endif
+# use previously generated init file for static stream
+set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
+set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
 
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}

@@ -1,13 +1,15 @@
-observations:
-  resource: PANDACArchive
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.GFS"
+members:
+  n: 1
 model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-firstbackground:
-  resource: "PANDAC.GFS"
-externalanalyses:
-  resource: "GFS.PANDAC"
+observations:
+  resource: PANDACArchive
 variational:
   DAType: 3dhybrid
   ensembleCovarianceWeight: 0.5

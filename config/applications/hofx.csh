@@ -7,6 +7,7 @@ if ( $?config_hofx ) exit 0
 set config_hofx = 1
 
 source config/model.csh
+
 source config/scenario.csh hofx
 
 ## required settings for PrepJEDI.csh
@@ -31,7 +32,35 @@ $setLocal maxIODAPoolSize
 $setLocal retainObsFeedback
 
 ## job
-$setNestedHofx job.${outerMesh}.seconds
-$setNestedHofx job.${outerMesh}.nodes
-$setNestedHofx job.${outerMesh}.PEPerNode
-$setNestedHofx job.${outerMesh}.memory
+$setLocal job.retry
+
+foreach parameter (seconds nodes PEPerNode memory)
+  set p = "`$getLocalOrNone job.${outerMesh}.${parameter}`"
+  if ("$p" == None) then
+    set p = "`$getLocalOrNone job.defaults.${parameter}`"
+  endif
+  if ("$p" == None) then
+    echo "config/applications/hofx.csh (ERROR): invalid value for $paramater"
+    exit 1
+  endif
+  set ${parameter}_ = "$p"
+end
+
+
+##################################
+# auto-generate cylc include files
+##################################
+
+if ( ! -e include/tasks/auto/hofxbase.rc ) then
+cat >! include/tasks/auto/hofxbase.rc << EOF
+  [[HofXBase]]
+    [[[job]]]
+      execution time limit = PT${seconds_}S
+      execution retry delays = ${retry}
+    [[[directives]]]
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select=${nodes_}:ncpus=${PEPerNode_}:mpiprocs=${PEPerNode_}:mem=${memory_}GB
+EOF
+
+endif

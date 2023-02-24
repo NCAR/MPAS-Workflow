@@ -7,13 +7,16 @@ source config/model.csh
 
 source config/scenario.csh externalanalyses
 
-$setNestedExternalanalyses resource
+setenv externalanalyses__resource "`$getLocalOrNone resource`"
+if ("$externalanalyses__resource" == None) then
+  exit 0
+endif
 
 # outer
 set name = Outer
 set mesh = "$outerMesh"
 set ncells = "$nCellsOuter"
-foreach parameter (externalDirectory filePrefix Vtable UngribPrefix PrepareExternalAnalysisTasks)
+foreach parameter (externalDirectory filePrefix Vtable UngribPrefix PrepareExternalAnalysisTasks retry)
   set p = "`$getLocalOrNone $externalanalyses__resource.$mesh.${parameter}`"
   if ("$p" == None) then
     set p = "`$getLocalOrNone $externalanalyses__resource.common.${parameter}`"
@@ -40,6 +43,9 @@ unset externalanalyses__UngribPrefixOuter
 
 set externalanalyses__Vtable = "$externalanalyses__VtableOuter"
 unset externalanalyses__VtableOuter
+
+set externalanalyses__retry = "$externalanalyses__retryOuter"
+unset externalanalyses__retryOuter
 
 # inner
 set name = Inner
@@ -90,3 +96,95 @@ foreach parameter (externalDirectory filePrefix PrepareExternalAnalysisTasks)
     set externalanalyses__${parameter}${name} = "$p"
   endif
 end
+
+
+##################################
+# auto-generate cylc include files
+##################################
+
+if ( ! -e include/tasks/auto/externalanalyses.rc ) then
+cat >! include/tasks/auto/externalanalyses.rc << EOF
+## Analyses generated outside MPAS-Workflow
+  [[ExternalAnalyses]]
+{% for dt in ExtendedFCLengths %}
+  [[GetGFSAnalysisFromRDA-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = \$origin/GetGFSAnalysisFromRDA.csh "{{dt}}"
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = $externalanalyses__retry
+  [[GetGFSAnalysisFromFTP-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = \$origin/GetGFSAnalysisFromFTP.csh "{{dt}}"
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = $externalanalyses__retry
+  [[UngribExternalAnalysis-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = \$origin/UngribExternalAnalysis.csh "{{dt}}"
+    [[[job]]]
+      execution time limit = PT5M
+      execution retry delays = 2*PT30S
+    # currently UngribExternalAnalysis has to be on Cheyenne, because ungrib.exe is built there
+    # TODO: build ungrib.exe on casper, remove CP directives below
+    [[[directives]]]
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+
+  {% for mesh in allMeshes %}
+  [[LinkExternalAnalysis-{{mesh}}-{{dt}}hr]]
+    inherit = ExternalAnalyses, BATCH
+    script = \$origin/LinkExternalAnalysis.csh "{{mesh}}" "{{dt}}"
+    [[[job]]]
+      execution time limit = PT30S
+      execution retry delays = $externalanalyses__retry
+  {% endfor %}
+
+  [[ExternalAnalysisReady-{{dt}}hr]]
+    inherit = ExternalAnalyses
+
+{% endfor %}
+
+  [[GetGFSAnalysisFromRDA]]
+    inherit = GetGFSAnalysisFromRDA-0hr
+  [[GetGFSAnalysisFromFTP]]
+    inherit = GetGFSAnalysisFromFTP-0hr
+  [[UngribExternalAnalysis]]
+    inherit = UngribExternalAnalysis-0hr
+{% for mesh in allMeshes %}
+  [[LinkExternalAnalysis-{{mesh}}]]
+    inherit = LinkExternalAnalysis-{{mesh}}-0hr
+{% endfor %}
+  [[ExternalAnalysisReady]]
+    inherit = ExternalAnalyses
+
+  [[GetGDASAnalysisFromFTP]]
+    inherit = ExternalAnalyses, BATCH
+    script = \$origin/GetGDASAnalysisFromFTP.csh
+    [[[job]]]
+      execution time limit = PT45M
+      execution retry delays = $externalanalyses__retry
+
+
+EOF
+
+endif
+
+## Mini-workflows that prepare cold-start initial condition files from an external analysis
+if ( ! -e include/variables/auto/externalanalyses.rc ) then
+cat >! include/variables/auto/externalanalyses.rc << EOF
+{% set PrepareExternalAnalysisTasksOuter = [${externalanalyses__PrepareExternalAnalysisTasksOuter}] %}
+{% set PrepareExternalAnalysisOuter = " => ".join(PrepareExternalAnalysisTasksOuter) %}
+
+{% set PrepareExternalAnalysisTasksInner = [${externalanalyses__PrepareExternalAnalysisTasksInner}] %}
+{% set PrepareExternalAnalysisInner = " => ".join(PrepareExternalAnalysisTasksInner) %}
+
+{% set PrepareExternalAnalysisTasksEnsemble = [${externalanalyses__PrepareExternalAnalysisTasksEnsemble}] %}
+{% set PrepareExternalAnalysisEnsemble = " => ".join(PrepareExternalAnalysisTasksEnsemble) %}
+
+# Use external analysis for sea surface updating
+{% set PrepareSeaSurfaceUpdate = PrepareExternalAnalysisOuter %}
+EOF
+
+endif
+

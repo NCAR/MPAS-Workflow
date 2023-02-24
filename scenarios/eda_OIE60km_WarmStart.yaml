@@ -7,23 +7,18 @@ workflow:
   DiagnoseEnsSpreadBG: True
   VerifyAgainstObservations: False
   VerifyAgainstExternalAnalyses: True
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.LaggedGEFS"
+hofx:
+  maxIODAPoolSize: 3
+members:
+  n: 80
 model:
   outerMesh: 60km
   innerMesh: 60km
   ensembleMesh: 60km
-firstbackground:
-  resource: "PANDAC.LaggedGEFS"
-  nMembers: 80
-externalanalyses:
-  resource: "GFS.PANDAC"
-variational:
-  DAType: 3denvar
-  SelfExclusion: True
-  maxIODAPoolSize: 3
-hofx:
-  maxIODAPoolSize: 3
-rtpp:
-  relaxationFactor: 0.7
 observations:
   resource: PANDACArchive
   PANDACArchive:
@@ -41,3 +36,11 @@ observations:
     IODASuperObGrid:
       abi_g16: 15X15
       ahi_himawari8: 15X15
+rtpp:
+  relaxationFactor: 0.7
+staticstream:
+  resource: "PANDAC.LaggedGEFS"
+variational:
+  DAType: 3denvar
+  SelfExclusion: True
+  maxIODAPoolSize: 3

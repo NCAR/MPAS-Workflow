@@ -1,3 +1,5 @@
+members:
+  n: 1
 model:
   outerMesh: 30km
   innerMesh: 60km

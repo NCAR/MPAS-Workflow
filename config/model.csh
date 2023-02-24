@@ -9,30 +9,20 @@ source config/scenario.csh model
 ## MPASCore - must be atmosphere
 setenv MPASCore atmosphere
 
-$setLocal outerMesh
-$setLocal innerMesh
-$setLocal ensembleMesh
+## meshes
+# outerMesh, innerMesh, and ensembleMesh are mandatory for suites/Cycle.rc
+setenv outerMesh "`$getLocalOrNone outerMesh`"
+setenv innerMesh "`$getLocalOrNone innerMesh`"
+setenv ensembleMesh "`$getLocalOrNone ensembleMesh`"
+
+if ("$outerMesh" == None) then
+  echo "  config/model.csh (INFO): no mesh information provided. model will not be configured."
+  exit 0
+endif
 
 setenv nCellsOuter "`$getLocalOrNone nCells.$outerMesh`"
 setenv nCellsInner "`$getLocalOrNone nCells.$innerMesh`"
 setenv nCellsEnsemble "`$getLocalOrNone nCells.$ensembleMesh`"
-
-# list of all meshes formatted to be fed to a jinja2 command
-set allMeshesJinja = '["'$outerMesh'", "'$innerMesh'", "'$ensembleMesh'"]'
-
-# MeshesDescriptor used for automated experiment naming conventions
-setenv MeshesDescriptor O
-if ("$outerMesh" != "$innerMesh") then
-  setenv MeshesDescriptor ${MeshesDescriptor}${outerMesh}
-endif
-setenv MeshesDescriptor ${MeshesDescriptor}I
-if ("$innerMesh" != "$ensembleMesh") then
-  #TODO: remove when this is no longer a limitation
-  echo "$0 (ERROR): innerMesh ($innerMesh) must equal ensembleMesh($ensembleMesh)"
-  exit 1
-  #setenv MeshesDescriptor ${MeshesDescriptor}${innerMesh}
-endif
-setenv MeshesDescriptor ${MeshesDescriptor}E${ensembleMesh}
 
 $setLocal ${outerMesh}.TimeStep
 $setLocal ${outerMesh}.DiffusionLengthScale
@@ -69,3 +59,16 @@ setenv localStaticFieldsPrefix static
 setenv localStaticFieldsFileOuter ${localStaticFieldsPrefix}.${nCellsOuter}.nc
 setenv localStaticFieldsFileInner ${localStaticFieldsPrefix}.${nCellsInner}.nc
 setenv localStaticFieldsFileEnsemble ${localStaticFieldsPrefix}.${nCellsEnsemble}.nc
+
+
+##################################
+# auto-generate cylc include files
+##################################
+
+if ( ! -e include/variables/auto/model.rc ) then
+cat >! include/variables/auto/model.rc << EOF
+{% set allMeshes = ["$outerMesh", "$innerMesh", "$ensembleMesh"] %} #list
+{% set outerMesh = "$outerMesh" %}
+EOF
+
+endif

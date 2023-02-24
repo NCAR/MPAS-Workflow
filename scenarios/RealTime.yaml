@@ -10,6 +10,8 @@ observations:
   resource: NCEPFTPOnline
 experiment:
   ExperimentName: 'RealTime'
+members:
+  n: 1
 model:
   outerMesh: 120km
   innerMesh: 120km

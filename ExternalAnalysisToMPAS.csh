@@ -3,7 +3,7 @@
 # Process arguments
 # =================
 ## args
-# ArgMesh: str, mesh name, one of allMeshesJinja
+# ArgMesh: str, mesh name, one of model.allMeshes
 set ArgMesh = "$1"
 
 # ArgDT: int, valid time offset beyond CYLC_TASK_CYCLE_POINT in hours

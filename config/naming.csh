@@ -7,6 +7,7 @@
 setenv configDir config
 setenv modelConfigDir config/mpas
 
+setenv PackageBaseName 'MPAS-Workflow'
 
 ##########################
 ## run directory structure

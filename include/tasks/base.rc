@@ -1,0 +1,42 @@
+## All-task defaults
+  [[root]]
+    pre-script = "cd  $origin/"
+    [[[environment]]]
+      origin = {{mainScriptDir}}
+
+  [[BATCH]]
+    # load conda + activate npl
+    init-script = '''
+source /etc/profile.d/modules.sh
+module load conda/latest
+conda activate npl
+'''
+    # default job
+    [[[job]]]
+      batch system = pbs
+      execution time limit = PT60M
+
+    # default directives, to be overridden by individual tasks
+    [[[directives]]]
+      -j = oe
+      -k = eod
+      -S = /bin/tcsh
+      -q = {{SingleProcQueueName}}
+      -A = {{SingleProcAccountNumber}}
+      -l = select=1:ncpus=1
+
+  [[CompareBase]]
+    [[[job]]]
+      execution time limit = PT5M
+    [[[directives]]]
+      -q = {{NCPQueueName}}
+      -A = {{NCPAccountNumber}}
+      -l = select=1:ncpus=36:mpiprocs=36
+
+  [[CleanBase]]
+    [[[job]]]
+      execution time limit = PT5M
+      execution retry delays = 2*PT15S
+
+## Null parent or child
+  [[Null]]

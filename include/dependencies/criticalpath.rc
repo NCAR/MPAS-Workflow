@@ -16,7 +16,7 @@
 {% if CriticalPathType == "Normal" %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
-%include include/da.rc
+%include include/dependencies/da.rc
         # depends on previous Forecast
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => PreDataAssim
       '''
@@ -25,7 +25,7 @@
 
     [[[{{ForecastTimes}}]]]
       graph = '''
-%include include/forecast.rc
+%include include/dependencies/forecast.rc
         # depends on previous DataAssim
         DataAssimFinished[-PT{{DA2FCOffsetHR}}H] => Forecast
       '''
@@ -38,7 +38,7 @@
 {% elif CriticalPathType == "Reanalysis" %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
-%include include/da.rc
+%include include/dependencies/da.rc
       '''
     [[[{{ForecastTimes}}]]]
       graph = ForecastFinished
@@ -49,7 +49,7 @@
       graph = DataAssimFinished
     [[[{{ForecastTimes}}]]]
       graph = '''
-%include include/forecast.rc
+%include include/dependencies/forecast.rc
       '''
 
 {% else %}
