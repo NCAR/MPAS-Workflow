@@ -38,7 +38,7 @@ if ( $status == 0 ) then
   cylc stop --kill $SuiteName
   sleep 30
 else
-  echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not running"
+  echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not already running"
   echo "$0 (INFO): starting a new suite..."
 endif
 
