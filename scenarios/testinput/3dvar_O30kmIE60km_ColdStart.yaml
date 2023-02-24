@@ -1,7 +1,7 @@
 workflow:
   # test a recent date
   firstCyclePoint: 20210121T18
-  initialCyclePoint: 20210121T18
+  initialCyclePoint: 20210123T06
   finalCyclePoint: 20210202T00
   CriticalPathType: Normal
   VerifyDeterministicDA: True
@@ -48,8 +48,8 @@ variational:
     30km:
       60km:
         3dvar:
-          nodes: 6
-          PEPerNode: 32
+          nodes: 8
+          PEPerNode: 24
           memory: 109
           baseSeconds: 900
           secondsPerEnVarMember: 9
