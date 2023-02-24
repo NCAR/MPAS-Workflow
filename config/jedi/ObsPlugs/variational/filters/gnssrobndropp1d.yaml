@@ -1,0 +1,22 @@
+  obs filters:
+  - filter: Domain Check
+    where:
+    - variable:
+        name: MetaData/impactHeightRO
+      minvalue: 0.0
+      maxvalue: 30000.0
+    - variable:
+        name: MetaData/earthRadiusCurvature
+      minvalue: 6250000.0
+      maxvalue: 6450000.0
+    - variable:
+        name: MetaData/geoidUndulation
+      minvalue: -200.0
+      maxvalue: 200.0
+  - filter: ROobserror
+    variable: bendingAngle
+    errmodel: NRL
+    <<: *multiIterationFilter
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter
