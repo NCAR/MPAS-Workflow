@@ -47,7 +47,7 @@ variational:
   job:
     30km:
       60km:
-        3denvar:
+        3dvar:
           nodes: 6
           PEPerNode: 32
           memory: 109
