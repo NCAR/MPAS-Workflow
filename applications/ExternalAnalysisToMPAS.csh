@@ -59,16 +59,24 @@ cd ${WorkDir}
 set outputFile = $ArgFilePrefix.$thisMPASFileDate.nc
 
 if ( -e $outputFile ) then
-  set oSize = `du -sh $outputFile | sed 's@'$outputFile'@@'`
-
-  if ( "$oSize" != "0" ) then
-    echo "$0 (INFO): outputFile ($outputFile) already exists, exiting with success"
-    echo "$0 (INFO): if regenerating the outputFile is desired, delete the original"
+  if ( -e SUCCESS ) then
+    echo "$0 (INFO): outputFile ($outputFile) and SUCCESS file already exist, exiting with success"
+    echo "$0 (INFO): if regenerating the output outputFile is desired, delete SUCCESS"
 
     date
 
     exit 0
   endif
+
+#  set oSize = `du -sh $outputFile | sed 's@'$outputFile'@@'`
+#  if ( "$oSize" != "0" ) then
+#    echo "$0 (INFO): outputFile ($outputFile) already exists, exiting with success"
+#    echo "$0 (INFO): if regenerating the outputFile is desired, delete $outputFile"
+#
+#    date
+#
+#    exit 0
+#  endif
 
   rm $outputFile
 endif
@@ -118,5 +126,7 @@ if ( $status != 0 ) then
 endif
 
 date
+
+touch SUCCESS
 
 exit 0

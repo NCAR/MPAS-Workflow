@@ -2,9 +2,6 @@ initic:
 ## mesh-specific settings
   # resource requirements
   job:
-    # cylc retry string
-    retry: '2*PT30S'
-
     #{{outerMesh}}:
     #  seconds: int
     #  nodes: int

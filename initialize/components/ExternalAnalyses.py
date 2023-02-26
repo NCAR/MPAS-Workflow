@@ -131,8 +131,14 @@ class ExternalAnalyses(Component):
     self._tasks = [
 '''## Analyses generated outside MPAS-Workflow
   [['''+self.groupName+''']]
+  [[GetExternalAnalyses]]
+    inherit = '''+self.groupName+'''
+  [[UngribExternalAnalyses]]
+    inherit = '''+self.groupName+'''
+  [[ConvertExternalAnalyses]]
+    inherit = '''+self.groupName+'''
   [[GetGDASAnalysisFromFTP]]
-    inherit = '''+self.groupName+''', SingleBatch
+    inherit = GetExternalAnalyses, SingleBatch
     script = $origin/applications/GetGDASAnalysisFromFTP.csh
     [[[job]]]
       execution time limit = PT45M
@@ -143,19 +149,19 @@ class ExternalAnalyses(Component):
       dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
       self._tasks += ['''
   [[GetGFSAnalysisFromRDA-'''+dtStr+'''hr]]
-    inherit = '''+self.groupName+''', SingleBatch
+    inherit = GetExternalAnalyses, SingleBatch
     script = $origin/applications/GetGFSAnalysisFromRDA.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+self.__getRetry+'''
   [[GetGFSAnalysisFromFTP-'''+dtStr+'''hr]]
-    inherit = '''+self.groupName+''', SingleBatch
+    inherit = GetExternalAnalyses, SingleBatch
     script = $origin/applications/GetGFSAnalysisFromFTP.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+self.__getRetry+'''
   [[UngribExternalAnalysis-'''+dtStr+'''hr]]
-    inherit = '''+self.groupName+''', SingleBatch
+    inherit = UngribExternalAnalyses, SingleBatch
     script = $origin/applications/UngribExternalAnalysis.csh '''+dt_work_Args+'''
 '''+self.__ungribtask.job()+self.__ungribtask.directives()+'''
   [[ExternalAnalysisReady-'''+dtStr+'''hr]]
@@ -171,7 +177,7 @@ class ExternalAnalyses(Component):
         linkArgs = ' '.join(['"'+str(a)+'"' for a in args])
         self._tasks += ['''
   [[LinkExternalAnalysis-'''+name+'''-'''+dtStr+'''hr]]
-    inherit = '''+self.groupName+''', SingleBatch
+    inherit = ConvertExternalAnalyses, SingleBatch
     script = $origin/applications/LinkExternalAnalysis.csh '''+linkArgs+'''
     [[[job]]]
       execution time limit = PT30S

@@ -28,7 +28,7 @@ observations: # for optional verification
 workflow:
   first cycle point: 20220606T00
   final cycle point: 20220607T00
-  max active cycle points: 1
+  max active cycle points: 4
 
   # optionally turn on extended forecast verification
   VerifyExtendedMeanFC: True

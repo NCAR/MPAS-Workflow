@@ -27,8 +27,6 @@ class InitIC(Component):
     job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
     self.__task = TaskFactory[hpc.system](job)
 
-    self.groupName = externalanalyses.groupName
-
     #########
     # outputs
     #########
@@ -69,7 +67,7 @@ class InitIC(Component):
         self._tasks += [
 '''
   [[ExternalAnalysisToMPAS-'''+name+'''-'''+dtStr+'''hr]]
-    inherit = '''+self.groupName+''', BATCH
+    inherit = ConvertExternalAnalyses, BATCH
     script = $origin/applications/ExternalAnalysisToMPAS.csh '''+initArgs+'''
 '''+self.__task.job()+self.__task.directives()]
 

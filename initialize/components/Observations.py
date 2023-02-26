@@ -107,6 +107,8 @@ class Observations(Component):
       dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
 
       self._tasks += ['''
+  [[ConvertObs]]
+    inherit = '''+self.groupName+'''
   [[GetObs-'''+dtStr+'''hr]]
     inherit = '''+self.groupName+''', SingleBatch
     script = $origin/applications/GetObs.csh '''+dt_work_Args+'''
@@ -114,7 +116,7 @@ class Observations(Component):
       execution time limit = PT10M
       execution retry delays = '''+self['getRetry']+'''
   [[ObsToIODA-'''+dtStr+'''hr]]
-    inherit = '''+self.groupName+''', SingleBatch
+    inherit = ConvertObs, SingleBatch
     script = $origin/applications/ObsToIODA.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT600S

@@ -48,6 +48,15 @@ if ( "${observations__resource}" == "PANDACArchive" ) then
   exit 0
 endif
 
+if ( -e SUCCESS ) then
+  echo "$0 (INFO): SUCCESS file already exists, exiting with success"
+  echo "$0 (INFO): if regenerating the output files is desired, delete SUCCESS"
+
+  date
+
+  exit 0
+endif
+
 if ( -d logs ) rm -r logs
 mkdir -p logs
 
@@ -201,5 +210,7 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
 endif
 
 date
+
+touch SUCCESS
 
 exit 0
