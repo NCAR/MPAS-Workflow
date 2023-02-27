@@ -79,7 +79,10 @@ class InitIC(Component):
   [['''+taskName+''']]
     inherit = ConvertExternalAnalyses, BATCH
     script = $origin/applications/ExternalAnalysisToMPAS.csh '''+initArgs+'''
-'''+self.__task.job()+self.__task.directives()]
+'''+self.__task.job()+self.__task.directives()+'''
+    [[[events]]]
+      submission timeout = PT10M
+      submission timeout handler = cylc poll %(suite)s '%(id)s:*'; cylc trigger %(suite)s '%(id)s:*' ''']
 
           # make task[t+dt] depend on task[t]
           if prevTaskName is not None:

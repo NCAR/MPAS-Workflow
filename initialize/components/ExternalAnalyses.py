@@ -253,8 +253,12 @@ class ExternalAnalyses(Component):
     inherit = '''+queue+''', SingleBatch
     script = $origin/applications/'''+base+'''.csh '''+linkArgs+'''
     [[[job]]]
-      execution time limit = PT30S
-      execution retry delays = 1*PT30S''']
+      execution time limit = PT90S
+      execution retry delays = 5*PT30S
+    [[[events]]]
+      submission timeout = PT3M
+      submission timeout handler = cylc poll %(suite)s '%(id)s:*'; cylc trigger %(suite)s '%(id)s:*' ''']
+
           # generic 0hr task name for external classes/tasks to grab
           if dt == 0:
             self._tasks += ['''
