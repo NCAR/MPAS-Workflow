@@ -131,7 +131,7 @@ class Component():
 
   ## export methods
   @staticmethod
-  def write(filename, Str):
+  def __toTextFile(filename, Str):
     if len(Str) == 0: return
     #self._msg('Creating '+filename)
     with open(filename, 'w') as f:
@@ -172,7 +172,7 @@ set config_'''+self.lower+''' = 1
 ''']
     for v in variables:
       Str += self.varToCsh(v, self._vtable[v])
-    self.write('config/auto/'+self.lower+'.csh', Str)
+    self.__toTextFile('config/auto/'+self.lower+'.csh', Str)
     return
 
   # cylc variables
@@ -190,21 +190,18 @@ set config_'''+self.lower+''' = 1
 
   def __exportVarsToCylc(self):
     variables = self._cylcVars
-    if len(variables) == 0: return
     Str = []
     for v in variables:
       Str += self.varToCylc(v, self._vtable[v])
-    self.write('include/variables/auto/'+self.lower+'.rc', Str)
+    self.__toTextFile('include/variables/auto/'+self.lower+'.rc', Str)
     return
 
   # cylc dependencies
   def __exportDependencies(self):
-    if len(self._dependencies) == 0: return
-    self.write('include/dependencies/auto/'+self.lower+'.rc', self._dependencies)
+    self.__toTextFile('include/dependencies/auto/'+self.lower+'.rc', self._dependencies)
     return
 
   # cylc tasks
   def __exportTasks(self):
-    if len(self._tasks) == 0: return
-    self.write('include/tasks/auto/'+self.lower+'.rc', self._tasks)
+    self.__toTextFile('include/tasks/auto/'+self.lower+'.rc', self._tasks)
     return
