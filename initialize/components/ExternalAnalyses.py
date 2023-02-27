@@ -219,7 +219,7 @@ class ExternalAnalyses(Component):
   [['''+base+''']]
     inherit = '''+base+'''-0hr''']
 
-      # ready
+      # ready (not part of subqueue, order does not matter)
       base = 'ExternalAnalysisReady'
       if base in self['PrepareExternalAnalysisOuter']:
         taskName = base+'-'+dtStr+'hr'

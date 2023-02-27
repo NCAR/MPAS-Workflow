@@ -112,6 +112,7 @@ class Observations(Component):
       dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
       taskNames = {}
 
+      # get (not part of subqueue, order does not matter)
       base = 'GetObs'
       if base in self['PrepareObservations']:
         taskName = base+'-'+dtStr+'hr'
@@ -129,6 +130,7 @@ class Observations(Component):
   [['''+base+''']]
     inherit = '''+base+'''-0hr''']
 
+      # convert
       base = 'ObsToIODA'
       queue = 'ConvertObs'
       if base in self['PrepareObservations']:
@@ -158,6 +160,7 @@ class Observations(Component):
   [['''+base+''']]
     inherit = '''+base+'''-0hr''']
 
+      # ready (not part of subqueue, order does not matter)
       base = 'ObsReady'
       if base in self['PrepareObservations']:
         taskName = base+'-'+dtStr+'hr'
