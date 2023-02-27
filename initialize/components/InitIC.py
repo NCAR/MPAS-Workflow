@@ -59,6 +59,7 @@ class InitIC(Component):
           meshNames.append(mesh.name)
           meshNCells.append(mesh.nCells)
 
+      zeroHR = '-0hr'
       queue = 'ConvertExternalAnalyses'
       subqueues.append(queue)
       for (typ, meshName, nCells) in zip(meshTypes, meshNames, meshNCells):
@@ -100,7 +101,7 @@ class InitIC(Component):
         # generic 0hr task names for external classes/tasks to grab
         self._tasks += ['''
   [['''+self.baseTask+'''-'''+meshName+''']]
-    inherit = '''+self.baseTask+'''-'''+meshName+'''-0hr''']
+    inherit = '''+self.baseTask+'''-'''+meshName+zeroHR]
 
     # only 1 task per subqueue to avoid cross-cycle errors
     for queue in set(subqueues):

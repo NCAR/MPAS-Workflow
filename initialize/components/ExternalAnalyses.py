@@ -136,6 +136,7 @@ class ExternalAnalyses(Component):
 
     subqueues = []
     prevTaskNames = {}
+    zeroHR = '-0hr'
     for dt in dtOffsets:
       dtStr = str(dt)
       dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
@@ -159,7 +160,7 @@ class ExternalAnalyses(Component):
         if dt == 0:
           self._tasks += ['''
   [['''+base+''']]
-    inherit = '''+base+'''-0hr''']
+    inherit = '''+base+zeroHR]
 
       # GFS RDA
       base = 'GetGFSAnalysisFromRDA'
@@ -179,7 +180,7 @@ class ExternalAnalyses(Component):
         if dt == 0:
           self._tasks += ['''
   [['''+base+''']]
-    inherit = '''+base+'''-0hr''']
+    inherit = '''+base+zeroHR]
 
       # GFS FTP
       base = 'GetGFSAnalysisFromFTP'
@@ -199,7 +200,7 @@ class ExternalAnalyses(Component):
         if dt == 0:
           self._tasks += ['''
   [['''+base+''']]
-    inherit = '''+base+'''-0hr''']
+    inherit = '''+base+zeroHR]
 
       # ungrib
       base = 'UngribExternalAnalysis'
@@ -217,7 +218,7 @@ class ExternalAnalyses(Component):
         if dt == 0:
           self._tasks += ['''
   [['''+base+''']]
-    inherit = '''+base+'''-0hr''']
+    inherit = '''+base+zeroHR]
 
       # ready (not part of subqueue, order does not matter)
       base = 'ExternalAnalysisReady'
@@ -231,7 +232,7 @@ class ExternalAnalyses(Component):
         if dt == 0:
           self._tasks += ['''
   [['''+base+''']]
-    inherit = '''+base+'''-0hr''']
+    inherit = '''+base+zeroHR]
 
       # link (convert)
       base = 'LinkExternalAnalysis'
@@ -263,7 +264,7 @@ class ExternalAnalyses(Component):
           if dt == 0:
             self._tasks += ['''
   [['''+base+'''-'''+meshName+''']]
-    inherit = '''+base+'''-'''+meshName+'''-0hr''']
+    inherit = '''+base+'''-'''+meshName+zeroHR]
 
 
       # for all above, make task[t] depend on task[t-dt]

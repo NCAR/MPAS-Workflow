@@ -104,6 +104,7 @@ class Observations(Component):
 
     subqueues = []
     prevTaskNames = {}
+    zeroHR = '-0hr'
 
     self._tasks = ['''
   [['''+self.groupName+''']]''']
@@ -128,7 +129,7 @@ class Observations(Component):
         if dt == 0:
           self._tasks += ['''
   [['''+base+''']]
-    inherit = '''+base+'''-0hr''']
+    inherit = '''+base+zeroHR]
 
       # convert
       base = 'ObsToIODA'
@@ -158,7 +159,7 @@ class Observations(Component):
         if dt == 0:
           self._tasks += ['''
   [['''+base+''']]
-    inherit = '''+base+'''-0hr''']
+    inherit = '''+base+zeroHR]
 
       # ready (not part of subqueue, order does not matter)
       base = 'ObsReady'
@@ -172,7 +173,7 @@ class Observations(Component):
         if dt == 0:
           self._tasks += ['''
   [['''+base+''']]
-    inherit = '''+base+'''-0hr''']
+    inherit = '''+base+zeroHR]
 
       # for all taskNames members, make task[t] depend on task[t-dt]
       for key, t_taskName in taskNames.items():
