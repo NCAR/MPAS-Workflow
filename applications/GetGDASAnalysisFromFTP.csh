@@ -24,6 +24,17 @@ cd ${WorkDir}
 
 # ================================================================================================
 
+if ( -e GETSUCCESS ) then
+  echo "$0 (INFO): GETSUCCESS file already exists, exiting with success"
+  echo "$0 (INFO): if regenerating the output files is desired, delete GETSUCCESS"
+
+  date
+
+  exit 0
+endif
+
+# ================================================================================================
+
 set fhour = 000
 
 echo "Getting GDAS atm and sfc analyses from the NCEP FTP"
@@ -56,5 +67,7 @@ foreach anaInfix ($gdasAnaInfix)
 end
 
 date
+
+touch GETSUCCESS
 
 exit 0

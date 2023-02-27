@@ -41,6 +41,17 @@ cd ${WorkDir}
 
 # ================================================================================================
 
+if ( -e UNGRIBSUCCESS ) then
+  echo "$0 (INFO): UNGRIBSUCCESS file already exists, exiting with success"
+  echo "$0 (INFO): if regenerating the output files is desired, delete UNGRIBSUCCESS"
+
+  date
+
+  exit 0
+endif
+
+# ================================================================================================
+
 ## link Vtable file
 ln -sfv ${externalanalyses__Vtable} Vtable
 
@@ -65,5 +76,7 @@ if ( $status != 0 ) then
 endif
 
 date
+
+touch UNGRIBSUCCESS
 
 exit 0

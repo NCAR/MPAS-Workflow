@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from copy import deepcopy
+
 from initialize.Component import Component
 
 class Observations(Component):
@@ -89,7 +91,7 @@ class Observations(Component):
     self._cylcVars.append(key)
     self._set(key, value)
     self.workflow = key
-   
+
     self.groupName = self.__class__.__name__
     self.Queue = hpc['CriticalQueue']
     self.Account = hpc['CriticalAccount']
@@ -100,24 +102,42 @@ class Observations(Component):
     else:
       dtOffsets=[0]
 
+    subqueues = []
+    prevTaskNames = {}
+
     self._tasks = ['''
   [['''+self.groupName+''']]''']
     for dt in dtOffsets:
       dtStr = str(dt)
       dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
+      taskNames = {}
 
-      self._tasks += ['''
-  [[ConvertObs]]
-    inherit = '''+self.groupName+'''
-  [[GetObs-'''+dtStr+'''hr]]
+      base = 'GetObs'
+      if base in self['PrepareObservations']:
+        taskName = base+'-'+dtStr+'hr'
+        self._tasks += ['''
+  [['''+taskName+''']]
     inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/GetObs.csh '''+dt_work_Args+'''
+    script = $origin/applications/'''+base+'''.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT10M
-      execution retry delays = '''+self['getRetry']+'''
-  [[ObsToIODA-'''+dtStr+'''hr]]
-    inherit = ConvertObs, SingleBatch
-    script = $origin/applications/ObsToIODA.csh '''+dt_work_Args+'''
+      execution retry delays = '''+self['getRetry']]
+
+        # generic 0hr task name for external classes/tasks to grab
+        if dt == 0:
+          self._tasks += ['''
+  [['''+base+''']]
+    inherit = '''+base+'''-0hr''']
+
+      base = 'ObsToIODA'
+      queue = 'ConvertObs'
+      if base in self['PrepareObservations']:
+        subqueues.append(queue)
+        taskNames[base] = base+'-'+dtStr+'hr'
+        self._tasks += ['''
+  [['''+taskNames[base]+''']]
+    inherit = '''+queue+''', SingleBatch
+    script = $origin/applications/'''+base+'''.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT600S
       execution retry delays = '''+self['convertRetry']+'''
@@ -130,16 +150,51 @@ class Observations(Component):
       -m = ae
       -q = '''+self.Queue+'''
       -A = '''+self.Account+'''
-      -l = select=1:ncpus=1:mem=10GB
-  [[ObsReady-'''+dtStr+'''hr]]
+      -l = select=1:ncpus=1:mem=10GB''']
+
+        # generic 0hr task name for external classes/tasks to grab
+        if dt == 0:
+          self._tasks += ['''
+  [['''+base+''']]
+    inherit = '''+base+'''-0hr''']
+
+      base = 'ObsReady'
+      if base in self['PrepareObservations']:
+        taskName = base+'-'+dtStr+'hr'
+        self._tasks += ['''
+  [['''+taskName+''']]
     inherit = '''+self.groupName]
 
-    self._tasks += ['''
-  [[GetObs]]
-    inherit = GetObs-0hr
-  [[ObsToIODA]]
-    inherit = ObsToIODA-0hr
-  [[ObsReady]]
+        # generic 0hr task name for external classes/tasks to grab
+        if dt == 0:
+          self._tasks += ['''
+  [['''+base+''']]
+    inherit = '''+base+'''-0hr''']
+
+      # for all taskNames members, make task[t] depend on task[t-dt]
+      for key, t_taskName in taskNames.items():
+        if key in prevTaskNames:
+
+          # special catch-all succeed string needed due to 0hr naming below
+          if dtOffsets[0] == 0 and dtOffsets.index(dt) == 1:
+            success = ':succeed-all'
+          else:
+            success = ''
+
+          self._dependencies += ['''
+    '''+prevTaskNames[key]+success+''' => '''+t_taskName]
+
+      prevTaskNames = deepcopy(taskNames)
+
+    # only 1 task per subqueue to avoid cross-cycle errors
+    for queue in set(subqueues):
+      self._tasks += ['''
+  [['''+queue+''']]
     inherit = '''+self.groupName]
+
+      self._queues += ['''
+    [[['''+queue+''']]]
+      members = '''+queue+'''
+      limit = 1''']
 
     super().export(components)

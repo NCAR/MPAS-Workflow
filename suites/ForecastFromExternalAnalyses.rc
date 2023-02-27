@@ -26,18 +26,9 @@
   max active cycle points = {{maxActiveCyclePoints}}
 
   [[queues]]
-    [[[ExternalAnalyses1]]]
-      members = GetExternalAnalyses
-      limit = 1
-    [[[ExternalAnalyses2]]]
-      members = UngribExternalAnalyses
-      limit = 1
-    [[[ExternalAnalyses3]]]
-      members = ConvertExternalAnalyses
-      limit = 1
-    [[[Obs]]]
-      members = ConvertObs
-      limit = 1
+%include include/queues/auto/externalanalyses.rc
+%include include/queues/auto/initic.rc
+%include include/queues/auto/observations.rc
 
   [[dependencies]]
 

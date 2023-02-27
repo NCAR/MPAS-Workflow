@@ -18,17 +18,17 @@
   [[VerifyObsMeanFC]]
   [[CleanHofXMeanFC]]
 {% for dt in extLengths %}
-  [[HofXMeanFC{{dt}}hr]]
+  [[HofXMeanFC-{{dt}}hr]]
     inherit = HofX, HofXMeanFC, BATCH
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIHofXMeanFC.csh "1" "{{dt}}" "FC" "hofx"
     script = $origin/applications/HofXMeanFC.csh "1" "{{dt}}" "FC"
-  [[VerifyObsMeanFC{{dt}}hr]]
+  [[VerifyObsMeanFC-{{dt}}hr]]
     inherit = VerifyObs, VerifyObsMeanFC, BATCH
     script = $origin/applications/VerifyObsMeanFC.csh "1" "{{dt}}" "FC" "0" "hofx"
-  [[VerifyModelMeanFC{{dt}}hr]]
+  [[VerifyModelMeanFC-{{dt}}hr]]
     inherit = VerifyModel, VerifyModelMeanFC, BATCH
     script = $origin/applications/VerifyModelMeanFC.csh "1" "{{dt}}" "FC" "0"
-  [[CleanHofXMeanFC{{dt}}hr]]
+  [[CleanHofXMeanFC-{{dt}}hr]]
     inherit = Clean, CleanHofXMeanFC
     script = $origin/applications/CleanHofXMeanFC.csh "1" "{{dt}}" "FC"
 {% endfor %}

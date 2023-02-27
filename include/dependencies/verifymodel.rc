@@ -39,18 +39,25 @@
   # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedMeanFC %}
+    [[[{{extMeanTimes}}]]]
+      graph = '''
+%include include/dependencies/auto/initic.rc
+%include include/dependencies/auto/externalanalyses.rc
+      '''
+
   {% for dt in extLengths %}
-    {% set ds = "-"+(dt|string)+"hr" %}
+    {% set dtStr = "-"+(dt|string)+"hr" %}
     {% if dt == 0 %}
-      {% set prep = (ds+":succeed-all => ").join(PrepareExternalAnalysisTasksOuter)+ds %}
+      {% set success = ":succeed-all" %}
     {% else %}
-      {% set prep = (ds+" => ").join(PrepareExternalAnalysisTasksOuter)+ds %}
+      {% set success = "" %}
     {% endif %}
+    {% set prep = (dtStr+success+" => ").join(PrepareExternalAnalysisTasksOuter)+dtStr %}
     [[[{{extMeanTimes}}]]]
       graph = '''
         {{prep}}
-        ExtendedForecastFinished => VerifyModelMeanFC{{dt}}hr
-        ExternalAnalysisReady-{{dt}}hr => VerifyModelMeanFC{{dt}}hr
+        ExtendedForecastFinished => VerifyModelMeanFC{{dtStr}}
+        ExternalAnalysisReady{{dtStr}}{{success}} => VerifyModelMeanFC{{dtStr}}
       '''
   {% endfor %}
 {% endif %}
@@ -59,19 +66,27 @@
   # ... for extended forecast from ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedEnsFC and nMembers > 1 %}
+    [[[{{extEnsTimes}}]]]
+      graph = '''
+%include include/dependencies/auto/initic.rc
+%include include/dependencies/auto/externalanalyses.rc
+      '''
+
   {% for dt in extLengths %}
-    {% set ds = "-"+(dt|string)+"hr" %}
+    {% set dtStr = "-"+(dt|string)+"hr" %}
     {% if dt == 0 %}
-      {% set prep = (ds+":succeed-all => ").join(PrepareExternalAnalysisTasksOuter)+ds %}
+      {% set success = ":succeed-all" %}
     {% else %}
-      {% set prep = (ds+" => ").join(PrepareExternalAnalysisTasksOuter)+ds %}
+      {% set success = "" %}
     {% endif %}
+    {% set prep = (dtStr+success+" => ").join(PrepareExternalAnalysisTasksOuter)+dtStr %}
+
     [[[{{extEnsTimes}}]]]
       graph = '''
         {{prep}}
     {% for mem in EnsVerifyMembers %}
-        ExtendedForecastFinished => VerifyModelEnsFC{{mem}}-{{dt}}hr
-        ExternalAnalysisReady-{{dt}}hr => VerifyModelEnsFC{{mem}}-{{dt}}hr
+        ExtendedForecastFinished => VerifyModelEnsFC{{mem}}{{dtStr}}
+        ExternalAnalysisReady{{dtStr}}{{success}} => VerifyModelEnsFC{{mem}}{{dtStr}}
     {% endfor %}
       '''
   {% endfor %}

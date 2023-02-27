@@ -48,9 +48,9 @@ if ( "${observations__resource}" == "PANDACArchive" ) then
   exit 0
 endif
 
-if ( -e SUCCESS ) then
-  echo "$0 (INFO): SUCCESS file already exists, exiting with success"
-  echo "$0 (INFO): if regenerating the output files is desired, delete SUCCESS"
+if ( -e CONVERTSUCCESS ) then
+  echo "$0 (INFO): CONVERTSUCCESS file already exists, exiting with success"
+  echo "$0 (INFO): if regenerating the output files is desired, delete CONVERTSUCCESS"
 
   date
 
@@ -211,6 +211,6 @@ endif
 
 date
 
-touch SUCCESS
+touch CONVERTSUCCESS
 
 exit 0

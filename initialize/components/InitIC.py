@@ -11,6 +11,8 @@ class InitIC(Component):
     super().__init__(config)
 
     self.meshes = meshes
+    self.baseTask = 'ExternalAnalysisToMPAS'
+    self.__used = self.baseTask in externalanalyses['PrepareExternalAnalysisOuter']
 
     ########################
     # tasks and dependencies
@@ -27,11 +29,13 @@ class InitIC(Component):
     job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
     self.__task = TaskFactory[hpc.system](job)
 
+    self.groupName = externalanalyses.groupName
+
     #########
     # outputs
     #########
     self.outputs = {}
-    for typ, m in meshes.items():
+    for typ in meshes.keys():
       self.outputs[typ] = [{
         'directory': externalanalyses['ExternalAnalysesDir'+typ],
         'prefix': externalanalyses['externalanalyses__filePrefix'+typ],
@@ -43,37 +47,67 @@ class InitIC(Component):
     else:
       dtOffsets=[0]
 
-    meshTypes = []
-    meshNames = []
-    meshNCells = []
-    for typ, m in self.meshes.items():
-      if m.name not in meshNames:
-        meshTypes.append(typ)
-        meshNames.append(m.name)
-        meshNCells.append(m.nCells)
+    subqueues = []
+    if self.__used:
+      # only once for each mesh
+      meshTypes = []
+      meshNames = []
+      meshNCells = []
+      for typ, mesh in self.meshes.items():
+        if mesh.name not in meshNames:
+          meshTypes.append(typ)
+          meshNames.append(mesh.name)
+          meshNCells.append(mesh.nCells)
 
-    self._tasks = []
-    for (typ, name, nCells) in zip(meshTypes, meshNames, meshNCells):
-      for dt in dtOffsets:
-        dtStr = str(dt)
-        args = [
-          dt,
-          components['externalanalyses']['ExternalAnalysesDir'+typ],
-          components['externalanalyses']['externalanalyses__filePrefix'+typ],
-          nCells,
-          components['externalanalyses'].WorkDir,
-        ]
-        initArgs = ' '.join(['"'+str(a)+'"' for a in args])
-        self._tasks += [
-'''
-  [[ExternalAnalysisToMPAS-'''+name+'''-'''+dtStr+'''hr]]
+      queue = 'ConvertExternalAnalyses'
+      subqueues.append(queue)
+      for (typ, meshName, nCells) in zip(meshTypes, meshNames, meshNCells):
+        prevTaskName = None
+        for dt in dtOffsets:
+          dtStr = str(dt)
+          args = [
+            dt,
+            components['externalanalyses']['ExternalAnalysesDir'+typ],
+            components['externalanalyses']['externalanalyses__filePrefix'+typ],
+            nCells,
+            components['externalanalyses'].WorkDir,
+          ]
+          initArgs = ' '.join(['"'+str(a)+'"' for a in args])
+          taskName = self.baseTask+'-'+meshName+'-'+dtStr+'hr'
+
+          self._tasks += ['''
+  [['''+taskName+''']]
     inherit = ConvertExternalAnalyses, BATCH
     script = $origin/applications/ExternalAnalysisToMPAS.csh '''+initArgs+'''
 '''+self.__task.job()+self.__task.directives()]
 
-      self._tasks += [
-'''
-  [[ExternalAnalysisToMPAS-'''+name+''']]
-    inherit = ExternalAnalysisToMPAS-'''+name+'''-0hr''']
+          # make task[t+dt] depend on task[t]
+          if prevTaskName is not None:
+            # special catch-all succeed string needed due to 0hr naming below
+            if dtOffsets[0] == 0 and dtOffsets.index(dt) == 1:
+              success = ':succeed-all'
+            else:
+              success = ''
+
+            self._dependencies += ['''
+    '''+prevTaskName+success+''' => '''+taskName]
+
+          prevTaskName = taskName
+
+        # generic 0hr task names for external classes/tasks to grab
+        self._tasks += ['''
+  [['''+self.baseTask+'''-'''+meshName+''']]
+    inherit = '''+self.baseTask+'''-'''+meshName+'''-0hr''']
+
+    # only 1 task per subqueue to avoid cross-cycle errors
+    for queue in set(subqueues):
+      self._tasks += ['''
+  [['''+queue+''']]
+    inherit = '''+self.groupName]
+
+      self._queues += ['''
+    [[['''+queue+''']]]
+      members = '''+queue+'''
+      limit = 1''']
 
     super().export(components)

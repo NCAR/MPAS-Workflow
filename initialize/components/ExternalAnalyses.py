@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from copy import deepcopy
+
 from initialize.Component import Component
 from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
@@ -30,12 +32,11 @@ class ExternalAnalyses(Component):
     # WorkDir is where external analysis files are linked/downloaded, e.g., in grib format
     self.WorkDir = self.workDir+'/'+resource+'/{{thisValidDate}}'
 
-    for typ, m in meshes.items():
-      mesh = m.name
-      nCells = str(m.nCells)
+    for typ, mesh in meshes.items():
+      nCells = str(mesh.nCells)
       # 'ExternalAnalysesDir'+typ is where external analyses converted to MPAS meshes are
       # created and/or stored
-      self._set('ExternalAnalysesDir'+typ, self.workDir+'/'+mesh+'/{{thisValidDate}}')
+      self._set('ExternalAnalysesDir'+typ, self.workDir+'/'+mesh.name+'/{{thisValidDate}}')
       self._cshVars.append('ExternalAnalysesDir'+typ)
 
       for (key, t) in [
@@ -45,11 +46,11 @@ class ExternalAnalyses(Component):
        ['Vtable', str],
        ['UngribPrefix', str],
       ]:
-        value = self.extractResource(('resources', resource, mesh), key, t)
+        value = self.extractResource(('resources', resource, mesh.name), key, t)
 
         if key == 'PrepareExternalAnalysisTasks':
           # push back cylc mini-workflow variables
-          values = [task.replace('{{mesh}}',mesh) for task in value]
+          values = [task.replace('{{mesh}}',mesh.name) for task in value]
 
           # first add variable as a list of tasks
           variable = key+typ
@@ -74,7 +75,7 @@ class ExternalAnalyses(Component):
               variable = 'externalanalyses__'+key
             else:
               continue
-          
+
           if key == 'filePrefix' and isinstance(value, str):
             value = value.replace('{{nCells}}', nCells)
 
@@ -109,7 +110,7 @@ class ExternalAnalyses(Component):
     # outputs
     #########
     self.outputs = {}
-    for typ, m in meshes.items():
+    for typ in meshes.keys():
       self.outputs[typ] = [{
         'directory': self['ExternalAnalysesDir'+typ],
         'prefix': self['externalanalyses__filePrefix'+typ],
@@ -121,81 +122,172 @@ class ExternalAnalyses(Component):
     else:
       dtOffsets=[0]
 
+    # only once for each mesh
     meshTypes = []
     meshNames = []
-    for typ, m in self.meshes.items():
-      if m.name not in meshNames:
-        meshNames.append(m.name)
+    for typ, mesh in self.meshes.items():
+      if mesh.name not in meshNames:
+        meshNames.append(mesh.name)
         meshTypes.append(typ)
 
     self._tasks = [
 '''## Analyses generated outside MPAS-Workflow
-  [['''+self.groupName+''']]
-  [[GetExternalAnalyses]]
-    inherit = '''+self.groupName+'''
-  [[UngribExternalAnalyses]]
-    inherit = '''+self.groupName+'''
-  [[ConvertExternalAnalyses]]
-    inherit = '''+self.groupName+'''
-  [[GetGDASAnalysisFromFTP]]
-    inherit = GetExternalAnalyses, SingleBatch
-    script = $origin/applications/GetGDASAnalysisFromFTP.csh
+  [['''+self.groupName+''']]''']
+
+    subqueues = []
+    prevTaskNames = {}
+    for dt in dtOffsets:
+      dtStr = str(dt)
+      dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
+      taskNames = {}
+
+      # GDAS FTP
+      base = 'GetGDASAnalysisFromFTP'
+      queue = 'GetExternalAnalyses'
+      if base in self['PrepareExternalAnalysisOuter']:
+        subqueues.append(queue)
+        taskNames[base] = base+'-'+dtStr+'hr'
+        self._tasks += ['''
+  [['''+taskNames[base]+''']]
+    inherit = '''+queue+''', SingleBatch
+    script = $origin/applications/'''+base+'''.csh
     [[[job]]]
       execution time limit = PT45M
       execution retry delays = '''+self.__getRetry]
 
-    for dt in dtOffsets:
-      dtStr = str(dt)
-      dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
-      self._tasks += ['''
-  [[GetGFSAnalysisFromRDA-'''+dtStr+'''hr]]
-    inherit = GetExternalAnalyses, SingleBatch
-    script = $origin/applications/GetGFSAnalysisFromRDA.csh '''+dt_work_Args+'''
+        # generic 0hr task name for external classes/tasks to grab
+        if dt == 0:
+          self._tasks += ['''
+  [['''+base+''']]
+    inherit = '''+base+'''-0hr''']
+
+      # GFS RDA
+      base = 'GetGFSAnalysisFromRDA'
+      queue = 'GetExternalAnalyses'
+      if base in self['PrepareExternalAnalysisOuter']:
+        subqueues.append(queue)
+        taskNames[base] = base+'-'+dtStr+'hr'
+        self._tasks += ['''
+  [['''+taskNames[base]+''']]
+    inherit = '''+queue+''', SingleBatch
+    script = $origin/applications/'''+base+'''.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = '''+self.__getRetry+'''
-  [[GetGFSAnalysisFromFTP-'''+dtStr+'''hr]]
-    inherit = GetExternalAnalyses, SingleBatch
-    script = $origin/applications/GetGFSAnalysisFromFTP.csh '''+dt_work_Args+'''
+      execution retry delays = '''+self.__getRetry]
+
+        # generic 0hr task name for external classes/tasks to grab
+        if dt == 0:
+          self._tasks += ['''
+  [['''+base+''']]
+    inherit = '''+base+'''-0hr''']
+
+      # GFS FTP
+      base = 'GetGFSAnalysisFromFTP'
+      queue = 'GetExternalAnalyses'
+      if base in self['PrepareExternalAnalysisOuter']:
+        subqueues.append(queue)
+        taskNames[base] = base+'-'+dtStr+'hr'
+        self._tasks += ['''
+  [['''+taskNames[base]+''']]
+    inherit = '''+queue+''', SingleBatch
+    script = $origin/applications/'''+base+'''.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT20M
-      execution retry delays = '''+self.__getRetry+'''
-  [[UngribExternalAnalysis-'''+dtStr+'''hr]]
-    inherit = UngribExternalAnalyses, SingleBatch
-    script = $origin/applications/UngribExternalAnalysis.csh '''+dt_work_Args+'''
-'''+self.__ungribtask.job()+self.__ungribtask.directives()+'''
-  [[ExternalAnalysisReady-'''+dtStr+'''hr]]
+      execution retry delays = '''+self.__getRetry]
+
+        # generic 0hr task name for external classes/tasks to grab
+        if dt == 0:
+          self._tasks += ['''
+  [['''+base+''']]
+    inherit = '''+base+'''-0hr''']
+
+      # ungrib
+      base = 'UngribExternalAnalysis'
+      queue = 'UngribExternalAnalyses'
+      if base in self['PrepareExternalAnalysisOuter']:
+        subqueues.append(queue)
+        taskNames[base] = base+'-'+dtStr+'hr'
+        self._tasks += ['''
+  [['''+taskNames[base]+''']]
+    inherit = '''+queue+''', SingleBatch
+    script = $origin/applications/'''+base+'''.csh '''+dt_work_Args+'''
+'''+self.__ungribtask.job()+self.__ungribtask.directives()]
+
+        # generic 0hr task name for external classes/tasks to grab
+        if dt == 0:
+          self._tasks += ['''
+  [['''+base+''']]
+    inherit = '''+base+'''-0hr''']
+
+      # ready
+      base = 'ExternalAnalysisReady'
+      if base in self['PrepareExternalAnalysisOuter']:
+        taskName = base+'-'+dtStr+'hr'
+        self._tasks += ['''
+  [['''+taskName+''']]
     inherit = '''+self.groupName]
 
-      for typ, name in zip(meshTypes, meshNames):
-        args = [
-          dt,
-          self['ExternalAnalysesDir'+typ],
-          self['externalanalyses__directory'+typ],
-          self['externalanalyses__filePrefix'+typ],
-        ]
-        linkArgs = ' '.join(['"'+str(a)+'"' for a in args])
-        self._tasks += ['''
-  [[LinkExternalAnalysis-'''+name+'''-'''+dtStr+'''hr]]
-    inherit = ConvertExternalAnalyses, SingleBatch
-    script = $origin/applications/LinkExternalAnalysis.csh '''+linkArgs+'''
+        # generic 0hr task name for external classes/tasks to grab
+        if dt == 0:
+          self._tasks += ['''
+  [['''+base+''']]
+    inherit = '''+base+'''-0hr''']
+
+      # link (convert)
+      base = 'LinkExternalAnalysis'
+      queue = 'LinkExternalAnalyses'
+      if base in self['PrepareExternalAnalysisOuter']:
+        subqueues.append(queue)
+        for typ, meshName in zip(meshTypes, meshNames):
+          taskNames[(base, meshName)] = base+'-'+meshName+'-'+dtStr+'hr'
+          args = [
+            dt,
+            self['ExternalAnalysesDir'+typ],
+            self['externalanalyses__directory'+typ],
+            self['externalanalyses__filePrefix'+typ],
+          ]
+          linkArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+          self._tasks += ['''
+  [['''+taskNames[(base, meshName)]+''']]
+    inherit = '''+queue+''', SingleBatch
+    script = $origin/applications/'''+base+'''.csh '''+linkArgs+'''
     [[[job]]]
       execution time limit = PT30S
       execution retry delays = 1*PT30S''']
+          # generic 0hr task name for external classes/tasks to grab
+          if dt == 0:
+            self._tasks += ['''
+  [['''+base+'''-'''+meshName+''']]
+    inherit = '''+base+'''-'''+meshName+'''-0hr''']
 
-    self._tasks += ['''
-  [[GetGFSAnalysisFromRDA]]
-    inherit = GetGFSAnalysisFromRDA-0hr
-  [[GetGFSAnalysisFromFTP]]
-    inherit = GetGFSAnalysisFromFTP-0hr
-  [[UngribExternalAnalysis]]
-    inherit = UngribExternalAnalysis-0hr
-  [[ExternalAnalysisReady]]
+
+      # for all above, make task[t] depend on task[t-dt]
+      for key, t_taskName in taskNames.items():
+        if key in prevTaskNames:
+
+          # special catch-all succeed string needed due to 0hr naming below
+          if dtOffsets[0] == 0 and dtOffsets.index(dt) == 1:
+            success = ':succeed-all'
+          else:
+            success = ''
+
+          self._dependencies += ['''
+    '''+prevTaskNames[key]+success+''' => '''+t_taskName]
+
+      prevTaskNames = deepcopy(taskNames)
+
+    # only 1 task per subqueue to avoid cross-cycle errors
+    for queue in set(subqueues):
+      self._tasks += ['''
+  [['''+queue+''']]
     inherit = '''+self.groupName]
 
-    for typ, name in zip(meshTypes, meshNames):
-      self._tasks += ['''
-  [[LinkExternalAnalysis-'''+name+''']]
-    inherit = LinkExternalAnalysis-'''+name+'''-0hr''']
+      self._queues += ['''
+    [[['''+queue+''']]]
+      members = '''+queue+'''
+      limit = 1''']
 
+
+    # export all
     super().export(components)

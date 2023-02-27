@@ -59,9 +59,9 @@ cd ${WorkDir}
 set outputFile = $ArgFilePrefix.$thisMPASFileDate.nc
 
 if ( -e $outputFile ) then
-  if ( -e SUCCESS ) then
-    echo "$0 (INFO): outputFile ($outputFile) and SUCCESS file already exist, exiting with success"
-    echo "$0 (INFO): if regenerating the output outputFile is desired, delete SUCCESS"
+  if ( -e CONVERTSUCCESS ) then
+    echo "$0 (INFO): outputFile ($outputFile) and CONVERTSUCCESS file already exist, exiting with success"
+    echo "$0 (INFO): if regenerating the output outputFile is desired, delete CONVERTSUCCESS"
 
     date
 
@@ -127,6 +127,6 @@ endif
 
 date
 
-touch SUCCESS
+touch CONVERTSUCCESS
 
 exit 0

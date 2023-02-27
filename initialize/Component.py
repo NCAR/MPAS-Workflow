@@ -20,6 +20,7 @@ class Component():
     ######################################################
     self._cshVars = []
     self._cylcVars = []
+    self._queues = []
     self._tasks = []
     self._dependencies = []
 
@@ -60,6 +61,7 @@ class Component():
     export for use outside python
     '''
     #self._msg('export()')
+    self.__exportQueues()
     self.__exportTasks()
     self.__exportDependencies()
     self.__exportVarsToCsh()
@@ -132,7 +134,7 @@ class Component():
   ## export methods
   @staticmethod
   def __toTextFile(filename, Str):
-    if len(Str) == 0: return
+    #if len(Str) == 0: return
     #self._msg('Creating '+filename)
     with open(filename, 'w') as f:
       f.writelines(Str)
@@ -194,6 +196,11 @@ set config_'''+self.lower+''' = 1
     for v in variables:
       Str += self.varToCylc(v, self._vtable[v])
     self.__toTextFile('include/variables/auto/'+self.lower+'.rc', Str)
+    return
+
+  # cylc internal scheduling queues
+  def __exportQueues(self):
+    self.__toTextFile('include/queues/auto/'+self.lower+'.rc', self._queues)
     return
 
   # cylc dependencies

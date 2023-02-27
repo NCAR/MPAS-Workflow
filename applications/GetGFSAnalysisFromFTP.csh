@@ -49,6 +49,17 @@ cd ${WorkDir}
 
 # ================================================================================================
 
+if ( -e GETSUCCESS ) then
+  echo "$0 (INFO): GETSUCCESS file already exists, exiting with success"
+  echo "$0 (INFO): if regenerating the output files is desired, delete GETSUCCESS"
+
+  date
+
+  exit 0
+endif
+
+# ================================================================================================
+
 set linkWPS = link_grib.csh
 ln -sfv ${WPSBuildDir}/${linkWPS} .
 rm -rf GRIBFILE.*
@@ -73,5 +84,7 @@ endif
 ./${linkWPS} $gribFile
 
 date
+
+touch GETSUCCESS
 
 exit 0

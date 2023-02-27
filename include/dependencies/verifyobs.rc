@@ -60,20 +60,26 @@
   # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedMeanFC %}
+    [[[{{extMeanTimes}}]]]
+      graph = '''
+%include include/dependencies/auto/observations.rc
+      '''
+
   {% for dt in extLengths %}
-    {% set ds = "-"+(dt|string)+"hr" %}
+    {% set dtStr = "-"+(dt|string)+"hr" %}
     {% if dt == 0 %}
-      {% set prep = (ds+":succeed-all => ").join(PrepareObservationsTasks)+ds %}
+      {% set success = ":succeed-all" %}
     {% else %}
-      {% set prep = (ds+" => ").join(PrepareObservationsTasks)+ds %}
+      {% set success = "" %}
     {% endif %}
+    {% set prep = (dtStr+success+" => ").join(PrepareObservationsTasks)+dtStr %}
     [[[{{extMeanTimes}}]]]
       graph = '''
         {{prep}}
-        ExtendedForecastFinished => HofXMeanFC{{dt}}hr
-        ObsReady-{{dt}}hr => HofXMeanFC{{dt}}hr
-        HofXMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
-        VerifyObsMeanFC{{dt}}hr => CleanHofXMeanFC{{dt}}hr
+        ExtendedForecastFinished => HofXMeanFC{{dtStr}}
+        ObsReady{{dtStr}}{{success}} => HofXMeanFC{{dtStr}}
+        HofXMeanFC{{dtStr}} => VerifyObsMeanFC{{dtStr}}
+        VerifyObsMeanFC{{dtStr}} => CleanHofXMeanFC{{dtStr}}
       '''
   {% endfor %}
 {% endif %}
@@ -82,21 +88,27 @@
   # ... for extended forecast from ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
 {% if VerifyExtendedEnsFC and nMembers > 1 %}
+    [[[{{extEnsTimes}}]]]
+      graph = '''
+%include include/dependencies/auto/observations.rc
+      '''
+
   {% for dt in extLengths %}
-    {% set ds = "-"+(dt|string)+"hr" %}
+    {% set dtStr = "-"+(dt|string)+"hr" %}
     {% if dt == 0 %}
-      {% set prep = (ds+":succeed-all => ").join(PrepareObservationsTasks)+ds %}
+      {% set success = ":succeed-all" %}
     {% else %}
-      {% set prep = (ds+" => ").join(PrepareObservationsTasks)+ds %}
+      {% set success = "" %}
     {% endif %}
+    {% set prep = (dtStr+success+" => ").join(PrepareObservationsTasks)+dtStr %}
     [[[{{extEnsTimes}}]]]
       graph = '''
         {{prep}}
     {% for mem in EnsVerifyMembers %}
-        ExtendedForecastFinished => HofXEnsFC{{mem}}-{{dt}}hr
-        ObsReady-{{dt}}hr => HofXEnsFC{{mem}}-{{dt}}hr
-        HofXEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
-        VerifyObsEnsFC{{mem}}-{{dt}}hr => CleanHofXEnsFC{{mem}}-{{dt}}hr
+        ExtendedForecastFinished => HofXEnsFC{{mem}}{{dtStr}}
+        ObsReady{{dtStr}}{{success}} => HofXEnsFC{{mem}}{{dtStr}}
+        HofXEnsFC{{mem}}{{dtStr}} => VerifyObsEnsFC{{mem}}{{dtStr}}
+        VerifyObsEnsFC{{mem}}{{dtStr}} => CleanHofXEnsFC{{mem}}{{dtStr}}
     {% endfor %}
       '''
   {% endfor %}
