@@ -18,8 +18,6 @@ model:
   # and determine if it is viable to bring into the workflow.  Ideally those files should be
   # generated using the same MPAS-A code version as is used in the initic and forecast applications.
   GraphInfoDir: /glade/work/duda/static_moved_to_campaign
-firstbackground:
-  resource: "ForecastFromAnalysis"
 externalanalyses:
   resource: "GFS.RDA"
 variational:

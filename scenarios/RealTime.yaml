@@ -17,8 +17,6 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
   GraphInfoDir: /glade/work/duda/static_moved_to_campaign
-firstbackground:
-  resource: "ForecastFromAnalysis"
 externalanalyses:
   resource: "GFS.NCEPFTP"
 variational:

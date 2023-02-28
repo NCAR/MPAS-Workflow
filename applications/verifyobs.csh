@@ -75,8 +75,8 @@ mkdir -p ${self_WorkDir}/${ObsDiagnosticsDir}
 cd ${self_WorkDir}/${ObsDiagnosticsDir}
 
 set mainScript="DiagnoseObsStatistics"
-ln -fs ${pyVerifyDir}/*.py ./
-ln -fs ${pyVerifyDir}/${mainScript}.py ./
+ln -fs ${scriptDirectory}/*.py ./
+ln -fs ${scriptDirectory}/${mainScript}.py ./
 set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 
 set success = 1

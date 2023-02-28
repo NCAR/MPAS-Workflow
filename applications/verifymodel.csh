@@ -74,11 +74,11 @@ set other = $self_StateDir
 set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
 ln -sf ${bgFileOther} ../restart.$thisMPASFileDate.nc
 
-ln -fs ${pyVerifyDir}/*.py ./
+ln -fs ${scriptDirectory}/*.py ./
 
 set mainScript = DiagnoseModelStatistics
 
-ln -fs ${pyVerifyDir}/${mainScript}.py ./
+ln -fs ${scriptDirectory}/${mainScript}.py ./
 set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 
 set EADir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \

@@ -82,8 +82,8 @@ endif
 # generate ABE Inflation Factors
 # ==============================
 set mainScript="GenerateABEIFactors"
-ln -fs ${pyVerifyDir}/*.py ./
-ln -fs ${pyVerifyDir}/${mainScript}.py ./
+ln -fs ${scriptDirectory}/*.py ./
+ln -fs ${scriptDirectory}/${mainScript}.py ./
 
 set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 

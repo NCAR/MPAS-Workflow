@@ -64,7 +64,7 @@ hpc:
   CriticalQueue: premium
   NonCriticalQueue: premium
 verifyobs:
-  pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics
+  script directory: /glade/p/mmm/parc/ivette/pandac/graphics
 hofx:
   job:
     120km:

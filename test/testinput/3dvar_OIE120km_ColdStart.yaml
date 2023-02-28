@@ -2,8 +2,6 @@ experiment:
   name: '3dvar_OIE120km_ColdStart_TEST'
 externalanalyses:
   resource: "GFS.RDA"
-firstbackground:
-  resource: "ForecastFromAnalysis"
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy

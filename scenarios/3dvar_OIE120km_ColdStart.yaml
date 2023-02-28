@@ -10,8 +10,6 @@ model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-firstbackground:
-  resource: "ForecastFromAnalysis"
 externalanalyses:
   resource: "GFS.RDA"
 variational:

@@ -55,4 +55,4 @@ hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 verifyobs:
-  pyVerifyDir: /glade/work/ivette/pandac/mpas-jedi/graphics
+  script directory: /glade/work/ivette/pandac/mpas-jedi/graphics

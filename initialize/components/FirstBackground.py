@@ -5,12 +5,13 @@ from initialize.Component import Component
 class FirstBackground(Component):
   defaults = 'scenarios/defaults/firstbackground.yaml'
 
-  requiredVariables = {
+  variablesWithDefaults = {
     ## resource:
     # used to select from among available options (e.g., see defaults)
     # must be in quotes
-    # e.g., "ForecastFromAnalysis", "PANDAC.GFS", "PANDAC.LaggedGEFS"
-    'resource': str,
+    # e.g., "PANDAC.GFS"
+    'resource': ['ForecastFromAnalysis', str,
+      ['ForecastFromAnalysis', 'PANDAC.GFS', 'PANDAC.LaggedGEFS']],
   }
 
   def __init__(self, config, meshes, members, FirstCycleDate):
@@ -29,17 +30,14 @@ class FirstBackground(Component):
     assert members.n > 0 and members.n <= maxMembers, (
       self._msg('invalid members.n => '+str(members.n)))
 
-    for typ, m in meshes.items():
-      mesh = m.name
-      nCells = str(m.nCells)
-
+    for typ, mesh in meshes.items():
       for (key, t) in [
         ['directory', str],
         ['filePrefix', str],
         ['memberFormat', str],
         ['PrepareFirstBackground', str],
       ]:
-        value = self.extractResource(('resources', resource, mesh), key, t)
+        value = self.extractResource(('resources', resource, mesh.name), key, t)
         if key == 'PrepareFirstBackground':
           # push back cylc mini-workflow
           variable = key+typ
@@ -58,11 +56,15 @@ class FirstBackground(Component):
     # tasks and dependencies
     ########################
     self.groupName = self.__class__.__name__
-    self._tasks = ['''
+
+    # link (prepares outer and inner meshes as needed)
+    base = 'LinkWarmStartBackgrounds'
+    if base in self['PrepareFirstBackgroundOuter']:
+      self._tasks += ['''
   [['''+self.groupName+''']]
-  [[LinkWarmStartBackgrounds]]
+  [['''+base+''']]
     inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/LinkWarmStartBackgrounds.csh
+    script = $origin/applications/'''+base+'''.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members
       # TODO: set time limit based on outerMesh AND (number of members OR
