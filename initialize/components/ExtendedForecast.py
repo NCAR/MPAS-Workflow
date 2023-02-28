@@ -28,9 +28,9 @@ class ExtendedForecast(Component):
     super().__init__(config)
 
     self.mesh = forecast.mesh
-    assert self.mesh.name == extAnaIC.mesh(), 'extAnaIC must be on same mesh as extended forecast'
-    assert self.mesh.name == meanAnaIC.mesh(), 'meanAnaIC must be on same mesh as extended forecast'
-    assert self.mesh.name == ensAnaIC.mesh(), 'ensAnaIC must be on same mesh as extended forecast'
+    assert self.mesh == extAnaIC.mesh(), 'extAnaIC must be on same mesh as extended forecast'
+    assert self.mesh == meanAnaIC.mesh(), 'meanAnaIC must be on same mesh as extended forecast'
+    assert self.mesh == ensAnaIC.mesh(), 'ensAnaIC must be on same mesh as extended forecast'
 
     ###################
     # derived variables

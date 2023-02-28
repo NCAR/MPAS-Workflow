@@ -34,8 +34,8 @@ class Forecast(Component):
       memFmt = ''
 
     self.mesh = mesh
-    assert self.mesh.name == coldIC.mesh(), 'coldIC must be on same mesh as forecast'
-    assert self.mesh.name == warmIC.mesh(), 'warmIC must be on same mesh as forecast'
+    assert self.mesh == coldIC.mesh(), 'coldIC must be on same mesh as forecast'
+    assert self.mesh == warmIC.mesh(), 'warmIC must be on same mesh as forecast'
 
     ###################
     # derived variables
@@ -145,6 +145,7 @@ class Forecast(Component):
     # outputs
     #########
     self.outputs = {}
+    self.outputs['state'] = {}
     self.outputs['state']['members'] = StateEnsemble(self.mesh)
     for mm in range(1, members.n+1, 1):
       self.outputs['state']['members'].append({

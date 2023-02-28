@@ -3,9 +3,9 @@
 from collections import OrderedDict
 
 from initialize.Component import Component
+from initialize.data.ObsEnsemble import ObsEnsemble
 from initialize.data.StateEnsemble import StateEnsemble, State
 from initialize.Resource import Resource
-from initialize.ObsEnsemble import ObsEnsemble
 from initialize.util.Task import TaskFactory
 
 class ABEI(Component):
@@ -373,7 +373,7 @@ class Variational(Component):
         'observers': self['observers']
       })
 
-    if NN > 1
+    if NN > 1:
       self.inputs['state']['mean'] = State({
           'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+'/mean',
           'prefix': self.backgroundPrefix,
@@ -381,6 +381,9 @@ class Variational(Component):
       self.outputs['state']['mean'] = State({
           'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+'/mean',
           'prefix': self.analysisPrefix,
+      }, meshes['Outer'])
+
     else:
       self.inputs['state']['mean'] = self.inputs['state']['members'][0]
       self.outputs['state']['mean'] = self.outputs['state']['members'][0]
+
