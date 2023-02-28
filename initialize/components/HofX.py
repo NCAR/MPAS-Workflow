@@ -8,13 +8,13 @@ class HofX(Component):
   defaults = 'scenarios/defaults/hofx.yaml'
 
   variablesWithDefaults = {
-  ## observations
+  ## observers
   # observation types simulated in hofx application instances for verification
   # OPTIONS: see list below
   # Abbreviations:
   #   clr == clear-sky
   #   cld == cloudy-sky
-    'observations': [[
+    'observers': [[
       # anchor
       'aircraft',
       'gnssroref',

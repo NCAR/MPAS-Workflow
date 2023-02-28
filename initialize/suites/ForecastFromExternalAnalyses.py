@@ -39,12 +39,12 @@ class ForecastFromExternalAnalyses(Suite):
     c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
     c['hofx'] = HofX(conf, c['hpc'], meshes, c['model'])
     c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['workflow'],
-                c['externalanalyses'].outputs['Outer'], 
-                c['externalanalyses'].outputs['Outer'])
+                c['externalanalyses'].outputs['state']['Outer'],
+                c['externalanalyses'].outputs['state']['Outer'])
     c['extendedforecast'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
-                c['externalanalyses'].outputs['Outer'],
-                c['externalanalyses'].outputs['Outer'][0],
-                c['externalanalyses'].outputs['Outer'])
+                c['externalanalyses'].outputs['state']['Outer'],
+                c['externalanalyses'].outputs['state']['Outer'][0],
+                c['externalanalyses'].outputs['state']['Outer'])
 
     #if conf.has('verifymodel'): # TODO: make verifymodel optional
     c['vmodel'] = VerifyModel(conf, c['hpc'], meshes['Outer'], c['members'])

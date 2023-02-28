@@ -51,7 +51,7 @@ variational:
       resource: "PANDAC.GEFS"
   biasCorrection: True
   tropprsMethod: thompson
-  observations: [
+  observers: [
     aircraft,
     gnssroref,
     satwind,

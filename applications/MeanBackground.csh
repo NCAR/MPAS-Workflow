@@ -39,35 +39,41 @@ while ( $member <= ${nMembers} )
 end
 
 if (${nMembers} == 1) then
+  # TODO: just need to exit when follow-on applications receive states via python scripts
+
   ## pass-through for mean
   ln -sfv $self_StateDirs[1]/${meanName} ./
-else
-  ## make copy for mean
-  cp $self_StateDirs[1]/${meanName} ./
 
-  ## make copy for variance
-  cp $self_StateDirs[1]/${meanName} ./${varianceName}
+  echo "$0 (INFO): linked determinstic state for mean"
+
+  exit 0
+endif
+
+## make copy for mean
+cp $self_StateDirs[1]/${meanName} ./
+
+## make copy for variance
+cp $self_StateDirs[1]/${meanName} ./${varianceName}
 
 
-  # Run the executable
-  # ==================
-  set arg1 = ${self_WorkDir}
-  set arg2 = ${meanName}
-  set arg3 = ${varianceName}
-  set arg4 = ${memberPrefix}
+# Run the executable
+# ==================
+set arg1 = ${self_WorkDir}
+set arg2 = ${meanName}
+set arg3 = ${varianceName}
+set arg4 = ${memberPrefix}
   set arg5 = ${nMembers}
 
-  ln -sfv ${meanStateBuildDir}/${meanStateExe} ./
-  mpiexec ./${meanStateExe} "$arg1" "$arg2" "$arg3" "$arg4" "$arg5" >& log
+ln -sfv ${meanStateBuildDir}/${meanStateExe} ./
+mpiexec ./${meanStateExe} "$arg1" "$arg2" "$arg3" "$arg4" "$arg5" >& log
 
 
-  # Check status
-  # ============
-  grep 'All done' log
-  if ( $status != 0 ) then
-    echo "ERROR in $0 : mean state application failed" > ./FAIL
-    exit 1
-  endif
+# Check status
+# ============
+grep 'All done' log
+if ( $status != 0 ) then
+  echo "$0 (ERROR): mean state application failed" > ./FAIL
+  exit 1
 endif
 
 date

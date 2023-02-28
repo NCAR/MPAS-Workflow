@@ -3,7 +3,9 @@
 from collections import OrderedDict
 
 from initialize.Component import Component
+from initialize.data.StateEnsemble import StateEnsemble, State
 from initialize.Resource import Resource
+from initialize.ObsEnsemble import ObsEnsemble
 from initialize.util.Task import TaskFactory
 
 class ABEI(Component):
@@ -92,7 +94,7 @@ class Variational(Component):
     # ABI and AHI channel used to determine the inflation factor
     'ABEIChannel': [8, int, [8, 9, 10]],
 
-    ## observations
+    ## observers
     # observation types assimilated in the variational application
     # Abbreviations:
     #   clr == clear-sky
@@ -117,7 +119,7 @@ class Variational(Component):
     # iasi_metop-a 
     # iasi_metop-b 
     # iasi_metop-c 
-    'observations': [benchmarkObservations, list],
+    'observers': [benchmarkObservations, list],
 
     ## nObsIndent
     # number of spaces to precede members of the 'observers' list in the JEDI YAML
@@ -148,7 +150,7 @@ class Variational(Component):
     'retainObsFeedback': [True, bool],
   }
 
-  def __init__(self, config, hpc, meshes, model, members, workflow, da): #, forecast):
+  def __init__(self, config, hpc, meshes, model, obs, members, workflow, da): #, forecast):
     super().__init__(config)
 
     if members.n > 1:
@@ -346,28 +348,39 @@ class Variational(Component):
         GenerateABEInflation => '''+da.init+'''
         GenerateABEInflation => CleanHofXEnsMeanBG''']
 
-    #########
-    # outputs
-    #########
+    ################
+    # inputs/outputs
+    ################
     self.inputs = {}
-    self.inputs['members'] = []
+    self.inputs['state'] = {}
+    self.inputs['state']['members'] = StateEnsemble(meshes['Outer'])
     self.outputs = {}
-    self.outputs['members'] = []
-    for mm in range(1, NN+1, 1):
-      self.inputs['members'].append({
+    self.outputs['state'] = {}
+    self.outputs['state']['members'] = StateEnsemble(meshes['Outer'])
+    self.outputs['obs'] = {}
+    self.outputs['obs']['members'] = ObsEnsemble()
+    for mm in range(1, NN+1, 1): 
+      self.inputs['state']['members'].append({
         'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+memFmt.format(mm),
         'prefix': self.backgroundPrefix,
       })
-      self.outputs['members'].append({
+      self.outputs['state']['members'].append({
         'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+memFmt.format(mm),
         'prefix': self.analysisPrefix,
       })
+      self.outputs['obs']['members'].append({
+        'directory': self.workDir+'/{{thisCycleDate}}/'+obs.OutDBDir+'/'+memFmt.format(mm),
+        'observers': self['observers']
+      })
 
-    self.inputs['mean'] = {
-        'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+'/mean',
-        'prefix': self.backgroundPrefix,
-    }
-    self.outputs['mean'] = {
-        'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+'/mean',
-        'prefix': self.analysisPrefix,
-    }
+    if NN > 1
+      self.inputs['state']['mean'] = State({
+          'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+'/mean',
+          'prefix': self.backgroundPrefix,
+      }, meshes['Outer'])
+      self.outputs['state']['mean'] = State({
+          'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+'/mean',
+          'prefix': self.analysisPrefix,
+    else:
+      self.inputs['state']['mean'] = self.inputs['state']['members'][0]
+      self.outputs['state']['mean'] = self.outputs['state']['members'][0]

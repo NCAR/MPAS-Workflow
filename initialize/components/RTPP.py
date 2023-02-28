@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from initialize.Component import Component
+from initialize.data.StateEnsemble import StateEnsemble
 from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
@@ -21,7 +22,7 @@ class RTPP(Component):
     'retainOriginalAnalyses': [False, bool],
   }
 
-  def __init__(self, config, hpc, ensMesh, members, da, ensBackgrounds:list, ensAnalyses:list):
+  def __init__(self, config, hpc, ensMesh, members, da, ensBackgrounds:StateEnsemble, ensAnalyses:StateEnsemble):
     super().__init__(config)
 
     # WorkDir is where RTPP is executed

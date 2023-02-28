@@ -65,9 +65,10 @@ class DA(Component):
         # finished after post, clean after finished
         '''+self.post+''' => '''+self.finished+''' => '''+self.clean]
 
-    self.var = Variational(config, hpc, meshes, model, members, workflow, self)
+    self.var = Variational(config, hpc, meshes, model, obs, members, workflow, self)
     self.outputs = self.var.outputs
-    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self, self.var.inputs['members'], self.var.outputs['members'])
+    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self,
+                     self.var.inputs['state']['members'], self.var.outputs['state']['members'])
 
   def export(self, components):
     self.var.export(components)

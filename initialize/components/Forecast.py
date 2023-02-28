@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from initialize.Component import Component
+from initialize.data.StateEnsemble import StateEnsemble
 from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
@@ -24,7 +25,7 @@ class Forecast(Component):
     'IAU': [False, bool],
   }
 
-  def __init__(self, config, hpc, mesh, members, workflow, coldIC:list, warmIC:list):
+  def __init__(self, config, hpc, mesh, members, workflow, coldIC:StateEnsemble, warmIC:StateEnsemble):
     super().__init__(config)
 
     if members.n > 1:
@@ -33,6 +34,8 @@ class Forecast(Component):
       memFmt = ''
 
     self.mesh = mesh
+    assert self.mesh.name == coldIC.mesh(), 'coldIC must be on same mesh as forecast'
+    assert self.mesh.name == warmIC.mesh(), 'warmIC must be on same mesh as forecast'
 
     ###################
     # derived variables
@@ -99,8 +102,8 @@ class Forecast(Component):
         True,
         False,
         self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
-        coldIC[0]['directory'],
-        coldIC[0]['prefix'],
+        coldIC[0].directory(),
+        coldIC[0].prefix(),
       ]
       ColdArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
@@ -118,8 +121,8 @@ class Forecast(Component):
         True,
         updateSea,
         self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
-        warmIC[mm-1]['directory'],
-        warmIC[mm-1]['prefix'],
+        warmIC[mm-1].directory(),
+        warmIC[mm-1].prefix(),
       ]
       WarmArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
@@ -142,14 +145,14 @@ class Forecast(Component):
     # outputs
     #########
     self.outputs = {}
-    self.outputs['members'] = []
+    self.outputs['state']['members'] = StateEnsemble(self.mesh)
     for mm in range(1, members.n+1, 1):
-      self.outputs['members'].append({
+      self.outputs['state']['members'].append({
         'directory': self.workDir+'/[[prevCycleDate]]'+memFmt.format(mm),
         'prefix': self.forecastPrefix,
       })
 
-    #self.outputs['mean'] = {
+    #self.outputs['sate']['mean'] = {
     #    'directory': self.workDir+'/[[prevCycleDate]]/mean',
     #    'prefix': self.forecastPrefix,
     #}

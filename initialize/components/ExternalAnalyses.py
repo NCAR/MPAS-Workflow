@@ -3,6 +3,7 @@
 from copy import deepcopy
 
 from initialize.Component import Component
+from initialize.data.StateEnsemble import StateEnsemble
 from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
@@ -110,11 +111,13 @@ class ExternalAnalyses(Component):
     # outputs
     #########
     self.outputs = {}
-    for typ in meshes.keys():
-      self.outputs[typ] = [{
+    self.outputs['state'] = {}
+    for typ, mesh in meshes.items():
+      self.outputs['state'][typ] = StateEnsemble(mesh)
+      self.outputs['state'][typ].append({
         'directory': self['ExternalAnalysesDir'+typ],
         'prefix': self['externalanalyses__filePrefix'+typ],
-      }]
+      })
 
   def export(self, components):
     if 'extendedforecast' in components:

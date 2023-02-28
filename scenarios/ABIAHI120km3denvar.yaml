@@ -35,7 +35,7 @@ variational:
       resource: "PANDAC.GEFS"
   nInnerIterations: [60,]
   biasCorrection: True
-  observations: [
+  observers: [
     aircraft,
     gnssroref,
     satwind,

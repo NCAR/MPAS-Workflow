@@ -10,6 +10,15 @@ class Mesh():
     self.nCells = int(nCells)
     self.attrib = attrib
 
+  def __eq__(self, other):
+    return all([
+      isinstance(other, Mesh),
+      other.name == self.name
+      other.nCells == self.nCells
+      (other.attrib is None and self.attrib is None) or (other.attrib == self.attrib)
+    ])
+
+
 class Model(Component):
   defaults = 'scenarios/defaults/model.yaml'
   # mesh descriptors, e.g.:

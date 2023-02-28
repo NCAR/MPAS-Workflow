@@ -43,12 +43,12 @@ class Cycle(Suite):
     c['hofx'] = HofX(conf, c['hpc'], meshes, c['model'])
     c['da'] = DA(conf, c['hpc'], c['obs'], meshes, c['model'], c['members'], c['workflow'])
     c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['workflow'],
-                c['externalanalyses'].outputs['Outer'],
-                c['da'].outputs['members'])
+                c['externalanalyses'].outputs['state']['Outer'],
+                c['da'].outputs['state']['members'])
     c['extendedforecast'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
-                c['externalanalyses'].outputs['Outer'],
-                c['da'].outputs['mean'],
-                c['da'].outputs['members'])
+                c['externalanalyses'].outputs['state']['Outer'],
+                c['da'].outputs['state']['mean'],
+                c['da'].outputs['state']['members'])
 
     #if conf.has('verifymodel'): # TODO: make verifymodel optional
     c['vmodel'] = VerifyModel(conf, c['hpc'], meshes['Outer'], c['members'])

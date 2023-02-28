@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from initialize.Component import Component
+from initialize.data.StateEnsemble import StateEnsemble, State
 from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
@@ -23,8 +24,13 @@ class ExtendedForecast(Component):
     'ensTimes': ['T00', str],
   }
 
-  def __init__(self, config, hpc, members, forecast, extAnaIC:list, meanAnaIC:dict, ensAnaIC:list):
+  def __init__(self, config, hpc, members, forecast, extAnaIC:StateEnsemble, meanAnaIC:State, ensAnaIC:StateEnsemble):
     super().__init__(config)
+
+    self.mesh = forecast.mesh
+    assert self.mesh.name == extAnaIC.mesh(), 'extAnaIC must be on same mesh as extended forecast'
+    assert self.mesh.name == meanAnaIC.mesh(), 'meanAnaIC must be on same mesh as extended forecast'
+    assert self.mesh.name == ensAnaIC.mesh(), 'ensAnaIC must be on same mesh as extended forecast'
 
     ###################
     # derived variables
@@ -77,13 +83,13 @@ class ExtendedForecast(Component):
       lengthHR,
       outIntervalHR,
       False,
-      forecast.mesh.name,
+      self.mesh.name,
       False,
       False,
       False,
       self.workDir+'/{{thisCycleDate}}/mean',
-      extAnaIC[0]['directory'],
-      extAnaIC[0]['prefix'],
+      extAnaIC[0].directory(),
+      extAnaIC[0].prefix(),
     ]
     extAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
@@ -92,13 +98,13 @@ class ExtendedForecast(Component):
       lengthHR,
       outIntervalHR,
       False,
-      forecast.mesh.name,
+      self.mesh.name,
       True,
       False,
       False,
       self.workDir+'/{{thisCycleDate}}/mean',
-      meanAnaIC['directory'],
-      meanAnaIC['prefix'],
+      meanAnaIC.directory(),
+      meanAnaIC.prefix(),
     ]
     meanAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
@@ -137,13 +143,13 @@ class ExtendedForecast(Component):
         lengthHR,
         outIntervalHR,
         False,
-        forecast.mesh.name,
+        self.mesh.name,
         True,
         False,
         False,
         self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
-        ensAnaIC[mm-1]['directory'],
-        ensAnaIC[mm-1]['prefix'],
+        ensAnaIC[mm-1].directory(),
+        ensAnaIC[mm-1].prefix(),
       ]
       ensAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
@@ -156,14 +162,15 @@ class ExtendedForecast(Component):
     # outputs
     #########
     self.outputs = {}
-    self.outputs['members'] = []
+    self.outputs['state'] = {}
+    self.outputs['state']['members'] = StateEnsemble(self.mesh)
     for mm in range(1, members.n+1, 1):
-      self.outputs['members'].append({
+      self.outputs['state']['members'].append({
         'directory': self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
         'prefix': forecast.forecastPrefix,
       })
 
-    self.outputs['mean'] = {
+    self.outputs['state']['mean'] = {
         'directory': self.workDir+'/{{thisCycleDate}}/mean',
         'prefix': forecast.forecastPrefix,
     }
