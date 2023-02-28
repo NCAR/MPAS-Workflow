@@ -1,21 +1,18 @@
 workflow:
   # test a recent date
-  firstCyclePoint: 20210120T00
-  initialCyclePoint: 20210120T00
-  finalCyclePoint: 20210128T00
-  CriticalPathType: HofxGNSSROFromExternalAnalyses
+  firstCyclePoint: 20210122T18
+  initialCyclePoint: 20210122T18
+  finalCyclePoint: 20210123T00
+  CriticalPathType: Normal
+  VerifyDeterministicDA: False
   VerifyEnsMeanBG: True
-  maxActiveCyclePoints: 20
-  ExtendedMeanFCTimes: T00,T06,T18
-  ExtendedFCLengthHR: 6
-  ExtendedFCOutIntervalHR: 6
 observations:
   resource: AroObs
   convertToIODAObservations:
-  - prepbufr
-#  - gpsro
+#  - prepbufr
+  - gpsro
 experiment:
-  ExperimentName: '3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX'
+  ExperimentName: '3dvar_O30kmIE60km_ARO_bndsioropp2d_otherBuild'
 model:
   outerMesh: 30km
   innerMesh: 60km
@@ -33,8 +30,6 @@ firstbackground:
 externalanalyses:
   resource: "GFS.RDA"
 forecast:
-  doDACycling: False
-  deleteZerothForecast: False
   job:
     30km:
       # faster turnaround
@@ -49,7 +44,7 @@ forecast:
       secondsPerForecastHR: 300
 variational:
   DAType: 3dvar
-  nInnerIterations: [0,]
+  nInnerIterations: [60,60]
   biasCorrection: False
   benchmarkObservations:
 # anchor
@@ -82,16 +77,10 @@ hofx:
 #  - gnssrobndnbam
 #  - satwind
 #  - sfc
-  - sondes
+#  - sondes
 job:
-  CPAccountNumber: UCSD0041
   CPQueueName: premium
-  NCPAccountNumber: UCSD0041
   NCPQueueName: premium
-  EnsMeanBGAccountNumber: UCSD0041
-  EnsMeanBGQueueName: premium
-  SingleProcAccountNumber: UCSD0041
-  SingleProcQueueName: premium
 builds:
   commonBuild: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230223_geopFromObs
   # /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230223
