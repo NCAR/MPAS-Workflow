@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from initialize.data.DataList import DataList
+from initialize.Configurable import Configurable
 
 class ObsEnsemble(DataList):
   def __init__(self):
@@ -15,15 +16,16 @@ class ObsEnsemble(DataList):
     else:
       raise TypeError
 
-
-class ObsDB:
+class ObsDB(Configurable):
+  conf = {
+    'directory': {'typ': str, 'required': True},
+    'observers': {'typ': list, 'required': True},
+  }
   def __init__(self, conf:dict):
-    assert set(conf.keys()) == set(['directory', 'observers']), 'State: invalid conf element'+str(conf)
-    self.__directory = str(conf['directory'])
-    self.__observers = list(conf['observers'])
+    super().__init__(conf)
 
   def directory(self):
-    return self.__directory
+    return self._conf['directory']
 
   def observers(self):
-    return self.__observers
+    return self._conf['observers']

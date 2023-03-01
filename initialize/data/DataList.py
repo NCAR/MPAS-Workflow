@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import collections
-
 # copied from https://stackoverflow.com/questions/3487434/overriding-append-method-after-inheriting-from-a-python-list
+
+import collections
 
 class DataList(list, collections.MutableSequence):
     def __init__(self, check_method, iterator_arg=None):

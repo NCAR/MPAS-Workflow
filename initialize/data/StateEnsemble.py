@@ -2,6 +2,7 @@
 
 from initialize.components.Model import Mesh
 from initialize.data.DataList import DataList
+from initialize.Configurable import Configurable
 
 class StateEnsemble(DataList):
   def __init__(self, mesh:Mesh):
@@ -21,22 +22,23 @@ class StateEnsemble(DataList):
   def mesh(self):
     return self.__mesh
 
-class State:
+class State(Configurable):
+  conf = {
+    'directory': {'typ': str, 'required': True},
+    'prefix': {'typ': str, 'required': True},
+  }
   def __init__(self, conf:dict, mesh:Mesh):
-    assert set(conf.keys()) == set(['directory', 'prefix']), 'State: invalid conf element'+str(conf)
-
-    self.__directory = str(conf['directory'])
-    self.__prefix = str(conf['prefix'])
+    super().__init__(conf)
     self.__mesh = mesh
 
-#  def location(self):
-#    return self.__directory+'/'+self.__prefix
+  def location(self):
+    return self.directory()+'/'+self.prefix()
 
   def directory(self):
-    return self.__directory
+    return self._conf['directory']
 
   def prefix(self):
-    return self.__prefix
+    return self._conf['prefix']
 
   def mesh(self):
     return self.__mesh
