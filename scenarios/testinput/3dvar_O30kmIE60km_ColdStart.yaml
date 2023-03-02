@@ -1,7 +1,7 @@
 workflow:
   # test a recent date
   firstCyclePoint: 20210121T18
-  initialCyclePoint: 20210123T06
+  initialCyclePoint: 20210123T12
   finalCyclePoint: 20210202T00
   CriticalPathType: Normal
   VerifyDeterministicDA: True
@@ -48,8 +48,8 @@ variational:
     30km:
       60km:
         3dvar:
-          nodes: 8
-          PEPerNode: 24
+          nodes: 6
+          PEPerNode: 32
           memory: 109
           baseSeconds: 900
           secondsPerEnVarMember: 9
@@ -63,6 +63,17 @@ hofx:
   - satwind
   - sfc
   - sondes
+forecast:
+  job:
+    30km:
+      nodes: 4
+      PEPerNode: 36
+      baseSeconds: 150
+      secondsPerForecastHR: 200
 job:
   CPQueueName: premium
   NCPQueueName: premium
+builds:
+# default build directory
+  commonBuild: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_ufo_bug_fix_ropp2d
+  #/glade/work/bjung/panda-c/build/mpas-bundle_gnu-openmpi_25JAN2023_single
