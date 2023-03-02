@@ -14,12 +14,14 @@
 # external modules
 import argparse
 from collections.abc import Iterable
+import glob
 from pathlib import Path
+import subprocess
 
 # local modules
 from initialize.config.Config import Config
 from initialize.config.Scenario import Scenario
-from initialize.suites.Suite import SuiteFactory
+from initialize.suites.Suite import SuiteLookup
 
 def main():
   '''
@@ -43,7 +45,6 @@ class Run():
     self.__configFile = args.config
     self.__config = Config(args.config)
 
-
   def execute(self):
     '''
     execute the scenarios
@@ -66,12 +67,30 @@ class Run():
       print("Running the scenario: "+scenarioFile)
       print("#########################################################################")
 
+      self.clean()
+
       scenario = Scenario(scenarioFile)
       scenario.initialize()
 
-      suite = SuiteFactory(suiteName, scenario.getConfig())
-      suite.drive()
-      suite.clean()
+      suite = SuiteLookup(suiteName, scenario.getConfig())
+      suite.submit()
+
+    self.clean()
+
+  @staticmethod
+  def clean():
+    print('cleaning up auto-generated files...')
+
+    cmd = ['rm']
+
+    files = glob.glob("config/auto/*.csh")
+    for file in files:
+      sub = subprocess.run(cmd+[file])
+
+    files = glob.glob("include/*/auto/*.rc")
+    for file in files:
+      sub = subprocess.run(cmd+[file])
+
 
 ## execute main program
 if __name__ == '__main__': main()

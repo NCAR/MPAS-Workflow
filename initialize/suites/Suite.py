@@ -7,36 +7,20 @@
 ####################################################################################################
 
 import subprocess
-import glob
 
 from initialize.config.Config import Config
 
 class Suite():
-  def __init__(self, conf:Config):
+  def __init__(self):
     '''
     virtual method
     '''
     raise NotImplementedError()
 
-  def drive(self):
-    cmd = ['./drive.csh', self.__class__.__name__]
+  def submit(self):
+    cmd = ['./submit.csh', self.__class__.__name__]
     print(' '.join(cmd))
     sub = subprocess.run(cmd)
-
-  @staticmethod
-  def clean():
-    print('cleaning up auto-generated files...')
-
-    cmd = ['rm']
-    #cmd += ['-v']
-
-    files = glob.glob("config/auto/*.csh")
-    for file in files:
-      sub = subprocess.run(cmd+[file])
-
-    files = glob.glob("include/*/auto/*.rc")
-    for file in files:
-      sub = subprocess.run(cmd+[file])
 
 # Register all suite classes
 from initialize.suites.Cycle import Cycle
@@ -51,5 +35,5 @@ suiteDict = {
   'GenerateObs': GenerateObs,
 }
 
-def SuiteFactory(suiteName:str, conf:Config):
+def SuiteLookup(suiteName:str, conf:Config):
   return suiteDict[suiteName](conf)

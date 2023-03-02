@@ -439,3 +439,4 @@ class Variational(Component):
 
   def export(self, components):
     self.__post.export(components)
+    super().export(components)
