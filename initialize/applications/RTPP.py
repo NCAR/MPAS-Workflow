@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from initialize.applications.DA import DA
+#from initialize.applications.DA import DA
 from initialize.applications.Members import Members
 
 from initialize.config.Component import Component
@@ -13,7 +13,6 @@ from initialize.data.Observations import Observations
 from initialize.data.StateEnsemble import StateEnsemble
 
 from initialize.framework.HPC import HPC
-from initialize.framework.Workflow import Workflow
 
 class RTPP(Component):
   defaults = 'scenarios/defaults/rtpp.yaml'
@@ -37,7 +36,7 @@ class RTPP(Component):
     hpc:HPC,
     mesh:Mesh,
     members:Members,
-    da:DA,
+    da, #:DA,
     ensBackgrounds:StateEnsemble,
     ensAnalyses:StateEnsemble,
   ):
@@ -95,9 +94,9 @@ class RTPP(Component):
 '''+task.job()+task.directives()+'''
 
   [[CleanRTPP]]
-    inherit = Clean, '''+DA.clean+'''
+    inherit = Clean, '''+da.clean+'''
     script = $origin/applications/CleanRTPP.csh "'''+self.WorkDir+'"']
 
       da._dependencies += ['''
         PrepRTPP => RTPP
-        '''+DA.post+''' => RTPP => '''+DA.finished]
+        '''+da.post+''' => RTPP => '''+da.finished]

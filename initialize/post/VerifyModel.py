@@ -74,11 +74,16 @@ class VerifyModel(Component):
     dt = states.duration()
     dtStr = str(dt)
 
+    if len(states) > 1:
+      memFmt = '/mem{:03d}'
+    else:
+      memFmt = ''
+
     for mm, state in enumerate(states):
-      workDir = self.WorkDir+'/'+label+'/{{thisCycleDate}}'+memFmt.format(mm)
+      workDir = self.workDir+'/'+label+'/{{thisCycleDate}}'+memFmt.format(mm)
       if dt > 0 or label == 'fc':
         workDir += '/'+dtStr+'hr'
-      workDir += '/'+diagnosticsDir
+      workDir += '/'+self.diagnosticsDir
 
       args = [
         dt,
@@ -89,8 +94,9 @@ class VerifyModel(Component):
       ]
       AppArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
+      taskName = self.groupName+str(mm)+'-'+dtStr+'hr'
       self._tasks += ['''
-  [['''+self.groupName+str(mm)+'-'+dtStr+'hr]]
+  [['''+taskName+''']]
     inherit = '''+self.groupName+''', BATCH
     script = $origin/applications/'''+base+'''.csh '''+AppArgs]
 

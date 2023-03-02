@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-from initialize.Component import Component
+from initialize.config.Component import Component
+from initialize.config.Config import Config
+
+from initialize.data.Model import Model
 
 class Build(Component):
   variablesWithDefaults = {
@@ -18,31 +21,32 @@ class Build(Component):
       ['gnu-openmpi', 'intel-impi']],
   }
 
-  def __init__(self, config, model=None):
+  def __init__(self, config:Config, model:Model=None):
     super().__init__(config)
 
     ###################
     # derived variables
     ###################
 
+    # MPAS-JEDI
+    # ---------
+    ## Variational
+    self._set('VariationalEXE', 'mpasjedi_variational.x')
+    self._set('VariationalBuildDir', self['mpas bundle']+'/bin')
+
+    ## EnsembleOfVariational
+    self._set('EnsembleOfVariationalEXE', 'mpasjedi_eda.x')
+    self._set('EnsembleOfVariationalBuildDir', self['mpas bundle']+'/bin')
+
+    ## HofX
+    self._set('HofXEXE', 'mpasjedi_hofx3d.x')
+    self._set('HofXBuildDir', self['mpas bundle']+'/bin')
+
+    ## RTPP
+    self._set('RTPPEXE', 'mpasjedi_rtpp.x')
+    self._set('RTPPBuildDir', self['mpas bundle']+'/bin')
+
     if model is not None:
-      # MPAS-JEDI
-      # ---------
-      ## Variational
-      self._set('VariationalEXE', 'mpasjedi_variational.x')
-      self._set('VariationalBuildDir', self['mpas bundle']+'/bin')
-
-      ## EnsembleOfVariational
-      self._set('EnsembleOfVariationalEXE', 'mpasjedi_eda.x')
-      self._set('EnsembleOfVariationalBuildDir', self['mpas bundle']+'/bin')
-
-      ## HofX
-      self._set('HofXEXE', 'mpasjedi_hofx3d.x')
-      self._set('HofXBuildDir', self['mpas bundle']+'/bin')
-
-      ## RTPP
-      self._set('RTPPEXE', 'mpasjedi_rtpp.x')
-      self._set('RTPPBuildDir', self['mpas bundle']+'/bin')
 
       # MPAS-Model
       # ----------

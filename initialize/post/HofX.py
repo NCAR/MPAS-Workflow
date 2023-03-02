@@ -8,6 +8,7 @@ from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
 
 from initialize.data.Model import Model, Mesh
+from initialize.data.Observations import Observations
 from initialize.data.ObsEnsemble import ObsEnsemble
 from initialize.data.StateEnsemble import StateEnsemble
 
@@ -206,6 +207,6 @@ class HofX(Component):
         workDir += '/'+dtStr+'hr'
 
       self.outputs['obs']['members'].append({
-        'directory': workDir+'/'+obs.OutDBDir,
-        'observers': self['observers']
+        'directory': workDir+'/'+Observations.OutDBDir,
+        'observers': self['observers'],
       })

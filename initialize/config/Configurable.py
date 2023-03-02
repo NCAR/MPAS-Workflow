@@ -16,10 +16,10 @@ class Configurable:
 
       vv = conf.get(k, v.get('default', None))
 
-      typ = v['typ']
       if vv is not None:
         try:
-          vv = typ(v)
+          typ = v['typ']
+          vv = typ(vv)
         except:
           raise TypeError
 

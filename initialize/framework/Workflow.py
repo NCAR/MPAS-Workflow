@@ -3,8 +3,8 @@
 import datetime as dt
 import tools.dateFormats as dtf
 
-from initialize.Component import Component
-from initialize.Config import Config
+from initialize.config.Component import Component
+from initialize.config.Config import Config
 
 class Workflow(Component):
   variablesWithDefaults = {

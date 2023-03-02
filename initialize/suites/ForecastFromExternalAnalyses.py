@@ -7,13 +7,13 @@ from initialize.applications.Members import Members
 
 from initialize.config.Config import Config
 
+from initialize.data.ExternalAnalyses import ExternalAnalyses
 from initialize.data.Model import Model
 from initialize.data.Observations import Observations
 from initialize.data.StaticStream import StaticStream
 
 from initialize.framework.Build import Build
 from initialize.framework.Experiment import Experiment
-from initialize.framework.ExternalAnalyses import ExternalAnalyses
 from initialize.framework.HPC import HPC
 from initialize.framework.Naming import Naming
 from initialize.framework.Workflow import Workflow

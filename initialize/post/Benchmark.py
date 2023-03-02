@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from initialize.config.Component import Component
+from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
 

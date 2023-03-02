@@ -68,6 +68,9 @@ class Config():
   def __getitem__(self, key:str):
     return self.get(key)
 
+  def __setitem__(self, key:str, v):
+    self._table[key] = v
+
   def getOrDefault(self, key, default, t=None, options=None):
     '''option to provide default value as second argument'''
     v = self.get(key, t, options)

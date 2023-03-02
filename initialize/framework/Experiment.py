@@ -3,7 +3,14 @@
 import os
 import subprocess
 
-from initialize.Component import Component
+from initialize.applications.Members import Members
+from initialize.applications.RTPP import RTPP
+from initialize.applications.Variational import Variational
+
+from initialize.config.Component import Component
+from initialize.config.Config import Config
+
+from initialize.framework.HPC import HPC
 
 class Experiment(Component):
   PackageBaseName = 'MPAS-Workflow'
@@ -41,7 +48,14 @@ class Experiment(Component):
     'user directory child': ['pandac', str],
   }
 
-  def __init__(self, config, hpc, meshes=None, variational=None, members=None, rtpp=None):
+  def __init__(self,
+    config:Config,
+    hpc:HPC,
+    meshes:dict=None,
+    variational:Variational=None,
+    members:Members=None,
+    rtpp:RTPP=None,
+  ):
     super().__init__(config)
 
     ###################

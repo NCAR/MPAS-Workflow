@@ -3,8 +3,8 @@
 import os
 import subprocess
 
-from initialize.Component import Component
-from initialize.Config import Config
+from initialize.config.Component import Component
+from initialize.config.Config import Config
 
 class HPC(Component):
   system = 'cheyenne'

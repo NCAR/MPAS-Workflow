@@ -2,7 +2,7 @@
 
 from collections import OrderedDict
 
-from initialize.applications.DA import DA
+#from initialize.applications.DA import DA
 from initialize.applications.Members import Members
 
 from initialize.config.Component import Component
@@ -174,7 +174,7 @@ class Variational(Component):
     obs:Observations,
     members:Members,
     workflow:Workflow,
-    da:DA,
+    da, #:DA,
     #forecast:Forecast,
   ):
     super().__init__(config)
@@ -336,7 +336,7 @@ class Variational(Component):
     da._tasks += ['''
   ## variational tasks
   [[InitVariational]]
-    inherit = '''+DA.init+''', SingleBatch
+    inherit = '''+da.init+''', SingleBatch
     env-script = cd {{mainScriptDir}}; ./applications/PrepJEDI.csh '''+PrepJEDIArgs+'''
     script = $origin/applications/PrepVariational.csh "1"
     [[[job]]]
@@ -354,7 +354,7 @@ class Variational(Component):
 
   # clean
   [[CleanVariational]]
-    inherit = Clean, '''+DA.clean+'''
+    inherit = Clean, '''+da.clean+'''
     script = $origin/applications/CleanVariational.csh''']
 
     if EDASize == 1:
@@ -362,7 +362,7 @@ class Variational(Component):
       for mm in range(1, NN+1, 1):
         da._tasks += ['''
   [[Variational'''+str(mm)+''']]
-    inherit = '''+DA.execute+''', Variationals, BATCH
+    inherit = '''+da.execute+''', Variationals, BATCH
     script = $origin/applications/Variational.csh "'''+str(mm)+'"']
 
     else:
@@ -370,16 +370,16 @@ class Variational(Component):
       for instance in range(1, nDAInstances+1, 1):
         da._tasks += ['''
   [[EDA'''+str(instance)+''']]
-    inherit = '''+DA.execute+''', Variationals, BATCH
+    inherit = '''+da.execute+''', Variationals, BATCH
     script = \$origin/applications/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     if self['ABEInflation']:
       da._dependencies += ['''
         # abei
-        '''+DA.pre+''' =>
+        '''+da.pre+''' =>
         MeanBackground =>
         HofXEnsMeanBG =>
-        GenerateABEInflation => '''+DA.init+'''
+        GenerateABEInflation => '''+da.init+'''
         GenerateABEInflation => CleanHofXEnsMeanBG''']
 
     #########################
@@ -403,7 +403,7 @@ class Variational(Component):
         'prefix': self.analysisPrefix,
       })
       self.outputs['obs']['members'].append({
-        'directory': self.workDir+'/{{thisCycleDate}}/'+obs.OutDBDir+'/'+memFmt.format(mm),
+        'directory': self.workDir+'/{{thisCycleDate}}/'+Observations.OutDBDir+'/'+memFmt.format(mm),
         'observers': self['observers']
       })
 
@@ -426,8 +426,8 @@ class Variational(Component):
       'label': 'da',
       'valid tasks': ['verifyobs'],
       'verifyobs': {
-        'dependencies': [DA.finished],
-        'followon': [DA.clean],
+        'dependencies': [da.finished],
+        'followon': [da.clean],
       },
     }
 
@@ -437,5 +437,5 @@ class Variational(Component):
       obs = self.outputs['obs']['members'],
     )
 
-  def export(components):
+  def export(self, components):
     self.__post.export(components)

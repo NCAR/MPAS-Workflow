@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from initialize.applications.Members import Config
+from initialize.applications.Members import Members
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config

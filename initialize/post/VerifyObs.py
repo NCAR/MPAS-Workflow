@@ -74,8 +74,8 @@ class VerifyObs(Component):
     msg = base+': one and only one of states or obs must be defined'
     if obs is None:
       assert states is not None, msg
-      self.__hofx = HofX(config, hpc, mesh, model, states, label, dependencies)
-      obsLocal = self.__hofx.outputs['obs']
+      self.__hofx = HofX(config, hpc, mesh, model, label, dependencies, states)
+      obsLocal = self.__hofx.outputs['obs']['members']
 
       self._dependencies += ['''
       '''+self.__hofx.groupName+''' => '''+self.groupName]
@@ -94,11 +94,16 @@ class VerifyObs(Component):
   [['''+self.groupName+''']]
 '''+task.job()+task.directives()]
 
-    dt = obs.duration()
+    dt = obsLocal.duration()
     dtStr = str(dt)
 
-    for mm, o in enumerate(obs):
-      workDir = self.WorkDir+'/'+label+'/{{thisCycleDate}}'+memFmt.format(mm)
+    if len(obsLocal) > 1:
+      memFmt = '/mem{:03d}'
+    else:
+      memFmt = ''
+
+    for mm, o in enumerate(obsLocal):
+      workDir = self.workDir+'/'+label+'/{{thisCycleDate}}'+memFmt.format(mm)
       if dt > 0 or label == 'fc':
         workDir += '/'+dtStr+'hr'
       workDir += '/'+self.diagnosticsDir
@@ -113,8 +118,9 @@ class VerifyObs(Component):
       ]
       AppArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
+      taskName = self.groupName+str(mm)+'-'+dtStr+'hr'
       self._tasks += ['''
-  [['''+self.groupName+str(mm)+'-'+dtStr+'hr]]
+  [['''+taskName+''']]
     inherit = '''+self.groupName+''', BATCH
     script = $origin/applications/'''+base+'''.csh '''+AppArgs]
 

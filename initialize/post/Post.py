@@ -4,6 +4,8 @@ from initialize.config.Configurable import Configurable
 from initialize.config.Config import Config
 
 from initialize.data.Model import Model, Mesh
+from initialize.data.ObsEnsemble import ObsEnsemble
+from initialize.data.StateEnsemble import StateEnsemble
 
 from initialize.framework.HPC import HPC
 
@@ -54,9 +56,11 @@ class Post(Configurable):
         self['label'], self[t], hpc, mesh, states)
 
   def export(self, components):
+    self.__tasks = []
+    self.__dependencies = []
     for t in self.__taskObj.values():
-      self._tasks += t._tasks
-      self._dependencies += t._dependencies
+      self.__tasks += t._tasks
+      self.__dependencies += t._dependencies
 
     self.__exportTasks()
     self.__exportDependencies()
@@ -75,10 +79,10 @@ class Post(Configurable):
 
   # cylc dependencies
   def __exportDependencies(self):
-    self.__toTextFile('include/dependencies/auto/'+self.autoLabel+'.rc', self._dependencies)
+    self.__toTextFile('include/dependencies/auto/'+self.autoLabel+'.rc', self.__dependencies)
     return
 
   # cylc tasks
   def __exportTasks(self):
-    self.__toTextFile('include/tasks/auto/'+self.autoLabel+'.rc', self._tasks)
+    self.__toTextFile('include/tasks/auto/'+self.autoLabel+'.rc', self.__tasks)
     return

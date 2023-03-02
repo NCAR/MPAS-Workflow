@@ -4,6 +4,7 @@ from initialize.applications.Forecast import Forecast
 from initialize.applications.Members import Members
 
 from initialize.config.Component import Component
+from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
 
@@ -52,10 +53,9 @@ class ExtendedForecast(Component):
   ):
     super().__init__(config)
 
-    self.mesh = forecast.mesh
-    assert self.mesh == extAnaIC.mesh(), 'extAnaIC must be on same mesh as extended forecast'
-    assert self.mesh == meanAnaIC.mesh(), 'meanAnaIC must be on same mesh as extended forecast'
-    assert self.mesh == ensAnaIC.mesh(), 'ensAnaIC must be on same mesh as extended forecast'
+    assert forecast.mesh == extAnaIC.mesh(), 'extAnaIC must be on same mesh as extended forecast'
+    assert forecast.mesh == meanAnaIC.mesh(), 'meanAnaIC must be on same mesh as extended forecast'
+    assert forecast.mesh == ensAnaIC.mesh(), 'ensAnaIC must be on same mesh as extended forecast'
 
     ###################
     # derived variables
@@ -108,7 +108,7 @@ class ExtendedForecast(Component):
       lengthHR,
       outIntervalHR,
       False,
-      self.mesh.name,
+      forecast.mesh.name,
       False,
       False,
       False,
@@ -123,7 +123,7 @@ class ExtendedForecast(Component):
       lengthHR,
       outIntervalHR,
       False,
-      self.mesh.name,
+      forecast.mesh.name,
       True,
       False,
       False,
@@ -167,7 +167,7 @@ class ExtendedForecast(Component):
         lengthHR,
         outIntervalHR,
         False,
-        self.mesh.name,
+        forecast.mesh.name,
         True,
         False,
         False,
@@ -193,8 +193,8 @@ class ExtendedForecast(Component):
     postconf = {
       'tasks': self['post'],
       'valid tasks': ['verifyobs', 'verifymodel'],
-      'verifyobs': {}
-      'verifymodel': {}
+      'verifyobs': {},
+      'verifymodel': {},
     }
 
     self.__post = []
@@ -221,7 +221,7 @@ class ExtendedForecast(Component):
       # note: only duration (dt) varies across output state
 
       # ensemble forecasts
-      self.outputs['state']['members'][dtStr] = StateEnsemble(self.mesh, dt)
+      self.outputs['state']['members'][dtStr] = StateEnsemble(forecast.mesh, dt)
       for mm in range(1, members.n+1, 1):
         self.outputs['state']['members'][dtStr].append({
           'directory': self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
@@ -231,12 +231,12 @@ class ExtendedForecast(Component):
       postconf['label'] = 'ensfc'
       self.__post.append(Post(
         postconf, config,
-        hpc, mesh, model,
+        hpc, forecast.mesh, forecast.model,
         states = self.outputs['state']['members'][dtStr],
       ))
 
       # mean forecast
-      self.outputs['state']['mean'][dtStr] = StateEnsemble(self.mesh, dt)
+      self.outputs['state']['mean'][dtStr] = StateEnsemble(forecast.mesh, dt)
       self.outputs['state']['mean'][dtStr].append({
           'directory': self.workDir+'/{{thisCycleDate}}/mean',
           'prefix': Forecast.forecastPrefix,
@@ -245,7 +245,7 @@ class ExtendedForecast(Component):
       postconf['label'] = 'fc'
       self.__post.append(Post(
         postconf, config,
-        hpc, mesh, model,
+        hpc, forecast.mesh, forecast.model,
         states = self.outputs['state']['mean'][dtStr],
       ))
 

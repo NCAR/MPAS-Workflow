@@ -13,6 +13,7 @@ from initialize.data.Model import Model, Mesh
 from initialize.data.StateEnsemble import StateEnsemble
 
 from initialize.framework.HPC import HPC
+from initialize.framework.Workflow import Workflow
 
 from initialize.post.Post import Post
 
@@ -61,18 +62,21 @@ class Forecast(Component):
     assert self.mesh == coldIC.mesh(), 'coldIC must be on same mesh as forecast'
     assert self.mesh == warmIC.mesh(), 'warmIC must be on same mesh as forecast'
 
+    self.model = model
+
     ###################
     # derived variables
     ###################
 
     IAU = self['IAU']
 
+    window = workflow['CyclingWindowHR']
     if IAU:
-      outIntervalHR = workflow['CyclingWindowHR'] // 2
+      outIntervalHR = window // 2
       lengthHR = 3 * outIntervalHR
     else:
-      outIntervalHR = workflow['CyclingWindowHR']
-      lengthHR = workflow['CyclingWindowHR']
+      outIntervalHR = window
+      lengthHR = window
 
     ########################
     # tasks and dependencies
@@ -189,7 +193,7 @@ class Forecast(Component):
     self.outputs = {}
     self.outputs['state'] = {}
 
-    previousForecast = 'ForecastFinished[-PT'+workflow['CyclingWindowHR']+'H]'
+    previousForecast = 'ForecastFinished[-PT'+str(window)+'H]'
     self.__post = []
 
     postconf = {
