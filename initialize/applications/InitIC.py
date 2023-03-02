@@ -87,7 +87,7 @@ class InitIC(Component):
           self._tasks += ['''
   [['''+taskName+''']]
     inherit = ConvertExternalAnalyses, BATCH
-    script = $origin/applications/ExternalAnalysisToMPAS.csh '''+initArgs+'''
+    script = $origin/bin/ExternalAnalysisToMPAS.csh '''+initArgs+'''
 '''+self.__task.job()+self.__task.directives()+'''
     [[[events]]]
       submission timeout = PT10M

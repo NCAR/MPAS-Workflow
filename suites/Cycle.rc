@@ -46,9 +46,6 @@
 %include include/tasks/auto/initic.rc
 %include include/tasks/auto/observations.rc
 %include include/tasks/auto/postbg.rc
-{% if nMembers > 1 %}
-%include include/tasks/auto/postbgmean.rc
-{% endif %}
 %include include/tasks/auto/postda.rc
 %include include/tasks/auto/postfc.rc
 

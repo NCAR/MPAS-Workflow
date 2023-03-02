@@ -337,8 +337,8 @@ class Variational(Component):
   ## variational tasks
   [[InitVariational]]
     inherit = '''+da.init+''', SingleBatch
-    env-script = cd {{mainScriptDir}}; ./applications/PrepJEDI.csh '''+PrepJEDIArgs+'''
-    script = $origin/applications/PrepVariational.csh "1"
+    env-script = cd {{mainScriptDir}}; ./bin/PrepJEDI.csh '''+PrepJEDIArgs+'''
+    script = $origin/bin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+varjob['retry']+'''
@@ -349,13 +349,13 @@ class Variational(Component):
   # inflation
   [[GenerateABEInflation]]
     inherit = '''+da.groupName+''', BATCH
-    script = $origin/applications/GenerateABEInflation.csh
+    script = $origin/bin/GenerateABEInflation.csh
 '''+abeitask.job()+abeitask.directives()+'''
 
   # clean
   [[CleanVariational]]
     inherit = Clean, '''+da.clean+'''
-    script = $origin/applications/CleanVariational.csh''']
+    script = $origin/bin/CleanVariational.csh''']
 
     if EDASize == 1:
       # single instance or ensemble of Variational(s)
@@ -363,7 +363,7 @@ class Variational(Component):
         da._tasks += ['''
   [[Variational'''+str(mm)+''']]
     inherit = '''+da.execute+''', Variationals, BATCH
-    script = $origin/applications/Variational.csh "'''+str(mm)+'"']
+    script = $origin/bin/Variational.csh "'''+str(mm)+'"']
 
     else:
       # single instance or ensemble of EnsembleOfVariational(s)
@@ -371,7 +371,7 @@ class Variational(Component):
         da._tasks += ['''
   [[EDA'''+str(instance)+''']]
     inherit = '''+da.execute+''', Variationals, BATCH
-    script = \$origin/applications/EnsembleOfVariational.csh "'''+str(instance)+'"']
+    script = \$origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     if self['ABEInflation']:
       da._dependencies += ['''
@@ -426,6 +426,7 @@ class Variational(Component):
       'label': 'da',
       'valid tasks': ['verifyobs'],
       'verifyobs': {
+        'sub directory': 'da',
         'dependencies': [da.finished],
         'followon': [da.clean],
       },

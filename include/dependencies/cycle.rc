@@ -57,9 +57,6 @@
     [[[{{AnalysisTimes}}]]]
       graph = '''
 %include include/dependencies/auto/postbg.rc
-{% if nMembers > 1 %}
-%include include/dependencies/auto/postbgmean.rc
-{% endif %}
 %include include/dependencies/auto/postda.rc
       '''
 
@@ -75,6 +72,6 @@
     [[[{{extEnsTimes}}]]]
       graph = '''
         DAFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
-%include include/dependencies/auto/postfc.rc
+%include include/dependencies/auto/postensfc.rc
       '''
 {% endif %}

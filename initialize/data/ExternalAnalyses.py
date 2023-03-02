@@ -158,7 +158,7 @@ class ExternalAnalyses(Component):
         self._tasks += ['''
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
-    script = $origin/applications/'''+base+'''.csh
+    script = $origin/bin/'''+base+'''.csh
     [[[job]]]
       execution time limit = PT45M
       execution retry delays = '''+self.__getRetry]
@@ -178,7 +178,7 @@ class ExternalAnalyses(Component):
         self._tasks += ['''
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
-    script = $origin/applications/'''+base+'''.csh '''+dt_work_Args+'''
+    script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+self.__getRetry]
@@ -198,7 +198,7 @@ class ExternalAnalyses(Component):
         self._tasks += ['''
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
-    script = $origin/applications/'''+base+'''.csh '''+dt_work_Args+'''
+    script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+self.__getRetry]
@@ -218,7 +218,7 @@ class ExternalAnalyses(Component):
         self._tasks += ['''
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
-    script = $origin/applications/'''+base+'''.csh '''+dt_work_Args+'''
+    script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
 '''+self.__ungribtask.job()+self.__ungribtask.directives()]
 
         # generic 0hr task name for external classes/tasks to grab
@@ -259,7 +259,7 @@ class ExternalAnalyses(Component):
           self._tasks += ['''
   [['''+taskNames[(base, meshName)]+''']]
     inherit = '''+queue+''', SingleBatch
-    script = $origin/applications/'''+base+'''.csh '''+linkArgs+'''
+    script = $origin/bin/'''+base+'''.csh '''+linkArgs+'''
     [[[job]]]
       execution time limit = PT90S
       execution retry delays = 5*PT30S

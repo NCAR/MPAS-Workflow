@@ -11,18 +11,28 @@ date
 # Setup environment
 # =================
 source config/auto/experiment.csh
+source config/auto/rtpp.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
-source ./getCycleVars.csh
+source ./bin/getCycleVars.csh
 
-# remove static work directory if it already exists
+# static work directory
 set self_WorkDir = "${ExperimentDirectory}/"`echo "$ArgWorkDir" \
   | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
   `
-if ( -d $self_WorkDir ) then
-  rm -r $self_WorkDir
+echo "WorkDir = ${self_WorkDir}"
+cd ${self_WorkDir}
+
+# ================================================================================================
+
+# Remove original analyses before RTPP
+# ====================================
+if ("${retainOriginalAnalyses}" == False) then
+  rm -r ${analysisSubDir}BeforeRTPP
 endif
+
+date
 
 exit 0

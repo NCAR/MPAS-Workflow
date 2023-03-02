@@ -126,7 +126,7 @@ class Observations(Component):
         self._tasks += ['''
   [['''+taskName+''']]
     inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/'''+base+'''.csh '''+dt_work_Args+'''
+    script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = '''+self['getRetry']]
@@ -146,7 +146,7 @@ class Observations(Component):
         self._tasks += ['''
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
-    script = $origin/applications/'''+base+'''.csh '''+dt_work_Args+'''
+    script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT600S
       execution retry delays = '''+self['convertRetry']+'''

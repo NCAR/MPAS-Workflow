@@ -52,7 +52,7 @@ set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
-source ./getCycleVars.csh
+source ./bin/getCycleVars.csh
 
 # getObservationsOrNone exposes the observations section of the config for run-time-dependent
 # behaviors

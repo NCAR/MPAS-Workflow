@@ -44,16 +44,13 @@ class Post(Configurable):
       assert t in self.validTasks, 'Post: invalid task => '+t
       assert t in self['valid tasks'], 'Post: invalid task for parent => '+t
 
-    t = 'verifyobs'
-    if t in self['tasks']:
-      self.__taskObj[t] = VerifyObs(globalConf,
-        self['label'], self[t], hpc, mesh, model, states = states, obs = obs)
+      if t == 'verifyobs':
+        self.__taskObj[t] = VerifyObs(globalConf,
+          self[t], hpc, mesh, model, states = states, obs = obs)
  
-    t = 'verifymodel'
-    if t in self['tasks']:
-      assert states is not None, 'Post: states must be defined for '+t
-      self.__taskObj[t] = VerifyModel(globalConf,
-        self['label'], self[t], hpc, mesh, states)
+      if t == 'verifymodel':
+        self.__taskObj[t] = VerifyModel(globalConf,
+          self[t], hpc, mesh, states)
 
   def export(self, components):
     self.__tasks = []
@@ -69,20 +66,20 @@ class Post(Configurable):
 
   ## export methods
   @staticmethod
-  def __toTextFile(filename, Str):
+  def __appendToTextFile(filename, Str):
     #if len(Str) == 0: return
     #self._msg('Creating '+filename)
-    with open(filename, 'w') as f:
+    with open(filename, 'a') as f:
       f.writelines(Str)
       f.close()
     return
 
   # cylc dependencies
   def __exportDependencies(self):
-    self.__toTextFile('include/dependencies/auto/'+self.autoLabel+'.rc', self.__dependencies)
+    self.__appendToTextFile('include/dependencies/auto/'+self.autoLabel+'.rc', self.__dependencies)
     return
 
   # cylc tasks
   def __exportTasks(self):
-    self.__toTextFile('include/tasks/auto/'+self.autoLabel+'.rc', self.__tasks)
+    self.__appendToTextFile('include/tasks/auto/'+self.autoLabel+'.rc', self.__tasks)
     return

@@ -90,20 +90,21 @@ class HofX(Component):
 
   def __init__(self,
     config:Config,
+    localConf:dict,
     hpc:HPC,
     mesh:Mesh,
     model:Model,
-    label:str,
-    dependencies:list,
     states:StateEnsemble,
   ):
     super().__init__(config)
-    self.autoLabel += label
+
+    subDirectory = str(localConf['sub directory'])
+    dependencies = list(localConf.get('dependencies', []))
 
     if len(states) > 1:
       memFmt = '/mem{:03d}'
     else:
-      memFmt = ''
+      memFmt = '/mean'
 
     ###################
     # derived variables
@@ -138,7 +139,7 @@ class HofX(Component):
 
     # tasks
     base = self.__class__.__name__
-    self.groupName = base+label.upper()
+    self.groupName = base+subDirectory.upper()
     self.clean = 'Clean'+self.groupName
 
     self._tasks += ['''
@@ -149,8 +150,8 @@ class HofX(Component):
     dt = states.duration()
     dtStr = str(dt)
     for mm, state in enumerate(states):
-      workDir = self.WorkDir+'/'+label+'/{{thisCycleDate}}'+memFmt.format(mm)
-      if dt > 0 or label == 'fc':
+      workDir = self.WorkDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm)
+      if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'
 
       args = [
@@ -181,11 +182,11 @@ class HofX(Component):
       self._tasks += ['''
   [['''+HofXTask+''']]
     inherit = '''+self.groupName+''', BATCH
-    env-script = cd {{mainScriptDir}}; ./applications/PrepJEDI.csh '''+PrepJEDIArgs+'''
-    script = $origin/applications/'''+base+'''.csh '''+HofXArgs+'''
+    env-script = cd {{mainScriptDir}}; ./bin/PrepJEDI.csh '''+PrepJEDIArgs+'''
+    script = $origin/bin/'''+base+'''.csh '''+HofXArgs+'''
   [['''+CleanTask+''']]
     inherit = '''+self.clean+''', Clean
-    script = $origin/applications/Clean'''+base+'''.csh '''+CleanArgs]
+    script = $origin/bin/Clean'''+base+'''.csh '''+CleanArgs]
 
       self._dependencies += ['''
        '''+HofXTask+''' => '''+CleanTask]
@@ -202,8 +203,8 @@ class HofX(Component):
     self.outputs['obs'] = {}
     self.outputs['obs']['members'] = ObsEnsemble(dt)
     for mm in range(1, len(states)+1, 1): 
-      workDir = self.WorkDir+'/'+label+'/{{thisCycleDate}}'+memFmt.format(mm)
-      if dt > 0 or label == 'fc':
+      workDir = self.WorkDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm)
+      if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'
 
       self.outputs['obs']['members'].append({

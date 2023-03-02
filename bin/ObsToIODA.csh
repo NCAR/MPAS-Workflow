@@ -30,7 +30,7 @@ set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${ccyymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 
-source ./getCycleVars.csh
+source ./bin/getCycleVars.csh
 
 set ccyy = `echo ${thisValidDate} | cut -c 1-4`
 

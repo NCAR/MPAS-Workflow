@@ -129,7 +129,7 @@ class Forecast(Component):
   ## post mean background (if needed)
   [[MeanBackground]]
     inherit = '''+self.groupName+''', BATCH
-    script = $origin/applications/MeanBackground.csh
+    script = $origin/bin/MeanBackground.csh
 '''+meantask.job()+meantask.directives()]
 
     for mm in range(1, members.n+1, 1):
@@ -175,10 +175,10 @@ class Forecast(Component):
       self._tasks += ['''
   [[ColdForecast'''+str(mm)+''']]
     inherit = ColdForecast, BATCH
-    script = $origin/applications/Forecast.csh '''+ColdArgs+'''
+    script = $origin/bin/Forecast.csh '''+ColdArgs+'''
   [[Forecast'''+str(mm)+''']]
     inherit = Forecast, BATCH
-    script = $origin/applications/Forecast.csh '''+WarmArgs]
+    script = $origin/bin/Forecast.csh '''+WarmArgs]
 
     self._dependencies += ['''
         # ensure there is a valid sea-surface update file before forecast
@@ -201,9 +201,11 @@ class Forecast(Component):
       'label': 'bg',
       'valid tasks': ['verifyobs', 'verifymodel'],
       'verifyobs': {
+        'sub directory': 'bg',
         'dependencies': [previousForecast, '{{PrepareObservations}}'],
       },
       'verifymodel': {
+        'sub directory': 'bg',
         'dependencies': [previousForecast, '{{PrepareExternalAnalysisOuter}}'],
       },
     }
@@ -216,8 +218,7 @@ class Forecast(Component):
       # store original conf values
       pp = deepcopy(postconf)
 
-      # override for bgmean tasks
-      postconf['label'] = 'bgmean'
+      # re-prupose for mean bg tasks
       for k in ['verifyobs', 'verifymodel']:
         postconf[k]['dependencies'] += ['MeanBackground']
         postconf[k]['member multiplier'] = members.n

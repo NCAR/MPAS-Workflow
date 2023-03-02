@@ -75,7 +75,7 @@ set self_icStateDir = ${ExperimentDirectory}/`echo "${ArgICStateDir}" \
   | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
   `
 
-source ./getCycleVars.csh
+source ./bin/getCycleVars.csh
 
 # nCells
 if ("$ArgMesh" == "$outerMesh") then

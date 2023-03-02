@@ -24,7 +24,6 @@ class VerifyObs(Component):
 
   def __init__(self,
     config:Config,
-    label:str,
     localConf:dict,
     hpc:HPC,
     mesh:Mesh,
@@ -36,6 +35,7 @@ class VerifyObs(Component):
 
     base = self.__class__.__name__
 
+    subDirectory = str(localConf['sub directory'])
     dependencies = list(localConf.get('dependencies', []))
     followon = list(localConf.get('followon', []))
     memberMultiplier = int(localConf.get('member multiplier', 1))
@@ -74,7 +74,7 @@ class VerifyObs(Component):
     msg = base+': one and only one of states or obs must be defined'
     if obs is None:
       assert states is not None, msg
-      self.__hofx = HofX(config, hpc, mesh, model, label, dependencies, states)
+      self.__hofx = HofX(config, localConf, hpc, mesh, model, states)
       obsLocal = self.__hofx.outputs['obs']['members']
 
       self._dependencies += ['''
@@ -86,10 +86,20 @@ class VerifyObs(Component):
       assert states is None, msg
       self.__hofx = None
       obsLocal = obs
+
+      for d in dependencies:
+        self._dependencies += ['''
+      '''+d+''' => '''+self.groupName]
+
       appType = 'variational'
 
+    if len(obsLocal) > 1:
+      memFmt = '/mem{:03d}'
+    else:
+      memFmt = '/mean'
+
     # tasks
-    self.groupName = base+label.upper()
+    self.groupName = base+subDirectory.upper()
     self._tasks += ['''
   [['''+self.groupName+''']]
 '''+task.job()+task.directives()]
@@ -97,14 +107,9 @@ class VerifyObs(Component):
     dt = obsLocal.duration()
     dtStr = str(dt)
 
-    if len(obsLocal) > 1:
-      memFmt = '/mem{:03d}'
-    else:
-      memFmt = ''
-
     for mm, o in enumerate(obsLocal):
-      workDir = self.workDir+'/'+label+'/{{thisCycleDate}}'+memFmt.format(mm)
-      if dt > 0 or label == 'fc':
+      workDir = self.workDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm)
+      if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'
       workDir += '/'+self.diagnosticsDir
 
@@ -122,7 +127,7 @@ class VerifyObs(Component):
       self._tasks += ['''
   [['''+taskName+''']]
     inherit = '''+self.groupName+''', BATCH
-    script = $origin/applications/'''+base+'''.csh '''+AppArgs]
+    script = $origin/bin/'''+base+'''.csh '''+AppArgs]
 
   def export(components):
     if self.__hofx is not None:

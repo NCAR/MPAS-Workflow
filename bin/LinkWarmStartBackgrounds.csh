@@ -7,7 +7,7 @@ source config/auto/workflow.csh
 
 set thisCycleDate = $FirstCycleDate
 set thisValidDate = $thisCycleDate
-source ./getCycleVars.csh
+source ./bin/getCycleVars.csh
 
 set member = 1
 while ( $member <= $nMembers )

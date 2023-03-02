@@ -28,16 +28,17 @@ set ccyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${ccyymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
-set prevValidDate = `$advanceCYMDH ${thisCycleDate} -6`
 
-source ./getCycleVars.csh
+source ./bin/getCycleVars.csh
 
 set ccyymmdd = `echo ${thisValidDate} | cut -c 1-8`
-set ccyy = `echo ${thisValidDate} | cut -c 1-4`
+set hh = `echo ${thisValidDate} | cut -c 9-10`
 
 set res = 0p25
 set fhour = 000
-set gribFile = ${ccyy}/${ccyymmdd}/gfs.${res}.${thisValidDate}.f${fhour}.grib2
+# url for GFS data
+set gfs_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gfs.${ccyymmdd}/${hh}/atmos
+set gribFile = gfs.t${hh}z.pgrb2.${res}.f${fhour}
 
 set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
   | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
@@ -63,26 +64,24 @@ set linkWPS = link_grib.csh
 ln -sfv ${WPSBuildDir}/${linkWPS} .
 rm -rf GRIBFILE.*
 
-echo "Getting GFS analysis from RDA"
-# RDA GFS forecasts directory
-set GFSgribdirRDA = /gpfs/fs1/collections/rda/data/ds084.1
-
-if ( ! -e ${GFSgribdirRDA}/${gribFile} ) then
-   set preVyymmdd = `echo ${prevValidDate} | cut -c 1-8`
-   set preVyy = `echo ${prevValidDate} | cut -c 1-4`
-   set preVhh = `echo ${prevValidDate} | cut -c 9-10`
-   set nexTfhour = 006
-   set gribFile = ${preVyy}/${preVyymmdd}/gfs.${res}.${preVyymmdd}${preVhh}.f${nexTfhour}.grib2
+echo "Getting GFS analysis from the NCEP FTP"
+# check if the GFS analysis is available
+if ( ! -e ${gribFile}) then
+  set gfs_ftp_file = ${gfs_ftp}/${gribFile}
+  wget -S --spider $gfs_ftp_file >&! log_check_gfs_f000
+  grep "HTTP/1.1 200 OK" log_check_gfs_f000
+  # if the file exists then download it
+  # otherwise, exit with failure
+  if ( $status == 0 ) then
+    echo "Downloading $gfs_ftp_file ..."
+    wget -r -np -nd $gfs_ftp_file
+  else
+    echo "$gribFile not available yet -- exiting"
+    exit 1
+  endif
 endif
-
 # link ungribbed GFS
-./${linkWPS} ${GFSgribdirRDA}/${gribFile}
-
-# check if the gribFile was linked
-if ( ! -e "GRIBFILE.AAA") then
-   echo "GRIBFILE.AAA is not in folder -- exiting"
-   exit 1
-endif
+./${linkWPS} $gribFile
 
 date
 

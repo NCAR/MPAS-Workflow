@@ -141,16 +141,16 @@ class ExtendedForecast(Component):
   ## from external analysis
   [[ExtendedFCFromExternalAnalysis]]
     inherit = '''+self.groupName+''', BATCH
-    script = $origin/applications/Forecast.csh '''+extAnaArgs+'''
+    script = $origin/bin/Forecast.csh '''+extAnaArgs+'''
 
   ## from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
     inherit = '''+self.groupName+''', BATCH
-    script = $origin/applications/MeanAnalysis.csh
+    script = $origin/bin/MeanAnalysis.csh
 '''+meantask.job()+meantask.directives()+'''
   [[ExtendedMeanFC]]
     inherit = '''+self.groupName+''', BATCH
-    script = $origin/applications/Forecast.csh '''+meanAnaArgs+'''
+    script = $origin/bin/Forecast.csh '''+meanAnaArgs+'''
 
 
   [[ExtendedForecastFinished]]
@@ -180,7 +180,7 @@ class ExtendedForecast(Component):
       self._tasks += ['''
   [[ExtendedFC'''+str(mm)+''']]
     inherit = ExtendedEnsFC, BATCH
-    script = $origin/applications/Forecast.csh '''+ensAnaArgs]
+    script = $origin/bin/Forecast.csh '''+ensAnaArgs]
 
     ##################
     # outputs and post
@@ -193,8 +193,12 @@ class ExtendedForecast(Component):
     postconf = {
       'tasks': self['post'],
       'valid tasks': ['verifyobs', 'verifymodel'],
-      'verifyobs': {},
-      'verifymodel': {},
+      'verifyobs': {
+        'sub directory': 'fc',
+      },
+      'verifymodel': {
+        'sub directory': 'fc',
+      },
     }
 
     self.__post = []

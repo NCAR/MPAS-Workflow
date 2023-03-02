@@ -20,19 +20,24 @@ class VerifyModel(Component):
 
   def __init__(self,
     config:Config,
-    label:str,
     localConf:dict,
     hpc:HPC,
     mesh:Mesh,
-    states:StateEnsemble = None,
+    states:StateEnsemble,
   ):
     super().__init__(config)
 
     base = self.__class__.__name__
 
+    subDirectory = str(localConf['sub directory'])
     dependencies = list(localConf.get('dependencies', []))
     followon = list(localConf.get('followon', []))
     memberMultiplier = int(localConf.get('member multiplier', 1))
+
+    if len(states) > 1:
+      memFmt = '/mem{:03d}'
+    else:
+      memFmt = '/mean'
 
     ###################
     # derived variables
@@ -66,7 +71,7 @@ class VerifyModel(Component):
       '''+self.groupName+''' => '''+f]
 
     # tasks
-    self.groupName = base+label.upper()
+    self.groupName = base+subDirectory.upper()
     self._tasks += ['''
   [['''+self.groupName+''']]
 '''+task.job()+task.directives()]
@@ -74,14 +79,9 @@ class VerifyModel(Component):
     dt = states.duration()
     dtStr = str(dt)
 
-    if len(states) > 1:
-      memFmt = '/mem{:03d}'
-    else:
-      memFmt = ''
-
     for mm, state in enumerate(states):
-      workDir = self.workDir+'/'+label+'/{{thisCycleDate}}'+memFmt.format(mm)
-      if dt > 0 or label == 'fc':
+      workDir = self.workDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm)
+      if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'
       workDir += '/'+self.diagnosticsDir
 
@@ -98,7 +98,7 @@ class VerifyModel(Component):
       self._tasks += ['''
   [['''+taskName+''']]
     inherit = '''+self.groupName+''', BATCH
-    script = $origin/applications/'''+base+'''.csh '''+AppArgs]
+    script = $origin/bin/'''+base+'''.csh '''+AppArgs]
 
     # dependencies
     for d in dependencies:

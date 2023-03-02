@@ -67,7 +67,7 @@ class FirstBackground(Component):
   [['''+self.groupName+''']]
   [['''+base+''']]
     inherit = '''+self.groupName+''', SingleBatch
-    script = $origin/applications/'''+base+'''.csh
+    script = $origin/bin/'''+base+'''.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members
       # TODO: set time limit based on outerMesh AND (number of members OR
