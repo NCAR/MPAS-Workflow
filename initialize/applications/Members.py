@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from initialize.Component import Component
+from initialize.config.Component import Component
+from initialize.config.Config import Config
 
 class Members(Component):
   optionalVariables = {

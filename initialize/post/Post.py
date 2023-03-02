@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 
-from initialize.components.HPC import HPC
-from initialize.components.Mesh import Mesh
-from initialize.components.Model import Model
-from initialize.components.VerifyObs import VerifyObs
-from initialize.components.VerifyModel import VerifyModel
+from initialize.config.Configurable import Configurable
+from initialize.config.Config import Config
 
-from initialize.Configurable import Configurable
-from initialize.Config import Config
+from initialize.data.Model import Model, Mesh
+
+from initialize.framework.HPC import HPC
+
+from initialize.post.VerifyObs import VerifyObs
+from initialize.post.VerifyModel import VerifyModel
 
 class Post(Configurable):
   conf = {
     'tasks': {'typ': list, 'required': True},
     'label': {'typ': str, 'required': True},
+    'valid tasks': {'typ': str, 'required': True},
+    'verifyobs': {'typ': dict},
+    'verifymodel': {'typ': dict},
   }
 
   validTasks = [
@@ -23,11 +27,9 @@ class Post(Configurable):
   def __init__(self,
     conf:dict,
     globalConf:Config,
-    parentValidTasks:list,
     hpc:HPC,
     mesh:Mesh,
     model:Model,
-    memberMultiplier:int = 1,
     states:StateEnsemble = None,
     obs:ObsEnsemble = None,
   ):
@@ -38,42 +40,18 @@ class Post(Configurable):
 
     for t in self['tasks']:
       assert t in self.validTasks, 'Post: invalid task => '+t
-      assert t in parentValidTasks, 'Post: invalid task for parent => '+t
+      assert t in self['valid tasks'], 'Post: invalid task for parent => '+t
 
     t = 'verifyobs'
     if t in self['tasks']:
-      if obs is None:
-        self.__taskObj[t] = VerifyObs(globalConf,
-          hpc,
-          mesh,
-          model,
-          self['label'],
-          self['dependencies'][t],
-          self.get('followon', {}).get(t, []),
-          memberMultiplier,
-          states = states)
-      else:
-        self.__taskObj[t] = VerifyObs(globalConf,
-          hpc,
-          mesh,
-          model,
-          self['label'],
-          self['dependencies'][t],
-          self.get('followon', {}).get(t, []),
-          memberMultiplier,
-          obs = obs)
+      self.__taskObj[t] = VerifyObs(globalConf,
+        self['label'], self[t], hpc, mesh, model, states = states, obs = obs)
  
     t = 'verifymodel'
     if t in self['tasks']:
       assert states is not None, 'Post: states must be defined for '+t
       self.__taskObj[t] = VerifyModel(globalConf,
-        hpc,
-        mesh,
-        self['label'],
-        self['dependencies'][t],
-        self.get('followon', {}).get(t, []),
-        memberMultiplier,
-        states)
+        self['label'], self[t], hpc, mesh, states)
 
   def export(self, components):
     for t in self.__taskObj.values():

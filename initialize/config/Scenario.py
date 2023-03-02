@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from initialize.Config import Config
+from initialize.config.Config import Config
 
 class Scenario():
   def __init__(self, file):

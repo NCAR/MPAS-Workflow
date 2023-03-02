@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
 
-from initialize.Config import Config
-from initialize.Suite import Suite
-from initialize.components.Build import Build
-from initialize.components.Experiment import Experiment
-from initialize.components.HPC import HPC
-from initialize.components.Members import Members
-from initialize.components.Model import Model
-from initialize.components.Naming import Naming
-from initialize.components.Workflow import Workflow
-from initialize.components.Observations import Observations
+# TODO: make members optional, modify getCycleVars
+from initialize.applications.Members import Members
+
+from initialize.config.Config import Config
+
+from initialize.data.Observations import Observations
+
+from initialize.framework.Build import Build
+from initialize.framework.Experiment import Experiment
+from initialize.framework.HPC import HPC
+from initialize.framework.Naming import Naming
+from initialize.framework.Workflow import Workflow
+
+from initialize.suites.Suite import Suite
+
 
 class GenerateObs(Suite):
   def __init__(self, conf:Config):

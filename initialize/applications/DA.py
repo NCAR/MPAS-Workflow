@@ -2,16 +2,18 @@
 
 from collections import OrderedDict
 
-from initialize.components.HPC import HPC
-from initialize.components.Members import Members
-from initialize.components.Model import Model
-from initialize.components.Observations import Observations
-from initialize.components.Workflow import Workflow
+from initialize.applications.Members import Members
+from initialize.applications.RTPP import RTPP
+from initialize.applications.Variational import Variational
 
-from initialize.Component import Component
-from initialize.Config import Config
-from initialize.components.RTPP import RTPP
-from initialize.components.Variational import Variational
+from initialize.config.Component import Component
+from initialize.config.Config import Config
+
+from initialize.data.Model import Model
+from initialize.data.Observations import Observations
+
+from initialize.framework.HPC import HPC
+from initialize.framework.Workflow import Workflow
 
 class DA(Component):
   '''

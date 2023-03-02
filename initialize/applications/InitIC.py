@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
 
-from initialize.Component import Component
+from initialize.config.Component import Component
+from initialize.config.Config import Config
+from initialize.config.Resource import Resource
+from initialize.config.Task import TaskLookup
+
 from initialize.data.StateEnsemble import StateEnsemble
-from initialize.Resource import Resource
-from initialize.util.Task import TaskFactory
+from initialize.data.ExternalAnalyses import ExternalAnalyses
+
+from initialize.framework.HPC import HPC
 
 class InitIC(Component):
   defaults = 'scenarios/defaults/initic.yaml'
 
-  def __init__(self, config, hpc, meshes, externalanalyses):
+  def __init__(self, config:Config, hpc:HPC, meshes:dict, ea:ExternalAnalyses):
     super().__init__(config)
 
     self.meshes = meshes
     self.baseTask = 'ExternalAnalysisToMPAS'
-    self.__used = self.baseTask in externalanalyses['PrepareExternalAnalysisOuter']
+    self.__used = self.baseTask in ea['PrepareExternalAnalysisOuter']
 
     ########################
     # tasks and dependencies
@@ -28,9 +33,9 @@ class InitIC(Component):
       'account': {'def': hpc['CriticalAccount']},
     }
     job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
-    self.__task = TaskFactory[hpc.system](job)
+    self.__task = TaskLookup[hpc.system](job)
 
-    self.groupName = externalanalyses.groupName
+    self.groupName = ea.groupName
 
     #########
     # outputs
@@ -40,8 +45,8 @@ class InitIC(Component):
     for typ, mesh in meshes.items():
       self.outputs['state'][typ] = StateEnsemble(mesh)
       self.outputs['state'][typ].append({
-        'directory': externalanalyses['ExternalAnalysesDir'+typ],
-        'prefix': externalanalyses['externalanalyses__filePrefix'+typ],
+        'directory': ea['ExternalAnalysesDir'+typ],
+        'prefix': ea['externalanalyses__filePrefix'+typ],
       })
 
   def export(self, components):

@@ -2,8 +2,8 @@
 
 from collections.abc import Iterable
 
-from initialize.Config import Config
-from initialize.SubConfig import SubConfig
+from initialize.config.Config import Config
+from initialize.config.SubConfig import SubConfig
 
 class Component():
   defaults = None

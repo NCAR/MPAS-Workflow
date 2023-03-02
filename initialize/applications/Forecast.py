@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 
-from initialize.components.DA import DA
-from initialize.components.HPC import HPC
-from initialize.components.Mesh import Mesh
-from initialize.components.Members import Members
-from initialize.components.Model import Model
-from initialize.components.Variational import Variational
+from initialize.applications.DA import DA
+from initialize.applications.Members import Members
+from initialize.applications.Variational import Variational
 
-from initialize.Component import Component
-from initialize.Config import Config
+from initialize.config.Component import Component
+from initialize.config.Config import Config
+from initialize.config.Resource import Resource
+from initialize.config.Task import TaskLookup
+
+from initialize.data.Model import Model, Mesh
 from initialize.data.StateEnsemble import StateEnsemble
-from initialize.Resource import Resource
-from initialize.util.Post import Post
-from initialize.util.Task import TaskFactory
+
+from initialize.framework.HPC import HPC
+
+from initialize.post.Post import Post
 
 class Forecast(Component):
   defaults = 'scenarios/defaults/forecast.yaml'
@@ -92,7 +94,7 @@ class Forecast(Component):
     # store job for ExtendedForecast to re-use
     self.job = Resource(self._conf, attr, ('job', mesh.name))
     self.job._set('seconds', self.job['baseSeconds'] + self.job['secondsPerForecastHR'] * lengthHR)
-    task = TaskFactory[hpc.system](self.job)
+    task = TaskLookup[hpc.system](self.job)
 
     # MeanBackground
     attr = {
@@ -103,7 +105,7 @@ class Forecast(Component):
       'account': {'def': hpc['NonCriticalAccount']},
     }
     meanjob = Resource(self._conf, attr, ('job', 'meanbackground'))
-    meantask = TaskFactory[hpc.system](meanjob)
+    meantask = TaskLookup[hpc.system](meanjob)
 
 
     self.groupName = 'ForecastFamily'
@@ -190,18 +192,17 @@ class Forecast(Component):
     previousForecast = 'ForecastFinished[-PT'+workflow['CyclingWindowHR']+'H]'
     self.__post = []
 
-    posttasks = self['post']
     postconf = {
-      'tasks': posttasks,
+      'tasks': self['post'],
       'label': 'bg',
-      'dependencies': {
-        'verifyobs': [previousForecast, '{{PrepareObservations}}'],
-        'verifymodel': [previousForecast, '{{PrepareExternalAnalysisOuter}}'],
-      }
-      'followon': {}
+      'valid tasks': ['verifyobs', 'verifymodel'],
+      'verifyobs': {
+        'dependencies': [previousForecast, '{{PrepareObservations}}'],
+      },
+      'verifymodel': {
+        'dependencies': [previousForecast, '{{PrepareExternalAnalysisOuter}}'],
+      },
     }
-
-    validTasks = ['verifyobs', 'verifymodel']
 
     # mean case when members.n > 1
     if members.n > 1:
@@ -209,17 +210,16 @@ class Forecast(Component):
         '''+previousForecast+''' => MeanBackground''']
 
       # store original conf values
-      ll = postconf['label']
-      dd = deepcopy(postconf['dependencies'])
-      ff = deepcopy(postconf['followon'])
+      pp = deepcopy(postconf)
 
       # override for bgmean tasks
       postconf['label'] = 'bgmean'
       for k in ['verifyobs', 'verifymodel']:
-        postconf['dependencies'][k] += ['MeanBackground']
-      postconf['dependencies']['verifyobs'] += ['HofX'+ll.upper()]
-      postconf['dependencies']['verifymodel'] += [DA.finished]
-      postconf['followon']['verifymodel'] = [DA.clean]
+        postconf[k]['dependencies'] += ['MeanBackground']
+        postconf[k]['member multiplier'] = members.n
+      postconf['verifyobs']['dependencies'] += ['HofX'+ll.upper()]
+      postconf['verifymodel']['dependencies'] += [DA.finished]
+      postconf['verifymodel']['followon'] = [DA.clean]
 
       self.outputs['state']['mean'] = StateEnsemble(self.mesh)
       self.outputs['state']['mean'].append({
@@ -230,15 +230,12 @@ class Forecast(Component):
       if len(self.outputs['state']['members']) > 1:
         self.__post.append(Post(
           postconf, config,
-          validTasks,
-          hpc, mesh, model, members.n,
+          hpc, mesh, model,
           states = self.outputs['state']['mean'],
         ))
 
       # restore original conf values
-      postconf['label'] = ll
-      postconf['dependencies'] = dd
-      postconf['followon'] = ff
+      postconf = deepcopy(pp)
 
       # only need verifyobs from individual ensemble members; used to calculate ensemble spread
       if 'verifyobs' in postconf['tasks']:
@@ -256,7 +253,6 @@ class Forecast(Component):
 
     self.__post.append(Post(
       postconf, config,
-      validTasks,
       hpc, mesh, model,
       states = self.outputs['state']['members'],
     ))

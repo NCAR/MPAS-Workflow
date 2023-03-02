@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-from initialize.Component import Component
-from initialize.Resource import Resource
-from initialize.util.Task import TaskFactory
+from initialize.config.Component import Component
+from initialize.config.Resource import Resource
+from initialize.config.Task import TaskLookup
+
+from initialize.framework.HPC import HPC
 
 class Benchmark(Component):
   ObsCompareDir = 'CompareToBenchmark/obs'
@@ -21,7 +23,7 @@ class Benchmark(Component):
   }
 
 
-  def __init__(self, config, hpc):
+  def __init__(self, config:Config, hpc:HPC):
     super().__init__(config)
 
     ###################
@@ -43,7 +45,7 @@ class Benchmark(Component):
       'account': {'def': hpc['NonCriticalAccount']},
     }
     job = Resource(self._conf, attr, ('job', 'compare'))
-    task = TaskFactory[hpc.system](job)
+    task = TaskLookup[hpc.system](job)
 
     self._tasks = ['''
   [[Compare]]

@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 
-from initialize.components.ExternalAnalyses import ExternalAnalyses
-from initialize.components.Forecast import Forecast
-from initialize.components.HPC import HPC
-#from initialize.components.Mesh import Mesh
-from initialize.components.Members import Members
-from initialize.components.Model import Model
-from initialize.components.Observations import Observations
+from initialize.applications.Forecast import Forecast
+from initialize.applications.Members import Members
 
-from initialize.Component import Component
+from initialize.config.Component import Component
+from initialize.config.Resource import Resource
+from initialize.config.Task import TaskLookup
+
+from initialize.data.ExternalAnalyses import ExternalAnalyses
+from initialize.data.Model import Model
+from initialize.data.Observations import Observations
 from initialize.data.StateEnsemble import StateEnsemble, State
-from initialize.Resource import Resource
-from initialize.util.Post import Post
-from initialize.util.Task import TaskFactory
+
+from initialize.framework.HPC import HPC
+
+from initialize.post.Post import Post
 
 class ExtendedForecast(Component):
   workDir = 'ExtendedFC'
@@ -42,8 +44,8 @@ class ExtendedForecast(Component):
     hpc:HPC,
     members:Members,
     forecast:Forecast,
-    externalanalyses:ExternalAnalyses,
-    observations:Observations,
+    ea:ExternalAnalyses,
+    obs:Observations,
     extAnaIC:StateEnsemble,
     meanAnaIC:State,
     ensAnaIC:StateEnsemble,
@@ -88,7 +90,7 @@ class ExtendedForecast(Component):
     job._set('seconds', job['baseSeconds'] + job['secondsPerForecastHR'] * lengthHR)
     job._set('queue', hpc['NonCriticalQueue'])
     job._set('account', hpc['NonCriticalAccount'])
-    fctask = TaskFactory[hpc.system](job)
+    fctask = TaskLookup[hpc.system](job)
 
     # MeanAnalysis
     attr = {
@@ -99,7 +101,7 @@ class ExtendedForecast(Component):
       'account': {'def': hpc['NonCriticalAccount']},
     }
     meanjob = Resource(self._conf, attr, ('job', 'meananalysis'))
-    meantask = TaskFactory[hpc.system](meanjob)
+    meantask = TaskLookup[hpc.system](meanjob)
 
     args = [
       1,
@@ -188,17 +190,17 @@ class ExtendedForecast(Component):
     self.outputs['state']['members'] = {}
     self.outputs['state']['mean'] = {}
 
-    posttasks = self['post']
     postconf = {
-      'tasks': posttasks,
-      'followon': {}
+      'tasks': self['post'],
+      'valid tasks': ['verifyobs', 'verifymodel'],
+      'verifyobs': {}
+      'verifymodel': {}
     }
-    validTasks = ['verifyobs', 'verifymodel']
 
     self.__post = []
 
-    prepObsTasks = observations['PrepareObservationsTasks']
-    prepEATasks = externalanalyses['PrepareExternalAnalysisTasksOuter']
+    prepObsTasks = obs['PrepareObservationsTasks']
+    prepEATasks = ea['PrepareExternalAnalysisTasksOuter']
 
     for dt in extLengths:
 
@@ -213,10 +215,8 @@ class ExtendedForecast(Component):
       prepObs = (taskSuffix+" => ").join(prepObsTasks)+taskSuffix
       prepEA = (taskSuffix+" => ").join(prepEATasks)+taskSuffix
 
-      postconf['dependencies'] = {
-        'verifyobs': ['ExtendedForecastFinished', prepObs],
-        'verifymodel': ['ExtendedForecastFinished', prepEA],
-      }
+      postconf['verifyobs']['dependencies'] = ['ExtendedForecastFinished', prepObs]
+      postconf['verifymodel']['dependencies'] = ['ExtendedForecastFinished', prepEA]
 
       # note: only duration (dt) varies across output state
 
@@ -228,10 +228,9 @@ class ExtendedForecast(Component):
           'prefix': Forecast.forecastPrefix,
         })
 
-      postconf['label'] = ensfc
+      postconf['label'] = 'ensfc'
       self.__post.append(Post(
         postconf, config,
-        validTasks,
         hpc, mesh, model,
         states = self.outputs['state']['members'][dtStr],
       ))
@@ -243,10 +242,9 @@ class ExtendedForecast(Component):
           'prefix': Forecast.forecastPrefix,
       })
 
-      postconf['label'] = fc
+      postconf['label'] = 'fc'
       self.__post.append(Post(
         postconf, config,
-        validTasks,
         hpc, mesh, model,
         states = self.outputs['state']['mean'][dtStr],
       ))

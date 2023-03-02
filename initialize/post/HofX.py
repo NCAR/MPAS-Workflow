@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
-from initialize.components.HPC import HPC
-from initialize.components.Mesh import Mesh
-from initialize.components.Model import Model
+from initialize.framework.HPC import HPC
 
-from initialize.Component import Component
-from initialize.Config import Config
+from initialize.config.Component import Component
+from initialize.config.Config import Config
+from initialize.config.Resource import Resource
+from initialize.config.Task import TaskLookup
+
+from initialize.data.Model import Model, Mesh
 from initialize.data.ObsEnsemble import ObsEnsemble
 from initialize.data.StateEnsemble import StateEnsemble
-from initialize.Resource import Resource
-from initialize.util.Task import TaskFactory
 
 class HofX(Component):
   defaults = 'scenarios/defaults/hofx.yaml'
@@ -133,7 +133,7 @@ class HofX(Component):
       'account': {'def': hpc['NonCriticalAccount']},
     }
     job = Resource(self._conf, attr, ('job', mesh.name))
-    task = TaskFactory[hpc.system](job)
+    task = TaskLookup[hpc.system](job)
 
     # tasks
     base = self.__class__.__name__

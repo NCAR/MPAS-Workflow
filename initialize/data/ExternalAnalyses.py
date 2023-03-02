@@ -2,10 +2,14 @@
 
 from copy import deepcopy
 
-from initialize.Component import Component
+from initialize.config.Component import Component
+from initialize.config.Config import Config
+from initialize.config.Resource import Resource
+from initialize.config.Task import TaskLookup
+
 from initialize.data.StateEnsemble import StateEnsemble
-from initialize.Resource import Resource
-from initialize.util.Task import TaskFactory
+
+from initialize.framework.HPC import HPC
 
 class ExternalAnalyses(Component):
   defaults = 'scenarios/defaults/externalanalyses.yaml'
@@ -18,7 +22,7 @@ class ExternalAnalyses(Component):
     'resource': str,
   }
 
-  def __init__(self, config, hpc, meshes):
+  def __init__(self, config:Config, hpc:HPC, meshes:dict):
     super().__init__(config)
     self.meshes = meshes
 
@@ -103,7 +107,7 @@ class ExternalAnalyses(Component):
       'account': {'def': hpc['CriticalAccount']},
     }
     ungribjob = Resource(self._conf, attr, ('job', 'ungrib'))
-    self.__ungribtask = TaskFactory[hpc.system](ungribjob)
+    self.__ungribtask = TaskLookup[hpc.system](ungribjob)
 
     self.groupName = self.__class__.__name__
 

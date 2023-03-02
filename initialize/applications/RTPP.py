@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 
-from initialize.components.DA import DA
-from initialize.components.HPC import HPC
-from initialize.components.Members import Members
-from initialize.components.Mesh import Mesh
-from initialize.components.Observations import Observations
-from initialize.components.Workflow import Workflow
+from initialize.applications.DA import DA
+from initialize.applications.Members import Members
 
-from initialize.Component import Component
-from initialize.Config import Config
+from initialize.config.Component import Component
+from initialize.config.Config import Config
+from initialize.config.Resource import Resource
+from initialize.config.Task import TaskLookup
+
+from initialize.data.Model import Mesh
+from initialize.data.Observations import Observations
 from initialize.data.StateEnsemble import StateEnsemble
-from initialize.Resource import Resource
-from initialize.util.Task import TaskFactory
+
+from initialize.framework.HPC import HPC
+from initialize.framework.Workflow import Workflow
 
 class RTPP(Component):
   defaults = 'scenarios/defaults/rtpp.yaml'
@@ -77,7 +79,7 @@ class RTPP(Component):
       }
       job = Resource(self._conf, attr, ('job', mesh.name))
       job._set('seconds', job['baseSeconds'] + job['secondsPerMember'] * members.n)
-      task = TaskFactory[hpc.system](job)
+      task = TaskLookup[hpc.system](job)
 
       da._tasks += ['''
   [[PrepRTPP]]

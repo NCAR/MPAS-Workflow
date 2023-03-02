@@ -3,7 +3,7 @@
 #from typing import Iterable, Callable, Union, Tuple, Type, Mapping
 #from collections.abc import Iterable
 
-from initialize.Config import Config
+from initialize.config.Config import Config
 
 class Resource(Config):
   '''

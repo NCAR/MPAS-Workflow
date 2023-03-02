@@ -2,7 +2,8 @@
 
 from copy import deepcopy
 
-from initialize.Component import Component
+from initialize.config.Component import Component
+from initialize.config.Config import Config
 
 class Mesh():
   def __init__(self, name, nCells, attrib=None):
@@ -54,7 +55,7 @@ class Model(Component):
     'precision': ['single', str],
   }
 
-  def __init__(self, config):
+  def __init__(self, config:Config):
     super().__init__(config)
 
     ###################

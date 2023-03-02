@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-from initialize.components.HPC import HPC
-from initialize.components.Mesh import Mesh
+from initialize.config.Component import Component
+from initialize.config.Config import Config
+from initialize.config.Resource import Resource
+from initialize.config.Task import TaskLookup
 
-from initialize.Component import Component
-from initialize.Config import Config
+from initialize.framework.HPC import HPC
+
+from initialize.data.Model import Mesh
 from initialize.data.StateEnsemble import StateEnsemble
-from initialize.Resource import Resource
-from initialize.util.Task import TaskFactory
 
 class VerifyModel(Component):
   defaults = 'scenarios/defaults/verifymodel.yaml'
@@ -19,16 +20,19 @@ class VerifyModel(Component):
 
   def __init__(self,
     config:Config,
+    label:str,
+    localConf:dict,
     hpc:HPC,
     mesh:Mesh,
-    label:str,
-    dependencies:list,
-    followon:list,
-    memberMultiplier:int,
     states:StateEnsemble = None,
   ):
-
     super().__init__(config)
+
+    base = self.__class__.__name__
+
+    dependencies = list(localConf.get('dependencies', []))
+    followon = list(localConf.get('followon', []))
+    memberMultiplier = int(localConf.get('member multiplier', 1))
 
     ###################
     # derived variables
@@ -53,7 +57,7 @@ class VerifyModel(Component):
     }
     job = Resource(self._conf, attr, ('job', mesh.name))
     job['seconds'] += job['secondsPerMember'] * memberMultiplier
-    task = TaskFactory[hpc.system](job)
+    task = TaskLookup[hpc.system](job)
 
     self.groupName = self.__class__.__name__
 
@@ -62,7 +66,6 @@ class VerifyModel(Component):
       '''+self.groupName+''' => '''+f]
 
     # tasks
-    base = self.__class__.__name__
     self.groupName = base+label.upper()
     self._tasks += ['''
   [['''+self.groupName+''']]

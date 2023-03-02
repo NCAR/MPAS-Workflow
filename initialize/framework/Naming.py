@@ -1,26 +1,24 @@
 #!/usr/bin/env python3
 
-from initialize.Component import Component
+from initialize.applications.ExtendedForecast import ExtendedForecast
+from initialize.applications.Forecast import Forecast
+from initialize.applications.RTPP import RTPP
+from initialize.applications.Variational import Variational, ABEI
 
-from initialize.components.Experiment import Experiment
-from initialize.components.ExternalAnalyses import ExternalAnalyses
-#from initialize.components.Members import Members
-from initialize.components.Observations import Observations
+from initialize.config.Component import Component
+from initialize.config.Config import Config
 
-# applications
-from initialize.components.Benchmark import Benchmark
-from initialize.components.ExtendedForecast import ExtendedForecast
-from initialize.components.Forecast import Forecast
-#from initialize.components.HofX import HofX
-from initialize.components.VerifyModel import VerifyModel
-from initialize.components.VerifyObs import VerifyObs
+from initialize.data.ExternalAnalyses import ExternalAnalyses
+from initialize.data.Observations import Observations
 
-from initialize.components.RTPP import RTPP
-from initialize.components.Variational import Variational
-from initialize.components.Variational import ABEI
+from initialize.framework.Experiment import Experiment
+
+from initialize.post.Benchmark import Benchmark
+from initialize.post.VerifyModel import VerifyModel
+from initialize.post.VerifyObs import VerifyObs
 
 class Naming(Component):
-  def __init__(self, config, exp:Experiment, bench=None):
+  def __init__(self, config:Config, exp:Experiment, bench:Benchmark=None):
     super().__init__(config)
 
     ###################

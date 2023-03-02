@@ -3,7 +3,14 @@
 import datetime as dt
 import tools.dateFormats as dtf
 
-from initialize.Component import Component
+from initialize.applications.Members import Members
+
+from initialize.config.Component import Component
+from initialize.config.Config import Config
+
+from initialize.data.ExternalAnalyses import ExternalAnalyses
+
+from initialize.framework.Experiment import Experiment
 
 class StaticStream(Component):
   defaults = 'scenarios/defaults/staticstream.yaml'
@@ -16,7 +23,14 @@ class StaticStream(Component):
     'resource': str,
   }
 
-  def __init__(self, config, meshes, members, FirstCycleDate, ea, exp):
+  def __init__(self,
+    config:Config,
+    meshes:dict,
+    members:Members,
+    FirstCycleDate:str,
+    ea:ExternalAnalyses,
+    exp:Experiment,
+  ):
     super().__init__(config)
 
     ###################

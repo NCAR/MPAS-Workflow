@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from initialize.Resource import Resource
+from initialize.config.Resource import Resource
 
 class Task():
   def __init__(self, r:Resource):
@@ -59,6 +59,9 @@ class PBSPro(Task):
 
     return text
 
-TaskFactory = {
-  'cheyenne': PBSPro,
+class Cheyenne(PBSPro):
+  name = 'cheyenne'
+
+TaskLookup = {
+  'cheyenne': Cheyenne,
 }

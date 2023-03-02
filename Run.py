@@ -17,9 +17,9 @@ from collections.abc import Iterable
 from pathlib import Path
 
 # local modules
-from initialize.Config import Config
-from initialize.Scenario import Scenario
-from initialize.Suite import SuiteFactory
+from initialize.config.Config import Config
+from initialize.config.Scenario import Scenario
+from initialize.suites.Suite import SuiteFactory
 
 def main():
   '''

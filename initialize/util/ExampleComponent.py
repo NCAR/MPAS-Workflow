@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from initialize.Component import Component
+from initialize.config.Component import Component
 
 class Example(Component):
   #defaults = 'scenarios/defaults/example.yaml' (optional)
@@ -26,7 +26,7 @@ class Example(Component):
     'default list': [[0, 0., '0'], list],
   }
 
-  def __init__(self, config):
+  def __init__(self, config:Config):
     super().__init__(config)
 
     ###################

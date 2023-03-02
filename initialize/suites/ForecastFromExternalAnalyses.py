@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
 
-from initialize.Config import Config
-from initialize.Suite import Suite
-from initialize.components.Build import Build
-from initialize.components.Experiment import Experiment
-from initialize.components.ExternalAnalyses import ExternalAnalyses
-from initialize.components.HPC import HPC
-from initialize.components.Members import Members
-from initialize.components.Model import Model
-from initialize.components.Naming import Naming
-from initialize.components.Observations import Observations
-from initialize.components.StaticStream import StaticStream
-from initialize.components.Workflow import Workflow
+from initialize.applications.InitIC import InitIC
+from initialize.applications.ExtendedForecast import ExtendedForecast
+from initialize.applications.Forecast import Forecast
+from initialize.applications.Members import Members
 
-# applications
-from initialize.components.Benchmark import Benchmark
-from initialize.components.InitIC import InitIC
-from initialize.components.ExtendedForecast import ExtendedForecast
-from initialize.components.Forecast import Forecast
+from initialize.config.Config import Config
+
+from initialize.data.Model import Model
+from initialize.data.Observations import Observations
+from initialize.data.StaticStream import StaticStream
+
+from initialize.framework.Build import Build
+from initialize.framework.Experiment import Experiment
+from initialize.framework.ExternalAnalyses import ExternalAnalyses
+from initialize.framework.HPC import HPC
+from initialize.framework.Naming import Naming
+from initialize.framework.Workflow import Workflow
+
+from initialize.post.Benchmark import Benchmark
+
+from initialize.suites.Suite import Suite
 
 class ForecastFromExternalAnalyses(Suite):
   def __init__(self, conf:Config):

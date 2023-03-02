@@ -142,6 +142,7 @@ class Workflow(Component):
     substitutionVars = [
       'thisValidDate',
       'thisCycleDate',
+      'prevCycleDate',
     ]
     for v in substitutionVars:
       # create cylc variable named v, with value '{{'+v+'}}', overriding Jinja2

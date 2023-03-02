@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
 
-from initialize.Config import Config
-from initialize.Suite import Suite
-from initialize.components.Build import Build
-from initialize.components.Experiment import Experiment
-from initialize.components.HPC import HPC
-from initialize.components.Members import Members
-from initialize.components.Model import Model
-from initialize.components.Naming import Naming
-from initialize.components.Workflow import Workflow
-from initialize.components.ExternalAnalyses import ExternalAnalyses
+from initialize.applications.InitIC import InitIC
+# TODO: make members optional, modify getCycleVars
+from initialize.applications.Members import Members
 
-# applications
-from initialize.components.InitIC import InitIC
+from initialize.config.Config import Config
+
+from initialize.data.ExternalAnalyses import ExternalAnalyses
+from initialize.data.Model import Model
+
+from initialize.framework.Build import Build
+from initialize.framework.Experiment import Experiment
+from initialize.framework.HPC import HPC
+from initialize.framework.Naming import Naming
+from initialize.framework.Workflow import Workflow
+
+from initialize.suites.Suite import Suite
 
 class GenerateExternalAnalyses(Suite):
   def __init__(self, conf:Config):

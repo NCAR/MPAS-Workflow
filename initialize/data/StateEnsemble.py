@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from initialize.components.Model import Mesh
+from initialize.config.Configurable import Configurable
+
+from initialize.data.Model import Mesh
 from initialize.data.DataList import DataList
-from initialize.Configurable import Configurable
 
 class StateEnsemble(DataList):
   def __init__(self, mesh:Mesh, duration=0):

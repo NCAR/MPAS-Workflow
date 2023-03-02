@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-from initialize.Component import Component
+from initialize.applications.Members import Config
+
+from initialize.config.Component import Component
+from initialize.config.Config import Config
 
 class FirstBackground(Component):
   defaults = 'scenarios/defaults/firstbackground.yaml'
@@ -14,7 +17,7 @@ class FirstBackground(Component):
       ['ForecastFromAnalysis', 'PANDAC.GFS', 'PANDAC.LaggedGEFS']],
   }
 
-  def __init__(self, config, meshes, members, FirstCycleDate):
+  def __init__(self, config:Config, meshes:dict, members:Members, FirstCycleDate:str):
     super().__init__(config)
 
     ###################

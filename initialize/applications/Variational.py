@@ -2,20 +2,23 @@
 
 from collections import OrderedDict
 
-from initialize.components.DA import DA
-from initialize.components.HPC import HPC
-from initialize.components.Members import Members
-from initialize.components.Model import Model
-from initialize.components.Observations import Observations
-from initialize.components.Workflow import Workflow
+from initialize.applications.DA import DA
+from initialize.applications.Members import Members
 
-from initialize.Component import Component
-from initialize.Config import Config
+from initialize.config.Component import Component
+from initialize.config.Config import Config
+from initialize.config.Resource import Resource
+from initialize.config.Task import TaskLookup
+
+from initialize.data.Model import Model
+from initialize.data.Observations import Observations
 from initialize.data.ObsEnsemble import ObsEnsemble
 from initialize.data.StateEnsemble import StateEnsemble, State
-from initialize.Resource import Resource
-from initialize.util.Post import Post
-from initialize.util.Task import TaskFactory
+
+from initialize.framework.HPC import HPC
+from initialize.framework.Workflow import Workflow
+
+from initialize.post.Post import Post
 
 class ABEI(Component):
   workDir = 'CyclingInflation/ABEI'
@@ -309,7 +312,7 @@ class Variational(Component):
     varjob._set('seconds', varjob['baseSeconds'] + varjob['secondsPerEnVarMember'] * ensPbNMembers)
     if EDASize > 1:
       varjob._set('nodes', varjob['nodesPerMember'] * EDASize)
-    vartask = TaskFactory[hpc.system](varjob)
+    vartask = TaskLookup[hpc.system](varjob)
 
     # GenerateABEInflation
     attr = {
@@ -320,7 +323,7 @@ class Variational(Component):
       'account': {'def': hpc['CriticalAccount']},
     }
     abeijob = Resource(self._conf, attr, ('abei.job', meshes['Outer'].name))
-    abeitask = TaskFactory[hpc.system](abeijob)
+    abeitask = TaskLookup[hpc.system](abeijob)
 
     args = [
       0,
@@ -421,19 +424,15 @@ class Variational(Component):
     postconf = {
       'tasks': self['post'],
       'label': 'da',
-      'dependencies': {
-        'verifyobs': [DA.finished],
-      }
-      'followon': {
-        'verifyobs': [DA.clean],
-      }
+      'valid tasks': ['verifyobs'],
+      'verifyobs': {
+        'dependencies': [DA.finished],
+        'followon': [DA.clean],
+      },
     }
-
-    validTasks = ['verifyobs']
 
     self.__post = Post(
       postconf, config,
-      validTasks,
       hpc, meshes['Outer'], model,
       obs = self.outputs['obs']['members'],
     )

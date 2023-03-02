@@ -9,7 +9,7 @@
 import subprocess
 import glob
 
-from initialize.Config import Config
+from initialize.config.Config import Config
 
 class Suite():
   def __init__(self, conf:Config):

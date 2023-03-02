@@ -2,8 +2,10 @@
 
 from copy import deepcopy
 
-from initialize.Component import Component
-from initialize.Config import Config
+from initialize.config.Config import Config
+from initialize.config.Component import Component
+
+from initialize.framework.HPC import HPC
 
 class Observations(Component):
   defaults = 'scenarios/defaults/observations.yaml'

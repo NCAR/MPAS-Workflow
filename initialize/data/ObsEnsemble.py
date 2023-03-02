@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
+from initialize.config.Configurable import Configurable
 from initialize.data.DataList import DataList
-from initialize.Configurable import Configurable
 
 class ObsEnsemble(DataList):
   def __init__(self, duration:int=0):
