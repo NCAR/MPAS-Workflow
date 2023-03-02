@@ -5,27 +5,14 @@ date
 # Process arguments
 # =================
 ## args
-# ArgMember: int, ensemble member [>= 1]
-set ArgMember = "$1"
-
 # ArgDT: int, valid forecast length beyond CYLC_TASK_CYCLE_POINT in hours
-set ArgDT = "$2"
+set ArgDT = "$1"
 
-# ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
-set ArgStateType = "$3"
+# ArgWorkDir: str, where to run
+set ArgWorkDir = "$2"
+
 
 ## arg checks
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isNotInt = ($status)
-if ( $isNotInt ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
-  exit 1
-endif
-if ( $ArgMember < 1 ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
-  exit 1
-endif
-
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isNotInt = ($status)
 if ( $isNotInt ) then
@@ -44,26 +31,24 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
-# templated work directory
-set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
-if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
-  set self_WorkDir = $self_WorkDir/${ArgDT}hr
-endif
-echo "WorkDir = ${self_WorkDir}"
-cd ${self_WorkDir}
+set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+  `
+echo "WorkDir = ${WorkDir}"
+cd ${WorkDir}
 
 # ================================================================================================
 
 # Remove unnecessary model state files
 # ====================================
-rm ${self_WorkDir}/${backgroundSubDir}/${BGFilePrefix}.$thisMPASFileDate.nc
+rm ${WorkDir}/${backgroundSubDir}/${BGFilePrefix}.$thisMPASFileDate.nc
 
 # Remove obs-database output files
 # ================================
 if ("$retainObsFeedback" != True) then
-  rm ${self_WorkDir}/${OutDBDir}/${obsPrefix}*.h5
-  rm ${self_WorkDir}/${OutDBDir}/${geoPrefix}*.nc4
-  rm ${self_WorkDir}/${OutDBDir}/${diagPrefix}*.nc4
+  rm ${WorkDir}/${OutDBDir}/${obsPrefix}*.h5
+  rm ${WorkDir}/${OutDBDir}/${geoPrefix}*.nc4
+  rm ${WorkDir}/${OutDBDir}/${diagPrefix}*.nc4
 endif
 
 date

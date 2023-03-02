@@ -14,6 +14,7 @@ class Component():
   def __init__(self, config:Config):
     self.lower = self.__class__.__name__.lower()
     self.logPrefix = self.__class__.__name__+': '
+    self.autoLabel = self.lower
 
     ######################################################
     # initialize exportable variables, tasks, dependencies
@@ -195,20 +196,20 @@ set config_'''+self.lower+''' = 1
     Str = []
     for v in variables:
       Str += self.varToCylc(v, self._vtable[v])
-    self.__toTextFile('include/variables/auto/'+self.lower+'.rc', Str)
+    self.__toTextFile('include/variables/auto/'+self.autoLabel+'.rc', Str)
     return
 
   # cylc internal scheduling queues
   def __exportQueues(self):
-    self.__toTextFile('include/queues/auto/'+self.lower+'.rc', self._queues)
+    self.__toTextFile('include/queues/auto/'+self.autoLabel+'.rc', self._queues)
     return
 
   # cylc dependencies
   def __exportDependencies(self):
-    self.__toTextFile('include/dependencies/auto/'+self.lower+'.rc', self._dependencies)
+    self.__toTextFile('include/dependencies/auto/'+self.autoLabel+'.rc', self._dependencies)
     return
 
   # cylc tasks
   def __exportTasks(self):
-    self.__toTextFile('include/tasks/auto/'+self.lower+'.rc', self._tasks)
+    self.__toTextFile('include/tasks/auto/'+self.autoLabel+'.rc', self._tasks)
     return

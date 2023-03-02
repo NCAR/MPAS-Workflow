@@ -35,16 +35,8 @@
     [[[{{extMeanTimes}}]]]
       graph = '''
         {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
+%include include/dependencies/auto/postfc.rc
       '''
-
-{% if VerifyAgainstExternalAnalyses %}
-%include include/dependencies/verifymodel.rc
-{% endif %}
-
-{% if VerifyAgainstObservations %}
-%include include/dependencies/verifyobs.rc
-{% endif %}
-
 
 [runtime]
 %include include/tasks/base.rc
@@ -52,12 +44,7 @@
 %include include/tasks/auto/extendedforecast.rc
 %include include/tasks/auto/externalanalyses.rc
 %include include/tasks/auto/initic.rc
-{% if VerifyAgainstObservations %}
-%include include/tasks/auto/observations.rc
-{% endif %}
-{% if VerifyAgainstExternalAnalyses or VerifyAgainstObservations %}
-%include include/tasks/verify.rc
-{% endif %}
+%include include/tasks/auto/postfc.rc
 
 [visualization]
   initial cycle point = {{restartCyclePoint}}

@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 
+from initialize.components.DA import DA
+from initialize.components.HPC import HPC
+from initialize.components.Members import Members
+from initialize.components.Mesh import Mesh
+from initialize.components.Observations import Observations
+from initialize.components.Workflow import Workflow
+
 from initialize.Component import Component
+from initialize.Config import Config
 from initialize.data.StateEnsemble import StateEnsemble
 from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
@@ -22,7 +30,15 @@ class RTPP(Component):
     'retainOriginalAnalyses': [False, bool],
   }
 
-  def __init__(self, config, hpc, ensMesh, members, da, ensBackgrounds:StateEnsemble, ensAnalyses:StateEnsemble):
+  def __init__(self,
+    config:Config,
+    hpc:HPC,
+    mesh:Mesh,
+    members:Members,
+    da:DA,
+    ensBackgrounds:StateEnsemble,
+    ensAnalyses:StateEnsemble,
+  ):
     super().__init__(config)
 
     # WorkDir is where RTPP is executed
@@ -59,7 +75,7 @@ class RTPP(Component):
         'account': {'def': hpc['CriticalAccount']},
         'email': {'def': True, 't': bool},
       }
-      job = Resource(self._conf, attr, ('job', ensMesh.name))
+      job = Resource(self._conf, attr, ('job', mesh.name))
       job._set('seconds', job['baseSeconds'] + job['secondsPerMember'] * members.n)
       task = TaskFactory[hpc.system](job)
 
@@ -77,9 +93,9 @@ class RTPP(Component):
 '''+task.job()+task.directives()+'''
 
   [[CleanRTPP]]
-    inherit = Clean, '''+da.clean+'''
+    inherit = Clean, '''+DA.clean+'''
     script = $origin/applications/CleanRTPP.csh "'''+self.WorkDir+'"']
 
       da._dependencies += ['''
         PrepRTPP => RTPP
-        '''+da.post+''' => RTPP => '''+da.finished]
+        '''+DA.post+''' => RTPP => '''+DA.finished]

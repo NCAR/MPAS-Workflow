@@ -4,6 +4,8 @@ externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
   resource: "PANDAC.GFS"
+forecast:
+  post: [verifyobs, verifymodel]
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
@@ -21,8 +23,7 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS"
+  post: [verifyobs]
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T06
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True

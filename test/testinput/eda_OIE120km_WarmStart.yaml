@@ -4,6 +4,8 @@ externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
   resource: "PANDAC.LaggedGEFS"
+forecast:
+  post: [verifyobs, verifymodel]
 hofx:
   retainObsFeedback: False
 hpc:
@@ -26,8 +28,7 @@ variational:
   nInnerIterations: [15,]
   SelfExclusion: True
   retainObsFeedback: False
+  post: []
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T06
-  VerifyEnsMeanBG: True
-  DiagnoseEnsSpreadBG: True

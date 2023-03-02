@@ -1,15 +1,15 @@
 workflow:
-  InitializationType: WarmStart
   first cycle point: 20180414T18
   final cycle point:   20180514T18
-  VerifyDeterministicDA: True 
-  VerifyEnsMeanBG: False
-
   VerifyExtendedMeanFC: False
-  ExtendedFCLengthHR: 120
-  ExtendedFCOutIntervalHR: 12
-  ExtendedMeanFCTimes: T00
 
+extendedforecast:
+  meanTimes: T00
+  lengthHR: 120
+  outIntervalHR: 12
+
+forecast:
+  post: []
 observations:
   resource: PANDACArchive
 model:
@@ -27,10 +27,11 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS"
+  post: [verifyobs]
+
+
 forecast:
   IAU: True
-builds:
-  commonBuild: /glade/work/syha/mpas-bundle-build-iau-rthm
 job:
   CPAccountNumber: NMMM0013
   NCPAccountNumber: NMMM0013

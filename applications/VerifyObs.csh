@@ -5,14 +5,14 @@ date
 # Process arguments
 # =================
 ## args
-# ArgMember: int, ensemble member [>= 1]
-set ArgMember = "$1"
-
 # ArgDT: int, valid forecast length beyond CYLC_TASK_CYCLE_POINT in hours
-set ArgDT = "$2"
+set ArgDT = "$1"
 
-# ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
-set ArgStateType = "$3"
+# ArgWorkDir: str, where to run
+set ArgWorkDir = "$2"
+
+# ArgObsFeedbackDir: directory of model state input
+set ArgObsFeedbackDir = "$3"
 
 # ArgNMembers: int, set > 1 to activate ensemble spread diagnostics
 set ArgNMembers = "$4"
@@ -21,17 +21,6 @@ set ArgNMembers = "$4"
 set ArgAppType = "$5"
 
 ## arg checks
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isNotInt = ($status)
-if ( $isNotInt ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
-  exit 1
-endif
-if ( $ArgMember < 1 ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
-  exit 1
-endif
-
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isNotInt = ($status)
 if ( $isNotInt ) then
@@ -57,12 +46,16 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
-# templated work directory
-set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
-if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
-  set self_WorkDir = $self_WorkDir/${ArgDT}hr
-endif
-echo "WorkDir = ${self_WorkDir}"
+set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+  `
+echo "WorkDir = ${WorkDir}"
+mkdir -p ${WorkDir}
+cd ${WorkDir}
+
+set ObsFeedbackDir = ${ExperimentDirectory}/`echo "$ArgObsFeedbackDir" \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+  `
 
 setenv HDF5_DISABLE_VERSION_CHECK 1
 setenv NUMEXPR_MAX_THREADS 1
@@ -71,9 +64,6 @@ setenv NUMEXPR_MAX_THREADS 1
 
 # collect obs-space diagnostic statistics into DB files
 # =====================================================
-mkdir -p ${self_WorkDir}/${ObsDiagnosticsDir}
-cd ${self_WorkDir}/${ObsDiagnosticsDir}
-
 set mainScript="DiagnoseObsStatistics"
 ln -fs ${scriptDirectory}/*.py ./
 ln -fs ${scriptDirectory}/${mainScript}.py ./
@@ -83,7 +73,7 @@ set success = 1
 while ( $success != 0 )
 
   mv log.${mainScript} log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py -n ${NUMPROC} -p ${self_WorkDir}/${OutDBDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} -app $ArgAppType"
+  setenv baseCommand "python ${mainScript}.py -n ${NUMPROC} -p ${ObsFeedbackDir} -o ${obsPrefix} -g ${geoPrefix} -d ${diagPrefix} -app $ArgAppType"
 if ("$ArgAppType" == variational) then
   setenv baseCommand "$baseCommand -nout $nOuterIterations"
 endif

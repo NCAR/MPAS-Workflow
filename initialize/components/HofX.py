@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 
+from initialize.components.HPC import HPC
+from initialize.components.Mesh import Mesh
+from initialize.components.Model import Model
+
 from initialize.Component import Component
+from initialize.Config import Config
+from initialize.data.ObsEnsemble import ObsEnsemble
+from initialize.data.StateEnsemble import StateEnsemble
 from initialize.Resource import Resource
 from initialize.util.Task import TaskFactory
 
@@ -77,8 +84,25 @@ class HofX(Component):
     # whether to retain the observation feedback files (obs, geovals, ydiag)
     'retainObsFeedback': [True, bool],
   }
-  def __init__(self, config, hpc, meshes, model):
+
+  WorkDir = 'Verification'
+
+  def __init__(self,
+    config:Config,
+    hpc:HPC,
+    mesh:Mesh,
+    model:Model,
+    label:str,
+    dependencies:list,
+    states:StateEnsemble,
+  ):
     super().__init__(config)
+    self.autoLabel += label
+
+    if len(states) > 1:
+      memFmt = '/mem{:03d}'
+    else:
+      memFmt = ''
 
     ###################
     # derived variables
@@ -87,7 +111,7 @@ class HofX(Component):
     self._set('appyaml', 'hofx.yaml')
 
     self._set('MeshList', ['HofX'])
-    self._set('nCellsList', [meshes['Outer'].nCells])
+    self._set('nCellsList', [mesh.nCells])
     self._set('StreamsFileList', [model['outerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile']])
 
@@ -108,10 +132,80 @@ class HofX(Component):
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }
-    job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
+    job = Resource(self._conf, attr, ('job', mesh.name))
     task = TaskFactory[hpc.system](job)
 
-    self.groupName = self.__class__.__name__
-    self._tasks = ['''
+    # tasks
+    base = self.__class__.__name__
+    self.groupName = base+label.upper()
+    self.clean = 'Clean'+self.groupName
+
+    self._tasks += ['''
   [['''+self.groupName+''']]
-'''+task.job()+task.directives()]
+'''+task.job()+task.directives()+'''
+  [['''+self.clean+''']]''']
+
+    dt = states.duration()
+    dtStr = str(dt)
+    for mm, state in enumerate(states):
+      workDir = self.WorkDir+'/'+label+'/{{thisCycleDate}}'+memFmt.format(mm)
+      if dt > 0 or label == 'fc':
+        workDir += '/'+dtStr+'hr'
+
+      args = [
+        dt,
+        self.lower,
+        workDir,
+        6, # window (hr); TODO: to be provided by parent
+      ]
+      PrepJEDIArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+      args = [
+        dt,
+        workDir,
+        state.directory(),
+        state.prefix(),
+      ]
+      HofXArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+      args = [
+        dt,
+        workDir,
+      ]
+      CleanArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+      HofXTask = self.groupName+str(mm)+'-'+dtStr+'hr'
+      CleanTask = self.clean+str(mm)+'-'+dtStr+'hr'
+
+      self._tasks += ['''
+  [['''+HofXTask+''']]
+    inherit = '''+self.groupName+''', BATCH
+    env-script = cd {{mainScriptDir}}; ./applications/PrepJEDI.csh '''+PrepJEDIArgs+'''
+    script = $origin/applications/'''+base+'''.csh '''+HofXArgs+'''
+  [['''+CleanTask+''']]
+    inherit = '''+self.clean+''', Clean
+    script = $origin/applications/Clean'''+base+'''.csh '''+CleanArgs]
+
+      self._dependencies += ['''
+       '''+HofXTask+''' => '''+CleanTask]
+
+    # dependencies
+    for d in dependencies:
+      self._dependencies += ['''
+        '''+d+''' => '''+self.groupName]
+
+    #########
+    # outputs
+    #########
+    self.outputs = {}
+    self.outputs['obs'] = {}
+    self.outputs['obs']['members'] = ObsEnsemble(dt)
+    for mm in range(1, len(states)+1, 1): 
+      workDir = self.WorkDir+'/'+label+'/{{thisCycleDate}}'+memFmt.format(mm)
+      if dt > 0 or label == 'fc':
+        workDir += '/'+dtStr+'hr'
+
+      self.outputs['obs']['members'].append({
+        'directory': workDir+'/'+obs.OutDBDir,
+        'observers': self['observers']
+      })

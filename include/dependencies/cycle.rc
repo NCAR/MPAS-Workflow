@@ -52,16 +52,29 @@
     {{ raise('CriticalPathType is not valid') }}
 {% endif %}
 
+# background-time verification
+# TODO: test for when no verification is turned on to ensure error does not occur
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+%include include/dependencies/auto/postbg.rc
+{% if nMembers > 1 %}
+%include include/dependencies/auto/postbgmean.rc
+{% endif %}
+%include include/dependencies/auto/postda.rc
+      '''
+
 # optional extended forecasts for verification
 {% if VerifyExtendedMeanFC %}
     [[[{{extMeanTimes}}]]]
       graph = '''
         DAFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
+%include include/dependencies/auto/postfc.rc
       '''
 {% endif %}
 {% if VerifyExtendedEnsFC and nMembers > 1 %}
     [[[{{extEnsTimes}}]]]
       graph = '''
         DAFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
+%include include/dependencies/auto/postfc.rc
       '''
 {% endif %}

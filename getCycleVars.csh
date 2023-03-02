@@ -80,25 +80,25 @@ end
 ## Verify*
 set memDir = /mean
 set VerifyEnsMeanBGDirs = (${VerifyObsWorkDir}/${backgroundSubDir}${memDir}/${thisCycleDate})
-set VerifyMeanANDirs = (${VerifyObsWorkDir}/${analysisSubDir}${memDir}/${thisCycleDate})
-set VerifyMeanFCDirs = (${VerifyObsWorkDir}/${forecastSubDir}${memDir}/${thisCycleDate})
-set VerifyBGPrefix = ${VerifyObsWorkDir}/${backgroundSubDir}
-set VerifyANPrefix = ${VerifyObsWorkDir}/${analysisSubDir}
+#set VerifyMeanANDirs = (${VerifyObsWorkDir}/${analysisSubDir}${memDir}/${thisCycleDate})
+#set VerifyMeanFCDirs = (${VerifyObsWorkDir}/${forecastSubDir}${memDir}/${thisCycleDate})
+#set VerifyBGPrefix = ${VerifyObsWorkDir}/${backgroundSubDir}
+#set VerifyANPrefix = ${VerifyObsWorkDir}/${analysisSubDir}
 set BenchmarkVerifyBGPrefix = ${BenchmarkVerifyObsWorkDir}/${backgroundSubDir}
 set BenchmarkVerifyANPrefix = ${BenchmarkVerifyObsWorkDir}/${analysisSubDir}
 
-set VerifyBGDirs = ()
-set VerifyANDirs = ()
-set VerifyEnsFCDirs = ()
+#set VerifyBGDirs = ()
+#set VerifyANDirs = ()
+#set VerifyEnsFCDirs = ()
 set BenchmarkVerifyBGDirs = ()
 set BenchmarkVerifyANDirs = ()
 set BenchmarkVerifyEnsFCDirs = ()
 set member = 1
 while ( $member <= ${nMembers} )
   set memDir = `${memberDir} $nMembers $member`
-  set VerifyANDirs = ($VerifyANDirs ${VerifyANPrefix}${memDir}/${thisCycleDate})
-  set VerifyBGDirs = ($VerifyBGDirs ${VerifyBGPrefix}${memDir}/${thisCycleDate})
-  set VerifyEnsFCDirs = ($VerifyEnsFCDirs ${VerifyObsWorkDir}/${forecastSubDir}${memDir}/${thisCycleDate})
+#  set VerifyANDirs = ($VerifyANDirs ${VerifyANPrefix}${memDir}/${thisCycleDate})
+#  set VerifyBGDirs = ($VerifyBGDirs ${VerifyBGPrefix}${memDir}/${thisCycleDate})
+#  set VerifyEnsFCDirs = ($VerifyEnsFCDirs ${VerifyObsWorkDir}/${forecastSubDir}${memDir}/${thisCycleDate})
 
   set BenchmarkVerifyANDirs = ($BenchmarkVerifyANDirs ${BenchmarkVerifyANPrefix}${memDir}/${thisCycleDate})
   set BenchmarkVerifyBGDirs = ($BenchmarkVerifyBGDirs ${BenchmarkVerifyBGPrefix}${memDir}/${thisCycleDate})

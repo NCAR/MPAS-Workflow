@@ -13,30 +13,19 @@ date
 # Process arguments
 # =================
 ## args
-# ArgMember: int, ensemble member [>= 1]
-set ArgMember = "$1"
-
 # ArgDT: int, valid forecast length beyond CYLC_TASK_CYCLE_POINT in hours
-set ArgDT = "$2"
-
-# ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
-set ArgStateType = "$3"
+set ArgDT = "$1"
 
 # ArgAppType: str, either hofx or variational
-set ArgAppType = "$4"
+set ArgAppType = "$2"
+
+# ArgWorkDir: str, where to run
+set ArgWorkDir = "$3"
+
+# ArgWindowHR: int, window for accepting obs
+set ArgWindowHR = "$4"
 
 ## arg checks
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isNotInt = ($status)
-if ( $isNotInt ) then
-  echo "$0 (ERROR): ArgMember ($ArgMember) must be an integer" > ./FAIL
-  exit 1
-endif
-if ( $ArgMember < 1 ) then
-  echo "$0 (ERROR): ArgMember ($ArgMember) must be > 0" > ./FAIL
-  exit 1
-endif
-
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isNotInt = ($status)
 if ( $isNotInt ) then
@@ -74,31 +63,26 @@ setenv getObservationsOrNone "${getLocalOrNone}"
 # for observations
 source config/auto/$ArgAppType.csh
 
-# templated work directory
-set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
-if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
-  set self_WorkDir = $self_WorkDir/${ArgDT}hr
-endif
-echo "WorkDir = ${self_WorkDir}"
-mkdir -p ${self_WorkDir}
-cd ${self_WorkDir}
-
-# other templated variables
-set self_WindowHR = WindowHRTEMPLATE
+set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+  `
+echo "WorkDir = ${WorkDir}"
+mkdir -p ${WorkDir}
+cd ${WorkDir}
 
 # ================================================================================================
 
 # Previous time info for yaml entries
 # ===================================
-set prevValidDate = `$advanceCYMDH ${thisValidDate} -${self_WindowHR}`
+set prevValidDate = `$advanceCYMDH ${thisValidDate} -${ArgWindowHR}`
 set yy = `echo ${prevValidDate} | cut -c 1-4`
 set mm = `echo ${prevValidDate} | cut -c 5-6`
 set dd = `echo ${prevValidDate} | cut -c 7-8`
 set hh = `echo ${prevValidDate} | cut -c 9-10`
 
-#TODO: HALF STEP ONLY WORKS FOR INTEGER VALUES OF self_WindowHR
-@ HALF_DT_HR = ${self_WindowHR} / 2
-@ ODD_DT = ${self_WindowHR} % 2
+#TODO: HALF STEP ONLY WORKS FOR INTEGER VALUES OF ArgWindowHR
+@ HALF_DT_HR = ${ArgWindowHR} / 2
+@ ODD_DT = ${ArgWindowHR} % 2
 @ HALF_mi_ = ${ODD_DT} * 30
 set HALF_mi = $HALF_mi_
 if ( $HALF_mi_ < 10 ) then
@@ -152,8 +136,8 @@ foreach StreamsFile_ ($StreamsFileList)
   rm ${StreamsFile_}
   cp -v $ModelConfigDir/$ArgAppType/${StreamsFile} ./${StreamsFile_}
   sed -i 's@{{nCells}}@'$nCellsList[$iMesh]'@' ${StreamsFile_}
-  sed -i 's@{{TemplateFieldsPrefix}}@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
-  sed -i 's@{{StaticFieldsPrefix}}@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@{{TemplateFieldsPrefix}}@'${WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@{{StaticFieldsPrefix}}@'${WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile_}
 end
 
@@ -165,7 +149,7 @@ foreach NamelistFile_ ($NamelistFileList)
   cp -v $ModelConfigDir/$ArgAppType/${NamelistFile} ./${NamelistFile_}
   sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
   sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${NamelistFile_}
-  sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'$nCellsList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@blockDecompPrefix@'${WorkDir}'/x1.'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'${TimeStep}'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' ${NamelistFile_}
 end
@@ -217,7 +201,7 @@ foreach instrument ($observers)
   if ("$IODAPrefix" == None) then
     set IODAPrefix = ${instrument}
   endif
-  cd ${self_WorkDir}
+  cd ${WorkDir}
 
   # link the data
   set obsFile = ${IODADirectory}/${thisValidDate}/${IODAPrefix}_obs_${thisValidDate}.h5
@@ -279,7 +263,7 @@ touch $observationsYAML
 cd ${mainScriptDir}
 set key = instrumentsAllowingBiasCorrection
 set $key = (`$getObservationsOrNone resources.${observations__resource}.${key}`)
-cd ${self_WorkDir}
+cd ${WorkDir}
 
 set found = 0
 foreach instrument ($observers)
@@ -377,7 +361,7 @@ sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $thisYAML
 cd ${mainScriptDir}
 set ABISuperObGrid = "`$getObservationsOrNone resources.${observations__resource}.IODASuperObGrid.abi_g16`"
 set AHISuperObGrid = "`$getObservationsOrNone resources.${observations__resource}.IODASuperObGrid.ahi_himawari8`"
-cd ${self_WorkDir}
+cd ${WorkDir}
 
 if ("$ABISuperObGrid" != None) then
   sed -i 's@{{ABISUPEROBGRID}}@'${ABISuperObGrid}'@g' $thisYAML
@@ -396,7 +380,7 @@ sed -i 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@g' $thisYAML
 sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $thisYAML
 
 # window length
-sed -i 's@{{windowLength}}@PT'${self_WindowHR}'H@g' $thisYAML
+sed -i 's@{{windowLength}}@PT'${ArgWindowHR}'H@g' $thisYAML
 
 # window beginning
 sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
@@ -407,8 +391,8 @@ sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
 sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 
 # input and output IODA DB directories
-sed -i 's@{{InDBDir}}@'${self_WorkDir}'/'${InDBDir}'@g' $thisYAML
-sed -i 's@{{OutDBDir}}@'${self_WorkDir}'/'${OutDBDir}'@g' $thisYAML
+sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $thisYAML
+sed -i 's@{{OutDBDir}}@'${WorkDir}'/'${OutDBDir}'@g' $thisYAML
 
 # obs, geo, and diag files with ArgAppType suffixes
 sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${ArgAppType}'@g' $thisYAML
@@ -430,14 +414,14 @@ sed -i 's@{{maxIODAPoolSize}}@'${maxIODAPoolSize}'@g' $prevYAML
 
 # bg file
 sed -i 's@{{bgStatePrefix}}@'${BGFilePrefix}'@g' $thisYAML
-sed -i 's@{{bgStateDir}}@'${self_WorkDir}'/'${backgroundSubDir}'@g' $thisYAML
+sed -i 's@{{bgStateDir}}@'${WorkDir}'/'${backgroundSubDir}'@g' $thisYAML
 
 # streams+namelist
 set iMesh = 0
 foreach mesh ($MeshList)
   @ iMesh++
-  sed -i 's@{{'$mesh'StreamsFile}}@'${self_WorkDir}'/'$StreamsFileList[$iMesh]'@' $thisYAML
-  sed -i 's@{{'$mesh'NamelistFile}}@'${self_WorkDir}'/'$NamelistFileList[$iMesh]'@' $thisYAML
+  sed -i 's@{{'$mesh'StreamsFile}}@'${WorkDir}'/'$StreamsFileList[$iMesh]'@' $thisYAML
+  sed -i 's@{{'$mesh'NamelistFile}}@'${WorkDir}'/'$NamelistFileList[$iMesh]'@' $thisYAML
 end
 
 ## model and analysis variables

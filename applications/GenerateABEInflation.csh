@@ -46,6 +46,7 @@ set gridTemplateFile = ${self_WorkDir}/${localStaticFieldsFile}
 
 
 # location of mean background obs-space hofx database
+# TODO: refactor similar to VerifyObs
 set dbPath = ${VerifyEnsMeanBGDirs}/${OutDBDir}
 
 set self_ObsList = (abi_g16 ahi_himawari8)

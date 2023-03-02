@@ -5,27 +5,19 @@ date
 # Process arguments
 # =================
 ## args
-# ArgMember: int, ensemble member [>= 1]
-set ArgMember = "$1"
-
 # ArgDT: int, valid forecast length beyond CYLC_TASK_CYCLE_POINT in hours
-set ArgDT = "$2"
+set ArgDT = "$1"
 
-# ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
-set ArgStateType = "$3"
+# ArgWorkDir: str, where to run
+set ArgWorkDir = "$2"
+
+# ArgStateDir: directory of model state input
+set ArgStateDir = "$3"
+
+# ArgStatePrefix: prefix of model state input
+set ArgStatePrefix = "$4"
 
 ## arg checks
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isNotInt = ($status)
-if ( $isNotInt ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
-  exit 1
-endif
-if ( $ArgMember < 1 ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
-  exit 1
-endif
-
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isNotInt = ($status)
 if ( $isNotInt ) then
@@ -48,22 +40,29 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
-# templated work directory
-set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
-if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
-  set self_WorkDir = $self_WorkDir/${ArgDT}hr
+set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+  `
+echo "WorkDir = ${WorkDir}"
+mkdir -p ${WorkDir}
+cd ${WorkDir}
+
+if ( "$ArgStateDir" =~ "*prevCycleDate*" ) then
+  set StateDir = ${ExperimentDirectory}/`echo "$ArgStateDir" \
+    | sed 's@{{prevCycleDate}}@'${prevCycleDate}'@' \
+    `
+else if ( "$ArgStateDir" =~ "*thisCycleDate*" ) then
+  set StateDir = ${ExperimentDirectory}/`echo "$ArgStateDir" \
+    | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+    `
+else
+  set StateDir = ${ExperimentDirectory}/$ArgStateDir
 endif
-echo "WorkDir = ${self_WorkDir}"
-cd ${self_WorkDir}
 
 # build, executable, yaml
 set myBuildDir = ${HofXBuildDir}
 set myEXE = ${HofXEXE}
-set myYAML = ${self_WorkDir}/$appyaml
-
-# other templated variables
-set self_StateDir = $inStateDirsTEMPLATE[$ArgMember]
-set self_StatePrefix = inStatePrefixTEMPLATE
+set myYAML = ${WorkDir}/$appyaml
 
 # Remove old logs
 rm jedi.log*
@@ -89,7 +88,7 @@ cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
 set bg = ./${backgroundSubDir}
 mkdir -p ${bg}
 
-set bgFileOther = ${self_StateDir}/${self_StatePrefix}.$thisMPASFileDate.nc
+set bgFileOther = ${StateDir}/${ArgStatePrefix}.$thisMPASFileDate.nc
 set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
 rm ${bgFile}${OrigFileSuffix} ${bgFile}

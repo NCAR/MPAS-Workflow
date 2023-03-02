@@ -5,30 +5,22 @@ date
 # Process arguments
 # =================
 ## args
-# ArgMember: int, ensemble member [>= 1]
-set ArgMember = "$1"
-
 # ArgDT: int, valid forecast length beyond CYLC_TASK_CYCLE_POINT in hours
-set ArgDT = "$2"
+set ArgDT = "$1"
 
-# ArgStateType: str, FC if this is a forecasted state, activates ArgDT in directory naming
-set ArgStateType = "$3"
+# ArgWorkDir: str, where to run
+set ArgWorkDir = "$2"
+
+# ArgStateDir: directory of model state input
+set ArgStateDir = "$3"
+
+# ArgStatePrefix: prefix of model state input
+set ArgStatePrefix = "$4"
 
 # ArgNMembers: int, set > 1 to activate ensemble spread diagnostics
-set ArgNMembers = "$4"
+set ArgNMembers = "$5"
 
 ## arg checks
-set test = `echo $ArgMember | grep '^[0-9]*$'`
-set isNotInt = ($status)
-if ( $isNotInt ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
-  exit 1
-endif
-if ( $ArgMember < 1 ) then
-  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
-  exit 1
-endif
-
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isNotInt = ($status)
 if ( $isNotInt ) then
@@ -49,16 +41,24 @@ set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
 source ./getCycleVars.csh
 
-# templated work directory
-set self_WorkDir = $WorkDirsTEMPLATE[$ArgMember]
-if ($ArgDT > 0 || "$ArgStateType" =~ *"FC") then
-  set self_WorkDir = $self_WorkDir/${ArgDT}hr
-endif
-echo "WorkDir = ${self_WorkDir}"
+set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+  `
+echo "WorkDir = ${WorkDir}"
+mkdir -p ${WorkDir}
+cd ${WorkDir}
 
-# other templated variables
-setenv self_StatePrefix inStatePrefixTEMPLATE
-set self_StateDir = $inStateDirsTEMPLATE[$ArgMember]
+if ( "$ArgStateDir" =~ "*prevCycleDate*" ) then
+  set StateDir = ${ExperimentDirectory}/`echo "$ArgStateDir" \
+    | sed 's@{{prevCycleDate}}@'${prevCycleDate}'@' \
+    `
+else if ( "$ArgStateDir" =~ "*thisCycleDate*" ) then
+  set StateDir = ${ExperimentDirectory}/`echo "$ArgStateDir" \
+    | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+    `
+else
+  set StateDir = ${ExperimentDirectory}/$ArgStateDir
+endif
 
 setenv HDF5_DISABLE_VERSION_CHECK 1
 setenv NUMEXPR_MAX_THREADS 1
@@ -67,11 +67,9 @@ setenv NUMEXPR_MAX_THREADS 1
 
 # collect model-space diagnostic statistics into DB files
 # =======================================================
-mkdir -p ${self_WorkDir}/${ModelDiagnosticsDir}
-cd ${self_WorkDir}/${ModelDiagnosticsDir}
 
-set other = $self_StateDir
-set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
+set other = $StateDir
+set bgFileOther = ${other}/${StatePrefix}.$thisMPASFileDate.nc
 ln -sf ${bgFileOther} ../restart.$thisMPASFileDate.nc
 
 ln -fs ${scriptDirectory}/*.py ./

@@ -2,10 +2,19 @@
 
 from collections import OrderedDict
 
+from initialize.components.DA import DA
+from initialize.components.HPC import HPC
+from initialize.components.Members import Members
+from initialize.components.Model import Model
+from initialize.components.Observations import Observations
+from initialize.components.Workflow import Workflow
+
 from initialize.Component import Component
+from initialize.Config import Config
 from initialize.data.ObsEnsemble import ObsEnsemble
 from initialize.data.StateEnsemble import StateEnsemble, State
 from initialize.Resource import Resource
+from initialize.util.Post import Post
 from initialize.util.Task import TaskFactory
 
 class ABEI(Component):
@@ -148,9 +157,23 @@ class Variational(Component):
     ## retainObsFeedback
     # whether to retain the observation feedback files (obs, geovals, ydiag)
     'retainObsFeedback': [True, bool],
+
+    ## post
+    # list of tasks for Post
+    'post': [['verifyobs'], list]
   }
 
-  def __init__(self, config, hpc, meshes, model, obs, members, workflow, da): #, forecast):
+  def __init__(self,
+    config:Config,
+    hpc:HPC,
+    meshes:dict,
+    model:Model,
+    obs:Observations,
+    members:Members,
+    workflow:Workflow,
+    da:DA,
+    #forecast:Forecast,
+  ):
     super().__init__(config)
 
     if members.n > 1:
@@ -299,11 +322,19 @@ class Variational(Component):
     abeijob = Resource(self._conf, attr, ('abei.job', meshes['Outer'].name))
     abeitask = TaskFactory[hpc.system](abeijob)
 
+    args = [
+      0,
+      self.lower,
+      self.workDir+'/{{thisCycleDate}}',
+      workflow['CyclingWindowHR'],
+    ]
+    PrepJEDIArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
     da._tasks += ['''
   ## variational tasks
   [[InitVariational]]
-    inherit = '''+da.init+''', SingleBatch
-    env-script = cd {{mainScriptDir}}; ./applications/PrepJEDIVariational.csh "1" "0" "DA" "'''+self.lower+'''"
+    inherit = '''+DA.init+''', SingleBatch
+    env-script = cd {{mainScriptDir}}; ./applications/PrepJEDI.csh '''+PrepJEDIArgs+'''
     script = $origin/applications/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M
@@ -320,7 +351,7 @@ class Variational(Component):
 
   # clean
   [[CleanVariational]]
-    inherit = Clean, '''+da.clean+'''
+    inherit = Clean, '''+DA.clean+'''
     script = $origin/applications/CleanVariational.csh''']
 
     if EDASize == 1:
@@ -328,7 +359,7 @@ class Variational(Component):
       for mm in range(1, NN+1, 1):
         da._tasks += ['''
   [[Variational'''+str(mm)+''']]
-    inherit = '''+da.execute+''', Variationals, BATCH
+    inherit = '''+DA.execute+''', Variationals, BATCH
     script = $origin/applications/Variational.csh "'''+str(mm)+'"']
 
     else:
@@ -336,21 +367,21 @@ class Variational(Component):
       for instance in range(1, nDAInstances+1, 1):
         da._tasks += ['''
   [[EDA'''+str(instance)+''']]
-    inherit = '''+da.execute+''', Variationals, BATCH
+    inherit = '''+DA.execute+''', Variationals, BATCH
     script = \$origin/applications/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     if self['ABEInflation']:
       da._dependencies += ['''
         # abei
-        '''+da.pre+''' =>
+        '''+DA.pre+''' =>
         MeanBackground =>
         HofXEnsMeanBG =>
-        GenerateABEInflation => '''+da.init+'''
+        GenerateABEInflation => '''+DA.init+'''
         GenerateABEInflation => CleanHofXEnsMeanBG''']
 
-    ################
-    # inputs/outputs
-    ################
+    #########################
+    # inputs/outputs and post
+    #########################
     self.inputs = {}
     self.inputs['state'] = {}
     self.inputs['state']['members'] = StateEnsemble(meshes['Outer'])
@@ -358,7 +389,7 @@ class Variational(Component):
     self.outputs['state'] = {}
     self.outputs['state']['members'] = StateEnsemble(meshes['Outer'])
     self.outputs['obs'] = {}
-    self.outputs['obs']['members'] = ObsEnsemble()
+    self.outputs['obs']['members'] = ObsEnsemble(0)
     for mm in range(1, NN+1, 1): 
       self.inputs['state']['members'].append({
         'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+memFmt.format(mm),
@@ -387,3 +418,25 @@ class Variational(Component):
       self.inputs['state']['mean'] = self.inputs['state']['members'][0]
       self.outputs['state']['mean'] = self.outputs['state']['members'][0]
 
+    postconf = {
+      'tasks': self['post'],
+      'label': 'da',
+      'dependencies': {
+        'verifyobs': [DA.finished],
+      }
+      'followon': {
+        'verifyobs': [DA.clean],
+      }
+    }
+
+    validTasks = ['verifyobs']
+
+    self.__post = Post(
+      postconf, config,
+      validTasks,
+      hpc, meshes['Outer'], model,
+      obs = self.outputs['obs']['members'],
+    )
+
+  def export(components):
+    self.__post.export(components)

@@ -2,6 +2,8 @@ experiment:
   name: '3denvar_O30kmIE60km_WarmStart_TEST'
 externalanalyses:
   resource: "GFS.PANDAC"
+forecast:
+  post: [verifyobs, verifymodel]
 firstbackground:
   resource: "PANDAC.GFS"
 hpc:
@@ -43,11 +45,10 @@ variational:
       60km:
         3denvar:
           memory: 45
+  post: [verifyobs]
 workflow:
   first cycle point: 20180414T18
   # Note: only run for 1 cycle to reduce cost
   # Also required with only 15 inner iterations to avoid NaN in forecast
   # Can cycle for a full month when nInnerIterations==[60,60]
   final cycle point: 20180415T00
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True

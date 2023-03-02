@@ -1,8 +1,17 @@
 #!/usr/bin/env python3
 
+from initialize.components.ExternalAnalyses import ExternalAnalyses
+from initialize.components.Forecast import Forecast
+from initialize.components.HPC import HPC
+#from initialize.components.Mesh import Mesh
+from initialize.components.Members import Members
+from initialize.components.Model import Model
+from initialize.components.Observations import Observations
+
 from initialize.Component import Component
 from initialize.data.StateEnsemble import StateEnsemble, State
 from initialize.Resource import Resource
+from initialize.util.Post import Post
 from initialize.util.Task import TaskFactory
 
 class ExtendedForecast(Component):
@@ -22,9 +31,23 @@ class ExtendedForecast(Component):
     # UTC times to run ensemble of extended forecasts
     # formatted as comma-separated string, e.g., T00,T06,T12,T18
     'ensTimes': ['T00', str],
+
+    ## post
+    # list of tasks for Post
+    'post': [['verifyobs', 'verifymodel'], list]
   }
 
-  def __init__(self, config, hpc, members, forecast, extAnaIC:StateEnsemble, meanAnaIC:State, ensAnaIC:StateEnsemble):
+  def __init__(self,
+    config:Config,
+    hpc:HPC,
+    members:Members,
+    forecast:Forecast,
+    externalanalyses:ExternalAnalyses,
+    observations:Observations,
+    extAnaIC:StateEnsemble,
+    meanAnaIC:State,
+    ensAnaIC:StateEnsemble,
+  ):
     super().__init__(config)
 
     self.mesh = forecast.mesh
@@ -118,7 +141,6 @@ class ExtendedForecast(Component):
     inherit = '''+self.groupName+''', BATCH
     script = $origin/applications/Forecast.csh '''+extAnaArgs+'''
 
-  # TODO: move MeanAnalysis somewhere else
   ## from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
     inherit = '''+self.groupName+''', BATCH
@@ -158,19 +180,78 @@ class ExtendedForecast(Component):
     inherit = ExtendedEnsFC, BATCH
     script = $origin/applications/Forecast.csh '''+ensAnaArgs]
 
-    #########
-    # outputs
-    #########
+    ##################
+    # outputs and post
+    ##################
     self.outputs = {}
     self.outputs['state'] = {}
-    self.outputs['state']['members'] = StateEnsemble(self.mesh)
-    for mm in range(1, members.n+1, 1):
-      self.outputs['state']['members'].append({
-        'directory': self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
-        'prefix': forecast.forecastPrefix,
+    self.outputs['state']['members'] = {}
+    self.outputs['state']['mean'] = {}
+
+    posttasks = self['post']
+    postconf = {
+      'tasks': posttasks,
+      'followon': {}
+    }
+    validTasks = ['verifyobs', 'verifymodel']
+
+    self.__post = []
+
+    prepObsTasks = observations['PrepareObservationsTasks']
+    prepEATasks = externalanalyses['PrepareExternalAnalysisTasksOuter']
+
+    for dt in extLengths:
+
+      dtStr = str(dt)
+
+      if dt == 0:
+        success = ':succeed-all'
+      else:
+        success = ''
+
+      taskSuffix = '-'+dtStr+'hr'+success
+      prepObs = (taskSuffix+" => ").join(prepObsTasks)+taskSuffix
+      prepEA = (taskSuffix+" => ").join(prepEATasks)+taskSuffix
+
+      postconf['dependencies'] = {
+        'verifyobs': ['ExtendedForecastFinished', prepObs],
+        'verifymodel': ['ExtendedForecastFinished', prepEA],
+      }
+
+      # note: only duration (dt) varies across output state
+
+      # ensemble forecasts
+      self.outputs['state']['members'][dtStr] = StateEnsemble(self.mesh, dt)
+      for mm in range(1, members.n+1, 1):
+        self.outputs['state']['members'][dtStr].append({
+          'directory': self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
+          'prefix': Forecast.forecastPrefix,
+        })
+
+      postconf['label'] = ensfc
+      self.__post.append(Post(
+        postconf, config,
+        validTasks,
+        hpc, mesh, model,
+        states = self.outputs['state']['members'][dtStr],
+      ))
+
+      # mean forecast
+      self.outputs['state']['mean'][dtStr] = StateEnsemble(self.mesh, dt)
+      self.outputs['state']['mean'][dtStr].append({
+          'directory': self.workDir+'/{{thisCycleDate}}/mean',
+          'prefix': Forecast.forecastPrefix,
       })
 
-    self.outputs['state']['mean'] = {
-        'directory': self.workDir+'/{{thisCycleDate}}/mean',
-        'prefix': forecast.forecastPrefix,
-    }
+      postconf['label'] = fc
+      self.__post.append(Post(
+        postconf, config,
+        validTasks,
+        hpc, mesh, model,
+        states = self.outputs['state']['mean'][dtStr],
+      ))
+
+  def export(self, components):
+    for p in self.__post:
+      p.export(components)
+    super().export(components)

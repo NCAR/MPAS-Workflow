@@ -4,6 +4,7 @@ import datetime as dt
 import tools.dateFormats as dtf
 
 from initialize.Component import Component
+from initialize.Config import Config
 
 class Workflow(Component):
   variablesWithDefaults = {
@@ -61,40 +62,9 @@ class Workflow(Component):
     # `Reforecast` options.
     'CriticalPathType': ['Normal', str, ['Normal', 'Bypass', 'Reanalysis', 'Reforecast']],
 
-    ## VerifyAgainstObservations: whether to verify against observations using
-    #    HofX applications evaluated at model forecasts or analysis states
-    'VerifyAgainstObservations': [True, bool],
-
-    ## VerifyAgainstExternalAnalyses: whether to verify against external model analysis states
-    #    Note: only enabled for GFS analyses
-    'VerifyAgainstExternalAnalyses': [True, bool],
-
-    ## VerifyDeterministicDA: whether to run verification scripts for
-    #    obs feedback files produced by DA.  Does not work for ensemble DA.
-    #    Only works when CriticalPathType == Normal.
-    'VerifyDeterministicDA': [True, bool],
-
     ## VerifyExtendedMeanFC: whether to run verification scripts across
     #    extended forecast states, first intialized at mean analysis
     'VerifyExtendedMeanFC': [False, bool],
-
-    ## VerifyBGMembers: whether to run verification scripts for CyclingWindowHR
-    #    forecast length. Runs HofXBG, VerifyObsBG, and VerifyModelBG on critical
-    #    path forecasts that are initialized from ensemble member analyses.
-    'VerifyBGMembers': [False, bool],
-
-    ## VerifyEnsMeanBG: whether to run verification scripts for ensemble mean
-    #    background (members.n > 1) or deterministic background (members.n == 1)
-    'VerifyEnsMeanBG': [True, bool],
-
-    ## DiagnoseEnsSpreadBG: whether to diagnose the ensemble spread in observation
-    #    space while VerifyEnsMeanBG is True.  Automatically triggers HofXBG
-    #    for all ensemble members.
-    'DiagnoseEnsSpreadBG': [True, bool],
-
-    ## VerifyEnsMeanAN: whether to run verification scripts for ensemble
-    #    mean analysis state.
-    'VerifyANMembers': [False, bool],
 
     ## VerifyExtendedEnsBG: whether to run verification scripts across
     #    extended forecast states, first intialized at ensemble of analysis
@@ -102,7 +72,7 @@ class Workflow(Component):
     'VerifyExtendedEnsFC': [False, bool],
   }
 
-  def __init__(self, config):
+  def __init__(self, config:Config):
     super().__init__(config)
 
     ###################

@@ -2,6 +2,8 @@ externalanalyses:
   resource: "GFS.RDA"
 experiment:
   name: '3dvar_O30kmIE60km_ColdStart_TEST'
+forecast:
+  post: [verifyobs, verifymodel]
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
@@ -30,9 +32,8 @@ variational:
       60km:
         3dvar:
           memory: 45
+  post: [verifyobs]
 workflow:
   # test a recent date
   first cycle point: 20220201T00
   final cycle point: 20220201T06
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True

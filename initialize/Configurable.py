@@ -5,6 +5,9 @@ from copy import deepcopy
 class Configurable:
   conf = {}
   def __init__(self, conf:dict):
+    self.lower = self.__class__.__name__.lower()
+    self.autoLabel = self.lower
+
     self._conf = {}
     for k, v in self.conf.items():
       required = v.get('required', False)

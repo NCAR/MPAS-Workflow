@@ -5,11 +5,12 @@ from initialize.data.DataList import DataList
 from initialize.Configurable import Configurable
 
 class StateEnsemble(DataList):
-  def __init__(self, mesh:Mesh):
+  def __init__(self, mesh:Mesh, duration=0):
 
     super().__init__(self.check_method)
 
     self.__mesh = mesh
+    self.__duration = duration
 
   def check_method(self, val):
     if isinstance(val, dict):
@@ -21,6 +22,9 @@ class StateEnsemble(DataList):
 
   def mesh(self):
     return self.__mesh
+
+  def duration(self):
+    return self.__duration
 
 class State(Configurable):
   conf = {

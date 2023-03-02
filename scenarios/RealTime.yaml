@@ -3,8 +3,6 @@ workflow:
   first cycle point: 20220316T00
   restart cycle point: 20220915T00
   final cycle point: 20250916T18
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
   max active cycle points: 1
 observations:
   resource: NCEPFTPOnline

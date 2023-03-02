@@ -3,6 +3,7 @@
 from copy import deepcopy
 
 from initialize.Component import Component
+from initialize.Config import Config
 
 class Observations(Component):
   defaults = 'scenarios/defaults/observations.yaml'
@@ -52,7 +53,10 @@ class Observations(Component):
     'initialVARBCcoeff': ['/glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018', str],
   }
 
-  def __init__(self, config, hpc):
+  def __init__(self,
+    config:Config,
+    hpc:HPC,
+  ):
     super().__init__(config)
 
     # WorkDir is where non-IODA-formatted observation files are linked/downloaded, then converted

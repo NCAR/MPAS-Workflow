@@ -4,8 +4,9 @@ from initialize.data.DataList import DataList
 from initialize.Configurable import Configurable
 
 class ObsEnsemble(DataList):
-  def __init__(self):
+  def __init__(self, duration:int=0):
     super().__init__(self.check_method)
+    self.__duration = duration
 
   @staticmethod
   def check_method(val):
@@ -15,6 +16,9 @@ class ObsEnsemble(DataList):
       return val
     else:
       raise TypeError
+
+  def duration(self):
+    return self.__duration
 
 class ObsDB(Configurable):
   conf = {

@@ -18,9 +18,6 @@ from initialize.components.Benchmark import Benchmark
 from initialize.components.InitIC import InitIC
 from initialize.components.ExtendedForecast import ExtendedForecast
 from initialize.components.Forecast import Forecast
-from initialize.components.HofX import HofX
-from initialize.components.VerifyModel import VerifyModel
-from initialize.components.VerifyObs import VerifyObs
 
 class ForecastFromExternalAnalyses(Suite):
   def __init__(self, conf:Config):
@@ -37,20 +34,14 @@ class ForecastFromExternalAnalyses(Suite):
 
     c['externalanalyses'] = ExternalAnalyses(conf, c['hpc'], meshes)
     c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
-    c['hofx'] = HofX(conf, c['hpc'], meshes, c['model'])
-    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['workflow'],
+    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['model'], c['workflow'],
                 c['externalanalyses'].outputs['state']['Outer'],
                 c['externalanalyses'].outputs['state']['Outer'])
     c['extendedforecast'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
+                c['externalanalyses'], c['obs'],
                 c['externalanalyses'].outputs['state']['Outer'],
                 c['externalanalyses'].outputs['state']['Outer'][0],
                 c['externalanalyses'].outputs['state']['Outer'])
-
-    #if conf.has('verifymodel'): # TODO: make verifymodel optional
-    c['vmodel'] = VerifyModel(conf, c['hpc'], meshes['Outer'], c['members'])
-
-    #if conf.has('verifyobs'): # TODO: make verifyobs optional
-    c['vobs'] = VerifyObs(conf, c['hpc'], c['members'])
 
     #if conf.has('benchmark'): # TODO: make benchmark unnecessary
     c['bench'] = Benchmark(conf, c['hpc'])

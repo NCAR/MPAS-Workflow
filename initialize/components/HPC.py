@@ -4,6 +4,7 @@ import os
 import subprocess
 
 from initialize.Component import Component
+from initialize.Config import Config
 
 class HPC(Component):
   system = 'cheyenne'
@@ -31,12 +32,8 @@ class HPC(Component):
     # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
     'SingleProcAccount': ['NMMM0015', str],
     'SingleProcQueue': ['casper@casper-pbs', str],
-
-    # EnsMeanBG*: settings for ensemble mean BG calculation; useful for override when time-critical
-    'EnsMeanBGAccount': ['NMMM0043', str],
-    'EnsMeanBGQueue': ['economy', str],
   }
-  def __init__(self, config):
+  def __init__(self, config:Config):
     super().__init__(config)
 
     user = os.getenv('USER')
