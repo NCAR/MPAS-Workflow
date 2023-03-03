@@ -264,8 +264,8 @@ class ExternalAnalyses(Component):
       execution time limit = PT90S
       execution retry delays = 5*PT30S
     [[[events]]]
-      submission timeout = PT3M
-      submission timeout handler = cylc poll %(suite)s '%(id)s:*'; cylc trigger %(suite)s '%(id)s:*' ''']
+      submission timeout = PT1M
+      submission timeout handler = cylc poll %(suite)s '%(id)s:*'; sleep 20; cylc trigger %(suite)s '%(id)s:*' ''']
 
           # generic 0hr task name for external classes/tasks to grab
           if dt == 0:
