@@ -3,6 +3,10 @@
     pre-script = "cd  $origin/"
     [[[environment]]]
       origin = {{mainScriptDir}}
+    [[[events]]]
+      # prevents jobs from sitting in submitted state for longer than 'submission timeout'
+      submission timeout = {{submissionTimeout}}
+      submission timeout handler = cylc poll %(suite)s '%(id)s:*'; sleep 20; cylc trigger %(suite)s '%(id)s:*' ''']
 
   [[BATCH]]
     # load conda + activate npl

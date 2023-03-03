@@ -24,6 +24,10 @@ class Workflow(Component):
     # maximum consecutive cycle points to be active at any time
     'max active cycle points': [4, int],
 
+    # default submission timeout for all cylc tasks
+    # note: overridden in come cylc tasks (e.g., under InitIC and ExternalAnalyses)
+    'submission timeout': ['PT90M', str],
+
     ################
     # task selection
     ################
@@ -148,3 +152,4 @@ class Workflow(Component):
       # create cylc variable named v, with value '{{'+v+'}}', overriding Jinja2
       self._set(v, '{{'+v+'}}')
     self._cylcVars = list(self._vtable.keys())
+    self._cylcVars += ['submission timeout']

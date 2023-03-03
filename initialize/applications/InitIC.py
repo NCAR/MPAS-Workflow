@@ -90,8 +90,7 @@ class InitIC(Component):
     script = $origin/bin/ExternalAnalysisToMPAS.csh '''+initArgs+'''
 '''+self.__task.job()+self.__task.directives()+'''
     [[[events]]]
-      submission timeout = PT10M
-      submission timeout handler = cylc poll %(suite)s '%(id)s:*'; sleep 20; cylc trigger %(suite)s '%(id)s:*' ''']
+      submission timeout = PT10M''']
 
           # make task[t+dt] depend on task[t]
           if prevTaskName is not None:
