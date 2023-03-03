@@ -224,15 +224,15 @@ class Forecast(Component):
       for k in ['verifyobs', 'verifymodel']:
         postconf[k]['dependencies'] += ['MeanBackground']
         postconf[k]['member multiplier'] = members.n
-      # TODO: mean VerifyObs job depends on member HofX jobs...how to add that
-      # postconf['verifyobs']['dependencies'] += ['HofX'+???]
       postconf['verifymodel']['dependencies'] += [DA.finished]
       postconf['verifymodel']['followon'] = [DA.clean]
 
       self.outputs['state']['mean'] = StateEnsemble(self.mesh)
+      # TODO: get this file name from Variational component during export
+      # actually an output of MeanBackground, which could have its own application class...
       self.outputs['state']['mean'].append({
-        'directory': Variational.workDir+'/{{thisCycleDate}}/mean',
-        'prefix': Variational.backgroundPrefix,
+        'directory': Variational.workDir+'/{{thisCycleDate}}/'+Variational.backgroundPrefix+'/mean',
+        'prefix': self.forecastPrefix,
       })
 
       self.__post.append(Post(

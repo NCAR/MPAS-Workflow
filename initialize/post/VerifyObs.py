@@ -81,6 +81,12 @@ class VerifyObs(Component):
 
     dt = obsLocal.duration()
     dtStr = str(dt)
+    NN = len(obsLocal)
+
+    if NN > 1:
+      memFmt = '/mem{:03d}'
+    else:
+      memFmt = '/mean'
 
     self.groupName = base+subDirectory.upper()
     parentName = self.groupName
@@ -111,11 +117,6 @@ class VerifyObs(Component):
         '''+self.finished+''' => '''+f]
 
     # class-specific tasks
-    if len(obsLocal) > 1:
-      memFmt = '/mem{:03d}'
-    else:
-      memFmt = '/mean'
-
     for mm, o in enumerate(obsLocal):
       workDir = self.workDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm+1)
       if dt > 0 or 'fc' in subDirectory:
@@ -132,7 +133,11 @@ class VerifyObs(Component):
       ]
       AppArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      taskName = self.groupName+'_'+str(mm+1)
+      if NN > 1:
+        taskName = self.groupName+'_'+str(mm+1)
+      else:
+        taskName = self.groupName+'_MEAN'
+
       self._tasks += ['''
   [['''+taskName+''']]
     inherit = '''+self.groupName+''', BATCH

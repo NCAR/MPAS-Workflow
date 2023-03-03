@@ -34,13 +34,14 @@ class VerifyModel(Component):
     followon = list(localConf.get('followon', []))
     memberMultiplier = int(localConf.get('member multiplier', 1))
 
+    dt = states.duration()
+    dtStr = str(dt)
+    NN = len(states)
+
     if len(states) > 1:
       memFmt = '/mem{:03d}'
     else:
       memFmt = '/mean'
-
-    dt = states.duration()
-    dtStr = str(dt)
 
     ###################
     # derived variables
@@ -111,7 +112,11 @@ class VerifyModel(Component):
       ]
       AppArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      taskName = self.groupName+'_'+str(mm+1)
+      if NN > 1:
+        taskName = self.groupName+'_'+str(mm+1)
+      else:
+        taskName = self.groupName+'_MEAN'
+
       self._tasks += ['''
   [['''+taskName+''']]
     inherit = '''+self.groupName+''', BATCH

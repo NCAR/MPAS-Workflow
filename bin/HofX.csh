@@ -5,19 +5,33 @@ date
 # Process arguments
 # =================
 ## args
+# ArgMember: int, ensemble member [>= 1]
+set ArgMember = "$1"
+
 # ArgDT: int, valid forecast length beyond CYLC_TASK_CYCLE_POINT in hours
-set ArgDT = "$1"
+set ArgDT = "$2"
 
 # ArgWorkDir: str, where to run
-set ArgWorkDir = "$2"
+set ArgWorkDir = "$3"
 
 # ArgStateDir: directory of model state input
-set ArgStateDir = "$3"
+set ArgStateDir = "$4"
 
 # ArgStatePrefix: prefix of model state input
-set ArgStatePrefix = "$4"
+set ArgStatePrefix = "$5"
 
 ## arg checks
+set test = `echo $ArgMember | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be an integer" > ./FAIL
+  exit 1
+endif
+if ( $ArgMember < 1 ) then
+  echo "ERROR in $0 : ArgMember ($ArgMember) must be > 0" > ./FAIL
+  exit 1
+endif
+
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isNotInt = ($status)
 if ( $isNotInt ) then

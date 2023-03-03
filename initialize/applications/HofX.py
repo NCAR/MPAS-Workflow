@@ -104,13 +104,14 @@ class HofX(Component):
     dependencies = list(localConf.get('dependencies', []))
     followon = list(localConf.get('followon', []))
 
-    if len(states) > 1:
+    dt = states.duration()
+    dtStr = str(dt)
+    NN = len(states)
+
+    if NN > 1:
       memFmt = '/mem{:03d}'
     else:
       memFmt = '/mean'
-
-    dt = states.duration()
-    dtStr = str(dt)
 
     ###################
     # derived variables
@@ -186,6 +187,7 @@ class HofX(Component):
       PrepJEDIArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
       args = [
+        mm+1,
         dt,
         workDir,
         state.directory(),
@@ -199,8 +201,12 @@ class HofX(Component):
       ]
       CleanArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      HofXTask = self.groupName+'_'+str(mm+1)
-      CleanTask = self.clean+'_'+str(mm+1)
+      if NN > 1:
+        HofXTask = self.groupName+'_'+str(mm+1)
+        CleanTask = self.clean+'_'+str(mm+1)
+      else:
+        HofXTask = self.groupName+'_MEAN'
+        CleanTask = self.clean+'_MEAN'
 
       self._tasks += ['''
   [['''+HofXTask+''']]
@@ -220,7 +226,7 @@ class HofX(Component):
     self.outputs = {}
     self.outputs['obs'] = {}
     self.outputs['obs']['members'] = ObsEnsemble(dt)
-    for mm in range(1, len(states)+1, 1): 
+    for mm in range(1, NN+1, 1): 
       workDir = self.WorkDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm)
       if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'
