@@ -14,6 +14,7 @@ from initialize.data.StateEnsemble import StateEnsemble
 
 class HofX(Component):
   defaults = 'scenarios/defaults/hofx.yaml'
+  workDir = 'Verification'
 
   variablesWithDefaults = {
   ## observers
@@ -86,8 +87,6 @@ class HofX(Component):
     'retainObsFeedback': [True, bool],
   }
 
-  WorkDir = 'Verification'
-
   def __init__(self,
     config:Config,
     localConf:dict,
@@ -103,6 +102,7 @@ class HofX(Component):
     subDirectory = str(localConf['sub directory'])
     dependencies = list(localConf.get('dependencies', []))
     followon = list(localConf.get('followon', []))
+    memberMultiplier = int(localConf.get('member multiplier', 1))
 
     dt = states.duration()
     dtStr = str(dt)
@@ -174,17 +174,19 @@ class HofX(Component):
 
     # class-specific tasks
     for mm, state in enumerate(states):
-      workDir = self.WorkDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm+1)
+      workDir = self.workDir+'/'+subDirectory+memFmt.format(mm+1)+'/{{thisCycleDate}}'
       if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'
 
+      # prep/run
       args = [
         dt,
         self.lower,
         workDir,
         6, # window (hr); TODO: to be provided by parent
       ]
-      PrepJEDIArgs = ' '.join(['"'+str(a)+'"' for a in args])
+      prepArgs = ' '.join(['"'+str(a)+'"' for a in args])
+      prepScript = 'PrepJEDI'
 
       args = [
         mm+1,
@@ -193,32 +195,44 @@ class HofX(Component):
         state.directory(),
         state.prefix(),
       ]
-      HofXArgs = ' '.join(['"'+str(a)+'"' for a in args])
+      runArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
+      runName = self.groupName
+      if NN > 1:
+        runName += '_'+str(mm+1)
+      elif memberMultiplier > 1:
+        runName += '_MEAN'
+      else:
+        runName += '00'
+
+      self._tasks += ['''
+  [['''+runName+''']]
+    inherit = '''+self.groupName+''', BATCH
+    env-script = cd {{mainScriptDir}}; ./bin/'''+prepScript+'''.csh '''+prepArgs+'''
+    script = $origin/bin/'''+base+'''.csh '''+runArgs]
+
+      # clean
       args = [
         dt,
         workDir,
       ]
       CleanArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
+      cleanName = self.clean
       if NN > 1:
-        HofXTask = self.groupName+'_'+str(mm+1)
-        CleanTask = self.clean+'_'+str(mm+1)
+        cleanName += '_'+str(mm+1)
+      elif memberMultiplier > 1:
+        cleanName += '_MEAN'
       else:
-        HofXTask = self.groupName+'_MEAN'
-        CleanTask = self.clean+'_MEAN'
+        cleanName += '00'
 
       self._tasks += ['''
-  [['''+HofXTask+''']]
-    inherit = '''+self.groupName+''', BATCH
-    env-script = cd {{mainScriptDir}}; ./bin/PrepJEDI.csh '''+PrepJEDIArgs+'''
-    script = $origin/bin/'''+base+'''.csh '''+HofXArgs+'''
-  [['''+CleanTask+''']]
+  [['''+cleanName+''']]
     inherit = '''+self.clean+''', Clean
     script = $origin/bin/Clean'''+base+'''.csh '''+CleanArgs]
 
       self._dependencies += ['''
-        '''+HofXTask+''' => '''+CleanTask]
+        '''+runName+''' => '''+cleanName]
 
     #########
     # outputs
@@ -227,7 +241,7 @@ class HofX(Component):
     self.outputs['obs'] = {}
     self.outputs['obs']['members'] = ObsEnsemble(dt)
     for mm in range(1, NN+1, 1): 
-      workDir = self.WorkDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm)
+      workDir = self.workDir+'/'+subDirectory+memFmt.format(mm)+'/{{thisCycleDate}}'
       if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'
 

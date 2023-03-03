@@ -331,13 +331,13 @@ class Variational(Component):
       self.workDir+'/{{thisCycleDate}}',
       workflow['CyclingWindowHR'],
     ]
-    PrepJEDIArgs = ' '.join(['"'+str(a)+'"' for a in args])
+    prepArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
     da._tasks += ['''
   ## variational tasks
   [[InitVariational]]
     inherit = '''+da.init+''', SingleBatch
-    env-script = cd {{mainScriptDir}}; ./bin/PrepJEDI.csh '''+PrepJEDIArgs+'''
+    env-script = cd {{mainScriptDir}}; ./bin/PrepJEDI.csh '''+prepArgs+'''
     script = $origin/bin/PrepVariational.csh "1"
     [[[job]]]
       execution time limit = PT20M

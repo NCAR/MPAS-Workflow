@@ -98,11 +98,12 @@ class VerifyModel(Component):
 
     # class-specific tasks
     for mm, state in enumerate(states):
-      workDir = self.workDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm+1)
+      workDir = self.workDir+'/'+subDirectory+memFmt.format(mm+1)+'/{{thisCycleDate}}'
       if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'
       workDir += '/'+self.diagnosticsDir
 
+      # run
       args = [
         dt,
         workDir,
@@ -110,17 +111,20 @@ class VerifyModel(Component):
         state.prefix(),
         memberMultiplier,
       ]
-      AppArgs = ' '.join(['"'+str(a)+'"' for a in args])
+      runArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
+      runName = self.groupName
       if NN > 1:
-        taskName = self.groupName+'_'+str(mm+1)
+        runName += '_'+str(mm+1)
+      elif memberMultiplier > 1:
+        runName += '_MEAN'
       else:
-        taskName = self.groupName+'_MEAN'
+        runName += '00'
 
       self._tasks += ['''
-  [['''+taskName+''']]
+  [['''+runName+''']]
     inherit = '''+self.groupName+''', BATCH
-    script = $origin/bin/'''+base+'''.csh '''+AppArgs]
+    script = $origin/bin/'''+base+'''.csh '''+runArgs]
 
   def export(self, components):
     '''
