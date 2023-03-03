@@ -61,12 +61,11 @@ class Component():
     '''
     export for use outside python
     '''
-    #self._msg('export()')
     self.__exportQueues()
     self.__exportTasks()
     self.__exportDependencies()
-    self.__exportVarsToCsh()
-    self.__exportVarsToCylc()
+    self._exportVarsToCsh()
+    self._exportVarsToCylc()
     return
 
   def _msg(self, text):
@@ -160,7 +159,7 @@ class Component():
     else:
       return ['setenv '+vvar+' "'+str(value)+'"\n']
 
-  def __exportVarsToCsh(self):
+  def _exportVarsToCsh(self):
     variables = self._cshVars
     if len(variables) == 0: return
     Str = ['''#!/bin/csh -f
@@ -191,7 +190,7 @@ set config_'''+self.lower+''' = 1
     else:
       return ['{% set '+vvar+' = '+str(value)+' %}\n']
 
-  def __exportVarsToCylc(self):
+  def _exportVarsToCylc(self):
     variables = self._cylcVars
     Str = []
     for v in variables:

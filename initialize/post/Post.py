@@ -56,6 +56,7 @@ class Post(Configurable):
     self.__tasks = []
     self.__dependencies = []
     for t in self.__taskObj.values():
+      t.export(components)
       self.__tasks += t._tasks
       self.__dependencies += t._dependencies
 

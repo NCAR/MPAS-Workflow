@@ -98,13 +98,19 @@ class HofX(Component):
   ):
     super().__init__(config)
 
+    base = self.__class__.__name__
+
     subDirectory = str(localConf['sub directory'])
     dependencies = list(localConf.get('dependencies', []))
+    followon = list(localConf.get('followon', []))
 
     if len(states) > 1:
       memFmt = '/mem{:03d}'
     else:
       memFmt = '/mean'
+
+    dt = states.duration()
+    dtStr = str(dt)
 
     ###################
     # derived variables
@@ -137,20 +143,37 @@ class HofX(Component):
     job = Resource(self._conf, attr, ('job', mesh.name))
     task = TaskLookup[hpc.system](job)
 
-    # tasks
-    base = self.__class__.__name__
     self.groupName = base+subDirectory.upper()
+    parentName = self.groupName
+    self.groupName += '-'+dtStr+'hr'
+    self.finished = self.groupName+'Finished'
     self.clean = 'Clean'+self.groupName
 
+    # generic Post tasks and dependencies
     self._tasks += ['''
+  [['''+parentName+''']]
   [['''+self.groupName+''']]
+    inherit = '''+parentName+'''
 '''+task.job()+task.directives()+'''
-  [['''+self.clean+''']]''']
+  [['''+self.finished+''']]
+    inherit = '''+parentName+'''
+  [['''+self.clean+''']]
+    inherit = Clean''']
 
-    dt = states.duration()
-    dtStr = str(dt)
+    self._dependencies += ['''
+        '''+self.groupName+''':succeed-all => '''+self.finished]
+
+    for d in dependencies:
+      self._dependencies += ['''
+        '''+d+''' => '''+self.groupName]
+
+    for f in followon:
+      self._dependencies += ['''
+        '''+self.finished+''' => '''+f]
+
+    # class-specific tasks
     for mm, state in enumerate(states):
-      workDir = self.WorkDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm)
+      workDir = self.WorkDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm+1)
       if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'
 
@@ -176,8 +199,8 @@ class HofX(Component):
       ]
       CleanArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      HofXTask = self.groupName+str(mm)+'-'+dtStr+'hr'
-      CleanTask = self.clean+str(mm)+'-'+dtStr+'hr'
+      HofXTask = self.groupName+'_'+str(mm+1)
+      CleanTask = self.clean+'_'+str(mm+1)
 
       self._tasks += ['''
   [['''+HofXTask+''']]
@@ -189,12 +212,7 @@ class HofX(Component):
     script = $origin/bin/Clean'''+base+'''.csh '''+CleanArgs]
 
       self._dependencies += ['''
-       '''+HofXTask+''' => '''+CleanTask]
-
-    # dependencies
-    for d in dependencies:
-      self._dependencies += ['''
-        '''+d+''' => '''+self.groupName]
+        '''+HofXTask+''' => '''+CleanTask]
 
     #########
     # outputs
@@ -211,3 +229,11 @@ class HofX(Component):
         'directory': workDir+'/'+Observations.OutDBDir,
         'observers': self['observers'],
       })
+
+  def export(self, components):
+    '''
+    export for use outside python
+    '''
+    self._exportVarsToCsh()
+    self._exportVarsToCylc()
+    return

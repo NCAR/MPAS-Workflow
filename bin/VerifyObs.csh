@@ -36,6 +36,7 @@ endif
 # Setup environment
 # =================
 source config/tools.csh
+source config/auto/experiment.csh
 source config/auto/observations.csh
 source config/auto/workflow.csh
 source config/auto/$ArgAppType.csh

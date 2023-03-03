@@ -39,6 +39,9 @@ class VerifyModel(Component):
     else:
       memFmt = '/mean'
 
+    dt = states.duration()
+    dtStr = str(dt)
+
     ###################
     # derived variables
     ###################
@@ -64,23 +67,37 @@ class VerifyModel(Component):
     job['seconds'] += job['secondsPerMember'] * memberMultiplier
     task = TaskLookup[hpc.system](job)
 
-    self.groupName = self.__class__.__name__
+    self.groupName = base+subDirectory.upper()
+    parentName = self.groupName
+    self.groupName += '-'+dtStr+'hr'
+    self.finished = self.groupName+'Finished'
+    self.clean = 'Clean'+self.groupName
+
+    # generic Post tasks and dependencies
+    self._tasks += ['''
+  [['''+parentName+''']]
+  [['''+self.groupName+''']]
+    inherit = '''+parentName+'''
+'''+task.job()+task.directives()+'''
+  [['''+self.finished+''']]
+    inherit = '''+parentName+'''
+  [['''+self.clean+''']]
+    inherit = Clean''']
+
+    self._dependencies += ['''
+        '''+self.groupName+''':succeed-all => '''+self.finished]
+
+    for d in dependencies:
+      self._dependencies += ['''
+        '''+d+''' => '''+self.groupName]
 
     for f in followon:
       self._dependencies += ['''
-      '''+self.groupName+''' => '''+f]
+        '''+self.finished+''' => '''+f]
 
-    # tasks
-    self.groupName = base+subDirectory.upper()
-    self._tasks += ['''
-  [['''+self.groupName+''']]
-'''+task.job()+task.directives()]
-
-    dt = states.duration()
-    dtStr = str(dt)
-
+    # class-specific tasks
     for mm, state in enumerate(states):
-      workDir = self.workDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm)
+      workDir = self.workDir+'/'+subDirectory+'/{{thisCycleDate}}'+memFmt.format(mm+1)
       if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'
       workDir += '/'+self.diagnosticsDir
@@ -94,16 +111,16 @@ class VerifyModel(Component):
       ]
       AppArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      taskName = self.groupName+str(mm)+'-'+dtStr+'hr'
+      taskName = self.groupName+'_'+str(mm+1)
       self._tasks += ['''
   [['''+taskName+''']]
     inherit = '''+self.groupName+''', BATCH
     script = $origin/bin/'''+base+'''.csh '''+AppArgs]
 
-    # dependencies
-    for d in dependencies:
-      self._dependencies += ['''
-        '''+d+''' => '''+self.groupName]
-
-  def export(components):
+  def export(self, components):
+    '''
+    export for use outside python
+    '''
+    self._exportVarsToCsh()
+    self._exportVarsToCylc()
     return

@@ -69,7 +69,7 @@ setenv NUMEXPR_MAX_THREADS 1
 # =======================================================
 
 set other = $StateDir
-set bgFileOther = ${other}/${StatePrefix}.$thisMPASFileDate.nc
+set bgFileOther = ${other}/${ArgStatePrefix}.$thisMPASFileDate.nc
 ln -sf ${bgFileOther} ../restart.$thisMPASFileDate.nc
 
 ln -fs ${scriptDirectory}/*.py ./
