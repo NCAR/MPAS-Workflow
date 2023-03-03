@@ -222,7 +222,6 @@ class Forecast(Component):
       for k in ['verifyobs', 'verifymodel']:
         postconf[k]['dependencies'] += ['MeanBackground']
         postconf[k]['member multiplier'] = members.n
-      postconf['verifyobs']['dependencies'] += ['HofX'+ll.upper()]
       postconf['verifymodel']['dependencies'] += [DA.finished]
       postconf['verifymodel']['followon'] = [DA.clean]
 

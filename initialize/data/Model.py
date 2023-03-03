@@ -31,9 +31,10 @@ class Model(Component):
 
   optionalVariables = {
     ## outerMesh [Required Parameter]
-    # variational outer loop, forecast, HofX, verification
+    # Variational outer loop, Forecast, HofX, verification
     'outerMesh': str,
 
+    # TODO: specify these inner and ensemble meshes under da classes (variational, enkf, etc...)
     ## innerMesh [Optional, used in Variational]
     # variational inner loop
     'innerMesh': str,

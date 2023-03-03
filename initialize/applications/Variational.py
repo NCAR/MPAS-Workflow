@@ -373,14 +373,14 @@ class Variational(Component):
     inherit = '''+da.execute+''', Variationals, BATCH
     script = \$origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
+    # TODO: make ABEI consistent with external class design
     if self['ABEInflation']:
       da._dependencies += ['''
         # abei
         '''+da.pre+''' =>
-        MeanBackground =>
-        HofXEnsMeanBG =>
-        GenerateABEInflation => '''+da.init+'''
-        GenerateABEInflation => CleanHofXEnsMeanBG''']
+        MeanBackground => HofXBG
+        HofXBG:succeed-all => GenerateABEInflation => '''+da.init+'''
+        GenerateABEInflation => CleanHofXBG''']
 
     #########################
     # inputs/outputs and post

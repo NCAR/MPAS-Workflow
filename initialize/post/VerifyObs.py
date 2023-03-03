@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from initialize.applications.HofX import HofX
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
@@ -11,8 +12,6 @@ from initialize.framework.HPC import HPC
 from initialize.data.Model import Model, Mesh
 from initialize.data.ObsEnsemble import ObsEnsemble
 from initialize.data.StateEnsemble import StateEnsemble
-
-from initialize.post.HofX import HofX
 
 class VerifyObs(Component):
   defaults = 'scenarios/defaults/verifyobs.yaml'
