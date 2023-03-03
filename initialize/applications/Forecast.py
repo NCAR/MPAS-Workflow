@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from copy import deepcopy
+
 from initialize.applications.DA import DA
 from initialize.applications.Members import Members
 from initialize.applications.Variational import Variational
@@ -231,12 +233,11 @@ class Forecast(Component):
         'prefix': Variational.backgroundPrefix,
       })
 
-      if len(self.outputs['state']['members']) > 1:
-        self.__post.append(Post(
-          postconf, config,
-          hpc, mesh, model,
-          states = self.outputs['state']['mean'],
-        ))
+      self.__post.append(Post(
+        postconf, config,
+        hpc, mesh, model,
+        states = self.outputs['state']['mean'],
+      ))
 
       # restore original conf values
       postconf = deepcopy(pp)
