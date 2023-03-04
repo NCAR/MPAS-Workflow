@@ -137,8 +137,7 @@ class ExternalAnalyses(Component):
         meshNames.append(mesh.name)
         meshTypes.append(typ)
 
-    self._tasks = [
-'''## Analyses generated outside MPAS-Workflow
+    self._tasks = ['''
   [['''+self.groupName+''']]''']
 
     subqueues = []

@@ -108,12 +108,12 @@ class Observations(Component):
     else:
       dtOffsets=[0]
 
+    self._tasks += ['''
+  [['''+self.groupName+''']]''']
+
     subqueues = []
     prevTaskNames = {}
     zeroHR = '-0hr'
-
-    self._tasks = ['''
-  [['''+self.groupName+''']]''']
     for dt in dtOffsets:
       dtStr = str(dt)
       dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
