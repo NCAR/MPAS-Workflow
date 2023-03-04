@@ -315,7 +315,10 @@ else
 
   # Run the executable
   # ==================
-  if( -e ${ForecastEXE} ) rm ./${ForecastEXE}
+  set log = log.${MPASCore}.0000.out
+  foreach f ($log $ForecastEXE)
+    if ( -e $f ) rm -v $f
+  end
   ln -sfv ${ForecastBuildDir}/${ForecastEXE} ./
   # mpiexec is for Open MPI, mpiexec_mpt is for MPT
   mpiexec ./${ForecastEXE}
@@ -324,7 +327,7 @@ else
 
   # Check status
   # ============
-  grep "Finished running the ${MPASCore} core" log.${MPASCore}.0000.out
+  grep "Finished running the ${MPASCore} core" $log
   if ( $status != 0 ) then
     echo "ERROR in $0 : MPAS-Model forecast failed" > ./FAIL
     exit 1
