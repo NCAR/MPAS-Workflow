@@ -116,13 +116,14 @@ class Observations(Component):
     zeroHR = '-0hr'
     for dt in dtOffsets:
       dtStr = str(dt)
+      dtLen = '-'+dtStr+'hr'
       dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
       taskNames = {}
 
       # get (not part of subqueue, order does not matter)
       base = 'GetObs'
       if base in self['PrepareObservations']:
-        taskName = base+'-'+dtStr+'hr'
+        taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
     inherit = '''+self.groupName+''', SingleBatch
@@ -142,7 +143,7 @@ class Observations(Component):
       queue = 'ConvertObs'
       if base in self['PrepareObservations']:
         subqueues.append(queue)
-        taskNames[base] = base+'-'+dtStr+'hr'
+        taskNames[base] = base+dtLen
         self._tasks += ['''
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
@@ -170,7 +171,7 @@ class Observations(Component):
       # ready (not part of subqueue, order does not matter)
       base = 'ObsReady'
       if base in self['PrepareObservations']:
-        taskName = base+'-'+dtStr+'hr'
+        taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
     inherit = '''+self.groupName]

@@ -145,6 +145,7 @@ class ExternalAnalyses(Component):
     zeroHR = '-0hr'
     for dt in dtOffsets:
       dtStr = str(dt)
+      dtLen = '-'+dtStr+'hr'
       dt_work_Args = '"'+dtStr+'" "'+self.WorkDir+'"'
       taskNames = {}
 
@@ -153,7 +154,7 @@ class ExternalAnalyses(Component):
       queue = 'GetExternalAnalyses'
       if base in self['PrepareExternalAnalysisOuter']:
         subqueues.append(queue)
-        taskNames[base] = base+'-'+dtStr+'hr'
+        taskNames[base] = base+dtLen
         self._tasks += ['''
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
@@ -173,7 +174,7 @@ class ExternalAnalyses(Component):
       queue = 'GetExternalAnalyses'
       if base in self['PrepareExternalAnalysisOuter']:
         subqueues.append(queue)
-        taskNames[base] = base+'-'+dtStr+'hr'
+        taskNames[base] = base+dtLen
         self._tasks += ['''
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
@@ -193,7 +194,7 @@ class ExternalAnalyses(Component):
       queue = 'GetExternalAnalyses'
       if base in self['PrepareExternalAnalysisOuter']:
         subqueues.append(queue)
-        taskNames[base] = base+'-'+dtStr+'hr'
+        taskNames[base] = base+dtLen
         self._tasks += ['''
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
@@ -213,7 +214,7 @@ class ExternalAnalyses(Component):
       queue = 'UngribExternalAnalyses'
       if base in self['PrepareExternalAnalysisOuter']:
         subqueues.append(queue)
-        taskNames[base] = base+'-'+dtStr+'hr'
+        taskNames[base] = base+dtLen
         self._tasks += ['''
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
@@ -229,7 +230,7 @@ class ExternalAnalyses(Component):
       # ready (not part of subqueue, order does not matter)
       base = 'ExternalAnalysisReady'
       if base in self['PrepareExternalAnalysisOuter']:
-        taskName = base+'-'+dtStr+'hr'
+        taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
     inherit = '''+self.groupName]
@@ -246,7 +247,7 @@ class ExternalAnalyses(Component):
       if base in self['PrepareExternalAnalysisOuter']:
         subqueues.append(queue)
         for typ, meshName in zip(meshTypes, meshNames):
-          taskNames[(base, meshName)] = base+'-'+meshName+'-'+dtStr+'hr'
+          taskNames[(base, meshName)] = base+'-'+meshName+dtLen
           args = [
             dt,
             self['ExternalAnalysesDir'+typ],
