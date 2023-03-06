@@ -40,10 +40,10 @@ class State(Configurable):
     return self.directory()+'/'+self.prefix()
 
   def directory(self):
-    return self._conf['directory']
+    return self['directory']
 
   def prefix(self):
-    return self._conf['prefix']
+    return self['prefix']
 
   def mesh(self):
     return self.__mesh

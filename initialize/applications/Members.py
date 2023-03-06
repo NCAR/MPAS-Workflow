@@ -23,4 +23,3 @@ class Members(Component):
       self.n = n
 
     self._cshVars = ['nMembers']
-    self._cylcVars = ['nMembers']

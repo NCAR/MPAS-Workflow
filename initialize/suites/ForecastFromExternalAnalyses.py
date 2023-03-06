@@ -18,7 +18,7 @@ from initialize.framework.HPC import HPC
 from initialize.framework.Naming import Naming
 from initialize.framework.Workflow import Workflow
 
-from initialize.post.Benchmark import Benchmark
+#from initialize.post.Benchmark import Benchmark
 
 from initialize.suites.Suite import Suite
 
@@ -47,7 +47,7 @@ class ForecastFromExternalAnalyses(Suite):
                 c['externalanalyses'].outputs['state']['Outer'])
 
     #if conf.has('benchmark'): # TODO: make benchmark unnecessary
-    c['bench'] = Benchmark(conf, c['hpc'])
+    #c['bench'] = Benchmark(conf, c['hpc'])
 
     c['exp'] = Experiment(conf, c['hpc'])
     c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['externalanalyses'], c['exp'])

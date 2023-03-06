@@ -84,9 +84,9 @@ class Model(Component):
     self._set('NamelistFileWPS', 'namelist.wps')
 
     self.__meshes = {}
-    for typ in ['outer', 'inner', 'ensemble']:
-      m = typ+'Mesh'
-      Typ = typ.capitalize()
+    for meshTyp in ['outer', 'inner', 'ensemble']:
+      m = meshTyp+'Mesh'
+      Typ = meshTyp.capitalize()
 
       name = self[m]
       if name is not None:
@@ -96,8 +96,8 @@ class Model(Component):
         self.__meshes[Typ] = Mesh(name, nCells)
 
         self._set('InitFilePrefix'+Typ, 'x1.'+str(nCells)+'.init')
-        self._set(typ+'StreamsFile', StreamsFile+'_'+name)
-        self._set(typ+'NamelistFile', NamelistFile+'_'+name)
+        self._set(meshTyp+'StreamsFile', StreamsFile+'_'+name)
+        self._set(meshTyp+'NamelistFile', NamelistFile+'_'+name)
         self._set('TemplateFieldsFile'+Typ, TemplateFieldsPrefix+'.'+str(nCells)+'.nc')
         self._set('localStaticFieldsFile'+Typ, localStaticFieldsPrefix+'.'+str(nCells)+'.nc')
 

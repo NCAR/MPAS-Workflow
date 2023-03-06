@@ -29,7 +29,7 @@ class ObsDB(Configurable):
     super().__init__(conf)
 
   def directory(self):
-    return self._conf['directory']
+    return self['directory']
 
   def observers(self):
-    return self._conf['observers']
+    return self['observers']

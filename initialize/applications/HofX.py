@@ -90,14 +90,15 @@ class HofX(Component):
   def __init__(self,
     config:Config,
     localConf:dict,
-    hpc:HPC,
-    mesh:Mesh,
-    model:Model,
-    states:StateEnsemble,
   ):
     super().__init__(config)
 
     base = self.__class__.__name__
+
+    hpc = localConf['hpc']; assert isinstance(hpc, HPC), base+': incorrect type for hpc'
+    model = localConf['model']; assert isinstance(model, Model), base+': incorrect type for model'
+    mesh = localConf['mesh']; assert isinstance(mesh, Mesh), base+': incorrect type for mesh'
+    states = localConf['states']; assert isinstance(states, StateEnsemble), base+': incorrect type for states'
 
     subDirectory = str(localConf['sub directory'])
     dependencies = list(localConf.get('dependencies', []))

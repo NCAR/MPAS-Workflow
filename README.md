@@ -222,16 +222,10 @@ most users and developers, only `initialize/` will need to be consulted and/or m
 
 Developers who wish to add new `Cylc` tasks, or change the relationships between tasks, may wish to
 modify static include files or `initialize/*/*.py`, or in rare cases, create their own suite. There
-are only two static include files that will eventually be depracated:
-
-- `include/dependencies/cycle.rc`: controls the relationships between task elements for the
-  `suites/Cycle.rc` suite, in particular for all possible `CriticalPathType` options.  Allows
-  for re-use of `include/tasks/auto/forecast.rc` and `include/tasks/auto/da.rc`
-  (generated automatically from `initialize/applications/Forecast.py` and
-  `initialize/applications/DA.py`) according to the user's scenario `yaml` selections.
+is only one static include file that will eventually be depracated:
 
 - `include/tasks/base.rc`: contains some base `Cylc` task descriptors that are inherited
-  by child tasks. Look for the `inherit` keyword for examples.
+  by child tasks. Look for the `inherit` keyword in `initialize/*/*.py` for examples.
 
 
 Workflow task scripts

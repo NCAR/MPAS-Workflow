@@ -203,10 +203,15 @@ class Forecast(Component):
       'label': 'bg',
       'valid tasks': ['verifyobs', 'verifymodel'],
       'verifyobs': {
+        'hpc': hpc,
+        'mesh': mesh,
+        'model': model,
         'sub directory': 'bg',
         'dependencies': [previousForecast, '{{PrepareObservations}}'],
       },
       'verifymodel': {
+        'hpc': hpc,
+        'mesh': mesh,
         'sub directory': 'bg',
         'dependencies': [previousForecast, '{{PrepareExternalAnalysisOuter}}'],
       },
@@ -220,13 +225,6 @@ class Forecast(Component):
       # store original conf values
       pp = deepcopy(postconf)
 
-      # re-prupose for mean bg tasks
-      for k in ['verifyobs', 'verifymodel']:
-        postconf[k]['dependencies'] += ['MeanBackground']
-        postconf[k]['member multiplier'] = members.n
-      postconf['verifymodel']['dependencies'] += [DA.finished]
-      postconf['verifymodel']['followon'] = [DA.clean]
-
       self.outputs['state']['mean'] = StateEnsemble(self.mesh)
       # TODO: get this file name from Variational component during export
       # actually an output of MeanBackground, which could have its own application class...
@@ -235,11 +233,16 @@ class Forecast(Component):
         'prefix': self.forecastPrefix,
       })
 
-      self.__post.append(Post(
-        postconf, config,
-        hpc, mesh, model,
-        states = self.outputs['state']['mean'],
-      ))
+      # re-purpose for mean bg tasks
+      for k in ['verifyobs', 'verifymodel']:
+        postconf[k]['dependencies'] += ['MeanBackground']
+        postconf[k]['member multiplier'] = members.n
+        postconf[k]['states'] = self.outputs['state']['mean']
+
+      postconf['verifymodel']['dependencies'] += [DA.finished]
+      postconf['verifymodel']['followon'] = [DA.clean]
+
+      self.__post.append(Post(postconf, config))
 
       # restore original conf values
       postconf = deepcopy(pp)
@@ -258,11 +261,10 @@ class Forecast(Component):
         'prefix': self.forecastPrefix,
       })
 
-    self.__post.append(Post(
-      postconf, config,
-      hpc, mesh, model,
-      states = self.outputs['state']['members'],
-    ))
+    for k in ['verifyobs', 'verifymodel']:
+      postconf[k]['states'] = self.outputs['state']['members']
+
+    self.__post.append(Post(postconf, config))
 
   def export(self, components):
     for p in self.__post:

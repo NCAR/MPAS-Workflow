@@ -9,7 +9,6 @@ from initialize.config.Task import TaskLookup
 
 from initialize.framework.HPC import HPC
 
-from initialize.data.Model import Model, Mesh
 from initialize.data.ObsEnsemble import ObsEnsemble
 from initialize.data.StateEnsemble import StateEnsemble
 
@@ -24,15 +23,13 @@ class VerifyObs(Component):
   def __init__(self,
     config:Config,
     localConf:dict,
-    hpc:HPC,
-    mesh:Mesh,
-    model:Model,
-    states:StateEnsemble = None,
-    obs:ObsEnsemble = None,
   ):
     super().__init__(config)
 
     base = self.__class__.__name__
+
+    hpc = localConf['hpc']; assert isinstance(hpc, HPC), base+': incorrect type for hpc'
+    obs = localConf.get('obs', None)
 
     subDirectory = str(localConf['sub directory'])
     dependencies = list(localConf.get('dependencies', []))
@@ -64,19 +61,16 @@ class VerifyObs(Component):
     job['seconds'] += job['secondsPerMember'] * memberMultiplier
     task = TaskLookup[hpc.system](job)
 
-    msg = base+': one and only one of states or obs must be defined'
+    # if obs are passed, defer to them, otherwise generate new obs with HofX
     if obs is None:
-      assert states is not None, msg
-      self.__hofx = HofX(config, localConf, hpc, mesh, model, states)
+      self.__hofx = HofX(config, localConf)
       obsLocal = self.__hofx.outputs['obs']['members']
-
       appType = 'hofx'
 
     else:
-      assert states is None, msg
+      assert isinstance (obs, ObsEnsemble), base+': incorrect obs instance type'
       self.__hofx = None
       obsLocal = obs
-
       appType = 'variational'
 
     dt = obsLocal.duration()

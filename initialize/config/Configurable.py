@@ -19,7 +19,7 @@ class Configurable:
     self.lower = self.__class__.__name__.lower()
     self.autoLabel = self.lower
 
-    self._conf = {}
+    self._vtable = {}
     for k, v in self.conf.items():
       required = v.get('req', False)
       if required:
@@ -34,11 +34,11 @@ class Configurable:
         except:
           raise TypeError
 
-      self._conf[k] = vv
+      self._vtable[k] = vv
 
   def __getitem__(self, key):
     '''
     basic get method
     usage: obj = Configurable(conf); value = obj[key]
     '''
-    return self._conf[key]
+    return self._vtable[key]

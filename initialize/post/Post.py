@@ -12,53 +12,45 @@ from initialize.framework.HPC import HPC
 from initialize.post.VerifyObs import VerifyObs
 from initialize.post.VerifyModel import VerifyModel
 
+#taskLookup = {
+#  'verifyobs': VerifyObs,
+#  'verifymodel': VerifyModel,
+#}
+
 class Post(Configurable):
   conf = {
-    'tasks': {'typ': list, 'required': True},
-    'label': {'typ': str, 'required': True},
-    'valid tasks': {'typ': str, 'required': True},
-    'verifyobs': {'typ': dict},
-    'verifymodel': {'typ': dict},
+    'tasks': {'typ': list, 'req': True},
+    'label': {'typ': str, 'req': True},
+    'valid tasks': {'typ': str, 'req': True},
   }
 
-  validTasks = [
-    'verifyobs',
-    'verifymodel',
+  posts = [
+    VerifyObs,
+    VerifyModel,
   ]
 
   def __init__(self,
     conf:dict,
     globalConf:Config,
-    hpc:HPC,
-    mesh:Mesh,
-    model:Model,
-    states:StateEnsemble = None,
-    obs:ObsEnsemble = None,
   ):
     super().__init__(conf)
     self.autoLabel += self['label']
 
-    self.__taskObj = {}
+    self.__posts = {}
 
-    for t in self['tasks']:
-      assert t in self.validTasks, 'Post: invalid task => '+t
-      assert t in self['valid tasks'], 'Post: invalid task for parent => '+t
-
-      if t == 'verifyobs':
-        self.__taskObj[t] = VerifyObs(globalConf,
-          self[t], hpc, mesh, model, states = states, obs = obs)
+    for P in self.posts:
+      plow = P.__name__.lower()
+      if plow in self['tasks']:
+        assert plow in conf['valid tasks'], 'Post: invalid task for parent => '+plow
+        self.__posts[plow] = P(globalConf, conf[plow])
  
-      if t == 'verifymodel':
-        self.__taskObj[t] = VerifyModel(globalConf,
-          self[t], hpc, mesh, states)
-
   def export(self, components):
     self.__tasks = []
     self.__dependencies = []
-    for t in self.__taskObj.values():
-      t.export(components)
-      self.__tasks += t._tasks
-      self.__dependencies += t._dependencies
+    for p in self.__posts.values():
+      p.export(components)
+      self.__tasks += p._tasks
+      self.__dependencies += p._dependencies
 
     self.__exportTasks()
     self.__exportDependencies()

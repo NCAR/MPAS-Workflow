@@ -174,7 +174,7 @@ class Variational(Component):
     obs:Observations,
     members:Members,
     workflow:Workflow,
-    da, #:DA,
+    parent:Component,
     #forecast:Forecast,
   ):
     super().__init__(config)
@@ -333,10 +333,10 @@ class Variational(Component):
     ]
     prepArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-    da._tasks += ['''
+    parent._tasks += ['''
   ## variational tasks
   [[InitVariational]]
-    inherit = '''+da.init+''', SingleBatch
+    inherit = '''+parent.init+''', SingleBatch
     env-script = cd {{mainScriptDir}}; ./bin/PrepJEDI.csh '''+prepArgs+'''
     script = $origin/bin/PrepVariational.csh "1"
     [[[job]]]
@@ -348,38 +348,38 @@ class Variational(Component):
 
   # inflation
   [[GenerateABEInflation]]
-    inherit = '''+da.groupName+''', BATCH
+    inherit = '''+parent.groupName+''', BATCH
     script = $origin/bin/GenerateABEInflation.csh
 '''+abeitask.job()+abeitask.directives()+'''
 
   # clean
   [[CleanVariational]]
-    inherit = Clean, '''+da.clean+'''
+    inherit = Clean, '''+parent.clean+'''
     script = $origin/bin/CleanVariational.csh''']
 
     if EDASize == 1:
       # single instance or ensemble of Variational(s)
       for mm in range(1, NN+1, 1):
-        da._tasks += ['''
+        parent._tasks += ['''
   [[Variational'''+str(mm)+''']]
-    inherit = '''+da.execute+''', Variationals, BATCH
+    inherit = '''+parent.execute+''', Variationals, BATCH
     script = $origin/bin/Variational.csh "'''+str(mm)+'"']
 
     else:
       # single instance or ensemble of EnsembleOfVariational(s)
       for instance in range(1, nDAInstances+1, 1):
-        da._tasks += ['''
+        parent._tasks += ['''
   [[EDA'''+str(instance)+''']]
-    inherit = '''+da.execute+''', Variationals, BATCH
+    inherit = '''+parent.execute+''', Variationals, BATCH
     script = \$origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     # TODO: make ABEI consistent with external class design
     if self['ABEInflation']:
-      da._dependencies += ['''
+      parent._dependencies += ['''
         # abei
-        '''+da.pre+''' =>
+        '''+parent.pre+''' =>
         MeanBackground => HofXBG
-        HofXBG:succeed-all => GenerateABEInflation => '''+da.init+'''
+        HofXBG:succeed-all => GenerateABEInflation => '''+parent.init+'''
         GenerateABEInflation => CleanHofXBG''']
 
     #########################
@@ -426,17 +426,15 @@ class Variational(Component):
       'label': 'da',
       'valid tasks': ['verifyobs'],
       'verifyobs': {
+        'hpc': hpc,
+        'obs': self.outputs['obs']['members'],
         'sub directory': 'da',
-        'dependencies': [da.finished],
-        'followon': [da.clean],
+        'dependencies': [parent.finished],
+        'followon': [parent.clean],
       },
     }
 
-    self.__post = Post(
-      postconf, config,
-      hpc, meshes['Outer'], model,
-      obs = self.outputs['obs']['members'],
-    )
+    self.__post = Post(postconf, config)
 
   def export(self, components):
     self.__post.export(components)

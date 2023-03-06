@@ -37,12 +37,12 @@ class ExternalAnalyses(Component):
     # WorkDir is where external analysis files are linked/downloaded, e.g., in grib format
     self.WorkDir = self.workDir+'/'+resource+'/{{thisValidDate}}'
 
-    for typ, mesh in meshes.items():
+    for meshTyp, mesh in meshes.items():
       nCells = str(mesh.nCells)
-      # 'ExternalAnalysesDir'+typ is where external analyses converted to MPAS meshes are
+      # 'ExternalAnalysesDir'+meshTyp is where external analyses converted to MPAS meshes are
       # created and/or stored
-      self._set('ExternalAnalysesDir'+typ, self.workDir+'/'+mesh.name+'/{{thisValidDate}}')
-      self._cshVars.append('ExternalAnalysesDir'+typ)
+      self._set('ExternalAnalysesDir'+meshTyp, self.workDir+'/'+mesh.name+'/{{thisValidDate}}')
+      self._cshVars.append('ExternalAnalysesDir'+meshTyp)
 
       for (key, typ) in [
        ['directory', str],
@@ -58,7 +58,7 @@ class ExternalAnalyses(Component):
           values = [task.replace('{{mesh}}',mesh.name) for task in value]
 
           # first add variable as a list of tasks
-          variable = key+typ
+          variable = key+meshTyp
           self._cylcVars.append(variable)
           self._set(variable, values)
 
@@ -74,9 +74,9 @@ class ExternalAnalyses(Component):
 
         else:
           # auto-generated csh variables
-          variable = 'externalanalyses__'+key+typ
+          variable = 'externalanalyses__'+key+meshTyp
           if key in ['Vtable','UngribPrefix']:
-            if typ == 'Outer':
+            if meshTyp == 'Outer':
               variable = 'externalanalyses__'+key
             else:
               continue
@@ -116,11 +116,11 @@ class ExternalAnalyses(Component):
     #########
     self.outputs = {}
     self.outputs['state'] = {}
-    for typ, mesh in meshes.items():
-      self.outputs['state'][typ] = StateEnsemble(mesh)
-      self.outputs['state'][typ].append({
-        'directory': self['ExternalAnalysesDir'+typ],
-        'prefix': self['externalanalyses__filePrefix'+typ],
+    for meshTyp, mesh in meshes.items():
+      self.outputs['state'][meshTyp] = StateEnsemble(mesh)
+      self.outputs['state'][meshTyp].append({
+        'directory': self['ExternalAnalysesDir'+meshTyp],
+        'prefix': self['externalanalyses__filePrefix'+meshTyp],
       })
 
   def export(self, components):
@@ -132,10 +132,10 @@ class ExternalAnalyses(Component):
     # only once for each mesh
     meshTypes = []
     meshNames = []
-    for typ, mesh in self.meshes.items():
+    for meshTyp, mesh in self.meshes.items():
       if mesh.name not in meshNames:
         meshNames.append(mesh.name)
-        meshTypes.append(typ)
+        meshTypes.append(meshTyp)
 
     self._tasks = ['''
   [['''+self.groupName+''']]''']
@@ -246,13 +246,13 @@ class ExternalAnalyses(Component):
       queue = 'LinkExternalAnalyses'
       if base in self['PrepareExternalAnalysisOuter']:
         subqueues.append(queue)
-        for typ, meshName in zip(meshTypes, meshNames):
+        for meshTyp, meshName in zip(meshTypes, meshNames):
           taskNames[(base, meshName)] = base+'-'+meshName+dtLen
           args = [
             dt,
-            self['ExternalAnalysesDir'+typ],
-            self['externalanalyses__directory'+typ],
-            self['externalanalyses__filePrefix'+typ],
+            self['ExternalAnalysesDir'+meshTyp],
+            self['externalanalyses__directory'+meshTyp],
+            self['externalanalyses__filePrefix'+meshTyp],
           ]
           linkArgs = ' '.join(['"'+str(a)+'"' for a in args])
 

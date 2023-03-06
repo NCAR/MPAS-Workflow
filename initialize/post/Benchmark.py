@@ -34,7 +34,6 @@ class Benchmark(Component):
     self._set('ModelCompareDir', self.ModelCompareDir)
 
     self._cshVars = list(self._vtable.keys())
-    self._cylcVars = ['compare da to benchmark', 'compare bg to benchmark']
 
     ########################
     # tasks and dependencies

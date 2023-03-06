@@ -76,9 +76,7 @@ class ExtendedForecast(Component):
     self._set('extLengths', extLengths)
     #self._set('nExtOuts', len(extLengths))
 
-    self._cylcVars = ['extMeanTimes', 'extEnsTimes',
-      'extMeanTimesList', 'extEnsTimesList',
-      'EnsVerifyMembers', 'extIntervHR', 'extLengths']#, 'nExtOuts']
+    self._cylcVars = ['extMeanTimes', 'extEnsTimes']
 
     ########################
     # tasks and dependencies
@@ -194,9 +192,14 @@ class ExtendedForecast(Component):
       'tasks': self['post'],
       'valid tasks': ['verifyobs', 'verifymodel'],
       'verifyobs': {
+        'hpc': hpc,
+        'mesh': forecast.mesh,
+        'model': forecast.model,
         'sub directory': 'fc',
       },
       'verifymodel': {
+        'hpc': hpc,
+        'mesh': forecast.mesh,
         'sub directory': 'fc',
       },
     }
@@ -232,26 +235,24 @@ class ExtendedForecast(Component):
           'prefix': Forecast.forecastPrefix,
         })
 
+      for k in ['verifyobs', 'verifymodel']:
+        postconf[k]['states'] = self.outputs['state']['members'][dtStr]
+
       postconf['label'] = 'ensfc'
-      self.__post.append(Post(
-        postconf, config,
-        hpc, forecast.mesh, forecast.model,
-        states = self.outputs['state']['members'][dtStr],
-      ))
+      self.__post.append(Post(postconf, config))
 
       # mean forecast
       self.outputs['state']['mean'][dtStr] = StateEnsemble(forecast.mesh, dt)
       self.outputs['state']['mean'][dtStr].append({
-          'directory': self.workDir+'/{{thisCycleDate}}/mean',
-          'prefix': Forecast.forecastPrefix,
+        'directory': self.workDir+'/{{thisCycleDate}}/mean',
+        'prefix': Forecast.forecastPrefix,
       })
 
+      for k in ['verifyobs', 'verifymodel']:
+        postconf[k]['states'] = self.outputs['state']['mean'][dtStr]
+
       postconf['label'] = 'fc'
-      self.__post.append(Post(
-        postconf, config,
-        hpc, forecast.mesh, forecast.model,
-        states = self.outputs['state']['mean'][dtStr],
-      ))
+      self.__post.append(Post(postconf, config))
 
   def export(self, components):
     for p in self.__post:

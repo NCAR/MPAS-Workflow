@@ -40,7 +40,7 @@ class StaticStream(Component):
 
     FirstFileDate = dt.datetime.strptime(FirstCycleDate, dtf.cycleFmt).strftime(dtf.MPASFileFmt)
 
-    for typ, m in meshes.items():
+    for meshTyp, m in meshes.items():
       mesh = m.name
       nCells = str(m.nCells)
 
@@ -53,23 +53,23 @@ class StaticStream(Component):
           value = value.replace('{{nCells}}', nCells)
 
         # auto-generated csh variables
-        variable = key+typ
+        variable = key+meshTyp
         self._set(variable, value)
 
       #############################
       # static stream file settings
       #############################
-      dirName = 'StaticFieldsDir'+typ
-      self._set(dirName, self['directory'+typ].replace(
+      dirName = 'StaticFieldsDir'+meshTyp
+      self._set(dirName, self['directory'+meshTyp].replace(
           '{{ExternalAnalysesDir}}',
-          exp['directory']+'/'+ea['ExternalAnalysesDir'+typ].replace(
+          exp['directory']+'/'+ea['ExternalAnalysesDir'+meshTyp].replace(
             '/{{thisValidDate}}', '')
         )
       )
       self._cshVars.append(dirName)
 
-      n = 'StaticFieldsFile'+typ
-      self._set(n, self['filePrefix'+typ]+'.'+FirstFileDate+'.nc')
+      n = 'StaticFieldsFile'+meshTyp
+      self._set(n, self['filePrefix'+meshTyp]+'.'+FirstFileDate+'.nc')
       self._cshVars.append(n)
 
     staticMemFmt = self.extractResource(('resources', resource, meshes['Outer'].name), 'memberFormat', str)
