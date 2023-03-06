@@ -98,7 +98,6 @@ class Observations(Component):
     self._set(key, value)
     self.workflow = key
 
-    self.groupName = self.__class__.__name__
     self.Queue = hpc['CriticalQueue']
     self.Account = hpc['CriticalAccount']
 
@@ -109,7 +108,7 @@ class Observations(Component):
       dtOffsets=[0]
 
     self._tasks += ['''
-  [['''+self.groupName+''']]''']
+  [['''+self.group+''']]''']
 
     subqueues = []
     prevTaskNames = {}
@@ -126,7 +125,7 @@ class Observations(Component):
         taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+self.groupName+''', SingleBatch
+    inherit = '''+self.group+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT10M
@@ -174,7 +173,7 @@ class Observations(Component):
         taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+self.groupName]
+    inherit = '''+self.group]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:
@@ -201,7 +200,7 @@ class Observations(Component):
     for queue in set(subqueues):
       self._tasks += ['''
   [['''+queue+''']]
-    inherit = '''+self.groupName]
+    inherit = '''+self.group]
 
       self._queues += ['''
     [[['''+queue+''']]]

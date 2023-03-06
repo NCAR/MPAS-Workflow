@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from initialize.applications.HofX import HofX
+from initialize.applications.Members import Members
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
@@ -26,9 +27,7 @@ class VerifyObs(Component):
   ):
     super().__init__(config)
 
-    base = self.__class__.__name__
-
-    hpc = localConf['hpc']; assert isinstance(hpc, HPC), base+': incorrect type for hpc'
+    hpc = localConf['hpc']; assert isinstance(hpc, HPC), self.base+': incorrect type for hpc'
     obs = localConf.get('obs', None)
 
     subDirectory = str(localConf['sub directory'])
@@ -68,7 +67,7 @@ class VerifyObs(Component):
       appType = 'hofx'
 
     else:
-      assert isinstance (obs, ObsEnsemble), base+': incorrect obs instance type'
+      assert isinstance (obs, ObsEnsemble), self.base+': incorrect obs instance type'
       self.__hofx = None
       obsLocal = obs
       appType = 'variational'
@@ -78,20 +77,20 @@ class VerifyObs(Component):
     NN = len(obsLocal)
 
     if NN > 1:
-      memFmt = '/mem{:03d}'
+      memFmt = Members.fmt
     else:
       memFmt = '/mean'
 
-    self.groupName = base+subDirectory.upper()
-    parentName = self.groupName
-    self.groupName += '-'+dtStr+'hr'
-    self.finished = self.groupName+'Finished'
-    self.clean = 'Clean'+self.groupName
+    self.group += subDirectory.upper()
+    parentName = self.group
+    self.group += '-'+dtStr+'hr'
+    self.finished = self.group+'Finished'
+    self.clean = 'Clean'+self.group
 
     # generic Post tasks and dependencies
     self._tasks += ['''
   [['''+parentName+''']]
-  [['''+self.groupName+''']]
+  [['''+self.group+''']]
     inherit = '''+parentName+'''
 '''+task.job()+task.directives()+'''
   [['''+self.finished+''']]
@@ -100,11 +99,11 @@ class VerifyObs(Component):
     inherit = Clean''']
 
     self._dependencies += ['''
-        '''+self.groupName+''':succeed-all => '''+self.finished]
+        '''+self.group+''':succeed-all => '''+self.finished]
 
     for d in dependencies:
       self._dependencies += ['''
-        '''+d+''' => '''+self.groupName]
+        '''+d+''' => '''+self.group]
 
     for f in followon:
       self._dependencies += ['''
@@ -128,18 +127,18 @@ class VerifyObs(Component):
       ]
       runArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      runName = self.groupName
+      self.execute = self.group
       if NN > 1:
-        runName += '_'+str(mm+1)
+        self.execute += '_'+str(mm+1)
       elif memberMultiplier > 1:
-        runName += '_MEAN'
+        self.execute += '_MEAN'
       else:
-        runName += '00'
+        self.execute += '00'
 
       self._tasks += ['''
-  [['''+runName+''']]
-    inherit = '''+self.groupName+''', BATCH
-    script = $origin/bin/'''+base+'''.csh '''+runArgs]
+  [['''+self.execute+''']]
+    inherit = '''+self.group+''', BATCH
+    script = $origin/bin/'''+self.base+'''.csh '''+runArgs]
 
   def export(self, components):
     '''
@@ -151,7 +150,7 @@ class VerifyObs(Component):
       self._tasks += self.__hofx._tasks
       self._dependencies += self.__hofx._dependencies
       self._dependencies += ['''
-        '''+self.__hofx.finished+''' => '''+self.groupName]
+        '''+self.__hofx.finished+''' => '''+self.group]
       self._dependencies += ['''
         '''+self.finished+''' => '''+self.__hofx.clean]
       self.__hofx.export(components)

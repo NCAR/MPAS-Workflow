@@ -52,6 +52,8 @@ class ExtendedForecast(Component):
     ensAnaIC:StateEnsemble,
   ):
     super().__init__(config)
+    self.NN = members.n
+    self.memFmt = members.memFmt
 
     assert forecast.mesh == extAnaIC.mesh(), 'extAnaIC must be on same mesh as extended forecast'
     assert forecast.mesh == meanAnaIC.mesh(), 'meanAnaIC must be on same mesh as extended forecast'
@@ -68,7 +70,7 @@ class ExtendedForecast(Component):
     self._set('extMeanTimesList', self['meanTimes'].split(','))
     self._set('extEnsTimesList', self['ensTimes'].split(','))
 
-    EnsVerifyMembers = range(1, members.n+1, 1)
+    EnsVerifyMembers = range(1, self.NN+1, 1)
     self._set('EnsVerifyMembers', EnsVerifyMembers)
 
     extLengths = range(0, lengthHR+outIntervalHR, outIntervalHR)
@@ -131,34 +133,32 @@ class ExtendedForecast(Component):
     ]
     meanAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-    self.groupName = self.__class__.__name__
     self._tasks = ['''
-  [['''+self.groupName+''']]
+  [['''+self.group+''']]
 '''+fctask.job()+fctask.directives()+'''
 
   ## from external analysis
   [[ExtendedFCFromExternalAnalysis]]
-    inherit = '''+self.groupName+''', BATCH
+    inherit = '''+self.group+''', BATCH
     script = $origin/bin/Forecast.csh '''+extAnaArgs+'''
 
   ## from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
-    inherit = '''+self.groupName+''', BATCH
+    inherit = '''+self.group+''', BATCH
     script = $origin/bin/MeanAnalysis.csh
 '''+meantask.job()+meantask.directives()+'''
   [[ExtendedMeanFC]]
-    inherit = '''+self.groupName+''', BATCH
+    inherit = '''+self.group+''', BATCH
     script = $origin/bin/Forecast.csh '''+meanAnaArgs+'''
 
 
   [[ExtendedForecastFinished]]
-    inherit = '''+self.groupName+'''
+    inherit = '''+self.group+'''
 
   ## from ensemble of analyses
   [[ExtendedEnsFC]]
-    inherit = '''+self.groupName]
+    inherit = '''+self.group]
 
-    memFmt = '/mem{:03d}'
     for mm in EnsVerifyMembers:
       args = [
         mm,
@@ -169,7 +169,7 @@ class ExtendedForecast(Component):
         True,
         False,
         False,
-        self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
+        self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
         ensAnaIC[mm-1].directory(),
         ensAnaIC[mm-1].prefix(),
       ]
@@ -229,9 +229,9 @@ class ExtendedForecast(Component):
 
       # ensemble forecasts
       self.outputs['state']['members'][dtStr] = StateEnsemble(forecast.mesh, dt)
-      for mm in range(1, members.n+1, 1):
+      for mm in range(1, self.NN+1, 1):
         self.outputs['state']['members'][dtStr].append({
-          'directory': self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
+          'directory': self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
           'prefix': Forecast.forecastPrefix,
         })
 

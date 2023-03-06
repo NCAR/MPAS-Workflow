@@ -12,9 +12,23 @@ class Component():
   optionalVariables = {}
   variablesWithDefaults = {}
   def __init__(self, config:Config):
+    self.base = self.__class__.__name__
     self.lower = self.__class__.__name__.lower()
     self.logPrefix = self.__class__.__name__+': '
     self.autoLabel = self.lower
+
+    # For each of these cylc "task" names, some are family names, while others are marker names
+    # + "family" tasks can be used for inheritance; those marked with a * must be used in order
+    #   to avoid an error message caused by the ":succeed-all" qualifier
+    # + "marker" tasks can be used in dependency graphs only
+    #TODO: provide mechanism for multiple serial pre and post tasks
+    self.group = self.base # family, all-encompassing
+    self.pre = 'Pre'+self.base # marker
+    self.init = 'Init'+self.base # family*
+    self.execute = self.base # family*
+    self.post = self.base+'Post' # marker
+    self.finished = self.base+'Finished' # marker
+    self.clean = 'Clean'+self.base # family
 
     ######################################################
     # initialize exportable variables, tasks, dependencies

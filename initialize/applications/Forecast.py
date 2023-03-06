@@ -2,7 +2,6 @@
 
 from copy import deepcopy
 
-from initialize.applications.DA import DA
 from initialize.applications.Members import Members
 from initialize.applications.Variational import Variational
 
@@ -54,17 +53,15 @@ class Forecast(Component):
     warmIC:StateEnsemble,
   ):
     super().__init__(config)
-
-    if members.n > 1:
-      memFmt = '/mem{:03d}'
-    else:
-      memFmt = ''
-
+    self.__globalConf = config
     self.mesh = mesh
-    assert self.mesh == coldIC.mesh(), 'coldIC must be on same mesh as forecast'
-    assert self.mesh == warmIC.mesh(), 'warmIC must be on same mesh as forecast'
-
     self.model = model
+    self.NN = members.n
+    self.memFmt = members.memFmt
+
+    assert mesh == coldIC.mesh(), 'coldIC must be on same mesh as forecast'
+    assert mesh == warmIC.mesh(), 'warmIC must be on same mesh as forecast'
+
 
     ###################
     # derived variables
@@ -114,27 +111,27 @@ class Forecast(Component):
     meantask = TaskLookup[hpc.system](meanjob)
 
 
-    self.groupName = 'ForecastFamily'
+    self.group = 'ForecastFamily'
     self._tasks = ['''
-  [['''+self.groupName+''']]
-  [[ColdForecast]]
-    inherit = '''+self.groupName+'''
+  [['''+self.group+''']]
+  [[Cold'''+self.base+''']]
+    inherit = '''+self.group+'''
 '''+task.job()+task.directives()+'''
 
-  [[Forecast]]
-    inherit = '''+self.groupName+'''
+  [['''+self.base+''']]
+    inherit = '''+self.group+'''
 '''+task.job()+task.directives()+'''
 
-  [[ForecastFinished]]
-    inherit = '''+self.groupName+'''
+  [['''+self.finished+''']]
+    inherit = '''+self.group+'''
 
   ## post mean background (if needed)
   [[MeanBackground]]
-    inherit = '''+self.groupName+''', BATCH
+    inherit = '''+self.group+''', BATCH
     script = $origin/bin/MeanBackground.csh
 '''+meantask.job()+meantask.directives()]
 
-    for mm in range(1, members.n+1, 1):
+    for mm in range(1, self.NN+1, 1):
       # ColdArgs explanation
       # IAU (False) cannot be used until 1 cycle after DA analysis
       # DACycling (False), IC ~is not~ a DA analysis for which re-coupling is required
@@ -149,7 +146,7 @@ class Forecast(Component):
         False,
         True,
         False,
-        self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
+        self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
         coldIC[0].directory(),
         coldIC[0].prefix(),
       ]
@@ -168,37 +165,31 @@ class Forecast(Component):
         True,
         True,
         updateSea,
-        self.workDir+'/{{thisCycleDate}}'+memFmt.format(mm),
+        self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
         warmIC[mm-1].directory(),
         warmIC[mm-1].prefix(),
       ]
       WarmArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
       self._tasks += ['''
-  [[ColdForecast'''+str(mm)+''']]
-    inherit = ColdForecast, BATCH
-    script = $origin/bin/Forecast.csh '''+ColdArgs+'''
-  [[Forecast'''+str(mm)+''']]
-    inherit = Forecast, BATCH
-    script = $origin/bin/Forecast.csh '''+WarmArgs]
+  [[Cold'''+self.base+str(mm)+''']]
+    inherit = Cold'''+self.base+''', BATCH
+    script = $origin/bin/'''+self.base+'''.csh '''+ColdArgs+'''
+  [['''+self.base+str(mm)+''']]
+    inherit = '''+self.base+''', BATCH
+    script = $origin/bin/'''+self.base+'''.csh '''+WarmArgs]
 
+    # {{ForecastTimes}} dependencies only, not the R1 cycle
     self._dependencies += ['''
         # ensure there is a valid sea-surface update file before forecast
-        {{PrepareSeaSurfaceUpdate}} => Forecast
+        {{PrepareSeaSurfaceUpdate}} => '''+self.base+'''
 
         # all members must succeed in order to proceed
-        Forecast:succeed-all => ForecastFinished''']
+        '''+self.base+''':succeed-all => '''+self.finished]
 
-    ##################
-    # outputs and post
-    ##################
-    self.outputs = {}
-    self.outputs['state'] = {}
+    self.previousForecast = self.finished+'[-PT'+str(window)+'H]'
 
-    previousForecast = 'ForecastFinished[-PT'+str(window)+'H]'
-    self.__post = []
-
-    postconf = {
+    self.postconf = {
       'tasks': self['post'],
       'label': 'bg',
       'valid tasks': ['verifyobs', 'verifymodel'],
@@ -207,66 +198,86 @@ class Forecast(Component):
         'mesh': mesh,
         'model': model,
         'sub directory': 'bg',
-        'dependencies': [previousForecast, '{{PrepareObservations}}'],
+        'dependencies': [self.previousForecast, '{{PrepareObservations}}'],
       },
       'verifymodel': {
         'hpc': hpc,
         'mesh': mesh,
         'sub directory': 'bg',
-        'dependencies': [previousForecast, '{{PrepareExternalAnalysisOuter}}'],
+        'dependencies': [self.previousForecast, '{{PrepareExternalAnalysisOuter}}'],
       },
     }
 
-    # mean case when members.n > 1
-    if members.n > 1:
-      self._dependencies += ['''
-        '''+previousForecast+''' => MeanBackground''']
+    #########
+    # outputs
+    #########
 
-      # store original conf values
-      pp = deepcopy(postconf)
+    self.outputs = {}
+    self.outputs['state'] = {}
 
-      self.outputs['state']['mean'] = StateEnsemble(self.mesh)
-      # TODO: get this file name from Variational component during export
-      # actually an output of MeanBackground, which could have its own application class...
-      self.outputs['state']['mean'].append({
-        'directory': Variational.workDir+'/{{thisCycleDate}}/'+Variational.backgroundPrefix+'/mean',
+    self.outputs['state']['members'] = StateEnsemble(mesh)
+    for mm in range(1, self.NN+1, 1):
+      self.outputs['state']['members'].append({
+        'directory': self.workDir+'/{{prevCycleDate}}'+self.memFmt.format(mm),
         'prefix': self.forecastPrefix,
       })
+
+    self.outputs['state']['mean'] = StateEnsemble(mesh)
+    # TODO: get this file name from Variational component during export
+    # actually an output of MeanBackground, which could have its own application class...
+    self.outputs['state']['mean'].append({
+      'directory': Variational.workDir+'/{{thisCycleDate}}/'+Variational.backgroundPrefix+'/mean',
+      'prefix': self.forecastPrefix,
+    })
+
+
+  def export(self, components):
+
+    ######
+    # post
+    ######
+    __post = []
+
+    # mean case when self.NN > 1
+    if self.NN > 1:
+      self._dependencies += ['''
+        '''+self.previousForecast+''' => MeanBackground''']
+
+      # store original conf values
+      pp = deepcopy(self.postconf)
 
       # re-purpose for mean bg tasks
       for k in ['verifyobs', 'verifymodel']:
-        postconf[k]['dependencies'] += ['MeanBackground']
-        postconf[k]['member multiplier'] = members.n
-        postconf[k]['states'] = self.outputs['state']['mean']
+        self.postconf[k]['dependencies'] += ['MeanBackground']
+        self.postconf[k]['member multiplier'] = self.NN
+        self.postconf[k]['states'] = self.outputs['state']['mean']
 
-      postconf['verifymodel']['dependencies'] += [DA.finished]
-      postconf['verifymodel']['followon'] = [DA.clean]
+      # mean-state model verification also diagnoses posterior ensemble spread
+      # TODO: define critical path class that containerizes Forecast and DA
+      # do not want components to be used as global variable
+      self.postconf['verifymodel']['dependencies'] += [components['da'].finished]
+      self.postconf['verifymodel']['followon'] = [components['da'].clean]
 
-      self.__post.append(Post(postconf, config))
+      __post.append(Post(self.postconf, self.__globalConf))
 
       # restore original conf values
-      postconf = deepcopy(pp)
+      self.postconf = deepcopy(pp)
 
       # only need verifyobs from individual ensemble members; used to calculate ensemble spread
-      if 'verifyobs' in postconf['tasks']:
-        postconf['tasks'] = ['verifyobs']
+      if 'verifyobs' in self.postconf['tasks']:
+        self.postconf['tasks'] = ['verifyobs']
       else:
-        postconf['tasks'] = []
+        self.postconf['tasks'] = []
 
-    # member case (mean case when members.n == 1)
-    self.outputs['state']['members'] = StateEnsemble(self.mesh)
-    for mm in range(1, members.n+1, 1):
-      self.outputs['state']['members'].append({
-        'directory': self.workDir+'/{{prevCycleDate}}'+memFmt.format(mm),
-        'prefix': self.forecastPrefix,
-      })
-
+    # member case (mean case when NN == 1)
     for k in ['verifyobs', 'verifymodel']:
-      postconf[k]['states'] = self.outputs['state']['members']
+      self.postconf[k]['states'] = self.outputs['state']['members']
 
-    self.__post.append(Post(postconf, config))
+    __post.append(Post(self.postconf, self.__globalConf))
 
-  def export(self, components):
-    for p in self.__post:
+    ########
+    # export
+    ########
+    for p in __post:
       p.export(components)
     super().export(components)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from initialize.framework.HPC import HPC
+from initialize.applications.Members import Members
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
@@ -93,12 +94,10 @@ class HofX(Component):
   ):
     super().__init__(config)
 
-    base = self.__class__.__name__
-
-    hpc = localConf['hpc']; assert isinstance(hpc, HPC), base+': incorrect type for hpc'
-    model = localConf['model']; assert isinstance(model, Model), base+': incorrect type for model'
-    mesh = localConf['mesh']; assert isinstance(mesh, Mesh), base+': incorrect type for mesh'
-    states = localConf['states']; assert isinstance(states, StateEnsemble), base+': incorrect type for states'
+    hpc = localConf['hpc']; assert isinstance(hpc, HPC), self.base+': incorrect type for hpc'
+    model = localConf['model']; assert isinstance(model, Model), self.base+': incorrect type for model'
+    mesh = localConf['mesh']; assert isinstance(mesh, Mesh), self.base+': incorrect type for mesh'
+    states = localConf['states']; assert isinstance(states, StateEnsemble), self.base+': incorrect type for states'
 
     subDirectory = str(localConf['sub directory'])
     dependencies = list(localConf.get('dependencies', []))
@@ -110,7 +109,7 @@ class HofX(Component):
     NN = len(states)
 
     if NN > 1:
-      memFmt = '/mem{:03d}'
+      memFmt = Members.fmt
     else:
       memFmt = '/mean'
 
@@ -145,16 +144,16 @@ class HofX(Component):
     job = Resource(self._conf, attr, ('job', mesh.name))
     task = TaskLookup[hpc.system](job)
 
-    self.groupName = base+subDirectory.upper()
-    parentName = self.groupName
-    self.groupName += '-'+dtStr+'hr'
-    self.finished = self.groupName+'Finished'
-    self.clean = 'Clean'+self.groupName
+    self.group += self.base+subDirectory.upper()
+    parentName = self.group
+    self.group += '-'+dtStr+'hr'
+    self.finished = self.group+'Finished'
+    self.clean = 'Clean'+self.group
 
     # generic Post tasks and dependencies
     self._tasks += ['''
   [['''+parentName+''']]
-  [['''+self.groupName+''']]
+  [['''+self.group+''']]
     inherit = '''+parentName+'''
 '''+task.job()+task.directives()+'''
   [['''+self.finished+''']]
@@ -163,11 +162,11 @@ class HofX(Component):
     inherit = Clean''']
 
     self._dependencies += ['''
-        '''+self.groupName+''':succeed-all => '''+self.finished]
+        '''+self.group+''':succeed-all => '''+self.finished]
 
     for d in dependencies:
       self._dependencies += ['''
-        '''+d+''' => '''+self.groupName]
+        '''+d+''' => '''+self.group]
 
     for f in followon:
       self._dependencies += ['''
@@ -198,7 +197,7 @@ class HofX(Component):
       ]
       runArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      runName = self.groupName
+      runName = self.group
       if NN > 1:
         runName += '_'+str(mm+1)
       elif memberMultiplier > 1:
@@ -208,9 +207,9 @@ class HofX(Component):
 
       self._tasks += ['''
   [['''+runName+''']]
-    inherit = '''+self.groupName+''', BATCH
+    inherit = '''+self.group+''', BATCH
     env-script = cd {{mainScriptDir}}; ./bin/'''+prepScript+'''.csh '''+prepArgs+'''
-    script = $origin/bin/'''+base+'''.csh '''+runArgs]
+    script = $origin/bin/'''+self.base+'''.csh '''+runArgs]
 
       # clean
       args = [
@@ -229,8 +228,8 @@ class HofX(Component):
 
       self._tasks += ['''
   [['''+cleanName+''']]
-    inherit = '''+self.clean+''', Clean
-    script = $origin/bin/Clean'''+base+'''.csh '''+CleanArgs]
+    inherit = '''+self.clean+'''
+    script = $origin/bin/Clean'''+self.base+'''.csh '''+CleanArgs]
 
       self._dependencies += ['''
         '''+runName+''' => '''+cleanName]

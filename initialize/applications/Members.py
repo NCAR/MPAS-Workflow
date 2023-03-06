@@ -8,6 +8,9 @@ class Members(Component):
     ## n: number of firstbackground, DA, and forecast members
     'n': int,
   }
+
+  fmt = '/mem{:03d}'
+
   def __init__(self, config):
     super().__init__(config)
 
@@ -23,3 +26,8 @@ class Members(Component):
       self.n = n
 
     self._cshVars = ['nMembers']
+
+    if self.n > 1:
+      self.memFmt = self.fmt
+    else:
+      self.memFmt = ''

@@ -109,8 +109,6 @@ class ExternalAnalyses(Component):
     ungribjob = Resource(self._conf, attr, ('job', 'ungrib'))
     self.__ungribtask = TaskLookup[hpc.system](ungribjob)
 
-    self.groupName = self.__class__.__name__
-
     #########
     # outputs
     #########
@@ -138,7 +136,7 @@ class ExternalAnalyses(Component):
         meshTypes.append(meshTyp)
 
     self._tasks = ['''
-  [['''+self.groupName+''']]''']
+  [['''+self.group+''']]''']
 
     subqueues = []
     prevTaskNames = {}
@@ -233,7 +231,7 @@ class ExternalAnalyses(Component):
         taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+self.groupName]
+    inherit = '''+self.group]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:
@@ -292,7 +290,7 @@ class ExternalAnalyses(Component):
     for queue in set(subqueues):
       self._tasks += ['''
   [['''+queue+''']]
-    inherit = '''+self.groupName]
+    inherit = '''+self.group]
 
       self._queues += ['''
     [[['''+queue+''']]]

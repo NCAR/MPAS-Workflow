@@ -35,7 +35,7 @@ class InitIC(Component):
     job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
     self.__task = TaskLookup[hpc.system](job)
 
-    self.groupName = ea.groupName
+    self.group = ea.group
 
     #########
     # outputs
@@ -50,6 +50,7 @@ class InitIC(Component):
       })
 
   def export(self, components):
+    # TODO: avoid using components as global variable
     if 'extendedforecast' in components:
       dtOffsets=components['extendedforecast']['extLengths']
     else:
@@ -76,6 +77,7 @@ class InitIC(Component):
           dtStr = str(dt)
           args = [
             dt,
+            # TODO: avoid using components as global variable
             components['externalanalyses']['ExternalAnalysesDir'+typ],
             components['externalanalyses']['externalanalyses__filePrefix'+typ],
             nCells,
@@ -114,7 +116,7 @@ class InitIC(Component):
     for queue in set(subqueues):
       self._tasks += ['''
   [['''+queue+''']]
-    inherit = '''+self.groupName]
+    inherit = '''+self.group]
 
       self._queues += ['''
     [[['''+queue+''']]]

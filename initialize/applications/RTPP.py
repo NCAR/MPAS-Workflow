@@ -36,10 +36,11 @@ class RTPP(Component):
     hpc:HPC,
     mesh:Mesh,
     members:Members,
-    da, #:DA,
+    parent:Component,
     ensBackgrounds:StateEnsemble,
     ensAnalyses:StateEnsemble,
   ):
+    self.NN = members.n
     super().__init__(config)
 
     # WorkDir is where RTPP is executed
@@ -80,23 +81,23 @@ class RTPP(Component):
       job._set('seconds', job['baseSeconds'] + job['secondsPerMember'] * members.n)
       task = TaskLookup[hpc.system](job)
 
-      da._tasks += ['''
+      self._tasks += ['''
   [[PrepRTPP]]
     # note: does not depend on any other tasks
-    inherit = '''+da.groupName+''', SingleBatch
+    inherit = '''+parent.group+''', SingleBatch
     script = $origin/bin/PrepRTPP.csh "'''+self.WorkDir+'''"
     [[[job]]]
       execution time limit = PT1M
       execution retry delays = '''+job['retry']+'''
   [[RTPP]]
-    inherit = '''+da.groupName+''', BATCH
+    inherit = '''+parent.group+''', BATCH
     script = $origin/bin/RTPP.csh "'''+self.WorkDir+'''"
 '''+task.job()+task.directives()+'''
 
   [[CleanRTPP]]
-    inherit = Clean, '''+da.clean+'''
+    inherit = Clean, '''+parent.clean+'''
     script = $origin/bin/CleanRTPP.csh "'''+self.WorkDir+'"']
 
-      da._dependencies += ['''
+      self._dependencies += ['''
         PrepRTPP => RTPP
-        '''+da.post+''' => RTPP => '''+da.finished]
+        '''+parent.post+''' => RTPP => '''+parent.finished]

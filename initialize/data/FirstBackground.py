@@ -58,15 +58,14 @@ class FirstBackground(Component):
     ########################
     # tasks and dependencies
     ########################
-    self.groupName = self.__class__.__name__
 
     # link (prepares outer and inner meshes as needed)
     base = 'LinkWarmStartBackgrounds'
     if base in self['PrepareFirstBackgroundOuter']:
       self._tasks += ['''
-  [['''+self.groupName+''']]
+  [['''+self.base+''']]
   [['''+base+''']]
-    inherit = '''+self.groupName+''', SingleBatch
+    inherit = '''+self.base+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members

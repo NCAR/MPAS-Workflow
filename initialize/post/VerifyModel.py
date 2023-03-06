@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from initialize.applications.Members import Members
+
 from initialize.config.Component import Component
 from initialize.config.Config import Config
 from initialize.config.Resource import Resource
@@ -24,11 +26,9 @@ class VerifyModel(Component):
   ):
     super().__init__(config)
 
-    base = self.__class__.__name__
-
-    hpc = localConf['hpc']; assert isinstance(hpc, HPC), base+': incorrect type for hpc'
-    mesh = localConf['mesh']; assert isinstance(mesh, Mesh), base+': incorrect type for mesh'
-    states = localConf['states']; assert isinstance(states, StateEnsemble), base+': incorrect type for states'
+    hpc = localConf['hpc']; assert isinstance(hpc, HPC), self.base+': incorrect type for hpc'
+    mesh = localConf['mesh']; assert isinstance(mesh, Mesh), self.base+': incorrect type for mesh'
+    states = localConf['states']; assert isinstance(states, StateEnsemble), self.base+': incorrect type for states'
 
     subDirectory = str(localConf['sub directory'])
     dependencies = list(localConf.get('dependencies', []))
@@ -40,7 +40,7 @@ class VerifyModel(Component):
     NN = len(states)
 
     if len(states) > 1:
-      memFmt = '/mem{:03d}'
+      memFmt = Members.fmt
     else:
       memFmt = '/mean'
 
@@ -69,16 +69,16 @@ class VerifyModel(Component):
     job['seconds'] += job['secondsPerMember'] * memberMultiplier
     task = TaskLookup[hpc.system](job)
 
-    self.groupName = base+subDirectory.upper()
-    parentName = self.groupName
-    self.groupName += '-'+dtStr+'hr'
-    self.finished = self.groupName+'Finished'
-    self.clean = 'Clean'+self.groupName
+    self.group += subDirectory.upper()
+    parentName = self.group
+    self.group += '-'+dtStr+'hr'
+    self.finished = self.group+'Finished'
+    self.clean = 'Clean'+self.group
 
     # generic Post tasks and dependencies
     self._tasks += ['''
   [['''+parentName+''']]
-  [['''+self.groupName+''']]
+  [['''+self.group+''']]
     inherit = '''+parentName+'''
 '''+task.job()+task.directives()+'''
   [['''+self.finished+''']]
@@ -87,11 +87,11 @@ class VerifyModel(Component):
     inherit = Clean''']
 
     self._dependencies += ['''
-        '''+self.groupName+''':succeed-all => '''+self.finished]
+        '''+self.group+''':succeed-all => '''+self.finished]
 
     for d in dependencies:
       self._dependencies += ['''
-        '''+d+''' => '''+self.groupName]
+        '''+d+''' => '''+self.group]
 
     for f in followon:
       self._dependencies += ['''
@@ -114,18 +114,18 @@ class VerifyModel(Component):
       ]
       runArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      runName = self.groupName
+      self.execute = self.group
       if NN > 1:
-        runName += '_'+str(mm+1)
+        self.execute += '_'+str(mm+1)
       elif memberMultiplier > 1:
-        runName += '_MEAN'
+        self.execute += '_MEAN'
       else:
-        runName += '00'
+        self.execute += '00'
 
       self._tasks += ['''
-  [['''+runName+''']]
-    inherit = '''+self.groupName+''', BATCH
-    script = $origin/bin/'''+base+'''.csh '''+runArgs]
+  [['''+self.execute+''']]
+    inherit = '''+self.group+''', BATCH
+    script = $origin/bin/'''+self.base+'''.csh '''+runArgs]
 
   def export(self, components):
     '''

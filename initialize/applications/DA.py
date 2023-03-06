@@ -20,19 +20,6 @@ class DA(Component):
   Framework for all data assimilation (DA) applications.  Can be used to manage interdependent classes
   and cylc tasks, but does not execute any tasks on its own.
   '''
-  # For each of these DA cylc "task" names, some are family names, while others are marker names
-  # + "family" tasks can be used for inheritance; those marked with a * must be used in order
-  #   to avoid an error message caused by the ":succeed-all" qualifier
-  # + "marker" tasks can be used in dependency graphs only
-  #TODO: provide mechanism for multiple serial pre and post tasks
-  pre = 'PreDA' # marker
-  init = 'InitDA' # family*
-  execute = 'DA' # family*
-  post = 'DAPost' # marker
-  finished = 'DAFinished' # marker
-  clean = 'CleanDA' # family
-  phases = [pre, init, execute, post, finished, clean]
-
   def __init__(self,
     config:Config,
     hpc:HPC,
@@ -44,15 +31,24 @@ class DA(Component):
   ):
     super().__init__(config)
 
+    phases = [
+      self.pre,
+      self.init,
+      self.execute,
+      self.post,
+      self.finished,
+      self.clean,
+    ]
+
     ########################
     # tasks and dependencies
     ########################
 
-    self.groupName = 'DAFamily'
+    self.group = 'DAFamily'
     self._tasks += ['''
   ## data assimilation task markers
-  [['''+self.groupName+''']]''']
-    for p in self.phases:
+  [['''+self.group+''']]''']
+    for p in phases:
       self._tasks += ['''
   [['''+p+''']]''']
 
@@ -82,4 +78,8 @@ class DA(Component):
   def export(self, components):
     self.var.export(components)
     self.rtpp.export(components)
+    for c in [self.var, self.rtpp]:
+      self._tasks += c._tasks
+      self._dependencies += c._dependencies
+
     super().export(components)

@@ -113,24 +113,24 @@ class Variational(Component):
     #   cld == cloudy-sky
     # OPTIONS besides benchmarkObservations
     ## MW satellite-based
-    # amsua-cld_aqua 
-    # amsua-cld_metop-a 
-    # amsua-cld_metop-b 
-    # amsua-cld_n15 
-    # amsua-cld_n18 
-    # amsua-cld_n19 
-    # mhs_n19 
-    # mhs_n18 
-    # mhs_metop-a 
-    # mhs_metop-b 
+    # amsua-cld_aqua
+    # amsua-cld_metop-a
+    # amsua-cld_metop-b
+    # amsua-cld_n15
+    # amsua-cld_n18
+    # amsua-cld_n19
+    # mhs_n19
+    # mhs_n18
+    # mhs_metop-a
+    # mhs_metop-b
     ## IR satellite-based
-    # abi_g16 
-    # ahi_himawari8 
-    # abi-clr_g16 
-    # ahi-clr_himawari8 
-    # iasi_metop-a 
-    # iasi_metop-b 
-    # iasi_metop-c 
+    # abi_g16
+    # ahi_himawari8
+    # abi-clr_g16
+    # ahi-clr_himawari8
+    # iasi_metop-a
+    # iasi_metop-b
+    # iasi_metop-c
     'observers': [benchmarkObservations, list],
 
     ## nObsIndent
@@ -178,11 +178,8 @@ class Variational(Component):
     #forecast:Forecast,
   ):
     super().__init__(config)
-
-    if members.n > 1:
-      memFmt = '/mem{:03d}'
-    else:
-      memFmt = ''
+    self.NN = members.n
+    self.memFmt = members.memFmt
 
     #self.abei = ABEI()
 
@@ -207,11 +204,11 @@ class Variational(Component):
     self._set('nOuterIterations', len(self['nInnerIterations']))
 
     # determine nDAInstances from members.n and EDASize
-    NN = members.n
+    self.NN = members.n
     EDASize = self['EDASize']
-    assert NN > 0, ('members.n must be greater than 0')
-    assert NN % EDASize == 0 and EDASize > 0, ('members.n must be divisible by EDASize')
-    nDAInstances = NN // EDASize
+    assert self.NN > 0, ('members.n must be greater than 0')
+    assert self.NN % EDASize == 0 and EDASize > 0, ('members.n must be divisible by EDASize')
+    nDAInstances = self.NN // EDASize
     self._set('nDAInstances', nDAInstances)
 
     BlockEDA = 'DRPBlockLanczos'
@@ -229,7 +226,7 @@ class Variational(Component):
       self._setOrDie('.'.join([r1, r2, 'bumpLocDir']), str, None, 'bumpLocDir')
 
       # forecasts
-      if NN > 1:
+      if self.NN > 1:
         # EDA uses online ensemble updating
         self._set('ensPbMemPrefix', workflow.MemPrefix)
         self._set('ensPbMemNDigits', workflow.MemNDigits)
@@ -240,7 +237,7 @@ class Variational(Component):
         #self._set('ensPbDir0', '{{ExperimentDirectory}}/'+forecast.WorkDir+'/{{prevDateTime}}')
         self._set('ensPbDir1', None)
 
-        ensPbNMembers = NN
+        ensPbNMembers = self.NN
 
         # TODO: this needs to be non-zero for EDA workflows that use IAU, get value from forecast
         self._set('ensPbOffsetHR', 0)
@@ -333,49 +330,49 @@ class Variational(Component):
     ]
     prepArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-    parent._tasks += ['''
+    self._tasks += ['''
   ## variational tasks
-  [[InitVariational]]
+  [['''+self.init+''']]
     inherit = '''+parent.init+''', SingleBatch
     env-script = cd {{mainScriptDir}}; ./bin/PrepJEDI.csh '''+prepArgs+'''
-    script = $origin/bin/PrepVariational.csh "1"
+    script = $origin/bin/Prep'''+self.base+'''.csh "1"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+varjob['retry']+'''
 
-  [[Variationals]]
+  [['''+self.base+'''s]]
 '''+vartask.job()+vartask.directives()+'''
 
   # inflation
   [[GenerateABEInflation]]
-    inherit = '''+parent.groupName+''', BATCH
+    inherit = '''+parent.group+''', BATCH
     script = $origin/bin/GenerateABEInflation.csh
 '''+abeitask.job()+abeitask.directives()+'''
 
   # clean
-  [[CleanVariational]]
+  [['''+self.clean+''']]
     inherit = Clean, '''+parent.clean+'''
-    script = $origin/bin/CleanVariational.csh''']
+    script = $origin/bin/Clean'''+self.base+'''.csh''']
 
     if EDASize == 1:
       # single instance or ensemble of Variational(s)
-      for mm in range(1, NN+1, 1):
-        parent._tasks += ['''
-  [[Variational'''+str(mm)+''']]
-    inherit = '''+parent.execute+''', Variationals, BATCH
-    script = $origin/bin/Variational.csh "'''+str(mm)+'"']
+      for mm in range(1, self.NN+1, 1):
+        self._tasks += ['''
+  [['''+self.base+str(mm)+''']]
+    inherit = '''+parent.execute+''', '''+self.base+'''s, BATCH
+    script = $origin/bin/'''+self.base+'''.csh "'''+str(mm)+'"']
 
     else:
       # single instance or ensemble of EnsembleOfVariational(s)
       for instance in range(1, nDAInstances+1, 1):
-        parent._tasks += ['''
+        self._tasks += ['''
   [[EDA'''+str(instance)+''']]
-    inherit = '''+parent.execute+''', Variationals, BATCH
+    inherit = '''+parent.execute+''', '''+self.base+'''s, BATCH
     script = \$origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     # TODO: make ABEI consistent with external class design
     if self['ABEInflation']:
-      parent._dependencies += ['''
+      self._dependencies += ['''
         # abei
         '''+parent.pre+''' =>
         MeanBackground => HofXBG
@@ -393,21 +390,21 @@ class Variational(Component):
     self.outputs['state']['members'] = StateEnsemble(meshes['Outer'])
     self.outputs['obs'] = {}
     self.outputs['obs']['members'] = ObsEnsemble(0)
-    for mm in range(1, NN+1, 1): 
+    for mm in range(1, self.NN+1, 1):
       self.inputs['state']['members'].append({
-        'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+memFmt.format(mm),
+        'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+self.memFmt.format(mm),
         'prefix': self.backgroundPrefix,
       })
       self.outputs['state']['members'].append({
-        'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+memFmt.format(mm),
+        'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+self.memFmt.format(mm),
         'prefix': self.analysisPrefix,
       })
       self.outputs['obs']['members'].append({
-        'directory': self.workDir+'/{{thisCycleDate}}/'+Observations.OutDBDir+'/'+memFmt.format(mm),
+        'directory': self.workDir+'/{{thisCycleDate}}/'+Observations.OutDBDir+'/'+self.memFmt.format(mm),
         'observers': self['observers']
       })
 
-    if NN > 1:
+    if self.NN > 1:
       self.inputs['state']['mean'] = State({
           'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+'/mean',
           'prefix': self.backgroundPrefix,
