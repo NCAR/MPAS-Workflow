@@ -254,7 +254,7 @@ class ExtendedForecast(Component):
       postconf['label'] = 'fc'
       self.__post.append(Post(postconf, config))
 
-  def export(self, components):
+  def export(self):
     for p in self.__post:
-      p.export(components)
-    super().export(components)
+      p.export()
+    super().export()

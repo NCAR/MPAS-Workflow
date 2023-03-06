@@ -73,3 +73,12 @@ class FirstBackground(Component):
       #       independent task for each member)
       execution time limit = PT10M
       execution retry delays = 1*PT5S''']
+
+    self._dependencies += ['''
+        # prepare first DA background state
+        {{PrepareExternalAnalysisOuter}} => {{PrepareFirstBackgroundOuter}}
+
+        # prepare analyses (init) files (for dual-mesh Variational) for reading to
+        # static and input stream in all cycles for inner and ensemble geometries
+        {{PrepareExternalAnalysisInner}}
+        {{PrepareExternalAnalysisEnsemble}}''']

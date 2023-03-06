@@ -16,6 +16,7 @@ class InitIC(Component):
   def __init__(self, config:Config, hpc:HPC, meshes:dict, ea:ExternalAnalyses):
     super().__init__(config)
 
+    self.ea = ea
     self.meshes = meshes
     self.baseTask = 'ExternalAnalysisToMPAS'
     self.__used = self.baseTask in ea['PrepareExternalAnalysisOuter']
@@ -49,13 +50,7 @@ class InitIC(Component):
         'prefix': ea['externalanalyses__filePrefix'+typ],
       })
 
-  def export(self, components):
-    # TODO: avoid using components as global variable
-    if 'extendedforecast' in components:
-      dtOffsets=components['extendedforecast']['extLengths']
-    else:
-      dtOffsets=[0]
-
+  def export(self, dtOffsets:list):
     subqueues = []
     if self.__used:
       # only once for each mesh
@@ -77,11 +72,10 @@ class InitIC(Component):
           dtStr = str(dt)
           args = [
             dt,
-            # TODO: avoid using components as global variable
-            components['externalanalyses']['ExternalAnalysesDir'+typ],
-            components['externalanalyses']['externalanalyses__filePrefix'+typ],
+            self.ea['ExternalAnalysesDir'+typ],
+            self.ea['externalanalyses__filePrefix'+typ],
             nCells,
-            components['externalanalyses'].WorkDir,
+            self.ea.WorkDir,
           ]
           initArgs = ' '.join(['"'+str(a)+'"' for a in args])
           taskName = self.baseTask+'-'+meshName+'-'+dtStr+'hr'
@@ -123,4 +117,5 @@ class InitIC(Component):
       members = '''+queue+'''
       limit = 1''']
 
-    super().export(components)
+    # export all
+    super().export()

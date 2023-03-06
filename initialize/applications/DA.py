@@ -75,11 +75,11 @@ class DA(Component):
     self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self,
                      self.var.inputs['state']['members'], self.var.outputs['state']['members'])
 
-  def export(self, components):
-    self.var.export(components)
-    self.rtpp.export(components)
+  def export(self, forecast):
+    self.var.export()
+    self.rtpp.export()
     for c in [self.var, self.rtpp]:
       self._tasks += c._tasks
       self._dependencies += c._dependencies
 
-    super().export(components)
+    super().export()

@@ -127,7 +127,7 @@ class VerifyModel(Component):
     inherit = '''+self.group+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+runArgs]
 
-  def export(self, components):
+  def export(self):
     '''
     export for use outside python
     '''

@@ -14,6 +14,7 @@
 [cylc]
   UTC mode = False
   [[environment]]
+
 [scheduling]
   initial cycle point = {{restartCyclePoint}}
   final cycle point   = {{finalCyclePoint}}
@@ -32,21 +33,20 @@
 
   [[dependencies]]
 
+#################
 # firstCyclePoint
+#################
 {% if restartCyclePoint == firstCyclePoint %}
     [[[R1]]]
       graph = '''
-        # prepare first DA background state
-        {{PrepareExternalAnalysisOuter}} => {{PrepareFirstBackgroundOuter}}
-
-        # prepare analyses (init) files (for dual-mesh Variational) for reading to
-        # static and input stream in all cycles for inner and ensemble geometries
-        {{PrepareExternalAnalysisInner}}
-        {{PrepareExternalAnalysisEnsemble}}
+%include include/dependencies/auto/firstbackground.rc
       '''
 {% endif %}
 
+##################
 # all other cycles
+##################
+#=======================================================
 {% if CriticalPathType == "Normal" %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
@@ -85,8 +85,11 @@
 {% else %}
     {{ raise('CriticalPathType is not valid') }}
 {% endif %}
+#=======================================================
 
+##############################
 # background-time verification
+##############################
 # TODO: test for when no verification is turned on to ensure error does not occur
     [[[{{AnalysisTimes}}]]]
       graph = '''
@@ -94,7 +97,9 @@
 %include include/dependencies/auto/postda.rc
       '''
 
-# optional extended forecasts for verification
+#########################################
+# optional extended forecast verification
+#########################################
 {% if VerifyExtendedMeanFC %}
     [[[{{extMeanTimes}}]]]
       graph = '''

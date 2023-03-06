@@ -71,7 +71,7 @@ class Component():
       else:
         self._setOrDefault(v, desc)
 
-  def export(self, components):
+  def export(self):
     '''
     export for use outside python
     '''

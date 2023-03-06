@@ -140,7 +140,7 @@ class VerifyObs(Component):
     inherit = '''+self.group+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+runArgs]
 
-  def export(self, components):
+  def export(self):
     '''
     export for use outside python
     '''
@@ -153,7 +153,7 @@ class VerifyObs(Component):
         '''+self.__hofx.finished+''' => '''+self.group]
       self._dependencies += ['''
         '''+self.finished+''' => '''+self.__hofx.clean]
-      self.__hofx.export(components)
+      self.__hofx.export()
 
     self._exportVarsToCsh()
     self._exportVarsToCylc()

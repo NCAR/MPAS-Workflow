@@ -60,5 +60,12 @@ class Cycle(Suite):
 
     c['naming'] = Naming(conf, c['exp'], c['bench'])
 
-    for c_ in c.values():
-      c_.export(c)
+    for k, c_ in c.items():
+      if k in ['obs', 'ic', 'externalanalyses']:
+        c_.export(c['extendedforecast']['extLengths'])
+      elif k in ['fc']:
+        c_.export(c['da'])
+      elif k in ['da']:
+        c_.export(c['fc'])
+      else:
+        c_.export()

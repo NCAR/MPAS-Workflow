@@ -44,11 +44,11 @@ class Post(Configurable):
         assert plow in conf['valid tasks'], 'Post: invalid task for parent => '+plow
         self.__posts[plow] = P(globalConf, conf[plow])
  
-  def export(self, components):
+  def export(self):
     self.__tasks = []
     self.__dependencies = []
     for p in self.__posts.values():
-      p.export(components)
+      p.export()
       self.__tasks += p._tasks
       self.__dependencies += p._dependencies
 

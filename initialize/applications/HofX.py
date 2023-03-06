@@ -250,7 +250,7 @@ class HofX(Component):
         'observers': self['observers'],
       })
 
-  def export(self, components):
+  def export(self):
     '''
     export for use outside python
     '''

@@ -101,11 +101,7 @@ class Observations(Component):
     self.Queue = hpc['CriticalQueue']
     self.Account = hpc['CriticalAccount']
 
-  def export(self, components):
-    if 'extendedforecast' in components:
-      dtOffsets=components['extendedforecast']['extLengths']
-    else:
-      dtOffsets=[0]
+  def export(self, dtOffsets:list):
 
     self._tasks += ['''
   [['''+self.group+''']]''']
@@ -207,4 +203,5 @@ class Observations(Component):
       members = '''+queue+'''
       limit = 1''']
 
-    super().export(components)
+    # export all
+    super().export()

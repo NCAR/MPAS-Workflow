@@ -121,11 +121,7 @@ class ExternalAnalyses(Component):
         'prefix': self['externalanalyses__filePrefix'+meshTyp],
       })
 
-  def export(self, components):
-    if 'extendedforecast' in components:
-      dtOffsets=components['extendedforecast']['extLengths']
-    else:
-      dtOffsets=[0]
+  def export(self, dtOffsets:list):
 
     # only once for each mesh
     meshTypes = []
@@ -297,6 +293,5 @@ class ExternalAnalyses(Component):
       members = '''+queue+'''
       limit = 1''']
 
-
     # export all
-    super().export(components)
+    super().export()

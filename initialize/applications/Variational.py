@@ -433,6 +433,6 @@ class Variational(Component):
 
     self.__post = Post(postconf, config)
 
-  def export(self, components):
-    self.__post.export(components)
-    super().export(components)
+  def export(self):
+    self.__post.export()
+    super().export()

@@ -55,4 +55,9 @@ class ForecastFromExternalAnalyses(Suite):
     c['naming'] = Naming(conf, c['exp'])
 
     for c_ in c.values():
-      c_.export(c)
+      if k in ['obs', 'ic', 'externalanalyses']:
+        c_.export(c['extendedforecast']['extLengths'])
+      elif k in ['fc']:
+        continue
+      else:
+        c_.export()

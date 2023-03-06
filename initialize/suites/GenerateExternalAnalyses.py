@@ -33,4 +33,7 @@ class GenerateExternalAnalyses(Suite):
     c['members'] = Members(conf)
 
     for c_ in c.values():
-      c_.export(c)
+      if k in ['ic', 'externalanalyses']:
+        c_.export([0])
+      else:
+        c_.export()

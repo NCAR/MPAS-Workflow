@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 
+from initialize.applications.DA import DA
 from initialize.applications.Members import Members
 from initialize.applications.Variational import Variational
 
@@ -231,7 +232,7 @@ class Forecast(Component):
     })
 
 
-  def export(self, components):
+  def export(self, da:DA):
 
     ######
     # post
@@ -253,10 +254,8 @@ class Forecast(Component):
         self.postconf[k]['states'] = self.outputs['state']['mean']
 
       # mean-state model verification also diagnoses posterior ensemble spread
-      # TODO: define critical path class that containerizes Forecast and DA
-      # do not want components to be used as global variable
-      self.postconf['verifymodel']['dependencies'] += [components['da'].finished]
-      self.postconf['verifymodel']['followon'] = [components['da'].clean]
+      self.postconf['verifymodel']['dependencies'] += [da.finished]
+      self.postconf['verifymodel']['followon'] = [da.clean]
 
       __post.append(Post(self.postconf, self.__globalConf))
 
@@ -279,5 +278,5 @@ class Forecast(Component):
     # export
     ########
     for p in __post:
-      p.export(components)
-    super().export(components)
+      p.export()
+    super().export()
