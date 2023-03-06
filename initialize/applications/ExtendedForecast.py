@@ -95,8 +95,8 @@ class ExtendedForecast(Component):
     # MeanAnalysis
     attr = {
       'seconds': {'def': 300},
-      'nodes': {'def': 1, 't': int},
-      'PEPerNode': {'def': 36, 't': int},
+      'nodes': {'def': 1, 'typ': int},
+      'PEPerNode': {'def': 36, 'typ': int},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }

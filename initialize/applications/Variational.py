@@ -298,15 +298,15 @@ class Variational(Component):
     r2 += '.'+DAType
 
     attr = {
-      'retry': {'t': str},
-      'baseSeconds': {'t': int},
-      'secondsPerEnVarMember': {'t': int},
-      nodeCount: {'t': int},
-      'PEPerNode': {'t': int},
-      'memory': {'def': '45GB', 't': str},
+      'retry': {'typ': str},
+      'baseSeconds': {'typ': int},
+      'secondsPerEnVarMember': {'typ': int},
+      nodeCount: {'typ': int},
+      'PEPerNode': {'typ': int},
+      'memory': {'def': '45GB', 'typ': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
-      'email': {'def': True, 't': bool},
+      'email': {'def': True, 'typ': bool},
     }
     varjob = Resource(self._conf, attr, ('job', r2))
     varjob._set('seconds', varjob['baseSeconds'] + varjob['secondsPerEnVarMember'] * ensPbNMembers)

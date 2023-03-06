@@ -25,10 +25,10 @@ class InitIC(Component):
     ########################
     # job settings
     attr = {
-      'retry': {'t': str},
-      'seconds': {'t': int},
-      'nodes': {'t': int},
-      'PEPerNode': {'t': int},
+      'retry': {'typ': str},
+      'seconds': {'typ': int},
+      'nodes': {'typ': int},
+      'PEPerNode': {'typ': int},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
     }

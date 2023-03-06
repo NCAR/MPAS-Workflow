@@ -16,11 +16,11 @@ class Resource(Config):
     keys: {key1[str]: {
               'def': default value, # optional
               'req': required, # bool, optional, True when missing
-              't': type}, # e.g., int, float, str, list, optional, None when missing
+              'typ': type}, # e.g., int, float, str, list, optional, None when missing
             key2[str]: {
               'def': default value, # optional
               'req': required, # bool, optional, True when missing
-              't': type}, # e.g., int, float, str, list, optional, None when missing
+              'typ': type}, # e.g., int, float, str, list, optional, None when missing
            }
     '''
     self._table = {}
@@ -29,39 +29,39 @@ class Resource(Config):
     for key, att in keys.items():
       default = att.get('def', None)
       required = att.get('req', True)
-      t = att.get('t', None)
+      typ = att.get('typ', None)
 
       if default is not None:
-        self._table[key] = self.extractNodeOrDefault(config, resource, key, default, t)
+        self._table[key] = self.extractNodeOrDefault(config, resource, key, default, typ)
       elif required:
-        self._table[key] = self.extractNodeOrDie(config, resource, key, t)
+        self._table[key] = self.extractNodeOrDie(config, resource, key, typ)
       else:
-        self._table[key] = self.extractNode(config, resource, key, t)
+        self._table[key] = self.extractNode(config, resource, key, typ)
 
   @staticmethod
-  def extractNode(config, resource:tuple, key:str, t=None):
+  def extractNode(config, resource:tuple, key:str, typ=None):
     value = None
     for i in range(len(resource), -1, -1):
       l = list(resource[:i+1])
       if None in l: continue
       if value is None:
-        value = config.get('.'.join(l+[key]), t)
+        value = config.get('.'.join(l+[key]), typ)
 
       if value is None:
-        value = config.get('.'.join(l+['common', key]), t)
+        value = config.get('.'.join(l+['common', key]), typ)
 
     if value is None:
-      value = config.get('.'.join([resource[0], 'defaults', key]), t)
+      value = config.get('.'.join([resource[0], 'defaults', key]), typ)
 
     return value
 
-  def extractNodeOrDie(self, config, resource, key, t=None):
-    v = self.extractNode(config, resource, key, t)
+  def extractNodeOrDie(self, config, resource, key, typ=None):
+    v = self.extractNode(config, resource, key, typ)
     assert v is not None, (str(resource)+'.'+key+' targets invalid or nonexistent node')
     return v
 
-  def extractNodeOrDefault(self, config, resource, key, default, t=None):
-    v = self.extractNode(config, resource, key, t)
+  def extractNodeOrDefault(self, config, resource, key, default, typ=None):
+    v = self.extractNode(config, resource, key, typ)
     if v is None:
       v = default
     return v

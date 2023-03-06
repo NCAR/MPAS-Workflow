@@ -22,8 +22,8 @@ class ObsEnsemble(DataList):
 
 class ObsDB(Configurable):
   conf = {
-    'directory': {'typ': str, 'required': True},
-    'observers': {'typ': list, 'required': True},
+    'directory': {'typ': str, 'req': True},
+    'observers': {'typ': list, 'req': True},
   }
   def __init__(self, conf:dict):
     super().__init__(conf)

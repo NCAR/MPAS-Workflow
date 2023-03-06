@@ -34,13 +34,13 @@ class FirstBackground(Component):
       self._msg('invalid members.n => '+str(members.n)))
 
     for typ, mesh in meshes.items():
-      for (key, t) in [
+      for (key, typ) in [
         ['directory', str],
         ['filePrefix', str],
         ['memberFormat', str],
         ['PrepareFirstBackground', str],
       ]:
-        value = self.extractResource(('resources', resource, mesh.name), key, t)
+        value = self.extractResource(('resources', resource, mesh.name), key, typ)
         if key == 'PrepareFirstBackground':
           # push back cylc mini-workflow
           variable = key+typ

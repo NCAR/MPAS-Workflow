@@ -44,14 +44,14 @@ class ExternalAnalyses(Component):
       self._set('ExternalAnalysesDir'+typ, self.workDir+'/'+mesh.name+'/{{thisValidDate}}')
       self._cshVars.append('ExternalAnalysesDir'+typ)
 
-      for (key, t) in [
+      for (key, typ) in [
        ['directory', str],
        ['filePrefix', str],
        ['PrepareExternalAnalysisTasks', list],
        ['Vtable', str],
        ['UngribPrefix', str],
       ]:
-        value = self.extractResource(('resources', resource, mesh.name), key, t)
+        value = self.extractResource(('resources', resource, mesh.name), key, typ)
 
         if key == 'PrepareExternalAnalysisTasks':
           # push back cylc mini-workflow variables

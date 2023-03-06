@@ -85,48 +85,48 @@ class Component():
     return
 
   ## methods for setting _vtable values from self._conf
-  def _setOrDie(self, v, t=None, options=None, vout=None):
+  def _setOrDie(self, v, typ=None, options=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-    self._vtable[v_] = self._conf.getOrDie(v, t, options)
+    self._vtable[v_] = self._conf.getOrDie(v, typ, options)
     return
 
-  def _setOrNone(self, v, t=None, options=None, vout=None):
+  def _setOrNone(self, v, typ=None, options=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-    self._vtable[v_] = self._conf.get(v, t, options)
+    self._vtable[v_] = self._conf.get(v, typ, options)
     return
 
-  def _setOrDefault(self, v, default, t=None, options=None, vout=None):
+  def _setOrDefault(self, v, default, typ=None, options=None, vout=None):
     v_ = vout
     if v_ is None: v_ = v
-    self._vtable[v_] = self._conf.getOrDefault(v, default, t, options)
+    self._vtable[v_] = self._conf.getOrDefault(v, default, typ, options)
     return
 
   ## general purpose nested extract methods
-  def extractResource(self, resource:tuple, key:str, t=None):
+  def extractResource(self, resource:tuple, key:str, typ=None):
     value = None
     for i in range(len(resource), -1, -1):
       l = list(resource[:i+1])
       if None in l: continue
       if value is None:
-        value = self._conf.get('.'.join(l+[key]), t)
+        value = self._conf.get('.'.join(l+[key]), typ)
 
       if value is None:
-        value = self._conf.get('.'.join(l+['common', key]), t)
+        value = self._conf.get('.'.join(l+['common', key]), typ)
 
     if value is None:
-      value = self._conf.get('.'.join([resource[0], 'defaults', key]), t)
+      value = self._conf.get('.'.join([resource[0], 'defaults', key]), typ)
 
     return value
 
-  def extractResourceOrDie(self, resource:tuple, key:str, t=None):
-    v = self.extractResource(resource, key, t)
+  def extractResourceOrDie(self, resource:tuple, key:str, typ=None):
+    v = self.extractResource(resource, key, typ)
     assert v is not None, (str(resource)+'.'+key+' targets invalid or nonexistent node')
     return v
 
-  def extractResourceOrDefault(self, resource:tuple, key:str, default, t=None):
-    v = self.extractResource(resource, key, t)
+  def extractResourceOrDefault(self, resource:tuple, key:str, default, typ=None):
+    v = self.extractResource(resource, key, typ)
     if v is None:
       v = default
     return v

@@ -29,8 +29,8 @@ class StateEnsemble(DataList):
 
 class State(Configurable):
   conf = {
-    'directory': {'typ': str, 'required': True},
-    'prefix': {'typ': str, 'required': True},
+    'directory': {'typ': str, 'req': True},
+    'prefix': {'typ': str, 'req': True},
   }
   def __init__(self, conf:dict, mesh:Mesh):
     super().__init__(conf)

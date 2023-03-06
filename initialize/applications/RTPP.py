@@ -66,15 +66,15 @@ class RTPP(Component):
     ########################
     if active:
       attr = {
-        'retry': {'t': str},
-        'baseSeconds': {'t': int},
-        'secondsPerMember': {'t': int},
-        'nodes': {'t': int},
-        'PEPerNode': {'t': int},
-        'memory': {'def': '45GB', 't': str},
+        'retry': {'typ': str},
+        'baseSeconds': {'typ': int},
+        'secondsPerMember': {'typ': int},
+        'nodes': {'typ': int},
+        'PEPerNode': {'typ': int},
+        'memory': {'def': '45GB', 'typ': str},
         'queue': {'def': hpc['CriticalQueue']},
         'account': {'def': hpc['CriticalAccount']},
-        'email': {'def': True, 't': bool},
+        'email': {'def': True, 'typ': bool},
       }
       job = Resource(self._conf, attr, ('job', mesh.name))
       job._set('seconds', job['baseSeconds'] + job['secondsPerMember'] * members.n)

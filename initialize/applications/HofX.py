@@ -133,11 +133,11 @@ class HofX(Component):
 
     # job settings
     attr = {
-      'retry': {'t': str},
-      'seconds': {'t': int},
-      'nodes': {'t': int},
-      'PEPerNode': {'t': int},
-      'memory': {'def': '45GB', 't': str},
+      'retry': {'typ': str},
+      'seconds': {'typ': int},
+      'nodes': {'typ': int},
+      'PEPerNode': {'typ': int},
+      'memory': {'def': '45GB', 'typ': str},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }

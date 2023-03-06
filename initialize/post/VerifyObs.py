@@ -51,12 +51,12 @@ class VerifyObs(Component):
     ########################
     # job settings
     attr = {
-      'retry': {'t': str},
-      'seconds': {'t': int},
-      'secondsPerMember': {'t': int},
-      'nodes': {'def': 1, 't': int},
-      'PEPerNode': {'def': 36, 't': int},
-      'memory': {'def': '45GB', 't': str},
+      'retry': {'typ': str},
+      'seconds': {'typ': int},
+      'secondsPerMember': {'typ': int},
+      'nodes': {'def': 1, 'typ': int},
+      'PEPerNode': {'def': 36, 'typ': int},
+      'memory': {'def': '45GB', 'typ': str},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }

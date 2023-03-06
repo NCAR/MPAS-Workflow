@@ -87,15 +87,15 @@ class Forecast(Component):
     updateSea = self['updateSea']
 
     attr = {
-      'retry': {'t': str},
-      'baseSeconds': {'t': int},
-      'secondsPerForecastHR': {'t': int},
-      'nodes': {'t': int},
-      'PEPerNode': {'t': int},
-      'memory': {'def': '45GB', 't': str},
+      'retry': {'typ': str},
+      'baseSeconds': {'typ': int},
+      'secondsPerForecastHR': {'typ': int},
+      'nodes': {'typ': int},
+      'PEPerNode': {'typ': int},
+      'memory': {'def': '45GB', 'typ': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
-      'email': {'def': True, 't': bool},
+      'email': {'def': True, 'typ': bool},
     }
     # store job for ExtendedForecast to re-use
     self.job = Resource(self._conf, attr, ('job', mesh.name))
@@ -105,8 +105,8 @@ class Forecast(Component):
     # MeanBackground
     attr = {
       'seconds': {'def': 300},
-      'nodes': {'def': 1, 't': int},
-      'PEPerNode': {'def': 36, 't': int},
+      'nodes': {'def': 1, 'typ': int},
+      'PEPerNode': {'def': 36, 'typ': int},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }
