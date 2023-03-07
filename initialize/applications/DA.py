@@ -31,6 +31,23 @@ class DA(Component):
   ):
     super().__init__(config)
 
+    self.workflow = workflow
+    self.obs = obs
+
+    self.group = 'DAFamily'
+    self.var = Variational(config, hpc, meshes, model, obs, members, workflow, self)
+    self.outputs = self.var.outputs
+    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self,
+                     self.var.inputs['state']['members'], self.var.outputs['state']['members'])
+
+  def export(self, forecastFinished:str):
+    self.var.export()
+    self.rtpp.export()
+
+    ########################
+    # tasks and dependencies
+    ########################
+
     phases = [
       self.pre,
       self.init,
@@ -40,22 +57,28 @@ class DA(Component):
       self.clean,
     ]
 
-    ########################
-    # tasks and dependencies
-    ########################
-
-    self.group = 'DAFamily'
     self._tasks += ['''
   ## data assimilation task markers
   [['''+self.group+''']]''']
     for p in phases:
       self._tasks += ['''
   [['''+p+''']]''']
+      if p in [self.init, self.execute]:
+        self._tasks += ['''
+    inherit = '''+self.group]
+
+    for c in [self.var, self.rtpp]:
+      self._tasks += c._tasks
+
+    # open graph
+    self._dependencies += ['''
+    [[['''+self.workflow['AnalysisTimes']+''']]]
+      graph = """''']
 
     self._dependencies += ['''
         # pre => init => execute:succeed-all => post => finished => clean
         # pre-da observation processing
-        {{'''+obs.workflow+'''}} => '''+self.pre+'''
+        {{'''+self.obs.workflow+'''}} => '''+self.pre+'''
 
         # init
         '''+self.pre+''' => '''+self.init+'''
@@ -70,16 +93,17 @@ class DA(Component):
         # finished after post, clean after finished
         '''+self.post+''' => '''+self.finished+''' => '''+self.clean]
 
-    self.var = Variational(config, hpc, meshes, model, obs, members, workflow, self)
-    self.outputs = self.var.outputs
-    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self,
-                     self.var.inputs['state']['members'], self.var.outputs['state']['members'])
+    if self.workflow['CriticalPathType'] in ['Normal', 'Reanalysis']:
+      for c in [self.var, self.rtpp]:
+        self._dependencies += c._dependencies
 
-  def export(self, forecast):
-    self.var.export()
-    self.rtpp.export()
-    for c in [self.var, self.rtpp]:
-      self._tasks += c._tasks
-      self._dependencies += c._dependencies
+    if self.workflow['CriticalPathType'] == 'Normal':
+      self._dependencies += ['''
+        # depends on previous Forecast
+        '''+forecastFinished+'''[-PT'''+str(self.workflow['FC2DAOffsetHR'])+'''H] => '''+self.pre]
+
+    # close graph
+    self._dependencies += ['''
+      """''']
 
     super().export()

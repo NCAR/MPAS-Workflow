@@ -82,22 +82,22 @@ class RTPP(Component):
       task = TaskLookup[hpc.system](job)
 
       self._tasks += ['''
-  [[PrepRTPP]]
+  [[Prep'''+self.base+''']]
     # note: does not depend on any other tasks
     inherit = '''+parent.group+''', SingleBatch
-    script = $origin/bin/PrepRTPP.csh "'''+self.WorkDir+'''"
+    script = $origin/bin/Prep'''+self.base+'''.csh "'''+self.WorkDir+'''"
     [[[job]]]
       execution time limit = PT1M
       execution retry delays = '''+job['retry']+'''
-  [[RTPP]]
+  [['''+self.base+''']]
     inherit = '''+parent.group+''', BATCH
-    script = $origin/bin/RTPP.csh "'''+self.WorkDir+'''"
+    script = $origin/bin/'''+self.base+'''.csh "'''+self.WorkDir+'''"
 '''+task.job()+task.directives()+'''
 
-  [[CleanRTPP]]
+  [['''+self.clean+''']]
     inherit = Clean, '''+parent.clean+'''
-    script = $origin/bin/CleanRTPP.csh "'''+self.WorkDir+'"']
+    script = $origin/bin/'''+self.clean+'''.csh "'''+self.WorkDir+'"']
 
       self._dependencies += ['''
-        PrepRTPP => RTPP
-        '''+parent.post+''' => RTPP => '''+parent.finished]
+        Prep'''+self.base+''' => '''+self.base+'''
+        '''+parent.post+''' => '''+self.base+''' => '''+parent.finished]

@@ -32,60 +32,9 @@
 %include include/queues/auto/observations.rc
 
   [[dependencies]]
-
-#################
-# firstCyclePoint
-#################
-{% if restartCyclePoint == firstCyclePoint %}
-    [[[R1]]]
-      graph = '''
 %include include/dependencies/auto/firstbackground.rc
-      '''
-{% endif %}
-
-##################
-# all other cycles
-##################
-#=======================================================
-{% if CriticalPathType == "Normal" %}
-    [[[{{AnalysisTimes}}]]]
-      graph = '''
 %include include/dependencies/auto/da.rc
-        # depends on previous Forecast
-        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => PreDA
-      '''
-
-# TODO: add IAU graph
-
-    [[[{{ForecastTimes}}]]]
-      graph = '''
 %include include/dependencies/auto/forecast.rc
-        # depends on previous DA
-        DAFinished[-PT{{DA2FCOffsetHR}}H] => Forecast
-      '''
-
-{% elif CriticalPathType == "Reanalysis" %}
-    [[[{{AnalysisTimes}}]]]
-      graph = '''
-%include include/dependencies/auto/da.rc
-      '''
-    [[[{{ForecastTimes}}]]]
-      graph = ForecastFinished
-
-{% elif CriticalPathType == "Reforecast" %}
-    [[[{{ForecastTimes}}]]]
-      graph = '''
-%include include/dependencies/auto/forecast.rc
-      '''
-
-{% elif CriticalPathType == "Bypass" %}
-    [[[{{ForecastTimes}}]]]
-      graph = ForecastFinished
-
-{% else %}
-    {{ raise('CriticalPathType is not valid') }}
-{% endif %}
-#=======================================================
 
 ##############################
 # background-time verification
@@ -97,9 +46,9 @@
 %include include/dependencies/auto/postda.rc
       '''
 
-#########################################
-# optional extended forecast verification
-#########################################
+################################
+# extended forecast verification
+################################
 {% if VerifyExtendedMeanFC %}
     [[[{{extMeanTimes}}]]]
       graph = '''

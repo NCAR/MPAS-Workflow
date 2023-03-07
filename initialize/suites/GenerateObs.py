@@ -30,7 +30,4 @@ class GenerateObs(Suite):
     c['members'] = Members(conf)
 
     for c_ in c.values():
-      if k in ['obs']:
-        c_.export([0])
-      else:
-        c_.export()
+      c_.export()

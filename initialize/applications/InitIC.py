@@ -50,7 +50,7 @@ class InitIC(Component):
         'prefix': ea['externalanalyses__filePrefix'+typ],
       })
 
-  def export(self, dtOffsets:list):
+  def export(self, dtOffsets:list=[0]):
     subqueues = []
     if self.__used:
       # only once for each mesh

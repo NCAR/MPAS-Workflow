@@ -121,7 +121,7 @@ class ExternalAnalyses(Component):
         'prefix': self['externalanalyses__filePrefix'+meshTyp],
       })
 
-  def export(self, dtOffsets:list):
+  def export(self, dtOffsets:list=[0]):
 
     # only once for each mesh
     meshTypes = []

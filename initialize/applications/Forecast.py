@@ -2,7 +2,6 @@
 
 from copy import deepcopy
 
-from initialize.applications.DA import DA
 from initialize.applications.Members import Members
 from initialize.applications.Variational import Variational
 
@@ -57,6 +56,7 @@ class Forecast(Component):
     self.__globalConf = config
     self.mesh = mesh
     self.model = model
+    self.workflow = workflow
     self.NN = members.n
     self.memFmt = members.memFmt
 
@@ -126,7 +126,7 @@ class Forecast(Component):
   [['''+self.finished+''']]
     inherit = '''+self.group+'''
 
-  ## post mean background (if needed)
+  ## post mean background
   [[MeanBackground]]
     inherit = '''+self.group+''', BATCH
     script = $origin/bin/MeanBackground.csh
@@ -180,14 +180,6 @@ class Forecast(Component):
     inherit = '''+self.base+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+WarmArgs]
 
-    # {{ForecastTimes}} dependencies only, not the R1 cycle
-    self._dependencies += ['''
-        # ensure there is a valid sea-surface update file before forecast
-        {{PrepareSeaSurfaceUpdate}} => '''+self.base+'''
-
-        # all members must succeed in order to proceed
-        '''+self.base+''':succeed-all => '''+self.finished]
-
     self.previousForecast = self.finished+'[-PT'+str(window)+'H]'
 
     self.postconf = {
@@ -232,17 +224,49 @@ class Forecast(Component):
     })
 
 
-  def export(self, da:DA):
+  def export(self, daFinished:str, daClean:str):
+
+    ##############
+    # dependencies
+    ##############
+
+    # open graph
+    self._dependencies += ['''
+    [[['''+self.workflow['ForecastTimes']+''']]]
+      graph = """''']
+
+    # {{ForecastTimes}} dependencies only, not the R1 cycle
+    self._dependencies += ['''
+        # ensure there is a valid sea-surface update file before forecast
+        {{PrepareSeaSurfaceUpdate}} => '''+self.base+'''
+
+        # all members must succeed in order to proceed
+        '''+self.base+''':succeed-all => '''+self.finished]
+
+    if self.workflow['CriticalPathType'] == 'Normal':
+      self._dependencies += ['''
+        # depends on previous DA
+        '''+daFinished+'''[-PT'''+str(self.workflow['DA2FCOffsetHR'])+'''H] => '''+self.base]
+    else:
+        '''+self.finished+'''
+
+    # close graph
+    self._dependencies += ['''
+      """''']
 
     ######
     # post
     ######
+
     __post = []
 
     # mean case when self.NN > 1
     if self.NN > 1:
       self._dependencies += ['''
-        '''+self.previousForecast+''' => MeanBackground''']
+    [[['''+self.workflow['AnalysisTimes']+''']]]
+      graph = """
+        '''+self.previousForecast+''' => MeanBackground
+      """''']
 
       # store original conf values
       pp = deepcopy(self.postconf)
@@ -253,9 +277,9 @@ class Forecast(Component):
         self.postconf[k]['member multiplier'] = self.NN
         self.postconf[k]['states'] = self.outputs['state']['mean']
 
-      # mean-state model verification also diagnoses posterior ensemble spread
-      self.postconf['verifymodel']['dependencies'] += [da.finished]
-      self.postconf['verifymodel']['followon'] = [da.clean]
+      # mean-state model verification; also diagnoses posterior ensemble spread
+      self.postconf['verifymodel']['dependencies'] += [daFinished]
+      self.postconf['verifymodel']['followon'] = [daClean]
 
       __post.append(Post(self.postconf, self.__globalConf))
 
@@ -267,6 +291,8 @@ class Forecast(Component):
         self.postconf['tasks'] = ['verifyobs']
       else:
         self.postconf['tasks'] = []
+
+    # close dependency graph
 
     # member case (mean case when NN == 1)
     for k in ['verifyobs', 'verifymodel']:

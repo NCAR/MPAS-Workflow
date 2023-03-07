@@ -101,7 +101,7 @@ class Observations(Component):
     self.Queue = hpc['CriticalQueue']
     self.Account = hpc['CriticalAccount']
 
-  def export(self, dtOffsets:list):
+  def export(self, dtOffsets:list=[0]):
 
     self._tasks += ['''
   [['''+self.group+''']]''']

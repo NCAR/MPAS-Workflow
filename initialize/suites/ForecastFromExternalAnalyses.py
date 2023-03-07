@@ -37,6 +37,8 @@ class ForecastFromExternalAnalyses(Suite):
 
     c['externalanalyses'] = ExternalAnalyses(conf, c['hpc'], meshes)
     c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
+
+    # Forecast object is only used to initialize parts of ExtendedForecast
     c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['model'], c['workflow'],
                 c['externalanalyses'].outputs['state']['Outer'],
                 c['externalanalyses'].outputs['state']['Outer'])
@@ -45,9 +47,6 @@ class ForecastFromExternalAnalyses(Suite):
                 c['externalanalyses'].outputs['state']['Outer'],
                 c['externalanalyses'].outputs['state']['Outer'][0],
                 c['externalanalyses'].outputs['state']['Outer'])
-
-    #if conf.has('benchmark'): # TODO: make benchmark unnecessary
-    #c['bench'] = Benchmark(conf, c['hpc'])
 
     c['exp'] = Experiment(conf, c['hpc'])
     c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['externalanalyses'], c['exp'])

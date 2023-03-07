@@ -38,7 +38,7 @@ class Cycle(Suite):
     c['members'] = Members(conf)
 
     c['externalanalyses'] = ExternalAnalyses(conf, c['hpc'], meshes)
-    c['fb'] = FirstBackground(conf, meshes, c['members'], c['workflow']['FirstCycleDate'])
+    c['fb'] = FirstBackground(conf, meshes, c['members'], c['workflow'])
 
     c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
     c['da'] = DA(conf, c['hpc'], c['obs'], meshes, c['model'], c['members'], c['workflow'])
@@ -64,8 +64,8 @@ class Cycle(Suite):
       if k in ['obs', 'ic', 'externalanalyses']:
         c_.export(c['extendedforecast']['extLengths'])
       elif k in ['fc']:
-        c_.export(c['da'])
+        c_.export(c['da'].finished, c['da'].clean)
       elif k in ['da']:
-        c_.export(c['fc'])
+        c_.export(c['fc'].finished)
       else:
         c_.export()

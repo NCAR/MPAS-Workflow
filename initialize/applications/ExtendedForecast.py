@@ -44,7 +44,7 @@ class ExtendedForecast(Component):
     config:Config,
     hpc:HPC,
     members:Members,
-    forecast:Forecast,
+    fc:Forecast,
     ea:ExternalAnalyses,
     obs:Observations,
     extAnaIC:StateEnsemble,
@@ -55,9 +55,9 @@ class ExtendedForecast(Component):
     self.NN = members.n
     self.memFmt = members.memFmt
 
-    assert forecast.mesh == extAnaIC.mesh(), 'extAnaIC must be on same mesh as extended forecast'
-    assert forecast.mesh == meanAnaIC.mesh(), 'meanAnaIC must be on same mesh as extended forecast'
-    assert forecast.mesh == ensAnaIC.mesh(), 'ensAnaIC must be on same mesh as extended forecast'
+    assert fc.mesh == extAnaIC.mesh(), 'extAnaIC must be on same mesh as extended forecast'
+    assert fc.mesh == meanAnaIC.mesh(), 'meanAnaIC must be on same mesh as extended forecast'
+    assert fc.mesh == ensAnaIC.mesh(), 'ensAnaIC must be on same mesh as extended forecast'
 
     ###################
     # derived variables
@@ -86,7 +86,7 @@ class ExtendedForecast(Component):
     # job settings
 
     # ExtendedFCBase
-    job = forecast.job
+    job = fc.job
     job._set('seconds', job['baseSeconds'] + job['secondsPerForecastHR'] * lengthHR)
     job._set('queue', hpc['NonCriticalQueue'])
     job._set('account', hpc['NonCriticalAccount'])
@@ -108,7 +108,7 @@ class ExtendedForecast(Component):
       lengthHR,
       outIntervalHR,
       False,
-      forecast.mesh.name,
+      fc.mesh.name,
       False,
       False,
       False,
@@ -123,7 +123,7 @@ class ExtendedForecast(Component):
       lengthHR,
       outIntervalHR,
       False,
-      forecast.mesh.name,
+      fc.mesh.name,
       True,
       False,
       False,
@@ -140,7 +140,7 @@ class ExtendedForecast(Component):
   ## from external analysis
   [[ExtendedFCFromExternalAnalysis]]
     inherit = '''+self.group+''', BATCH
-    script = $origin/bin/Forecast.csh '''+extAnaArgs+'''
+    script = $origin/bin/'''+fc.base+'''.csh '''+extAnaArgs+'''
 
   ## from mean analysis (including single-member deterministic)
   [[MeanAnalysis]]
@@ -149,7 +149,7 @@ class ExtendedForecast(Component):
 '''+meantask.job()+meantask.directives()+'''
   [[ExtendedMeanFC]]
     inherit = '''+self.group+''', BATCH
-    script = $origin/bin/Forecast.csh '''+meanAnaArgs+'''
+    script = $origin/bin/'''+fc.base+'''.csh '''+meanAnaArgs+'''
 
 
   [[ExtendedForecastFinished]]
@@ -165,7 +165,7 @@ class ExtendedForecast(Component):
         lengthHR,
         outIntervalHR,
         False,
-        forecast.mesh.name,
+        fc.mesh.name,
         True,
         False,
         False,
@@ -178,7 +178,7 @@ class ExtendedForecast(Component):
       self._tasks += ['''
   [[ExtendedFC'''+str(mm)+''']]
     inherit = ExtendedEnsFC, BATCH
-    script = $origin/bin/Forecast.csh '''+ensAnaArgs]
+    script = $origin/bin/'''+fc.base+'''.csh '''+ensAnaArgs]
 
     ##################
     # outputs and post
@@ -193,13 +193,13 @@ class ExtendedForecast(Component):
       'valid tasks': ['verifyobs', 'verifymodel'],
       'verifyobs': {
         'hpc': hpc,
-        'mesh': forecast.mesh,
-        'model': forecast.model,
+        'mesh': fc.mesh,
+        'model': fc.model,
         'sub directory': 'fc',
       },
       'verifymodel': {
         'hpc': hpc,
-        'mesh': forecast.mesh,
+        'mesh': fc.mesh,
         'sub directory': 'fc',
       },
     }
@@ -228,7 +228,7 @@ class ExtendedForecast(Component):
       # note: only duration (dt) varies across output state
 
       # ensemble forecasts
-      self.outputs['state']['members'][dtStr] = StateEnsemble(forecast.mesh, dt)
+      self.outputs['state']['members'][dtStr] = StateEnsemble(fc.mesh, dt)
       for mm in range(1, self.NN+1, 1):
         self.outputs['state']['members'][dtStr].append({
           'directory': self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
@@ -242,7 +242,7 @@ class ExtendedForecast(Component):
       self.__post.append(Post(postconf, config))
 
       # mean forecast
-      self.outputs['state']['mean'][dtStr] = StateEnsemble(forecast.mesh, dt)
+      self.outputs['state']['mean'][dtStr] = StateEnsemble(fc.mesh, dt)
       self.outputs['state']['mean'][dtStr].append({
         'directory': self.workDir+'/{{thisCycleDate}}/mean',
         'prefix': Forecast.forecastPrefix,
