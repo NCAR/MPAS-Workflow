@@ -1,7 +1,6 @@
 #!Jinja2
 
 %include include/variables/auto/experiment.rc
-%include include/variables/auto/extendedforecast.rc
 %include include/variables/auto/externalanalyses.rc
 %include include/variables/auto/firstbackground.rc
 %include include/variables/auto/hpc.rc
@@ -36,34 +35,6 @@
 %include include/dependencies/auto/da.rc
 %include include/dependencies/auto/forecast.rc
 
-##############################
-# background-time verification
-##############################
-# TODO: test for when no verification is turned on to ensure error does not occur
-    [[[{{AnalysisTimes}}]]]
-      graph = '''
-%include include/dependencies/auto/postbg.rc
-%include include/dependencies/auto/postda.rc
-      '''
-
-################################
-# extended forecast verification
-################################
-{% if VerifyExtendedMeanFC %}
-    [[[{{extMeanTimes}}]]]
-      graph = '''
-        DAFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
-%include include/dependencies/auto/postfc.rc
-      '''
-{% endif %}
-{% if VerifyExtendedEnsFC and nMembers > 1 %}
-    [[[{{extEnsTimes}}]]]
-      graph = '''
-        DAFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
-%include include/dependencies/auto/postensfc.rc
-      '''
-{% endif %}
-
 [runtime]
 %include include/tasks/base.rc
 %include include/tasks/auto/benchmark.rc
@@ -73,9 +44,6 @@
 %include include/tasks/auto/externalanalyses.rc
 %include include/tasks/auto/initic.rc
 %include include/tasks/auto/observations.rc
-%include include/tasks/auto/postbg.rc
-%include include/tasks/auto/postda.rc
-%include include/tasks/auto/postfc.rc
 
 [visualization]
   initial cycle point = {{restartCyclePoint}}

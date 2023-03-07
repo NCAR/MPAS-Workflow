@@ -14,6 +14,7 @@ from initialize.data.Observations import Observations
 from initialize.data.StateEnsemble import StateEnsemble, State
 
 from initialize.framework.HPC import HPC
+from initialize.framework.Workflow import Workflow
 
 from initialize.post.Post import Post
 
@@ -92,17 +93,6 @@ class ExtendedForecast(Component):
     job._set('account', hpc['NonCriticalAccount'])
     fctask = TaskLookup[hpc.system](job)
 
-    # MeanAnalysis
-    attr = {
-      'seconds': {'def': 300},
-      'nodes': {'def': 1, 'typ': int},
-      'PEPerNode': {'def': 36, 'typ': int},
-      'queue': {'def': hpc['NonCriticalQueue']},
-      'account': {'def': hpc['NonCriticalAccount']},
-    }
-    meanjob = Resource(self._conf, attr, ('job', 'meananalysis'))
-    meantask = TaskLookup[hpc.system](meanjob)
-
     args = [
       1,
       lengthHR,
@@ -143,14 +133,9 @@ class ExtendedForecast(Component):
     script = $origin/bin/'''+fc.base+'''.csh '''+extAnaArgs+'''
 
   ## from mean analysis (including single-member deterministic)
-  [[MeanAnalysis]]
-    inherit = '''+self.group+''', BATCH
-    script = $origin/bin/MeanAnalysis.csh
-'''+meantask.job()+meantask.directives()+'''
   [[ExtendedMeanFC]]
     inherit = '''+self.group+''', BATCH
     script = $origin/bin/'''+fc.base+'''.csh '''+meanAnaArgs+'''
-
 
   [[ExtendedForecastFinished]]
     inherit = '''+self.group+'''
@@ -222,8 +207,8 @@ class ExtendedForecast(Component):
       prepObs = (taskSuffix+" => ").join(prepObsTasks)+taskSuffix
       prepEA = (taskSuffix+" => ").join(prepEATasks)+taskSuffix
 
-      postconf['verifyobs']['dependencies'] = ['ExtendedForecastFinished', prepObs]
-      postconf['verifymodel']['dependencies'] = ['ExtendedForecastFinished', prepEA]
+      postconf['verifyobs']['dependencies'] = [self.finished, prepObs]
+      postconf['verifymodel']['dependencies'] = [self.finished, prepEA]
 
       # note: only duration (dt) varies across output state
 
@@ -238,8 +223,10 @@ class ExtendedForecast(Component):
       for k in ['verifyobs', 'verifymodel']:
         postconf[k]['states'] = self.outputs['state']['members'][dtStr]
 
-      postconf['label'] = 'ensfc'
-      self.__post.append(Post(postconf, config))
+      # TODO: need method to separate ensemble and mean dependencies and post within
+      #   suites/*.rc; turn off ensemble post for now; mean and ensemble forecast
+      #   dependencies reside externally
+      # self.__post.append(Post(postconf, config))
 
       # mean forecast
       self.outputs['state']['mean'][dtStr] = StateEnsemble(fc.mesh, dt)
@@ -251,10 +238,8 @@ class ExtendedForecast(Component):
       for k in ['verifyobs', 'verifymodel']:
         postconf[k]['states'] = self.outputs['state']['mean'][dtStr]
 
-      postconf['label'] = 'fc'
       self.__post.append(Post(postconf, config))
 
-  def export(self):
     for p in self.__post:
-      p.export()
-    super().export()
+      self._tasks += p._tasks
+      self._dependencies += p._dependencies

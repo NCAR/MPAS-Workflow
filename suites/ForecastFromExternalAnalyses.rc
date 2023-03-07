@@ -34,7 +34,7 @@
     [[[{{extMeanTimes}}]]]
       graph = '''
         {{PrepareExternalAnalysisOuter}} => ExtendedFCFromExternalAnalysis => ExtendedForecastFinished
-%include include/dependencies/auto/postfc.rc
+%include include/dependencies/auto/extendedforecast.rc
       '''
 
 [runtime]
@@ -43,7 +43,6 @@
 %include include/tasks/auto/externalanalyses.rc
 %include include/tasks/auto/initic.rc
 %include include/tasks/auto/observations.rc
-%include include/tasks/auto/postfc.rc
 
 [visualization]
   initial cycle point = {{restartCyclePoint}}

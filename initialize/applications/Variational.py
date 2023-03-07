@@ -12,13 +12,9 @@ from initialize.config.Task import TaskLookup
 
 from initialize.data.Model import Model
 from initialize.data.Observations import Observations
-from initialize.data.ObsEnsemble import ObsEnsemble
-from initialize.data.StateEnsemble import StateEnsemble, State
 
 from initialize.framework.HPC import HPC
 from initialize.framework.Workflow import Workflow
-
-from initialize.post.Post import Post
 
 class ABEI(Component):
   workDir = 'CyclingInflation/ABEI'
@@ -26,8 +22,6 @@ class ABEI(Component):
 class Variational(Component):
   defaults = 'scenarios/defaults/variational.yaml'
   workDir = 'CyclingDA'
-  analysisPrefix = 'an'
-  backgroundPrefix = 'bg'
 
   ## benchmarkObservations
   # base set of observation types assimilated in all experiments
@@ -378,61 +372,3 @@ class Variational(Component):
         MeanBackground => HofXBG
         HofXBG:succeed-all => GenerateABEInflation => '''+parent.init+'''
         GenerateABEInflation => CleanHofXBG''']
-
-    #########################
-    # inputs/outputs and post
-    #########################
-    self.inputs = {}
-    self.inputs['state'] = {}
-    self.inputs['state']['members'] = StateEnsemble(meshes['Outer'])
-    self.outputs = {}
-    self.outputs['state'] = {}
-    self.outputs['state']['members'] = StateEnsemble(meshes['Outer'])
-    self.outputs['obs'] = {}
-    self.outputs['obs']['members'] = ObsEnsemble(0)
-    for mm in range(1, self.NN+1, 1):
-      self.inputs['state']['members'].append({
-        'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+self.memFmt.format(mm),
-        'prefix': self.backgroundPrefix,
-      })
-      self.outputs['state']['members'].append({
-        'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+self.memFmt.format(mm),
-        'prefix': self.analysisPrefix,
-      })
-      self.outputs['obs']['members'].append({
-        'directory': self.workDir+'/{{thisCycleDate}}/'+Observations.OutDBDir+'/'+self.memFmt.format(mm),
-        'observers': self['observers']
-      })
-
-    if self.NN > 1:
-      self.inputs['state']['mean'] = State({
-          'directory': self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+'/mean',
-          'prefix': self.backgroundPrefix,
-      }, meshes['Outer'])
-      self.outputs['state']['mean'] = State({
-          'directory': self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+'/mean',
-          'prefix': self.analysisPrefix,
-      }, meshes['Outer'])
-
-    else:
-      self.inputs['state']['mean'] = self.inputs['state']['members'][0]
-      self.outputs['state']['mean'] = self.outputs['state']['members'][0]
-
-    postconf = {
-      'tasks': self['post'],
-      'label': 'da',
-      'valid tasks': ['verifyobs'],
-      'verifyobs': {
-        'hpc': hpc,
-        'obs': self.outputs['obs']['members'],
-        'sub directory': 'da',
-        'dependencies': [parent.finished],
-        'followon': [parent.clean],
-      },
-    }
-
-    self.__post = Post(postconf, config)
-
-  def export(self):
-    self.__post.export()
-    super().export()

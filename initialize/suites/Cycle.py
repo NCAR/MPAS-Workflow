@@ -64,8 +64,8 @@ class Cycle(Suite):
       if k in ['obs', 'ic', 'externalanalyses']:
         c_.export(c['extendedforecast']['extLengths'])
       elif k in ['fc']:
-        c_.export(c['da'].finished, c['da'].clean)
+        c_.export(c['da'].finished, c['da'].clean, c['da'].meanBGDir)
       elif k in ['da']:
-        c_.export(c['fc'].finished)
+        c_.export(c['fc'].finished, c['extendedforecast'])
       else:
         c_.export()

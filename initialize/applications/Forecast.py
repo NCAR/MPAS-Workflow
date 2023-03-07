@@ -3,7 +3,6 @@
 from copy import deepcopy
 
 from initialize.applications.Members import Members
-from initialize.applications.Variational import Variational
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
@@ -184,7 +183,6 @@ class Forecast(Component):
 
     self.postconf = {
       'tasks': self['post'],
-      'label': 'bg',
       'valid tasks': ['verifyobs', 'verifymodel'],
       'verifyobs': {
         'hpc': hpc,
@@ -201,30 +199,28 @@ class Forecast(Component):
       },
     }
 
+
+  def export(self, daFinished:str, daClean:str, daMeanDir:str):
     #########
     # outputs
     #########
-
     self.outputs = {}
     self.outputs['state'] = {}
 
-    self.outputs['state']['members'] = StateEnsemble(mesh)
+    self.outputs['state']['members'] = StateEnsemble(self.mesh)
     for mm in range(1, self.NN+1, 1):
       self.outputs['state']['members'].append({
         'directory': self.workDir+'/{{prevCycleDate}}'+self.memFmt.format(mm),
         'prefix': self.forecastPrefix,
       })
 
-    self.outputs['state']['mean'] = StateEnsemble(mesh)
-    # TODO: get this file name from Variational component during export
+    self.outputs['state']['mean'] = StateEnsemble(self.mesh)
+    # TODO: get this file name from DA component during export
     # actually an output of MeanBackground, which could have its own application class...
     self.outputs['state']['mean'].append({
-      'directory': Variational.workDir+'/{{thisCycleDate}}/'+Variational.backgroundPrefix+'/mean',
+      'directory': daMeanDir,
       'prefix': self.forecastPrefix,
     })
-
-
-  def export(self, daFinished:str, daClean:str):
 
     ##############
     # dependencies
@@ -303,6 +299,18 @@ class Forecast(Component):
     ########
     # export
     ########
+
+    # open graph
+    self._dependencies += ['''
+    [[['''+self.workflow['AnalysisTimes']+''']]]
+      graph = """''']
+
     for p in __post:
-      p.export()
+      self._tasks += p._tasks
+      self._dependencies += p._dependencies
+
+    # close graph
+    self._dependencies += ['''
+      """''']
+
     super().export()
