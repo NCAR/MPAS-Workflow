@@ -26,6 +26,9 @@ set self_AppType = hofx
 
 # ================================================================================================
 
+set memDir = /mean
+set VerifyEnsMeanBGDirs = (${VerifyObsWorkDir}/${backgroundSubDir}${memDir}/${thisCycleDate})
+
 set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 
 ## copy static fields
