@@ -124,25 +124,25 @@ class ExtendedForecast(Component):
     meanAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
     self._tasks = ['''
-  [['''+self.group+''']]
+  [['''+self.TM.group+''']]
 '''+fctask.job()+fctask.directives()+'''
 
   ## from external analysis
   [[ExtendedFCFromExternalAnalysis]]
-    inherit = '''+self.group+''', BATCH
+    inherit = '''+self.TM.group+''', BATCH
     script = $origin/bin/'''+fc.base+'''.csh '''+extAnaArgs+'''
 
   ## from mean analysis (including single-member deterministic)
   [[ExtendedMeanFC]]
-    inherit = '''+self.group+''', BATCH
+    inherit = '''+self.TM.group+''', BATCH
     script = $origin/bin/'''+fc.base+'''.csh '''+meanAnaArgs+'''
 
   [[ExtendedForecastFinished]]
-    inherit = '''+self.group+'''
+    inherit = '''+self.TM.group+'''
 
   ## from ensemble of analyses
   [[ExtendedEnsFC]]
-    inherit = '''+self.group]
+    inherit = '''+self.TM.group]
 
     for mm in EnsVerifyMembers:
       args = [
@@ -175,7 +175,7 @@ class ExtendedForecast(Component):
 
     postconf = {
       'tasks': self['post'],
-      'valid tasks': ['verifyobs', 'verifymodel'],
+      'valid tasks': ['hofx', 'verifyobs', 'verifymodel'],
       'verifyobs': {
         'hpc': hpc,
         'mesh': fc.mesh,
@@ -207,8 +207,8 @@ class ExtendedForecast(Component):
       prepObs = (taskSuffix+" => ").join(prepObsTasks)+taskSuffix
       prepEA = (taskSuffix+" => ").join(prepEATasks)+taskSuffix
 
-      postconf['verifyobs']['dependencies'] = [self.finished, prepObs]
-      postconf['verifymodel']['dependencies'] = [self.finished, prepEA]
+      postconf['verifyobs']['dependencies'] = [self.TM.finished, prepObs]
+      postconf['verifymodel']['dependencies'] = [self.TM.finished, prepEA]
 
       # note: only duration (dt) varies across output state
 
@@ -222,6 +222,8 @@ class ExtendedForecast(Component):
 
       for k in ['verifyobs', 'verifymodel']:
         postconf[k]['states'] = self.outputs['state']['members'][dtStr]
+
+      postconf['hofx'] = postconf['verifyobs']
 
       # TODO: need method to separate ensemble and mean dependencies and post within
       #   suites/*.rc; turn off ensemble post for now; mean and ensemble forecast
@@ -238,8 +240,12 @@ class ExtendedForecast(Component):
       for k in ['verifyobs', 'verifymodel']:
         postconf[k]['states'] = self.outputs['state']['mean'][dtStr]
 
+      postconf['hofx'] = postconf['verifyobs']
+
       self.__post.append(Post(postconf, config))
 
+    self._tasks += self.TM.tasks()
+    self._dependencies += self.TM.dependencies()
     for p in self.__post:
       self._tasks += p._tasks
       self._dependencies += p._dependencies

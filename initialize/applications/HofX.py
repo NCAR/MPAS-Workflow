@@ -7,6 +7,7 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
+from initialize.config.TaskManager import CylcTask
 
 from initialize.data.Model import Model, Mesh
 from initialize.data.Observations import Observations
@@ -144,33 +145,17 @@ class HofX(Component):
     job = Resource(self._conf, attr, ('job', mesh.name))
     task = TaskLookup[hpc.system](job)
 
-    self.group += self.base+subDirectory.upper()
-    parentName = self.group
-    self.group += '-'+dtStr+'hr'
-    self.finished = self.group+'Finished'
-    self.clean = 'Clean'+self.group
-
-    # generic Post tasks and dependencies
-    self._tasks += ['''
-  [['''+parentName+''']]
-  [['''+self.group+''']]
-    inherit = '''+parentName+'''
+    # generic tasks and dependencies
+    parent = self.base + subDirectory.upper()
+    group = parent+'-'+dtStr+'hr'
+    groupSettings = ['''
+    inherit = '''+parent+'''
 '''+task.job()+task.directives()+'''
-  [['''+self.finished+''']]
-    inherit = '''+parentName+'''
-  [['''+self.clean+''']]
-    inherit = Clean''']
+  [['''+parent+''']]''']
 
-    self._dependencies += ['''
-        '''+self.group+''':succeed-all => '''+self.finished]
-
-    for d in dependencies:
-      self._dependencies += ['''
-        '''+d+''' => '''+self.group]
-
-    for f in followon:
-      self._dependencies += ['''
-        '''+self.finished+''' => '''+f]
+    self.TM = CylcTask(group, groupSettings)
+    self.TM.addDependencies(dependencies)
+    self.TM.addFollowons(followon)
 
     # class-specific tasks
     for mm, state in enumerate(states):
@@ -197,19 +182,20 @@ class HofX(Component):
       ]
       runArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      runName = self.group
+      execute = self.TM.execute 
       if NN > 1:
-        runName += '_'+str(mm+1)
+        execute += '_'+str(mm+1)
       elif memberMultiplier > 1:
-        runName += '_MEAN'
+        execute += '_MEAN'
       else:
-        runName += '00'
+        execute += '00'
 
       self._tasks += ['''
-  [['''+runName+''']]
-    inherit = '''+self.group+''', BATCH
+  [['''+execute+''']]
+    inherit = '''+self.TM.execute+''', BATCH
     env-script = cd {{mainScriptDir}}; ./bin/'''+prepScript+'''.csh '''+prepArgs+'''
     script = $origin/bin/'''+self.base+'''.csh '''+runArgs]
+
 
       # clean
       args = [
@@ -218,21 +204,18 @@ class HofX(Component):
       ]
       CleanArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      cleanName = self.clean
+      clean = self.TM.clean 
       if NN > 1:
-        cleanName += '_'+str(mm+1)
+        clean += '_'+str(mm+1)
       elif memberMultiplier > 1:
-        cleanName += '_MEAN'
+        clean += '_MEAN'
       else:
-        cleanName += '00'
+        clean += '00'
 
       self._tasks += ['''
-  [['''+cleanName+''']]
-    inherit = '''+self.clean+'''
+  [['''+clean+''']]
+    inherit = '''+self.TM.clean+'''
     script = $origin/bin/Clean'''+self.base+'''.csh '''+CleanArgs]
-
-      self._dependencies += ['''
-        '''+runName+''' => '''+cleanName]
 
     #########
     # outputs
@@ -254,6 +237,9 @@ class HofX(Component):
     '''
     export for use outside python
     '''
+    self._tasks += self.TM.tasks()
+    self._dependencies += self.TM.dependencies()
+
     self._exportVarsToCsh()
     self._exportVarsToCylc()
     return

@@ -103,8 +103,8 @@ class Observations(Component):
 
   def export(self, dtOffsets:list=[0]):
 
-    self._tasks += ['''
-  [['''+self.group+''']]''']
+    self._tasks += self.TM.tasks()
+    self._dependencies += self.TM.dependencies()
 
     subqueues = []
     prevTaskNames = {}
@@ -121,7 +121,7 @@ class Observations(Component):
         taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+self.group+''', SingleBatch
+    inherit = '''+self.TM.group+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT10M
@@ -169,7 +169,7 @@ class Observations(Component):
         taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+self.group]
+    inherit = '''+self.TM.group]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:
@@ -196,7 +196,7 @@ class Observations(Component):
     for queue in set(subqueues):
       self._tasks += ['''
   [['''+queue+''']]
-    inherit = '''+self.group]
+    inherit = '''+self.TM.group]
 
       self._queues += ['''
     [[['''+queue+''']]]

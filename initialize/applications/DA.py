@@ -47,8 +47,6 @@ class DA(Component):
     self.memFmt = members.memFmt
     self.workflow = workflow
 
-    self.group = 'DAFamily'
-
     # variational
     self.var = Variational(config, hpc, meshes, model, obs, members, workflow, self)
 
@@ -97,55 +95,23 @@ class DA(Component):
 
     self.__subtasks = [self.var, self.rtpp]
 
-  def export(self, forecastFinished:str, ef:ExtendedForecast):
+  def export(self, previousForecast:str, ef:ExtendedForecast):
     for st in self.__subtasks:
       st.export()
 
     ########################
     # tasks and dependencies
     ########################
-
-    phases = [
-      self.pre,
-      self.init,
-      self.execute,
-      self.post,
-      self.finished,
-      self.clean,
-    ]
-
-    self._tasks += ['''
-  ## data assimilation task markers
-  [['''+self.group+''']]''']
-    for p in phases:
-      self._tasks += ['''
-  [['''+p+''']]''']
-      if p in [self.init, self.execute]:
-        self._tasks += ['''
-    inherit = '''+self.group]
+    self._tasks += self.TM.tasks()
 
     # open graph
     self._dependencies += ['''
     [[['''+self.workflow['AnalysisTimes']+''']]]
       graph = """''']
 
+    # pre-da observation processing
     self._dependencies += ['''
-        # pre => init => execute:succeed-all => post => finished => clean
-        # pre-da observation processing
-        {{'''+self.obs.workflow+'''}} => '''+self.pre+'''
-
-        # init
-        '''+self.pre+''' => '''+self.init+'''
-
-        ## data assimilation
-        '''+self.init+''':succeed-all => '''+self.execute+'''
-
-        ## post-da
-        # all DA sub-tasks must succeed in order to start post
-        '''+self.execute+''':succeed-all => '''+self.post+'''
-
-        # finished after post, clean after finished
-        '''+self.post+''' => '''+self.finished+''' => '''+self.clean]
+        {{'''+self.obs.workflow+'''}} => '''+self.TM.pre]
 
     # sub-tasks
     if self.workflow['CriticalPathType'] in ['Normal', 'Reanalysis']:
@@ -154,9 +120,10 @@ class DA(Component):
         self._dependencies += st._dependencies
 
     if self.workflow['CriticalPathType'] == 'Normal':
-      self._dependencies += ['''
-        # depends on previous Forecast
-        '''+forecastFinished+'''[-PT'''+str(self.workflow['FC2DAOffsetHR'])+'''H] => '''+self.pre]
+      # depends on previous Forecast
+      self.TM.addDependencies([previousForecast])
+
+    self._dependencies += self.TM.dependencies()
 
     # close graph
     self._dependencies += ['''
@@ -172,8 +139,8 @@ class DA(Component):
         'hpc': self.hpc,
         'obs': self.outputs['obs']['members'],
         'sub directory': 'da',
-        'dependencies': [self.finished],
-        'followon': [self.clean],
+        'dependencies': [self.TM.finished],
+        'followon': [self.TM.clean],
       },
     }
 
@@ -191,6 +158,8 @@ class DA(Component):
     self._dependencies += ['''
       """''']
 
+    #TODO: move extended forecast task and dependency export
+    #      to ExtendedForecast.export, taking dependency as arg
     ################################
     # extended forecast verification
     ################################
@@ -209,7 +178,7 @@ class DA(Component):
       self._tasks += ['''
   ## mean analysis
   [[MeanAnalysis]]
-    inherit = '''+self.group+''', BATCH
+    inherit = '''+self.TM.group+''', BATCH
     script = $origin/bin/MeanAnalysis.csh
 '''+meantask.job()+meantask.directives()]
 
@@ -220,7 +189,7 @@ class DA(Component):
     [[['''+ef['meanTimes']+''']]]
       graph = """''']
       self._dependencies += ['''
-        '''+self.finished+''' => MeanAnalysis => ExtendedMeanFC => '''+ef.finished]
+        '''+self.TM.finished+''' => MeanAnalysis => ExtendedMeanFC => '''+ef.TM.finished]
 
       self._dependencies += ef._dependencies
 
@@ -238,7 +207,7 @@ class DA(Component):
 #    [[['''+ef['ensTimes']+''']]]
 #      graph = """''']
 #      self._dependencies += ['''
-#        '''+self.finished+''' => ExtendedEnsFC:succeed-all => '''+ef.finished]
+#        '''+self.TM.finished+''' => ExtendedEnsFC:succeed-all => '''+ef.TM.finished]
 #
 #      self._dependencies += ef._dependencies
 #

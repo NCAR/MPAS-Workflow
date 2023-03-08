@@ -123,6 +123,9 @@ class ExternalAnalyses(Component):
 
   def export(self, dtOffsets:list=[0]):
 
+    self._tasks += self.TM.tasks()
+    self._dependencies += self.TM.dependencies()
+
     # only once for each mesh
     meshTypes = []
     meshNames = []
@@ -130,9 +133,6 @@ class ExternalAnalyses(Component):
       if mesh.name not in meshNames:
         meshNames.append(mesh.name)
         meshTypes.append(meshTyp)
-
-    self._tasks = ['''
-  [['''+self.group+''']]''']
 
     subqueues = []
     prevTaskNames = {}
@@ -227,7 +227,7 @@ class ExternalAnalyses(Component):
         taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+self.group]
+    inherit = '''+self.TM.group]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:
@@ -286,7 +286,7 @@ class ExternalAnalyses(Component):
     for queue in set(subqueues):
       self._tasks += ['''
   [['''+queue+''']]
-    inherit = '''+self.group]
+    inherit = '''+self.TM.group]
 
       self._queues += ['''
     [[['''+queue+''']]]

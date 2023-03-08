@@ -110,24 +110,23 @@ class Forecast(Component):
     meanjob = Resource(self._conf, attr, ('job', 'meanbackground'))
     meantask = TaskLookup[hpc.system](meanjob)
 
-
-    self.group = 'ForecastFamily'
-    self._tasks = ['''
-  [['''+self.group+''']]
+    #######
+    # tasks
+    #######
+    # only run 1st cycle, derived from group
+    self._tasks += ['''
   [[Cold'''+self.base+''']]
-    inherit = '''+self.group+'''
-'''+task.job()+task.directives()+'''
+    inherit = '''+self.TM.group+'''
+'''+task.job()+task.directives()]
 
-  [['''+self.base+''']]
-    inherit = '''+self.group+'''
+    # derived from every-cycle execute
+    self._tasks += ['''
+  [['''+self.TM.execute+''']]
 '''+task.job()+task.directives()+'''
-
-  [['''+self.finished+''']]
-    inherit = '''+self.group+'''
 
   ## post mean background
   [[MeanBackground]]
-    inherit = '''+self.group+''', BATCH
+    inherit = '''+self.TM.group+''', BATCH
     script = $origin/bin/MeanBackground.csh
 '''+meantask.job()+meantask.directives()]
 
@@ -176,14 +175,14 @@ class Forecast(Component):
     inherit = Cold'''+self.base+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+ColdArgs+'''
   [['''+self.base+str(mm)+''']]
-    inherit = '''+self.base+''', BATCH
+    inherit = '''+self.TM.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+WarmArgs]
 
-    self.previousForecast = self.finished+'[-PT'+str(window)+'H]'
+    self.previousForecast = self.TM.finished+'[-PT'+str(self.workflow['FC2DAOffsetHR'])+'H]'
 
     self.postconf = {
       'tasks': self['post'],
-      'valid tasks': ['verifyobs', 'verifymodel'],
+      'valid tasks': ['hofx', 'verifyobs', 'verifymodel'],
       'verifyobs': {
         'hpc': hpc,
         'mesh': mesh,
@@ -198,7 +197,6 @@ class Forecast(Component):
         'dependencies': [self.previousForecast, '{{PrepareExternalAnalysisOuter}}'],
       },
     }
-
 
   def export(self, daFinished:str, daClean:str, daMeanDir:str):
     #########
@@ -222,6 +220,12 @@ class Forecast(Component):
       'prefix': self.forecastPrefix,
     })
 
+    #######
+    # tasks
+    #######
+
+    self._tasks += self.TM.tasks()
+
     ##############
     # dependencies
     ##############
@@ -234,17 +238,16 @@ class Forecast(Component):
     # {{ForecastTimes}} dependencies only, not the R1 cycle
     self._dependencies += ['''
         # ensure there is a valid sea-surface update file before forecast
-        {{PrepareSeaSurfaceUpdate}} => '''+self.base+'''
-
-        # all members must succeed in order to proceed
-        '''+self.base+''':succeed-all => '''+self.finished]
+        {{PrepareSeaSurfaceUpdate}} => '''+self.TM.pre]
 
     if self.workflow['CriticalPathType'] == 'Normal':
-      self._dependencies += ['''
-        # depends on previous DA
-        '''+daFinished+'''[-PT'''+str(self.workflow['DA2FCOffsetHR'])+'''H] => '''+self.base]
+      # depends on previous DA
+      self.TM.addDependencies([daFinished+'[-PT'+str(self.workflow['DA2FCOffsetHR'])+'H]'])
     else:
-        '''+self.finished+'''
+      self._dependencies += ['''
+        '''+self.TM.finished]
+
+    self._dependencies += self.TM.dependencies()
 
     # close graph
     self._dependencies += ['''
@@ -277,6 +280,8 @@ class Forecast(Component):
       self.postconf['verifymodel']['dependencies'] += [daFinished]
       self.postconf['verifymodel']['followon'] = [daClean]
 
+      self.postconf['hofx'] = self.postconf['verifyobs']
+
       __post.append(Post(self.postconf, self.__globalConf))
 
       # restore original conf values
@@ -293,6 +298,8 @@ class Forecast(Component):
     # member case (mean case when NN == 1)
     for k in ['verifyobs', 'verifymodel']:
       self.postconf[k]['states'] = self.outputs['state']['members']
+
+    self.postconf['hofx'] = self.postconf['verifyobs']
 
     __post.append(Post(self.postconf, self.__globalConf))
 

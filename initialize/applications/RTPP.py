@@ -84,20 +84,23 @@ class RTPP(Component):
       self._tasks += ['''
   [[Prep'''+self.base+''']]
     # note: does not depend on any other tasks
-    inherit = '''+parent.group+''', SingleBatch
+    inherit = '''+self.TM.init+''', SingleBatch
     script = $origin/bin/Prep'''+self.base+'''.csh "'''+self.WorkDir+'''"
     [[[job]]]
       execution time limit = PT1M
       execution retry delays = '''+job['retry']+'''
-  [['''+self.base+''']]
-    inherit = '''+parent.group+''', BATCH
+  [['''+self.TM.execute+''']]
+    inherit = '''+parent.TM.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh "'''+self.WorkDir+'''"
 '''+task.job()+task.directives()+'''
 
-  [['''+self.clean+''']]
-    inherit = Clean, '''+parent.clean+'''
-    script = $origin/bin/'''+self.clean+'''.csh "'''+self.WorkDir+'"']
+  [['''+self.TM.clean+''']]
+    inherit = '''+parent.TM.clean+'''
+    script = $origin/bin/Clean'''+self.base+'''.csh "'''+self.WorkDir+'"']
 
       self._dependencies += ['''
-        Prep'''+self.base+''' => '''+self.base+'''
-        '''+parent.post+''' => '''+self.base+''' => '''+parent.finished]
+        '''+parent.TM.post+''' => '''+self.TM.pre+'''
+        '''+self.TM.finished+''' => '''+parent.TM.finished]
+
+    self._tasks += self.TM.tasks()
+    self._dependencies += self.TM.dependencies()

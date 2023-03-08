@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from initialize.applications.HofX import HofX
+
 from initialize.config.Component import Component
 from initialize.config.Configurable import Configurable
 from initialize.config.Config import Config
@@ -13,18 +15,17 @@ from initialize.framework.HPC import HPC
 from initialize.post.VerifyObs import VerifyObs
 from initialize.post.VerifyModel import VerifyModel
 
-#taskLookup = {
-#  'verifyobs': VerifyObs,
-#  'verifymodel': VerifyModel,
-#}
-
 class Post(Configurable):
   conf = {
+    # tasks selected by caller
     'tasks': {'typ': list, 'req': True},
+    # valid tasks according to caller
     'valid tasks': {'typ': str, 'req': True},
   }
 
+  # can only construct instances of classes in posts[:]
   posts = [
+    HofX
     VerifyObs,
     VerifyModel,
   ]

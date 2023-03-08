@@ -7,6 +7,7 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
+from initialize.config.TaskManager import CylcTask
 
 from initialize.framework.HPC import HPC
 
@@ -81,33 +82,17 @@ class VerifyObs(Component):
     else:
       memFmt = '/mean'
 
-    self.group += subDirectory.upper()
-    parentName = self.group
-    self.group += '-'+dtStr+'hr'
-    self.finished = self.group+'Finished'
-    self.clean = 'Clean'+self.group
-
-    # generic Post tasks and dependencies
-    self._tasks += ['''
-  [['''+parentName+''']]
-  [['''+self.group+''']]
-    inherit = '''+parentName+'''
+    # generic tasks and dependencies
+    parent = self.base + subDirectory.upper()
+    group = parent+'-'+dtStr+'hr'
+    groupSettings = ['''
+    inherit = '''+parent+'''
 '''+task.job()+task.directives()+'''
-  [['''+self.finished+''']]
-    inherit = '''+parentName+'''
-  [['''+self.clean+''']]
-    inherit = Clean''']
+  [['''+parent+''']]''']
 
-    self._dependencies += ['''
-        '''+self.group+''':succeed-all => '''+self.finished]
-
-    for d in dependencies:
-      self._dependencies += ['''
-        '''+d+''' => '''+self.group]
-
-    for f in followon:
-      self._dependencies += ['''
-        '''+self.finished+''' => '''+f]
+    self.TM = CylcTask(group, groupSettings)
+    self.TM.addDependencies(dependencies)
+    self.TM.addFollowons(followon)
 
     # class-specific tasks
     for mm, o in enumerate(obsLocal):
@@ -127,33 +112,35 @@ class VerifyObs(Component):
       ]
       runArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      self.execute = self.group
+      execute = self.TM.execute 
       if NN > 1:
-        self.execute += '_'+str(mm+1)
+        execute += '_'+str(mm+1)
       elif memberMultiplier > 1:
-        self.execute += '_MEAN'
+        execute += '_MEAN'
       else:
-        self.execute += '00'
+        execute += '00'
 
       self._tasks += ['''
-  [['''+self.execute+''']]
-    inherit = '''+self.group+''', BATCH
+  [['''+execute+''']]
+    inherit = '''+self.TM.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+runArgs]
 
   def export(self):
     '''
     export for use outside python
     '''
+    self._tasks += self.TM.tasks()
+    self._dependencies += self.TM.dependencies()
 
     # add hofx tasks and dependencies when applicable
     if self.__hofx is not None:
+      self.__hofx.export()
       self._tasks += self.__hofx._tasks
       self._dependencies += self.__hofx._dependencies
       self._dependencies += ['''
-        '''+self.__hofx.finished+''' => '''+self.group]
+        '''+self.__hofx.TM.finished+''' => '''+self.TM.pre]
       self._dependencies += ['''
-        '''+self.finished+''' => '''+self.__hofx.clean]
-      self.__hofx.export()
+        '''+self.TM.finished+''' => '''+self.__hofx.TM.clean]
 
     self._exportVarsToCsh()
     self._exportVarsToCylc()

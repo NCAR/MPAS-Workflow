@@ -326,26 +326,27 @@ class Variational(Component):
 
     self._tasks += ['''
   ## variational tasks
-  [['''+self.init+''']]
-    inherit = '''+parent.init+''', SingleBatch
+  [[InitVariationals]]
+    inherit = '''+parent.TM.init+''', '''+self.TM.init+''', SingleBatch
     env-script = cd {{mainScriptDir}}; ./bin/PrepJEDI.csh '''+prepArgs+'''
     script = $origin/bin/Prep'''+self.base+'''.csh "1"
     [[[job]]]
       execution time limit = PT20M
       execution retry delays = '''+varjob['retry']+'''
 
-  [['''+self.base+'''s]]
+  [[Variationals]]
+    inherit = '''+parent.TM.execute+''', '''+self.TM.execute+'''
 '''+vartask.job()+vartask.directives()+'''
 
   # inflation
   [[GenerateABEInflation]]
-    inherit = '''+parent.group+''', BATCH
+    inherit = '''+parent.TM.group+''', BATCH
     script = $origin/bin/GenerateABEInflation.csh
 '''+abeitask.job()+abeitask.directives()+'''
 
   # clean
-  [['''+self.clean+''']]
-    inherit = Clean, '''+parent.clean+'''
+  [[CleanVariationals]]
+    inherit = '''+parent.TM.clean+''', '''+self.TM.clean+'''
     script = $origin/bin/Clean'''+self.base+'''.csh''']
 
     if EDASize == 1:
@@ -353,7 +354,7 @@ class Variational(Component):
       for mm in range(1, self.NN+1, 1):
         self._tasks += ['''
   [['''+self.base+str(mm)+''']]
-    inherit = '''+parent.execute+''', '''+self.base+'''s, BATCH
+    inherit = Variationals, BATCH
     script = $origin/bin/'''+self.base+'''.csh "'''+str(mm)+'"']
 
     else:
@@ -361,14 +362,17 @@ class Variational(Component):
       for instance in range(1, nDAInstances+1, 1):
         self._tasks += ['''
   [[EDA'''+str(instance)+''']]
-    inherit = '''+parent.execute+''', '''+self.base+'''s, BATCH
+    inherit = Variationals, BATCH
     script = \$origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     # TODO: make ABEI consistent with external class design
     if self['ABEInflation']:
       self._dependencies += ['''
         # abei
-        '''+parent.pre+''' =>
+        '''+parent.TM.pre+''' =>
         MeanBackground => HofXBG
-        HofXBG:succeed-all => GenerateABEInflation => '''+parent.init+'''
+        HofXBG:succeed-all => GenerateABEInflation => '''+parent.TM.init+'''
         GenerateABEInflation => CleanHofXBG''']
+
+    self._tasks += self.TM.tasks()
+    self._dependencies += self.TM.dependencies()

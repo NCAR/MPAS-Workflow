@@ -36,7 +36,7 @@ class InitIC(Component):
     job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
     self.__task = TaskLookup[hpc.system](job)
 
-    self.group = ea.group
+    self.TM.group = ea.TM.group
 
     #########
     # outputs
@@ -51,6 +51,9 @@ class InitIC(Component):
       })
 
   def export(self, dtOffsets:list=[0]):
+    self._tasks += self.TM.tasks()
+    self._dependencies += self.TM.dependencies()
+
     subqueues = []
     if self.__used:
       # only once for each mesh
@@ -82,7 +85,7 @@ class InitIC(Component):
 
           self._tasks += ['''
   [['''+taskName+''']]
-    inherit = ConvertExternalAnalyses, BATCH
+    inherit = '''+queue+''', '''+self.TM.execute+''', BATCH
     script = $origin/bin/ExternalAnalysisToMPAS.csh '''+initArgs+'''
 '''+self.__task.job()+self.__task.directives()+'''
     [[[events]]]
@@ -110,7 +113,7 @@ class InitIC(Component):
     for queue in set(subqueues):
       self._tasks += ['''
   [['''+queue+''']]
-    inherit = '''+self.group]
+    inherit = '''+self.TM.group]
 
       self._queues += ['''
     [[['''+queue+''']]]
