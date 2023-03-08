@@ -223,6 +223,9 @@ class ExternalAnalyses(Component):
 
       # ready (not part of subqueue, order does not matter)
       base = 'ExternalAnalysisReady'
+# TODO: use 'finished' tag like other tasks
+#      self._dependencies += ['''
+#        '''+base+''' => '''+self.TM.finished]
       if base in self['PrepareExternalAnalysisOuter']:
         taskName = base+dtLen
         self._tasks += ['''

@@ -165,6 +165,9 @@ class Observations(Component):
 
       # ready (not part of subqueue, order does not matter)
       base = 'ObsReady'
+# TODO: use 'finished' tag like other tasks
+#      self._dependencies += ['''
+#        '''+base+''' => '''+self.TM.finished]
       if base in self['PrepareObservations']:
         taskName = base+dtLen
         self._tasks += ['''
