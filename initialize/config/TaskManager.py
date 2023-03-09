@@ -26,7 +26,7 @@ class TaskManager:
     ]
 
 class CylcTask(TaskManager):
-  def __init__(self, name, groupSettings=['']):
+  def __init__(self, name:str, groupSettings=['']):
     '''
     populate internal task markers and dependencies
     '''
@@ -78,13 +78,17 @@ class CylcTask(TaskManager):
 
   def addDependencies(self, d_:list):
     for d in d_:
-      self.__d += ['''
-        '''+d+''' => '''+self.pre]
+      dStr = '''
+        '''+d+' => '+self.pre
+      if dStr not in self.__d:
+        self.__d += [dStr]
 
   def addFollowons(self, f_:list):
-    for f in f_
-      self.__d += ['''
-        '''+self.finished+''' => '''+f]
+    for f in f_:
+      fStr = '''
+        '''+self.finished+' => '+f
+      if fStr not in self.__d:
+        self.__d += [fStr]
 
   def tasks(self):
     return self.__t

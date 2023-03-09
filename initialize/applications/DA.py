@@ -47,8 +47,11 @@ class DA(Component):
     self.memFmt = members.memFmt
     self.workflow = workflow
 
+    self.__subtasks = []
+
     # variational
     self.var = Variational(config, hpc, meshes, model, obs, members, workflow, self)
+    self.__subtasks += [self.var]
 
     # inputs/ouputs
     self.inputs = {}
@@ -73,6 +76,8 @@ class DA(Component):
         'observers': self.var['observers']
       })
 
+    # TODO: mean directories are controlled by external applications and should
+    #   be moved there or else those applications need to depend on the DA instance
     self.meanBGDir = self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+'/mean'
     self.meanANDir = self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+'/mean'
     if self.NN > 1:
@@ -90,10 +95,13 @@ class DA(Component):
       self.outputs['state']['mean'] = self.outputs['state']['members'][0]
 
     # rtpp
-    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self,
-                       self.inputs['state']['members'], self.outputs['state']['members'])
+    if config.has('rtpp'):
+      self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self,
+                         self.inputs['state']['members'], self.outputs['state']['members'])
 
-    self.__subtasks = [self.var, self.rtpp]
+      self.__subtasks += [self.rtpp]
+    else:
+      self.rtpp = None
 
   def export(self, previousForecast:str, ef:ExtendedForecast):
     for st in self.__subtasks:
@@ -157,62 +165,5 @@ class DA(Component):
     # close graph
     self._dependencies += ['''
       """''']
-
-    #TODO: move extended forecast task and dependency export
-    #      to ExtendedForecast.export, taking dependency as arg
-    ################################
-    # extended forecast verification
-    ################################
-    if self.workflow['VerifyExtendedMeanFC']:
-      # mean analysis
-      attr = {
-        'seconds': {'def': 300},
-        'nodes': {'def': 1, 'typ': int},
-        'PEPerNode': {'def': 36, 'typ': int},
-        'queue': {'def': self.hpc['NonCriticalQueue']},
-        'account': {'def': self.hpc['NonCriticalAccount']},
-      }
-      meanjob = Resource(self._conf, attr, ('job', 'meananalysis'))
-      meantask = TaskLookup[self.hpc.system](meanjob)
-
-      self._tasks += ['''
-  ## mean analysis
-  [[MeanAnalysis]]
-    inherit = '''+self.TM.group+''', BATCH
-    script = $origin/bin/MeanAnalysis.csh
-'''+meantask.job()+meantask.directives()]
-
-      self._tasks += ef._tasks
-
-      # open graph
-      self._dependencies += ['''
-    [[['''+ef['meanTimes']+''']]]
-      graph = """''']
-      self._dependencies += ['''
-        '''+self.TM.finished+''' => MeanAnalysis => ExtendedMeanFC => '''+ef.TM.finished]
-
-      self._dependencies += ef._dependencies
-
-      # close graph
-      self._dependencies += ['''
-      """''']
-
-# ensemble forecast verfication requires ExtendedForecast tasks and dependencies
-# to be defined separately for mean and ensemble
-#    if self.workflow['VerifyExtendedEnsFC'] and self.NN > 1:
-#      self._tasks += ef._tasks
-#
-#      # open graph
-#      self._dependencies += ['''
-#    [[['''+ef['ensTimes']+''']]]
-#      graph = """''']
-#      self._dependencies += ['''
-#        '''+self.TM.finished+''' => ExtendedEnsFC:succeed-all => '''+ef.TM.finished]
-#
-#      self._dependencies += ef._dependencies
-#
-#      # close graph
-#      self._dependencies += ['''
-#      """''']
 
     super().export()

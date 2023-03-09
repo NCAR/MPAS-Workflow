@@ -9,6 +9,7 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
+from initialize.config.TaskManager import CylcTask
 
 from initialize.data.Model import Model
 from initialize.data.Observations import Observations
@@ -176,6 +177,10 @@ class Variational(Component):
     self.memFmt = members.memFmt
 
     #self.abei = ABEI()
+
+    groupSettings = ['''
+    inherit = '''+parent.TM.group]
+    self.TM = CylcTask(self.base, groupSettings)
 
     ###################
     # derived variables

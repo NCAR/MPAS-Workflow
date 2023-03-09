@@ -34,6 +34,7 @@
 %include include/dependencies/auto/firstbackground.rc
 %include include/dependencies/auto/da.rc
 %include include/dependencies/auto/forecast.rc
+%include include/dependencies/auto/extendedforecast.rc
 
 [runtime]
 %include include/tasks/base.rc
@@ -41,6 +42,7 @@
 %include include/tasks/auto/da.rc
 %include include/tasks/auto/forecast.rc
 %include include/tasks/auto/firstbackground.rc
+%include include/tasks/auto/extendedforecast.rc
 %include include/tasks/auto/externalanalyses.rc
 %include include/tasks/auto/initic.rc
 %include include/tasks/auto/observations.rc

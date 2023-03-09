@@ -67,5 +67,7 @@ class Cycle(Suite):
         c_.export(c['da'].TM.finished, c['da'].TM.clean, c['da'].meanBGDir)
       elif k in ['da']:
         c_.export(c['fc'].previousForecast, c['extendedforecast'])
+      elif k in ['extendedforecast']:
+        c_.export(c['da'].TM.finished, 'internal', activateEnsemble=False)
       else:
         c_.export()

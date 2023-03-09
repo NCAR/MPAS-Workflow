@@ -25,7 +25,7 @@ class Post(Configurable):
 
   # can only construct instances of classes in posts[:]
   posts = [
-    HofX
+    HofX,
     VerifyObs,
     VerifyModel,
   ]

@@ -39,8 +39,7 @@ class Workflow(Component):
     #          - run selected verification elements with dependence on the `da` and `forecast`
     #            mini-workflow sub-tasks
     # + Bypass - do not run either `da` or `forecast` mini-workflows
-    #          - only run `verification` mini-workflows, including non-critical path forecasts, e.g.,
-    #            VerifyExtendedMeanFC
+    #          - only run `verification` mini-workflows
     # + Reanalysis
     #   - run only the `da` mini-workflow in the critical path, and also verification
     #   - requires CyclingFC forecast files or links to already be present in ExperimentDirectory
@@ -65,15 +64,6 @@ class Workflow(Component):
     # demonstrate the correct directory structure before trying either of the `Reanalysis` or
     # `Reforecast` options.
     'CriticalPathType': ['Normal', str, ['Normal', 'Bypass', 'Reanalysis', 'Reforecast']],
-
-    ## VerifyExtendedMeanFC: whether to run verification scripts across
-    #    extended forecast states, first intialized at mean analysis
-    'VerifyExtendedMeanFC': [False, bool],
-
-    ## VerifyExtendedEnsBG: whether to run verification scripts across
-    #    extended forecast states, first intialized at ensemble of analysis
-    #    states.
-    'VerifyExtendedEnsFC': [False, bool],
   }
 
   def __init__(self, config:Config):

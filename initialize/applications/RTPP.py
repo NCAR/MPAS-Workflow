@@ -7,6 +7,7 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
+from initialize.config.TaskManager import CylcTask
 
 from initialize.data.Model import Mesh
 from initialize.data.Observations import Observations
@@ -42,6 +43,10 @@ class RTPP(Component):
   ):
     self.NN = members.n
     super().__init__(config)
+
+    groupSettings = ['''
+    inherit = '''+parent.TM.group]
+    self.TM = CylcTask(self.base, groupSettings)
 
     # WorkDir is where RTPP is executed
     self.WorkDir = self.workDir+'/{{thisCycleDate}}'

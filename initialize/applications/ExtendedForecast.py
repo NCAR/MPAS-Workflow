@@ -28,13 +28,15 @@ class ExtendedForecast(Component):
     # interval between OMF verification times of an individual forecast
     'outIntervalHR': [12, int],
 
-    # UTC times to run extended forecast from mean analysis
+    # UTC times to run extended forecast from mean or single analysis
     # formatted as comma-separated string, e.g., T00,T06,T12,T18
-    'meanTimes': ['T00,T12', str],
+    # note: must be supplied in order to do single-state verification
+    'meanTimes': [None, str],
 
     # UTC times to run ensemble of extended forecasts
     # formatted as comma-separated string, e.g., T00,T06,T12,T18
-    'ensTimes': ['T00', str],
+    # note: must be supplied in order to do ensemble-state verification
+    'ensTimes': [None, str],
 
     ## post
     # list of tasks for Post
@@ -52,9 +54,14 @@ class ExtendedForecast(Component):
     meanAnaIC:State,
     ensAnaIC:StateEnsemble,
   ):
+    self.__globalConf = config
     super().__init__(config)
     self.NN = members.n
     self.memFmt = members.memFmt
+    self.hpc = hpc
+    self.fc = fc
+    self.ea = ea
+    self.obs = obs
 
     assert fc.mesh == extAnaIC.mesh(), 'extAnaIC must be on same mesh as extended forecast'
     assert fc.mesh == meanAnaIC.mesh(), 'meanAnaIC must be on same mesh as extended forecast'
@@ -66,32 +73,23 @@ class ExtendedForecast(Component):
 
     lengthHR = self['lengthHR']
     outIntervalHR = self['outIntervalHR']
-    self._set('extMeanTimes', self['meanTimes'])
-    self._set('extEnsTimes', self['ensTimes'])
-    self._set('extMeanTimesList', self['meanTimes'].split(','))
-    self._set('extEnsTimesList', self['ensTimes'].split(','))
-
-    EnsVerifyMembers = range(1, self.NN+1, 1)
-    self._set('EnsVerifyMembers', EnsVerifyMembers)
-
     extLengths = range(0, lengthHR+outIntervalHR, outIntervalHR)
-    self._set('extIntervHR', outIntervalHR)
     self._set('extLengths', extLengths)
-    #self._set('nExtOuts', len(extLengths))
+    self.ensVerifyMembers = range(1, self.NN+1, 1)
 
-    self._cylcVars = ['extMeanTimes', 'extEnsTimes']
-
-    ########################
-    # tasks and dependencies
-    ########################
-    # job settings
-
-    # ExtendedFCBase
+    #########################################
+    # group base task and args to executables
+    #########################################
+    # job settings for self.TM.execute
     job = fc.job
     job._set('seconds', job['baseSeconds'] + job['secondsPerForecastHR'] * lengthHR)
     job._set('queue', hpc['NonCriticalQueue'])
     job._set('account', hpc['NonCriticalAccount'])
     fctask = TaskLookup[hpc.system](job)
+
+    self._tasks += ['''
+  [['''+self.TM.execute+''']]
+'''+fctask.job()+fctask.directives()]
 
     args = [
       1,
@@ -106,7 +104,7 @@ class ExtendedForecast(Component):
       extAnaIC[0].directory(),
       extAnaIC[0].prefix(),
     ]
-    extAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
+    self.extAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
     args = [
       1,
@@ -121,30 +119,10 @@ class ExtendedForecast(Component):
       meanAnaIC.directory(),
       meanAnaIC.prefix(),
     ]
-    meanAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
+    self.meanAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-    self._tasks = ['''
-  [['''+self.TM.group+''']]
-'''+fctask.job()+fctask.directives()+'''
-
-  ## from external analysis
-  [[ExtendedFCFromExternalAnalysis]]
-    inherit = '''+self.TM.group+''', BATCH
-    script = $origin/bin/'''+fc.base+'''.csh '''+extAnaArgs+'''
-
-  ## from mean analysis (including single-member deterministic)
-  [[ExtendedMeanFC]]
-    inherit = '''+self.TM.group+''', BATCH
-    script = $origin/bin/'''+fc.base+'''.csh '''+meanAnaArgs+'''
-
-  [[ExtendedForecastFinished]]
-    inherit = '''+self.TM.group+'''
-
-  ## from ensemble of analyses
-  [[ExtendedEnsFC]]
-    inherit = '''+self.TM.group]
-
-    for mm in EnsVerifyMembers:
+    self.ensAnaArgs = {}
+    for mm in self.ensVerifyMembers:
       args = [
         mm,
         lengthHR,
@@ -158,12 +136,26 @@ class ExtendedForecast(Component):
         ensAnaIC[mm-1].directory(),
         ensAnaIC[mm-1].prefix(),
       ]
-      ensAnaArgs = ' '.join(['"'+str(a)+'"' for a in args])
+      self.ensAnaArgs[str(mm)] = ' '.join(['"'+str(a)+'"' for a in args])
 
-      self._tasks += ['''
-  [[ExtendedFC'''+str(mm)+''']]
-    inherit = ExtendedEnsFC, BATCH
-    script = $origin/bin/'''+fc.base+'''.csh '''+ensAnaArgs]
+  def export(self,
+    dependency:str,
+    singleForecastType:str='external',
+    activateEnsemble:bool=False,
+  ):
+    '''
+    dependency: single task on which extended forecast tasks depend
+    singleForecastType: either internal or external
+    activateEnsemble: whether to activate ensemble extended forecasts (False by default)
+    '''
+
+    assert singleForecastType in ['internal','external'], (
+     'ExtendedForecast.export: incorrect singleForecastType => '+singleForecastType)
+
+    doSingle = (self['meanTimes'] is not None)
+    doEnsemble = (self['ensTimes'] is not None and self.NN > 1 and activateEnsemble)
+
+    self._tasks += self.TM.tasks()
 
     ##################
     # outputs and post
@@ -177,24 +169,25 @@ class ExtendedForecast(Component):
       'tasks': self['post'],
       'valid tasks': ['hofx', 'verifyobs', 'verifymodel'],
       'verifyobs': {
-        'hpc': hpc,
-        'mesh': fc.mesh,
-        'model': fc.model,
+        'hpc': self.hpc,
+        'mesh': self.fc.mesh,
+        'model': self.fc.model,
         'sub directory': 'fc',
       },
       'verifymodel': {
-        'hpc': hpc,
-        'mesh': fc.mesh,
+        'hpc': self.hpc,
+        'mesh': self.fc.mesh,
         'sub directory': 'fc',
       },
     }
 
-    self.__post = []
+    meanpost = []
+    enspost = []
 
-    prepObsTasks = obs['PrepareObservationsTasks']
-    prepEATasks = ea['PrepareExternalAnalysisTasksOuter']
+    prepObsTasks = self.obs['PrepareObservationsTasks']
+    prepEATasks = self.ea['PrepareExternalAnalysisTasksOuter']
 
-    for dt in extLengths:
+    for dt in self['extLengths']:
 
       dtStr = str(dt)
 
@@ -213,25 +206,22 @@ class ExtendedForecast(Component):
       # note: only duration (dt) varies across output state
 
       # ensemble forecasts
-      self.outputs['state']['members'][dtStr] = StateEnsemble(fc.mesh, dt)
-      for mm in range(1, self.NN+1, 1):
-        self.outputs['state']['members'][dtStr].append({
-          'directory': self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
-          'prefix': Forecast.forecastPrefix,
-        })
+      if doEnsemble:
+        self.outputs['state']['members'][dtStr] = StateEnsemble(self.fc.mesh, dt)
+        for mm in self.ensVerifyMembers:
+          self.outputs['state']['members'][dtStr].append({
+            'directory': self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
+            'prefix': Forecast.forecastPrefix,
+          })
 
-      for k in ['verifyobs', 'verifymodel']:
-        postconf[k]['states'] = self.outputs['state']['members'][dtStr]
+        for k in ['verifyobs', 'verifymodel']:
+          postconf[k]['states'] = self.outputs['state']['members'][dtStr]
 
-      postconf['hofx'] = postconf['verifyobs']
-
-      # TODO: need method to separate ensemble and mean dependencies and post within
-      #   suites/*.rc; turn off ensemble post for now; mean and ensemble forecast
-      #   dependencies reside externally
-      # self.__post.append(Post(postconf, config))
+        postconf['hofx'] = postconf['verifyobs']
+        enspost.append(Post(postconf, self.__globalConf))
 
       # mean forecast
-      self.outputs['state']['mean'][dtStr] = StateEnsemble(fc.mesh, dt)
+      self.outputs['state']['mean'][dtStr] = StateEnsemble(self.fc.mesh, dt)
       self.outputs['state']['mean'][dtStr].append({
         'directory': self.workDir+'/{{thisCycleDate}}/mean',
         'prefix': Forecast.forecastPrefix,
@@ -242,10 +232,102 @@ class ExtendedForecast(Component):
 
       postconf['hofx'] = postconf['verifyobs']
 
-      self.__post.append(Post(postconf, config))
+      meanpost.append(Post(postconf, self.__globalConf))
 
-    self._tasks += self.TM.tasks()
-    self._dependencies += self.TM.dependencies()
-    for p in self.__post:
-      self._tasks += p._tasks
-      self._dependencies += p._dependencies
+    if doSingle:
+      #######
+      # tasks
+      #######
+      if singleForecastType == 'internal':
+        # mean analysis (if needed)
+        # TODO: either get meanAnaIC states from MeanAnalysis description or
+        #   feed those directories/prefix inputs to bin/MeanAnalysis.csh
+        #   via args
+        attr = {
+          'seconds': {'def': 300},
+          'nodes': {'def': 1, 'typ': int},
+          'PEPerNode': {'def': 36, 'typ': int},
+          'queue': {'def': self.hpc['NonCriticalQueue']},
+          'account': {'def': self.hpc['NonCriticalAccount']},
+        }
+        meanjob = Resource(self._conf, attr, ('job', 'meananalysis'))
+        meantask = TaskLookup[self.hpc.system](meanjob)
+
+        self._tasks += ['''
+  [[MeanAnalysis]]
+    inherit = '''+self.TM.init+''', BATCH
+    script = $origin/bin/MeanAnalysis.csh
+'''+meantask.job()+meantask.directives()]
+
+        ## from mean analysis (including single-member deterministic)
+        self._tasks += ['''
+  [[ExtendedMeanFC]]
+    inherit = '''+self.TM.execute+''', BATCH
+    script = $origin/bin/'''+self.fc.base+'''.csh '''+self.meanAnaArgs]
+
+      elif singleForecastType == 'external':
+        ## from external analysis
+        self._tasks += ['''
+  [[ExtendedFCFromExternalAnalysis]]
+    inherit = '''+self.TM.execute+''', BATCH
+    script = $origin/bin/'''+self.fc.base+'''.csh '''+self.extAnaArgs]
+
+      ##############
+      # dependencies
+      ##############
+      self.TM.addDependencies([dependency])
+
+      # open graph
+      self._dependencies += ['''
+    [[['''+self['meanTimes']+''']]]
+      graph = """''']
+
+      self._dependencies += self.TM.dependencies()
+
+      for p in meanpost:
+        self._tasks += p._tasks
+        self._dependencies += p._dependencies
+
+      # close graph
+      self._dependencies += ['''
+      """''']
+
+    if doEnsemble:
+      ## from ensemble of analyses
+
+      #######
+      # tasks
+      #######
+
+      self._tasks += ['''
+  [[ExtendedEnsFC]]
+    inherit = '''+self.TM.execute]
+
+      for mm in self.ensVerifyMembers:
+        self._tasks += ['''
+  [[ExtendedFC'''+str(mm)+''']]
+    inherit = ExtendedEnsFC, BATCH
+    script = $origin/bin/'''+self.fc.base+'''.csh '''+self.ensAnaArgs[str(mm)]]
+
+      ##############
+      # dependencies
+      ##############
+
+      self.TM.addDependencies([dependency])
+
+      # open graph
+      self._dependencies += ['''
+    [[['''+self['ensTimes']+''']]]
+      graph = """''']
+
+      self._dependencies += self.TM.dependencies()
+
+      for p in enspost:
+        self._tasks += p._tasks
+        self._dependencies += p._dependencies
+
+      # close graph
+      self._dependencies += ['''
+      """''']
+
+    super().export()

@@ -1,10 +1,9 @@
 workflow:
   first cycle point: 20180414T18
   final cycle point:   20180514T18
-  VerifyExtendedMeanFC: False
 
 extendedforecast:
-  meanTimes: T00
+  #meanTimes: T00  # uncomment to engage
   lengthHR: 120
   outIntervalHR: 12
 
