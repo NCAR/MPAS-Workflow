@@ -9,7 +9,9 @@ from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
 
+from initialize.data.ExternalAnalyses import ExternalAnalyses
 from initialize.data.Model import Model, Mesh
+from initialize.data.Observations import Observations
 from initialize.data.StateEnsemble import StateEnsemble
 
 from initialize.framework.HPC import HPC
@@ -47,7 +49,9 @@ class Forecast(Component):
     mesh:Mesh,
     members:Members,
     model:Model,
+    obs:Observations,
     workflow:Workflow,
+    ea:ExternalAnalyses,
     coldIC:StateEnsemble,
     warmIC:StateEnsemble,
   ):
@@ -56,6 +60,7 @@ class Forecast(Component):
     self.mesh = mesh
     self.model = model
     self.workflow = workflow
+    self.ea = ea
     self.NN = members.n
     self.memFmt = members.memFmt
 
@@ -180,6 +185,9 @@ class Forecast(Component):
 
     self.previousForecast = self.TM.finished+'[-PT'+str(self.workflow['FC2DAOffsetHR'])+'H]'
 
+    # TODO: move Post initialization out of Forecast class so that PrepareObservations
+    #  can be appropriately referenced without adding a dependence of the Forecast class
+    #  on the Observations class
     self.postconf = {
       'tasks': self['post'],
       'valid tasks': ['hofx', 'verifyobs', 'verifymodel'],
@@ -188,13 +196,13 @@ class Forecast(Component):
         'mesh': mesh,
         'model': model,
         'sub directory': 'bg',
-        'dependencies': [self.previousForecast, '{{PrepareObservations}}'],
+        'dependencies': [self.previousForecast, obs['PrepareObservations']],
       },
       'verifymodel': {
         'hpc': hpc,
         'mesh': mesh,
         'sub directory': 'bg',
-        'dependencies': [self.previousForecast, '{{PrepareExternalAnalysisOuter}}'],
+        'dependencies': [self.previousForecast, ea['PrepareExternalAnalysisOuter']],
       },
     }
 
@@ -213,8 +221,8 @@ class Forecast(Component):
       })
 
     self.outputs['state']['mean'] = StateEnsemble(self.mesh)
-    # TODO: get this file name from DA component during export
-    # actually an output of MeanBackground, which could have its own application class...
+    # TODO: create MeanBackground class that defines daMeanDir
+    #   and passes it to MeanBackground.csh script as an arg
     self.outputs['state']['mean'].append({
       'directory': daMeanDir,
       'prefix': self.forecastPrefix,
@@ -238,7 +246,7 @@ class Forecast(Component):
     # {{ForecastTimes}} dependencies only, not the R1 cycle
     self._dependencies += ['''
         # ensure there is a valid sea-surface update file before forecast
-        {{PrepareSeaSurfaceUpdate}} => '''+self.TM.pre]
+        '''+self.ea['PrepareSeaSurfaceUpdate']+''' => '''+self.TM.pre]
 
     if self.workflow['CriticalPathType'] == 'Normal':
       # depends on previous DA

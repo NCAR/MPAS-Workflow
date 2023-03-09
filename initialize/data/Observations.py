@@ -86,7 +86,6 @@ class Observations(Component):
     values = self.extractResourceOrDie(('resources', resource), key, list)
 
     # first add variable as a list of tasks
-    self._cylcVars.append(key)
     self._set(key, values)
 
     # then add as a joined string with dependencies between subtasks (" => ")
@@ -94,7 +93,6 @@ class Observations(Component):
     # value: [a, b] becomes "a => b"
     key = 'PrepareObservations'
     value = " => ".join(values)
-    self._cylcVars.append(key)
     self._set(key, value)
     self.workflow = key
 

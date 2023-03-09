@@ -1,9 +1,7 @@
 #!Jinja2
 
 %include include/variables/auto/experiment.rc
-%include include/variables/auto/externalanalyses.rc
 %include include/variables/auto/hpc.rc
-%include include/variables/auto/observations.rc
 %include include/variables/auto/workflow.rc
 
 [meta]
@@ -32,7 +30,9 @@
 %include include/dependencies/auto/extendedforecast.rc
 
 [runtime]
-%include include/tasks/base.rc
+# eventually replace all below with this one
+%include include/tasks/auto/suite.rc
+
 %include include/tasks/auto/extendedforecast.rc
 %include include/tasks/auto/externalanalyses.rc
 %include include/tasks/auto/initic.rc

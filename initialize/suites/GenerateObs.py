@@ -18,6 +18,8 @@ from initialize.suites.Suite import Suite
 
 class GenerateObs(Suite):
   def __init__(self, conf:Config):
+    super().__init__()
+
     c = {}
     c['build'] = Build(conf, None)
     c['hpc'] = HPC(conf)
@@ -31,3 +33,7 @@ class GenerateObs(Suite):
 
     for c_ in c.values():
       c_.export()
+
+    self._dependencies += ['''
+    [[[PT'''+c['workflow']['CyclingWindowHR']+'''H]]]
+      graph = '''+c['obs']['PrepareObservations']]

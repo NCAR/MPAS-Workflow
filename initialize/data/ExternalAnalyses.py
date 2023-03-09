@@ -59,7 +59,6 @@ class ExternalAnalyses(Component):
 
           # first add variable as a list of tasks
           variable = key+meshTyp
-          self._cylcVars.append(variable)
           self._set(variable, values)
 
           # then add as a joined string with dependencies between subtasks (" => ")
@@ -68,7 +67,6 @@ class ExternalAnalyses(Component):
           # value: [a, b] becomes "a => b"
           variable = variable.replace('Tasks','')
           value = " => ".join(values)
-          self._cylcVars.append(variable)
           self._set(variable, value)
           continue
 
@@ -90,7 +88,6 @@ class ExternalAnalyses(Component):
     # Use external analysis for sea surface updating
     variable = 'PrepareSeaSurfaceUpdate'
     self._set(variable, self['PrepareExternalAnalysisOuter'])
-    self._cylcVars.append(variable)
 
     ########################
     # tasks and dependencies

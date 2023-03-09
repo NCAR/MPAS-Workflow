@@ -76,23 +76,14 @@ class DA(Component):
         'observers': self.var['observers']
       })
 
-    # TODO: mean directories are controlled by external applications and should
-    #   be moved there or else those applications need to depend on the DA instance
+    # TODO: mean directories are controlled by external applications (e.g., ExtendedForecast)
+    #   and do not need to be defined as inputs/outputs members of DA class
     self.meanBGDir = self.workDir+'/{{thisCycleDate}}/'+self.backgroundPrefix+'/mean'
-    self.meanANDir = self.workDir+'/{{thisCycleDate}}/'+self.analysisPrefix+'/mean'
     if self.NN > 1:
       self.inputs['state']['mean'] = State({
           'directory': self.meanBGDir,
           'prefix': self.backgroundPrefix,
       }, meshes['Outer'])
-      self.outputs['state']['mean'] = State({
-          'directory': self.meanANDir,
-          'prefix': self.analysisPrefix,
-      }, meshes['Outer'])
-
-    else:
-      self.inputs['state']['mean'] = self.inputs['state']['members'][0]
-      self.outputs['state']['mean'] = self.outputs['state']['members'][0]
 
     # rtpp
     if config.has('rtpp'):
@@ -119,7 +110,7 @@ class DA(Component):
 
     # pre-da observation processing
     self._dependencies += ['''
-        {{'''+self.obs.workflow+'''}} => '''+self.TM.pre]
+        '''+self.obs['PrepareObservations']+''' => '''+self.TM.pre]
 
     # sub-tasks
     if self.workflow['CriticalPathType'] in ['Normal', 'Reanalysis']:

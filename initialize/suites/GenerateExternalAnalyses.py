@@ -19,6 +19,8 @@ from initialize.suites.Suite import Suite
 
 class GenerateExternalAnalyses(Suite):
   def __init__(self, conf:Config):
+    super().__init__()
+
     c = {}
     c['hpc'] = HPC(conf)
     c['workflow'] = Workflow(conf)
@@ -34,3 +36,8 @@ class GenerateExternalAnalyses(Suite):
 
     for c_ in c.values():
       c_.export()
+
+
+    self._dependencies += ['''
+    [[[PT'''+c['workflow']['CyclingWindowHR']+'''H]]]
+      graph = '''+c['externalanalyses']['PrepareExternalAnalysisOuter']]

@@ -170,8 +170,8 @@ class Variational(Component):
     members:Members,
     workflow:Workflow,
     parent:Component,
-    #forecast:Forecast,
   ):
+    # note: all dependencies on obs are handled in DA.py or PrepJEDI.csh
     super().__init__(config)
     self.NN = members.n
     self.memFmt = members.memFmt

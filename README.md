@@ -58,7 +58,7 @@ code from either [JCSDA/mpas-bundle](https://github.com/JCSDA/mpas-bundle/) or
 follow the build instructions in the corresponding repository.  Tagged releases of MPAS-Workflow
 starting with 25JAN2023 are accompanied by an mpas-bundle CMakeLists.txt (`build/CMakeLists.txt`)
 with fixed source code repository tags/hashes that are consistent with the released workflow
-version.  Users can copy that file into their mpas-bundle source code directory before executing 
+version.  Users can copy that file into their mpas-bundle source code directory before executing
 `ecbuild` in order to download the currect repository versions.
 
 Periodically the `develop` branch of MPAS-Workflow will be consistent with the source code
@@ -82,7 +82,7 @@ Configuration Files
 
 The files under the `scenarios/` directories describe the configuration for a particular instance
 of an `MPAS-Workflow` `Cylc` suite.  `scenarios/defaults/*.yaml` describe some default
-`resource`-based options that users may select in their experiment scenario `yaml` (e.g., 
+`resource`-based options that users may select in their experiment scenario `yaml` (e.g.,
 `scenarios/*.yaml`.  Both the `defaults` and the particular scenario selected are parsed with
 python-based classes in the `initialize/components/` directory.  Each `component` is associated
 with a particular root `yaml` node.  For example, `Variational.py` parses the configuration of the
@@ -218,15 +218,10 @@ example, execute the following from the command-line:
 initiates the `Cylc` suite by executing `submit.csh`. Users need not modify `Run.py` or `submit.csh`.
 
 There are additional aspects of the driver in `submit.csh`, `initialize/`, and `suites/*.rc`.  For
-most users and developers, only `initialize/` will need to be consulted and/or modified. 
+most users and developers, only `initialize/` will need to be consulted and/or modified.
 
-Developers who wish to add new `Cylc` tasks, or change the relationships between tasks, may wish to
-modify static include files or `initialize/*/*.py`, or in rare cases, create their own suite. There
-is only one static include file that will eventually be depracated:
-
-- `include/tasks/base.rc`: contains some base `Cylc` task descriptors that are inherited
-  by child tasks. Look for the `inherit` keyword in `initialize/*/*.py` for examples.
-
+Developers who wish to add new `Cylc` tasks, or change the relationships between tasks, will need
+to modify `initialize/*/*.py`, or in rare cases, create their own suite.
 
 Workflow task scripts
 ---------------------
@@ -307,14 +302,14 @@ and date-resolved directories
 2. Copy the `bin`, `config`, `include`, `scenarios`, `suites`, `test`, and `tools` directories
    to the experiment workflow directory for use by `Cylc` tasks and so that a record is kept of
    all settings
-3. Copy the top-level cylc suite file, then submit the suite for execution 
+3. Copy the top-level cylc suite file, then submit the suite for execution
 
 
 Python tools (`tools/*.py`)
 ---------------------------
 Each of these tools perform a useful part of the workflow that is otherwise cumbersome to achieve
 via shell scripts. The argument definitions for each script can be retrieved by executing
-`python {{ScriptName}}.py --help` 
+`python {{ScriptName}}.py --help`
 
 `advanceCYMDH`: time-stepping used to figure out dates relative to an arbitrary input date
 

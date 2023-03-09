@@ -85,6 +85,19 @@ class Workflow(Component):
     #   CyclingFC output must already be present from the cycle before restartCyclePoint.
     self._setOrDefault('restart cycle point', firstCyclePoint)
 
+    self._cylcVars += ['max active cycle points', 'restart cycle point', 'final cycle point', 'submission timeout']
+
+    # substitution variables to be passed directly to shell scripts instead of parsed with Jinja2
+    substitutionVars = [
+      'thisValidDate',
+      'thisCycleDate',
+      'prevCycleDate',
+    ]
+    for v in substitutionVars:
+      # create cylc variable named v, with value '{{'+v+'}}', overriding Jinja2
+      self._set(v, '{{'+v+'}}')
+    self._cylcVars += substitutionVars
+
     ## FirstCycleDate in directory structure format
     first = dt.datetime.strptime(firstCyclePoint, dtf.abbrevISO8601Fmt)
     self._set('FirstCycleDate', first.strftime(dtf.cycleFmt))
@@ -131,15 +144,3 @@ class Workflow(Component):
       self._set('ForecastTimes', '+PT'+str(DA2FCOffsetHR)+'H/PT'+str(CyclingWindowHR)+'H')
 
     self._cshVars = list(self._vtable.keys())
-
-    # substitution variables to be passed directly to task scripts instead of parsed with Jinja2
-    substitutionVars = [
-      'thisValidDate',
-      'thisCycleDate',
-      'prevCycleDate',
-    ]
-    for v in substitutionVars:
-      # create cylc variable named v, with value '{{'+v+'}}', overriding Jinja2
-      self._set(v, '{{'+v+'}}')
-    self._cylcVars = list(self._vtable.keys())
-    self._cylcVars += ['submission timeout']

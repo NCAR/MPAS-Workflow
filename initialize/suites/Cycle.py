@@ -27,6 +27,8 @@ from initialize.suites.Suite import Suite
 
 class Cycle(Suite):
   def __init__(self, conf:Config):
+    super().__init__()
+
     c = {}
     c['hpc'] = HPC(conf)
     c['workflow'] = Workflow(conf)
@@ -38,18 +40,17 @@ class Cycle(Suite):
     c['members'] = Members(conf)
 
     c['externalanalyses'] = ExternalAnalyses(conf, c['hpc'], meshes)
-    c['fb'] = FirstBackground(conf, meshes, c['members'], c['workflow'])
+    c['fb'] = FirstBackground(conf, meshes, c['members'], c['workflow'], c['externalanalyses'])
 
     c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
     c['da'] = DA(conf, c['hpc'], c['obs'], meshes, c['model'], c['members'], c['workflow'])
-    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['model'], c['workflow'],
+    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['model'], c['obs'],
+                c['workflow'], c['externalanalyses'],
                 c['externalanalyses'].outputs['state']['Outer'],
                 c['da'].outputs['state']['members'])
     c['extendedforecast'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
                 c['externalanalyses'], c['obs'],
-                c['externalanalyses'].outputs['state']['Outer'],
-                c['da'].outputs['state']['mean'],
-                c['da'].outputs['state']['members'])
+                c['da'].outputs['state']['members'], 'internal')
 
     #if conf.has('benchmark'): # TODO: make benchmark optional,
     # and depend on whether verifyobs/verifymodel are selected
@@ -68,6 +69,6 @@ class Cycle(Suite):
       elif k in ['da']:
         c_.export(c['fc'].previousForecast, c['extendedforecast'])
       elif k in ['extendedforecast']:
-        c_.export(c['da'].TM.finished, 'internal', activateEnsemble=False)
+        c_.export(c['da'].TM.finished, activateEnsemble=False)
       else:
         c_.export()

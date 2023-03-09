@@ -24,6 +24,8 @@ from initialize.suites.Suite import Suite
 
 class ForecastFromExternalAnalyses(Suite):
   def __init__(self, conf:Config):
+    super().__init__()
+
     c = {}
     c['hpc'] = HPC(conf)
     c['workflow'] = Workflow(conf)
@@ -39,14 +41,13 @@ class ForecastFromExternalAnalyses(Suite):
     c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
 
     # Forecast object is only used to initialize parts of ExtendedForecast
-    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['model'], c['workflow'],
+    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['model'], c['obs'],
+                c['workflow'], c['externalanalyses'],
                 c['externalanalyses'].outputs['state']['Outer'],
                 c['externalanalyses'].outputs['state']['Outer'])
     c['extendedforecast'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
                 c['externalanalyses'], c['obs'],
-                c['externalanalyses'].outputs['state']['Outer'],
-                c['externalanalyses'].outputs['state']['Outer'][0],
-                c['externalanalyses'].outputs['state']['Outer'])
+                c['externalanalyses'].outputs['state']['Outer'], 'external')
 
     c['exp'] = Experiment(conf, c['hpc'])
     c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['externalanalyses'], c['exp'])

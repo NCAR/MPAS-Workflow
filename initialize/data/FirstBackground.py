@@ -5,6 +5,8 @@ from initialize.applications.Members import Members
 from initialize.config.Component import Component
 from initialize.config.Config import Config
 
+from initialize.data.ExternalAnalyses import ExternalAnalyses
+
 from initialize.framework.Workflow import Workflow
 
 class FirstBackground(Component):
@@ -19,7 +21,13 @@ class FirstBackground(Component):
       ['ForecastFromAnalysis', 'PANDAC.GFS', 'PANDAC.LaggedGEFS']],
   }
 
-  def __init__(self, config:Config, meshes:dict, members:Members, workflow:Workflow):
+  def __init__(self,
+    config:Config,
+    meshes:dict,
+    members:Members,
+    workflow:Workflow,
+    ea:ExternalAnalyses,
+  ):
     super().__init__(config)
 
     ###################
@@ -46,7 +54,6 @@ class FirstBackground(Component):
         if key == 'PrepareFirstBackground':
           # push back cylc mini-workflow
           variable = key+meshTyp
-          self._cylcVars.append(variable)
         else:
           # auto-generated csh variables
           if key == 'directory' and isinstance(value, str):
@@ -81,10 +88,10 @@ class FirstBackground(Component):
     [[[R1]]]
       graph = """
         # prepare first DA background state
-        {{PrepareExternalAnalysisOuter}} => {{PrepareFirstBackgroundOuter}}
+        '''+ea['PrepareExternalAnalysisOuter']+''' => '''+self['PrepareFirstBackgroundOuter']+'''
 
         # prepare analyses (init) files (for dual-mesh Variational) for reading to
         # static and input stream in all cycles for inner and ensemble geometries
-        {{PrepareExternalAnalysisInner}}
-        {{PrepareExternalAnalysisEnsemble}}
+        '''+ea['PrepareExternalAnalysisInner']+'''
+        '''+ea['PrepareExternalAnalysisEnsemble']+'''
       """''']

@@ -23,12 +23,12 @@
   max active cycle points = {{maxActiveCyclePoints}}
 
   [[dependencies]]
-
-    [[[PT{{CyclingWindowHR}}H]]]
-      graph = {{PrepareObservations}}
+%include include/dependencies/auto/suite.rc
 
 [runtime]
-%include include/tasks/base.rc
+# eventually replace all below with this one
+%include include/tasks/auto/suite.rc
+
 %include include/tasks/auto/observations.rc
 
 [visualization]

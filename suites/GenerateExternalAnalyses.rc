@@ -1,7 +1,6 @@
 #!Jinja2
 
 %include include/variables/auto/experiment.rc
-%include include/variables/auto/externalanalyses.rc
 %include include/variables/auto/hpc.rc
 %include include/variables/auto/workflow.rc
 
@@ -23,12 +22,12 @@
   max active cycle points = {{maxActiveCyclePoints}}
 
   [[dependencies]]
-
-    [[[PT{{CyclingWindowHR}}H]]]
-      graph = {{PrepareExternalAnalysisOuter}}
+%include include/dependencies/auto/suite.rc
 
 [runtime]
-%include include/tasks/base.rc
+# eventually replace all below with this one
+%include include/tasks/auto/suite.rc
+
 %include include/tasks/auto/externalanalyses.rc
 %include include/tasks/auto/initic.rc
 
