@@ -10,7 +10,6 @@ from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
 
 from initialize.data.ExternalAnalyses import ExternalAnalyses
-from initialize.data.FirstBackground import FirstBackground
 from initialize.data.Model import Model, Mesh
 from initialize.data.Observations import Observations
 from initialize.data.StateEnsemble import StateEnsemble
@@ -53,8 +52,6 @@ class Forecast(Component):
     obs:Observations,
     workflow:Workflow,
     ea:ExternalAnalyses,
-    fb:FirstBackground,
-    coldIC:StateEnsemble,
     warmIC:StateEnsemble,
   ):
     super().__init__(config)
@@ -67,9 +64,7 @@ class Forecast(Component):
     self.NN = members.n
     self.memFmt = members.memFmt
 
-    assert mesh == coldIC.mesh(), 'coldIC must be on same mesh as forecast'
     assert mesh == warmIC.mesh(), 'warmIC must be on same mesh as forecast'
-
 
     ###################
     # derived variables
@@ -84,6 +79,9 @@ class Forecast(Component):
     else:
       outIntervalHR = window
       lengthHR = window
+
+    self._set('outIntervalHR', outIntervalHR)
+    self._set('lengthHR', lengthHR)
 
     ########################
     # tasks and dependencies
@@ -118,7 +116,7 @@ class Forecast(Component):
 '''+task.job()+task.directives()]
 
     for mm in range(1, self.NN+1, 1):
-      # WarmArgs explanation
+      # fcArgs explanation
       # DACycling (True), IC ~is~ a DA analysis for which re-coupling is required
       # DeleteZerothForecast (True), not used anywhere else in the workflow
       args = [
@@ -134,50 +132,14 @@ class Forecast(Component):
         warmIC[mm-1].directory(),
         warmIC[mm-1].prefix(),
       ]
-      WarmArgs = ' '.join(['"'+str(a)+'"' for a in args])
+      fcArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
       self._tasks += ['''
   [['''+self.base+str(mm)+''']]
     inherit = '''+self.base+''', BATCH
-    script = $origin/bin/'''+self.base+'''.csh '''+WarmArgs]
+    script = $origin/bin/'''+self.base+'''.csh '''+fcArgs]
 
     self.previousForecast = self.TM.finished+'[-PT'+str(self.workflow['FC2DAOffsetHR'])+'H]'
-
-    # cold-start, only run R1 cycle, controlled in FirstBackground yaml
-    ColdForecast = 'Cold'+self.base
-    if fb['PrepareFirstBackgroundOuter']:
-      # TODO: base task has no inheritance, would only work with 2 separate classes
-      #   consider refactoring; could move Cold* to FirstBackground and make that ctor
-      #   take a Forecast instance as an arg (swap dependence)
-      self._tasks += ['''
-  [['''+ColdForecast+''']]
-'''+task.job()+task.directives()]
-
-      for mm in range(1, self.NN+1, 1):
-        # ColdArgs explanation
-        # IAU (False) cannot be used until 1 cycle after DA analysis
-        # DACycling (False), IC ~is not~ a DA analysis for which re-coupling is required
-        # DeleteZerothForecast (True), not used anywhere else in the workflow
-        # updateSea (False) is not needed since the IC is already an external analysis
-        args = [
-          1,
-          lengthHR,
-          outIntervalHR,
-          False,
-          mesh.name,
-          False,
-          True,
-          False,
-          self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
-          coldIC[0].directory(),
-          coldIC[0].prefix(),
-        ]
-        ColdArgs = ' '.join(['"'+str(a)+'"' for a in args])
-
-        self._tasks += ['''
-  [['''+ColdForecast+str(mm)+''']]
-    inherit = '''+ColdForecast+''', BATCH
-    script = $origin/bin/'''+self.base+'''.csh '''+ColdArgs]
 
     # TODO: move Post initialization out of Forecast class so that PrepareObservations
     #  can be appropriately referenced without adding a dependence of the Forecast class

@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 
+from initialize.applications.Forecast import Forecast
 from initialize.applications.Members import Members
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
+from initialize.config.Task import TaskLookup
 
 from initialize.data.ExternalAnalyses import ExternalAnalyses
+from initialize.data.StateEnsemble import StateEnsemble
 
+from initialize.framework.HPC import HPC
 from initialize.framework.Workflow import Workflow
 
 class FirstBackground(Component):
@@ -23,12 +27,17 @@ class FirstBackground(Component):
 
   def __init__(self,
     config:Config,
+    hpc:HPC,
     meshes:dict,
     members:Members,
     workflow:Workflow,
     ea:ExternalAnalyses,
+    coldIC:StateEnsemble,
+    fc:Forecast,
   ):
     super().__init__(config)
+
+    assert fc.mesh == coldIC.mesh(), 'coldIC must be on same mesh as forecast'
 
     ###################
     # derived variables
@@ -68,13 +77,51 @@ class FirstBackground(Component):
     # tasks and dependencies
     ########################
 
+    # cold-start, only run R1 cycle, controlled in self.defaults
+    base = 'ColdForecast'
+    if base in self['PrepareFirstBackgroundOuter']:
+      # TODO: base task has no inheritance, would only work with 2 separate classes
+      #   consider refactoring; could move Cold* to FirstBackground and make that ctor
+      #   take a Forecast instance as an arg (swap dependence)
+      job = fc.job
+      task = TaskLookup[hpc.system](job)
+      self._tasks += ['''
+  [['''+base+''']]
+    inherit = '''+self.TM.execute+'''
+'''+task.job()+task.directives()]
+
+      for mm in range(1, fc.NN+1, 1):
+        # fcArgs explanation
+        # IAU (False) cannot be used until 1 cycle after DA analysis
+        # DACycling (False), IC ~is not~ a DA analysis for which re-coupling is required
+        # DeleteZerothForecast (True), not used anywhere else in the workflow
+        # updateSea (False) is not needed since the IC is already an external analysis
+        args = [
+          1,
+          fc['lengthHR'],
+          fc['outIntervalHR'],
+          False,
+          fc.mesh.name,
+          False,
+          True,
+          False,
+          fc.workDir+'/{{thisCycleDate}}'+fc.memFmt.format(mm),
+          coldIC[0].directory(),
+          coldIC[0].prefix(),
+        ]
+        fcArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+        self._tasks += ['''
+  [['''+base+str(mm)+''']]
+    inherit = '''+base+''', BATCH
+    script = $origin/bin/Forecast.csh '''+fcArgs]
+
     # link (prepares outer and inner meshes as needed)
     base = 'LinkWarmStartBackgrounds'
     if base in self['PrepareFirstBackgroundOuter']:
       self._tasks += ['''
-  [['''+self.base+''']]
   [['''+base+''']]
-    inherit = '''+self.base+''', SingleBatch
+    inherit = '''+self.TM.execute+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members
@@ -84,14 +131,24 @@ class FirstBackground(Component):
       execution retry delays = 1*PT5S''']
 
     if workflow['first cycle point'] == workflow['restart cycle point']:
+      # open graph
       self._dependencies += ['''
     [[[R1]]]
-      graph = """
+      graph = """''']
+
+      self._dependencies += ['''
         # prepare first DA background state
         '''+ea['PrepareExternalAnalysisOuter']+''' => '''+self['PrepareFirstBackgroundOuter']+'''
 
         # prepare analyses (init) files (for dual-mesh Variational) for reading to
         # static and input stream in all cycles for inner and ensemble geometries
         '''+ea['PrepareExternalAnalysisInner']+'''
-        '''+ea['PrepareExternalAnalysisEnsemble']+'''
+        '''+ea['PrepareExternalAnalysisEnsemble']]
+
+      self._dependencies = self.TM.updateDependencies(self._dependencies)
+
+      # close graph
+      self._dependencies += ['''
       """''']
+
+      self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
