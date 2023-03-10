@@ -86,23 +86,17 @@ class DA(Component):
       }, meshes['Outer'])
 
     # rtpp
-    if config.has('rtpp'):
-      self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self,
-                         self.inputs['state']['members'], self.outputs['state']['members'])
-
-      self.__subtasks += [self.rtpp]
-    else:
-      self.rtpp = None
+    self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self,
+                       self.inputs['state']['members'], self.outputs['state']['members'])
+    self.__subtasks += [self.rtpp]
 
   def export(self, previousForecast:str, ef:ExtendedForecast):
-    for st in self.__subtasks:
-      st.export()
+    self.var.export()
+    self.rtpp.export(dependency = self.TM.post, followon = self.TM.finished)
 
     ########################
     # tasks and dependencies
     ########################
-    self._tasks += self.TM.tasks()
-
     # open graph
     self._dependencies += ['''
     [[['''+self.workflow['AnalysisTimes']+''']]]
@@ -122,7 +116,9 @@ class DA(Component):
       # depends on previous Forecast
       self.TM.addDependencies([previousForecast])
 
-    self._dependencies += self.TM.dependencies()
+    # update tasks and dependencies
+    self._dependencies = self.TM.updateDependencies(self._dependencies)
+    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
 
     # close graph
     self._dependencies += ['''
@@ -138,7 +134,7 @@ class DA(Component):
         'hpc': self.hpc,
         'obs': self.outputs['obs']['members'],
         'sub directory': 'da',
-        'dependencies': [self.TM.finished],
+        'dependencies': [self.TM.post],
         'followon': [self.TM.clean],
       },
     }

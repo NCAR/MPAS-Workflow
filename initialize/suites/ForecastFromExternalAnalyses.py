@@ -40,9 +40,10 @@ class ForecastFromExternalAnalyses(Suite):
     c['externalanalyses'] = ExternalAnalyses(conf, c['hpc'], meshes)
     c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
 
-    # Forecast object is only used to initialize parts of ExtendedForecast
+    # FirstBackground+Forecast objects are only used to initialize parts of ExtendedForecast
+    c['fb'] = FirstBackground(conf, meshes, c['members'], c['workflow'], c['externalanalyses'])
     c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['model'], c['obs'],
-                c['workflow'], c['externalanalyses'],
+                c['workflow'], c['externalanalyses'], c['fb'],
                 c['externalanalyses'].outputs['state']['Outer'],
                 c['externalanalyses'].outputs['state']['Outer'])
     c['extendedforecast'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
@@ -59,7 +60,7 @@ class ForecastFromExternalAnalyses(Suite):
         c_.export(c['extendedforecast']['extLengths'])
       elif k in ['extendedforecast']:
         c_.export(c['externalanalyses']['PrepareExternalAnalysisOuter'])
-      elif k in ['fc']:
+      elif k in ['fb', 'fc']:
         continue
       else:
         c_.export()

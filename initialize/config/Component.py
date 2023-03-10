@@ -3,7 +3,7 @@
 from collections.abc import Iterable
 
 from initialize.config.Config import Config
-from initialize.config.TaskManager import CylcTask
+from initialize.config.TaskFamily import CylcTaskFamily
 from initialize.config.SubConfig import SubConfig
 
 class Component():
@@ -17,7 +17,7 @@ class Component():
     self.lower = self.__class__.__name__.lower()
     self.logPrefix = self.__class__.__name__+': '
     self.autoLabel = self.lower
-    self.TM = CylcTask(self.base)
+    self.TM = CylcTaskFamily(self.base)
 
     ######################################################
     # initialize exportable variables, tasks, dependencies

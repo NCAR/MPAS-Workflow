@@ -10,6 +10,7 @@ from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
 
 from initialize.data.ExternalAnalyses import ExternalAnalyses
+from initialize.data.FirstBackground import FirstBackground
 from initialize.data.Model import Model, Mesh
 from initialize.data.Observations import Observations
 from initialize.data.StateEnsemble import StateEnsemble
@@ -52,11 +53,13 @@ class Forecast(Component):
     obs:Observations,
     workflow:Workflow,
     ea:ExternalAnalyses,
+    fb:FirstBackground,
     coldIC:StateEnsemble,
     warmIC:StateEnsemble,
   ):
     super().__init__(config)
     self.__globalConf = config
+    self.hpc = hpc
     self.mesh = mesh
     self.model = model
     self.workflow = workflow
@@ -104,59 +107,17 @@ class Forecast(Component):
     self.job._set('seconds', self.job['baseSeconds'] + self.job['secondsPerForecastHR'] * lengthHR)
     task = TaskLookup[hpc.system](self.job)
 
-    # MeanBackground
-    attr = {
-      'seconds': {'def': 300},
-      'nodes': {'def': 1, 'typ': int},
-      'PEPerNode': {'def': 36, 'typ': int},
-      'queue': {'def': hpc['NonCriticalQueue']},
-      'account': {'def': hpc['NonCriticalAccount']},
-    }
-    meanjob = Resource(self._conf, attr, ('job', 'meanbackground'))
-    meantask = TaskLookup[hpc.system](meanjob)
-
     #######
     # tasks
     #######
-    # only run 1st cycle, derived from group
+    # warm-start, run all cycles
+    # base task derived from every-cycle execute
     self._tasks += ['''
-  [[Cold'''+self.base+''']]
-    inherit = '''+self.TM.group+'''
+  [['''+self.base+''']]
+    inherit = '''+self.TM.execute+'''
 '''+task.job()+task.directives()]
 
-    # derived from every-cycle execute
-    self._tasks += ['''
-  [['''+self.TM.execute+''']]
-'''+task.job()+task.directives()+'''
-
-  ## post mean background
-  [[MeanBackground]]
-    inherit = '''+self.TM.group+''', BATCH
-    script = $origin/bin/MeanBackground.csh
-'''+meantask.job()+meantask.directives()]
-
     for mm in range(1, self.NN+1, 1):
-      # ColdArgs explanation
-      # IAU (False) cannot be used until 1 cycle after DA analysis
-      # DACycling (False), IC ~is not~ a DA analysis for which re-coupling is required
-      # DeleteZerothForecast (True), not used anywhere else in the workflow
-      # updateSea (False) is not needed since the IC is already an external analysis
-      args = [
-        1,
-        lengthHR,
-        outIntervalHR,
-        False,
-        mesh.name,
-        False,
-        True,
-        False,
-        self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
-        coldIC[0].directory(),
-        coldIC[0].prefix(),
-      ]
-      ColdArgs = ' '.join(['"'+str(a)+'"' for a in args])
-
-
       # WarmArgs explanation
       # DACycling (True), IC ~is~ a DA analysis for which re-coupling is required
       # DeleteZerothForecast (True), not used anywhere else in the workflow
@@ -176,14 +137,46 @@ class Forecast(Component):
       WarmArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
       self._tasks += ['''
-  [[Cold'''+self.base+str(mm)+''']]
-    inherit = Cold'''+self.base+''', BATCH
-    script = $origin/bin/'''+self.base+'''.csh '''+ColdArgs+'''
   [['''+self.base+str(mm)+''']]
-    inherit = '''+self.TM.execute+''', BATCH
+    inherit = '''+self.base+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+WarmArgs]
 
     self.previousForecast = self.TM.finished+'[-PT'+str(self.workflow['FC2DAOffsetHR'])+'H]'
+
+    # cold-start, only run R1 cycle, controlled in FirstBackground yaml
+    ColdForecast = 'Cold'+self.base
+    if fb['PrepareFirstBackgroundOuter']:
+      # TODO: base task has no inheritance, would only work with 2 separate classes
+      #   consider refactoring
+      self._tasks += ['''
+  [['''+ColdForecast+''']]
+'''+task.job()+task.directives()]
+
+      for mm in range(1, self.NN+1, 1):
+        # ColdArgs explanation
+        # IAU (False) cannot be used until 1 cycle after DA analysis
+        # DACycling (False), IC ~is not~ a DA analysis for which re-coupling is required
+        # DeleteZerothForecast (True), not used anywhere else in the workflow
+        # updateSea (False) is not needed since the IC is already an external analysis
+        args = [
+          1,
+          lengthHR,
+          outIntervalHR,
+          False,
+          mesh.name,
+          False,
+          True,
+          False,
+          self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
+          coldIC[0].directory(),
+          coldIC[0].prefix(),
+        ]
+        ColdArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+        self._tasks += ['''
+  [['''+ColdForecast+str(mm)+''']]
+    inherit = '''+ColdForecast+''', BATCH
+    script = $origin/bin/'''+self.base+'''.csh '''+ColdArgs]
 
     # TODO: move Post initialization out of Forecast class so that PrepareObservations
     #  can be appropriately referenced without adding a dependence of the Forecast class
@@ -228,12 +221,6 @@ class Forecast(Component):
       'prefix': self.forecastPrefix,
     })
 
-    #######
-    # tasks
-    #######
-
-    self._tasks += self.TM.tasks()
-
     ##############
     # dependencies
     ##############
@@ -249,17 +236,20 @@ class Forecast(Component):
         '''+self.ea['PrepareSeaSurfaceUpdate']+''' => '''+self.TM.pre]
 
     if self.workflow['CriticalPathType'] == 'Normal':
+      previousDA = daFinished+'[-PT'+str(self.workflow['DA2FCOffsetHR'])+'H]'
       # depends on previous DA
-      self.TM.addDependencies([daFinished+'[-PT'+str(self.workflow['DA2FCOffsetHR'])+'H]'])
+      self.TM.addDependencies([previousDA])
     else:
       self._dependencies += ['''
         '''+self.TM.finished]
 
-    self._dependencies += self.TM.dependencies()
+    self._dependencies = self.TM.updateDependencies(self._dependencies)
 
     # close graph
     self._dependencies += ['''
       """''']
+
+    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
 
     ######
     # post
@@ -269,6 +259,24 @@ class Forecast(Component):
 
     # mean case when self.NN > 1
     if self.NN > 1:
+      # MeanBackground
+      # TODO: ABEI depends on MeanBackground too, need to move outside of Forecast
+      attr = {
+        'seconds': {'def': 300},
+        'nodes': {'def': 1, 'typ': int},
+        'PEPerNode': {'def': 36, 'typ': int},
+        'queue': {'def': self.hpc['NonCriticalQueue']},
+        'account': {'def': self.hpc['NonCriticalAccount']},
+      }
+      meanjob = Resource(self._conf, attr, ('job', 'meanbackground'))
+      meantask = TaskLookup[self.hpc.system](meanjob)
+
+      self._tasks += ['''
+  [[MeanBackground]]
+    inherit = BATCH
+    script = $origin/bin/MeanBackground.csh
+'''+meantask.job()+meantask.directives()]
+
       self._dependencies += ['''
     [[['''+self.workflow['AnalysisTimes']+''']]]
       graph = """
@@ -284,7 +292,8 @@ class Forecast(Component):
         self.postconf[k]['member multiplier'] = self.NN
         self.postconf[k]['states'] = self.outputs['state']['mean']
 
-      # mean-state model verification; also diagnoses posterior ensemble spread
+      # mean-state model verification
+      # also diagnoses posterior/inflated ensemble spread (after RTPP)
       self.postconf['verifymodel']['dependencies'] += [daFinished]
       self.postconf['verifymodel']['followon'] = [daClean]
 
@@ -300,8 +309,6 @@ class Forecast(Component):
         self.postconf['tasks'] = ['verifyobs']
       else:
         self.postconf['tasks'] = []
-
-    # close dependency graph
 
     # member case (mean case when NN == 1)
     for k in ['verifyobs', 'verifymodel']:
@@ -324,8 +331,12 @@ class Forecast(Component):
       self._tasks += p._tasks
       self._dependencies += p._dependencies
 
+    self._dependencies = self.TM.updateDependencies(self._dependencies)
+
     # close graph
     self._dependencies += ['''
       """''']
+
+    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
 
     super().export()

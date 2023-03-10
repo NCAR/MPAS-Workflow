@@ -7,7 +7,7 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
-from initialize.config.TaskManager import CylcTask
+from initialize.config.TaskFamily import CylcTaskFamily
 
 from initialize.data.Model import Mesh
 from initialize.data.Observations import Observations
@@ -46,7 +46,7 @@ class RTPP(Component):
 
     groupSettings = ['''
     inherit = '''+parent.TM.group]
-    self.TM = CylcTask(self.base, groupSettings)
+    self.TM = CylcTaskFamily(self.base, groupSettings)
 
     # WorkDir is where RTPP is executed
     self.WorkDir = self.workDir+'/{{thisCycleDate}}'
@@ -62,15 +62,15 @@ class RTPP(Component):
     # used by experiment naming convention
     self._set('rtpp__relaxationFactor', relaxationFactor)
 
-    active = (relaxationFactor > 0. and members.n > 1)
+    self.active = (relaxationFactor > 0. and members.n > 1)
 
-    if active:
+    if self.active:
       self._cshVars += list(self._vtable.keys())
 
     ########################
     # tasks and dependencies
     ########################
-    if active:
+    if self.active:
       attr = {
         'retry': {'typ': str},
         'baseSeconds': {'typ': int},
@@ -94,18 +94,25 @@ class RTPP(Component):
     [[[job]]]
       execution time limit = PT1M
       execution retry delays = '''+job['retry']+'''
-  [['''+self.TM.execute+''']]
-    inherit = '''+parent.TM.execute+''', BATCH
+  [['''+self.base+''']]
+    inherit = '''+self.TM.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh "'''+self.WorkDir+'''"
 '''+task.job()+task.directives()+'''
 
   [['''+self.TM.clean+''']]
-    inherit = '''+parent.TM.clean+'''
     script = $origin/bin/Clean'''+self.base+'''.csh "'''+self.WorkDir+'"']
 
+  def export(self, dependency:str, followon:str):
+    if self.active:
+      # insert between parent post and finished markers
       self._dependencies += ['''
-        '''+parent.TM.post+''' => '''+self.TM.pre+'''
-        '''+self.TM.finished+''' => '''+parent.TM.finished]
+        '''+dependency+''' => '''+self.TM.pre+'''
+        '''+self.TM.finished+''' => '''+followon]
 
-    self._tasks += self.TM.tasks()
-    self._dependencies += self.TM.dependencies()
+      ###########################
+      # update tasks/dependencies
+      ###########################
+      self._dependencies = self.TM.updateDependencies(self._dependencies)
+      self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+
+      super().export()

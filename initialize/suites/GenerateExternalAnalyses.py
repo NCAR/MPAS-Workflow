@@ -39,5 +39,5 @@ class GenerateExternalAnalyses(Suite):
 
 
     self._dependencies += ['''
-    [[[PT'''+c['workflow']['CyclingWindowHR']+'''H]]]
+    [[[PT'''+str(c['workflow']['CyclingWindowHR'])+'''H]]]
       graph = '''+c['externalanalyses']['PrepareExternalAnalysisOuter']]

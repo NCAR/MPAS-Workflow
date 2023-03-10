@@ -101,9 +101,6 @@ class Observations(Component):
 
   def export(self, dtOffsets:list=[0]):
 
-    self._tasks += self.TM.tasks()
-    self._dependencies += self.TM.dependencies()
-
     subqueues = []
     prevTaskNames = {}
     zeroHR = '-0hr'
@@ -162,7 +159,7 @@ class Observations(Component):
     inherit = '''+base+zeroHR]
 
       # ready (not part of subqueue, order does not matter)
-      base = 'ObsReady'
+      base = 'ObsReady__'
 # TODO: use 'finished' tag like other tasks
 #      self._dependencies += ['''
 #        '''+base+''' => '''+self.TM.finished]
@@ -203,6 +200,12 @@ class Observations(Component):
     [[['''+queue+''']]]
       members = '''+queue+'''
       limit = 1''']
+
+    ###########################
+    # update tasks/dependencies
+    ###########################
+    self._dependencies = self.TM.updateDependencies(self._dependencies)
+    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
 
     # export all
     super().export()

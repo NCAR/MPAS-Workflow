@@ -6,7 +6,7 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
-from initialize.config.TaskManager import CylcTask
+from initialize.config.TaskFamily import CylcTaskFamily
 
 from initialize.framework.HPC import HPC
 
@@ -78,7 +78,7 @@ class VerifyModel(Component):
 '''+task.job()+task.directives()+'''
   [['''+parent+''']]''']
 
-    self.TM = CylcTask(group, groupSettings)
+    self.TM = CylcTaskFamily(group, groupSettings)
     self.TM.addDependencies(dependencies)
     self.TM.addFollowons(followon)
 
@@ -116,8 +116,11 @@ class VerifyModel(Component):
     '''
     export for use outside python
     '''
-    self._tasks += self.TM.tasks()
-    self._dependencies += self.TM.dependencies()
+    ##############
+    # update tasks
+    ##############
+    self._dependencies = self.TM.updateDependencies(self._dependencies)
+    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
 
     self._exportVarsToCsh()
     self._exportVarsToCylc()

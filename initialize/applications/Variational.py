@@ -9,7 +9,7 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
-from initialize.config.TaskManager import CylcTask
+from initialize.config.TaskFamily import CylcTaskFamily
 
 from initialize.data.Model import Model
 from initialize.data.Observations import Observations
@@ -178,9 +178,7 @@ class Variational(Component):
 
     #self.abei = ABEI()
 
-    groupSettings = ['''
-    inherit = '''+parent.TM.group]
-    self.TM = CylcTask(self.base, groupSettings)
+    self.TM = parent.TM
 
     ###################
     # derived variables
@@ -310,17 +308,6 @@ class Variational(Component):
       varjob._set('nodes', varjob['nodesPerMember'] * EDASize)
     vartask = TaskLookup[hpc.system](varjob)
 
-    # GenerateABEInflation
-    attr = {
-      'seconds': {'def': 1200},
-      'nodes': {'def': 1},
-      'PEPerNode': {'def': 36},
-      'queue': {'def': hpc['CriticalQueue']},
-      'account': {'def': hpc['CriticalAccount']},
-    }
-    abeijob = Resource(self._conf, attr, ('abei.job', meshes['Outer'].name))
-    abeitask = TaskLookup[hpc.system](abeijob)
-
     args = [
       0,
       self.lower,
@@ -332,7 +319,7 @@ class Variational(Component):
     self._tasks += ['''
   ## variational tasks
   [[InitVariationals]]
-    inherit = '''+parent.TM.init+''', '''+self.TM.init+''', SingleBatch
+    inherit = '''+self.TM.init+''', SingleBatch
     env-script = cd {{mainScriptDir}}; ./bin/PrepJEDI.csh '''+prepArgs+'''
     script = $origin/bin/Prep'''+self.base+'''.csh "1"
     [[[job]]]
@@ -340,18 +327,12 @@ class Variational(Component):
       execution retry delays = '''+varjob['retry']+'''
 
   [[Variationals]]
-    inherit = '''+parent.TM.execute+''', '''+self.TM.execute+'''
+    inherit = '''+self.TM.execute+'''
 '''+vartask.job()+vartask.directives()+'''
-
-  # inflation
-  [[GenerateABEInflation]]
-    inherit = '''+parent.TM.group+''', BATCH
-    script = $origin/bin/GenerateABEInflation.csh
-'''+abeitask.job()+abeitask.directives()+'''
 
   # clean
   [[CleanVariationals]]
-    inherit = '''+parent.TM.clean+''', '''+self.TM.clean+'''
+    inherit = '''+self.TM.clean+'''
     script = $origin/bin/Clean'''+self.base+'''.csh''']
 
     if EDASize == 1:
@@ -371,13 +352,27 @@ class Variational(Component):
     script = \$origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     # TODO: make ABEI consistent with external class design
+    # GenerateABEInflation
     if self['ABEInflation']:
+      attr = {
+        'seconds': {'def': 1200},
+        'nodes': {'def': 1},
+        'PEPerNode': {'def': 36},
+        'queue': {'def': hpc['CriticalQueue']},
+        'account': {'def': hpc['CriticalAccount']},
+      }
+      abeijob = Resource(self._conf, attr, ('abei.job', meshes['Outer'].name))
+      abeitask = TaskLookup[hpc.system](abeijob)
+
+      self._tasks += ['''
+  [[GenerateABEInflation]]
+    inherit = '''+self.TM.group+''', BATCH
+    script = $origin/bin/GenerateABEInflation.csh
+'''+abeitask.job()+abeitask.directives()]
+
       self._dependencies += ['''
         # abei
-        '''+parent.TM.pre+''' =>
+        '''+self.TM.pre+''' =>
         MeanBackground => HofXBG
-        HofXBG:succeed-all => GenerateABEInflation => '''+parent.TM.init+'''
+        HofXBG:succeed-all => GenerateABEInflation => '''+self.TM.init+'''
         GenerateABEInflation => CleanHofXBG''']
-
-    self._tasks += self.TM.tasks()
-    self._dependencies += self.TM.dependencies()

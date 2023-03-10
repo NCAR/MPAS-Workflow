@@ -35,5 +35,5 @@ class GenerateObs(Suite):
       c_.export()
 
     self._dependencies += ['''
-    [[[PT'''+c['workflow']['CyclingWindowHR']+'''H]]]
+    [[[PT'''+str(c['workflow']['CyclingWindowHR'])+'''H]]]
       graph = '''+c['obs']['PrepareObservations']]

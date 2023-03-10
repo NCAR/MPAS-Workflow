@@ -51,9 +51,6 @@ class InitIC(Component):
       })
 
   def export(self, dtOffsets:list=[0]):
-    self._tasks += self.TM.tasks()
-    self._dependencies += self.TM.dependencies()
-
     subqueues = []
     if self.__used:
       # only once for each mesh
@@ -119,6 +116,12 @@ class InitIC(Component):
     [[['''+queue+''']]]
       members = '''+queue+'''
       limit = 1''']
+
+    ###########################
+    # update tasks/dependencies
+    ###########################
+    self._dependencies = self.TM.updateDependencies(self._dependencies)
+    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
 
     # export all
     super().export()

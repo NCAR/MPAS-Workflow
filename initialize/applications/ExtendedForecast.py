@@ -76,6 +76,8 @@ class ExtendedForecast(Component):
     self._set('extLengths', extLengths)
     self.ensVerifyMembers = range(1, self.NN+1, 1)
 
+    self.doMean = (self['meanTimes'] is not None)
+
     #########################################
     # group base task and args to executables
     #########################################
@@ -134,7 +136,8 @@ class ExtendedForecast(Component):
     meanjob = Resource(self._conf, attr, ('job', 'meananalysis'))
     meantask = TaskLookup[self.hpc.system](meanjob)
 
-    self._tasks += ['''
+    if self.doMean:
+      self._tasks += ['''
   [[MeanAnalysis]]
     inherit = '''+self.TM.init+''', BATCH
     script = $origin/bin/MeanAnalysis.csh
@@ -194,10 +197,7 @@ class ExtendedForecast(Component):
     activateEnsemble: whether to activate ensemble extended forecasts (False by default)
     '''
 
-    doMean = (self['meanTimes'] is not None)
     doEnsemble = (self['ensTimes'] is not None and self.NN > 1 and activateEnsemble)
-
-    self._tasks += self.TM.tasks()
 
     ##################
     # outputs and post
@@ -263,7 +263,7 @@ class ExtendedForecast(Component):
         enspost.append(Post(postconf, self.__globalConf))
 
       # mean forecast
-      if doMean:
+      if self.doMean:
         self.outputs['state']['mean'][dtStr] = StateEnsemble(self.fc.mesh, dt)
         self.outputs['state']['mean'][dtStr].append({
           'directory': self.workDir+'/{{thisCycleDate}}/mean',
@@ -277,7 +277,7 @@ class ExtendedForecast(Component):
 
         meanpost.append(Post(postconf, self.__globalConf))
 
-    if doMean:
+    if self.doMean:
       #######
       # tasks
       #######
@@ -296,7 +296,7 @@ class ExtendedForecast(Component):
     [[['''+self['meanTimes']+''']]]
       graph = """''']
 
-      self._dependencies += self.TM.dependencies()
+      self._dependencies = self.TM.updateDependencies(self._dependencies)
 
       for p in meanpost:
         self._tasks += p._tasks
@@ -332,7 +332,7 @@ class ExtendedForecast(Component):
     [[['''+self['ensTimes']+''']]]
       graph = """''']
 
-      self._dependencies += self.TM.dependencies()
+      self._dependencies = self.TM.updateDependencies(self._dependencies)
 
       for p in enspost:
         self._tasks += p._tasks
@@ -341,5 +341,7 @@ class ExtendedForecast(Component):
       # close graph
       self._dependencies += ['''
       """''']
+
+    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
 
     super().export()
