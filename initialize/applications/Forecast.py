@@ -147,7 +147,8 @@ class Forecast(Component):
     ColdForecast = 'Cold'+self.base
     if fb['PrepareFirstBackgroundOuter']:
       # TODO: base task has no inheritance, would only work with 2 separate classes
-      #   consider refactoring
+      #   consider refactoring; could move Cold* to FirstBackground and make that ctor
+      #   take a Forecast instance as an arg (swap dependence)
       self._tasks += ['''
   [['''+ColdForecast+''']]
 '''+task.job()+task.directives()]
