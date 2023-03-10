@@ -81,7 +81,7 @@ class ExtendedForecast(Component):
     #########################################
     # group base task and args to executables
     #########################################
-    # job settings for self.TM.execute
+    # job settings for self.base
     job = fc.job
     job._set('seconds', job['baseSeconds'] + job['secondsPerForecastHR'] * lengthHR)
     job._set('queue', hpc['NonCriticalQueue'])
@@ -89,7 +89,7 @@ class ExtendedForecast(Component):
     fctask = TaskLookup[hpc.system](job)
 
     self._tasks += ['''
-  [['''+self.TM.execute+''']]
+  [['''+self.base+''']]
 '''+fctask.job()+fctask.directives()]
 
     if icType == 'external':
@@ -286,7 +286,7 @@ class ExtendedForecast(Component):
       #######
       self._tasks += ['''
   [[ExtendedMeanFC]]
-    inherit = '''+self.TM.execute+''', BATCH
+    inherit = '''+self.TM.execute+''', '''+self.base+''', BATCH
     script = $origin/bin/'''+self.fc.base+'''.csh '''+self.meanAnaArgs]
 
       ##############
@@ -316,7 +316,7 @@ class ExtendedForecast(Component):
 
       self._tasks += ['''
   [[ExtendedEnsFC]]
-    inherit = '''+self.TM.execute]
+    inherit = '''+self.TM.execute+''', '''+self.base]
 
       for mm, args in self.ensAnaArgs.items():
         self._tasks += ['''
