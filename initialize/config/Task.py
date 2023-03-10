@@ -7,6 +7,7 @@ class Task():
     self.r = r
     #TODO: add email() method when more systems are supported
     self.email = r.getOrDefault('email', False)
+    self.batchSystem = 'background'
 
   def job(self):
     retry = self.r.get('retry')
@@ -14,6 +15,7 @@ class Task():
 
     text = '''
     [[[job]]]
+      batch system = '''+self.batchSystem+'''
       execution time limit = PT'''+str(int(seconds))+'S'
     if retry is not None:
       text += '''
@@ -29,20 +31,34 @@ class Task():
 
 
 class PBSPro(Task):
+  def __init__(self, r:Resource):
+    super().__init__(r)
+    self.batchSystem = 'pbs'
+
   def directives(self):
     nodes = self.r.getOrDefault('nodes', None)
     if nodes is not None:
       PEPerNode = self.r['PEPerNode']
       memory = self.r.getOrDefault('memory', None)
-      select = str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)
+      if PEPerNode > 1:
+        select = str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)
+      else:
+        select = str(nodes)+':ncpus='+str(PEPerNode)
+
       if memory is not None:
         select += ':mem='+memory
     else:
       select = None
 
     unique = {}
-    unique['q'] = self.r['queue']
-    unique['A'] = self.r['account']
+    if self.r['queue'] is not None:
+      unique['q'] = self.r['queue']
+    if self.r['account'] is not None:
+      unique['A'] = self.r['account']
+    unique['j'] = 'oe'
+    unique['k'] = 'eod'
+    unique['S'] = '/bin/tcsh'
+
     if self.email: unique['m'] = 'ae'
 
     flags = ''

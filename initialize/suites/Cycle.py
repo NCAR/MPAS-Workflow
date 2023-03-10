@@ -16,58 +16,78 @@ from initialize.data.StaticStream import StaticStream
 
 from initialize.framework.Build import Build
 from initialize.framework.Experiment import Experiment
-from initialize.framework.HPC import HPC
 from initialize.framework.Naming import Naming
-from initialize.framework.Workflow import Workflow
 
 from initialize.post.Benchmark import Benchmark
 
-from initialize.suites.Suite import Suite
+from initialize.suites.SuiteBase import SuiteBase
 
 
-class Cycle(Suite):
+class Cycle(SuiteBase):
   def __init__(self, conf:Config):
-    super().__init__()
+    super().__init__(conf)
 
-    c = {}
-    c['hpc'] = HPC(conf)
-    c['workflow'] = Workflow(conf)
+    self.c['model'] = Model(conf)
+    self.c['build'] = Build(conf, self.c['model'])
+    meshes = self.c['model'].getMeshes()
+    self.c['observations'] = Observations(conf, self.c['hpc'])
+    self.c['members'] = Members(conf)
 
-    c['model'] = Model(conf)
-    c['build'] = Build(conf, c['model'])
-    meshes = c['model'].getMeshes()
-    c['obs'] = Observations(conf, c['hpc'])
-    c['members'] = Members(conf)
-
-    c['externalanalyses'] = ExternalAnalyses(conf, c['hpc'], meshes)
-    c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
-    c['da'] = DA(conf, c['hpc'], c['obs'], meshes, c['model'], c['members'], c['workflow'])
-    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['model'], c['obs'],
-                c['workflow'], c['externalanalyses'], c['da'].outputs['state']['members'])
-    c['fb'] = FirstBackground(conf, c['hpc'], meshes, c['members'], c['workflow'],
-                c['externalanalyses'],
-                c['externalanalyses'].outputs['state']['Outer'], c['fc'])
-    c['extendedforecast'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
-                c['externalanalyses'], c['obs'],
-                c['da'].outputs['state']['members'], 'internal')
+    self.c['externalanalyses'] = ExternalAnalyses(conf, self.c['hpc'], meshes)
+    self.c['initic'] = InitIC(conf, self.c['hpc'], meshes, self.c['externalanalyses'])
+    self.c['da'] = DA(conf, self.c['hpc'], self.c['observations'], meshes, self.c['model'], self.c['members'], self.c['workflow'])
+    self.c['forecast'] = Forecast(conf, self.c['hpc'], meshes['Outer'], self.c['members'], self.c['model'],
+                self.c['observations'], self.c['workflow'], self.c['externalanalyses'],
+                self.c['da'].outputs['state']['members'])
+    self.c['firstbackground'] = FirstBackground(conf, self.c['hpc'], meshes, self.c['members'], self.c['workflow'],
+                self.c['externalanalyses'],
+                self.c['externalanalyses'].outputs['state']['Outer'], self.c['forecast'])
+    self.c['extendedforecast'] = ExtendedForecast(conf, self.c['hpc'], self.c['members'], self.c['forecast'],
+                self.c['externalanalyses'], self.c['observations'],
+                self.c['da'].outputs['state']['members'], 'internal')
 
     #if conf.has('benchmark'): # TODO: make benchmark optional,
     # and depend on whether verifyobs/verifymodel are selected
-    c['bench'] = Benchmark(conf, c['hpc'])
+    self.c['benchmark'] = Benchmark(conf, self.c['hpc'])
 
-    c['exp'] = Experiment(conf, c['hpc'], meshes, c['da'].var, c['members'], c['da'].rtpp)
-    c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['externalanalyses'], c['exp'])
+    self.c['experiment'] = Experiment(conf, self.c['hpc'], meshes, self.c['da'].var, self.c['members'], self.c['da'].rtpp)
+    self.c['ss'] = StaticStream(conf, meshes, self.c['members'], self.c['workflow']['FirstCycleDate'],
+                self.c['externalanalyses'], self.c['experiment'])
 
-    c['naming'] = Naming(conf, c['exp'], c['bench'])
+    self.c['naming'] = Naming(conf, self.c['experiment'], self.c['benchmark'])
 
-    for k, c_ in c.items():
-      if k in ['obs', 'ic', 'externalanalyses']:
-        c_.export(c['extendedforecast']['extLengths'])
-      elif k in ['fc']:
-        c_.export(c['da'].TM.finished, c['da'].TM.clean, c['da'].meanBGDir)
+    for k, c_ in self.c.items():
+      if k in ['observations', 'initic', 'externalanalyses']:
+        c_.export(self.c['extendedforecast']['extLengths'])
+      elif k in ['forecast']:
+        c_.export(self.c['da'].TM.finished, self.c['da'].TM.clean, self.c['da'].meanBGDir)
       elif k in ['da']:
-        c_.export(c['fc'].previousForecast, c['extendedforecast'])
+        c_.export(self.c['forecast'].previousForecast, self.c['extendedforecast'])
       elif k in ['extendedforecast']:
-        c_.export(c['da'].TM.finished, activateEnsemble=False)
+        c_.export(self.c['da'].TM.finished, activateEnsemble=False)
       else:
         c_.export()
+
+    self.queueComponents += [
+      'externalanalyses',
+      'initic',
+      'observations',
+    ]
+
+    self.dependencyComponents += [
+      'da',
+      'forecast',
+      'firstbackground',
+      'extendedforecast',
+    ]
+
+    self.taskComponents += [
+      'benchmark',
+      'da',
+      'forecast',
+      'firstbackground',
+      'extendedforecast',
+      'externalanalyses',
+      'initic',
+      'observations',
+    ]

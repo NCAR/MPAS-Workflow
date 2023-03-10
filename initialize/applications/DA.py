@@ -139,18 +139,23 @@ class DA(Component):
       },
     }
 
-    self.__post = Post(postconf, self.__globalConf)
-    self._tasks += self.__post._tasks
+    if len(postconf['tasks']) > 0:
+      post = Post(postconf, self.__globalConf)
+      self._tasks += post._tasks
 
-    # open graph
-    self._dependencies += ['''
-    [[['''+self.workflow['AnalysisTimes']+''']]]
-      graph = """''']
+      # open graph
+      self._dependencies += ['''
+      [[['''+self.workflow['AnalysisTimes']+''']]]
+        graph = """''']
 
-    self._dependencies += self.__post._dependencies
+      self._dependencies += post._dependencies
 
-    # close graph
-    self._dependencies += ['''
-      """''']
+      self._dependencies = self.TM.updateDependencies(self._dependencies)
+      self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+
+      # close graph
+      self._dependencies += ['''
+        """''']
+
 
     super().export()

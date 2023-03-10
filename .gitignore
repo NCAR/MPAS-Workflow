@@ -1,12 +1,7 @@
 # Ignore these files anywhere in the tree
 
-include/dependencies/auto/*.rc
-include/queues/auto/*.rc
-include/tasks/auto/*.rc
-include/variables/auto/*.rc
-
 config/auto/*.csh
-
+include/variables/auto/*.rc
 suites/auto/*.rc
 
 ~*

@@ -9,31 +9,28 @@ from initialize.data.Observations import Observations
 
 from initialize.framework.Build import Build
 from initialize.framework.Experiment import Experiment
-from initialize.framework.HPC import HPC
 from initialize.framework.Naming import Naming
-from initialize.framework.Workflow import Workflow
 
-from initialize.suites.Suite import Suite
+from initialize.suites.SuiteBase import SuiteBase
 
 
-class GenerateObs(Suite):
+class GenerateObs(SuiteBase):
   def __init__(self, conf:Config):
-    super().__init__()
+    super().__init__(conf)
 
-    c = {}
-    c['build'] = Build(conf, None)
-    c['hpc'] = HPC(conf)
-    c['workflow'] = Workflow(conf)
-    c['obs'] = Observations(conf, c['hpc'])
-    c['exp'] = Experiment(conf, c['hpc'])
-    c['naming'] = Naming(conf, c['exp'])
+    self.c['build'] = Build(conf, None)
+    self.c['observations'] = Observations(conf, self.c['hpc'])
+    self.c['experiment'] = Experiment(conf, self.c['hpc'])
+    self.c['naming'] = Naming(conf, self.c['experiment'])
 
     # TODO: make members optional, modify getCycleVars
-    c['members'] = Members(conf)
+    self.c['members'] = Members(conf)
 
-    for c_ in c.values():
+    for k, c_ in self.c.items():
       c_.export()
 
     self._dependencies += ['''
-    [[[PT'''+str(c['workflow']['CyclingWindowHR'])+'''H]]]
-      graph = '''+c['obs']['PrepareObservations']]
+    [[[PT'''+str(self.c['workflow']['CyclingWindowHR'])+'''H]]]
+      graph = '''+self.c['observations']['PrepareObservations']]
+
+    self.taskComponents += ['observations']

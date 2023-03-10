@@ -163,4 +163,4 @@ class Experiment(Component):
     self._msg('')
 
     self._cshVars = ['cylcWorkDir', 'SuiteName', 'ExperimentDirectory', 'mainScriptDir', 'ConfigDir', 'ModelConfigDir']
-    self._cylcVars = ['mainScriptDir', 'title']
+    self._cylcVars = ['mainScriptDir']

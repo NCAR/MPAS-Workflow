@@ -6,8 +6,6 @@
 # already running, then executing this script will automatically kill those running suites.
 ####################################################################################################
 
-set suite = "$1"
-
 echo "$0 (INFO): Generating the scenario-specific MPAS-Workflow directory"
 
 # Create/copy the task shell scripts
@@ -37,8 +35,8 @@ module load graphviz
 
 date
 
-# copy suite to cylc-recognized name
-cp -v suites/${suite}.rc ./suite.rc
+# copy suite to cylc-recognized location
+cp -v suites/auto/suite.rc ./
 
 echo "$0 (INFO): checking if a suite with the same name is already running"
 

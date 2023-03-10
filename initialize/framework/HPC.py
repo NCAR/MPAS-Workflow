@@ -5,6 +5,8 @@ import subprocess
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
+from initialize.config.Resource import Resource
+from initialize.config.Task import TaskLookup
 
 class HPC(Component):
   system = 'cheyenne'
@@ -44,3 +46,21 @@ class HPC(Component):
 
     # TODO: have all dependent classes take an HPC object as an argument, do not export
     self._cylcVars = list(self._vtable.keys())
+
+    # default multi-processor task
+    attr = {
+      'seconds': {'def': 3600},
+    }
+    multijob = Resource(self._conf, attr, ('job', 'multi proc'))
+    self.multitask = TaskLookup[self.system](multijob)
+
+    # default single-processor task
+    attr = {
+      'seconds': {'def': 3600},
+      'nodes': {'def': 1, 'typ': int},
+      'PEPerNode': {'def': 1, 'typ': int},
+      'queue': {'def': self['SingleProcQueue']},
+      'account': {'def': self['SingleProcAccount']},
+    }
+    singlejob = Resource(self._conf, attr, ('job', 'single proc'))
+    self.singletask = TaskLookup[self.system](singlejob)

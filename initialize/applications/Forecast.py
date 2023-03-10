@@ -207,20 +207,17 @@ class Forecast(Component):
         '''+self.TM.finished]
 
     self._dependencies = self.TM.updateDependencies(self._dependencies)
+    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
 
     # close graph
     self._dependencies += ['''
       """''']
 
-    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
-
     ######
     # post
     ######
 
-    __post = []
-
-    # mean case when self.NN > 1
+    posts = []
     if self.NN > 1:
       # MeanBackground
       # TODO: ABEI depends on MeanBackground too, need to move outside of Forecast
@@ -235,71 +232,71 @@ class Forecast(Component):
       meantask = TaskLookup[self.hpc.system](meanjob)
 
       self._tasks += ['''
-  [[MeanBackground]]
-    inherit = BATCH
-    script = $origin/bin/MeanBackground.csh
+    [[MeanBackground]]
+      inherit = BATCH
+      script = $origin/bin/MeanBackground.csh
 '''+meantask.job()+meantask.directives()]
 
       self._dependencies += ['''
-    [[['''+self.workflow['AnalysisTimes']+''']]]
-      graph = """
-        '''+self.previousForecast+''' => MeanBackground
-      """''']
+      [[['''+self.workflow['AnalysisTimes']+''']]]
+        graph = """
+          '''+self.previousForecast+''' => MeanBackground
+        """''']
 
-      # store original conf values
-      pp = deepcopy(self.postconf)
+    if len(self.postconf['tasks']) > 0:
+      ## mean case (only if NN > 1)
+      if self.NN > 1:
+        # store original conf values
+        pp = deepcopy(self.postconf)
 
-      # re-purpose for mean bg tasks
+        # re-purpose for mean bg tasks
+        for k in ['verifyobs', 'verifymodel']:
+          self.postconf[k]['dependencies'] += ['MeanBackground']
+          self.postconf[k]['member multiplier'] = self.NN
+          self.postconf[k]['states'] = self.outputs['state']['mean']
+
+        # mean-state model verification
+        # also diagnoses posterior/inflated ensemble spread (after RTPP)
+        self.postconf['verifymodel']['dependencies'] += [daFinished]
+        self.postconf['verifymodel']['followon'] = [daClean]
+
+        self.postconf['hofx'] = self.postconf['verifyobs']
+
+        posts.append(Post(self.postconf, self.__globalConf))
+
+        # restore original conf values
+        self.postconf = deepcopy(pp)
+
+        # only need verifyobs from individual ensemble members; used to calculate ensemble spread
+        if 'verifyobs' in self.postconf['tasks']:
+          self.postconf['tasks'] = ['verifyobs']
+        else:
+          self.postconf['tasks'] = []
+
+      ## members case (mean case when NN == 1)
       for k in ['verifyobs', 'verifymodel']:
-        self.postconf[k]['dependencies'] += ['MeanBackground']
-        self.postconf[k]['member multiplier'] = self.NN
-        self.postconf[k]['states'] = self.outputs['state']['mean']
-
-      # mean-state model verification
-      # also diagnoses posterior/inflated ensemble spread (after RTPP)
-      self.postconf['verifymodel']['dependencies'] += [daFinished]
-      self.postconf['verifymodel']['followon'] = [daClean]
+        self.postconf[k]['states'] = self.outputs['state']['members']
 
       self.postconf['hofx'] = self.postconf['verifyobs']
 
-      __post.append(Post(self.postconf, self.__globalConf))
+      posts.append(Post(self.postconf, self.__globalConf))
 
-      # restore original conf values
-      self.postconf = deepcopy(pp)
+      ## export
 
-      # only need verifyobs from individual ensemble members; used to calculate ensemble spread
-      if 'verifyobs' in self.postconf['tasks']:
-        self.postconf['tasks'] = ['verifyobs']
-      else:
-        self.postconf['tasks'] = []
+      # open graph
+      self._dependencies += ['''
+      [[['''+self.workflow['AnalysisTimes']+''']]]
+        graph = """''']
 
-    # member case (mean case when NN == 1)
-    for k in ['verifyobs', 'verifymodel']:
-      self.postconf[k]['states'] = self.outputs['state']['members']
+      for p in posts:
+        self._tasks += p._tasks
+        self._dependencies += p._dependencies
 
-    self.postconf['hofx'] = self.postconf['verifyobs']
+      self._dependencies = self.TM.updateDependencies(self._dependencies)
+      self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
 
-    __post.append(Post(self.postconf, self.__globalConf))
-
-    ########
-    # export
-    ########
-
-    # open graph
-    self._dependencies += ['''
-    [[['''+self.workflow['AnalysisTimes']+''']]]
-      graph = """''']
-
-    for p in __post:
-      self._tasks += p._tasks
-      self._dependencies += p._dependencies
-
-    self._dependencies = self.TM.updateDependencies(self._dependencies)
-
-    # close graph
-    self._dependencies += ['''
-      """''']
-
-    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+      # close graph
+      self._dependencies += ['''
+        """''']
 
     super().export()

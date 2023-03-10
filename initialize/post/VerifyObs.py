@@ -40,26 +40,7 @@ class VerifyObs(Component):
     # derived variables
     ###################
     self._set('ObsDiagnosticsDir', self.diagnosticsDir) # used by compareobs.csh
-
     self._cshVars = list(self._vtable.keys())
-
-    ########################
-    # tasks and dependencies
-    ########################
-    # job settings
-    attr = {
-      'retry': {'typ': str},
-      'seconds': {'typ': int},
-      'secondsPerMember': {'typ': int},
-      'nodes': {'def': 1, 'typ': int},
-      'PEPerNode': {'def': 36, 'typ': int},
-      'memory': {'def': '45GB', 'typ': str},
-      'queue': {'def': hpc['NonCriticalQueue']},
-      'account': {'def': hpc['NonCriticalAccount']},
-    }
-    job = Resource(self._conf, attr, ('job',))
-    job['seconds'] += job['secondsPerMember'] * memberMultiplier
-    task = TaskLookup[hpc.system](job)
 
     # if obs are passed, defer to them, otherwise generate new obs with HofX
     if obs is None:
@@ -82,19 +63,36 @@ class VerifyObs(Component):
     else:
       memFmt = '/mean'
 
-    # generic tasks and dependencies
+    ########################
+    # tasks and dependencies
+    ########################
+    ## generic tasks and dependencies
     parent = self.base + subDirectory.upper()
     group = parent+'-'+dtStr+'hr'
     groupSettings = ['''
     inherit = '''+parent+'''
-'''+task.job()+task.directives()+'''
   [['''+parent+''']]''']
 
     self.TM = CylcTaskFamily(group, groupSettings)
     self.TM.addDependencies(dependencies)
     self.TM.addFollowons(followon)
 
-    # class-specific tasks
+    ## class-specific tasks
+    # job settings
+    attr = {
+      'retry': {'typ': str},
+      'seconds': {'typ': int},
+      'secondsPerMember': {'typ': int},
+      'nodes': {'def': 1, 'typ': int},
+      'PEPerNode': {'def': 36, 'typ': int},
+      'memory': {'def': '45GB', 'typ': str},
+      'queue': {'def': hpc['NonCriticalQueue']},
+      'account': {'def': hpc['NonCriticalAccount']},
+    }
+    job = Resource(self._conf, attr, ('job',))
+    job['seconds'] += job['secondsPerMember'] * memberMultiplier
+    task = TaskLookup[hpc.system](job)
+
     for mm, o in enumerate(obsLocal):
       workDir = self.workDir+'/'+subDirectory+memFmt.format(mm+1)+'/{{thisCycleDate}}'
       if dt > 0 or 'fc' in subDirectory:
@@ -123,7 +121,8 @@ class VerifyObs(Component):
       self._tasks += ['''
   [['''+execute+''']]
     inherit = '''+self.TM.execute+''', BATCH
-    script = $origin/bin/'''+self.base+'''.csh '''+runArgs]
+    script = $origin/bin/'''+self.base+'''.csh '''+runArgs+'''
+'''+task.job()+task.directives()]
 
   def export(self):
     '''
@@ -145,6 +144,5 @@ class VerifyObs(Component):
     self._dependencies = self.TM.updateDependencies(self._dependencies)
     self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
 
-    self._exportVarsToCsh()
-    self._exportVarsToCylc()
+    super().export()
     return

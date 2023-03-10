@@ -85,8 +85,6 @@ class Workflow(Component):
     #   CyclingFC output must already be present from the cycle before restartCyclePoint.
     self._setOrDefault('restart cycle point', firstCyclePoint)
 
-    self._cylcVars += ['max active cycle points', 'restart cycle point', 'final cycle point', 'submission timeout']
-
     # substitution variables to be passed directly to shell scripts instead of parsed with Jinja2
     substitutionVars = [
       'thisValidDate',

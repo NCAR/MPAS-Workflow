@@ -21,7 +21,7 @@ import subprocess
 # local modules
 from initialize.config.Config import Config
 from initialize.config.Scenario import Scenario
-from initialize.suites.Suite import SuiteLookup
+from initialize.suites.SuiteBase import SuiteLookup
 
 def main():
   '''
@@ -83,14 +83,14 @@ class Run():
 
     cmd = ['rm']
 
-    files = glob.glob("config/auto/*.csh")
-    for file in files:
-      sub = subprocess.run(cmd+[file])
-
-    files = glob.glob("include/*/auto/*.rc")
-    for file in files:
-      sub = subprocess.run(cmd+[file])
-
+    for g in [
+      "config/auto/*.csh",
+      "include/*/auto/*.rc",
+      "suites/auto/*.rc",
+    ]:
+      files = glob.glob(g)
+      for file in files:
+        sub = subprocess.run(cmd+[file])
 
 ## execute main program
 if __name__ == '__main__': main()

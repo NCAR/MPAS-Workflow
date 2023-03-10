@@ -14,51 +14,60 @@ from initialize.data.StaticStream import StaticStream
 
 from initialize.framework.Build import Build
 from initialize.framework.Experiment import Experiment
-from initialize.framework.HPC import HPC
 from initialize.framework.Naming import Naming
-from initialize.framework.Workflow import Workflow
 
 #from initialize.post.Benchmark import Benchmark
 
-from initialize.suites.Suite import Suite
+from initialize.suites.SuiteBase import SuiteBase
 
-class ForecastFromExternalAnalyses(Suite):
+class ForecastFromExternalAnalyses(SuiteBase):
   def __init__(self, conf:Config):
-    super().__init__()
+    super().__init__(conf)
 
-    c = {}
-    c['hpc'] = HPC(conf)
-    c['workflow'] = Workflow(conf)
+    self.c['model'] = Model(conf)
+    meshes = self.c['model'].getMeshes()
 
-    c['model'] = Model(conf)
-    meshes = c['model'].getMeshes()
+    self.c['build'] = Build(conf, self.c['model'])
+    self.c['observations'] = Observations(conf, self.c['hpc'])
+    self.c['members'] = Members(conf)
 
-    c['build'] = Build(conf, c['model'])
-    c['obs'] = Observations(conf, c['hpc'])
-    c['members'] = Members(conf)
-
-    c['externalanalyses'] = ExternalAnalyses(conf, c['hpc'], meshes)
-    c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
+    self.c['externalanalyses'] = ExternalAnalyses(conf, self.c['hpc'], meshes)
+    self.c['initic'] = InitIC(conf, self.c['hpc'], meshes, self.c['externalanalyses'])
 
     # Forecast object is only used to initialize parts of ExtendedForecast
-    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['model'], c['obs'],
-                c['workflow'], c['externalanalyses'],
-                c['externalanalyses'].outputs['state']['Outer'])
-    c['extendedforecast'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
-                c['externalanalyses'], c['obs'],
-                c['externalanalyses'].outputs['state']['Outer'], 'external')
+    self.c['forecast'] = Forecast(conf, self.c['hpc'], meshes['Outer'], self.c['members'], self.c['model'], self.c['observations'],
+                self.c['workflow'], self.c['externalanalyses'],
+                self.c['externalanalyses'].outputs['state']['Outer'])
+    self.c['extendedforecast'] = ExtendedForecast(conf, self.c['hpc'], self.c['members'], self.c['forecast'],
+                self.c['externalanalyses'], self.c['observations'],
+                self.c['externalanalyses'].outputs['state']['Outer'], 'external')
 
-    c['exp'] = Experiment(conf, c['hpc'])
-    c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['externalanalyses'], c['exp'])
+    self.c['experiment'] = Experiment(conf, self.c['hpc'])
+    self.c['ss'] = StaticStream(conf, meshes, self.c['members'], self.c['workflow']['FirstCycleDate'], self.c['externalanalyses'], self.c['experiment'])
 
-    c['naming'] = Naming(conf, c['exp'])
+    self.c['naming'] = Naming(conf, self.c['experiment'])
 
-    for k, c_ in c.items():
-      if k in ['obs', 'ic', 'externalanalyses']:
-        c_.export(c['extendedforecast']['extLengths'])
+    for k, c_ in self.c.items():
+      if k in ['observations', 'initic', 'externalanalyses']:
+        c_.export(self.c['extendedforecast']['extLengths'])
       elif k in ['extendedforecast']:
-        c_.export(c['externalanalyses']['PrepareExternalAnalysisOuter'])
-      elif k in ['fc']:
+        c_.export(self.c['externalanalyses']['PrepareExternalAnalysisOuter'])
+      elif k in ['forecast']:
         continue
       else:
         c_.export()
+
+    self.queueComponents += [
+      'externalanalyses',
+      'initic',
+      'observations',
+    ]
+
+    self.dependencyComponents += ['extendedforecast']
+
+    self.taskComponents += [
+      'extendedforecast',
+      'externalanalyses',
+      'initic',
+      'observations',
+    ]

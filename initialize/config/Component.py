@@ -64,9 +64,6 @@ class Component():
     '''
     export for use outside python
     '''
-    self.__exportQueues()
-    self.__exportTasks()
-    self.__exportDependencies()
     self._exportVarsToCsh()
     self._exportVarsToCylc()
     return
@@ -199,19 +196,4 @@ set config_'''+self.lower+''' = 1
     for v in variables:
       Str += self.varToCylc(v, self._vtable[v])
     self.__toTextFile('include/variables/auto/'+self.autoLabel+'.rc', Str)
-    return
-
-  # cylc internal scheduling queues
-  def __exportQueues(self):
-    self.__toTextFile('include/queues/auto/'+self.autoLabel+'.rc', self._queues)
-    return
-
-  # cylc dependencies
-  def __exportDependencies(self):
-    self.__toTextFile('include/dependencies/auto/'+self.autoLabel+'.rc', self._dependencies)
-    return
-
-  # cylc tasks
-  def __exportTasks(self):
-    self.__toTextFile('include/tasks/auto/'+self.autoLabel+'.rc', self._tasks)
     return

@@ -223,8 +223,8 @@ class ExtendedForecast(Component):
       },
     }
 
-    meanpost = []
-    enspost = []
+    meanposts = []
+    ensposts = []
 
     prepObsTasks = self.obs['PrepareObservationsTasks']
     prepEATasks = self.ea['PrepareExternalAnalysisTasksOuter']
@@ -260,7 +260,9 @@ class ExtendedForecast(Component):
           postconf[k]['states'] = self.outputs['state']['members'][dtStr]
 
         postconf['hofx'] = postconf['verifyobs']
-        enspost.append(Post(postconf, self.__globalConf))
+
+        if len(postconf['tasks']) > 0:
+          ensposts.append(Post(postconf, self.__globalConf))
 
       # mean forecast
       if self.doMean:
@@ -275,7 +277,8 @@ class ExtendedForecast(Component):
 
         postconf['hofx'] = postconf['verifyobs']
 
-        meanpost.append(Post(postconf, self.__globalConf))
+        if len(postconf['tasks']) > 0:
+          meanposts.append(Post(postconf, self.__globalConf))
 
     if self.doMean:
       #######
@@ -296,11 +299,11 @@ class ExtendedForecast(Component):
     [[['''+self['meanTimes']+''']]]
       graph = """''']
 
-      self._dependencies = self.TM.updateDependencies(self._dependencies)
-
-      for p in meanpost:
+      for p in meanposts:
         self._tasks += p._tasks
         self._dependencies += p._dependencies
+
+      self._dependencies = self.TM.updateDependencies(self._dependencies)
 
       # close graph
       self._dependencies += ['''
@@ -332,11 +335,11 @@ class ExtendedForecast(Component):
     [[['''+self['ensTimes']+''']]]
       graph = """''']
 
-      self._dependencies = self.TM.updateDependencies(self._dependencies)
-
-      for p in enspost:
+      for p in ensposts:
         self._tasks += p._tasks
         self._dependencies += p._dependencies
+
+      self._dependencies = self.TM.updateDependencies(self._dependencies)
 
       # close graph
       self._dependencies += ['''

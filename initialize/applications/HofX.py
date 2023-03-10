@@ -131,6 +131,18 @@ class HofX(Component):
     ########################
     # tasks and dependencies
     ########################
+    ## generic tasks and dependencies
+    parent = self.base + subDirectory.upper()
+    group = parent+'-'+dtStr+'hr'
+    groupSettings = ['''
+    inherit = '''+parent+'''
+  [['''+parent+''']]''']
+
+    self.TM = CylcTaskFamily(group, groupSettings)
+    self.TM.addDependencies(dependencies)
+    self.TM.addFollowons(followon)
+
+    ## class-specific tasks
 
     # job settings
     attr = {
@@ -144,20 +156,6 @@ class HofX(Component):
     }
     job = Resource(self._conf, attr, ('job', mesh.name))
     task = TaskLookup[hpc.system](job)
-
-    # generic tasks and dependencies
-    parent = self.base + subDirectory.upper()
-    group = parent+'-'+dtStr+'hr'
-    groupSettings = ['''
-    inherit = '''+parent+'''
-'''+task.job()+task.directives()+'''
-  [['''+parent+''']]''']
-
-    self.TM = CylcTaskFamily(group, groupSettings)
-    self.TM.addDependencies(dependencies)
-    self.TM.addFollowons(followon)
-
-    # class-specific tasks
     for mm, state in enumerate(states):
       workDir = self.workDir+'/'+subDirectory+memFmt.format(mm+1)+'/{{thisCycleDate}}'
       if dt > 0 or 'fc' in subDirectory:
@@ -194,8 +192,8 @@ class HofX(Component):
   [['''+execute+''']]
     inherit = '''+self.TM.execute+''', BATCH
     env-script = cd {{mainScriptDir}}; ./bin/'''+prepScript+'''.csh '''+prepArgs+'''
-    script = $origin/bin/'''+self.base+'''.csh '''+runArgs]
-
+    script = $origin/bin/'''+self.base+'''.csh '''+runArgs+'''
+'''+task.job()+task.directives()]
 
       # clean
       args = [
@@ -243,6 +241,5 @@ class HofX(Component):
     self._dependencies = self.TM.updateDependencies(self._dependencies)
     self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
 
-    self._exportVarsToCsh()
-    self._exportVarsToCylc()
+    super().export()
     return

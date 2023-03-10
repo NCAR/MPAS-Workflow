@@ -197,13 +197,14 @@ further populated by scripts templated on `PrepJEDI.csh` and/or `PrepVariational
 Main driver: Run.py
 -------------------
 
-`Run.py` initiates one of the suites (`suites/*.rc`) for either a single scenario or a list of
-scenarios, each of which must be described in a scenario configuration file.  Other than for
-automated testing (`test/testinput/test.yaml`), most of the scenario configurations
-(`scenarios/*.yaml`) only select a single scenario. It is recommended to run the `test.yaml`
-list of scenarios both (1) when a new user first clones the MPAS-Workflow repository and (2) before
-submitting a GitHub pull request to [MPAS-Workflow](https://github.com/NCAR/MPAS-Workflow).  For
-example, execute the following from the command-line:
+`Run.py` initiates a single scenario or a list of scenarios, each of which is associated with one
+of the pre-defined suites (`initialize/suites/*.py`). Each scenario must be described in
+`yaml`-formatted scenario configuration file.  Other than for automated testing
+(`test/testinput/test.yaml`), most of the scenario configurations (`scenarios/*.yaml`) only select
+a single scenario. It is recommended to run the `test.yaml` list of scenarios both (1) when a new
+user first clones the MPAS-Workflow repository and (2) before submitting a GitHub pull request to
+[MPAS-Workflow](https://github.com/NCAR/MPAS-Workflow).  For example, execute the following from
+the command-line:
 
 ```shell
   source env-script/cheyenne.${YourShell}
@@ -213,23 +214,29 @@ example, execute the following from the command-line:
   ./test.csh
 ```
 
-`Run.py` parses the selected `{{scenarioConfig}}`, automatically generates many
-`Cylc` `include/*/auto/*.rc` files and `config/auto/*.csh` environment variable files, and finally
-initiates the `Cylc` suite by executing `submit.csh`. Users need not modify `Run.py` or `submit.csh`.
+`Run.py` (1) parses the selected `{{scenarioConfig}}`, (2) automatically generates a few
+`Cylc`-relevant `*.rc` files and `config/auto/*.csh` environment variable files, and (3)
+initiates the `Cylc` suite by executing `submit.csh`. Users need not modify `Run.py` or
+`submit.csh`.  The file `MPAS-Workflow/suite.rc` is automatically generated in the run
+directory, and it describes all suite tasks and dependencies.
 
-There are additional aspects of the driver in `submit.csh`, `initialize/`, and `suites/*.rc`.  For
-most users and developers, only `initialize/` will need to be consulted and/or modified.
-
-Developers who wish to add new `Cylc` tasks, or change the relationships between tasks, will need
-to modify `initialize/*/*.py`, or in rare cases, create their own suite.
+Most of the driver functionality is comprised by python scripts in `initialize/`.  Only
+they need to be consulted and/or modified.  For example, developers who wish to
+add new `Cylc` tasks, or change the relationships (`dependencies`) between tasks, will need
+to modify `initialize/*/*.py`, or in rare cases, create a new suite under `initialize/suites/`.
+If the new task requires a new shell script, it can be added in the `bin/` directory.  Examples
+are available for executing `bin/*.csh` scripts from an auto-generated `Cylc` task in the
+`initialize/applications`, `initialize/data`, and `initialize/post` directories.
 
 Workflow task scripts
 ---------------------
 
-These scripts (`bin/*.csh`) are called from cylc workflow task elements.  Their usage is nearly
-fully described in sequences of automatically generated task and dependency include files that
+These scripts (`bin/*.csh`) are called from cylc workflow task elements.  Their usage is fully
+described in sequences of automatically generated task and dependency suite snippets that
 are created during the execution of `Run.py`.  That procedure is carried out by the python
-scripts under the `initialize` directory.
+scripts under the `initialize` directory.  Many shell scripts have a corresponding python class
+in the `interface/` directory, or else serve as one task of many in more complex python
+`Component` classes.
 
 `CleanHofx.csh`: used to clean `HofX` working directories (e.g., `Verification/fc/*`) in order
 to reduce experiment disk resource requirements.
@@ -238,9 +245,9 @@ to reduce experiment disk resource requirements.
  through the `MPAS-Atmosphere` `da_state` stream.
 
 `PrepJEDI.csh`: substitutes commonly repeated sections in the `yaml` file for multiple MPAS-JEDI
-applications. Prepares `namelist.atmosphere`, `streams.atmosphere`, and
-`stream_list.atmosphere.*`.  Links required static files and graph info files that describe MPI
-partitioning.
+applications. The primary purpose is to fill in the `observers` section of `hofx` and `variational`
+`yaml` files.  Prepares `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*`.
+Links required static files and graph info files that describe MPI  partitioning.
 
 `VerifyObs.csh`: used to verify observation-database output from `HofX` and `Variational` tasks.
 
