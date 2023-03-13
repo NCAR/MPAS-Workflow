@@ -34,8 +34,8 @@ class Variational(Component):
     #'gnssrobndnbam',
     #'gnssrobndmo',
     #'gnssrobndmo-nopseudo',
-    #'gnssroref', # UFO obs errors
     #'gnssrorefncep', # obs errors derived from cycling exp.
+    #'gnssrorefncep_NCEPErrors', # UFO obs errors
     'satwind',
     'satwnd',
     'sfc',

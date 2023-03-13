@@ -54,7 +54,7 @@ _gnssro:
     # replaced, then do not assimilate higher peaking AMSUA channels when using VarBC.
     # Replacement candidates include gnssrobndmo, gnssrobndropp1d, gnssrobndnbam
     # gnssrobndropp1d: exibits some of the same bias sign and similar magnitude relative to STD as
-    #   gnssroref; requires filtering at some heights (see below)
+    #   gnssrorefncep; requires filtering at some heights (see below)
     # gnssrobndmo (not fully functional): only modifies pressure and moisture; pressure not
     #   compatible with mpas-jedi analysis variables; could use for very small impact on upper level
     #   moisture with pressure fixed, but probably no real advantage

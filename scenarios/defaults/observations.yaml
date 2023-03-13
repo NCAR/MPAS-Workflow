@@ -28,8 +28,8 @@ observations:
         gnssrobndnbam: gnssro
         gnssrobndmo: gnssro
         gnssrobndmo-nopseudo: gnssro
-        gnssroref: gnssro
         gnssrorefncep: gnssro
+        gnssrorefncep_NCEPErrors: gnssro
 
       IODADirectory:
         variational:
@@ -61,8 +61,8 @@ observations:
         gnssrobndnbam: gnssro
         gnssrobndmo: gnssro
         gnssrobndmo-nopseudo: gnssro
-        gnssroref: gnssro
         gnssrorefncep: gnssro
+        gnssrorefncep_NCEPErrors: gnssro
         amsua-cld_aqua: amsua_aqua
         amsua-cld_metop-a: amsua_metop-a
         amsua-cld_metop-b: amsua_metop-b
@@ -87,8 +87,8 @@ observations:
         gnssrobndnbam: gnssro
         gnssrobndmo: gnssro
         gnssrobndmo-nopseudo: gnssro
-        gnssroref: gnssro
         gnssrorefncep: gnssro
+        gnssrorefncep_NCEPErrors: gnssro
         amsua-cld_aqua: amsua_aqua
         amsua-cld_metop-a: amsua_metop-a
         amsua-cld_metop-b: amsua_metop-b
@@ -106,8 +106,8 @@ observations:
           gnssrobndnbam: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           gnssrobndmo: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           gnssrobndmo-nopseudo: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
-          gnssroref: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           gnssrorefncep: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
+          gnssrorefncep_NCEPErrors: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           satwind: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           sfc: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           sondes: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
@@ -152,8 +152,8 @@ observations:
           gnssrobndnbam: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           gnssrobndmo: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           gnssrobndmo-nopseudo: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
-          gnssroref: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           gnssrorefncep: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
+          gnssrorefncep_NCEPErrors: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           satwind: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           sfc: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           sondes: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
@@ -222,8 +222,8 @@ observations:
         gnssrobndnbam: gnssro
         gnssrobndmo: gnssro
         gnssrobndmo-nopseudo: gnssro
-        gnssroref: gnssro
         gnssrorefncep: gnssro
+        gnssrorefncep_NCEPErrors: gnssro
         amsua-cld_aqua: amsua_aqua
         amsua-cld_metop-a: amsua_metop-a
         amsua-cld_metop-b: amsua_metop-b
@@ -241,8 +241,8 @@ observations:
           gnssrobndnbam: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           gnssrobndmo: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           gnssrobndmo-nopseudo: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
-          gnssroref: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           gnssrorefncep: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
+          gnssrorefncep_NCEPErrors: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           satwind: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           satwnd: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           sfc: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
@@ -288,8 +288,8 @@ observations:
           gnssrobndnbam: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           gnssrobndmo: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           gnssrobndmo-nopseudo: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
-          gnssroref: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           gnssrorefncep: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
+          gnssrorefncep_NCEPErrors: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           satwind: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           satwnd: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
           sfc: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/raw_obs
@@ -350,8 +350,8 @@ observations:
         gnssrobndnbam: gnssro
         gnssrobndmo: gnssro
         gnssrobndmo-nopseudo: gnssro
-        gnssroref: gnssro
         gnssrorefncep: gnssro
+        gnssrorefncep_NCEPErrors: gnssro
         amsua-cld_aqua: amsua_aqua
         amsua-cld_metop-a: amsua_metop-a
         amsua-cld_metop-b: amsua_metop-b

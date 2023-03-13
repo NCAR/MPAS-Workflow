@@ -32,7 +32,6 @@ class HofX(Component):
       #'gnssrobndnbam',
       #'gnssrobndmo',
       #'gnssrobndmo-nopseudo',
-      #'gnssroref', # UFO obs errors
       'gnssrorefncep', # obs errors derived from cycling exp.
       'satwind',
       'satwnd',
