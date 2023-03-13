@@ -16,7 +16,7 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 experiment:
-  ExpSuffix: '_IAUfix2'
+  suffix: '_IAUfix2'
 firstbackground:
   resource: "PANDAC.GFS"
 externalanalyses:

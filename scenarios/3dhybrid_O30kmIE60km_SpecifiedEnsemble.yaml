@@ -20,7 +20,7 @@ variational:
     forecasts:
       resource: "PANDAC.EDA"
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70'
+  suffix: '_ensB-SE80+RTPP70'
 
 observations:
   resource: PANDACArchive
