@@ -1,24 +1,7 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
-workflow:
-  firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180418T00
-  finalCyclePoint: 20180514T00
-  CriticalPathType: Bypass
-  VerifyDeterministicDA: False
-  VerifyEnsMeanBG: False
-  VerifyAgainstObservations: True
-  VerifyAgainstExternalAnalyses: True
-  maxActiveCyclePoints: 40
+experiment:
+  suffix: '_ensB-SE80+RTPP70_VarBC'
 
-  VerifyExtendedMeanFC: True
-  ExtendedFCLengthHR: 240
-  ExtendedFCOutIntervalHR: 24
-  ExtendedMeanFCTimes: T00
-
-model:
-  outerMesh: 30km
-  innerMesh: 60km
-  ensembleMesh: 60km
 firstbackground:
   resource: "PANDAC.GFS"
 
@@ -32,13 +15,20 @@ forecast:
 
 externalanalyses:
   resource: "GFS.PANDAC"
-  GFS:
-    PANDAC: # only available 20180418T00-20180524T00
-      30km:
-        externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAnaAndDiagnostics"
+  resources:
+    GFS:
+      PANDAC: # only available 20180418T00-20180524T00
+        30km:
+          externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAnaAndDiagnostics"
 
-hofx:
-  maxIODAPoolSize: 1
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+
+observations:
+  resource: PANDACArchiveForVarBC
+
 variational:
   DAType: 3dhybrid
   biasCorrection: True
@@ -48,26 +38,6 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
-  maxIODAPoolSize: 1
-  benchmarkObservations:
-# anchor
-  - aircraft
-#  - gnssrorefncep
-  - gnssrobndropp1d
-#  - gnssrobndnbam
-#  - gnssrobndmo # checking performance of BendMetOffice
-#  - gnssrobndmo-nopseudo
-  - satwind
-  - satwnd
-  - sfc
-  - sondes
-# MW satellite-based
-  - amsua_aqua
-  - amsua_metop-a
-  - amsua_metop-b
-  - amsua_n15
-  - amsua_n18
-  - amsua_n19
 
   # resource requirements
   job:
@@ -80,24 +50,9 @@ variational:
           baseSeconds: 700
           secondsPerEnVarMember: 20
 
-experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70_BndROPP1D_MidPol_3rdDoaDob'
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180514T18
+  CriticalPathType: Normal
 
-observations:
-  resource: GenerateObs
-  #resource: PANDACArchive
-  PANDACArchive:
-    IODADirectory:
-      variational:
-        abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
-        abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPERO15X15_const-bias-correct
-        ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_const-bias-correct
-        ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_const-bias-correct
-      hofx:
-        abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
-        abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPERO15X15_const-bias-correct
-        ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_const-bias-correct
-        ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_const-bias-correct
-    IODASuperObGrid:
-      abi_g16: 15X15
-      ahi_himawari8: 15X15
+
