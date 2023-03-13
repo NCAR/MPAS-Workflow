@@ -1,0 +1,29 @@
+experiment:
+  name: '3denvar_OIE120km_WarmStart_TEST'
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.GFS"
+forecast:
+  post: [verifyobs, verifymodel]
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+members:
+  n: 1
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+observations:
+  resource: PANDACArchive
+variational:
+  DAType: 3denvar
+  nInnerIterations: [15,]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
+  post: [verifyobs]
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180415T06

@@ -1,6 +1,0 @@
-builds:
-  # default build directory
-  commonBuild: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_atmosphere--more_isobars
-
-  # optional double-precision build
-  #commonBuild: /glade/work/bjung/panda-c/build/mpas-bundle_gnu-openmpi_25JAN2023

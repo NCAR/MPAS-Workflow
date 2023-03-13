@@ -1,0 +1,44 @@
+forecast:
+  # resource requirements (used for both Forecast and ExtendedForecast)
+  job:
+    defaults:
+      nodes: 4
+      PEPerNode: 32
+      baseSeconds: 60
+      secondsPerForecastHR: 500
+
+      # cylc retry string
+      retry: '2*PT30S'
+
+    #{{outerMesh}}:
+    #  baseSeconds: int
+    #  secondsPerForecastHR: int
+    #  nodes: int
+    #  PEPerNode: int
+    30km:
+      # faster turnaround
+      #nodes: 16
+      #PEPerNode: 32
+      #baseSeconds: 60
+      #secondsPerForecastHR: 120
+      # more efficient
+      nodes: 4
+      PEPerNode: 36
+      baseSeconds: 60
+      secondsPerForecastHR: 150
+    60km:
+      # faster turnaround
+      #nodes: 4
+      #PEPerNode: 36
+      #baseSeconds: 60
+      #secondsPerForecastHR: 40
+      # more efficient
+      nodes: 2
+      PEPerNode: 36
+      baseSeconds: 60
+      secondsPerForecastHR: 40
+    120km:
+      nodes: 4
+      PEPerNode: 32
+      baseSeconds: 60
+      secondsPerForecastHR: 60

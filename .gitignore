@@ -1,1 +1,9 @@
+# Ignore these files anywhere in the tree
+
+config/auto/*.csh
+include/variables/auto/*.rc
+suites/auto/*.rc
+
+~*
+
 config/jedi/ObsPlugs/retrieveObsErrors/*.yaml

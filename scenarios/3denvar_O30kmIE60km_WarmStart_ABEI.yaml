@@ -1,3 +1,5 @@
+members:
+  n: 1
 model:
   outerMesh: 30km
   innerMesh: 60km
@@ -14,23 +16,24 @@ variational:
       resource: "PANDAC.GEFS"
   ABEInflation: True
   ABEIChannel: 10
-job:
+hpc:
   # use premium queue for ensemble mean calculation
-  EnsMeanBGQueueName: premium
+  EnsMeanBGQueue: premium
 observations:
   resource: PANDACArchive
-  PANDACArchive:
-    IODADirectory:
-      variational:
-        abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-        abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
-        ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-        ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-      hofx:
-        abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-        abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
-        ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-        ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-    IODASuperObGrid:
-      abi_g16: 15X15
-      ahi_himawari8: 15X15
+  resources:
+    PANDACArchive:
+      IODADirectory:
+        variational:
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+        hofx:
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15

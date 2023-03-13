@@ -1,0 +1,69 @@
+externalanalyses:
+  resources:
+    ## defaults:
+    # default resource values
+    # can be overridden in either a `common` or `{{mesh}}``-specific block
+    defaults:
+      ## directory (optional): location where pre-generated analyses are stored, if applicable
+      directory: None
+
+      ## filePrefix: prefix of analysis files
+      filePrefix: "x1.{{nCells}}.init"
+
+      ## Vtable: variable table for UngribExternalAnalysis
+      Vtable: None
+
+      ## UngribPrefix: prefix for ungribbed files
+      UngribPrefix: GFS
+
+      ## PrepareExternalAnalysis
+      # a cylc dependency graph that generates analyses
+      # default behavior is to assume that analyses are already prepared offline
+      PrepareExternalAnalysisTasks:
+      - "LinkExternalAnalysis-{{mesh}}"
+      - "ExternalAnalysisReady__"
+
+      job:
+        # job settings for "Get*AnalysisFrom*" tasks
+        GetAnalysisFrom:
+          # cylc retry string
+          retry: '0*PT5S'
+
+    GFS:
+      PANDAC: # only available 20180415T00-20180525T00
+        120km:
+          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/GFSAna"
+        60km:
+          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/GFSAna"
+        30km:
+          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAna"
+      RDA:
+        common:
+          PrepareExternalAnalysisTasks:
+          - "GetGFSAnalysisFromRDA"
+          - "UngribExternalAnalysis"
+          - "ExternalAnalysisToMPAS-{{mesh}}"
+          - "ExternalAnalysisReady__"
+          Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
+          job:
+            GetAnalysisFrom:
+              retry: '1*PT20S'
+
+      NCEPFTP:
+        common:
+          PrepareExternalAnalysisTasks:
+          - "GetGFSAnalysisFromFTP"
+          - "UngribExternalAnalysis"
+          - "ExternalAnalysisToMPAS-{{mesh}}"
+          - "ExternalAnalysisReady__"
+          Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
+          job:
+            GetAnalysisFrom:
+              retry: '40*PT10M'
+    GDAS:
+      NCEPFTP:
+        common:
+          PrepareExternalAnalysisTasks:
+          - "GetGDASAnalysisFromFTP"
+          #Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
+          retry: '40*PT10M'

@@ -1,31 +1,34 @@
-workflow:
-  # test a recent date
-  firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180415T00
-  finalCyclePoint: 20180415T00
-  CriticalPathType: ForecastFromExternalAnalyses
-  maxActiveCyclePoints: 60
-  ExtendedMeanFCTimes: T00
-  ExtendedFCLengthHR: 240
-  ExtendedFCOutIntervalHR: 24
+suite: ForecastFromExternalAnalyses
+
 externalanalyses:
   resource: "GFS.RDA"
+
 experiment:
-  ExperimentName: 'ForecastFromGFSAnalyses'
-  ExperimentUserPrefix: ''
+  name: 'ForecastFromGFSAnalyses'
+  prefix: ''
+
+extendedforecast:
+  meanTimes: T00,T12
+  lengthHR: 24
+  outIntervalHR: 12
+
+  # optionally turn on extended forecast post
+  post: [verifyobs, verifymodel]
+
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+
+members:
+  n: 1
+
 model:
-  outerMesh: 60km
-#TODO: make it so that innerMesh and ensembleMesh are not needed
-  innerMesh: 60km
-  ensembleMesh: 60km
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
-#TODO: make it so that firstbackground, observations, and variational are not necessary
-firstbackground:
-  resource: "ForecastFromAnalysis"
-observations:
-  resource: PANDACArchive
-variational:
-  DAType: 3dvar
-  nInnerIterations: [0,]
+  outerMesh: 120km
+
+observations: # for optional verification
+  resource: GladeRDAOnline
+
+workflow:
+  first cycle point: 20220606T00
+  final cycle point: 20220607T00
+  max active cycle points: 4

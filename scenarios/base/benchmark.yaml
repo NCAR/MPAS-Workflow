@@ -1,4 +1,0 @@
-benchmark:
-## ExperimentDirectory
-# location of a benchmark experiment, which will be used by CompareModel and CompareObs tasks
-  ExperimentDirectory: None
