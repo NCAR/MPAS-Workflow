@@ -44,9 +44,6 @@ class HPC(Component):
     print(' '.join(cmd))
     sub = subprocess.run(cmd)
 
-    # TODO: have all dependent classes take an HPC object as an argument, do not export
-    self._cylcVars = list(self._vtable.keys())
-
     # default multi-processor task
     attr = {
       'seconds': {'def': 3600},

@@ -314,16 +314,26 @@ class Variational(Component):
       self.workDir+'/{{thisCycleDate}}',
       workflow['CyclingWindowHR'],
     ]
-    prepArgs = ' '.join(['"'+str(a)+'"' for a in args])
+    initArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+    # 2 init phases
+    self._dependencies += ['''
+        InitVariationals_0 => InitVariationals_1''']
 
     self._tasks += ['''
   ## variational tasks
-  [[InitVariationals]]
+  [[InitVariationals_0]]
     inherit = '''+self.TM.init+''', SingleBatch
-    env-script = cd {{mainScriptDir}}; ./bin/PrepJEDI.csh '''+prepArgs+'''
-    script = $origin/bin/Prep'''+self.base+'''.csh "1"
+    script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
     [[[job]]]
-      execution time limit = PT20M
+      execution time limit = PT10M
+      execution retry delays = '''+varjob['retry']+'''
+
+  [[InitVariationals_1]]
+    inherit = '''+self.TM.init+''', SingleBatch
+    script = $origin/bin/InitVariationals.csh "1"
+    [[[job]]]
+      execution time limit = PT10M
       execution retry delays = '''+varjob['retry']+'''
 
   [[Variationals]]
@@ -349,7 +359,7 @@ class Variational(Component):
         self._tasks += ['''
   [[EDA'''+str(instance)+''']]
     inherit = Variationals, BATCH
-    script = \$origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
+    script = $origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     # TODO: make ABEI consistent with external class design
     # GenerateABEInflation

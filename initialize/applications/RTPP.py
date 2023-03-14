@@ -87,10 +87,10 @@ class RTPP(Component):
       task = TaskLookup[hpc.system](job)
 
       self._tasks += ['''
-  [[Prep'''+self.base+''']]
+  [['''+self.TM.init+'''Job]]
     # note: does not depend on any other tasks
     inherit = '''+self.TM.init+''', SingleBatch
-    script = $origin/bin/Prep'''+self.base+'''.csh "'''+self.WorkDir+'''"
+    script = $origin/bin/Init'''+self.base+'''.csh "'''+self.WorkDir+'''"
     [[[job]]]
       execution time limit = PT1M
       execution retry delays = '''+job['retry']+'''

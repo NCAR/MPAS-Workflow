@@ -23,7 +23,6 @@ class Component():
     # initialize exportable variables, tasks, dependencies
     ######################################################
     self._cshVars = []
-    self._cylcVars = []
     self._queues = []
     self._tasks = []
     self._dependencies = []
@@ -65,7 +64,6 @@ class Component():
     export for use outside python
     '''
     self._exportVarsToCsh()
-    self._exportVarsToCylc()
     return
 
   def _msg(self, text):
@@ -175,25 +173,4 @@ set config_'''+self.lower+''' = 1
     for v in variables:
       Str += self.varToCsh(v, self._vtable[v])
     self.__toTextFile('config/auto/'+self.lower+'.csh', Str)
-    return
-
-  # cylc variables
-  @staticmethod
-  def varToCylc(var:str, value):
-    vvar = var
-    if ' ' in var:
-      parts = var.split(' ')
-      vvar = ''.join([parts[0][0].lower()+parts[0][1:]]+[v.capitalize() for v in parts[1:]])
-
-    if isinstance(value, str):
-      return ['{% set '+vvar+' = "'+value+'" %}\n']
-    else:
-      return ['{% set '+vvar+' = '+str(value)+' %}\n']
-
-  def _exportVarsToCylc(self):
-    variables = self._cylcVars
-    Str = []
-    for v in variables:
-      Str += self.varToCylc(v, self._vtable[v])
-    self.__toTextFile('include/variables/auto/'+self.autoLabel+'.rc', Str)
     return

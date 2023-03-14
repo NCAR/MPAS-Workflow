@@ -161,16 +161,24 @@ class HofX(Component):
       if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'
 
-      # prep/run
+      if NN > 1:
+        suffix = '_'+str(mm+1)
+      elif memberMultiplier > 1:
+        suffix = '_MEAN'
+      else:
+        suffix = '00'
+
+      # init
       args = [
         dt,
         self.lower,
         workDir,
         6, # window (hr); TODO: to be provided by parent
       ]
-      prepArgs = ' '.join(['"'+str(a)+'"' for a in args])
-      prepScript = 'PrepJEDI'
+      initArgs = ' '.join(['"'+str(a)+'"' for a in args])
+      init = self.TM.init+suffix
 
+      # execute
       args = [
         mm+1,
         dt,
@@ -178,42 +186,31 @@ class HofX(Component):
         state.directory(),
         state.prefix(),
       ]
-      runArgs = ' '.join(['"'+str(a)+'"' for a in args])
-
-      execute = self.TM.execute 
-      if NN > 1:
-        execute += '_'+str(mm+1)
-      elif memberMultiplier > 1:
-        execute += '_MEAN'
-      else:
-        execute += '00'
-
-      self._tasks += ['''
-  [['''+execute+''']]
-    inherit = '''+self.TM.execute+''', BATCH
-    env-script = cd {{mainScriptDir}}; ./bin/'''+prepScript+'''.csh '''+prepArgs+'''
-    script = $origin/bin/'''+self.base+'''.csh '''+runArgs+'''
-'''+task.job()+task.directives()]
+      executeArgs = ' '.join(['"'+str(a)+'"' for a in args])
+      execute = self.TM.execute+suffix
 
       # clean
       args = [
         dt,
         workDir,
       ]
-      CleanArgs = ' '.join(['"'+str(a)+'"' for a in args])
-
-      clean = self.TM.clean 
-      if NN > 1:
-        clean += '_'+str(mm+1)
-      elif memberMultiplier > 1:
-        clean += '_MEAN'
-      else:
-        clean += '00'
+      cleanArgs = ' '.join(['"'+str(a)+'"' for a in args])
+      clean = self.TM.clean+suffix
 
       self._tasks += ['''
+  [['''+init+''']]
+    inherit = '''+self.TM.init+''', SingleBatch
+    script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
+    [[[job]]]
+      execution time limit = PT5M
+      execution retry delays = '''+job['retry']+'''
+  [['''+execute+''']]
+    inherit = '''+self.TM.execute+''', BATCH
+    script = $origin/bin/'''+self.base+'''.csh '''+executeArgs+'''
+'''+task.job()+task.directives()+'''
   [['''+clean+''']]
     inherit = '''+self.TM.clean+'''
-    script = $origin/bin/Clean'''+self.base+'''.csh '''+CleanArgs]
+    script = $origin/bin/Clean'''+self.base+'''.csh '''+cleanArgs]
 
     #########
     # outputs
@@ -221,7 +218,7 @@ class HofX(Component):
     self.outputs = {}
     self.outputs['obs'] = {}
     self.outputs['obs']['members'] = ObsEnsemble(dt)
-    for mm in range(1, NN+1, 1): 
+    for mm in range(1, NN+1, 1):
       workDir = self.workDir+'/'+subDirectory+memFmt.format(mm)+'/{{thisCycleDate}}'
       if dt > 0 or 'fc' in subDirectory:
         workDir += '/'+dtStr+'hr'

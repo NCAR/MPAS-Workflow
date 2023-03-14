@@ -306,10 +306,8 @@ and date-resolved directories
 
 `submit.csh`:
 1. Source the experiment directory info from `config/auto/experiment.csh`
-2. Copy the `bin`, `config`, `include`, `scenarios`, `suites`, `test`, and `tools` directories
-   to the experiment workflow directory for use by `Cylc` tasks and so that a record is kept of
-   all settings
-3. Copy the top-level cylc suite file, then submit the suite for execution
+2. Check if suite is already running; kill if it is
+3. Submit the suite for execution
 
 
 Python tools (`tools/*.py`)
