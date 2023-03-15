@@ -84,14 +84,14 @@ The files under the `scenarios/` directories describe the configuration for a pa
 of an `MPAS-Workflow` `Cylc` suite.  `scenarios/defaults/*.yaml` describe some default
 `resource`-based options that users may select in their experiment scenario `yaml` (e.g.,
 `scenarios/*.yaml`.  Both the `defaults` and the particular scenario selected are parsed with
-python-based classes in the `initialize/components/` directory.  Each `component` is associated
-with a particular root `yaml` node.  For example, `Variational.py` parses the configuration of the
-`variational` node, `Forecast.py` parses the `forecast` node, and so on.  The basic (i.e.,
-`non-resource`) options available for each root `yaml` node are described either as class member
+python modules/classes in the `initialize/*/` directories.  Each class derived from `Component` is
+associated with a root node in the scenario `yaml` file.  For example, `Variational.py` parses the
+configuration of the `variational` node, `Forecast.py` parses the `forecast` node, and so on.  The
+basic (i.e., `non-resource`) options available for each root `yaml` node are described either as class member
 variables or in the class `__init__` method.  The appropriate `yaml` layouts for `resource` options
 (e.g., `variational.job` `externalanalyses.resources`, `observations.resources`, `forecast.job`)
 are demonstrated in `scenarios/defaults/*.yaml`.  `resource` options are also parsed in the
-`initialize/components/` python classes.
+python modules/classes under `initialize/*`.
 
 #### cross-application `resource` options
 
@@ -145,15 +145,15 @@ GitHub issues, and then submit pull requests.
 
 `config/tools.csh`: initializes python tools for workflow task management
 
-If a developer wishes to add a new `yaml` key beyond the current available options, the
+If a developer wishes to add a new `yaml` node beyond the current available options, the
 recommended procedure is to add the option in the appropriate python class, following the examples
-in `initialize/components/*.py`.  Developers are referred to the many existing examples and it is
+in `initialize/*/*.py`.  Developers are referred to the many existing examples, and it is
 recommended to discuss additional options to be merged back into the GitHub repository via GitHub
 issues and pull requests.
 
 
 #### MPAS (`config/mpas/`)
-Configuration aspects that are unique to `MPAS-Atmosphere`
+Contains static configuration aspects that are unique to `MPAS-Atmosphere`
 
 `config/mpas/geovars.yaml`: list of templated geophysical variables (`GeoVars`) that MPAS-JEDI can
 provide to UFO; identical to `mpas-jedi/test/testinput/namelists/geovars.yaml`, but duplicated here
@@ -182,13 +182,15 @@ E.g., `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*
 The application-specific `yaml` stubs provide a base set of options that are common across most
 experiments.  Parts of those stubs are automatically populated via the workflow.  Advanced
 users or developers are encouraged to modify the application-specific yamls directly to suit
-their needs.
+their needs.  If those changes/enhancements would be beneficial for multiple users, please
+consider submitting a pull request to share your enhancements.
 
 `config/jedi/applications/*.yaml`: MPAS-JEDI application-specific `yaml` templates.  These will be
-further populated by scripts templated on `PrepJEDI.csh` and/or `PrepVariational.csh`.
+further populated by `bin/PrepJEDI.csh` and/or `bin/InitVariationals.csh`.
 
 `config/jedi/ObsPlugs/variational/*.yaml`: observation `yaml` stubs that get plugged into `Variational`
-`jedi/applications` yamls, e.g., `3dvar.yaml`, `3denvar.yaml`, and `3dhybrid.yaml`
+`jedi/applications` yamls, e.g., `3dvar.yaml`, `3denvar.yaml`, and `3dhybrid.yaml`.  The yaml
+substitution is carried out by `bin/PrepJEDI.csh`.
 
 `config/jedi/ObsPlugs/hofx/*.yaml`: same, but for `jedi/applications/hofx.yaml`
 
@@ -231,14 +233,14 @@ are available for executing `bin/*.csh` scripts from an auto-generated `Cylc` ta
 Workflow task scripts
 ---------------------
 
-These scripts (`bin/*.csh`) are called from cylc workflow task elements.  Their usage is fully
-described in sequences of automatically generated task and dependency suite snippets that
-are created during the execution of `Run.py`.  That procedure is carried out by the python
-scripts under the `initialize` directory.  Many shell scripts have a corresponding python class
-in the `interface/` directory, or else serve as one task of many in more complex python
-`Component` classes.
+These scripts (`bin/*.csh`) are called from cylc workflow task elements.  Their usage and
+relationships are fully described by automatically generated suite.rc snippets.  Those task and
+dependency snippets, respectively, are created during the execution of `Run.py`.  That procedure
+is carried out by the python scripts under the `initialize/` directory.  Many shell scripts have a
+corresponding python class in the `initialize/` directory, or else serve as one task of many in a
+`TaskFamily` class member belonging to a derived `Component` class.
 
-`CleanHofx.csh`: used to clean `HofX` working directories (e.g., `Verification/fc/*`) in order
+`CleanHofx.csh`: used to clean `HofX` working directories (e.g., under `Verification/fc/`) in order
 to reduce experiment disk resource requirements.
 
 `HofX.csh`: used to execute the `mpasjedi_hofx3d` application. Can read any forecast state written
@@ -259,9 +261,10 @@ configurable via `initialize/data/ExternalAnalyses.py`).
 `Forecast.csh`: used for all forecast-related `Cylc` tasks, e.g., `Forecast`, `ColdForecast`,
 and `ExtendedForecast`, which execute `mpas_atmosphere` for a command-line-argument controlled time
 duration and state output interval. Many more command-line arguments allow for extensive flexibility
-in the types of tasks to which this script can apply.  See initialize/applications/Forecast.py and
-ExtendedForecast.py for multiple use-cases.  Takes `Variational` analyses, or external analyses
-processed as cold-start initial conditions (IC), as inputs.
+in the types of tasks to which this script can apply.  See `initialize/applications/Forecast.py`,
+`initialize/applications/ExtendedForecast.py`, and `initialize/data/FirstBackground.py` for multiple
+use-cases.  Takes `Variational` analyses, or external analyses processed as cold-start initial
+conditions (IC), as inputs.
 
 `GenerateABEInflation.csh`: generates Adaptive Background Error Inflation (ABEI) factors based on
 all-sky IR brightness temperature `H(x_mean)` and `H_clear(x_mean)` from GOES-16 ABI and Himawari-8
@@ -290,7 +293,7 @@ background and analysis ensembles of the ensemble of `Variational*` tasks
    be conducted simultaneously if it is beneficial to group members instead of running them all
    independently like what is achieved via `Variational*` member tasks.
 
- - `PrepVariational.csh`: further modifies the application `yaml` file(s) for the `Variational`
+ - `InitVariationals.csh`: further modifies the application `yaml` file(s) for the `Variational`
    task. The primary function is to populate the background error covariance and EDA-relevant
    entries.
 
@@ -301,13 +304,13 @@ background and analysis ensembles of the ensemble of `Variational*` tasks
 
 Non-task shell scripts
 ----------------------
-`getCycleVars.csh`: defines cycle-specific variables, such as multiple formats of the valid date,
+`bin/getCycleVars.csh`: defines cycle-specific variables, such as multiple formats of the valid date,
 and date-resolved directories
 
 `submit.csh`:
 1. Source the experiment directory info from `config/auto/experiment.csh`
 2. Check if suite is already running; kill if it is
-3. Submit the suite for execution
+3. Submit the suite
 
 
 Python tools (`tools/*.py`)
@@ -330,7 +333,7 @@ controlling indentation of some `yaml` components
 
 `substituteEnsembleBTemplate`: generates and substitutes the ensemble background error
 covariance `members from template` configuration into application yamls that match `*envar*`
-and `*hybrid*`. See `PrepVariational.csh` for the specific behavior.
+and `*hybrid*`. See `InitVariationals.csh` for the specific behavior.
 
 `updateXTIME`: updates the `xtime` variable in an `MPAS-Atmosphere` state file so that it can be read
 into the model as though it had the correct time stamp
@@ -364,7 +367,7 @@ using the drop-down menus.  From the GUI, it is easy to perform actions on the e
 individual tasks, e.g., hold, resume, kill, trigger.  It is also possible to interrogate the
 real-time progress of the `Cylc` tasks being executed, and in some cases the next tasks that will be
 triggered. There are multiple views available, including a flow chart view that is useful for new
-users to learn the dependencies between tasks.
+users to learn the dependencies between tasks and families of tasks.
 
 3. Shut down a suite (`SUITENAME`) after killing all active tasks
 ```shell
@@ -430,5 +433,5 @@ Contributors to-date
 
 [^+]: primary repository maintainers/developers
 
-These people have contributed any of the following: GitHub pull requests and review, data, scripts
-on which workflow tasks are templated, source code, or critical consultation.
+These people have contributed any of the following: GitHub pull requests and review, data, shell
+scripts used by workflow tasks, basic workflow design, source code, or other critical consultation.
