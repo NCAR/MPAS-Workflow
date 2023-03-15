@@ -2,10 +2,10 @@ workflow:
   # test a recent date
   firstCyclePoint: 20210120T00
   initialCyclePoint: 20210120T00
-  finalCyclePoint: 20210128T00
+  finalCyclePoint: 20210120T00 #20210128T00
   CriticalPathType: HofxGNSSROFromExternalAnalyses
   VerifyEnsMeanBG: True
-  maxActiveCyclePoints: 20
+  maxActiveCyclePoints: 60
   ExtendedMeanFCTimes: T00,T06,T18
   ExtendedFCLengthHR: 6
   ExtendedFCOutIntervalHR: 6
@@ -15,7 +15,7 @@ observations:
   - prepbufr
 #  - gpsro
 experiment:
-  ExperimentName: '3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX'
+  ExperimentName: '3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_nhoriz31_ROobserror'
 model:
   outerMesh: 30km
   innerMesh: 60km
@@ -46,7 +46,7 @@ forecast:
       nodes: 4
       PEPerNode: 36
       baseSeconds: 60
-      secondsPerForecastHR: 300
+      secondsPerForecastHR: 700
 variational:
   DAType: 3dvar
   nInnerIterations: [0,]
@@ -78,11 +78,13 @@ hofx:
 #  - gnssroref
 #  - gnssrobndropp1d
 #  - gnssrobndropp2d
-  - gnssarobndsioropp2d
+#  - gnssarobndsioropp2d
+#  - gnssarobndsioropp2d_nrl
+  - gnssarobndsioropp2d_ecmwf
 #  - gnssrobndnbam
 #  - satwind
 #  - sfc
-  - sondes
+#  - sondes
 job:
   CPAccountNumber: UCSD0041
   CPQueueName: premium

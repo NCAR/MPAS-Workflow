@@ -4,7 +4,7 @@
     obsdatain:
       engine:
         type: H5File
-        obsfile: {{InDBDir}}/gnssarobndsioropp2d_obs_{{thisValidDate}}.h5
+        obsfile: {{InDBDir}}/gnssarobndsioropp2d_nrl_obs_{{thisValidDate}}.h5
       obsgrouping:
         group variables: [ sequenceNumber ]
         sort variable: impactHeightRO
@@ -12,7 +12,7 @@
     obsdataout:
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}/{{obsPrefix}}_gnssarobndsioropp2d.h5
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_gnssarobndsioropp2d_nrl.h5
     simulated variables: [bendingAngle]
   obs error: *ObsErrorDiagonal
   obs operator:

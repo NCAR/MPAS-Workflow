@@ -10,6 +10,7 @@ source config/scenario.csh model
 setenv MPASCore atmosphere
 
 $setLocal outerMesh
+echo ${outerMesh}
 $setLocal innerMesh
 $setLocal ensembleMesh
 

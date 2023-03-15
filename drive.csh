@@ -262,8 +262,8 @@ cat >! suite.rc << EOF
 ## (ii) External analyses generation for a historical period
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
-        {{PrepareExternalAnalysisOuter}} => Forecast
-        Forecast:succeed-all => ForecastFinished => HofXBG
+#        {{PrepareExternalAnalysisOuter}} => Forecast
+#        Forecast:succeed-all => ForecastFinished => HofXBG
         {{PrepareObservations}} => HofXBG
         HofXBG:succeed-all => CleanHofXBG
       '''

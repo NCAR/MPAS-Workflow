@@ -233,6 +233,8 @@ observations:
       gnssrobndnbam: gnssro
       gnssrobndropp1d: gnssro
       gnssrobndropp2d: gnssaro
+      gnssarobndsioropp2d_nrl: gnssaro
+      gnssarobndsioropp2d_ecmwf: gnssaro
       gnssarobndsioropp2d: gnssaro
       amsua-cld_aqua: amsua_aqua
       amsua-cld_metop-a: amsua_metop-a
@@ -250,6 +252,8 @@ observations:
         ## aro
         gnssrobndropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
         gnssarobndsioropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
+        gnssarobndsioropp2d_nrl: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
+        gnssarobndsioropp2d_ecmwf: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
 
       hofx:
         common: "{{ObsWorkDir}}"
@@ -257,6 +261,8 @@ observations:
         ## aro
         gnssrobndropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
         gnssarobndsioropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
+        gnssarobndsioropp2d_nrl: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
+        gnssarobndsioropp2d_ecmwf: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
 
     IODASuperObGrid:
       abi_g16: 59X59
