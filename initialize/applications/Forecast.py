@@ -112,7 +112,7 @@ class Forecast(Component):
     # base task derived from every-cycle execute
     self._tasks += ['''
   [['''+self.base+''']]
-    inherit = '''+self.TM.execute+'''
+    inherit = '''+self.tf.execute+'''
 '''+task.job()+task.directives()]
 
     for mm in range(1, self.NN+1, 1):
@@ -139,7 +139,7 @@ class Forecast(Component):
     inherit = '''+self.base+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+fcArgs]
 
-    self.previousForecast = self.TM.finished+'[-PT'+str(self.workflow['FC2DAOffsetHR'])+'H]'
+    self.previousForecast = self.tf.finished+'[-PT'+str(self.workflow['FC2DAOffsetHR'])+'H]'
 
     # TODO: move Post initialization out of Forecast class so that PrepareObservations
     #  can be appropriately referenced without adding a dependence of the Forecast class
@@ -196,18 +196,18 @@ class Forecast(Component):
     # {{ForecastTimes}} dependencies only, not the R1 cycle
     self._dependencies += ['''
         # ensure there is a valid sea-surface update file before forecast
-        '''+self.ea['PrepareSeaSurfaceUpdate']+''' => '''+self.TM.pre]
+        '''+self.ea['PrepareSeaSurfaceUpdate']+''' => '''+self.tf.pre]
 
     if self.workflow['CriticalPathType'] == 'Normal':
       previousDA = daFinished+'[-PT'+str(self.workflow['DA2FCOffsetHR'])+'H]'
       # depends on previous DA
-      self.TM.addDependencies([previousDA])
+      self.tf.addDependencies([previousDA])
     else:
       self._dependencies += ['''
-        '''+self.TM.finished]
+        '''+self.tf.finished]
 
-    self._dependencies = self.TM.updateDependencies(self._dependencies)
-    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+    self._dependencies = self.tf.updateDependencies(self._dependencies)
+    self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
     # close graph
     self._dependencies += ['''
@@ -292,8 +292,8 @@ class Forecast(Component):
         self._tasks += p._tasks
         self._dependencies += p._dependencies
 
-      self._dependencies = self.TM.updateDependencies(self._dependencies)
-      self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+      self._dependencies = self.tf.updateDependencies(self._dependencies)
+      self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
       # close graph
       self._dependencies += ['''

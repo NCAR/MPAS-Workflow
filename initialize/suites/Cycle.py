@@ -61,12 +61,12 @@ class Cycle(SuiteBase):
         c_.export(self.c['extendedforecast']['extLengths'])
       elif k in ['forecast']:
         # TODO: Forecast.export should take DA.output['state']['members] as input arg
-        c_.export(self.c['da'].TM.finished, self.c['da'].TM.clean, self.c['da'].meanBGDir)
+        c_.export(self.c['da'].tf.finished, self.c['da'].tf.clean, self.c['da'].meanBGDir)
       elif k in ['da']:
         # TODO: DA.export should take Forecast.output['state']['members] as input arg
         c_.export(self.c['forecast'].previousForecast, self.c['extendedforecast'])
       elif k in ['extendedforecast']:
-        c_.export(self.c['da'].TM.finished, activateEnsemble=False)
+        c_.export(self.c['da'].tf.finished, activateEnsemble=False)
       else:
         c_.export()
 

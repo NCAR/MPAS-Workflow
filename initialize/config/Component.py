@@ -17,7 +17,7 @@ class Component():
     self.lower = self.__class__.__name__.lower()
     self.logPrefix = self.__class__.__name__+': '
     self.autoLabel = self.lower
-    self.TM = CylcTaskFamily(self.base)
+    self.tf = CylcTaskFamily(self.base)
 
     ######################################################
     # initialize exportable variables, tasks, dependencies

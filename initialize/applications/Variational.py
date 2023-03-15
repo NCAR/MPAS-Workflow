@@ -178,7 +178,7 @@ class Variational(Component):
 
     #self.abei = ABEI()
 
-    self.TM = parent.TM
+    self.tf = parent.tf
 
     ###################
     # derived variables
@@ -323,26 +323,26 @@ class Variational(Component):
     self._tasks += ['''
   ## variational tasks
   [[InitVariationals_0]]
-    inherit = '''+self.TM.init+''', SingleBatch
+    inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = '''+varjob['retry']+'''
 
   [[InitVariationals_1]]
-    inherit = '''+self.TM.init+''', SingleBatch
+    inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/InitVariationals.csh "1"
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = '''+varjob['retry']+'''
 
   [[Variationals]]
-    inherit = '''+self.TM.execute+'''
+    inherit = '''+self.tf.execute+'''
 '''+vartask.job()+vartask.directives()+'''
 
   # clean
   [[CleanVariationals]]
-    inherit = '''+self.TM.clean+'''
+    inherit = '''+self.tf.clean+'''
     script = $origin/bin/Clean'''+self.base+'''.csh''']
 
     if EDASize == 1:
@@ -376,13 +376,13 @@ class Variational(Component):
 
       self._tasks += ['''
   [[GenerateABEInflation]]
-    inherit = '''+self.TM.group+''', BATCH
+    inherit = '''+self.tf.group+''', BATCH
     script = $origin/bin/GenerateABEInflation.csh
 '''+abeitask.job()+abeitask.directives()]
 
       self._dependencies += ['''
         # abei
-        '''+self.TM.pre+''' =>
+        '''+self.tf.pre+''' =>
         MeanBackground => HofXBG
-        HofXBG:succeed-all => GenerateABEInflation => '''+self.TM.init+'''
+        HofXBG:succeed-all => GenerateABEInflation => '''+self.tf.init+'''
         GenerateABEInflation => CleanHofXBG''']

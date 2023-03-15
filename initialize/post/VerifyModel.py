@@ -62,9 +62,9 @@ class VerifyModel(Component):
     inherit = '''+parent+'''
   [['''+parent+''']]''']
 
-    self.TM = CylcTaskFamily(group, groupSettings)
-    self.TM.addDependencies(dependencies)
-    self.TM.addFollowons(followon)
+    self.tf = CylcTaskFamily(group, groupSettings)
+    self.tf.addDependencies(dependencies)
+    self.tf.addFollowons(followon)
 
     ## class-specific tasks
     # job settings
@@ -98,7 +98,7 @@ class VerifyModel(Component):
       ]
       runArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      execute = self.TM.execute 
+      execute = self.tf.execute
       if NN > 1:
         execute += '_'+str(mm+1)
       elif memberMultiplier > 1:
@@ -108,7 +108,7 @@ class VerifyModel(Component):
 
       self._tasks += ['''
   [['''+execute+''']]
-    inherit = '''+self.TM.execute+''', BATCH
+    inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+runArgs+'''
 '''+task.job()+task.directives()]
 
@@ -119,8 +119,8 @@ class VerifyModel(Component):
     ##############
     # update tasks
     ##############
-    self._dependencies = self.TM.updateDependencies(self._dependencies)
-    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+    self._dependencies = self.tf.updateDependencies(self._dependencies)
+    self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
     super().export()
     return

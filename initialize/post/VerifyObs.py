@@ -73,9 +73,9 @@ class VerifyObs(Component):
     inherit = '''+parent+'''
   [['''+parent+''']]''']
 
-    self.TM = CylcTaskFamily(group, groupSettings)
-    self.TM.addDependencies(dependencies)
-    self.TM.addFollowons(followon)
+    self.tf = CylcTaskFamily(group, groupSettings)
+    self.tf.addDependencies(dependencies)
+    self.tf.addFollowons(followon)
 
     ## class-specific tasks
     # job settings
@@ -110,7 +110,7 @@ class VerifyObs(Component):
       ]
       runArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      execute = self.TM.execute 
+      execute = self.tf.execute
       if NN > 1:
         execute += '_'+str(mm+1)
       elif memberMultiplier > 1:
@@ -120,7 +120,7 @@ class VerifyObs(Component):
 
       self._tasks += ['''
   [['''+execute+''']]
-    inherit = '''+self.TM.execute+''', BATCH
+    inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+runArgs+'''
 '''+task.job()+task.directives()]
 
@@ -134,15 +134,15 @@ class VerifyObs(Component):
       self._tasks += self.__hofx._tasks
       self._dependencies += self.__hofx._dependencies
       self._dependencies += ['''
-        '''+self.__hofx.TM.group+''':succeed-all => '''+self.TM.pre]
+        '''+self.__hofx.tf.group+''':succeed-all => '''+self.tf.pre]
       self._dependencies += ['''
-        '''+self.TM.group+''':succeed-all => '''+self.__hofx.TM.clean]
+        '''+self.tf.group+''':succeed-all => '''+self.__hofx.tf.clean]
 
     ##############
     # update tasks
     ##############
-    self._dependencies = self.TM.updateDependencies(self._dependencies)
-    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+    self._dependencies = self.tf.updateDependencies(self._dependencies)
+    self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
     super().export()
     return

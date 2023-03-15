@@ -138,9 +138,9 @@ class HofX(Component):
     inherit = '''+parent+'''
   [['''+parent+''']]''']
 
-    self.TM = CylcTaskFamily(group, groupSettings)
-    self.TM.addDependencies(dependencies)
-    self.TM.addFollowons(followon)
+    self.tf = CylcTaskFamily(group, groupSettings)
+    self.tf.addDependencies(dependencies)
+    self.tf.addFollowons(followon)
 
     ## class-specific tasks
 
@@ -176,7 +176,7 @@ class HofX(Component):
         6, # window (hr); TODO: to be provided by parent
       ]
       initArgs = ' '.join(['"'+str(a)+'"' for a in args])
-      init = self.TM.init+suffix
+      init = self.tf.init+suffix
 
       # execute
       args = [
@@ -187,7 +187,7 @@ class HofX(Component):
         state.prefix(),
       ]
       executeArgs = ' '.join(['"'+str(a)+'"' for a in args])
-      execute = self.TM.execute+suffix
+      execute = self.tf.execute+suffix
 
       # clean
       args = [
@@ -195,21 +195,21 @@ class HofX(Component):
         workDir,
       ]
       cleanArgs = ' '.join(['"'+str(a)+'"' for a in args])
-      clean = self.TM.clean+suffix
+      clean = self.tf.clean+suffix
 
       self._tasks += ['''
   [['''+init+''']]
-    inherit = '''+self.TM.init+''', SingleBatch
+    inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
     [[[job]]]
       execution time limit = PT5M
       execution retry delays = '''+job['retry']+'''
   [['''+execute+''']]
-    inherit = '''+self.TM.execute+''', BATCH
+    inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+executeArgs+'''
 '''+task.job()+task.directives()+'''
   [['''+clean+''']]
-    inherit = '''+self.TM.clean+'''
+    inherit = '''+self.tf.clean+'''
     script = $origin/bin/Clean'''+self.base+'''.csh '''+cleanArgs]
 
     #########
@@ -235,8 +235,8 @@ class HofX(Component):
     ###########################
     # update tasks/dependencies
     ###########################
-    self._dependencies = self.TM.updateDependencies(self._dependencies)
-    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+    self._dependencies = self.tf.updateDependencies(self._dependencies)
+    self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
     super().export()
     return

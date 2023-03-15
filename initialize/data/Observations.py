@@ -116,7 +116,7 @@ class Observations(Component):
         taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+self.TM.group+''', SingleBatch
+    inherit = '''+self.tf.group+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
     [[[job]]]
       execution time limit = PT10M
@@ -162,12 +162,12 @@ class Observations(Component):
       base = 'ObsReady__'
 # TODO: use 'finished' tag like other tasks
 #      self._dependencies += ['''
-#        '''+base+''' => '''+self.TM.finished]
+#        '''+base+''' => '''+self.tf.finished]
       if base in self['PrepareObservations']:
         taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+self.TM.group]
+    inherit = '''+self.tf.group]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:
@@ -194,7 +194,7 @@ class Observations(Component):
     for queue in set(subqueues):
       self._tasks += ['''
   [['''+queue+''']]
-    inherit = '''+self.TM.group]
+    inherit = '''+self.tf.group]
 
       self._queues += ['''
     [[['''+queue+''']]]
@@ -204,8 +204,8 @@ class Observations(Component):
     ###########################
     # update tasks/dependencies
     ###########################
-    self._dependencies = self.TM.updateDependencies(self._dependencies)
-    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+    self._dependencies = self.tf.updateDependencies(self._dependencies)
+    self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
     # export all
     super().export()
