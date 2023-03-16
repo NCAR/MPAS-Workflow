@@ -344,6 +344,16 @@ observations:
       - amsua_n15
       - amsua_n18
       - amsua_n19
+      - amsua-cld_aqua
+      - amsua-cld_metop-a
+      - amsua-cld_metop-b
+      - amsua-cld_metop-c
+      - amsua-cld_n15
+      - amsua-cld_n18
+      - amsua-cld_n19
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
 
       IODAPrefix:
         gnssrobndropp1d: gnssro
