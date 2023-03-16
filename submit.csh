@@ -1,9 +1,14 @@
 #!/bin/csh
 
+# (C) Copyright 2023 UCAR
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
 ####################################################################################################
-# This script runs a pre-configure cylc suite scenario described in config/scenario.csh. If the user
-# has previously executed this script with the same effecitve "SuiteName" the scenario is
-# already running, then executing this script will automatically kill those running suites.
+# This script runs a pre-generated cylc suite.rc file in the local directory. If the user
+# has previously executed this script with the same "SuiteName", and the scenario is already
+# running, then executing this script will automatically kill that running suite.
 ####################################################################################################
 
 echo "$0 (INFO): Generating the scenario-specific MPAS-Workflow directory"

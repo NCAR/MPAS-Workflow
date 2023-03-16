@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 
+'''
+ (C) Copyright 2023 UCAR
+
+ This software is licensed under the terms of the Apache Licence Version 2.0
+ which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+'''
+
 ####################################################################################################
-# This script runs a pre-configured set of cylc suites via MPAS-Workflow. If the user has
-# previously executed this script with the same "ArgRunConfig", and one or more of the scenarios is
-# already running, then executing this script again will cause drive.csh to kill those running
-# suites.
+# This script generates a suite.rc file from a pre-configured set MPAS-Workflow scenarios, and then
+# submits those suites via Cylc
 ####################################################################################################
 
 ## Usage:
