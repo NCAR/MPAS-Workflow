@@ -13,72 +13,73 @@
         name: MetaData/geoidUndulation
       minvalue: -200.0
       maxvalue: 200.0
-  # reject where refractivity is assimilated
-  # NPol
-  - filter: RejectList
-    defer to post: true
-    filter variables:
-    - name: bendingAngle
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minNPol
-      maxvalue: *maxNPol
-    - variable:
-        name: MetaData/impactHeightRO
-      maxvalue: *gnssrorefncepNPolExcludeMin
-  # NMid
-  - filter: RejectList
-    defer to post: true
-    filter variables:
-    - name: bendingAngle
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minNMid
-      maxvalue: *maxNMid
-    - variable:
-        name: MetaData/impactHeightRO
-      maxvalue: *gnssrorefncepNMidExcludeMin
-  # Tro
-  - filter: RejectList
-    defer to post: true
-    filter variables:
-    - name: bendingAngle
-    where:
-    - variable:
-        name: MetaData/latitude
-      maxvalue: *minTro
-      maxvalue: *maxTro
-    - variable:
-        name: MetaData/impactHeightRO
-      minvalue: *gnssrorefncepTroExcludeMin
-  # SMid
-  - filter: RejectList
-    defer to post: true
-    filter variables:
-    - name: bendingAngle
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minSMid
-      maxvalue: *maxSMid
-    - variable:
-        name: MetaData/impactHeightRO
-      maxvalue: *gnssrorefncepSMidExcludeMin
-  # SPol
-  - filter: RejectList
-    defer to post: true
-    filter variables:
-    - name: bendingAngle
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minSPol
-      maxvalue: *maxSPol
-    - variable:
-        name: MetaData/impactHeightRO
-      maxvalue: *gnssrorefncepSPolExcludeMin
+
+#  # reject where refractivity is assimilated
+#  # NPol
+#  - filter: RejectList
+#    defer to post: true
+#    filter variables:
+#    - name: bendingAngle
+#    where:
+#    - variable:
+#        name: MetaData/latitude
+#      minvalue: *minNPol
+#      maxvalue: *maxNPol
+#    - variable:
+#        name: MetaData/impactHeightRO
+#      maxvalue: *gnssrorefncepNPolExcludeMin
+#  # NMid
+#  - filter: RejectList
+#    defer to post: true
+#    filter variables:
+#    - name: bendingAngle
+#    where:
+#    - variable:
+#        name: MetaData/latitude
+#      minvalue: *minNMid
+#      maxvalue: *maxNMid
+#    - variable:
+#        name: MetaData/impactHeightRO
+#      maxvalue: *gnssrorefncepNMidExcludeMin
+#  # Tro
+#  - filter: RejectList
+#    defer to post: true
+#    filter variables:
+#    - name: bendingAngle
+#    where:
+#    - variable:
+#        name: MetaData/latitude
+#      maxvalue: *minTro
+#      maxvalue: *maxTro
+#    - variable:
+#        name: MetaData/impactHeightRO
+#      minvalue: *gnssrorefncepTroExcludeMin
+#  # SMid
+#  - filter: RejectList
+#    defer to post: true
+#    filter variables:
+#    - name: bendingAngle
+#    where:
+#    - variable:
+#        name: MetaData/latitude
+#      minvalue: *minSMid
+#      maxvalue: *maxSMid
+#    - variable:
+#        name: MetaData/impactHeightRO
+#      maxvalue: *gnssrorefncepSMidExcludeMin
+#  # SPol
+#  - filter: RejectList
+#    defer to post: true
+#    filter variables:
+#    - name: bendingAngle
+#    where:
+#    - variable:
+#        name: MetaData/latitude
+#      minvalue: *minSPol
+#      maxvalue: *maxSPol
+#    - variable:
+#        name: MetaData/impactHeightRO
+#      maxvalue: *gnssrorefncepSPolExcludeMin
 
   ## Scale ObsError based on ObsValue
   # NPol
