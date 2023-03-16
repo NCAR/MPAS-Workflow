@@ -87,7 +87,7 @@ class FirstBackground(Component):
       task = TaskLookup[hpc.system](job)
       self._tasks += ['''
   [['''+base+''']]
-    inherit = '''+self.TM.execute+'''
+    inherit = '''+self.tf.execute+'''
 '''+task.job()+task.directives()]
 
       for mm in range(1, fc.NN+1, 1):
@@ -121,7 +121,7 @@ class FirstBackground(Component):
     if base in self['PrepareFirstBackgroundOuter']:
       self._tasks += ['''
   [['''+base+''']]
-    inherit = '''+self.TM.execute+''', SingleBatch
+    inherit = '''+self.tf.execute+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh
     [[[job]]]
       # give longer for higher resolution and more EDA members
@@ -145,10 +145,10 @@ class FirstBackground(Component):
         '''+ea['PrepareExternalAnalysisInner']+'''
         '''+ea['PrepareExternalAnalysisEnsemble']]
 
-      self._dependencies = self.TM.updateDependencies(self._dependencies)
+      self._dependencies = self.tf.updateDependencies(self._dependencies)
 
       # close graph
       self._dependencies += ['''
       """''']
 
-      self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+      self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)

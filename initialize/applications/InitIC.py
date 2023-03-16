@@ -36,7 +36,7 @@ class InitIC(Component):
     job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
     self.__task = TaskLookup[hpc.system](job)
 
-    self.TM.group = ea.TM.group
+    self.tf.group = ea.tf.group
 
     #########
     # outputs
@@ -82,7 +82,7 @@ class InitIC(Component):
 
           self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+queue+''', '''+self.TM.execute+''', BATCH
+    inherit = '''+queue+''', '''+self.tf.execute+''', BATCH
     script = $origin/bin/ExternalAnalysisToMPAS.csh '''+initArgs+'''
 '''+self.__task.job()+self.__task.directives()+'''
     [[[events]]]
@@ -110,7 +110,7 @@ class InitIC(Component):
     for queue in set(subqueues):
       self._tasks += ['''
   [['''+queue+''']]
-    inherit = '''+self.TM.group]
+    inherit = '''+self.tf.group]
 
       self._queues += ['''
     [[['''+queue+''']]]
@@ -120,8 +120,8 @@ class InitIC(Component):
     ###########################
     # update tasks/dependencies
     ###########################
-    self._dependencies = self.TM.updateDependencies(self._dependencies)
-    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+    self._dependencies = self.tf.updateDependencies(self._dependencies)
+    self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
     # export all
     super().export()

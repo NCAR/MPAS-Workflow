@@ -45,8 +45,8 @@ class RTPP(Component):
     super().__init__(config)
 
     groupSettings = ['''
-    inherit = '''+parent.TM.group]
-    self.TM = CylcTaskFamily(self.base, groupSettings)
+    inherit = '''+parent.tf.group]
+    self.tf = CylcTaskFamily(self.base, groupSettings)
 
     # WorkDir is where RTPP is executed
     self.WorkDir = self.workDir+'/{{thisCycleDate}}'
@@ -87,32 +87,32 @@ class RTPP(Component):
       task = TaskLookup[hpc.system](job)
 
       self._tasks += ['''
-  [[Prep'''+self.base+''']]
+  [['''+self.tf.init+'''Job]]
     # note: does not depend on any other tasks
-    inherit = '''+self.TM.init+''', SingleBatch
-    script = $origin/bin/Prep'''+self.base+'''.csh "'''+self.WorkDir+'''"
+    inherit = '''+self.tf.init+''', SingleBatch
+    script = $origin/bin/Init'''+self.base+'''.csh "'''+self.WorkDir+'''"
     [[[job]]]
       execution time limit = PT1M
       execution retry delays = '''+job['retry']+'''
   [['''+self.base+''']]
-    inherit = '''+self.TM.execute+''', BATCH
+    inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh "'''+self.WorkDir+'''"
 '''+task.job()+task.directives()+'''
 
-  [['''+self.TM.clean+''']]
+  [['''+self.tf.clean+''']]
     script = $origin/bin/Clean'''+self.base+'''.csh "'''+self.WorkDir+'"']
 
   def export(self, dependency:str, followon:str):
     if self.active:
       # insert between parent post and finished markers
       self._dependencies += ['''
-        '''+dependency+''' => '''+self.TM.pre+'''
-        '''+self.TM.finished+''' => '''+followon]
+        '''+dependency+''' => '''+self.tf.pre+'''
+        '''+self.tf.finished+''' => '''+followon]
 
       ###########################
       # update tasks/dependencies
       ###########################
-      self._dependencies = self.TM.updateDependencies(self._dependencies)
-      self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+      self._dependencies = self.tf.updateDependencies(self._dependencies)
+      self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
       super().export()

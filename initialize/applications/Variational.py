@@ -183,7 +183,7 @@ class Variational(Component):
 
     #self.abei = ABEI()
 
-    self.TM = parent.TM
+    self.tf = parent.tf
 
     ###################
     # derived variables
@@ -319,25 +319,35 @@ class Variational(Component):
       self.workDir+'/{{thisCycleDate}}',
       workflow['CyclingWindowHR'],
     ]
-    prepArgs = ' '.join(['"'+str(a)+'"' for a in args])
+    initArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+    # 2 init phases
+    self._dependencies += ['''
+        InitVariationals_0 => InitVariationals_1''']
 
     self._tasks += ['''
   ## variational tasks
-  [[InitVariationals]]
-    inherit = '''+self.TM.init+''', SingleBatch
-    env-script = cd {{mainScriptDir}}; ./bin/PrepJEDI.csh '''+prepArgs+'''
-    script = $origin/bin/Prep'''+self.base+'''.csh "1"
+  [[InitVariationals_0]]
+    inherit = '''+self.tf.init+''', SingleBatch
+    script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
     [[[job]]]
-      execution time limit = PT20M
+      execution time limit = PT10M
+      execution retry delays = '''+varjob['retry']+'''
+
+  [[InitVariationals_1]]
+    inherit = '''+self.tf.init+''', SingleBatch
+    script = $origin/bin/InitVariationals.csh "1"
+    [[[job]]]
+      execution time limit = PT10M
       execution retry delays = '''+varjob['retry']+'''
 
   [[Variationals]]
-    inherit = '''+self.TM.execute+'''
+    inherit = '''+self.tf.execute+'''
 '''+vartask.job()+vartask.directives()+'''
 
   # clean
   [[CleanVariationals]]
-    inherit = '''+self.TM.clean+'''
+    inherit = '''+self.tf.clean+'''
     script = $origin/bin/Clean'''+self.base+'''.csh''']
 
     if EDASize == 1:
@@ -354,7 +364,7 @@ class Variational(Component):
         self._tasks += ['''
   [[EDA'''+str(instance)+''']]
     inherit = Variationals, BATCH
-    script = \$origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
+    script = $origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
     # TODO: make ABEI consistent with external class design
     # GenerateABEInflation
@@ -371,13 +381,13 @@ class Variational(Component):
 
       self._tasks += ['''
   [[GenerateABEInflation]]
-    inherit = '''+self.TM.group+''', BATCH
+    inherit = '''+self.tf.group+''', BATCH
     script = $origin/bin/GenerateABEInflation.csh
 '''+abeitask.job()+abeitask.directives()]
 
       self._dependencies += ['''
         # abei
-        '''+self.TM.pre+''' =>
+        '''+self.tf.pre+''' =>
         MeanBackground => HofXBG
-        HofXBG:succeed-all => GenerateABEInflation => '''+self.TM.init+'''
+        HofXBG:succeed-all => GenerateABEInflation => '''+self.tf.init+'''
         GenerateABEInflation => CleanHofXBG''']

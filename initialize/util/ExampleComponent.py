@@ -33,7 +33,6 @@ class Example(Component):
     # derived variables
     ###################
     self._cshVars = list(self._vtable.keys())
-    self._cylcVars = list(self._vtable.keys())
 
     ########################
     # tasks and dependencies

@@ -139,7 +139,7 @@ class ExtendedForecast(Component):
     if self.doMean:
       self._tasks += ['''
   [[MeanAnalysis]]
-    inherit = '''+self.TM.init+''', BATCH
+    inherit = '''+self.tf.init+''', BATCH
     script = $origin/bin/MeanAnalysis.csh
 '''+meantask.job()+meantask.directives()]
 
@@ -242,8 +242,8 @@ class ExtendedForecast(Component):
       prepObs = (taskSuffix+" => ").join(prepObsTasks)+taskSuffix
       prepEA = (taskSuffix+" => ").join(prepEATasks)+taskSuffix
 
-      postconf['verifyobs']['dependencies'] = [self.TM.finished, prepObs]
-      postconf['verifymodel']['dependencies'] = [self.TM.finished, prepEA]
+      postconf['verifyobs']['dependencies'] = [self.tf.finished, prepObs]
+      postconf['verifymodel']['dependencies'] = [self.tf.finished, prepEA]
 
       # note: only duration (dt) varies across output state
 
@@ -286,13 +286,13 @@ class ExtendedForecast(Component):
       #######
       self._tasks += ['''
   [[ExtendedMeanFC]]
-    inherit = '''+self.TM.execute+''', '''+self.base+''', BATCH
+    inherit = '''+self.tf.execute+''', '''+self.base+''', BATCH
     script = $origin/bin/'''+self.fc.base+'''.csh '''+self.meanAnaArgs]
 
       ##############
       # dependencies
       ##############
-      self.TM.addDependencies([dependency])
+      self.tf.addDependencies([dependency])
 
       # open graph
       self._dependencies += ['''
@@ -303,7 +303,7 @@ class ExtendedForecast(Component):
         self._tasks += p._tasks
         self._dependencies += p._dependencies
 
-      self._dependencies = self.TM.updateDependencies(self._dependencies)
+      self._dependencies = self.tf.updateDependencies(self._dependencies)
 
       # close graph
       self._dependencies += ['''
@@ -316,7 +316,7 @@ class ExtendedForecast(Component):
 
       self._tasks += ['''
   [[ExtendedEnsFC]]
-    inherit = '''+self.TM.execute+''', '''+self.base]
+    inherit = '''+self.tf.execute+''', '''+self.base]
 
       for mm, args in self.ensAnaArgs.items():
         self._tasks += ['''
@@ -328,7 +328,7 @@ class ExtendedForecast(Component):
       # dependencies
       ##############
 
-      self.TM.addDependencies([dependency])
+      self.tf.addDependencies([dependency])
 
       # open graph
       self._dependencies += ['''
@@ -339,12 +339,12 @@ class ExtendedForecast(Component):
         self._tasks += p._tasks
         self._dependencies += p._dependencies
 
-      self._dependencies = self.TM.updateDependencies(self._dependencies)
+      self._dependencies = self.tf.updateDependencies(self._dependencies)
 
       # close graph
       self._dependencies += ['''
       """''']
 
-    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+    self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
     super().export()

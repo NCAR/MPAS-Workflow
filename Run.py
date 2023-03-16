@@ -81,16 +81,13 @@ class Run():
   def clean():
     print('cleaning up auto-generated files...')
 
-    cmd = ['rm']
-
     for g in [
       "config/auto/*.csh",
-      "include/*/auto/*.rc",
-      "suites/auto/*.rc",
+      "suite.rc",
     ]:
       files = glob.glob(g)
       for file in files:
-        sub = subprocess.run(cmd+[file])
+        sub = subprocess.run(['rm', file])
 
 ## execute main program
 if __name__ == '__main__': main()

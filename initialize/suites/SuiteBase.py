@@ -22,13 +22,28 @@ class SuiteBase():
     self._dependencies = []
     self._tasks = []
 
+    self.logPrefix = self.__class__.__name__+': '
+    self.suiteFileName = 'suite.rc'
+  def __msg(self, text):
+    print(self.logPrefix+text)
+    return
+
   def submit(self):
+    scriptDir = self.c['experiment']['mainScriptDir']
+    cmd = ['rm', '-rf', scriptDir]
+    self.__msg(' '.join(cmd))
+    sub = subprocess.run(cmd)
+
+    cmd = ['mkdir', '-p', scriptDir]
+    self.__msg(' '.join(cmd))
+    sub = subprocess.run(cmd)
+
     ## task defaults inherited by others
     self._tasks += ["""
   [[root]]
     pre-script = "cd  $origin/"
     [[[environment]]]
-      origin = """+self.c['experiment']['mainScriptDir']+"""
+      origin = """+scriptDir+"""
     [[[events]]]
       # prevents jobs from sitting in submitted state for longer than 'submission timeout'
       submission timeout = """+self.c['workflow']['submission timeout']+"""
@@ -79,23 +94,34 @@ conda activate npl
       self._tasks += self.c[k]._tasks
 
     self.__export()
+
+    suiteSpec = [
+      'bin',
+      'config',
+      'scenarios',
+      self.suiteFileName,
+      'test',
+      'tools',
+    ]
+    for spec in suiteSpec:
+      cmd = ['cp', '-rP', spec, scriptDir+'/']
+      self.__msg(' '.join(cmd))
+      sub = subprocess.run(cmd)
+
     cmd = ['./submit.csh']
-    print(' '.join(cmd))
+    self.__msg(' '.join(cmd))
     sub = subprocess.run(cmd)
 
   def __export(self):
     '''
-    export suite.rc that instructs cylc
+    export suite file that instructs cylc
     '''
-    # define suite.rc
+    # define suite file
     suiterc = [
-'''#!Jinja2
+'''
 
-# experiment for mainScriptDir (needed by Hofx and Variational)
-%include include/variables/auto/experiment.rc
-
-# workflow for "double-date-substitution" variables
-%include include/variables/auto/workflow.rc
+# '''+self.suiteFileName+''' is automatically generated.  Modifying it directly will not give the
+#  intended result.  See '''+self.__class__.__name__+''' class for implementation information.
 
 [meta]
   title = '''+self.c['experiment']['title']+'''
@@ -129,8 +155,8 @@ conda activate npl
   number of cycle points = 200
   default node attributes = "style=filled", "fillcolor=grey"''']
 
-    # write suite.rc to text file
-    with open('suites/auto/suite.rc', 'w') as f:
+    # write suite to text file
+    with open(self.suiteFileName, 'w') as f:
       f.writelines(suiterc)
       f.close()
     return

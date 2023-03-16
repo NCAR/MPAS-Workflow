@@ -219,12 +219,12 @@ class ExternalAnalyses(Component):
       base = 'ExternalAnalysisReady__'
 # TODO: use 'finished' tag like other tasks
 #      self._dependencies += ['''
-#        '''+base+''' => '''+self.TM.finished]
+#        '''+base+''' => '''+self.tf.finished]
       if base in self['PrepareExternalAnalysisOuter']:
         taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+self.TM.group]
+    inherit = '''+self.tf.group]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:
@@ -283,7 +283,7 @@ class ExternalAnalyses(Component):
     for queue in set(subqueues):
       self._tasks += ['''
   [['''+queue+''']]
-    inherit = '''+self.TM.group]
+    inherit = '''+self.tf.group]
 
       self._queues += ['''
     [[['''+queue+''']]]
@@ -293,8 +293,8 @@ class ExternalAnalyses(Component):
     ###########################
     # update tasks/dependencies
     ###########################
-    self._dependencies = self.TM.updateDependencies(self._dependencies)
-    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+    self._dependencies = self.tf.updateDependencies(self._dependencies)
+    self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
     # export all
     super().export()

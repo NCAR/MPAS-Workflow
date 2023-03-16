@@ -92,7 +92,7 @@ class DA(Component):
 
   def export(self, previousForecast:str, ef:ExtendedForecast):
     self.var.export()
-    self.rtpp.export(dependency = self.TM.post, followon = self.TM.finished)
+    self.rtpp.export(dependency = self.tf.post, followon = self.tf.finished)
 
     ########################
     # tasks and dependencies
@@ -104,7 +104,7 @@ class DA(Component):
 
     # pre-da observation processing
     self._dependencies += ['''
-        '''+self.obs['PrepareObservations']+''' => '''+self.TM.pre]
+        '''+self.obs['PrepareObservations']+''' => '''+self.tf.pre]
 
     # sub-tasks
     if self.workflow['CriticalPathType'] in ['Normal', 'Reanalysis']:
@@ -114,11 +114,11 @@ class DA(Component):
 
     if self.workflow['CriticalPathType'] == 'Normal':
       # depends on previous Forecast
-      self.TM.addDependencies([previousForecast])
+      self.tf.addDependencies([previousForecast])
 
     # update tasks and dependencies
-    self._dependencies = self.TM.updateDependencies(self._dependencies)
-    self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+    self._dependencies = self.tf.updateDependencies(self._dependencies)
+    self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
     # close graph
     self._dependencies += ['''
@@ -134,8 +134,8 @@ class DA(Component):
         'hpc': self.hpc,
         'obs': self.outputs['obs']['members'],
         'sub directory': 'da',
-        'dependencies': [self.TM.post],
-        'followon': [self.TM.clean],
+        'dependencies': [self.tf.post],
+        'followon': [self.tf.clean],
       },
     }
 
@@ -150,8 +150,8 @@ class DA(Component):
 
       self._dependencies += post._dependencies
 
-      self._dependencies = self.TM.updateDependencies(self._dependencies)
-      self._tasks = self.TM.updateTasks(self._tasks, self._dependencies)
+      self._dependencies = self.tf.updateDependencies(self._dependencies)
+      self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
 
       # close graph
       self._dependencies += ['''

@@ -10,21 +10,8 @@ echo "$0 (INFO): Generating the scenario-specific MPAS-Workflow directory"
 
 # Create/copy the task shell scripts
 
-# experiment provides mainScriptDir
+# experiment provides mainScriptDir, SuiteName
 source config/auto/experiment.csh
-
-set configParts = ( \
-  bin \
-  config \
-  include \
-  scenarios \
-  suites \
-  test \
-  tools \
-)
-foreach part ($configParts)
-  cp -rP $part ${mainScriptDir}/
-end
 
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
@@ -34,9 +21,6 @@ module load cylc
 module load graphviz
 
 date
-
-# copy suite to cylc-recognized location
-cp -v suites/auto/suite.rc ./
 
 echo "$0 (INFO): checking if a suite with the same name is already running"
 

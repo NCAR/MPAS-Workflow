@@ -1,8 +1,7 @@
 # Ignore these files anywhere in the tree
 
 config/auto/*.csh
-include/variables/auto/*.rc
-suites/auto/*.rc
+suite.rc
 
 ~*
 
