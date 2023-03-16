@@ -1,4 +1,10 @@
 #!/bin/csh -f
+
+# (C) Copyright 2023 UCAR
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
 # Get observations for a cold start experiment
 # from the NCEP FTP BUFR/PrepBUFR files or CISL RDA archived NCEP BUFR files
 
