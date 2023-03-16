@@ -1,5 +1,5 @@
   obs filters:
   - filter: PreQC
     maxvalue: 0
-#  - filter: GOMsaver
-#    filename: {{OutDBDir}}/{{geoPrefix}}_amsua_n18.nc4
+  - filter: GOMsaver
+    filename: {{OutDBDir}}/{{geoPrefix}}_amsua_n18.nc4
