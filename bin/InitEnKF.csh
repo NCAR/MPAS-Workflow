@@ -1,6 +1,9 @@
 #!/bin/csh -f
 
-#TODO: move this script functionality and relevent control's to python + maybe yaml
+# (C) Copyright 2023 UCAR
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
 # Perform preparation for the enkf application
 # + background ensemble
@@ -28,7 +31,7 @@ set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
-source ./getCycleVars.csh
+source ./bin/getCycleVars.csh
 
 # static work directory
 set self_WorkDir = $CyclingDADir

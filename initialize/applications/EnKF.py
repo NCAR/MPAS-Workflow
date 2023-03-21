@@ -207,7 +207,7 @@ class EnKF(Component):
 
   [[InitEnKF_1]]
     inherit = '''+self.tf.init+''', SingleBatch
-    script = $origin/bin/InitEnKF.csh "1"
+    script = $origin/bin/InitEnKF.csh
     [[[job]]]
       execution time limit = PT10M
       execution retry delays = '''+solverjob['retry']+'''

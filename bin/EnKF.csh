@@ -1,6 +1,12 @@
 #!/bin/csh -f
 
-# Carry out LocalEnsembleDA (EnKF) for ensemble of first guess states
+# (C) Copyright 2023 UCAR
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# Carry out LocalEnsembleDA (EnKF) solver stage for ensemble of first guess states
+# note: must follow successful observer stage
 
 date
 
