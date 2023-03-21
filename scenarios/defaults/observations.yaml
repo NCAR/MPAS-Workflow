@@ -9,7 +9,7 @@ observations:
       PrepareObservationsTasks:
       - GetObs
       - ObsToIODA
-      - ObsReady
+      - ObsReady__
 
       instrumentsAllowingBiasCorrection:
       - amsua_aqua
@@ -37,7 +37,7 @@ observations:
       PrepareObservationsTasks:
       - GetObs
       - ObsToIODA
-      - ObsReady
+      - ObsReady__
 
       instrumentsAllowingBiasCorrection:
       - amsua_aqua
@@ -68,7 +68,7 @@ observations:
           common: "{{ObservationsWorkDir}}"
 
     PANDACArchive:
-      PrepareObservationsTasks: [ObsReady]
+      PrepareObservationsTasks: [ObsReady__]
 
       instrumentsAllowingBiasCorrection: [None]
 
@@ -173,7 +173,7 @@ observations:
 
 
     GenerateObs:
-      PrepareObservationsTasks: [ObsReady]
+      PrepareObservationsTasks: [ObsReady__]
 
       instrumentsAllowingBiasCorrection:
       - amsua_aqua

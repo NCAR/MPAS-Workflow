@@ -21,7 +21,7 @@ externalanalyses:
       # default behavior is to assume that analyses are already prepared offline
       PrepareExternalAnalysisTasks:
       - "LinkExternalAnalysis-{{mesh}}"
-      - "ExternalAnalysisReady"
+      - "ExternalAnalysisReady__"
 
       job:
         # job settings for "Get*AnalysisFrom*" tasks
@@ -43,7 +43,7 @@ externalanalyses:
           - "GetGFSAnalysisFromRDA"
           - "UngribExternalAnalysis"
           - "ExternalAnalysisToMPAS-{{mesh}}"
-          - "ExternalAnalysisReady"
+          - "ExternalAnalysisReady__"
           Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
           job:
             GetAnalysisFrom:
@@ -55,7 +55,7 @@ externalanalyses:
           - "GetGFSAnalysisFromFTP"
           - "UngribExternalAnalysis"
           - "ExternalAnalysisToMPAS-{{mesh}}"
-          - "ExternalAnalysisReady"
+          - "ExternalAnalysisReady__"
           Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
           job:
             GetAnalysisFrom:

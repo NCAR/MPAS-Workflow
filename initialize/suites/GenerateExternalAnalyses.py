@@ -1,33 +1,49 @@
 #!/usr/bin/env python3
 
-from initialize.Config import Config
-from initialize.Suite import Suite
-from initialize.components.Build import Build
-from initialize.components.Experiment import Experiment
-from initialize.components.HPC import HPC
-from initialize.components.Members import Members
-from initialize.components.Model import Model
-from initialize.components.Naming import Naming
-from initialize.components.Workflow import Workflow
-from initialize.components.ExternalAnalyses import ExternalAnalyses
+'''
+ (C) Copyright 2023 UCAR
 
-# applications
-from initialize.components.InitIC import InitIC
+ This software is licensed under the terms of the Apache Licence Version 2.0
+ which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+'''
 
-class GenerateExternalAnalyses(Suite):
+from initialize.applications.InitIC import InitIC
+# TODO: make members optional, modify getCycleVars
+from initialize.applications.Members import Members
+
+from initialize.config.Config import Config
+
+from initialize.data.ExternalAnalyses import ExternalAnalyses
+from initialize.data.Model import Model
+
+from initialize.framework.Build import Build
+from initialize.framework.Experiment import Experiment
+from initialize.framework.Naming import Naming
+
+from initialize.suites.SuiteBase import SuiteBase
+
+class GenerateExternalAnalyses(SuiteBase):
   def __init__(self, conf:Config):
-    c = {}
-    c['hpc'] = HPC(conf)
-    c['workflow'] = Workflow(conf)
-    c['model'] = Model(conf)
-    c['build'] = Build(conf, c['model'])
-    c['externalanalyses'] = ExternalAnalyses(conf, c['hpc'], c['model'].getMeshes())
-    c['ic'] = InitIC(conf, c['hpc'], c['model'].getMeshes(), c['externalanalyses'])
-    c['exp'] = Experiment(conf, c['hpc'])
-    c['naming'] = Naming(conf, c['exp'])
+    super().__init__(conf)
+
+    self.c['model'] = Model(conf)
+    self.c['build'] = Build(conf, self.c['model'])
+    self.c['externalanalyses'] = ExternalAnalyses(conf, self.c['hpc'], self.c['model'].getMeshes())
+    self.c['initic'] = InitIC(conf, self.c['hpc'], self.c['model'].getMeshes(), self.c['externalanalyses'])
+    self.c['experiment'] = Experiment(conf, self.c['hpc'])
+    self.c['naming'] = Naming(conf, self.c['experiment'])
 
     # TODO: make members optional, modify getCycleVars
-    c['members'] = Members(conf)
+    self.c['members'] = Members(conf)
 
-    for c_ in c.values():
-      c_.export(c)
+    for k, c_ in self.c.items():
+      c_.export()
+
+    self._dependencies += ['''
+    [[[PT'''+str(self.c['workflow']['CyclingWindowHR'])+'''H]]]
+      graph = '''+self.c['externalanalyses']['PrepareExternalAnalysisOuter']]
+
+    self.taskComponents += [
+      'externalanalyses',
+      'initic',
+    ]

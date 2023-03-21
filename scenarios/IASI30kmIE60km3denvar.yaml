@@ -1,8 +1,6 @@
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180514T18
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
 observations:
   resource: PANDACArchive
   resources:
@@ -51,7 +49,7 @@ variational:
       resource: "PANDAC.GEFS"
   biasCorrection: True
   tropprsMethod: thompson
-  observations: [
+  observers: [
     aircraft,
     gnssroref,
     satwind,
@@ -78,4 +76,4 @@ hpc:
   CriticalQueue: premium
   NonCriticalQueue: premium
 verifyobs:
-  pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics
+  script directory: /glade/p/mmm/parc/ivette/pandac/graphics

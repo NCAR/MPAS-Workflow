@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 
+'''
+ (C) Copyright 2023 UCAR
+
+ This software is licensed under the terms of the Apache Licence Version 2.0
+ which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+'''
+
 ####################################################################################################
-# This script runs a pre-configured set of cylc suites via MPAS-Workflow. If the user has
-# previously executed this script with the same "ArgRunConfig", and one or more of the scenarios is
-# already running, then executing this script again will cause drive.csh to kill those running
-# suites.
+# This script generates a suite.rc file from a pre-configured set MPAS-Workflow scenarios, and then
+# submits those suites via Cylc
 ####################################################################################################
 
 ## Usage:
@@ -14,12 +19,14 @@
 # external modules
 import argparse
 from collections.abc import Iterable
+import glob
 from pathlib import Path
+import subprocess
 
 # local modules
-from initialize.Config import Config
-from initialize.Scenario import Scenario
-from initialize.Suite import SuiteFactory
+from initialize.config.Config import Config
+from initialize.config.Scenario import Scenario
+from initialize.suites.SuiteBase import SuiteLookup
 
 def main():
   '''
@@ -43,7 +50,6 @@ class Run():
     self.__configFile = args.config
     self.__config = Config(args.config)
 
-
   def execute(self):
     '''
     execute the scenarios
@@ -66,12 +72,27 @@ class Run():
       print("Running the scenario: "+scenarioFile)
       print("#########################################################################")
 
+      self.clean()
+
       scenario = Scenario(scenarioFile)
       scenario.initialize()
 
-      suite = SuiteFactory(suiteName, scenario.getConfig())
-      suite.drive()
-      suite.clean()
+      suite = SuiteLookup(suiteName, scenario.getConfig())
+      suite.submit()
+
+    self.clean()
+
+  @staticmethod
+  def clean():
+    print('cleaning up auto-generated files...')
+
+    for g in [
+      "config/auto/*.csh",
+      "suite.rc",
+    ]:
+      files = glob.glob(g)
+      for file in files:
+        sub = subprocess.run(['rm', file])
 
 ## execute main program
 if __name__ == '__main__': main()

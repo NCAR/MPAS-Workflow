@@ -2,10 +2,6 @@ workflow:
   first cycle point: 20180414T18
   final cycle point: 20180514T18
   CriticalPathType: Normal
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
-  VerifyAgainstObservations: True
-  VerifyAgainstExternalAnalyses: True
 
 model:
   outerMesh: 30km
@@ -24,7 +20,7 @@ variational:
     forecasts:
       resource: "PANDAC.EDA"
 experiment:
-  ExpSuffix: '_ensB-SE80+RTPP70'
+  suffix: '_ensB-SE80+RTPP70'
 
 observations:
   resource: PANDACArchive

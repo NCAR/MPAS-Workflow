@@ -1,5 +1,4 @@
 rtpp:
-## mesh-specific settings
   # resource requirements
   job:
     #{{ensembleMesh}}:
@@ -18,6 +17,7 @@ rtpp:
       # cylc retry string
       retry: '2*PT30S'
 
+    ## mesh-specific settings
     60km:
       baseSeconds: 10
       secondsPerMember: 10

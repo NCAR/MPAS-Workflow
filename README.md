@@ -58,7 +58,7 @@ code from either [JCSDA/mpas-bundle](https://github.com/JCSDA/mpas-bundle/) or
 follow the build instructions in the corresponding repository.  Tagged releases of MPAS-Workflow
 starting with 25JAN2023 are accompanied by an mpas-bundle CMakeLists.txt (`build/CMakeLists.txt`)
 with fixed source code repository tags/hashes that are consistent with the released workflow
-version.  Users can copy that file into their mpas-bundle source code directory before executing 
+version.  Users can copy that file into their mpas-bundle source code directory before executing
 `ecbuild` in order to download the currect repository versions.
 
 Periodically the `develop` branch of MPAS-Workflow will be consistent with the source code
@@ -82,16 +82,16 @@ Configuration Files
 
 The files under the `scenarios/` directories describe the configuration for a particular instance
 of an `MPAS-Workflow` `Cylc` suite.  `scenarios/defaults/*.yaml` describe some default
-`resource`-based options that users may select in their experiment scenario `yaml` (e.g., 
+`resource`-based options that users may select in their experiment scenario `yaml` (e.g.,
 `scenarios/*.yaml`.  Both the `defaults` and the particular scenario selected are parsed with
-python-based classes in the `initialize/components/` directory.  Each `component` is associated
-with a particular root `yaml` node.  For example, `Variational.py` parses the configuration of the
-`variational` node, `Forecast.py` parses the `forecast` node, and so on.  The basic (i.e.,
-`non-resource`) options available for each root `yaml` node are described either as class member
+python modules/classes in the `initialize/*/` directories.  Each class derived from `Component` is
+associated with a root node in the scenario `yaml` file.  For example, `Variational.py` parses the
+configuration of the `variational` node, `Forecast.py` parses the `forecast` node, and so on.  The
+basic (i.e., `non-resource`) options available for each root `yaml` node are described either as class member
 variables or in the class `__init__` method.  The appropriate `yaml` layouts for `resource` options
 (e.g., `variational.job` `externalanalyses.resources`, `observations.resources`, `forecast.job`)
 are demonstrated in `scenarios/defaults/*.yaml`.  `resource` options are also parsed in the
-`initialize/components/` python classes.
+python modules/classes under `initialize/*`.
 
 #### cross-application `resource` options
 
@@ -145,15 +145,15 @@ GitHub issues, and then submit pull requests.
 
 `config/tools.csh`: initializes python tools for workflow task management
 
-If a developer wishes to add a new `yaml` key beyond the current available options, the
+If a developer wishes to add a new `yaml` node beyond the current available options, the
 recommended procedure is to add the option in the appropriate python class, following the examples
-in `initialize/components/*.py`.  Developers are referred to the many existing examples and it is
+in `initialize/*/*.py`.  Developers are referred to the many existing examples, and it is
 recommended to discuss additional options to be merged back into the GitHub repository via GitHub
 issues and pull requests.
 
 
 #### MPAS (`config/mpas/`)
-Configuration aspects that are unique to `MPAS-Atmosphere`
+Contains static configuration aspects that are unique to `MPAS-Atmosphere`
 
 `config/mpas/geovars.yaml`: list of templated geophysical variables (`GeoVars`) that MPAS-JEDI can
 provide to UFO; identical to `mpas-jedi/test/testinput/namelists/geovars.yaml`, but duplicated here
@@ -166,7 +166,7 @@ so that users modify it at run-time as needed.
 
 E.g., `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*`
 
-`config/mpas/forecast/*`: tasks derived from `forecast.csh`
+`config/mpas/forecast/*`: tasks using `Forecast.csh`
 
 `config/mpas/hofx/*`: tasks derived from `HofX.csh`
 
@@ -182,13 +182,15 @@ E.g., `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*
 The application-specific `yaml` stubs provide a base set of options that are common across most
 experiments.  Parts of those stubs are automatically populated via the workflow.  Advanced
 users or developers are encouraged to modify the application-specific yamls directly to suit
-their needs.
+their needs.  If those changes/enhancements would be beneficial for multiple users, please
+consider submitting a pull request to share your enhancements.
 
 `config/jedi/applications/*.yaml`: MPAS-JEDI application-specific `yaml` templates.  These will be
-further populated by scripts templated on `PrepJEDI.csh` and/or `PrepVariational.csh`.
+further populated by `bin/PrepJEDI.csh` and/or `bin/InitVariationals.csh`.
 
 `config/jedi/ObsPlugs/variational/*.yaml`: observation `yaml` stubs that get plugged into `Variational`
-`jedi/applications` yamls, e.g., `3dvar.yaml`, `3denvar.yaml`, and `3dhybrid.yaml`
+`jedi/applications` yamls, e.g., `3dvar.yaml`, `3denvar.yaml`, and `3dhybrid.yaml`.  The yaml
+substitution is carried out by `bin/PrepJEDI.csh`.
 
 `config/jedi/ObsPlugs/hofx/*.yaml`: same, but for `jedi/applications/hofx.yaml`
 
@@ -197,13 +199,14 @@ further populated by scripts templated on `PrepJEDI.csh` and/or `PrepVariational
 Main driver: Run.py
 -------------------
 
-`Run.py` initiates one of the suites (`suites/*.rc`) for either a single scenario or a list of
-scenarios, each of which must be described in a scenario configuration file.  Other than for
-automated testing (`test/testinput/test.yaml`), most of the scenario configurations
-(`scenarios/*.yaml`) only select a single scenario. It is recommended to run the `test.yaml`
-list of scenarios both (1) when a new user first clones the MPAS-Workflow repository and (2) before
-submitting a GitHub pull request to [MPAS-Workflow](https://github.com/NCAR/MPAS-Workflow).  For
-example, execute the following from the command-line:
+`Run.py` initiates a single scenario or a list of scenarios, each of which is associated with one
+of the pre-defined suites (`initialize/suites/*.py`). Each scenario must be described in
+`yaml`-formatted scenario configuration file.  Other than for automated testing
+(`test/testinput/test.yaml`), most of the scenario configurations (`scenarios/*.yaml`) only select
+a single scenario. It is recommended to run the `test.yaml` list of scenarios both (1) when a new
+user first clones the MPAS-Workflow repository and (2) before submitting a GitHub pull request to
+[MPAS-Workflow](https://github.com/NCAR/MPAS-Workflow).  For example, execute the following from
+the command-line:
 
 ```shell
   source env-script/cheyenne.${YourShell}
@@ -213,81 +216,55 @@ example, execute the following from the command-line:
   ./test.csh
 ```
 
-`Run.py` parses the selected `{{scenarioConfig}}`, automatically generates many
-`Cylc` `include/*/auto/*.rc` files and `config/auto/*.csh` environment variable files, and finally
-initiates the `Cylc` suite by executing `drive.csh`. Users need not modify `Run.py` or `drive.csh`.
+`Run.py` (1) parses the selected `{{scenarioConfig}}`, (2) automatically generates a few
+`Cylc`-relevant `*.rc` files and `config/auto/*.csh` environment variable files, and (3)
+initiates the `Cylc` suite by executing `submit.csh`. Users need not modify `Run.py` or
+`submit.csh`.  The file `MPAS-Workflow/suite.rc` is automatically generated in the run
+directory, and it describes all suite tasks and dependencies.
 
-There are additional aspects of the driver in `drive.csh`, `initialize/`, and `suites/*.rc`.  For
-most users and developers, only `initialize/components` will need to be consulted and/or modified. 
+Most of the driver functionality is comprised by python scripts in `initialize/`.  Only
+they need to be consulted and/or modified.  For example, developers who wish to
+add new `Cylc` tasks, or change the relationships (`dependencies`) between tasks, will need
+to modify `initialize/*/*.py`, or in rare cases, create a new suite under `initialize/suites/`.
+If the new task requires a new shell script, it can be added in the `bin/` directory.  Examples
+are available for executing `bin/*.csh` scripts from an auto-generated `Cylc` task in the
+`initialize/applications`, `initialize/data`, and `initialize/post` directories.
 
-Developers who wish to add new `Cylc` tasks, or modify the relationships between tasks, may modify
-`include/dependencies/*.rc`, `include/tasks/*.rc`, or `initialize/components/*.py`.
+Workflow task scripts
+---------------------
 
-- `include/dependencies/criticalpath.rc`: controls the relationships between the critical path task
-  elements for the `suites/Cycle.rc` suite, in particular for all possible `CriticalPathType`
-  options.  Allows for re-use of `include/tasks/auto/forecast.rc` and `include/tasks/auto/da.rc`
-  (generated automatically from from `initialize/components/Forecast.py` and
-  `initialize/components/DA.py`) according to the user's scenario `yaml` selections.
-- `include/dependencies/verifyobs.rc` and `include/dependencies/verifymodel.rc`: describe the
-  dependencies between `HofX`, `Verify*`, `Compare*`, and other kinds of tasks that produce
-  verification statistics files.  These include dependencies on tasks in
-  `include/tasks/auto/forecast.rc` and `include/tasks/auto/da.rc` that produce the data to be
-  verified.  Multiple aspects of verification are controlled via the `workflow` section of the
-  scenario configuration. Full descriptions of all verification options are available in
-  `initialize/components/Workflow.py`.
-- `include/tasks/verify.rc`: describes particular instances of verification-related `Cylc` tasks.
-  This file differs from the base task descriptions, which are automatically generated by
-`initialize/components/*.py` in the following locations:
-  - `include/tasks/auto/extendedforecast.rc`
-  - `include/tasks/auto/hofx.rc`
-  - `include/tasks/auto/verifymodel.rc`
-  - `include/tasks/auto/verifyobs.rc`
-- `include/tasks/base.rc`: contains some base `Cylc` task descriptors that are inherited
-  by child tasks. Look for the `inherit` keyword for examples.
+These scripts (`bin/*.csh`) are called from cylc workflow task elements.  Their usage and
+relationships are fully described by automatically generated suite.rc snippets.  Those task and
+dependency snippets, respectively, are created during the execution of `Run.py`.  That procedure
+is carried out by the python scripts under the `initialize/` directory.  Many shell scripts have a
+corresponding python class in the `initialize/` directory, or else serve as one task of many in a
+`TaskFamily` class member belonging to a derived `Component` class.
 
+`CleanHofx.csh`: used to clean `HofX` working directories (e.g., under `Verification/fc/`) in order
+to reduce experiment disk resource requirements.
 
-Templated workflow tasks
-------------------------
-
-These scripts (`applications/*.csh`) serve as templates for multiple workflow components. In some
-cases, the actual `Cylc` task scripts that are selected within `include/tasks/*.rc` and
-`include/tasks/auto/*.rc` are generated by performing sed substitution within `SetupWorkflow.csh`
-and `applications/AppAndVerify.csh`. Here we give a brief summary of the design and templating for
-each application script.
-
-`CleanHofx.csh`: used to generate `CleanHofX*.csh` scripts, which clean `HofX` working directories
-(e.g., `Verification/fc/*`) in order to reduce experiment disk resource requirements.
-
-`forecast.csh`: used to generate all forecast scripts, e.g., `Forecast.csh` and
-`ExtendedMeanFC.csh`, which execute `mpas_atmosphere` for a command-line-argument controlled time
-duration and state output interval. Takes `Variational` analyses or external analyses processed
-as cold-start initial conditions (IC) as inputs.
-
-`HofX.csh`: used to generate all `HofX*` scripts, e.g., `HofXBG.csh`, `HofXMeanFC.csh`, and
-`HofXEnsMeanBG.csh`.  Each of those executes the `mpasjedi_hofx3d` application. Templated w.r.t.
-the input state directory and prefix, allowing it to read any forecast state written through the
-`MPAS-Atmosphere` `da_state` stream.
+`HofX.csh`: used to execute the `mpasjedi_hofx3d` application. Can read any forecast state written
+ through the `MPAS-Atmosphere` `da_state` stream.
 
 `PrepJEDI.csh`: substitutes commonly repeated sections in the `yaml` file for multiple MPAS-JEDI
-applications. Templated w.r.t. the application type (i.e., `variational`, `hofx`) and application
-name (e.g., `3denvar`, `3dvar`, `hofx`). Prepares `namelist.atmosphere`, `streams.atmosphere`, and
-`stream_list.atmosphere.*`.  Links required static files and graph info files that describe MPI
-partitioning.
+applications. The primary purpose is to fill in the `observers` section of `hofx` and `variational`
+`yaml` files.  Prepares `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*`.
+Links required static files and graph info files that describe MPI  partitioning.
 
-`verifyobs.csh`: used to generate scripts that verify observation-database output from `HofX` and
-`Variational`-type tasks.
+`VerifyObs.csh`: used to verify observation-database output from `HofX` and `Variational` tasks.
 
-`verifymodel.csh`: used to generate scripts that verify model forecast states with respect to
-external analyses (i.e., configurable via `initialize/components/ExternalAnalyses.py`).
-
-
-Non-templated workflow tasks
-----------------------------
-These scripts (also located at `applications/*.csh`) are used as-is without sed substitution.
-They are copied to the experiment workflow directory by `SetupWorkflow.csh` or by
-`applications/AppAndVerify.csh`.
+`VerifyModel.csh`: used to verify model forecast states with respect to external analyses (i.e.,
+configurable via `initialize/data/ExternalAnalyses.py`).
 
 `ExternalAnalysisToMPAS.csh`: generates cold-start IC files from ungribbed external analyses
+
+`Forecast.csh`: used for all forecast-related `Cylc` tasks, e.g., `Forecast`, `ColdForecast`,
+and `ExtendedForecast`, which execute `mpas_atmosphere` for a command-line-argument controlled time
+duration and state output interval. Many more command-line arguments allow for extensive flexibility
+in the types of tasks to which this script can apply.  See `initialize/applications/Forecast.py`,
+`initialize/applications/ExtendedForecast.py`, and `initialize/data/FirstBackground.py` for multiple
+use-cases.  Takes `Variational` analyses, or external analyses processed as cold-start initial
+conditions (IC), as inputs.
 
 `GenerateABEInflation.csh`: generates Adaptive Background Error Inflation (ABEI) factors based on
 all-sky IR brightness temperature `H(x_mean)` and `H_clear(x_mean)` from GOES-16 ABI and Himawari-8
@@ -316,7 +293,7 @@ background and analysis ensembles of the ensemble of `Variational*` tasks
    be conducted simultaneously if it is beneficial to group members instead of running them all
    independently like what is achieved via `Variational*` member tasks.
 
- - `PrepVariational.csh`: further modifies the application `yaml` file(s) for the `Variational`
+ - `InitVariationals.csh`: further modifies the application `yaml` file(s) for the `Variational`
    task. The primary function is to populate the background error covariance and EDA-relevant
    entries.
 
@@ -325,34 +302,22 @@ background and analysis ensembles of the ensemble of `Variational*` tasks
    can be launched in parallel to conduct an ensemble of data assimilations (EDA).
 
 
-
 Non-task shell scripts
 ----------------------
-`applications/AppAndVerify.csh`: generate "Application" and "Verification" `Cylc`-task shell scripts
-from the templated workflow task scripts via `sed` substitution.  Note that although this script
-performs sed substitution on some non-templated `*Variational.csh` scripts, those scripts are
-completely non-templated.  Only the `Variational` verification and `PrepJEDIVaritional.csh` scripts
-are templated.
-
-`getCycleVars.csh`: defines cycle-specific variables, such as multiple formats of the valid date,
+`bin/getCycleVars.csh`: defines cycle-specific variables, such as multiple formats of the valid date,
 and date-resolved directories
 
-`SetupWorkflow.csh`:
+`submit.csh`:
 1. Source the experiment directory info from `config/auto/experiment.csh`
-2. Copy non-templated application scripts to the experiment directory
-
-3. Copy the `config`, `include`, `scenarios`, `suites`, `test`, and `tools` directories
-   to the experiment workflow directory so that a record is kept of all settings
-4. Generate application shell scripts via templated substitution of
-   `applications/AppAndVerify.csh`, then execution of application-specific
-   `applications/AppAndVerify*.csh` scripts
+2. Check if suite is already running; kill if it is
+3. Submit the suite
 
 
 Python tools (`tools/*.py`)
 ---------------------------
 Each of these tools perform a useful part of the workflow that is otherwise cumbersome to achieve
 via shell scripts. The argument definitions for each script can be retrieved by executing
-`python {{ScriptName}}.py --help` 
+`python {{ScriptName}}.py --help`
 
 `advanceCYMDH`: time-stepping used to figure out dates relative to an arbitrary input date
 
@@ -368,7 +333,7 @@ controlling indentation of some `yaml` components
 
 `substituteEnsembleBTemplate`: generates and substitutes the ensemble background error
 covariance `members from template` configuration into application yamls that match `*envar*`
-and `*hybrid*`. See `PrepVariational.csh` for the specific behavior.
+and `*hybrid*`. See `InitVariationals.csh` for the specific behavior.
 
 `updateXTIME`: updates the `xtime` variable in an `MPAS-Atmosphere` state file so that it can be read
 into the model as though it had the correct time stamp
@@ -402,7 +367,7 @@ using the drop-down menus.  From the GUI, it is easy to perform actions on the e
 individual tasks, e.g., hold, resume, kill, trigger.  It is also possible to interrogate the
 real-time progress of the `Cylc` tasks being executed, and in some cases the next tasks that will be
 triggered. There are multiple views available, including a flow chart view that is useful for new
-users to learn the dependencies between tasks.
+users to learn the dependencies between tasks and families of tasks.
 
 3. Shut down a suite (`SUITENAME`) after killing all active tasks
 ```shell
@@ -468,5 +433,5 @@ Contributors to-date
 
 [^+]: primary repository maintainers/developers
 
-These people have contributed any of the following: GitHub pull requests and review, data, scripts
-on which workflow tasks are templated, source code, or critical consultation.
+These people have contributed any of the following: GitHub pull requests and review, data, shell
+scripts used by workflow tasks, basic workflow design, source code, or other critical consultation.

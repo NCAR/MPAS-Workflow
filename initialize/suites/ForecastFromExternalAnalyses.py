@@ -1,64 +1,80 @@
 #!/usr/bin/env python3
 
-from initialize.Config import Config
-from initialize.Suite import Suite
-from initialize.components.Build import Build
-from initialize.components.Experiment import Experiment
-from initialize.components.ExternalAnalyses import ExternalAnalyses
-from initialize.components.HPC import HPC
-from initialize.components.Members import Members
-from initialize.components.Model import Model
-from initialize.components.Naming import Naming
-from initialize.components.Observations import Observations
-from initialize.components.StaticStream import StaticStream
-from initialize.components.Workflow import Workflow
+'''
+ (C) Copyright 2023 UCAR
 
-# applications
-from initialize.components.Benchmark import Benchmark
-from initialize.components.InitIC import InitIC
-from initialize.components.ExtendedForecast import ExtendedForecast
-from initialize.components.Forecast import Forecast
-from initialize.components.HofX import HofX
-from initialize.components.VerifyModel import VerifyModel
-from initialize.components.VerifyObs import VerifyObs
+ This software is licensed under the terms of the Apache Licence Version 2.0
+ which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+'''
 
-class ForecastFromExternalAnalyses(Suite):
+from initialize.applications.InitIC import InitIC
+from initialize.applications.ExtendedForecast import ExtendedForecast
+from initialize.applications.Forecast import Forecast
+from initialize.applications.Members import Members
+
+from initialize.config.Config import Config
+
+from initialize.data.ExternalAnalyses import ExternalAnalyses
+from initialize.data.Model import Model
+from initialize.data.Observations import Observations
+from initialize.data.StaticStream import StaticStream
+
+from initialize.framework.Build import Build
+from initialize.framework.Experiment import Experiment
+from initialize.framework.Naming import Naming
+
+#from initialize.post.Benchmark import Benchmark
+
+from initialize.suites.SuiteBase import SuiteBase
+
+class ForecastFromExternalAnalyses(SuiteBase):
   def __init__(self, conf:Config):
-    c = {}
-    c['hpc'] = HPC(conf)
-    c['workflow'] = Workflow(conf)
+    super().__init__(conf)
 
-    c['model'] = Model(conf)
-    meshes = c['model'].getMeshes()
+    self.c['model'] = Model(conf)
+    meshes = self.c['model'].getMeshes()
 
-    c['build'] = Build(conf, c['model'])
-    c['obs'] = Observations(conf, c['hpc'])
-    c['members'] = Members(conf)
+    self.c['build'] = Build(conf, self.c['model'])
+    self.c['observations'] = Observations(conf, self.c['hpc'])
+    self.c['members'] = Members(conf)
 
-    c['externalanalyses'] = ExternalAnalyses(conf, c['hpc'], meshes)
-    c['ic'] = InitIC(conf, c['hpc'], meshes, c['externalanalyses'])
-    c['hofx'] = HofX(conf, c['hpc'], meshes, c['model'])
-    c['fc'] = Forecast(conf, c['hpc'], meshes['Outer'], c['members'], c['workflow'],
-                c['externalanalyses'].outputs['Outer'], 
-                c['externalanalyses'].outputs['Outer'])
-    c['extendedforecast'] = ExtendedForecast(conf, c['hpc'], c['members'], c['fc'],
-                c['externalanalyses'].outputs['Outer'],
-                c['externalanalyses'].outputs['Outer'][0],
-                c['externalanalyses'].outputs['Outer'])
+    self.c['externalanalyses'] = ExternalAnalyses(conf, self.c['hpc'], meshes)
+    self.c['initic'] = InitIC(conf, self.c['hpc'], meshes, self.c['externalanalyses'])
 
-    #if conf.has('verifymodel'): # TODO: make verifymodel optional
-    c['vmodel'] = VerifyModel(conf, c['hpc'], meshes['Outer'], c['members'])
+    # Forecast object is only used to initialize parts of ExtendedForecast
+    self.c['forecast'] = Forecast(conf, self.c['hpc'], meshes['Outer'], self.c['members'], self.c['model'], self.c['observations'],
+                self.c['workflow'], self.c['externalanalyses'],
+                self.c['externalanalyses'].outputs['state']['Outer'])
+    self.c['extendedforecast'] = ExtendedForecast(conf, self.c['hpc'], self.c['members'], self.c['forecast'],
+                self.c['externalanalyses'], self.c['observations'],
+                self.c['externalanalyses'].outputs['state']['Outer'], 'external')
 
-    #if conf.has('verifyobs'): # TODO: make verifyobs optional
-    c['vobs'] = VerifyObs(conf, c['hpc'], c['members'])
+    self.c['experiment'] = Experiment(conf, self.c['hpc'])
+    self.c['ss'] = StaticStream(conf, meshes, self.c['members'], self.c['workflow']['FirstCycleDate'], self.c['externalanalyses'], self.c['experiment'])
 
-    #if conf.has('benchmark'): # TODO: make benchmark unnecessary
-    c['bench'] = Benchmark(conf, c['hpc'])
+    self.c['naming'] = Naming(conf, self.c['experiment'])
 
-    c['exp'] = Experiment(conf, c['hpc'])
-    c['ss'] = StaticStream(conf, meshes, c['members'], c['workflow']['FirstCycleDate'], c['externalanalyses'], c['exp'])
+    for k, c_ in self.c.items():
+      if k in ['observations', 'initic', 'externalanalyses']:
+        c_.export(self.c['extendedforecast']['extLengths'])
+      elif k in ['extendedforecast']:
+        c_.export(self.c['externalanalyses']['PrepareExternalAnalysisOuter'])
+      elif k in ['forecast']:
+        continue
+      else:
+        c_.export()
 
-    c['naming'] = Naming(conf, c['exp'])
+    self.queueComponents += [
+      'externalanalyses',
+      'initic',
+      'observations',
+    ]
 
-    for c_ in c.values():
-      c_.export(c)
+    self.dependencyComponents += ['extendedforecast']
+
+    self.taskComponents += [
+      'extendedforecast',
+      'externalanalyses',
+      'initic',
+      'observations',
+    ]

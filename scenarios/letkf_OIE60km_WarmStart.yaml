@@ -3,10 +3,13 @@ enkf:
   horizontal localization lengthscale: 1.2e6
   vertical localization lengthscale: 6.e3
   retainObsFeedback: False
+  post: []
 externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
   resource: "PANDAC.LaggedGEFS"
+forecast:
+  post: [verifyobs, verifymodel]
 hofx:
   retainObsFeedback: False
 members:
@@ -24,9 +27,3 @@ rtpp:
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T00
-  VerifyEnsMeanBG: False
-  DiagnoseEnsSpreadBG: False
-
-#temporary until code is merged to develop
-build:
-  mpas bundle: /glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_feature--EnKFStats_single

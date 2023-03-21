@@ -2,10 +2,6 @@ workflow:
   first cycle point: 20180414T18
   final cycle point: 20180514T18
   CriticalPathType: Normal
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
-  VerifyAgainstObservations: True
-  VerifyAgainstExternalAnalyses: True
 
 members:
   n: 1
@@ -26,14 +22,14 @@ variational:
 #    forecasts:
 #      resource: "PANDAC.DART"
 #experiment:
-#  ExpSuffix: '_B-DART80'
+#  suffix: '_B-DART80'
 
 ## EDA
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
 experiment:
-  ExpSuffix: '_B-SE80+RTPP70'
+  suffix: '_B-SE80+RTPP70'
 
 forecast:
   job:

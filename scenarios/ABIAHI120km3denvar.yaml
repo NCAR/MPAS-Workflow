@@ -1,8 +1,6 @@
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180514T18
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
 observations:
   resource: PANDACArchive
   resources:
@@ -35,7 +33,7 @@ variational:
       resource: "PANDAC.GEFS"
   nInnerIterations: [60,]
   biasCorrection: True
-  observations: [
+  observers: [
     aircraft,
     gnssroref,
     satwind,
@@ -55,4 +53,4 @@ hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 verifyobs:
-  pyVerifyDir: /glade/work/ivette/pandac/mpas-jedi/graphics
+  script directory: /glade/work/ivette/pandac/mpas-jedi/graphics

@@ -12,6 +12,9 @@ extendedforecast:
   lengthHR: 24
   outIntervalHR: 12
 
+  # optionally turn on extended forecast post
+  post: [verifyobs, verifymodel]
+
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
@@ -28,17 +31,4 @@ observations: # for optional verification
 workflow:
   first cycle point: 20220606T00
   final cycle point: 20220607T00
-  max active cycle points: 10
-
-  # optionally turn on extended forecast verification
-  VerifyExtendedMeanFC: True
-  VerifyAgainstObservations: True
-  VerifyAgainstExternalAnalyses: True
-
-  # none of the following verification methods are valid and are set to False
-  VerifyDeterministicDA: False
-  VerifyBGMembers: False
-  VerifyEnsMeanBG: False
-  DiagnoseEnsSpreadBG: False
-  VerifyANMembers: False
-  VerifyExtendedEnsFC: False
+  max active cycle points: 4

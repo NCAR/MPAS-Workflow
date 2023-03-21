@@ -2,8 +2,8 @@ experiment:
   name: '3dvar_OIE120km_ColdStart_TEST'
 externalanalyses:
   resource: "GFS.RDA"
-firstbackground:
-  resource: "ForecastFromAnalysis"
+forecast:
+  post: [verifyobs, verifymodel]
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
@@ -19,9 +19,8 @@ variational:
   DAType: 3dvar
   nInnerIterations: [15,]
   biasCorrection: True
+  post: [verifyobs]
 workflow:
   # test a recent date
   first cycle point: 20220201T00
   final cycle point: 20220201T12
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True

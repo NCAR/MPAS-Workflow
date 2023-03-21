@@ -1,5 +1,7 @@
 #!/bin/csh -f
 
+# a helper function for parsing YAML in c-shell
+
 source config/config.csh
 
 # get arguments

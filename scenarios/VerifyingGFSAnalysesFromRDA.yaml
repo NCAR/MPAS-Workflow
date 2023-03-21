@@ -12,6 +12,9 @@ extendedforecast:
   lengthHR: 1
   outIntervalHR: 1
 
+  # optionally turn on extended forecast verification
+  post: []
+
 forecast:
   job:
     30km:
@@ -54,16 +57,3 @@ workflow:
   first cycle point: 20180414T18
   final cycle point: 20180524T00
   max active cycle points: 20
-
-  # optionally turn on extended forecast verification
-  VerifyExtendedMeanFC: False
-  VerifyAgainstObservations: False
-  VerifyAgainstExternalAnalyses: False
-
-  # none of the following verification methods are valid and are set to False
-  VerifyDeterministicDA: False
-  VerifyBGMembers: False
-  VerifyEnsMeanBG: False
-  DiagnoseEnsSpreadBG: False
-  VerifyANMembers: False
-  VerifyExtendedEnsFC: False

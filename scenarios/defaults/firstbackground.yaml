@@ -23,12 +23,12 @@ firstbackground:
 
     ForecastFromAnalysis:
       common:
-        PrepareFirstBackground: "ColdForecast:succeed-all => ForecastFinished"
+        PrepareFirstBackground: "ColdForecast:succeed-all => ForecastFinished__"
 
     PANDAC:
       GFS:
         common:
-          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished"
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
         120km: # only available 20180414T18, 20200723T18
           directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/SingleFCFirstCycle/{{FirstCycleDate}}"
         60km: # only available 20180414T18, 20200723T18
@@ -37,7 +37,7 @@ firstbackground:
           directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/SingleFCFirstCycle/{{FirstCycleDate}}"
       LaggedGEFS:
         common:
-          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished"
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
         120km: # only available 20180414T18, 20200723T18
           directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/EnsFCFirstCycle/{{FirstCycleDate}}"
           maxMembers: 80

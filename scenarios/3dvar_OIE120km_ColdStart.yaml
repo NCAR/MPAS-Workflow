@@ -1,7 +1,6 @@
 workflow:
   first cycle point: 20220217T18
   final cycle point: 20220228T00
-  VerifyEnsMeanBG: False
 observations:
   resource: GladeRDAOnline
 members:
@@ -10,8 +9,6 @@ model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-firstbackground:
-  resource: "ForecastFromAnalysis"
 externalanalyses:
   resource: "GFS.RDA"
 variational:

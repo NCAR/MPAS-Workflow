@@ -1,7 +1,6 @@
 workflow:
   first cycle point: 20220217T18
   final cycle point: 20220228T00
-  VerifyEnsMeanBG: False
 observations:
   resource: GladeRDAOnline
 members:
@@ -18,10 +17,10 @@ model:
   # and determine if it is viable to bring into the workflow.  Ideally those files should be
   # generated using the same MPAS-A code version as is used in the initic and forecast applications.
   GraphInfoDir: /glade/work/duda/static_moved_to_campaign
-firstbackground:
-  resource: "ForecastFromAnalysis"
 externalanalyses:
   resource: "GFS.RDA"
+forecast:
+  post: []
 variational:
   DAType: 3dvar
   biasCorrection: True
