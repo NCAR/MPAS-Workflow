@@ -2,7 +2,7 @@ workflow:
   # test a recent date
   firstCyclePoint: 20220111T00
   initialCyclePoint: 20220111T00
-  finalCyclePoint: 20220111T00
+  finalCyclePoint: 20220324T00
   CriticalPathType: HofxGNSSROFromExternalAnalyses
   VerifyEnsMeanBG: True
   maxActiveCyclePoints: 72
@@ -12,12 +12,12 @@ workflow:
 externalanalyses:
   resource: "GFS.SIOCW3E"
 experiment:
-  ExperimentName: 'HofxGNSSROFromExternalAnalyses_MPAS-test2'
+  ExperimentName: 'HofxGNSSROFromExternalAnalyses_GFSctrl_sondes_ref_ropp1d_ropp2d'
   ExperimentUserPrefix: ''
 model:
-  outerMesh: 120km
-  innerMesh: 120km
-  ensembleMesh: 120km
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
 job:
   CPAccountNumber: UCSD0041
   CPQueueName: premium
@@ -34,7 +34,7 @@ observations:
   resource: GladeRDAOnline
   convertToIODAObservations:
   - gpsro
-#  - prepbufr
+  - prepbufr
 forecast:
   doDACycling: False
   deleteZerothForecast: False
@@ -45,10 +45,6 @@ hofx:
   observations:
   - gnssroref
 #  - gnssrobndnbam
-#  - gnssrobndropp1d
-#  - gnssrobndropp2d
-#  - sondes
-builds:
-# default build directory
-  commonBuild: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_wkflw_cmakelist_MPAS
-  #/glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_feature_spack-stack-1.2.0_skylab-3.0.0_MPAS
+  - gnssrobndropp1d
+  - gnssrobndropp2d
+  - sondes
