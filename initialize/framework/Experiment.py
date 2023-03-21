@@ -77,7 +77,7 @@ class Experiment(Component):
           name_ += '-'+str(nInner)
         name_ += '-iter'
 
-        for o in variational['observations']:
+        for o in variational['observers']:
           if o not in variational.benchmarkObservations:
             name_ += '_'+o
 
