@@ -2,6 +2,8 @@ workflow:
   first cycle point: 20180414T18
   final cycle point: 20180514T18
   CriticalPathType: Normal
+members:
+  n: 1
 model:
   outerMesh: 30km
   innerMesh: 60km

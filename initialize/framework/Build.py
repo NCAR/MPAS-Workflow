@@ -9,7 +9,7 @@ class Build(Component):
   variablesWithDefaults = {
     ## mpas bundle
     # mpas-bundle build directory
-    'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_atmosphere--more_isobars', str]
+    'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_atmosphere--more_isobars', str],
 
     # optional double-precision build
     #'mpas bundle': ['/glade/work/bjung/panda-c/build/mpas-bundle_gnu-openmpi_24FEB2023', str],
