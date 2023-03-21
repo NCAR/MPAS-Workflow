@@ -11,7 +11,7 @@ from initialize.config.Task import TaskLookup
 from initialize.config.TaskFamily import CylcTaskFamily
 
 from initialize.data.Model import Model
-from initialize.data.Observations import Observations
+from initialize.data.Observations import benchmarkObservations
 
 from initialize.framework.HPC import HPC
 from initialize.framework.Workflow import Workflow
@@ -37,7 +37,7 @@ class EnKF(Component):
     # GETKF
     #'vertical localization lengthscale': [5.0, float],
 
-    ## observations
+    ## observers
     # observation types assimilated in the enkf application
     # Abbreviations:
     #   clr == clear-sky
@@ -62,7 +62,7 @@ class EnKF(Component):
     # iasi_metop-a 
     # iasi_metop-b 
     # iasi_metop-c 
-    'observations': [benchmarkObservations, list],
+    'observers': [benchmarkObservations, list],
 
     ## nObsIndent
     # number of spaces to precede members of the 'observers' list in the JEDI YAML
@@ -167,7 +167,7 @@ class EnKF(Component):
     r2observer += '.'+solver+'.observer'
     observerjob = Resource(self._conf, attr, ('job', r2observer))
     observerjob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
-    observertask = TaskFactory[hpc.system](observerjob)
+    observertask = TaskLookup[hpc.system](observerjob)
 
     # EnKF solver
     # r2solver = {{outerMesh}}.{{solver}}
@@ -179,7 +179,7 @@ class EnKF(Component):
 
     solverjob = Resource(self._conf, attr, ('job', r2solver))
     solverjob._set('seconds', solverjob['baseSeconds'] + solverjob['secondsPerMember'] * NN)
-    solvertask = TaskFactory[hpc.system](solverjob)
+    solvertask = TaskLookup[hpc.system](solverjob)
 
     self._set('solverThreads', solverjob.get('threads'))
     self._cshVars.append('solverThreads')

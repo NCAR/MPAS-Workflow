@@ -9,6 +9,7 @@
 
 from collections import OrderedDict
 
+from initialize.applications.EnKF import EnKF
 from initialize.applications.ExtendedForecast import ExtendedForecast
 from initialize.applications.Members import Members
 from initialize.applications.RTPP import RTPP

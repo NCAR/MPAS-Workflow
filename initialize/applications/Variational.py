@@ -18,7 +18,7 @@ from initialize.config.Task import TaskLookup
 from initialize.config.TaskFamily import CylcTaskFamily
 
 from initialize.data.Model import Model
-from initialize.data.Observations import Observations, benchmarkObservations
+from initialize.data.Observations import benchmarkObservations
 
 from initialize.framework.HPC import HPC
 from initialize.framework.Workflow import Workflow
