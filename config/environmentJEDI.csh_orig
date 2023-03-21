@@ -9,18 +9,19 @@ setenv config_environmentJEDI 1
 # OPTIONS: gnu-openmpi, intel-impi
 set BuildCompiler = 'gnu-openmpi'
 
-source /etc/profile.d/modules.sh  # note: needed on non-computing nodes
+
+source /etc/profile.d/modules.csh
 module purge
 module unuse /glade/u/apps/ch/modulefiles/default/compilers
-export MODULEPATH_ROOT=/glade/work/jedipara/cheyenne/spack-stack/modulefiles
+setenv MODULEPATH_ROOT /glade/work/jedipara/cheyenne/spack-stack/modulefiles
 module use /glade/work/jedipara/cheyenne/spack-stack/modulefiles/compilers
 module use /glade/work/jedipara/cheyenne/spack-stack/modulefiles/misc
 
+
 if ( "$BuildCompiler" =~  *"gnu"* ) then
-  module use /glade/work/jedipara/cheyenne/spack-stack/spack-stack-v1/envs/skylab-3.0.0-gnu-10.1.0/install/modulefiles/Core
+  module use /glade/work/jedipara/cheyenne/spack-stack/spack-stack-v1/envs/skylab-2.0.0-gnu-10.1.0/install/modulefiles/Core
   module load stack-gcc/10.1.0
   module load stack-openmpi/4.1.1
-  module load stack-python/3.9.12
   module load jedi-mpas-env/1.0.0
 
 else if ( "$BuildCompiler" =~  *"intel"* ) then
@@ -30,6 +31,7 @@ else if ( "$BuildCompiler" =~  *"intel"* ) then
   module load jedi-mpas-env/1.0.0
 
 endif
+
 
 limit stacksize unlimited
 setenv OOPS_TRACE 0

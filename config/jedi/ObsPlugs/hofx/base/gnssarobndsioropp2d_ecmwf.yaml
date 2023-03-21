@@ -20,5 +20,6 @@
     obs options:
       n_horiz: 31
       res: 40.0
+      ro_type: airborne
   get values:
     <<: *GetValues
