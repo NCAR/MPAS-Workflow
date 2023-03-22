@@ -215,16 +215,16 @@ class EnKF(Component):
   # clean
   [[CleanEnKFs]]
     inherit = '''+self.tf.clean+'''
-    script = $origin/applications/CleanEnKF.csh
+    script = $origin/bin/CleanEnKF.csh
 
   [[EnKFObserver]]
     inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/applications/EnKFObserver.csh
+    script = $origin/bin/EnKFObserver.csh
 '''+observertask.job()+observertask.directives()+'''
 
   [[EnKF]]
     inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/applications/EnKF.csh
+    script = $origin/bin/EnKF.csh
 '''+solvertask.job()+solvertask.directives()]
 
     self._dependencies += ['''
