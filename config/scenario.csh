@@ -63,7 +63,7 @@ set configSection = $1
 
 ## scenario
 # select from pre-defined scenarios (scenarios/*.yaml) or define your own
-set scenario = 3dvar_OIE120km_WarmStart
+set scenario = HofxGNSSROFromExternalAnalyses
 
 ## scenarioDirectory
 # The scenario must be described in a yaml file in the scenarioDirectory.  Users can create their

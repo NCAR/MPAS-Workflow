@@ -12,7 +12,7 @@ workflow:
 externalanalyses:
   resource: "GFS.SIOCW3E"
 experiment:
-  ExperimentName: 'HofxGNSSROFromExternalAnalyses_MPAS-test2'
+  ExperimentName: 'HofxGNSSROFromExternalAnalyses_MPAS-test3'
   ExperimentUserPrefix: ''
 model:
   outerMesh: 120km
@@ -50,5 +50,6 @@ hofx:
 #  - sondes
 builds:
 # default build directory
-  commonBuild: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_wkflw_cmakelist_MPAS
+  commonBuild: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_mpas-bundle_MPAS2
+  #/glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_wkflw_cmakelist_MPAS
   #/glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_feature_spack-stack-1.2.0_skylab-3.0.0_MPAS
