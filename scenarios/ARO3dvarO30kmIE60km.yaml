@@ -12,14 +12,14 @@ workflow:
 observations:
   resource: AroObs
   convertToIODAObservations:
-  - prepbufr
-#  - gpsro
+#  - prepbufr
+  - gpsro
 experiment:
-  ExperimentName: '3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_merge'
+  ExperimentName: '3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_merge2'
 model:
-  outerMesh: 120km
-  innerMesh: 120km
-  ensembleMesh: 120km
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
   # Need x1.655362.static.nc to include var2d, con, oa{1,2,3,4}, and ol{1,2,3,4} fields
   # alternatively could use /glade/work/liuz/pandac/prepare_mpas/mpas_static_30km/x1.655362.static.nc,
   # but no such file exists for 60km mesh.  This might skew comparisons to 30km GFS analyses produced
