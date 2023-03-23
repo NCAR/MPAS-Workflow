@@ -35,28 +35,29 @@ class Build(Component):
     # derived variables
     ###################
 
+    # MPAS-JEDI
+    # ---------
+    ## Variational
+    self._set('VariationalEXE', 'mpasjedi_variational.x')
+    self._set('VariationalBuildDir', self['mpas bundle']+'/bin')
+
+    ## EnsembleOfVariational
+    self._set('EnsembleOfVariationalEXE', 'mpasjedi_eda.x')
+    self._set('EnsembleOfVariationalBuildDir', self['mpas bundle']+'/bin')
+
+    ## EnKF
+    self._set('EnKFEXE', 'mpasjedi_enkf.x')
+    self._set('EnKFBuildDir', self['mpas bundle']+'/bin')
+
+    ## HofX
+    self._set('HofXEXE', 'mpasjedi_hofx3d.x')
+    self._set('HofXBuildDir', self['mpas bundle']+'/bin')
+
+    ## RTPP
+    self._set('RTPPEXE', 'mpasjedi_rtpp.x')
+    self._set('RTPPBuildDir', self['mpas bundle']+'/bin')
+
     if model is not None:
-      # MPAS-JEDI
-      # ---------
-      ## Variational
-      self._set('VariationalEXE', 'mpasjedi_variational.x')
-      self._set('VariationalBuildDir', self['mpas bundle']+'/bin')
-
-      ## EnsembleOfVariational
-      self._set('EnsembleOfVariationalEXE', 'mpasjedi_eda.x')
-      self._set('EnsembleOfVariationalBuildDir', self['mpas bundle']+'/bin')
-
-      ## EnKF
-      self._set('EnKFEXE', 'mpasjedi_enkf.x')
-      self._set('EnKFBuildDir', self['mpas bundle']+'/bin')
-
-      ## HofX
-      self._set('HofXEXE', 'mpasjedi_hofx3d.x')
-      self._set('HofXBuildDir', self['mpas bundle']+'/bin')
-
-      ## RTPP
-      self._set('RTPPEXE', 'mpasjedi_rtpp.x')
-      self._set('RTPPBuildDir', self['mpas bundle']+'/bin')
 
       # MPAS-Model
       # ----------
@@ -74,7 +75,7 @@ class Build(Component):
       #self._set('ForecastBuildDir', '/glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single')
       #self._set('ForecastEXE', model['MPASCore']+'_model')
 
-      # Note: this also requires modifying applications/forecast.csh:
+      # Note: this also requires modifying bin/Forecast.csh:
       #-source config/environmentJEDI.csh
       #+source config/environmentMPT.csh
       #-  mpiexec ./${ForecastEXE}
