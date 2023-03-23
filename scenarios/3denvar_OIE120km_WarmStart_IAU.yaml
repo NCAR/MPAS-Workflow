@@ -11,6 +11,8 @@ forecast:
   post: []
 observations:
   resource: PANDACArchive
+members:
+  n: 1
 model:
   outerMesh: 120km
   innerMesh: 120km
