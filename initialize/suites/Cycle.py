@@ -58,7 +58,21 @@ class Cycle(SuiteBase):
     # and depend on whether verifyobs/verifymodel are selected
     self.c['benchmark'] = Benchmark(conf, self.c['hpc'])
 
-    self.c['experiment'] = Experiment(conf, self.c['hpc'], meshes, self.c['da'])
+    # provide default title in case one is not specified
+    meshTitle = ''
+    mO = meshes['Outer'].name
+    meshTitle = 'O'+mO
+    mI = meshes['Inner'].name
+    if mI != mO:
+      meshTitle += 'I'+mI
+    mE = meshes['Ensemble'].name
+    if mE != mO and mE != mI:
+      meshTitle += 'E'+mE
+
+    defaultTitle = self.c['da'].title+'_'+meshTitle
+
+
+    self.c['experiment'] = Experiment(conf, self.c['hpc'], defaultTitle)
     self.c['ss'] = StaticStream(conf, meshes, self.c['members'], self.c['workflow']['FirstCycleDate'],
                 self.c['externalanalyses'], self.c['experiment'])
 

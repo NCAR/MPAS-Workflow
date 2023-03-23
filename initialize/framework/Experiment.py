@@ -59,8 +59,7 @@ class Experiment(Component):
   def __init__(self,
     config:Config,
     hpc:HPC,
-    meshes:dict=None,
-    da:DA=None,
+    defaultTitle:str='',
   ):
     super().__init__(config)
 
@@ -69,29 +68,9 @@ class Experiment(Component):
     ###################
     suiteName = self['name']
     if suiteName is None:
-      name = ''
-      if da is not None:
-        name += da.title
+      suiteName = defaultTitle
 
-      if meshes is not None:
-        meshName = ''
-        mO = meshes['Outer'].name
-        meshName = 'O'+mO
-        mI = ''
-        if 'Inner' in meshes:
-          mI = meshes['Inner'].name
-          if mI != mO:
-            meshName += 'I'+mI
-        if 'Ensemble' in meshes:
-          mE = meshes['Ensemble'].name
-          if mE != mO and mE != mI:
-            meshName += 'E'+mE
-
-        name += '_'+meshName
-
-      assert name != '', ('Must give a valid name')
-
-      suiteName = name
+    assert suiteName != '', ('Must give a valid suite name')
 
     user = os.getenv('USER')
 
