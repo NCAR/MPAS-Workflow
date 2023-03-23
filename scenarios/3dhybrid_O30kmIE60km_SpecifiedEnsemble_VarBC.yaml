@@ -20,6 +20,8 @@ externalanalyses:
       PANDAC: # only available 20180418T00-20180524T00
         30km:
           externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAnaAndDiagnostics"
+members:
+  n: 1
 
 model:
   outerMesh: 30km
