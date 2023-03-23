@@ -415,13 +415,27 @@ Oliver, H., Shin, M., Matthews, D., Sanders, O., Bartholomew, S., Clark, A., Fit
 Skamarock, W. C., Klemp, J. B., Duda, M. G., Fowler, L. D., Park, S.-H., and Ringler, T. D.: A Multiscale Nonhydrostatic Atmospheric Model Using Centroidal Voronoi Tesselations and C-Grid Staggering, Monthly Weather Review, 140, 3090–3105, https://doi.org/10.1175/mwr-d-11-00215.1, 2012.
 
 
-Contributors to-date
---------------------
+Contributions
+-------------
+
+<!-- Any time this section is updated, it should be copied verbatim to the NOTICE file, consistent
+with the Apache-2 LICENSE file. Contributors are to be listed alphabetically by surname.-->
+
+`MPAS-Workflow` is provided by NCAR/MMM as an example for carrying out DA and non-DA
+workflows with MPAS and JEDI-MPAS. The contributors have provided any of the following:
+ - GitHub pull requests and/or review
+ - data
+ - shell scripts used by workflow tasks 
+ - workflow design
+ - source code
+ - other critical consultation
+
+Contributors:
  - Maryam Abdi-Oskouei
  - Junmei Ban
- - Ivette Hernandez Banos[^+] (ivette@ucar.edu)
+ - Ivette Hernandez Banos
  - Jamie Bresch
- - JJ Guerrette[^+] (guerrett@ucar.edu)
+ - JJ Guerrette
  - Soyoung Ha
  - BJ Jung
  - Zhiquan Liu
@@ -430,8 +444,3 @@ Contributors to-date
  - Steven Vahl
  - Yali Wu
  - Yonggang Yu
-
-[^+]: primary repository maintainers/developers
-
-These people have contributed any of the following: GitHub pull requests and review, data, shell
-scripts used by workflow tasks, basic workflow design, source code, or other critical consultation.

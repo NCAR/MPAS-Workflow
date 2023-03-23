@@ -1,27 +1,19 @@
-workflow:
-  first cycle point: 20180414T18
-  final cycle point: 20180514T18
-  CriticalPathType: Normal
+experiment:
+  suffix: '_ensB-SE80+RTPP70'
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+
+firstbackground:
+  resource: "PANDAC.GFS"
+
 members:
   n: 1
+
 model:
   outerMesh: 30km
   innerMesh: 60km
   ensembleMesh: 60km
-firstbackground:
-  resource: "PANDAC.GFS"
-externalanalyses:
-  resource: "GFS.PANDAC"
-variational:
-  DAType: 3dhybrid
-  ensembleCovarianceWeight: 0.75
-  staticCovarianceWeight: 0.25
-  nInnerIterations: [60,60,]
-  ensemble:
-    forecasts:
-      resource: "PANDAC.EDA"
-experiment:
-  suffix: '_ensB-SE80+RTPP70'
 
 observations:
   resource: PANDACArchive
@@ -41,3 +33,17 @@ observations:
       IODASuperObGrid:
         abi_g16: 15X15
         ahi_himawari8: 15X15
+
+variational:
+  DAType: 3dhybrid
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  nInnerIterations: [60,60,]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.EDA"
+
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180514T18
+  CriticalPathType: Normal
