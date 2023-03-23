@@ -71,7 +71,7 @@ class Build(Component):
       #self._set('ForecastBuildDir', '/glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single')
       #self._set('ForecastEXE', model['MPASCore']+'_model')
 
-      # Note: this also requires modifying applications/forecast.csh:
+      # Note: this also requires modifying bin/Forecast.csh:
       #-source config/environmentJEDI.csh
       #+source config/environmentMPT.csh
       #-  mpiexec ./${ForecastEXE}
