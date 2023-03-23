@@ -19,7 +19,7 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 
 from initialize.data.Model import Model
-from initialize.data.Observations import Observations
+from initialize.data.Observations import Observations, benchmarkObservations
 from initialize.data.ObsEnsemble import ObsEnsemble
 from initialize.data.StateEnsemble import StateEnsemble, State
 
@@ -78,6 +78,38 @@ class DA(Component):
     else:
       self.enkf = None
 
+    self.title = ''
+    obsName = ''
+    for o in self.__da['observers']:
+      if o not in benchmarkObservations:
+        obsName += '_'+o
+
+    if self.var is not None:
+      varName = self.var['DAType']
+      for nInner in self.var['nInnerIterations']:
+        varName += '-'+str(nInner)
+      varName += '-iter'
+      self.title += varName+obsName
+
+      if members.n > 1:
+        self.title = 'eda_'+self.title
+        if self.var['EDASize'] > 1:
+          self.title += '_NMEM'+str(self.var['nDAInstances'])+'x'+str(self.var['EDASize'])
+          if self.var['MinimizerAlgorithm'] == self.var['BlockEDA']:
+            self.title += 'Block'
+        else:
+          self.title += '_NMEM'+str(members.n)
+
+        if self.var['SelfExclusion']:
+          self.title += '_SelfExclusion'
+
+        if self.var['ABEInflation']:
+          self.title += '_ABEI_BT'+str(self.var['ABEIChannel'])
+
+    elif self.enkf is not None:
+      self.title += self.enkf['solver']+obsName
+      self.title += '_NMEM'+str(members.n)
+
     # inputs/ouputs
     self.inputs = {}
     self.inputs['state'] = {}
@@ -114,6 +146,9 @@ class DA(Component):
     self.rtpp = RTPP(config, hpc, meshes['Ensemble'], members, self,
                        self.inputs['state']['members'], self.outputs['state']['members'])
     self.__subtasks += [self.rtpp]
+
+    if self.rtpp['relaxationFactor'] > 0.0:
+      self.title += '_RTPP'+str(self.rtpp['relaxationFactor'])
 
   def export(self, previousForecast:str, ef:ExtendedForecast):
     self.__da.export()

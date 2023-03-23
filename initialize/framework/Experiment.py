@@ -61,7 +61,6 @@ class Experiment(Component):
     hpc:HPC,
     meshes:dict=None,
     da:DA=None,
-    members:Members=None,
   ):
     super().__init__(config)
 
@@ -72,45 +71,7 @@ class Experiment(Component):
     if suiteName is None:
       name = ''
       if da is not None:
-        if da.var is not None:
-          daName = da.var['DAType']
-          for nInner in da.var['nInnerIterations']:
-            daName += '-'+str(nInner)
-          daName += '-iter'
-
-          for o in da.var['observers']:
-            if o not in benchmarkObservations:
-              daName += '_'+o
-
-          if members is not None:
-            if members.n > 1:
-              daName = 'eda_'+daName
-              if da.var['EDASize'] > 1:
-                daName += '_NMEM'+str(da.var['nDAInstances'])+'x'+str(da.var['EDASize'])
-                if da.var['MinimizerAlgorithm'] == da.var['BlockEDA']:
-                  daName += 'Block'
-              else:
-                daName += '_NMEM'+str(members.n)
-
-              if da.var['SelfExclusion']:
-                daName += '_SelfExclusion'
-
-              if da.var['ABEInflation']:
-                daName += '_ABEI_BT'+str(da.var['ABEIChannel'])
-
-        elif da.enkf is not None:
-          daName = da.enkf['solver']
-
-          for o in da.enkf['observers']:
-            if o not in benchmarkObservations:
-              daName += '_'+o
-
-          daName += '_NMEM'+str(members.n)
-
-        if da.rtpp['relaxationFactor'] > 0.0:
-          daName += '_RTPP'+str(da.rtpp['relaxationFactor'])
-
-        name += daName
+        name += da.title
 
       if meshes is not None:
         meshName = ''
