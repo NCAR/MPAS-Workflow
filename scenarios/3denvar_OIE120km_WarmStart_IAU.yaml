@@ -1,6 +1,6 @@
 workflow:
   first cycle point: 20180414T18
-  final cycle point:   20180418T00
+  final cycle point:   20180514T18
 
 extendedforecast:
   #meanTimes: T00  # uncomment to engage
@@ -8,7 +8,7 @@ extendedforecast:
   outIntervalHR: 12
 
 forecast:
-  post: [verifymodel]
+  post: []
 observations:
   resource: PANDACArchive
 members:
@@ -34,6 +34,6 @@ variational:
 forecast:
   IAU: True
 job:
-  CPAccountNumber: NMMM0043
-  NCPAccountNumber: NMMM0043
-  SingleProcAccountNumber: NMMM0015
+  CPAccountNumber: NMMM0013
+  NCPAccountNumber: NMMM0013
+  SingleProcAccountNumber: NMMM0013
