@@ -59,9 +59,6 @@ set self_WindowHR = ${CyclingWindowHR}
 set self_StateDirs = ($prevCyclingFCDirs)
 set self_StatePrefix = ${FCFilePrefix}
 
-# Remove old netcdf lock files
-rm *.nc*.lock
-
 # Remove old static fields in case this directory was used previously
 rm ${localStaticFieldsPrefix}*.nc*
 
