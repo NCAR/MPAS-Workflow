@@ -12,7 +12,7 @@ workflow:
 externalanalyses:
   resource: "GFS.SIOCW3E"
 experiment:
-  ExperimentName: 'HofxGNSSROFromExternalAnalyses_MPAS-test3'
+  ExperimentName: 'HofxGNSSROFromExternalAnalyses_MPAS-test4'
   ExperimentUserPrefix: ''
 model:
   outerMesh: 120km
