@@ -24,7 +24,8 @@ class Component():
     self.lower = self.__class__.__name__.lower()
     self.logPrefix = self.__class__.__name__+': '
     self.autoLabel = self.lower
-    self.tf = CylcTaskFamily(self.base)
+    self.variablesWithDefaults['initialize'] = [True, bool]
+    self.variablesWithDefaults['execute'] = [True, bool]
 
     ######################################################
     # initialize exportable variables, tasks, dependencies
@@ -65,6 +66,9 @@ class Component():
           self._setOrDefault(v, desc[0], desc[1], desc[2])
       else:
         self._setOrDefault(v, desc)
+
+    self.tf = CylcTaskFamily(self.base, [''], self['initialize'], self['execute'])
+
 
   def export(self):
     '''

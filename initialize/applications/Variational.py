@@ -16,7 +16,6 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
-from initialize.config.TaskFamily import CylcTaskFamily
 
 from initialize.data.Model import Model
 from initialize.data.Observations import Observations

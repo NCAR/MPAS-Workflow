@@ -53,7 +53,7 @@ class RTPP(Component):
 
     groupSettings = ['''
     inherit = '''+parent.tf.group]
-    self.tf = CylcTaskFamily(self.base, groupSettings)
+    self.tf = CylcTaskFamily(self.base, groupSettings, self['initialize'], self['execute'])
 
     # WorkDir is where RTPP is executed
     self.WorkDir = self.workDir+'/{{thisCycleDate}}'

@@ -8,7 +8,7 @@
 '''
 
 class TaskFamilyBase:
-  def __init__(self, name):
+  def __init__(self, name:str, initialize:bool, execute:bool):
     self.base = name
 
     # For each of these cylc "task" names, some are family names, while others are marker names
@@ -26,8 +26,12 @@ class TaskFamilyBase:
 
     self.phases = [
       self.pre,
-      self.init,
-      self.execute,
+    ]
+
+    if initialize: self.phases.append(self.init)
+    if execute: self.phases.append(self.execute)
+
+    self.phases += [
       self.post,
       self.finished,
       self.clean,
@@ -36,12 +40,17 @@ class TaskFamilyBase:
     self._multiple = [self.init, self.execute]
 
 class CylcTaskFamily(TaskFamilyBase):
-  def __init__(self, name:str, groupSettings=['']):
+  def __init__(self,
+    name:str,
+    groupSettings=[''],
+    initialize:bool=True,
+    execute:bool=True,
+  ):
     '''
     populate internal task markers and dependencies
     '''
 
-    super().__init__(name)
+    super().__init__(name, initialize, execute)
 
     # tasks (i.e., cylc runtime)
     self.__t = []
