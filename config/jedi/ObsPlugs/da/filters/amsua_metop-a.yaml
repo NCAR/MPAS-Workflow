@@ -1,0 +1,24 @@
+  obs filters:
+  - filter: PreQC
+    maxvalue: 0
+#  Useflag check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua_metop-a_channels
+    test variables:
+    - name: ObsFunction/ChannelUseflagCheckRad
+      channels: *amsua_metop-a_channels
+      options:
+        channels: *amsua_metop-a_channels
+        use_flag: [ -1, -1, -1, -1,  1,
+                     1, -1, -1,  1, -1,
+                    -1, -1, -1, -1, -1 ]
+    minvalue: 1.0e-12
+    action:
+      name: reject
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_metop-a.nc4
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter

@@ -46,6 +46,10 @@ class Build(Component):
     self._set('EnsembleOfVariationalEXE', 'mpasjedi_eda.x')
     self._set('EnsembleOfVariationalBuildDir', self['mpas bundle']+'/bin')
 
+    ## EnKF
+    self._set('EnKFEXE', 'mpasjedi_enkf.x')
+    self._set('EnKFBuildDir', self['mpas bundle']+'/bin')
+
     ## HofX
     self._set('HofXEXE', 'mpasjedi_hofx3d.x')
     self._set('HofXBuildDir', self['mpas bundle']+'/bin')

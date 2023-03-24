@@ -20,7 +20,7 @@ observations:
   resources:
     PANDACArchive:
       IODADirectory:
-        variational:
+        da:
           abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
           ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_no-bias-correct

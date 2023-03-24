@@ -1,0 +1,21 @@
+- obs space:
+    <<: *ObsSpace
+    name: Radiosonde
+    _obsdatain: &ObsDataIn
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/sondes_obs_{{thisValidDate}}.h5
+    _obsdataout: &ObsDataOut
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_sondes{{ObsOutSuffix}}.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
+    simulated variables: [airTemperature, virtualTemperature, windEastward, windNorthward, specificHumidity]
+  obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLoc
+  obs operator:
+    name: VertInterp
+    observation alias file: obsop_name_map.yaml
+  get values:
+    <<: *GetValues

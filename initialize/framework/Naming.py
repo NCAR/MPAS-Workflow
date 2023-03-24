@@ -7,10 +7,11 @@
  which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 '''
 
+from initialize.applications.DA import DA
 from initialize.applications.ExtendedForecast import ExtendedForecast
 from initialize.applications.Forecast import Forecast
 from initialize.applications.RTPP import RTPP
-from initialize.applications.Variational import Variational, ABEI
+from initialize.applications.Variational import ABEI
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
@@ -33,7 +34,7 @@ class Naming(Component):
     ###################
 
     namedComponents = [
-      Variational,
+      DA,
       RTPP,
       ABEI,
       Forecast,

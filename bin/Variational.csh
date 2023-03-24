@@ -89,6 +89,11 @@ end
 # Link+Run the executable
 # =======================
 ln -sfv ${myBuildDir}/${myEXE} ./
+
+sed -i 's@{{ObsDataIn}}@ObsDataIn@' $myYAML
+sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' $myYAML
+sed -i 's@{{ObsOutSuffix}}@@' $myYAML
+
 mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
 
 #WITH DEBUGGER
