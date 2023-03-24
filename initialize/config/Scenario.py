@@ -40,7 +40,7 @@ setenv ${nestedConfigFunctionName} "source $setNestedConfig $defaultsConfig $sce
   def initialize(self):
     '''
     Creates a script used to parse a particular section of the complete scenario configuration
-    YAML in any c-shell script.  The primary remaining usage is in applications/PrepJEDI.csh
+    YAML in any c-shell script.  The primary remaining usage is in bin/PrepJEDI.csh
 
     It should be sourced in a section-specific configuration shell script after all
     other "config/*.csh" dependencies are sourced as follows
