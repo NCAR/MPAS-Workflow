@@ -1,7 +1,7 @@
 observations:
   resources:
     # resource options available for selection with observations.resource
-    # the selected resource is parsed in applications/PrepJEDI.csh
+    # the selected resource is parsed in bin/PrepJEDI.csh
 
     ## IODADirectory (used below)
     # locations of raw bufr and prepbufr observation data, separated by resource
