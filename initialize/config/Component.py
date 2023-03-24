@@ -24,6 +24,8 @@ class Component():
     self.lower = self.__class__.__name__.lower()
     self.logPrefix = self.__class__.__name__+': '
     self.autoLabel = self.lower
+
+    # add initialize and execute variables to control internal TaskFamily object dependencies
     self.variablesWithDefaults['initialize'] = [True, bool]
     self.variablesWithDefaults['execute'] = [True, bool]
 
