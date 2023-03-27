@@ -26,7 +26,7 @@ class TaskFamilyBase:
     self.finished = self.base+'Finished__' # marker
     self.clean = 'Clean'+self.base # family
 
-    # add all phases as tasks in case they are referenced internally
+    # add all phases as tasks in case they are referenced externally
     self._tPhases = [
       self.pre,
       self.init,
