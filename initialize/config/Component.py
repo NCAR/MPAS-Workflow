@@ -25,10 +25,6 @@ class Component():
     self.logPrefix = self.__class__.__name__+': '
     self.autoLabel = self.lower
 
-    # add initialize and execute variables to control internal TaskFamily object dependencies
-    self.variablesWithDefaults['initialize'] = [True, bool]
-    self.variablesWithDefaults['execute'] = [True, bool]
-
     ######################################################
     # initialize exportable variables, tasks, dependencies
     ######################################################
@@ -60,6 +56,10 @@ class Component():
       else:
         self._setOrNone(v, desc)
 
+    # add initialize and execute variables to control internal TaskFamily object dependencies
+    self.variablesWithDefaults['initialize'] = [False, bool] # overwritten when execute is True
+    self.variablesWithDefaults['execute'] = [True, bool]
+
     for v, desc in self.variablesWithDefaults.items():
       if isinstance(desc, Iterable):
         if len(desc) == 2:
@@ -68,6 +68,10 @@ class Component():
           self._setOrDefault(v, desc[0], desc[1], desc[2])
       else:
         self._setOrDefault(v, desc)
+
+    # always precede execute with initialize
+    if self['execute']:
+      self._set('initialize', True)
 
     self.tf = CylcTaskFamily(self.base, [''], self['initialize'], self['execute'])
 
