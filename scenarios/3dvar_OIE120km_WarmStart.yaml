@@ -1,14 +1,27 @@
-observations:
-  resource: PANDACArchive
+externalanalyses:
+  resource: "GFS.PANDAC"
+
+firstbackground:
+  resource: "PANDAC.GFS"
+
+forecast:
+  post: []
+
 members:
   n: 1
+
 model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-firstbackground:
-  resource: "PANDAC.GFS"
-externalanalyses:
-  resource: "GFS.PANDAC"
+
+observations:
+  resource: PANDACArchive
+
 variational:
   DAType: 3dvar
+  post: []
+
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180514T18

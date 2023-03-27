@@ -38,7 +38,7 @@ class Experiment(Component):
     'name': str,
 
     ## user directory
-    # subdirectory within ParentDirectoryPrefix where experiments are located
+    # subdirectory within hpc['top directory'] where experiments are located
     # leave as None to be assigned with os.getenv('USER')
     'user directory': str,
 
@@ -53,6 +53,9 @@ class Experiment(Component):
 
     ## user directory child
     'user directory child': ['pandac', str],
+
+    ## suite identifier
+    'suite identifier': ['', str],
   }
 
   def __init__(self,
@@ -68,8 +71,8 @@ class Experiment(Component):
     ###################
     # derived variables
     ###################
-    suiteName = self['name']
-    if suiteName is None:
+    expName = self['name']
+    if expName is None:
       name = ''
       if variational is not None:
         name_ = variational['DAType']
@@ -121,7 +124,7 @@ class Experiment(Component):
 
       assert name != '', ('Must give a valid name')
 
-      suiteName = name
+      expName = name
 
     user = os.getenv('USER')
 
@@ -133,8 +136,8 @@ class Experiment(Component):
 
     ParentDirectory = hpc['top directory']+'/'+self['user directory']+'/'+self['user directory child']
 
-    suiteName = self['prefix']+suiteName+self['suffix']
-    self._set('SuiteName', suiteName)
+    expName = self['prefix']+expName+self['suffix']
+    self._set('SuiteName', expName+self['suite identifier'])
 
     # ensure cylc suite parent directory exists
     cylcWorkDir = hpc['top directory']+'/'+user+'/cylc-run'
@@ -144,8 +147,8 @@ class Experiment(Component):
     sub = subprocess.run(cmd)
 
     ## absolute experiment directory
-    self._set('ExperimentDirectory', ParentDirectory+'/'+suiteName)
-    self._set('directory', ParentDirectory+'/'+suiteName)
+    self._set('ExperimentDirectory', ParentDirectory+'/'+expName)
+    self._set('directory', ParentDirectory+'/'+expName)
     self._set('mainScriptDir', self['ExperimentDirectory']+'/'+self.PackageBaseName)
     self._set('ConfigDir', self['mainScriptDir']+'/config')
     self._set('ModelConfigDir', self['mainScriptDir']+'/config/mpas')
