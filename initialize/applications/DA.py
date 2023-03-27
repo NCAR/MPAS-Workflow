@@ -114,14 +114,12 @@ class DA(Component):
         '''+self.obs['PrepareObservations']+''' => '''+self.tf.pre]
 
     # sub-tasks
-    if self.workflow['CriticalPathType'] in ['Normal', 'Reanalysis']:
-      for st in self.__subtasks:
-        self._tasks += st._tasks
-        self._dependencies += st._dependencies
+    for st in self.__subtasks:
+      self._tasks += st._tasks
+      self._dependencies += st._dependencies
 
-    if self.workflow['CriticalPathType'] == 'Normal':
-      # depends on previous Forecast
-      self.tf.addDependencies([previousForecast])
+    # depends on previous Forecast
+    self.tf.addDependencies([previousForecast])
 
     # update tasks and dependencies
     self._dependencies = self.tf.updateDependencies(self._dependencies)

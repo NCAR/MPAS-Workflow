@@ -28,43 +28,6 @@ class Workflow(Component):
     # default submission timeout for all cylc tasks
     # note: overridden in come cylc tasks (e.g., under InitIC and ExternalAnalyses)
     'submission timeout': ['PT90M', str],
-
-    ################
-    # task selection
-    ################
-    ## CriticalPathType: controls dependencies between and chilrdren of
-    #                   `da` and `forecast` mini-workflows for Cycle suite
-    # OPTIONS:
-    # + Normal - run both the `da` and `forecast` mini-workflows, each with a dependency on the
-    #            previous instance of the other
-    #          - run selected verification elements with dependence on the `da` and `forecast`
-    #            mini-workflow sub-tasks
-    # + Bypass - do not run either `da` or `forecast` mini-workflows
-    #          - only run `verification` mini-workflows
-    # + Reanalysis
-    #   - run only the `da` mini-workflow in the critical path, and also verification
-    #   - requires CyclingFC forecast files or links to already be present in ExperimentDirectory
-    # + Reforecast
-    #   - run only the `forecast` mini-workflow in the critical path, and also verification
-    #   - requires CyclingDA analysis files or links to already be present in ExperimentDirectory
-    # Users may choose whether to run the verification concurrently with and
-    # dependent on the critical path tasks (`Normal`), or as an independent post-processing step
-    # (`Bypass`). `Normal` and `Bypass` cover most use-cases for "continuous cycling" experiments.
-    #
-    # Setting `CriticalPathType` to either `Reanalysis` or `Reforecast` gives two variations of
-    # "partial cycling", where each cycle is independent and does not depend on any of the previous
-    # cycles. `Reanalysis` is used to perform the `da` task on each cycle without re-running
-    # forecasts.  This requires the `forecast` output files to already be present in the experiment
-    # directory.  If the user wishes to do this for independently-generated forecasts (i.e., from a
-    # previous separate experiment or a set of forecasts generated outside `MPAS-Workflow`), they
-    # must manually create an experiment directory, then either link or copy the forecast files into the
-    # `CyclingFC` directory following the usual directory structure and file-naming conventions.
-    # `Reforecast` is used to perform forecasts from an existing set of analysis states, which similarly
-    # must be already stored or linked in the `CyclingDA` directory following normal directory structures
-    # and file naming conventions.  It is recommended to run at least one `Normal` experiment to
-    # demonstrate the correct directory structure before trying either of the `Reanalysis` or
-    # `Reforecast` options.
-    'CriticalPathType': ['Normal', str, ['Normal', 'Bypass', 'Reanalysis', 'Reforecast']],
   }
 
   def __init__(self, config:Config):
