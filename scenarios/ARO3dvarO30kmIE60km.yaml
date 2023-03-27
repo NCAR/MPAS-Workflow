@@ -1,10 +1,10 @@
 workflow:
   # test a recent date
-  firstCyclePoint: 20210120T00
-  initialCyclePoint: 20210120T00
-  finalCyclePoint: 20210120T00 #20210128T00
+  firstCyclePoint: 20210122T00
+  initialCyclePoint: 20210122T00
+  finalCyclePoint: 20210122T00 #20210128T00
   CriticalPathType: HofxGNSSROFromExternalAnalyses
-  VerifyEnsMeanBG: True
+  VerifyEnsMeanBG: False #True
   maxActiveCyclePoints: 60
   ExtendedMeanFCTimes: T00,T06,T18
   ExtendedFCLengthHR: 6
@@ -15,7 +15,7 @@ observations:
 #  - prepbufr
   - gpsro
 experiment:
-  ExperimentName: '3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_merge2'
+  ExperimentName: '3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_merge2_012200'
 model:
   outerMesh: 30km
   innerMesh: 60km
@@ -77,7 +77,7 @@ hofx:
 #  - aircraft
 #  - gnssroref
 #  - gnssrobndropp1d
-#  - gnssrobndropp2d
+  - gnssrobndropp2d
 #  - gnssarobndsioropp2d
 #  - gnssarobndsioropp2d_nrl
   - gnssarobndsioropp2d_ecmwf
