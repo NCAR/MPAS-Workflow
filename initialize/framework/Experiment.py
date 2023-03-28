@@ -10,13 +10,8 @@
 import os
 import subprocess
 
-from initialize.applications.Members import Members
-from initialize.applications.DA import DA
-
 from initialize.config.Component import Component
 from initialize.config.Config import Config
-
-from initialize.data.Observations import benchmarkObservations
 
 from initialize.framework.HPC import HPC
 

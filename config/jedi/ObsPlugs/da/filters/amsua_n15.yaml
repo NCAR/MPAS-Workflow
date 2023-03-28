@@ -17,8 +17,8 @@
     minvalue: 1.0e-12
     action:
       name: reject
-#  - filter: GOMsaver
-#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n15.nc4
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n15.nc4
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter
