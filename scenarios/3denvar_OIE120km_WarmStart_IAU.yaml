@@ -33,7 +33,7 @@ variational:
 
 forecast:
   IAU: True
-job:
-  CPAccountNumber: NMMM0013
-  NCPAccountNumber: NMMM0013
-  SingleProcAccountNumber: NMMM0013
+hpc:
+  CriticalAccount: NMMM0013
+  NonCriticalAccount: NMMM0013
+  SingleProcAccount: NMMM0013
