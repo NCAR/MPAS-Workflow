@@ -16,9 +16,6 @@ variational:
       resource: "PANDAC.GEFS"
   ABEInflation: True
   ABEIChannel: 10
-hpc:
-  # use premium queue for ensemble mean calculation
-  EnsMeanBGQueue: premium
 observations:
   resource: PANDACArchive
   resources:

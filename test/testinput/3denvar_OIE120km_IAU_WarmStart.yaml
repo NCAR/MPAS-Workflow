@@ -1,10 +1,11 @@
 experiment:
-  name: '3denvar_OIE120km_WarmStart_TEST'
+  name: '3denvar_OIE120km_IAU_WarmStart_TEST'
 externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
   resource: "PANDAC.GFS"
 forecast:
+  IAU: True
   post: [verifyobs, verifymodel]
 hpc:
   CriticalQueue: economy
