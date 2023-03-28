@@ -29,6 +29,11 @@ class Workflow(Component):
     # note: overridden in come cylc tasks (e.g., under InitIC and ExternalAnalyses)
     'submission timeout': ['PT90M', str],
   }
+  optionalVariables = {
+    # restart cycle point is used to restart an existing suite from a previously-generated
+    # forecast at a date that is after 'first cycle point'
+    'restart cycle point': [str],
+  }
 
   def __init__(self, config:Config):
     super().__init__(config)
@@ -47,7 +52,8 @@ class Workflow(Component):
     # OR:
     # + restartCyclePoint > FirstCyclePoint to automatically restart from a previously completed cycle.
     #   CyclingFC output must already be present from the cycle before restartCyclePoint.
-    self._setOrDefault('restart cycle point', firstCyclePoint)
+    if self['restart cycle point'] is None:
+      self._set('restart cycle point', firstCyclePoint)
 
     ## FirstCycleDate in directory structure format
     first = dt.datetime.strptime(firstCyclePoint, dtf.abbrevISO8601Fmt)
