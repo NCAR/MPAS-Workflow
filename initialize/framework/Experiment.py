@@ -80,7 +80,7 @@ class Experiment(Component):
 
     ParentDirectory = hpc['top directory']+'/'+self['user directory']+'/'+self['user directory child']
 
-    expName = self['prefix']+expName+self['suffix']
+    expName = self['prefix']+suiteName+self['suffix']
     self._set('SuiteName', expName+self['suite identifier'])
 
     # ensure cylc suite parent directory exists

@@ -32,7 +32,7 @@ class Workflow(Component):
   optionalVariables = {
     # restart cycle point is used to restart an existing suite from a previously-generated
     # forecast at a date that is after 'first cycle point'
-    'restart cycle point': [str],
+    'restart cycle point': str,
   }
 
   def __init__(self, config:Config):

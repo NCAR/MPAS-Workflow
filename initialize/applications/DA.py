@@ -17,6 +17,7 @@ from initialize.applications.Variational import Variational
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
+from initialize.config.TaskFamily import CylcTaskFamily
 
 from initialize.data.Model import Model
 from initialize.data.Observations import Observations, benchmarkObservations
