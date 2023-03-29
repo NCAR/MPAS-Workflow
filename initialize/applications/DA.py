@@ -78,6 +78,12 @@ class DA(Component):
     else:
       self.enkf = None
 
+    # reinitialize TaskFamily with child initialize/execute settings
+    self._set('initialize', self.__da['initialize'])
+    self._set('execute', self.__da['execute'])
+    self.tf = CylcTaskFamily(self.base, [''], self['initialize'], self['execute'])
+
+    # DA title
     self.title = ''
     obsName = ''
     for o in self.__da['observers']:
@@ -185,19 +191,19 @@ class DA(Component):
     ######
     # post
     ######
-    postconf = {
-      'tasks': self.__da['post'],
-      'valid tasks': ['verifyobs'],
-      'verifyobs': {
-        'hpc': self.hpc,
-        'obs': self.outputs['obs']['members'],
-        'sub directory': 'da',
-        'dependencies': [self.tf.post],
-        'followon': [self.tf.clean],
-      },
-    }
+    if len(self.__da['post']) > 0:
+      postconf = {
+        'tasks': self.__da['post'],
+        'valid tasks': ['verifyobs'],
+        'verifyobs': {
+          'hpc': self.hpc,
+          'obs': self.outputs['obs']['members'],
+          'sub directory': 'da',
+          'dependencies': [self.tf.post],
+          'followon': [self.tf.clean],
+        },
+      }
 
-    if len(postconf['tasks']) > 0:
       post = Post(postconf, self.__globalConf)
       self._tasks += post._tasks
 
