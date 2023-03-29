@@ -64,7 +64,6 @@ source config/auto/members.csh
 source config/auto/model.csh
 source config/auto/staticstream.csh
 source config/auto/workflow.csh
-source config/environmentJEDI.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -158,9 +157,10 @@ if ( ${self_IAU} == True ) then
     # Initial condition (mpasin.YYYY-MM-DD_HH.00.00.nc)
     ln -sfv ${BGFile} ${ICFilePrefix}.${BGFileExt} || exit 1
   else		# either analysis or background does not exist; IAU is off.
-    echo "IAU was on, but no input files. So it is off and initialized at ${thisValidDate}."
-    set self_IAU          = False
-    set self_FCLengthHR   = ${CyclingWindowHR}
+    echo "IAU is enabled, but one of two input files is missing."
+    echo "Thus IAU is turned off at this cycle and the forecast is initialized at ${thisValidDate}."
+    set self_IAU = False
+    set self_FCLengthHR = ${CyclingWindowHR}
   endif
 endif
 
@@ -320,6 +320,11 @@ else
 
   # Run the executable
   # ==================
+  # load JEDI environment here to avoid conflict between multiple python versions
+  cd ${mainScriptDir}
+  source config/environmentJEDI.csh
+  cd -
+
   set log = log.${MPASCore}.0000.out
   foreach f ($log $ForecastEXE)
     if ( -e $f ) rm -v $f

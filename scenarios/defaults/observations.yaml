@@ -27,7 +27,7 @@ observations:
         gnssroref: gnssro
 
       IODADirectory:
-        variational:
+        da:
           common: "{{ObservationsWorkDir}}"
 
         hofx:
@@ -61,7 +61,7 @@ observations:
         amsua-cld_n19: amsua_n19
 
       IODADirectory:
-        variational:
+        da:
           common: "{{ObservationsWorkDir}}"
 
         hofx:
@@ -85,7 +85,7 @@ observations:
 
       IODADirectory:
         #TODO: update to locations of files with new DateTime format
-        variational:
+        da:
           ##anchor
           aircraft: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
           gnssroref: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/conv_obs
@@ -196,7 +196,7 @@ observations:
         ahi-clr_himawari8: ahi_himawari8
 
       IODADirectory:
-        variational:
+        da:
           common: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/GenerateObs/Observations
           abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPERO15X15_no-bias-correct

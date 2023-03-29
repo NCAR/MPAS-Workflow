@@ -1,0 +1,22 @@
+- obs space:
+    <<: *ObsSpace
+    name: Aircraft
+    _obsdatain: &ObsDataIn
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/aircraft_obs_{{thisValidDate}}.h5
+    _obsdataout: &ObsDataOut
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_aircraft{{ObsOutSuffix}}.h5
+    obsdatain:
+      <<: *{{ObsDataIn}}
+      max frame size: 40000
+    {{ObsDataOut}}
+    simulated variables: [airTemperature, windEastward, windNorthward, specificHumidity]
+  obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLoc
+  obs operator:
+    name: VertInterp
+  get values:
+    <<: *GetValues

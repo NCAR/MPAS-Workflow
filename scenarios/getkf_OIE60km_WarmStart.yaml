@@ -1,0 +1,29 @@
+enkf:
+  solver: GETKF
+  horizontal localization lengthscale: 1.2e6
+  vertical localization lengthscale: 10.0 # modellevel
+  retainObsFeedback: False
+  post: []
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.LaggedGEFS"
+forecast:
+  post: [verifyobs, verifymodel]
+hofx:
+  retainObsFeedback: False
+members:
+  n: 20
+model:
+  outerMesh: 60km
+  # TODO: make inner and ensemble meshes unnecessary
+  # related to {{PrepareExternalAnalysisInner}} and {{PrepareExternalAnalysisEnsemble}}
+  innerMesh: 60km
+  ensembleMesh: 60km
+observations:
+  resource: PANDACArchive
+rtpp:
+  relaxationFactor: 0.8
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180415T00

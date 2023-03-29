@@ -9,6 +9,7 @@
 
 from collections import OrderedDict
 
+from initialize.applications.EnKF import EnKF
 from initialize.applications.ExtendedForecast import ExtendedForecast
 from initialize.applications.Members import Members
 from initialize.applications.RTPP import RTPP
@@ -18,7 +19,7 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 
 from initialize.data.Model import Model
-from initialize.data.Observations import Observations
+from initialize.data.Observations import Observations, benchmarkObservations
 from initialize.data.ObsEnsemble import ObsEnsemble
 from initialize.data.StateEnsemble import StateEnsemble, State
 
@@ -56,9 +57,58 @@ class DA(Component):
 
     self.__subtasks = []
 
-    # variational
-    self.var = Variational(config, hpc, meshes, model, obs, members, workflow, self)
-    self.__subtasks += [self.var]
+    ## DA
+    # application
+    msg = "DA: config must contain only one of variational or enkf"
+    assert config.has('variational') or config.has('enkf'), msg
+
+    if config.has('variational'):
+      assert not config.has('enkf'), msg
+      self.var = Variational(config, hpc, meshes, model, members, workflow, self)
+      self.__da = self.var
+      self.__subtasks += [self.var]
+    else:
+      self.var = None
+
+    if config.has('enkf'):
+      assert not config.has('variational'), msg
+      self.enkf = EnKF(config, hpc, meshes, model, members, workflow, self)
+      self.__da = self.enkf
+      self.__subtasks += [self.enkf]
+    else:
+      self.enkf = None
+
+    self.title = ''
+    obsName = ''
+    for o in self.__da['observers']:
+      if o not in benchmarkObservations:
+        obsName += '_'+o
+
+    if self.var is not None:
+      varName = self.var['DAType']
+      for nInner in self.var['nInnerIterations']:
+        varName += '-'+str(nInner)
+      varName += '-iter'
+      self.title += varName+obsName
+
+      if members.n > 1:
+        self.title = 'eda_'+self.title
+        if self.var['EDASize'] > 1:
+          self.title += '_NMEM'+str(self.var['nDAInstances'])+'x'+str(self.var['EDASize'])
+          if self.var['MinimizerAlgorithm'] == self.var['BlockEDA']:
+            self.title += 'Block'
+        else:
+          self.title += '_NMEM'+str(members.n)
+
+        if self.var['SelfExclusion']:
+          self.title += '_SelfExclusion'
+
+        if self.var['ABEInflation']:
+          self.title += '_ABEI_BT'+str(self.var['ABEIChannel'])
+
+    elif self.enkf is not None:
+      self.title += self.enkf['solver']+obsName
+      self.title += '_NMEM'+str(members.n)
 
     # inputs/ouputs
     self.inputs = {}
@@ -80,7 +130,7 @@ class DA(Component):
       })
       self.outputs['obs']['members'].append({
         'directory': self.workDir+'/{{thisCycleDate}}/'+Observations.OutDBDir+'/'+self.memFmt.format(mm),
-        'observers': self.var['observers']
+        'observers': self.__da['observers']
       })
 
     # TODO: mean directories are controlled by external applications (e.g., ExtendedForecast)
@@ -97,8 +147,11 @@ class DA(Component):
                        self.inputs['state']['members'], self.outputs['state']['members'])
     self.__subtasks += [self.rtpp]
 
+    if self.rtpp['relaxationFactor'] > 0.0:
+      self.title += '_RTPP'+str(self.rtpp['relaxationFactor'])
+
   def export(self, previousForecast:str, ef:ExtendedForecast):
-    self.var.export()
+    self.__da.export()
     self.rtpp.export(dependency = self.tf.post, followon = self.tf.finished)
 
     ########################
@@ -133,7 +186,7 @@ class DA(Component):
     # post
     ######
     postconf = {
-      'tasks': self.var['post'],
+      'tasks': self.__da['post'],
       'valid tasks': ['verifyobs'],
       'verifyobs': {
         'hpc': self.hpc,

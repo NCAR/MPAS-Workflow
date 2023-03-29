@@ -76,7 +76,20 @@ class PBSPro(Task):
     text = '''
     [[[directives]]]'''+flags
 
-    if select is not None:
+    nodes = self.r.getOrDefault('nodes', None, int)
+    if nodes is not None:
+      PEPerNode = self.r['PEPerNode']
+      threads = self.r.getOrDefault('threads', 1, int)
+      assert threads*PEPerNode <= self.maxProcPerNode, (
+        'PBSPro: too many processors requested -->'+str(threads*PEPerNode))
+
+      memory = self.r.getOrDefault('memory', None)
+      select = str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)
+      if threads > 1:
+        select = str(nodes)+':ncpus='+str(self.maxProcPerNode)+':mpiprocs='+str(PEPerNode)+':ompthreads='+str(threads)
+      if memory is not None:
+        select += ':mem='+memory
+
       text += '''
       -l = select='''+select
 
@@ -84,6 +97,7 @@ class PBSPro(Task):
 
 class Cheyenne(PBSPro):
   name = 'cheyenne'
+  maxProcPerNode = 36
 
 TaskLookup = {
   'cheyenne': Cheyenne,
