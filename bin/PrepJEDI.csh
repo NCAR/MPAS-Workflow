@@ -384,7 +384,7 @@ end
 # TODO: move to config/applications/${ArgAppType}.csh
 # function used for the all-sky IR ObsError parameterization
 # Options: Okamoto, Polynomial2D, Polynomial2DByLatBand, Constant
-set allSkyIRErrorType = Constant
+set allSkyIRErrorType = Okamoto
 
 #POLYNOMIAL2DFITDEGREE
 # 2d polynomial fit degree for CFxMax vs. CFy, only applies when allSkyIRErrorType==Polynomial2D
