@@ -20,7 +20,7 @@ from initialize.framework.HPC import HPC
 benchmarkObservations = [
   # anchor
   'aircraft',
-  'gnssroref',
+  'gnssrobndropp1d',
   'satwind',
   'satwnd',
   'sfc',
