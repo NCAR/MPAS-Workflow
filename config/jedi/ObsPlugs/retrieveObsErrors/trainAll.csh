@@ -12,3 +12,7 @@ set diagnostic = rltv_doadob
 set coord = alt
 set errortype = RelativeObsError
 ./relativeObsErrors.csh "$analysisDir" "$obsspace" "$diagnostic" "$coord" "$errortype"
+
+# 2ndDoaDob
+set analysisDir = /glade/scratch/guerrett/pandac/graphics_results/SatwindAircSondeSimulations28DEC2022
+./satwindObsErrors.csh "$analysisDir"
