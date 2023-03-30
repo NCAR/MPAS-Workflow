@@ -1,0 +1,13 @@
+# test scenarios, ordered from most simple to most complex
+# If multiple test scenarios fail, it is advisable to progress by debugging and re-testing with only
+# the most simple of the failing scenarios until it passes in order to reduce computational overhead.
+# Then proceed with the remaining failing scenarios until all complete.
+scenarios: [
+  test/testinput/3dvar_OIE120km_WarmStart.yaml,
+  test/testinput/3denvar_OIE120km_IAU_WarmStart.yaml,
+  test/testinput/3dvar_OIE120km_ColdStart.yaml,
+  test/testinput/3dvar_O30kmIE60km_ColdStart.yaml,
+  test/testinput/3denvar_O30kmIE60km_WarmStart.yaml,
+  test/testinput/eda_OIE120km_WarmStart.yaml,
+  test/testinput/getkf_OIE120km_WarmStart.yaml,
+]

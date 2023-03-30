@@ -1,0 +1,34 @@
+suite: ForecastFromExternalAnalyses
+
+externalanalyses:
+  resource: "GFS.RDA"
+
+experiment:
+  name: 'ForecastFromGFSAnalyses'
+  prefix: ''
+
+extendedforecast:
+  meanTimes: T00,T12
+  lengthHR: 24
+  outIntervalHR: 12
+
+  # optionally turn on extended forecast post
+  post: [verifyobs, verifymodel]
+
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+
+members:
+  n: 1
+
+model:
+  outerMesh: 120km
+
+observations: # for optional verification
+  resource: GladeRDAOnline
+
+workflow:
+  first cycle point: 20220606T00
+  final cycle point: 20220607T00
+  max active cycle points: 4

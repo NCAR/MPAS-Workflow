@@ -55,7 +55,7 @@ cost function:
             data directory: {{bumpLocDir}}
             files prefix: {{bumpLocPrefix}}
           drivers:
-            multivariate strategy: common
+            multivariate strategy: duplicated
             read local nicas: true
           model:
             level for 2d variables: last

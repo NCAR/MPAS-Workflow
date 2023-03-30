@@ -1,0 +1,32 @@
+hofx:
+  # resource requirements
+  job:
+    defaults:
+      seconds: 1000
+      nodes: 4
+      PEPerNode: 32
+      memory: 109GB
+
+      # cylc retry string
+      retry: '2*PT30S'
+
+    #{{outerMesh}}:
+    #  seconds: int
+    #  nodes: int
+    #  PEPerNode: int
+    #  memory: int
+    30km:
+      seconds: 600
+      nodes: 2
+      PEPerNode: 36
+      memory: 109GB
+    60km:
+      seconds: 600
+      nodes: 1
+      PEPerNode: 36
+      memory: 109GB
+    120km:
+      seconds: 600
+      nodes: 1
+      PEPerNode: 36
+      memory: 109GB

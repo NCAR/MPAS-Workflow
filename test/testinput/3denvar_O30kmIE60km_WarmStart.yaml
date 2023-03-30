@@ -1,0 +1,54 @@
+experiment:
+  name: '3denvar_O30kmIE60km_WarmStart_TEST'
+externalanalyses:
+  resource: "GFS.PANDAC"
+forecast:
+  post: [verifyobs, verifymodel]
+firstbackground:
+  resource: "PANDAC.GFS"
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+members:
+  n: 1
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+observations:
+  resource: PANDACArchive
+  resources:
+    PANDACArchive:
+      IODADirectory:
+        da:
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_no-bias-correct
+        hofx:
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_no-bias-correct
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15
+variational:
+  DAType: 3denvar
+  # only use 15 inner iterations to reduce cost
+  nInnerIterations: [15,]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
+  job:
+    30km:
+      60km:
+        3denvar:
+          memory: 45
+  post: [verifyobs]
+workflow:
+  first cycle point: 20180414T18
+  # Note: only run for 1 cycle to reduce cost
+  # Also required with only 15 inner iterations to avoid NaN in forecast
+  # Can cycle for a full month when nInnerIterations==[60,60]
+  final cycle point: 20180415T00

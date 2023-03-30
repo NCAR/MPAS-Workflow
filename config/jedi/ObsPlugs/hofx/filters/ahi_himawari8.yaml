@@ -47,22 +47,22 @@
   - filter: Background Check
     threshold: *ahi_himawari8BGRelThresh
     <<: *multiIterationFilter
-#  - filter: GOMsaver
-#    filename: {{OutDBDir}}/{{geoPrefix}}_ahi_himawari8.nc4
+  - filter: GOMsaver
+    filename: {{OutDBDir}}/{{geoPrefix}}_ahi_himawari8.nc4
   - filter: YDIAGsaver
     filename: {{OutDBDir}}/{{diagPrefix}}_ahi_himawari8.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
       channels: *ahi_channels
-#    - name: weightingfunction_of_atmosphere_layer
-#      channels: *ahi_channels
-#    - name: pressure_level_at_peak_of_weightingfunction
-#      channels: *ahi_channels
-#    - name: brightness_temperature_jacobian_air_temperature
-#      channels: *ahi_channels
-#    - name: brightness_temperature_jacobian_humidity_mixing_ratio
-#      channels: *ahi_channels
-#    - name: brightness_temperature_jacobian_surface_emissivity
-#      channels: *ahi_channels
-#    - name: brightness_temperature_jacobian_surface_temperature
-#      channels: *ahi_channels
+    - name: weightingfunction_of_atmosphere_layer
+      channels: *ahi_channels
+    - name: pressure_level_at_peak_of_weightingfunction
+      channels: *ahi_channels
+    - name: brightness_temperature_jacobian_air_temperature
+      channels: *ahi_channels
+    - name: brightness_temperature_jacobian_humidity_mixing_ratio
+      channels: *ahi_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *ahi_channels
+    - name: brightness_temperature_jacobian_surface_temperature
+      channels: *ahi_channels

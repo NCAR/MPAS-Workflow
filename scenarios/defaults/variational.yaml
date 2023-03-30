@@ -1,0 +1,258 @@
+variational:
+  ## mesh-specific settings
+  ensemble: #(envar or hybrid)
+    forecasts:
+      ## resource (required)
+      # use the format "{{project}}.{{source}}"
+      # see below for options (e.g., "PANDAC.GEFS")
+      resource: None
+
+      #{{project}}:
+      #  {{source}}:
+      #    {{ensembleMesh}}:
+      #      maxMembers: int
+      #      directory0: str
+      #      directory1: str
+      #      #dateFormatter: str
+      #      memberNDigits: int
+      #      memberPrefix: str
+      #      forecastDateOffsetHR: int
+
+      # produces this filename:
+      #  {{directory0}}/{{memberPrefix}}{{member}}/{{directory1}}/{{filePrefix}}.{{thisMPASFileDate}}.nc
+      #
+      #  where
+      #    + {{member}} is an iterator formatted using {{memberNDigits}}
+      #    + {{directory0}} or {{directory1}} may include {{prevDateTime}} for substitution
+      #    + {{prevDateTime}} is the previous forecast date-time, formatted as YYMMDDHH, and depends on
+      #      the forecastDateOffsetHR and workflow.CyclingWindowHR
+      #    + {{thisMPASFileDate}} is formatted as YY-MM-DD_HH.00.00
+      # For more details, see PrepVariational.csh and tools/substituteEnsembleBTemplate.py
+
+      # common settings act as default values when not contained in {{project}}.{{source}}
+      defaults:
+        maxMembers: 0
+        directory0: None #must override
+        directory1: None
+        #dateFormatter: 'YYYYMMDDHH' # not currently implemented
+        filePrefix: mpasout
+        memberPrefix: None # defaults to empty string
+        memberNDigits: 0 # must override
+        forecastDateOffsetHR: 0 # added to CyclingWindowHR, only non-zero for IAU
+
+      PANDAC: # only available 20180415T00-20180514T18
+        GEFS:
+          120km:
+            maxMembers: 20
+            directory0: '/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/EnsForCov/{{prevDateTime}}'
+            filePrefix: EnsForCov
+            memberNDigits: 2
+
+            # the settings above produce the following yaml template:
+            #members from template:
+            #  template:
+            #    <<: *memberConfig
+            #    filename: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/EnsForCov/{{prevDateTime}}/%iMember%/EnsForCov.{{thisMPASFileDate}}.nc
+            #  pattern: %iMember%
+            #  start: 1
+            #  zero padding: 2
+            #  nmembers: 20
+            #
+            # note that when SelfExclusion is True, nmembers will be 19 and another key:value pair
+            # is added as with `except: [{{backgroundMember}}]`, where {{backgroundMember}} is equal
+            # to the member iterator (i.e., 1 for member 1, 2 for member 2, etc.)
+
+          60km:
+            maxMembers: 20
+            directory0: '/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/EnsForCov/{{prevDateTime}}'
+            filePrefix: EnsForCov
+            memberNDigits: 2
+
+        DART:
+          60km:
+            maxMembers: 80
+            directory0: '/glade/scratch/guerrett/pandac/schwartz_dart_NMEM80_60km/CyclingFC/{{prevDateTime}}'
+            memberPrefix: mem
+            memberNDigits: 3
+
+        EDA:
+          60km:
+            maxMembers: 80
+            directory0: '/glade/scratch/guerrett/pandac/guerrett_eda_3denvar-60-iter_NMEM80_RTPP0.7_SelfExclusion_OIE60km_WarmStart/CyclingFC/{{prevDateTime}}'
+            memberPrefix: mem
+            memberNDigits: 3
+
+            # the settings above produce the following yaml template:
+            #members from template:
+            #  template:
+            #    <<: *memberConfig
+            #    filename: /glade/scratch/guerrett/pandac/guerrett_eda_3denvar-60-iter_NMEM80_RTPP0.7_SelfExclusion_OIE60km_WarmStart/CyclingFC/{{prevDateTime}}/mem%iMember%/mpasout.{{thisMPASFileDate}}.nc
+            #  pattern: %iMember%
+            #  start: 1
+            #  zero padding: 3
+            #  nmembers: 80
+
+    # externally-produced localization files
+    localization:
+      #{{ensembleMesh}}:
+      #  bumpLocPrefix: str
+      #  bumpLocDir: str
+      30km:
+        bumpLocPrefix: bumploc_1200.0km_6.0km
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
+      60km:
+        bumpLocPrefix: bumploc_1200.0km_6.0km
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
+      120km:
+        bumpLocPrefix: bumploc_1200.0km_6.0km
+        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
+
+  # externally-produced background covariance files (var or hybrid)
+  covariance:
+    bumpCovControlVariables:
+    - stream_function
+    - velocity_potential
+    - temperature
+    - spechum
+    - surface_pressure
+    bumpCovPrefix: mpas_parametersbump_cov
+    bumpCovVBalPrefix: mpas_vbal
+    #{{innerMesh}}:
+    #  bumpCovDir: str
+    #  bumpCovStdDevFile: str
+    #  bumpCovVBalDir: str
+    30km:
+      bumpCovDir: None
+      bumpCovStdDevFile: None
+      bumpCovVBalDir: None
+    60km:
+      bumpCovDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230125_prebuilt/60km.NICAS_00
+      bumpCovStdDevFile: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230125_prebuilt/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230125_prebuilt/60km.VBAL_00
+    120km:
+      bumpCovDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230125_prebuilt/NICAS_00
+      bumpCovStdDevFile: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230125_prebuilt/CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/p/mmm/parc/bjung/pandac_common/staticB/20230125_prebuilt/VBAL_00
+
+  # resource requirements
+  job:
+    defaults:
+      baseSeconds: 1500
+      secondsPerEnVarMember: 10
+      nodes: 8
+      PEPerNode: 16
+      memory: 45GB
+
+      # cylc retry string
+      retry: '2*PT30S'
+
+    ## FORMAT
+    #{{outerMesh}}:
+    #  {{innerMesh}}:
+    #    {{DAType}}: # i.e., 3dvar, 3denvar, 3dhybrid, 4denvar, etc...
+    #      baseSeconds: int
+    #      secondsPerEnVarMember: int, default is 0
+    #      #@ seconds = $secondsPerEnVarMember * $ensPbNMembers + $baseSeconds
+    #      nodes: int
+    #      PEPerNode: int
+    #      memory: int
+    ## All resource requests below are based on
+    # + single-precision bundle build
+    # + sondes, aircraft, sfc, gnssro, satwind, 6 clear amsua
+    # These are starting points.  When more memory is needed (e.g., more observations, more EnVar
+    # memmbers) than is available in default resource requests below, use more nodes and keep
+    # the product of (nodes x PEPerNode) constant. If (nodes x PEPerNode) is modifed, new
+    # localization or covariance files may be needed.
+    30km:
+      # Assuming 120 total inner iterations
+      30km:
+        3denvar:
+          nodes: 64
+          PEPerNode: 8
+          memory: 45GB
+          baseSeconds: 1500
+          secondsPerEnVarMember: 5
+        3dvar:
+          nodes: 64
+          PEPerNode: 8
+          memory: 45GB
+          baseSeconds: 1500
+        ensemble: # i.e., EDASize > 1, multiple background members treated per executable
+          3denvar:
+            nodesPerMember: 3
+            PEPerNode: 12
+            memory: 45GB
+            baseSeconds: 1200
+            secondsPerEnVarMember: 10
+      60km:
+        3denvar:
+          nodes: 6
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 400
+          secondsPerEnVarMember: 9
+        3dhybrid:
+          nodes: 6
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 500
+          secondsPerEnVarMember: 9
+        3dvar:
+          nodes: 6
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 500
+    60km:
+      # Assuming 60 total inner iterations
+      60km:
+        3denvar:
+          nodes: 4
+          PEPerNode: 36
+          memory: 45GB
+          baseSeconds: 200
+          secondsPerEnVarMember: 6
+          # double-precision bundle build
+          ##nodes: 6
+          ##PEPerNode: 32
+          ##memory: 45GB
+          ##baseSeconds: 200
+          ##secondsPerEnVarMember: 6
+        3dhybrid:
+          nodes: 4
+          PEPerNode: 36
+          memory: 45GB
+          baseSeconds: 250
+          secondsPerEnVarMember: 6
+        3dvar:
+          nodes: 6
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 250
+        ensemble:
+          3denvar:
+            nodesPerMember: 3
+            PEPerNode: 12
+            memory: 45GB
+            baseSeconds: 1200
+            secondsPerEnVarMember: 10
+    120km:
+      # Assuming 60 total inner iterations
+      120km:
+        3denvar:
+          nodes: 4
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 200
+          secondsPerEnVarMember: 5
+        3dvar:
+          nodes: 4
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 300
+        ensemble:
+          3denvar:
+            nodesPerMember: 3
+            PEPerNode: 12
+            memory: 45GB
+            baseSeconds: 1200
+            secondsPerEnVarMember: 10

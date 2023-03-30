@@ -39,4 +39,5 @@ set StandardStateVariables = ( \
 set MPASJEDIVariablesFiles = (\
   geovars.yaml \
   obsop_name_map.yaml \
+  keptvars.yaml \
 )

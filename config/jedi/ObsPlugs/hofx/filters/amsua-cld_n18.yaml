@@ -16,8 +16,8 @@
   - filter: Background Check
     threshold: *amsua_n18BGRelThresh
     <<: *multiIterationFilter
-#  - filter: GOMsaver
-#    filename: {{OutDBDir}}/{{geoPrefix}}_amsua-cld_n18.nc4
+  - filter: GOMsaver
+    filename: {{OutDBDir}}/{{geoPrefix}}_amsua-cld_n18.nc4
   - filter: YDIAGsaver
     filename: {{OutDBDir}}/{{diagPrefix}}_amsua-cld_n18.nc4
     filter variables:

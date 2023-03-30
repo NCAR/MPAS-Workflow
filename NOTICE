@@ -1,0 +1,23 @@
+`MPAS-Workflow` is provided by NCAR/MMM as an example for carrying out DA and non-DA
+workflows with MPAS and JEDI-MPAS. The contributors have provided any of the following:
+ - GitHub pull requests and/or review
+ - data
+ - shell scripts used by workflow tasks 
+ - workflow design
+ - source code
+ - other critical consultation
+
+Contributors:
+ - Maryam Abdi-Oskouei
+ - Junmei Ban
+ - Ivette Hernandez Banos
+ - Jamie Bresch
+ - JJ Guerrette
+ - Soyoung Ha
+ - BJ Jung
+ - Zhiquan Liu
+ - Chris Snyder
+ - Craig Schwartz
+ - Steven Vahl
+ - Yali Wu
+ - Yonggang Yu
