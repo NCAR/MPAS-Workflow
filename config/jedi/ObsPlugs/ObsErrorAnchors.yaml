@@ -264,7 +264,7 @@ _satwind:
     # removed, then heights with 999. either (1) need to have valid values or (2) need to be
     # filtered out by other means in order to avoid polluting post-processed statistics.
 
-    # trained using DoaDob (Desroziers et al, 2005): E[{d^a_o}^T d^b_o y^-1]
+    # trained using DoaDob (Desroziers et al, 2005): E[{d^a_o}^T d^b_o]
     doadob by named latitude band and ObsType 2nd training:
       # retrieved and formatted using ./retrieveObsErrors/satwindObsErrors.csh
       # note: satwnd has more ObsType245 locations and satwind has more ObsType246 locations
@@ -387,88 +387,47 @@ _sondes:
     # pressures (Pa) for observation error interpolation
     levels: &sondesErrorLevels [500., 1000., 2500., 5000., 10000., 20000., 30000., 40000., 50000., 65000., 80000., 100000.]
 
-    # commands used to modify diagnostic output:
-    # cd $analysisDir/sondes_analyses/BinValAxisProfile/ObsError/data
-    # echo 'absolute doadob:' > tmp
-    # grep 'doadob' P_*Tro*.yaml | sed 's@.*yaml:\ \+@@' >> tmp
-    #
-    # echo 'relative doadob:' >> tmp
-    # grep 'rltv_doadob' ../../RelativeObsError/data/P_*Tro*.yaml | sed 's@.*yaml:\ \+@@' >> tmp
-    #
-    # vi tmp
-    # :%s@.*sondes\(.*\):@\ \ \1:\ \&sondes\1Error@
-    #
-    # # use to selectively divide relative doadob by 100:
-    # :15,$s@\(\D\)\(\d\)\.\(\d\+\)@\10\.0\2\3@g # values < 10%
-    # :15,$s@\(\d\d\)\.\(\d\+\)@\.\1\2@g # values >= 10%
-    # :%s@\ \.@\ 0\.@g # add leading zero where missing
-    # :%s@9\.990@999\.0@g # return missing values to originals
-    #
-    # indent
-    # :%s@^@      @
-
     # latitude band-specific observation errors: T (K), U (m s^-1), V (m s^-1), qv (kg/kg)
 
+    # trained using DoaDob (Desroziers et al, 2005): E[{d^a_o}^T d^b_]
     doadob by named latitude band 2nd training:
+      # retrieved and formatted using ./retrieveObsErrors/sondesObsErrors.csh
       absolute doadob:
-        NXTro_T: &sondesNXTro_TError [5.598, 3.199, 1.847, 1.507, 1.386, 1.376, 0.9649, 0.7333, 0.7425, 0.8463, 1.052, 1.533]
-        NXTro_U: &sondesNXTro_UError [4.407, 3.655, 2.761, 2.722, 2.816, 2.861, 2.624, 2.429, 2.252, 2.147, 2.153, 2.186]
-        NXTro_V: &sondesNXTro_VError [4.19, 3.63, 2.867, 2.774, 2.787, 2.841, 2.669, 2.486, 2.284, 2.18, 2.158, 2.19]
-        #NXTro_qv: &sondesNXTro_qvError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 6.931e-05, 0.0001813, 0.0004371, 0.0007594, 0.001105, 0.001157]
-        SXTro_T: &sondesSXTro_TError [4.128, 3.446, 2.574, 1.726, 1.804, 1.506, 0.8847, 0.7219, 0.7829, 0.9609, 1.177, 1.434]
-        SXTro_U: &sondesSXTro_UError [5.61, 3.941, 3.242, 3.208, 3.532, 3.371, 2.914, 2.683, 2.424, 2.248, 2.228, 2.234]
-        SXTro_V: &sondesSXTro_VError [4.7, 4.074, 3.416, 3.353, 3.461, 3.268, 2.802, 2.657, 2.416, 2.302, 2.295, 2.28]
-        #SXTro_qv: &sondesSXTro_qvError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 7.144e-05, 0.0001949, 0.0004627, 0.001024, 0.001289, 0.001164]
-        Tro_T: &sondesTro_TError [5.731, 3.311, 2.006, 1.858, 1.611, 0.9108, 0.6955, 0.7348, 0.8289, 0.9004, 1.022, 1.346]
-        Tro_U: &sondesTro_UError [4.711, 3.801, 3.13, 3.289, 3.336, 2.911, 2.554, 2.408, 2.21, 2.067, 2.01, 2.08]
-        Tro_V: &sondesTro_VError [4.689, 3.929, 3.28, 3.498, 3.546, 3.106, 2.699, 2.545, 2.304, 2.1, 1.976, 1.965]
-        #Tro_qv: &sondesTro_qvError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 0.0002913, 0.000637, 0.001172, 0.001645, 0.002198, 0.002063]
+        NXTro_T: &sondesNXTro_TError [10.3, 4.415, 1.972, 1.589, 1.456, 1.409, 0.9734, 0.7294, 0.7372, 0.8573, 1.108, 1.645]
+        SXTro_T: &sondesSXTro_TError [6.559, 4.807, 3.034, 1.955, 2.017, 1.602, 0.8976, 0.7152, 0.7907, 1.013, 1.308, 1.524]
+        Tro_T: &sondesTro_TError [9.36, 4.335, 2.18, 2.208, 1.891, 0.9432, 0.6834, 0.7274, 0.836, 0.9219, 1.059, 1.379]
+        NXTro_U: &sondesNXTro_UError [5.276, 4.023, 2.833, 2.787, 2.89, 2.888, 2.59, 2.413, 2.273, 2.21, 2.278, 2.334]
+        SXTro_U: &sondesSXTro_UError [8.19, 4.804, 3.509, 3.38, 3.743, 3.486, 2.888, 2.698, 2.486, 2.349, 2.426, 2.487]
+        Tro_U: &sondesTro_UError [6.226, 4.608, 3.475, 3.611, 3.621, 3.015, 2.504, 2.385, 2.232, 2.134, 2.125, 2.225]
+        NXTro_V: &sondesNXTro_VError [4.721, 3.89, 2.942, 2.832, 2.847, 2.864, 2.635, 2.467, 2.309, 2.248, 2.274, 2.334]
+        SXTro_V: &sondesSXTro_VError [5.974, 4.748, 3.612, 3.509, 3.632, 3.369, 2.794, 2.636, 2.488, 2.449, 2.539, 2.53]
+        Tro_V: &sondesTro_VError [5.714, 4.382, 3.426, 3.754, 3.838, 3.239, 2.687, 2.544, 2.338, 2.168, 2.072, 2.086]
       relative doadob:
-        NXTro_qv: &sondesNXTro_qvError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 0.4971, 0.590, 0.6916, 0.6388, 0.4787, 0.2774]
-        SXTro_qv: &sondesSXTro_qvError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 0.4949, 0.6671, 0.8109, 0.9239, 0.6968, 0.2826]
-        Tro_qv: &sondesTro_qvError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 0.7892, 0.8529, 0.9764, 0.6877, 0.4176, 0.1953]
+        NXTro_qv: &sondesNXTro_qvError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 0.4134, 0.4425, 0.4718, 0.4302, 0.3387, 0.2355]
+        SXTro_qv: &sondesSXTro_qvError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 0.3949, 0.4619, 0.5575, 0.5701, 0.4364, 0.2269]
+        Tro_qv: &sondesTro_qvError [999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 0.6005, 0.5775, 0.5866, 0.4386, 0.2883, 0.1604]
 
 _aircraft:
   errors:
     # pressures (Pa) for observation error interpolation
     levels: &aircraftErrorLevels [10000., 20000., 30000., 40000., 50000., 65000., 80000., 100000.]
 
-    # commands used to modify diagnostic output:
-    # cd $analysisDir/aircraft_analyses/BinValAxisProfile/ObsError/data
-    # echo 'absolute doadob:' > tmp
-    # grep 'doadob' P_*Tro*.yaml | sed 's@.*yaml:\ \+@@' >> tmp
-    #
-    # echo 'relative doadob:' >> tmp
-    # grep 'rltv_doadob' ../../RelativeObsError/data/P_*Tro*.yaml | sed 's@.*yaml:\ \+@@' >> tmp
-    #
-    # vi tmp
-    # :%s@.*aircraft\(.*\):@\ \ \1:\ \&aircraft\1Error@
-    # :%s@\[999\.0,\ 999\.0,\ 999.0,\ 999\.0,@\[@
-    #
-    # # use to selectively divide relative doadob by 100:
-    # :14,$s@\(\D\)\(\d\)\.\(\d\+\)@\10\.0\2\3@g # values < 10%
-    # :14,$s@\(\d\d\)\.\(\d\+\)@\.\1\2@g # values >= 10%
-    # :%s@\ \.@\ 0\.@g # add leading zero where missing
-    # :%s@9\.990@999\.0@g # return missing values to originals
-    #
-    # indent
-    # :%s@^@      @
-
     # latitude band-specific observation errors: T (K), U (m s^-1), V (m s^-1), qv (kg/kg)
+
+    # trained using DoaDob (Desroziers et al, 2005): E[{d^a_o}^T d^b_]
     doadob by named latitude band 2nd training:
+      # retrieved and formatted using ./retrieveObsErrors/aircraftObsErrors.csh
       absolute doadob:
-        NXTro_T: &aircraftNXTro_TError [ 2.576, 1.064, 0.8505, 0.753, 0.7613, 0.8346, 1.018, 1.348]
-        NXTro_U: &aircraftNXTro_UError [ 3.13, 2.975, 2.825, 2.496, 2.337, 2.283, 2.344, 2.344]
-        NXTro_V: &aircraftNXTro_VError [ 3.666, 3.182, 3.066, 2.628, 2.45, 2.362, 2.395, 2.325]
-        #NXTro_qv: &aircraftNXTro_qvError [ 999.0, 999.0, 9.454e-05, 0.0002255, 0.0004657, 0.0008262, 0.001199, 0.001222]
-        SXTro_T: &aircraftSXTro_TError [ 999.0, 1.925, 1.111, 0.968, 0.8826, 0.8974, 1.061, 0.9207]
-        SXTro_U: &aircraftSXTro_UError [ 999.0, 3.449, 3.041, 2.851, 2.478, 2.379, 2.546, 2.461]
-        SXTro_V: &aircraftSXTro_VError [ 999.0, 4.299, 3.137, 2.931, 2.54, 2.428, 2.588, 2.412]
-        Tro_T: &aircraftTro_TError [ 1.685, 0.8963, 0.766, 0.6692, 0.6939, 0.7497, 0.8761, 1.092]
-        Tro_U: &aircraftTro_UError [ 2.001, 2.608, 2.528, 2.232, 2.03, 1.931, 2.105, 2.104]
-        Tro_V: &aircraftTro_VError [ 4.33, 2.782, 2.613, 2.273, 2.067, 1.943, 2.054, 2.039]
-        #Tro_qv: &aircraftTro_qvError [ 999.0, 999.0, 0.0001451, 0.000311, 0.0006296, 0.001084, 0.001859, 0.001917]
+        NXTro_T: &aircraftNXTro_TError [ 2.55, 1.076, 0.8462, 0.7394, 0.7491, 0.8276, 1.016, 1.336]
+        SXTro_T: &aircraftSXTro_TError [ 999.0, 1.974, 1.098, 0.9556, 0.8612, 0.8965, 1.056, 0.8808]
+        Tro_T: &aircraftTro_TError [ 1.783, 0.8845, 0.7519, 0.6555, 0.6803, 0.7333, 0.8624, 1.059]
+        NXTro_U: &aircraftNXTro_UError [ 3.042, 3.031, 2.873, 2.501, 2.325, 2.262, 2.325, 2.323]
+        SXTro_U: &aircraftSXTro_UError [ 999.0, 3.527, 3.078, 2.809, 2.416, 2.321, 2.503, 2.409]
+        Tro_U: &aircraftTro_UError [ 2.003, 2.597, 2.51, 2.199, 1.987, 1.893, 2.068, 2.059]
+        NXTro_V: &aircraftNXTro_VError [ 3.666, 3.277, 3.156, 2.651, 2.448, 2.347, 2.378, 2.305]
+        SXTro_V: &aircraftSXTro_VError [ 999.0, 4.515, 3.273, 2.913, 2.501, 2.383, 2.539, 2.357]
+        Tro_V: &aircraftTro_VError [ 4.369, 2.795, 2.619, 2.245, 2.028, 1.902, 2.011, 1.989]
       relative doadob:
-        NXTro_qv: &aircraftNXTro_qvError [ 999.0, 999.0, 0.4668, 0.5459, 0.5719, 0.5556, 0.4318, 0.2617]
-        SXTro_qv: &aircraftSXTro_qvError [999.0, 999.0, 0.4949, 0.6671, 0.8109, 0.9239, 0.6968, 0.2826] # no training data available, copied from sondes
-        Tro_qv: &aircraftTro_qvError [ 999.0, 999.0, 0.5012, 0.5531, 0.6639, 0.6454, 0.5537, 0.2398]
+        NXTro_qv: &aircraftNXTro_qvError [ 999.0, 999.0, 0.3804, 0.4211, 0.4312, 0.4035, 0.3029, 0.1939]
+        Tro_qv: &aircraftTro_qvError [ 999.0, 999.0, 0.4021, 0.4219, 0.4606, 0.428, 0.3533, 0.1717]
+        SXTro_qv: &aircraftSXTro_qvError [999.0, 999.0, 0.6005, 0.5775, 0.5866, 0.4386, 0.2883, 0.1604] # no training data available, copied from sondes

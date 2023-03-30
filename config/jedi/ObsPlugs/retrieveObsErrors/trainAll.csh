@@ -16,3 +16,5 @@ set errortype = RelativeObsError
 # 2ndDoaDob
 set analysisDir = /glade/scratch/guerrett/pandac/graphics_results/SatwindAircSondeSimulations28DEC2022
 ./satwindObsErrors.csh "$analysisDir"
+./sondesObsErrors.csh "$analysisDir"
+./aircraftObsErrors.csh "$analysisDir"
