@@ -9,7 +9,8 @@
       engine:
         type: H5File
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrobndropp1d{{ObsOutSuffix}}.h5
-    obsdatain: *{{ObsDataIn}}
+    obsdatain:
+      <<: *{{ObsDataIn}}
       obsgrouping:
         group variables: [ sequenceNumber ]
         sort variable: impactHeightRO
