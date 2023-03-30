@@ -1,6 +1,0 @@
-run:
-  scenarios: [ForecastFromGFSAnalyses]
-  suite: ForecastFromExternalAnalyses
-  appIndependentConfigs: [externalanalyses, job, members, model, observations, workflow]
-  appDependentConfigs: [forecast, hofx, initic, verifyobs, verifymodel]
-  ExpConfigType: base

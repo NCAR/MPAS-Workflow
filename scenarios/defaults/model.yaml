@@ -1,0 +1,21 @@
+model:
+  resources:
+    #{{mesh}}:
+    #  nCells: float
+    #    number of horizontal cells for each valid mesh descriptor
+    #    serves as a convenience for file naming when distinguishing between
+    #    multiple meshes, but does not affect any calculations
+    #  TimeStep: float # only used for {{outerMesh}}
+    #  DiffusionLengthScale: float # only used for {{outerMesh}}
+    30km:
+      nCells: 655362
+      TimeStep: 180.0
+      DiffusionLengthScale: 30000.0
+    60km:
+      nCells: 163842
+      TimeStep: 360.0
+      DiffusionLengthScale: 60000.0
+    120km:
+      nCells: 40962
+      TimeStep: 720.0
+      DiffusionLengthScale: 120000.0

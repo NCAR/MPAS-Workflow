@@ -1,0 +1,30 @@
+staticstream:
+  resources:
+    ## defaults:
+    # default resource values
+    # can be overridden in either a `common` or `{{mesh}}``-specific block
+    defaults:
+      ## directory (required): location of static stream file
+      directory: "{{ExternalAnalysesDir}}/{{FirstCycleDate}}"
+
+      ## filePrefix: prefix of static stream file
+      filePrefix: "x1.{{nCells}}.init"
+
+      ## maxMembers: maximum number of static stream members available for this resource
+      maxMembers: None
+
+      ## memberFormat:
+      # python formatting string for memberDir function
+      # defaults to providing an empty member directory, i.e., for non-ensemble scenarios
+      memberFormat: " "
+
+    PANDAC:
+      LaggedGEFS:
+        120km: # only available 20180414T18, 20200723T18
+          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
+          maxMembers: 80
+          memberFormat: "/{:02d}"
+        60km: # only available 20180414T18, 20200723T18
+          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
+          maxMembers: 80
+          memberFormat: "/{:02d}"

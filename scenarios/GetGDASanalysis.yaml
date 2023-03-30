@@ -1,18 +1,18 @@
+suite: GenerateExternalAnalyses
+
 externalanalyses:
   resource: "GDAS.NCEPFTP"
 experiment:
-  ExperimentName: 'DownloadGDASAnalysis'
-  ExperimentUserPrefix: ''
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
+  name: 'DownloadGDASAnalysis'
+  prefix: ''
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
 workflow:
   # test a recent date
-  firstCyclePoint: 20220819T00
-  initialCyclePoint: 20220915T12
-  finalCyclePoint: 20250912T12
-  CriticalPathType: GenerateExternalAnalyses
-  maxActiveCyclePoints: 1
+  first cycle point: 20220819T00
+  final cycle point: 20250912T12
+  max active cycle points: 1
 
 # needed variables for the experiment to run, even though we do not run init_atmosphere
 model:

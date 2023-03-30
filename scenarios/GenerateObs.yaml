@@ -1,3 +1,5 @@
+suite: GenerateObs
+
 observations:
   resource: GladeRDAOnline
   convertToIODAObservations:
@@ -10,13 +12,13 @@ observations:
   - prepbufr
   - satwnd
 experiment:
-  ExperimentName: 'GenerateObs'
-  ExperimentUserPrefix: ''
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
+  name: 'GenerateObs'
+  prefix: ''
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
 workflow:
-  firstCyclePoint: 20180415T00
-  finalCyclePoint: 20180416T00
-  CriticalPathType: GenerateObs
-  maxActiveCyclePoints: 60
+  first cycle point: 20220606T00
+  final cycle point: 20220608T00
+
+  max active cycle points: 60

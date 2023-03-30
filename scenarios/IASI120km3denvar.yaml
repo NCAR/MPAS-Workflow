@@ -1,23 +1,21 @@
 workflow:
-  firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180415T06
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
+  first cycle point: 20180414T18
+  final cycle point: 20180415T06
 observations:
   resource: PANDACArchive
-  PANDACArchive:
-    instrumentsAllowingBiasCorrection:
-    - iasi_metop-a
-    - iasi_metop-b
-    - iasi_metop-c
-    IODADirectory:
-      variational:
-        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+  resources:
+    PANDACArchive:
+      instrumentsAllowingBiasCorrection:
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+      IODADirectory:
+        variational:
+          iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+          iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+          iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
 experiment:
-  ExperimentName: '3denvar_OIE120km_WarmStart_IASI'
+  name: '3denvar_OIE120km_WarmStart_IASI'
 members:
   n: 1
 model:
@@ -36,7 +34,19 @@ variational:
       resource: "PANDAC.GEFS"
   biasCorrection: True
   tropprsMethod: thompson
-  experimentalObservations: [
+  observers: [
+    aircraft,
+    gnssroref,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
     iasi_metop-b,
   ]
   # for a 6h obs file
@@ -48,11 +58,11 @@ variational:
           nodes: 8
           PEPerNode: 16
           memory: 109
-job:
-  CPQueueName: premium
-  NCPQueueName: premium
+hpc:
+  CriticalQueue: premium
+  NonCriticalQueue: premium
 verifyobs:
-  pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics
+  script directory: /glade/p/mmm/parc/ivette/pandac/graphics
 hofx:
   job:
     120km:

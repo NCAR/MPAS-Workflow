@@ -1,5 +1,7 @@
 #!/bin/csh -f
 
+# defines helper functions for parsing YAML in c-shell
+
 if ( $?config_config ) exit 0
 setenv config_config 1
 
