@@ -1,0 +1,46 @@
+externalanalyses:
+  resource: "GFS.RDA"
+
+experiment:
+  ExperimentName: 'ForecastFromGFSAnalyses'
+  ExperimentUserPrefix: ''
+
+forecast:
+  ExtendedMeanFCTimes: T00,T12
+  ExtendedFCLengthHR: 24
+  ExtendedFCOutIntervalHR: 12
+
+job:
+  CPQueueName: economy
+  NCPQueueName: economy
+
+members:
+  n: 1
+
+model:
+  outerMesh: 120km
+
+observations: # for optional verification
+  resource: GladeRDAOnline
+
+workflow:
+  firstCyclePoint: 20180415T00
+  finalCyclePoint: 20180416T00
+
+  CriticalPathType: ForecastFromExternalAnalyses
+  maxActiveCyclePoints: 60
+
+  # optionally turn on extended forecast verification
+  VerifyExtendedMeanFC: True
+  VerifyAgainstObservations: True
+  VerifyAgainstExternalAnalyses: True
+
+  # none of the following verification methods are valid and are set to False
+  VerifyDeterministicDA: False
+  CompareDA2Benchmark: False
+  VerifyBGMembers: False
+  CompareBG2Benchmark: False
+  VerifyEnsMeanBG: False
+  DiagnoseEnsSpreadBG: False
+  VerifyANMembers: False
+  VerifyExtendedEnsFC: False

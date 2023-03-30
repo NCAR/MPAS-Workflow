@@ -3,12 +3,9 @@
 if ( $?config_workflow ) exit 0
 setenv config_workflow 1
 
-source config/scenario.csh
+source config/tools.csh
 
-# setLocal is a helper function that picks out a configuration node
-# under the "workflow" key of scenarioConfig
-setenv baseConfig scenarios/base/workflow.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig workflow"
+source config/scenario.csh workflow
 
 $setLocal firstCyclePoint
 
@@ -17,11 +14,11 @@ set yymmdd = `echo ${firstCyclePoint} | cut -c 1-8`
 set hh = `echo ${firstCyclePoint} | cut -c 10-11`
 setenv FirstCycleDate ${yymmdd}${hh}
 
-$setLocal initialCyclePoint
+setenv initialCyclePoint "`$getLocalOrNone initialCyclePoint`"
+if ("$initialCyclePoint" == None) then
+  setenv initialCyclePoint "$firstCyclePoint"
+endif
 $setLocal finalCyclePoint
-
-# cold (online) vs. warm (offline)
-$setLocal InitializationType
 
 # critical path selection
 $setLocal CriticalPathType
@@ -39,20 +36,85 @@ $setLocal DiagnoseEnsSpreadBG
 $setLocal VerifyANMembers
 $setLocal VerifyExtendedEnsFC
 
+# maximum active cycle points
+$setLocal maxActiveCyclePoints
+
 # durations and intervals
 $setLocal CyclingWindowHR
-$setLocal ExtendedFCWindowHR
-$setLocal ExtendedFC_DT_HR
-$setLocal ExtendedMeanFCTimes
-$setLocal ExtendedEnsFCTimes
 $setLocal DAVFWindowHR
 $setLocal FCVFWindowHR
 
-# maximum active cycle points
-$setLocal maxActiveCyclePoints
+## next date from which first background is initialized
+set nextFirstCycleDate = `$advanceCYMDH ${FirstCycleDate} +${CyclingWindowHR}`
+setenv nextFirstCycleDate ${nextFirstCycleDate}
+set Nyy = `echo ${nextFirstCycleDate} | cut -c 1-4`
+set Nmm = `echo ${nextFirstCycleDate} | cut -c 5-6`
+set Ndd = `echo ${nextFirstCycleDate} | cut -c 7-8`
+set Nhh = `echo ${nextFirstCycleDate} | cut -c 9-10`
+set nextFirstFileDate = ${Nyy}-${Nmm}-${Ndd}_${Nhh}.00.00
 
 ## DA2FCOffsetHR and FC2DAOffsetHR: control the offsets between DataAssim and Forecast
 # tasks in the critical path
 # TODO: set DA2FCOffsetHR and FC2DAOffsetHR based on IAU controls
 setenv DA2FCOffsetHR 0
 setenv FC2DAOffsetHR ${CyclingWindowHR}
+
+
+# Differentiate between creating the workflow suite for the first time
+# and restarting (i.e., when initialCyclePoint > firstCyclePoint)
+if ($initialCyclePoint == $firstCyclePoint) then
+  # The analysis will run every CyclingWindowHR hours, starting CyclingWindowHR hours after the
+  # initialCyclePoint
+  set AnalysisTimes = +PT${CyclingWindowHR}H/PT${CyclingWindowHR}H
+
+  # The forecast will run every CyclingWindowHR hours, starting CyclingWindowHR+DA2FCOffsetHR hours
+  # after the initialCyclePoint
+  @ ColdFCOffset = ${CyclingWindowHR} + ${DA2FCOffsetHR}
+  set ForecastTimes = +PT${ColdFCOffset}H/PT${CyclingWindowHR}H
+else
+  # The analysis will run every CyclingWindowHR hours, starting at the initialCyclePoint
+  set AnalysisTimes = PT${CyclingWindowHR}H
+
+  # The forecast will run every CyclingWindowHR hours, starting DA2FCOffsetHR hours after the
+  # initialCyclePoint
+  set ForecastTimes = +PT${DA2FCOffsetHR}H/PT${CyclingWindowHR}H
+endif
+
+
+##################################
+# auto-generate cylc include files
+##################################
+
+if ( ! -e include/variables/auto/workflow.rc ) then
+cat >! include/variables/auto/workflow.rc << EOF
+# cycling dates-time information
+{% set firstCyclePoint   = "${firstCyclePoint}" %}
+{% set initialCyclePoint = "${initialCyclePoint}" %}
+{% set finalCyclePoint   = "${finalCyclePoint}" %}
+
+{% set AnalysisTimes = "${AnalysisTimes}" %}
+{% set ForecastTimes = "${ForecastTimes}" %}
+
+{% set CyclingWindowHR = "${CyclingWindowHR}" %}
+{% set DA2FCOffsetHR = "${DA2FCOffsetHR}" %}
+{% set FC2DAOffsetHR = "${FC2DAOffsetHR}" %}
+
+# task selection controls
+{% set CriticalPathType = "${CriticalPathType}" %}
+{% set VerifyAgainstObservations = ${VerifyAgainstObservations} %} #bool
+{% set VerifyAgainstExternalAnalyses = ${VerifyAgainstExternalAnalyses} %} #bool
+{% set VerifyDeterministicDA = ${VerifyDeterministicDA} %} #bool
+{% set CompareDA2Benchmark = ${CompareDA2Benchmark} %} #bool
+{% set VerifyExtendedMeanFC = ${VerifyExtendedMeanFC} %} #bool
+{% set VerifyBGMembers = ${VerifyBGMembers} %} #bool
+{% set CompareBG2Benchmark = ${CompareBG2Benchmark} %} #bool
+{% set VerifyEnsMeanBG = ${VerifyEnsMeanBG} %} #bool
+{% set DiagnoseEnsSpreadBG = ${DiagnoseEnsSpreadBG} %} #bool
+{% set VerifyANMembers = ${VerifyANMembers} %} #bool
+{% set VerifyExtendedEnsFC = ${VerifyExtendedEnsFC} %} #bool
+
+# active cycle points
+{% set maxActiveCyclePoints = ${maxActiveCyclePoints} %}
+EOF
+
+endif

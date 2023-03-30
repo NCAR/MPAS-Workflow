@@ -7,8 +7,6 @@ date
 source config/experiment.csh
 source config/tools.csh
 source config/model.csh
-source config/modeldata.csh
-source config/environmentPython.csh
 source config/applications/verifyobs.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -103,11 +101,6 @@ while ( $success != 0 )
   ${baseCommand} >& log.${mainScript}
 
   set success = $?
-
-  if ( $success != 0 ) then
-    source /glade/u/apps/ch/opt/usr/bin/npl/ncar_pylib.csh default
-    sleep 3
-  endif
 end
 
 grep "Finished __main__ successfully" log.${mainScript}

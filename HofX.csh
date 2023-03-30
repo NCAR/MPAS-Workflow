@@ -37,7 +37,6 @@ endif
 # =================
 source config/experiment.csh
 source config/tools.csh
-source config/modeldata.csh
 source config/builds.csh
 source config/environmentJEDI.csh
 source config/applications/hofx.csh

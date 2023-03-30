@@ -1,19 +1,22 @@
-workflow:
-  # test a recent date
-  firstCyclePoint: 20180415T00
-  initialCyclePoint: 20180415T00
-  finalCyclePoint: 20180524T18
-  CriticalPathType: GenerateObs
-#TODO: make it so that model and variational are not necessary
 observations:
-  resource: RDAOnline
+  resource: GladeRDAOnline
+  convertToIODAObservations:
+  - 1bamua
+  - 1bmhs
+  - airsev
+  #- cris
+  - gpsro
+  #- mtiasi
+  - prepbufr
+  - satwnd
 experiment:
   ExperimentName: 'GenerateObs'
-model:
-  MPASGridDescriptor: OIE120km
-variational:
-  DAType: 3dvar
-  nInnerIterations: [0,]
+  ExperimentUserPrefix: ''
 job:
   CPQueueName: economy
   NCPQueueName: economy
+workflow:
+  firstCyclePoint: 20180415T00
+  finalCyclePoint: 20180416T00
+  CriticalPathType: GenerateObs
+  maxActiveCyclePoints: 60

@@ -1,0 +1,71 @@
+# firstCyclePoint
+{% if initialCyclePoint == firstCyclePoint %}
+    [[[R1]]]
+      graph = '''
+        # prepare first DA background state
+        {{PrepareExternalAnalysisOuter}} => {{PrepareFirstBackgroundOuter}}
+
+        # prepare analyses (init) files (for dual-mesh Variational) for reading to
+        # static and input stream in all cycles for inner and ensemble geometries
+        {{PrepareExternalAnalysisInner}}
+        {{PrepareExternalAnalysisEnsemble}}
+      '''
+{% endif %}
+
+# all other cycles
+{% if CriticalPathType == "Normal" %}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+%include include/dependencies/da.rc
+        # depends on previous Forecast
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] => PreDataAssim
+      '''
+
+# TODO: add IAU graph
+
+    [[[{{ForecastTimes}}]]]
+      graph = '''
+%include include/dependencies/forecast.rc
+        # depends on previous DataAssim
+        DataAssimFinished[-PT{{DA2FCOffsetHR}}H] => Forecast
+      '''
+
+{% elif CriticalPathType == "Bypass" %}
+  {% set CleanDataAssim = 'Null' %}
+    [[[{{ForecastTimes}}]]]
+      graph = ForecastFinished
+
+{% elif CriticalPathType == "Reanalysis" %}
+    [[[{{AnalysisTimes}}]]]
+      graph = '''
+%include include/dependencies/da.rc
+      '''
+    [[[{{ForecastTimes}}]]]
+      graph = ForecastFinished
+
+{% elif CriticalPathType == "Reforecast" %}
+    {% set CleanDataAssim = 'Null' %}
+    [[[{{AnalysisTimes}}]]]
+      graph = DataAssimFinished
+    [[[{{ForecastTimes}}]]]
+      graph = '''
+%include include/dependencies/forecast.rc
+      '''
+
+{% else %}
+    {{ raise('CriticalPathType is not valid') }}
+{% endif %}
+
+# optional extended forecasts for verification
+{% if VerifyExtendedMeanFC %}
+    [[[{{ExtendedMeanFCTimes}}]]]
+      graph = '''
+        DataAssimFinished => MeanAnalysis => ExtendedMeanFC => ExtendedForecastFinished
+      '''
+{% endif %}
+{% if VerifyExtendedEnsFC and nMembers > 1 %}
+    [[[{{ExtendedEnsFCTimes}}]]]
+      graph = '''
+        DataAssimFinished => ExtendedEnsFC:succeed-all => ExtendedForecastFinished
+      '''
+{% endif %}

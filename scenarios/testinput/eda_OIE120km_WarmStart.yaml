@@ -1,28 +1,34 @@
-workflow:
-  firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180415T06
-  InitializationType: WarmStart
-  VerifyEnsMeanBG: True
-  DiagnoseEnsSpreadBG: True
-observations:
-  resource: PANDACArchive
 experiment:
   ExperimentName: 'eda_OIE120km_WarmStart_TEST'
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.LaggedGEFS"
+hofx:
+  retainObsFeedback: False
+job:
+  CPQueueName: economy
+  NCPQueueName: economy
+members:
+  n: 5
 model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
+observations:
+  resource: PANDACArchive
+rtpp:
+  relaxationFactor: 0.8
+staticstream:
+  resource: "PANDAC.LaggedGEFS"
 variational:
   DAType: 3denvar
   nInnerIterations: [15,]
-  nDAInstances: 5
-  LeaveOneOutEDA: True
+  SelfExclusion: True
   retainObsFeedback: False
-hofx:
-  retainObsFeedback: False
-rtpp:
-  relaxationFactor: 0.8
-job:
-  CPQueueName: economy
-  NCPQueueName: economy
+workflow:
+  firstCyclePoint: 20180414T18
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180415T06
+  VerifyEnsMeanBG: True
+  DiagnoseEnsSpreadBG: True

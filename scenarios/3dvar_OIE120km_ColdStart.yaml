@@ -2,14 +2,19 @@ workflow:
   firstCyclePoint: 20220217T18
   initialCyclePoint: 20220218T00
   finalCyclePoint: 20220228T00
-  InitializationType: ColdStart
   VerifyEnsMeanBG: False
 observations:
   resource: GladeRDAOnline
+members:
+  n: 1
 model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
+firstbackground:
+  resource: "ForecastFromAnalysis"
+externalanalyses:
+  resource: "GFS.RDA"
 variational:
   DAType: 3dvar
   biasCorrection: True

@@ -1,6 +1,19 @@
 #!/bin/csh -f
 #Convert CISL RDA archived NCEP BUFR files to IODA-v2 format based on Jamie Bresch (NCAR/MMM) script rda_obs2ioda.csh
 
+# Process arguments
+# =================
+## args
+# ArgDT: int, valid time offset beyond CYLC_TASK_CYCLE_POINT in hours
+set ArgDT = "$1"
+
+set test = `echo $ArgDT | grep '^[0-9]*$'`
+set isNotInt = ($status)
+if ( $isNotInt ) then
+  echo "ERROR in $0 : ArgDT must be an integer, not $ArgDT"
+  exit 1
+endif
+
 date
 
 # Setup environment
@@ -8,13 +21,15 @@ date
 source config/observations.csh
 source config/experiment.csh
 source config/builds.csh
-set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
-set ccyy = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c1-4`
-set mmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c5-8`
+source config/tools.csh
+set ccyymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
-set thisCycleDate = ${yymmdd}${hh}
-set thisValidDate = ${thisCycleDate}
+set thisCycleDate = ${ccyymmdd}${hh}
+set thisValidDate = `$advanceCYMDH ${thisCycleDate} ${ArgDT}`
+
 source ./getCycleVars.csh
+
+set ccyy = `echo ${thisValidDate} | cut -c 1-4`
 
 # templated work directory
 set WorkDir = ${ObsDir}
@@ -29,6 +44,9 @@ if ( "${observations__resource}" == "PANDACArchive" ) then
   exit 0
 endif
 
+if ( -d logs ) rm -r logs
+mkdir -p logs
+
 # write out hourly files for IASI
 setenv SPLIThourly "-split"
 
@@ -36,7 +54,7 @@ setenv SPLIThourly "-split"
 # observations as in GSI
 setenv noGSIQCFilters "-noqc"
 
-foreach gdasfile ( *"gdas"* )
+foreach gdasfile ( *"gdas."* )
    echo "Running ${obs2iodaEXEC} for ${gdasfile}"
    # link SpcCoeff files for converting IR radiances to brightness temperature
    if ( ${gdasfile} =~ *"cris"* && ${ccyy} >= '2021' ) then
@@ -55,28 +73,34 @@ foreach gdasfile ( *"gdas"* )
    # ==================
    rm ./${obs2iodaEXEC}
    ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
+   set inst = `echo "$gdasfile" | cut -d'.' -f2`
+
+   set log = logs/log-converter_${inst}
+   rm $log
+
    if ( ${gdasfile} =~ *"mtiasi"* ) then
-     ./${obs2iodaEXEC} ${SPLIThourly} ${gdasfile} >&! log_${gdasfile}
+     ./${obs2iodaEXEC} ${SPLIThourly} ${gdasfile} >&! $log
    else if ( ${gdasfile} =~ *"prepbufr"* ) then
+     set inst = `echo "$gdasfile" | cut -d'.' -f1`
      # run obs2ioda for preburf with additional QC as in GSI
-     ./${obs2iodaEXEC} ${gdasfile} >&! log_${gdasfile}
+     ./${obs2iodaEXEC} ${gdasfile} >&! $log
      # for surface obs, run obs2ioda for prepbufr without additional QC
      mkdir -p sfc
      cd sfc
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXEC} ./
-     ./${obs2iodaEXEC} ${noGSIQCFilters} ../${gdasfile} >&! log_sfc
+     ./${obs2iodaEXEC} ${noGSIQCFilters} ../${gdasfile} >&! logs/log-converter_sfc
      # replace surface obs file with file created without additional QC
      mv sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
      cd ..
      rm -rf sfc
    else
-     ./${obs2iodaEXEC} ${gdasfile} >&! log_${gdasfile}
+     ./${obs2iodaEXEC} ${gdasfile} >&! $log
    endif
    # Check status
    # ============
-   grep "all done!" log_${gdasfile}
+   grep "all done!" $log
    if ( $status != 0 ) then
-     echo "$0 (ERROR): Pre-processing observations to IODA-v2 failed" > ./FAIL-converter
+     echo "$0 (ERROR): Pre-processing observations to IODA-v2 failed" > ./FAIL-converter_${inst}
      exit 1
    endif
   # remove BURF/PrepBUFR files
@@ -90,23 +114,84 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
   cd ${mainScriptDir}
   source config/environmentJEDI.csh
   cd -
-  rm ./${iodaupgradeEXEC}
-  ln -sfv ${iodaupgradeBuildDir}/${iodaupgradeEXEC} ./
-  set types = ( aircraft ascat profiler satwind sfc sondes satwnd )
-  foreach ty ( ${types} )
+  foreach exec ($iodaUpgradeEXEC1 $iodaUpgradeEXEC2)
+    rm ./${exec}
+    ln -sfv ${iodaUpgradeBuildDir}/${exec} ./
+  end
+
+  # upgrade from IODA v1 to v2
+  set V1toV2 = ( \
+    aircraft \
+    gnssro \
+    satwind \
+    satwnd \
+    sfc \
+    sondes \
+    ascat \
+    profiler \
+  )
+  foreach ty ( ${V1toV2} )
     if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
       set ty_obs = ${ty}_obs_${thisValidDate}.h5
       set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
-      ./${iodaupgradeEXEC} ${ty_obs} ${ty_obs_base}_tmp.h5 >&! log_${ty}_upgrade
+
+      set ii = 1
+      set log = logs/log-upgrade${ii}_${ty}
+      rm $log
+      ./$iodaUpgradeEXEC1 ${ty_obs} ${ty_obs_base}_tmp.h5 >&! $log
       rm -rf $ty_obs
       mv ${ty_obs_base}_tmp.h5 $ty_obs
+
       # Check status
       # ============
-      grep "Success!" log_${ty}_upgrade
+      grep "Success!" $log
       if ( $status != 0 ) then
-        echo "$0 (ERROR): ioda-upgrade failed for $ty" > ./FAIL-${ty}_upgrade
+        echo "$0 (ERROR): ${exec} failed for $ty" > ./FAIL-upgrade${ii}_${ty}
         exit 1
       endif
+    endif
+  end
+
+  # upgrade from IODA v2 to v3
+  set V2toV3 = ( $V1toV2 \
+    amsua_n15 \
+    amsua_n18 \
+    amsua_n19 \
+    amsua_aqua \
+    amsua_metop-a \
+    amsua_metop-b \
+    amsua_metop-c \
+    gnssro \
+    mhs_n18 \
+    mhs_n19 \
+    mhs_metop-a \
+    mhs_metop-b \
+    mhs_metop-c \
+    iasi_metop-a \
+    iasi_metop-b \
+    iasi_metop-c \
+  )
+  set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
+  foreach ty ( ${V2toV3} )
+    if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
+      set ty_obs = ${ty}_obs_${thisValidDate}.h5
+      set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
+
+      set ii = 2
+      set log = logs/log-upgrade${ii}_${ty}
+      rm $log
+      ./$iodaUpgradeEXEC2 ${ty_obs} ${ty_obs_base}_tmp.h5 $iodaUpgradeV3Config >&! $log
+      rm -rf $ty_obs
+      mv ${ty_obs_base}_tmp.h5 $ty_obs
+
+      # Check status
+      # ============
+      grep "Success!" $log
+      if ( $status != 0 ) then
+        echo "$0 (ERROR): ${exec} failed for $ty" > ./FAIL-upgrade${ii}_${ty}
+        exit 1
+      endif
+
     endif
   end
 endif

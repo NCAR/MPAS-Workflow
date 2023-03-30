@@ -2,15 +2,15 @@
   - filter: Domain Check
     where:
     - variable:
-        name: sensor_zenith_angle@MetaData
+        name: MetaData/sensorZenithAngle
       maxvalue: 45.0
 #  CLW Retrieval Check
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-6, 15
     test variables:
-    - name: CLWRetMW@ObsFunction
+    - name: ObsFunction/CLWRetMW
       options:
         clwret_ch238: 1
         clwret_ch314: 2
@@ -21,10 +21,10 @@
 #  CLW Retrieval Check
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-6, 15
     test variables:
-    - name: CLWRetMW@ObsFunction
+    - name: ObsFunction/CLWRetMW
       options:
         clwret_ch238: 1
         clwret_ch314: 2
@@ -35,10 +35,10 @@
 #  Hydrometeor Check (cloud/precipitation affected chanels)
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *amsua_aqua_channels
     test variables:
-    - name: HydrometeorCheckAMSUA@ObsFunction
+    - name: ObsFunction/HydrometeorCheckAMSUA
       channels: *amsua_aqua_channels
       options:
         channels: *amsua_aqua_channels
@@ -46,18 +46,18 @@
                            0.400, 0.500, 0.300, 0.350, 0.350,
                            0.450, 1.000, 1.500, 2.500, 2.500]
         clwret_function:
-          name: CLWRetMW@ObsFunction
+          name: ObsFunction/CLWRetMW
           options:
             clwret_ch238: 1
             clwret_ch314: 2
             clwret_types: [ObsValue]
         obserr_function:
-          name: ObsErrorModelRamp@ObsFunction
+          name: ObsFunction/ObsErrorModelRamp
           channels: *amsua_aqua_channels
           options:
             channels: *amsua_aqua_channels
             xvar:
-              name: CLWRetSymmetricMW@ObsFunction
+              name: ObsFunction/CLWRetSymmetricMW
               options:
                 clwret_ch238: 1
                 clwret_ch314: 2
@@ -80,12 +80,12 @@
 #  Topography check
   - filter: Perform Action
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *amsua_aqua_channels
     action:
       name: inflate error
       inflation variable:
-        name: ObsErrorFactorTopoRad@ObsFunction
+        name: ObsFunction/ObsErrorFactorTopoRad
         channels: *amsua_aqua_channels
         options:
           sensor: amsua_aqua
@@ -93,57 +93,58 @@
 #  Transmittance Top Check
   - filter: Perform Action
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *amsua_aqua_channels
     action:
       name: inflate error
       inflation variable:
-        name: ObsErrorFactorTransmitTopRad@ObsFunction
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
         channels: *amsua_aqua_channels
         options:
           channels: *amsua_aqua_channels
 #  Surface Jacobian check
   - filter: Perform Action
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *amsua_aqua_channels
     action:
       name: inflate error
       inflation variable:
-        name: ObsErrorFactorSurfJacobianRad@ObsFunction
+        name: ObsFunction/ObsErrorFactorSurfJacobianRad
         channels: *amsua_aqua_channels
         options:
           channels: *amsua_aqua_channels
+          sensor: amsua_aqua
           obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
           obserr_dtempf: [0.500, 2.000, 1.000, 2.000, 4.500]
 #  Situation dependent Check
   - filter: Perform Action
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *amsua_aqua_channels
     action:
       name: inflate error
       inflation variable:
-        name: ObsErrorFactorSituDependMW@ObsFunction
+        name: ObsFunction/ObsErrorFactorSituDependMW
         channels: *amsua_aqua_channels
         options:
           sensor: amsua_aqua
           channels: *amsua_aqua_channels
           clwobs_function:
-            name: CLWRetMW@ObsFunction
+            name: ObsFunction/CLWRetMW
             options:
               clwret_ch238: 1
               clwret_ch314: 2
               clwret_types: [ObsValue]
           clwbkg_function:
-            name: CLWRetMW@ObsFunction
+            name: ObsFunction/CLWRetMW
             options:
               clwret_ch238: 1
               clwret_ch314: 2
               clwret_types: [HofX]
               bias_application: HofX
           scatobs_function:
-            name: SCATRetMW@ObsFunction
+            name: ObsFunction/SCATRetMW
             options:
               scatret_ch238: 1
               scatret_ch314: 2
@@ -151,18 +152,18 @@
               scatret_types: [ObsValue]
               bias_application: HofX
           clwmatchidx_function:
-            name: CLWMatchIndexMW@ObsFunction
+            name: ObsFunction/CLWMatchIndexMW
             channels: *amsua_aqua_channels
             options:
               channels: *amsua_aqua_channels
               clwobs_function:
-                name: CLWRetMW@ObsFunction
+                name: ObsFunction/CLWRetMW
                 options:
                   clwret_ch238: 1
                   clwret_ch314: 2
                   clwret_types: [ObsValue]
               clwbkg_function:
-                name: CLWRetMW@ObsFunction
+                name: ObsFunction/CLWRetMW
                 options:
                   clwret_ch238: 1
                   clwret_ch314: 2
@@ -177,36 +178,36 @@
 #  Gross check
   - filter: Background Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *amsua_aqua_channels
     function absolute threshold:
-    - name: ObsErrorBoundMW@ObsFunction
+    - name: ObsFunction/ObsErrorBoundMW
       channels: *amsua_aqua_channels
       options:
         sensor: amsua_aqua
         channels: *amsua_aqua_channels
         obserr_bound_latitude:
-          name: ObsErrorFactorLatRad@ObsFunction
+          name: ObsFunction/ObsErrorFactorLatRad
           options:
             latitude_parameters: [25.0, 0.25, 0.04, 3.0]
         obserr_bound_transmittop:
-          name: ObsErrorFactorTransmitTopRad@ObsFunction
+          name: ObsFunction/ObsErrorFactorTransmitTopRad
           channels: *amsua_aqua_channels
           options:
             channels: *amsua_aqua_channels
         obserr_bound_topo:
-          name: ObsErrorFactorTopoRad@ObsFunction
+          name: ObsFunction/ObsErrorFactorTopoRad
           channels: *amsua_aqua_channels
           options:
             channels: *amsua_aqua_channels
             sensor: amsua_aqua
         obserr_function:
-          name: ObsErrorModelRamp@ObsFunction
+          name: ObsFunction/ObsErrorModelRamp
           channels: *amsua_aqua_channels
           options:
             channels: *amsua_aqua_channels
             xvar:
-              name: CLWRetSymmetricMW@ObsFunction
+              name: ObsFunction/CLWRetSymmetricMW
               options:
                 clwret_ch238: 1
                 clwret_ch314: 2
@@ -233,10 +234,10 @@
 #  Inter-channel check
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *amsua_aqua_channels
     test variables:
-    - name: InterChannelConsistencyCheck@ObsFunction
+    - name: ObsFunction/InterChannelConsistencyCheck
       channels: *amsua_aqua_channels
       options:
         channels: *amsua_aqua_channels
@@ -250,10 +251,10 @@
 #  Useflag check
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: *amsua_aqua_channels
     test variables:
-    - name: ChannelUseflagCheckRad@ObsFunction
+    - name: ObsFunction/ChannelUseflagCheckRad
       channels: *amsua_aqua_channels
       options:
         channels: *amsua_aqua_channels

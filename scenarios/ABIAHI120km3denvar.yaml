@@ -1,0 +1,45 @@
+workflow:
+  firstCyclePoint: 20180414T18
+  initialCyclePoint: 20180414T18
+  finalCyclePoint: 20180514T18
+  InitializationType: WarmStart
+  VerifyDeterministicDA: True
+  VerifyEnsMeanBG: True
+observations:
+  resource: PANDACArchive
+  PANDACArchive:
+    instrumentsAllowingBiasCorrection:
+    - abi_g16
+    - ahi_himawari8
+    IODADirectory:
+      variational:
+        abi_g16: /glade/p/mmm/parc/ivette/pandac/Observations/abi/ioda/SUPEROBBING59
+        ahi_himawari8: /glade/p/mmm/parc/ivette/pandac/Observations/ahi/ioda/SUPEROBBING59
+  initialVARBCcoeff: /glade/scratch/ivette/pandac/ivette_3denvar_OIE120km_WarmStart_ABIAHI_10AUG2022_SUPEROBBING59_VarBC_2022ABI_2022AHI/CyclingDA/2018051418/dbOut
+  fixedTlapmeanCov: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/new_20220816/2022ABI_2022AHI
+experiment:
+  ExperimentName: '3denvar_OIE120km_WarmStart_ABIAHI_VarBC'
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+variational:
+  DAType: 3denvar
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
+  nInnerIterations: [60,]
+  biasCorrection: True
+  experimentalObservations: [
+    abi_g16,
+    ahi_himawari8,
+  ]
+job:
+  CPQueueName: economy
+  NCPQueueName: economy
+verifyobs:
+  pyVerifyDir: /glade/work/ivette/pandac/mpas-jedi/graphics

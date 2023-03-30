@@ -2,17 +2,17 @@
   - filter: Domain Check
     where:
     - variable:
-        name: altitude@MetaData
+        name: MetaData/height
       minvalue: 0.0
       maxvalue: 30000.0
     - variable:
-        name: earth_radius_of_curvature@MetaData
+        name: MetaData/earthRadiusCurvature
       minvalue: 6250000.0
       maxvalue: 6450000.0
     - variable:
-        name: geoid_height_above_reference_ellipsoid@MetaData
+        name: MetaData/geoidUndulation
       minvalue: -200.0
       maxvalue: 200.0
   - filter: ROobserror
     variable: refractivity
-    errmodel: NBAM
+    errmodel: NCEP

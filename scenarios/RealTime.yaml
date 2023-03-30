@@ -1,9 +1,8 @@
 workflow:
   # test a recent date
   firstCyclePoint: 20220316T00
-  initialCyclePoint: 20220404T12
-  finalCyclePoint: 20250320T00
-  InitializationType: ColdStart
+  initialCyclePoint: 20220915T00
+  finalCyclePoint: 20250916T18
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
   maxActiveCyclePoints: 1
@@ -11,15 +10,27 @@ observations:
   resource: NCEPFTPOnline
 experiment:
   ExperimentName: 'RealTime'
+members:
+  n: 1
 model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
-  AnalysisSource: GFSfromNCEPFTPOnline
+  GraphInfoDir: /glade/work/duda/static_moved_to_campaign
+firstbackground:
+  resource: "ForecastFromAnalysis"
+externalanalyses:
+  resource: "GFS.NCEPFTP"
 variational:
   DAType: 3dvar
   nInnerIterations: [60,]
   biasCorrection: True
+  job:
+    120km:
+      # Assuming 60 total inner iterations
+      120km:
+        3dvar:
+          baseSeconds: 400
 job:
   CPQueueName: premium
   NCPQueueName: economy

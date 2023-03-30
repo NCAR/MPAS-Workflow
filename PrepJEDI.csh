@@ -56,7 +56,6 @@ source config/model.csh
 source config/observations.csh
 source config/workflow.csh
 source config/tools.csh
-source config/modeldata.csh
 source config/mpas/variables.csh
 source config/builds.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -144,9 +143,9 @@ foreach StreamsFile_ ($StreamsFileList)
   @ iMesh++
   rm ${StreamsFile_}
   cp -v $ModelConfigDir/$ArgAppType/${StreamsFile} ./${StreamsFile_}
-  sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${StreamsFile_}
-  sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
-  sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@{{nCells}}@'$nCellsList[$iMesh]'@' ${StreamsFile_}
+  sed -i 's@{{TemplateFieldsPrefix}}@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@{{StaticFieldsPrefix}}@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile_}
 end
 
@@ -294,19 +293,9 @@ foreach instrument ($observations)
   foreach i ($instrumentsAllowingBiasCorrection)
     if ("$instrument" == "$i") then
       set allowsBiasCorrection = True
-      set dateListback = (`$dateList ${FirstCycleDate} ${thisCycleDate} ${self_WindowHR}`)
-      set foundsatbias = False
-      foreach dt (${dateListback})
-        # check for satbias file at dt
-        if ( -e ${CyclingDAWorkDir}/${dt}/dbOut/satbias_${i}.h5 ) then
-          set biasCorrectionDir = ${CyclingDAWorkDir}/${dt}/dbOut
-          set foundsatbias = True
-          break
-        endif
-      end
-      # if no online updated satbias files exist, use first cycle's satbias file
-      if ($foundsatbias == False) then
-        set biasCorrectionDir = $initialVARBCcoeff
+      # if no obs file exists, link satbias file from the previous cycle
+      if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
+          ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${CyclingDAWorkDir}/${thisValidDate}/dbOut
       endif
     endif
   end
@@ -526,6 +515,9 @@ sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 
 # method for the tropopause pressure determination
 sed -i 's@{{tropprsMethod}}@'${tropprsMethod}'@g' $prevYAML
+
+# number of IODA pool writers
+sed -i 's@{{maxIODAPoolSize}}@'${maxIODAPoolSize}'@g' $prevYAML
 
 # (3) model-related substitutions
 # ===============================

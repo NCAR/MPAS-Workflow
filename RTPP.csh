@@ -4,13 +4,13 @@ date
 
 # Setup environment
 # =================
-source config/model.csh
-source config/experiment.csh
-source config/tools.csh
-source config/modeldata.csh
-source config/mpas/variables.csh
 source config/builds.csh
 source config/environmentJEDI.csh
+source config/experiment.csh
+source config/members.csh
+source config/model.csh
+source config/mpas/variables.csh
+source config/tools.csh
 source config/applications/rtpp.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -86,9 +86,9 @@ end
 
 rm ${StreamsFile}
 cp -v $ModelConfigDir/${AppName}/${StreamsFile} .
-sed -i 's@nCells@'${nCellsEnsemble}'@' ${StreamsFile}
-sed -i 's@TemplateFieldsPrefix@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
-sed -i 's@StaticFieldsPrefix@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@{{nCells}}@'${nCellsEnsemble}'@' ${StreamsFile}
+sed -i 's@{{TemplateFieldsPrefix}}@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@{{StaticFieldsPrefix}}@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 # determine analysis output precision
@@ -211,8 +211,8 @@ EOF
 
     ## copy original analysis files for diagnosing RTPP behavior
     if ($PMatrix == Pa) then
-      set memDir = "."`${memberDir} 2 $member "${flowMemFmt}"`
-      set tempAnalysisCopyDir = ${anDir}/${memDir}
+      set memDir = `${memberDir} 2 $member "${flowMemFmt}"`
+      set tempAnalysisCopyDir = ./${anDir}${memDir}
 
       # Restore ${ensPFileBeforeRTPP} with original files if ${tempAnalysisCopyDir}/${ensPFile} already exists
       if ( -f "${tempAnalysisCopyDir}/${ensPFile}" ) then

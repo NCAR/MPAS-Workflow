@@ -1,13 +1,19 @@
 #!/bin/csh -f
 
+# ArgExpConfigType: either Cycling or Base
+set ArgExpConfigType = "$1"
+
 ## create experiment environment
-source generateExperimentConfig.csh
+source setupExperiment/${ArgExpConfigType}.csh
 
 set workflowParts = ( \
-  GetGFSanalysis.csh \
-  UngribColdStartIC.csh \
-  GenerateColdStartIC.csh \
-  GetWarmStartIC.csh \
+  GetGFSAnalysisFromRDA.csh \
+  GetGFSAnalysisFromFTP.csh \
+  GetGDASAnalysisFromFTP.csh \
+  LinkExternalAnalysis.csh \
+  UngribExternalAnalysis.csh \
+  ExternalAnalysisToMPAS.csh \
+  LinkWarmStartBackgrounds.csh \
   GetObs.csh \
   ObsToIODA.csh \
   getCycleVars.csh \
@@ -23,6 +29,7 @@ set workflowParts = ( \
   PrepVariational.csh \
   EnsembleOfVariational.csh \
   include \
+  suites \
 )
 foreach part ($workflowParts)
   cp -rP $part ${mainScriptDir}/
@@ -32,6 +39,7 @@ cd ${mainScriptDir}
 
 ## load the workflow settings
 source config/workflow.csh
+source config/externalanalyses.csh
 
 cd -
 
@@ -55,14 +63,23 @@ ${WrapperScript}
 rm ${WrapperScript}
 
 
+## ColdForecast
+if ("$externalanalyses__resource" != None) then
+  echo "Making ColdForecast job script"
+  set JobScript=${mainScriptDir}/ColdForecast.csh
+  sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
+      -e 's@StateDirsTEMPLATE@ExternalAnalysisDirOuters@' \
+      -e 's@StatePrefixTEMPLATE@'${externalanalyses__filePrefixOuter}'@' \
+      forecast.csh > ${JobScript}
+  chmod 744 ${JobScript}
+endif
+
 ## Forecast
 echo "Making Forecast job script"
 set JobScript=${mainScriptDir}/Forecast.csh
 sed -e 's@WorkDirsTEMPLATE@CyclingFCDirs@' \
     -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
-    -e 's@fcLengthHRTEMPLATE@'${CyclingWindowHR}'@' \
-    -e 's@fcIntervalHRTEMPLATE@'${CyclingWindowHR}'@' \
-    -e 's@deleteZerothForecastTEMPLATE@True@' \
+    -e 's@StatePrefixTEMPLATE@'${ANFilePrefix}'@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
@@ -72,9 +89,7 @@ echo "Making ExtendedMeanFC job script"
 set JobScript=${mainScriptDir}/ExtendedMeanFC.csh
 sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
     -e 's@StateDirsTEMPLATE@MeanAnalysisDirs@' \
-    -e 's@fcLengthHRTEMPLATE@'${ExtendedFCWindowHR}'@' \
-    -e 's@fcIntervalHRTEMPLATE@'${ExtendedFC_DT_HR}'@' \
-    -e 's@deleteZerothForecastTEMPLATE@False@' \
+    -e 's@StatePrefixTEMPLATE@'${ANFilePrefix}'@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
@@ -84,17 +99,26 @@ echo "Making ExtendedEnsFC job script"
 set JobScript=${mainScriptDir}/ExtendedEnsFC.csh
 sed -e 's@WorkDirsTEMPLATE@ExtendedEnsFCDirs@' \
     -e 's@StateDirsTEMPLATE@CyclingDAOutDirs@' \
-    -e 's@fcLengthHRTEMPLATE@'${ExtendedFCWindowHR}'@' \
-    -e 's@fcIntervalHRTEMPLATE@'${ExtendedFC_DT_HR}'@' \
-    -e 's@deleteZerothForecastTEMPLATE@False@' \
+    -e 's@StatePrefixTEMPLATE@'${ANFilePrefix}'@' \
     forecast.csh > ${JobScript}
 chmod 744 ${JobScript}
 
 
+## ExtendedFCFromExternalAnalysis
+if ("$externalanalyses__resource" != None) then
+  echo "Making ExtendedFCFromExternalAnalysis job script"
+  set JobScript=${mainScriptDir}/ExtendedFCFromExternalAnalysis.csh
+  sed -e 's@WorkDirsTEMPLATE@ExtendedMeanFCDirs@' \
+      -e 's@StateDirsTEMPLATE@ExternalAnalysisDirOuters@' \
+      -e 's@StatePrefixTEMPLATE@'${externalanalyses__filePrefixOuter}'@' \
+      forecast.csh > ${JobScript}
+  chmod 744 ${JobScript}
+endif
+
 ## PrepJEDIHofX{{state}}, HofX{{state}}, CleanHofX{{state}}
 ## VerifyObs{{state}}, CompareObs{{state}},
 ## VerifyModel{{state}}, CompareModel{{state}}
-foreach state (AN BG EnsMeanBG MeanFC EnsFC)
+foreach state (AN BG EnsMeanBG MeanFC EnsFC ExternalAnalysis)
   if (${state} == AN) then
     set TemplateVariables = (CyclingDAOutDirs ${ANFilePrefix} ${DAVFWindowHR})
   else if (${state} == BG) then
@@ -105,6 +129,8 @@ foreach state (AN BG EnsMeanBG MeanFC EnsFC)
     set TemplateVariables = (ExtendedMeanFCDirs ${FCFilePrefix} ${FCVFWindowHR})
   else if (${state} == EnsFC) then
     set TemplateVariables = (ExtendedEnsFCDirs ${FCFilePrefix} ${FCVFWindowHR})
+#  else if (${state} == ExternalAnalysis) then
+#    set TemplateVariables = (ExtendedMeanFCDirs ${FCFilePrefix} ${FCVFWindowHR})
   endif
   set taskBaseScript = HofX${state}
   set WrapperScript=${mainScriptDir}/${AppAndVerify}${state}.csh

@@ -5,7 +5,6 @@ _iteration: &iterationConfig
     deallocate non-da fields: true
     interpolation type: unstructured
   gradient norm reduction: 1e-3
-  obs perturbations: {{ObsPerturbations}}
   #Several 'online diagnostics' are useful for checking the H correctness and Hessian symmetry
 #  online diagnostics:
 #    tlm taylor test: true
@@ -28,7 +27,7 @@ variational:
 {{VariationalIterations}}
 final:
   diagnostics:
-    departures: depan
+    departures: oman
 cost function:
   cost type: 3D-Var
   window begin: {{windowBegin}}
@@ -51,38 +50,41 @@ cost function:
         value: {{staticCovarianceWeight}}
       covariance:
         covariance model: SABER
-        saber blocks:
-        - saber block name: BUMP_NICAS
-          saber central block: true
-          iterative inverse: true
-          input variables: &ctlvars [{{bumpCovControlVariables}}]
-          output variables: *ctlvars
+        saber central block:
+          saber block name: BUMP_NICAS
+          active variables: &ctlvars [{{bumpCovControlVariables}}]
           bump:
-            datadir: {{bumpCovDir}}
-            prefix: {{bumpCovPrefix}}
-            strategy: specific_univariate
-            load_nicas_local: true
-            verbosity: main
+            io:
+              data directory: {{bumpCovDir}}
+              files prefix: {{bumpCovPrefix}}
+            drivers:
+              multivariate strategy: univariate
+              read local nicas: true
+        saber outer blocks:
         - saber block name: StdDev
-          input variables: *ctlvars
-          output variables: *ctlvars
-          file:
-            filename: {{bumpCovStdDevFile}}
-            date: *analysisDate
-            stream name: control
+          input fields:
+          - parameter: StdDev
+            file:
+              filename: {{bumpCovStdDevFile}}
+              date: *analysisDate
+              stream name: control
         - saber block name: BUMP_VerticalBalance
-          input variables: *ctlvars
-          output variables: *ctlvars
           bump:
-            datadir: {{bumpCovVBalDir}}
-            prefix: {{bumpCovVBalPrefix}}
-            load_vbal: true
-            #load_samp_global: true
-            load_samp_local: true
-            vbal_block:     [ true,  true,false, false,false,false,  true,false,false,false]
-            vbal_diag_reg:  [ true, false,false, false,false,false, false,false,false,false]
-            vbal_diag_auto: [false, false,false, false,false,false, false,false,false,false]
-            verbosity: main
+            io:
+              data directory: {{bumpCovVBalDir}}
+              files prefix: {{bumpCovVBalPrefix}}
+            drivers:
+              read local sampling: true
+              read vertical balance: true
+            vertical balance:
+              vbal:
+              - balanced variable: velocity_potential
+                unbalanced variable: stream_function
+                diagonal regression: true
+              - balanced variable: temperature
+                unbalanced variable: stream_function
+              - balanced variable: surface_pressure
+                unbalanced variable: stream_function
         linear variable change:
           linear variable change name: Control2Analysis
           input variables: *ctlvars
@@ -93,18 +95,21 @@ cost function:
         covariance model: ensemble
         localization:
           localization method: SABER
-          saber block:
+          saber central block:
             saber block name: BUMP_NICAS
-            input variables: *incvars
-            output variables: *incvars
+            active variables: *incvars
             bump:
-              datadir: {{bumpLocDir}}
-              prefix: {{bumpLocPrefix}}
-              strategy: common
-              load_nicas_local: true
-              verbosity: main
+              io:
+                data directory: {{bumpLocDir}}
+                files prefix: {{bumpLocPrefix}}
+              drivers:
+                multivariate strategy: duplicated
+                read local nicas: true
+              model:
+                level for 2d variables: last
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:
+    obs perturbations: {{ObsPerturbations}}
     observers:
 {{Observers}}

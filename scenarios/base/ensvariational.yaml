@@ -2,10 +2,13 @@ ensvariational:
 ## mesh-specific settings
   # resource requirements
   job:
+    # cylc retry string
+    retry: '1*PT30S'
+
     #{{outerMesh}}:
     #  baseSeconds: int
     #  secondsPerEnVarMember: int
-    #  #@ seconds = $nEnsDAMembers * $secondsPerEnVarMember + $baseSeconds
+    #  #@ seconds = $members.n * $secondsPerEnVarMember + $baseSeconds
     #  nodesPerMember: int
     #  #@ nodes = $nodesPerMember * $EDASize
     #  PEPerNode: int

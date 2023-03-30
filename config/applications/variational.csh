@@ -6,28 +6,80 @@
 if ( $?config_variational ) exit 0
 set config_variational = 1
 
-source config/scenario.csh
+source config/members.csh
 source config/model.csh
+source config/naming.csh
 
-# setLocal is a helper function that picks out a configuration node
-# under the "variational" key of scenarioConfig
-setenv baseConfig scenarios/base/variational.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig variational"
-setenv getLocalOrNone "source $getConfigOrNone $baseConfig $scenarioConfig variational"
-setenv setNestedVariational "source $setNestedConfig $baseConfig $scenarioConfig variational"
+source config/scenario.csh variational
 
-## variational settings
+# variational settings
 $setLocal DAType
 
 $setLocal nInnerIterations
 # nOuterIterations, automatically determined from length of nInnerIterations
 setenv nOuterIterations ${#nInnerIterations}
 
-# localization
-if ($DAType == 3denvar || $DAType == 3dhybrid) then
-  $setLocal localization.${ensembleMesh}.bumpLocPrefix
-  $setLocal localization.${ensembleMesh}.bumpLocDir
+# stochastic DA settings
+set EDASize = "`$getLocalOrNone EDASize`"
+if ($EDASize == None) then
+  set EDASize = 1
 endif
+
+@ nDAInstances = $nMembers / $EDASize
+@ nEnsDAMembers = $EDASize * $nDAInstances
+
+if ($nEnsDAMembers != $nMembers) then
+  echo "config/applications/variational.csh (ERROR): nMembers must be divisible by EDASize"
+  exit 1
+endif
+setenv nDAInstances $nDAInstances
+
+$setLocal SelfExclusion
+
+
+# ensemble
+if ($DAType == 3denvar || $DAType == 3dhybrid) then
+  # localization
+  $setLocal ensemble.localization.${ensembleMesh}.bumpLocPrefix
+  $setLocal ensemble.localization.${ensembleMesh}.bumpLocDir
+
+  # forecasts
+  if ( $nMembers > 1 ) then
+    # EDA uses online ensemble updating
+    setenv ensPbMemPrefix "${flowMemPrefix}"
+    setenv ensPbMemNDigits ${flowMemNDigits}
+    setenv ensPbFilePrefix ${FCFilePrefix}
+    setenv ensPbDir0 "{{ExperimentDirectory}}/${forecastWorkDir}/{{prevDateTime}}"
+    setenv ensPbDir1 None
+    setenv ensPbNMembers ${nMembers}
+    # TODO: this needs to be non-zero for EDA workflows that use IAU
+    setenv ensPbOffsetHR 0
+  else
+    $setLocal ensemble.forecasts.resource
+
+    foreach parameter (maxMembers directory0 directory1 filePrefix memberPrefix memberNDigits forecastDateOffsetHR)
+      set p = "`$getLocalOrNone ensemble.forecasts.${resource}.${ensembleMesh}.${parameter}`"
+      if ( "$p" == None ) then
+        set p = "`$getLocalOrNone ensemble.forecasts.defaults.${parameter}`"
+      endif
+      set ${parameter}_ = "$p"
+    end
+
+    setenv ensPbMemPrefix "${memberPrefix_}"
+    setenv ensPbMemNDigits ${memberNDigits_}
+    setenv ensPbFilePrefix ${filePrefix_}
+    setenv ensPbDir0 "${directory0_}"
+    setenv ensPbDir1 "${directory1_}"
+    setenv ensPbNMembers ${maxMembers_}
+    setenv ensPbOffsetHR ${forecastDateOffsetHR_}
+  endif
+else
+  set ensPbNMembers = 0
+endif
+
+# ensemble inflation settings
+$setLocal ABEInflation
+$setLocal ABEIChannel
 
 # covariance
 if ($DAType == 3dvar || $DAType == 3dhybrid) then
@@ -41,26 +93,6 @@ endif
 
 set ensembleCovarianceWeight = "`$getLocalOrNone ensembleCovarianceWeight`"
 set staticCovarianceWeight = "`$getLocalOrNone staticCovarianceWeight`"
-
-# stochastic settings
-set EDASize = "`$getLocalOrNone EDASize`"
-if ($EDASize == None) then
-  set EDASize = 1
-endif
-set nDAInstances = "`$getLocalOrNone nDAInstances`"
-if ($nDAInstances == None) then
-  set nDAInstances = 1
-endif
-$setLocal LeaveOneOutEDA
-
-# nEnsDAMembers is the total number of ensemble DA members, product of EDASize and nDAInstances
-# Should be in range (1, $firstEnsFCNMembers); affects data source in config/modeldata.csh
-@ nEnsDAMembers = $EDASize * $nDAInstances
-setenv nEnsDAMembers $nEnsDAMembers
-
-# ensemble inflation settings
-$setLocal ABEInflation
-$setLocal ABEIChannel
 
 ## required settings for PrepJEDI.csh
 setenv AppName $DAType
@@ -83,35 +115,94 @@ $setLocal nObsIndent
 $setLocal radianceThinningDistance
 $setLocal biasCorrection
 $setLocal tropprsMethod
+$setLocal maxIODAPoolSize
 
 ## clean
 $setLocal retainObsFeedback
 
 ## job
-# TODO: determine job settings for 3dhybrid; for now use 3denvar settings for non-3dvar DAType's
-## nEnVarMembers (int)
-# ensemble size for "envar" applications; only used for job timings
-# defaults to 20 for GEFS-ensemble retrospective experiments
-setenv nEnVarMembers 20
-if ($nEnsDAMembers > 1) then
-  setenv nEnVarMembers $nEnsDAMembers
+$setLocal job.retry
+
+foreach parameter (baseSeconds secondsPerEnVarMember nodes PEPerNode memory)
+  set p = "`$getLocalOrNone job.${outerMesh}.${innerMesh}.${DAType}.${parameter}`"
+  if ("$p" == None) then
+    set p = "`$getLocalOrNone job.defaults.${parameter}`"
+  endif
+  if ("$p" == None) then
+    echo "config/applications/variational.csh (ERROR): invalid value for $paramater"
+    exit 1
+  endif
+  set ${parameter}_ = "$p"
+end
+
+if ("$secondsPerEnVarMember_" == None) then
+  set secondsPerEnVarMember_ = 0
 endif
-if ($DAType == 3dvar) then
-  setenv nEnVarMembers 0
-  #TODO: add extra time/memory for covariance multiplication
+@ seconds = $secondsPerEnVarMember_ * $ensPbNMembers + $baseSeconds_
+setenv seconds $seconds
+
+
+##################################
+# auto-generate cylc include files
+##################################
+
+if ( ! -e include/tasks/auto/variational.rc ) then
+cat >! include/tasks/auto/variational.rc << EOF
+# variational
+  [[InitDataAssim]]
+    inherit = BATCH
+    env-script = cd {{mainScriptDir}}; ./PrepJEDIVariational.csh "1" "0" "DA" "variational"
+    script = \$origin/PrepVariational.csh "1"
+    [[[job]]]
+      execution time limit = PT20M
+      execution retry delays = ${retry}
+
+  [[DataAssim]]
+    inherit = BATCH
+
+{% if ${EDASize} == 1 %}
+  # single instance or ensemble of Variational(s)
+  {% for mem in range(1, ${nMembers}+1, 1) %}
+  [[DAMember{{mem}}]]
+    inherit = DataAssim
+    script = \$origin/Variational.csh "{{mem}}"
+    [[[job]]]
+      execution time limit = PT${seconds}S
+      execution retry delays = ${retry}
+    [[[directives]]]
+      -m = ae
+      -q = {{CPQueueName}}
+      -A = {{CPAccountNumber}}
+      -l = select=${nodes_}:ncpus=${PEPerNode_}:mpiprocs=${PEPerNode_}:mem=${memory_}GB
+  {% endfor %}
+{% endif %}
+
+  [[CleanVariational]]
+    inherit = CleanBase, BATCH
+    script = \$origin/CleanVariational.csh
+EOF
+
 endif
 
-$setLocal job.${outerMesh}.${innerMesh}.$DAType.baseSeconds
-set secondsPerEnVarMember = "`$getLocalOrNone job.${outerMesh}.${innerMesh}.$DAType.secondsPerEnVarMember`"
-if ("$secondsPerEnVarMember" == None) then
-  set secondsPerEnVarMember = 0
-endif
-@ seconds = $secondsPerEnVarMember * $nEnVarMembers + $baseSeconds
-setenv variational__seconds $seconds
+if ( ! -e include/dependencies/auto/abei.rc ) then
 
-$setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.nodes
-$setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.PEPerNode
-$setNestedVariational job.${outerMesh}.${innerMesh}.$DAType.memory
+  if ( "$ABEInflation" == True ) then
+cat >! include/dependencies/auto/abei.rc << EOF
+        ForecastFinished[-PT{{FC2DAOffsetHR}}H] =>
+        MeanBackground =>
+        HofXEnsMeanBG =>
+        GenerateABEInflation => PreDataAssim
+        GenerateABEInflation => CleanHofXEnsMeanBG
+EOF
+
+  else
+cat >! include/dependencies/auto/abei.rc << EOF
+#
+EOF
+
+  endif
+
+endif
 
 ##############################
 ## more non-YAML-fied settings

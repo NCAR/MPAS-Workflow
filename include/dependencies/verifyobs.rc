@@ -1,11 +1,7 @@
-{% set ExtendedFCLengths = range(0, ExtendedFCWindowHR+ExtendedFC_DT_HR, ExtendedFC_DT_HR) %}
-{% set EnsVerifyMembers = range(1, nMembers+1, 1) %}
-
-
   # ... for deterministic DA in observation space only (OMB+OMA together)
 #TODO: enable VerifyObsDA to handle more than one ensemble member
 #      and use feedback files from EDA for VerifyEnsMeanBG
-{% if CriticalPathType in ["Normal", "Reanalysis"] and VerifyDeterministicDA and nMembers < 2 %}
+{% if VerifyDeterministicDA and nMembers < 2 and CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"]  %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         DataAssimFinished => VerifyObsDA
@@ -18,7 +14,8 @@
 
 
   # ... for background-duration forecast from deterministic analysis or ensemble of analyses
-{% if VerifyBGMembers or (VerifyEnsMeanBG and nMembers == 1)%}
+{% if (VerifyBGMembers or (VerifyEnsMeanBG and nMembers == 1)) and CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
+
     [[[{{AnalysisTimes}}]]]
       graph = '''
         ForecastFinished[-PT{{FC2DAOffsetHR}}H] => HofXBG
@@ -33,7 +30,7 @@
 
 
   # ... for mean of ensemble of backgrounds and ensemble spread (bg only for obs, bg+an for model)
-{% if VerifyEnsMeanBG and nMembers > 1 %}
+{% if VerifyEnsMeanBG and nMembers > 1 and CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         MeanBackground => HofXEnsMeanBG
@@ -50,7 +47,7 @@
 
 
   # ... for ensemble of analyses
-{% if VerifyANMembers %}
+{% if VerifyANMembers and CriticalPathType in ["Normal", "Reanalysis", "Bypass", "Reforecast"] %}
     [[[{{AnalysisTimes}}]]]
       graph = '''
         DataAssimFinished => HofXAN
@@ -62,25 +59,45 @@
 
   # ... for extended forecast from deterministic analysis or mean of ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
-{% if VerifyExtendedMeanFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
+{% if VerifyExtendedMeanFC %}
+  {% for dt in ExtendedFCLengths %}
+    {% set ds = "-"+(dt|string)+"hr" %}
+    {% if dt == 0 %}
+      {% set prep = (ds+":succeed-all => ").join(PrepareObservationsTasks)+ds %}
+    {% else %}
+      {% set prep = (ds+" => ").join(PrepareObservationsTasks)+ds %}
+    {% endif %}
     [[[{{ExtendedMeanFCTimes}}]]]
       graph = '''
-        DataAssimFinished => MeanAnalysis => ExtendedMeanFC
-        ExtendedMeanFC => HofXMeanFC
-        HofXMeanFC:succeed-all => VerifyObsMeanFC
-        VerifyObsMeanFC:succeed-all => CleanHofXMeanFC
+        {{prep}}
+        ExtendedForecastFinished => HofXMeanFC{{dt}}hr
+        ObsReady-{{dt}}hr => HofXMeanFC{{dt}}hr
+        HofXMeanFC{{dt}}hr => VerifyObsMeanFC{{dt}}hr
+        VerifyObsMeanFC{{dt}}hr => CleanHofXMeanFC{{dt}}hr
       '''
+  {% endfor %}
 {% endif %}
 
 
   # ... for extended forecast from ensemble of analyses
   # note: assumes that obs and verifying analyses are available at extended forecast times
-{% if VerifyExtendedEnsFC and (InitializationType != "ColdStart" or CriticalPathType == "Bypass") %}
+{% if VerifyExtendedEnsFC and nMembers > 1 %}
+  {% for dt in ExtendedFCLengths %}
+    {% set ds = "-"+(dt|string)+"hr" %}
+    {% if dt == 0 %}
+      {% set prep = (ds+":succeed-all => ").join(PrepareObservationsTasks)+ds %}
+    {% else %}
+      {% set prep = (ds+" => ").join(PrepareObservationsTasks)+ds %}
+    {% endif %}
     [[[{{ExtendedEnsFCTimes}}]]]
       graph = '''
-        DataAssimFinished => ExtendedEnsFC
-        ExtendedEnsFC:succeed-all => HofXEnsFC
-        HofXEnsFC:succeed-all => VerifyObsEnsFC
-        VerifyObsEnsFC:succeed-all => CleanHofXEnsFC
+        {{prep}}
+    {% for mem in EnsVerifyMembers %}
+        ExtendedForecastFinished => HofXEnsFC{{mem}}-{{dt}}hr
+        ObsReady-{{dt}}hr => HofXEnsFC{{mem}}-{{dt}}hr
+        HofXEnsFC{{mem}}-{{dt}}hr => VerifyObsEnsFC{{mem}}-{{dt}}hr
+        VerifyObsEnsFC{{mem}}-{{dt}}hr => CleanHofXEnsFC{{mem}}-{{dt}}hr
+    {% endfor %}
       '''
+  {% endfor %}
 {% endif %}

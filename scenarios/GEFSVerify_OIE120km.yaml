@@ -1,17 +1,20 @@
-workflow:
-  InitializationType: WarmStart
-observations:
-  resource: PANDACArchive
 experiment:
   ExpSuffix: _GEFSVerify
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.LaggedGEFS"
 model:
   outerMesh: 120km
   innerMesh: 120km
   ensembleMesh: 120km
+members:
+  n: 20
+observations:
+  resource: PANDACArchive
 variational:
   DAType: 3denvar
-  nDAInstances: 20
-  LeaveOneOutEDA: False
+  SelfExclusion: False
   nInnerIterations: [,]
-rtpp:
-  relaxationFactor: 0.0
+workflow:
+  CriticalPathType: Bypass

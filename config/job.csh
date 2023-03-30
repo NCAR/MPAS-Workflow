@@ -3,12 +3,7 @@
 if ( $?config_job ) exit 0
 setenv config_job 1
 
-source config/scenario.csh
-
-# setLocal is a helper function that picks out a configuration node
-# under the "job" key of scenarioConfig
-setenv baseConfig scenarios/base/job.yaml
-setenv setLocal "source $setConfig $baseConfig $scenarioConfig job"
+source config/scenario.csh job
 
 $setLocal CPAccountNumber
 $setLocal CPQueueName
@@ -19,14 +14,21 @@ $setLocal SingleProcQueueName
 $setLocal EnsMeanBGQueueName
 $setLocal EnsMeanBGAccountNumber
 
-$setLocal InitializationRetry
-$setLocal GFSAnalysisRetry
-$setLocal GetObsRetry
-$setLocal VariationalRetry
-$setLocal EnsOfVariationalRetry
-$setLocal CyclingFCRetry
-$setLocal RTPPRetry
-$setLocal HofXRetry
-$setLocal CleanRetry
-$setLocal VerifyObsRetry
-$setLocal VerifyModelRetry
+
+##################################
+# auto-generate cylc include files
+##################################
+
+if ( ! -e include/variables/auto/job.rc ) then
+cat >! include/variables/auto/job.rc << EOF
+{% set CPQueueName = "${CPQueueName}" %}
+{% set CPAccountNumber = "${CPAccountNumber}" %}
+{% set NCPQueueName = "${NCPQueueName}" %}
+{% set NCPAccountNumber = "${NCPAccountNumber}" %}
+{% set SingleProcQueueName = "${SingleProcQueueName}" %}
+{% set SingleProcAccountNumber = "${SingleProcAccountNumber}" %}
+{% set EnsMeanBGQueueName = "${EnsMeanBGQueueName}" %}
+{% set EnsMeanBGAccountNumber = "${EnsMeanBGAccountNumber}" %}
+EOF
+
+endif

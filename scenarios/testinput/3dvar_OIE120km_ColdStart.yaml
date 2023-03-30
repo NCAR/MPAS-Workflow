@@ -1,24 +1,28 @@
+experiment:
+  ExperimentName: '3dvar_OIE120km_ColdStart_TEST'
+externalanalyses:
+  resource: "GFS.RDA"
+firstbackground:
+  resource: "ForecastFromAnalysis"
+job:
+  CPQueueName: economy
+  NCPQueueName: economy
+members:
+  n: 1
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+observations:
+  resource: GladeRDAOnline
+variational:
+  DAType: 3dvar
+  nInnerIterations: [15,]
+  biasCorrection: True
 workflow:
   # test a recent date
   firstCyclePoint: 20220201T00
   initialCyclePoint: 20220201T00
   finalCyclePoint: 20220201T12
-  InitializationType: ColdStart
   VerifyDeterministicDA: True
   VerifyEnsMeanBG: True
-observations:
-  resource: GladeRDAOnline
-experiment:
-  ExperimentName: '3dvar_OIE120km_ColdStart_TEST'
-model:
-  outerMesh: 120km
-  innerMesh: 120km
-  ensembleMesh: 120km
-  AnalysisSource: GFSfromRDAOnline
-variational:
-  DAType: 3dvar
-  nInnerIterations: [15,]
-  biasCorrection: True
-job:
-  CPQueueName: economy
-  NCPQueueName: economy

@@ -2,14 +2,14 @@
 <immutable_stream name="static"
                   type="input"
                   precision="{{PRECISION}}"
-                  filename_template="StaticFieldsPrefix.nCells.nc"
+                  filename_template="{{StaticFieldsPrefix}}.{{nCells}}.nc"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <immutable_stream name="input"
                   type="input"
                   precision="{{PRECISION}}"
-                  filename_template="ICFilePrefix.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_template="{{ICFilePrefix}}.$Y-$M-$D_$h.$m.$s.nc"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
@@ -17,17 +17,18 @@
                   type="output"
                   precision="{{PRECISION}}"
                   clobber_mode="truncate"
-                  filename_template="FCFilePrefix.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_template="{{FCFilePrefix}}.$Y-$M-$D_$h.$m.$s.nc"
                   io_type="pnetcdf,cdf5"
-                  output_interval="outputInterval" />
+                  output_interval="{{outputInterval}}" />
 
 <immutable_stream name="iau"
                   type="input"
                   precision="{{PRECISION}}"
-                  filename_template="x1.nCells.AmB.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_template="AmB.$Y-$M-$D_$h.$m.$s.nc"
                   filename_interval="none"
                   packages="iau"
-                  input_interval="none" />
+                  io_type="netcdf4"
+                  input_interval="initial_only" />
 
 <stream name="output"
         type="none"
@@ -38,10 +39,11 @@
 <stream name="diagnostics"
         type="output"
         precision="{{PRECISION}}"
+        clobber_mode="truncate"
         filename_template="diag.$Y-$M-$D_$h.$m.$s.nc"
         io_type="pnetcdf,cdf5"
         clobber_mode="overwrite"
-        output_interval="outputInterval" >
+        output_interval="{{outputInterval}}" >
         <file name="stream_list.atmosphere.diagnostics"/>
 </stream>
 

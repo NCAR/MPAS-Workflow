@@ -2,14 +2,18 @@
     <<: *ObsSpace
     name: Satwind
     obsdatain:
-      obsfile: {{InDBDir}}/satwind_obs_{{thisValidDate}}.h5
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/satwind_obs_{{thisValidDate}}.h5
       max frame size: 80000
     obsdataout:
-      obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_satwind.h5
-      max frame size: 80000
-    simulated variables: [eastward_wind, northward_wind]
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_satwind.h5
+    simulated variables: [windEastward, windNorthward]
   obs error: *ObsErrorDiagonal
   obs operator:
     name: VertInterp
+    observation alias file: obsop_name_map.yaml
   get values:
     <<: *GetValues

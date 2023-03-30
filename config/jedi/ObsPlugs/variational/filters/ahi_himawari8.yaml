@@ -2,7 +2,7 @@
   - filter: Domain Check
     where:
     - variable:
-        name: sensor_zenith_angle@MetaData
+        name: MetaData/sensorZenithAngle
       maxvalue: 65.0
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}

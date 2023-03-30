@@ -13,7 +13,7 @@
 /
 &data_sources
     config_geog_data_path = '/glade/work/wrfhelp/WPS_GEOG/'
-    config_met_prefix = 'GFS'
+    config_met_prefix = '{{UngribPrefix}}'
     config_sfc_prefix = 'SST'
     config_fg_interval = 86400
     config_landuse_data = 'USGS'

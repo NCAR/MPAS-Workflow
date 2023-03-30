@@ -1,29 +1,67 @@
 forecast:
-## updateSea
-# whether to update surface fields before a forecast (e.g., sst, xice)
-# OPTIONS: True/False
+  ## updateSea
+  # whether to update surface fields before a forecast (e.g., sst, xice)
+  # OPTIONS: True/False
   updateSea: True
+
+  # whether or not to activate IAU 
+  IAU: False
+
+  # length of verification forecasts
+  ExtendedFCLengthHR: 240
+
+  # interval between OMF verification times of an individual forecast
+  ExtendedFCOutIntervalHR: 12
+
+  # UTC times to run extended forecast from mean analysis
+  # formatted as comma-separated string, e.g., T00,T06,T12,T18
+  ExtendedMeanFCTimes: T00,T12
+
+  # UTC times to run ensemble of extended forecasts
+  # formatted as comma-separated string, e.g., T00,T06,T12,T18
+  ExtendedEnsFCTimes: T00
 
 ## mesh-specific settings
   # resource requirements
   job:
+    # cylc retry string
+    retry: '2*PT30S'
+
+    defaults:
+      nodes: 4
+      PEPerNode: 32
+      baseSeconds: 60
+      secondsPerForecastHR: 500
+
     #{{outerMesh}}:
     #  baseSeconds: int
     #  secondsPerForecastHR: int
     #  nodes: int
     #  PEPerNode: int
     30km:
-      baseSeconds: 120
-      secondsPerForecastHR: 420
-      nodes: 16
-      PEPerNode: 32
-    60km:
-      baseSeconds: 60
-      secondsPerForecastHR: 120
+      # faster turnaround
+      #nodes: 16
+      #PEPerNode: 32
+      #baseSeconds: 60
+      #secondsPerForecastHR: 120
+      # more efficient
       nodes: 4
       PEPerNode: 36
-    120km:
       baseSeconds: 60
-      secondsPerForecastHR: 60
+      secondsPerForecastHR: 150
+    60km:
+      # faster turnaround
+      #nodes: 4
+      #PEPerNode: 36
+      #baseSeconds: 60
+      #secondsPerForecastHR: 40
+      # more efficient
+      nodes: 2
+      PEPerNode: 36
+      baseSeconds: 60
+      secondsPerForecastHR: 40
+    120km:
       nodes: 4
       PEPerNode: 32
+      baseSeconds: 60
+      secondsPerForecastHR: 60

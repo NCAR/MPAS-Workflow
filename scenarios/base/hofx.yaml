@@ -48,10 +48,16 @@ hofx:
 # OPTIONS: False (not enabled yet)
   biasCorrection: False
 
+## tropprsMethod
 # method for the tropopause pressure determination used in the
 # cloud detection filter for infrared observations
 # OPTIONS: thompson, wmo (currently the build code only works for thompson)
   tropprsMethod: thompson
+
+## maxIODAPoolSize
+# maximum number of IO pool members in IODA writer class
+# OPTIONS: 1 to NPE, default: 10
+  maxIODAPoolSize: 10
 
 ## radianceThinningDistance
 # distance (km) used for the Gaussian Thinning filter for all radiance-based observations
@@ -65,6 +71,15 @@ hofx:
 ## mesh-specific settings
   # resource requirements
   job:
+    # cylc retry string
+    retry: '2*PT30S'
+
+    defaults:
+      seconds: 1000
+      nodes: 4
+      PEPerNode: 32
+      memory: 109
+
     #{{outerMesh}}:
     #  seconds: int
     #  nodes: int
@@ -76,12 +91,12 @@ hofx:
       PEPerNode: 36
       memory: 109
     60km:
-      seconds: 300
+      seconds: 600
       nodes: 1
       PEPerNode: 36
       memory: 109
     120km:
-      seconds: 300
+      seconds: 600
       nodes: 1
       PEPerNode: 36
       memory: 109

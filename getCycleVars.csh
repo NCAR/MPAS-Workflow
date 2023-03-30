@@ -1,9 +1,9 @@
 #!/bin/csh -f
 
+source config/experiment.csh
+source config/members.csh
 source config/tools.csh
 source config/workflow.csh
-source config/experiment.csh
-source config/${InitializationType}ModelData.csh
 
 set prevCycleDate = `$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`
 #set nextCycleDate = `$advanceCYMDH ${thisCycleDate} ${CyclingWindowHR}`
@@ -18,6 +18,11 @@ set CyclingDAOutDir = $CyclingDADir/${anDir}
 set CyclingDADirs = (${CyclingDADir})
 set BenchmarkCyclingDADirs = (${BenchmarkCyclingDAWorkDir}/${thisCycleDate})
 
+set ExternalAnalysisDir = ${ExternalAnalysisWorkDir}/${thisValidDate}
+set ExternalAnalysisDirOuter = ${ExternalAnalysisWorkDirOuter}/${thisValidDate}
+set ExternalAnalysisDirInner = ${ExternalAnalysisWorkDirInner}/${thisValidDate}
+set ExternalAnalysisDirEnsemble = ${ExternalAnalysisWorkDirEnsemble}/${thisValidDate}
+
 set prevCyclingDADir = ${CyclingDAWorkDir}/${prevCycleDate}
 set CyclingFCDir = ${CyclingFCWorkDir}/${thisCycleDate}
 set prevCyclingFCDir = ${CyclingFCWorkDir}/${prevCycleDate}
@@ -27,6 +32,7 @@ set memDir = /mean
 set MeanBackgroundDirs = (${CyclingDAInDir}${memDir})
 set MeanAnalysisDirs = (${CyclingDAOutDir}${memDir})
 set ExtendedMeanFCDirs = (${ExtendedFCDir}${memDir})
+
 set VerifyEnsMeanBGDirs = (${VerificationWorkDir}/${bgDir}${memDir}/${thisCycleDate})
 set VerifyMeanANDirs = (${VerificationWorkDir}/${anDir}${memDir}/${thisCycleDate})
 set VerifyMeanFCDirs = (${VerificationWorkDir}/${fcDir}${memDir}/${thisCycleDate})
@@ -42,6 +48,7 @@ set CyclingDAInDirs = ()
 set CyclingDAOutDirs = ()
 
 set CyclingFCDirs = ()
+set ExternalAnalysisDirOuters = ()
 set prevCyclingFCDirs = ()
 
 set ExtendedEnsFCDirs = ()
@@ -65,6 +72,7 @@ while ( $member <= ${nMembers} )
   set CyclingDAOutDirs = ($CyclingDAOutDirs ${CyclingDAOutDir}${memDir})
 
   set CyclingFCDirs = ($CyclingFCDirs ${CyclingFCDir}${memDir})
+  set ExternalAnalysisDirOuters = ($ExternalAnalysisDirOuters ${ExternalAnalysisDirOuter}${memDir})
   set prevCyclingFCDirs = ($prevCyclingFCDirs ${prevCyclingFCDir}${memDir})
 
   set ExtendedEnsFCDirs = ($ExtendedEnsFCDirs ${ExtendedFCDir}${memDir})
@@ -90,7 +98,3 @@ set thisMPASFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set thisMPASNamelistDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set thisISO8601Date = ${yy}-${mm}-${dd}T${hh}:00:00Z
 set ICfileDate = ${yy}-${mm}-${dd}_${hh}
-
-if ( ${InitializationType} == "ColdStart" ) then
-  setenv GFSAnaDirVerify ${GFSAnaDirOuter}/${thisValidDate}
-endif

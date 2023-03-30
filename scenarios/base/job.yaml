@@ -1,7 +1,6 @@
 job:
 ## *AccountNumber
-# OPTIONS: NMMM0015, NMMM0043
-#Note: NMMM0043 is not available on casper
+# EXAMPLES: NMMM0015, NMMM0043
 
 ## *QueueName
 # Cheyenne Options: economy, regular, premium
@@ -21,22 +20,5 @@ job:
 
 # SingleProc*: used for single-processor jobs, both critical and non-critical paths
 # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
-  #SingleProcAccountNumber: NMMM0043
-  #SingleProcQueueName: share
   SingleProcAccountNumber: NMMM0015
   SingleProcQueueName: "casper@casper-pbs"
-
-## *Retry
-# various retry counts for different types of tasks
-  InitializationRetry: '2*PT30S'
-  GFSAnalysisRetry: '80*PT5M'
-  GetObsRetry: '80*PT5M'
-  VariationalRetry: '2*PT30S'
-  EnsOfVariationalRetry: '1*PT30S'
-  CyclingFCRetry: '2*PT30S'
-  RTPPRetry: '2*PT30S'
-  HofXRetry: '2*PT30S'
-  CleanRetry: '2*PT15S'
-  VerifyObsRetry: '1*PT30S'
-  VerifyModelRetry: '1*PT30S'
-  CleanRetry: '2*PT10S'

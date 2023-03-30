@@ -1,22 +1,15 @@
-workflow:
-  # test a recent date
-  firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180414T18
-  finalCyclePoint: 20180524T18
-  InitializationType: ColdStart
-  CriticalPathType: GenerateExternalAnalyses
-#TODO: make it so that observations and variational are not necessary
-observations:
-  resource: PANDACArchive
+externalanalyses:
+  resource: "GFS.RDA"
 experiment:
   ExperimentName: 'GenerateGFSAnalyses'
-model:
-  MPASGridDescriptor: OIE60km
-  AnalysisSource: GFSfromRDAOnline
-  GraphInfoDir: /glade/p/mmm/parc/liuz/pandac_common/static_from_duda
-variational:
-  DAType: 3dvar
-  nInnerIterations: [0,]
+  ExperimentUserPrefix: ''
 job:
   CPQueueName: economy
   NCPQueueName: economy
+model:
+  outerMesh: 60km
+workflow:
+  firstCyclePoint: 20180414T18
+  finalCyclePoint: 20180416T00
+  CriticalPathType: GenerateExternalAnalyses
+  maxActiveCyclePoints: 60
