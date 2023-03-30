@@ -1,0 +1,60 @@
+# settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
+experiment:
+  suffix: '_ensB-SE80+RTPP70_VarBC'
+
+firstbackground:
+  resource: "PANDAC.GFS"
+
+forecast:
+  job:
+    30km:
+      nodes: 8
+      PEPerNode: 32
+      baseSeconds: 60
+      secondsPerForecastHR: 150
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+  resources:
+    GFS:
+      PANDAC: # only available 20180418T00-20180524T00
+        30km:
+          externalDirectory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAnaAndDiagnostics"
+members:
+  n: 1
+
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+
+observations:
+  resource: PANDACArchiveForVarBC
+
+variational:
+  DAType: 3dhybrid
+  biasCorrection: True
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  nInnerIterations: [60,60,]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.EDA"
+
+  # resource requirements
+  job:
+    30km:
+      60km:
+        3dhybrid:
+          nodes: 6
+          PEPerNode: 32
+          memory: 109GB
+          baseSeconds: 700
+          secondsPerEnVarMember: 20
+
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180514T18
+  CriticalPathType: Normal
+
+

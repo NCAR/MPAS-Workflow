@@ -35,7 +35,11 @@ class HofX(Component):
     'observers': [[
       # anchor
       'aircraft',
-      'gnssroref',
+      'gnssrobndropp1d',
+      #'gnssrobndnbam',
+      #'gnssrobndmo',
+      #'gnssrobndmo-nopseudo',
+      'gnssrorefncep', # obs errors derived from cycling exp.
       'satwind',
       'satwnd',
       'sfc',

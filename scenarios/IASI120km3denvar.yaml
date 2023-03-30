@@ -10,7 +10,7 @@ observations:
       - iasi_metop-b
       - iasi_metop-c
       IODADirectory:
-        variational:
+        da:
           iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
           iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
           iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
@@ -36,7 +36,7 @@ variational:
   tropprsMethod: thompson
   observers: [
     aircraft,
-    gnssroref,
+    gnssrorefncep_NCEPErrors,
     satwind,
     satwnd,
     sfc,

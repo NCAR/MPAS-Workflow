@@ -14,6 +14,26 @@ from initialize.config.Component import Component
 
 from initialize.framework.HPC import HPC
 
+## benchmarkObservations
+# base set of observation types assimilated in all experiments
+# not included in auto-generated experiment names
+benchmarkObservations = [
+  # anchor
+  'aircraft',
+  'gnssrobndropp1d',
+  'satwind',
+  'satwnd',
+  'sfc',
+  'sondes',
+  # MW satellite-based
+  'amsua_aqua',
+  'amsua_metop-a',
+  'amsua_metop-b',
+  'amsua_n15',
+  'amsua_n18',
+  'amsua_n19',
+]
+
 class Observations(Component):
   defaults = 'scenarios/defaults/observations.yaml'
   workDir = 'Observations'
@@ -57,9 +77,9 @@ class Observations(Component):
     'CRTMTABLES': ['/glade/work/guerrett/pandac/fixed_input/crtm_bin/', str],
 
     # static directories for bias correction files
-    'fixedCoeff': ['/glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed', str],
-    'fixedTlapmeanCov': ['/glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018', str],
-    'initialVARBCcoeff': ['/glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018', str],
+    'fixedCoeff': ['/glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias', str],
+    'fixedTlapmeanCov': ['/glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias/2018', str],
+    'initialVARBCcoeff': ['/glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias/2018', str],
   }
 
   def __init__(self,

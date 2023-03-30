@@ -5,3 +5,4 @@ suite.rc
 
 ~*
 
+config/jedi/ObsPlugs/retrieveObsErrors/*.yaml

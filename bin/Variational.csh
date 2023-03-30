@@ -60,6 +60,10 @@ if ( $ArgMember > $nMembers ) then
   exit 1
 endif
 
+# Remove old netcdf lock files
+rm *.nc*.lock
+rm */*.nc*.lock
+
 # ================================================================================================
 
 ## create then move to member-specific run directory
@@ -85,6 +89,11 @@ end
 # Link+Run the executable
 # =======================
 ln -sfv ${myBuildDir}/${myEXE} ./
+
+sed -i 's@{{ObsDataIn}}@ObsDataIn@' $myYAML
+sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' $myYAML
+sed -i 's@{{ObsOutSuffix}}@@' $myYAML
+
 mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
 
 #WITH DEBUGGER

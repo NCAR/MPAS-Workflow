@@ -42,6 +42,7 @@ class Cycle(SuiteBase):
 
     self.c['externalanalyses'] = ExternalAnalyses(conf, self.c['hpc'], meshes)
     self.c['initic'] = InitIC(conf, self.c['hpc'], meshes, self.c['externalanalyses'])
+
     self.c['da'] = DA(conf, self.c['hpc'], self.c['observations'], meshes, self.c['model'], self.c['members'], self.c['workflow'])
     self.c['forecast'] = Forecast(conf, self.c['hpc'], meshes['Outer'], self.c['members'], self.c['model'],
                 self.c['observations'], self.c['workflow'], self.c['externalanalyses'],
@@ -57,7 +58,21 @@ class Cycle(SuiteBase):
     # and depend on whether verifyobs/verifymodel are selected
     self.c['benchmark'] = Benchmark(conf, self.c['hpc'])
 
-    self.c['experiment'] = Experiment(conf, self.c['hpc'], meshes, self.c['da'].var, self.c['members'], self.c['da'].rtpp)
+    # provide default title in case one is not specified
+    meshTitle = ''
+    mO = meshes['Outer'].name
+    meshTitle = 'O'+mO
+    mI = meshes['Inner'].name
+    if mI != mO:
+      meshTitle += 'I'+mI
+    mE = meshes['Ensemble'].name
+    if mE != mO and mE != mI:
+      meshTitle += 'E'+mE
+
+    defaultTitle = self.c['da'].title+'_'+meshTitle
+
+
+    self.c['experiment'] = Experiment(conf, self.c['hpc'], defaultTitle)
     self.c['ss'] = StaticStream(conf, meshes, self.c['members'], self.c['workflow']['FirstCycleDate'],
                 self.c['externalanalyses'], self.c['experiment'])
 

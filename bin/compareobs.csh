@@ -83,7 +83,7 @@ set ObsTypeList = ( \
   amsua_n15 \
   amsua_n18 \
   amsua_n19 \
-  gnssroref \
+  gnssrorefncep \
   satwind \
   sfc \
   sondes \
