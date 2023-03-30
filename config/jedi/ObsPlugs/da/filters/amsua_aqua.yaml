@@ -17,8 +17,8 @@
     minvalue: 1.0e-12
     action:
       name: reject
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_aqua.nc4
   - filter: Background Check
     threshold: *amsua_aquaBGRelThresh
     <<: *multiIterationFilter
-  - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_aqua.nc4
