@@ -9,7 +9,8 @@
       engine:
         type: H5File
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrobndmo-nopseudo{{ObsOutSuffix}}.h5
-    obsdatain: *{{ObsDataIn}}
+    obsdatain:
+      <<: *{{ObsDataIn}}
       obsgrouping:
         group variables: [ sequenceNumber ]
     {{ObsDataOut}}
