@@ -26,7 +26,7 @@ class VerifyObs(Component):
   workDir = 'Verification'
   diagnosticsDir = 'diagnostic_stats/obs'
   variablesWithDefaults = {
-    'script directory': ['/glade/work/guerrett/pandac/fixed_input/graphics_mpasScoreCard_iodaV3_latest', str],
+    'script directory': ['/glade/work/guerrett/pandac/fixed_input/graphics_mpasScoreCard_iodaV3_latest_allSkyIR', str],
   }
 
   def __init__(self,
