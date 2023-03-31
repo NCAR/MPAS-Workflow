@@ -4,7 +4,7 @@
     - variable:
         name: MetaData/sensorZenithAngle
       maxvalue: 65.0
-PerformActionFilters_abi_g16
+{{PerformActionFilters_abi_g16}}
   - filter: GOMsaver
     filename: {{OutDBDir}}/{{geoPrefix}}_abi_g16.nc4
   - filter: YDIAGsaver

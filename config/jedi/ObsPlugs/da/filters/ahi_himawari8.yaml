@@ -6,7 +6,7 @@
       maxvalue: 65.0
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
-PerformActionFilters_ahi_himawari8
+{{PerformActionFilters_ahi_himawari8}}
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter

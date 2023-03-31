@@ -402,8 +402,10 @@ set Polynomial2DLatBands = (NXTro NTro ITCZ STro SXTro Tro)
 set ConstantErrorValueAllChannels = "3.0"
 
 # (b) allSkyIR ObsAnchors (channel selection)
-set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${ArgAppType}/${sedstring}.yaml
-sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+set anchor = ObsAnchors
+set prependYAML = jedi/ObsPlugs/allSkyIR/${AppCategory}/${anchor}.yaml
+set thisYAML = insertAllSkyIR${anchor}.yaml
+cat ${ConfigDir}/${prependYAML} > $thisYAML
 
 # (c) more sub-anchor parts
 if ($allSkyIRErrorType == Constant) then
@@ -412,20 +414,20 @@ if ($allSkyIRErrorType == Constant) then
     set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${allSkyIRErrorType}AssignErrorParameter_InfraredInstrument.yaml
     sed 's@{{InfraredInstrument}}@'${InfraredInstrument}'@g' ${SUBYAML} > tempYAML
     sed -i 's@{{ConstantErrorValueAllChannels}}@'${ConstantErrorValueAllChannels}'@g' tempYAML
-    sed 's@$@\\@' tempYAML >> ${thisSEDF}
+    cat tempYAML >> ${thisYAML}
     rm tempYAML
   end
 else if ($allSkyIRErrorType == Okamoto) then
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # assign error function anchor
-    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${ArgAppType}/${allSkyIRErrorType}AssignErrorFunction_${InfraredInstrument}.yaml
+    set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${AppCategory}/${allSkyIRErrorType}AssignErrorFunction_${InfraredInstrument}.yaml
     sed 's@{{HofXMeshDescriptor}}@'${outerMesh}'@g' ${SUBYAML} > tempYAML
 
     # need to change to mainScriptDir for getObservationsOrNone to work
     cd ${mainScriptDir}
     set ABISuperObGrid = "`$getObservationsOrNone resources.${observations__resource}.IODASuperObGrid.abi_g16`"
     set AHISuperObGrid = "`$getObservationsOrNone resources.${observations__resource}.IODASuperObGrid.ahi_himawari8`"
-    cd ${self_WorkDir}
+    cd ${WorkDir}
     if ("$ABISuperObGrid" != None) then
       sed -i 's@{{ABISUPEROBGRID}}@'${ABISuperObGrid}'@g' tempYAML
     endif
@@ -433,7 +435,7 @@ else if ($allSkyIRErrorType == Okamoto) then
       sed -i 's@{{AHISUPEROBGRID}}@'${AHISuperObGrid}'@g' tempYAML
     endif
 
-    sed 's@$@\\@' tempYAML >> ${thisSEDF}
+    cat tempYAML >> ${thisYAML}
     rm tempYAML
   end
 else
@@ -441,11 +443,11 @@ else
     # polynomial2d fit parameters
     if ($allSkyIRErrorType == Polynomial2D) then
       set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/MonitorCycle15daysTwice/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
-      sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+      cat ${SUBYAML} >> ${thisYAML}
     else if ($allSkyIRErrorType == Polynomial2DByLatBand) then
       foreach LatBand ($Polynomial2DLatBands)
         set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/MonitorCycle15daysTwice/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_${LatBand}_0min_${InfraredInstrument}.yaml
-        sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
+        cat ${SUBYAML} >> ${thisYAML}
       end
     else
       echo "ERROR in $0 : invalid allSkyIRErrorType=${allSkyIRErrorType}" > ./FAIL
@@ -456,15 +458,13 @@ else
     set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${allSkyIRErrorType}AssignErrorFunction_InfraredInstrument.yaml
     sed 's@{{InfraredInstrument}}@'${InfraredInstrument}'@g' ${SUBYAML} > tempYAML
     sed -i 's@{{POLYNOMIAL2DFITDEGREE}}@'${POLYNOMIAL2DFITDEGREE}'@g' tempYAML
-    sed 's@$@\\@' tempYAML >> ${thisSEDF}
+    cat tempYAML >> ${thisYAML}
     rm tempYAML
   end
 endif
 
-# (d) finally, insert into prevYAML
-set thisYAML = insert${sedstring}.yaml
-sed -f ${thisSEDF} $prevYAML >! $thisYAML
-rm ${thisSEDF}
+# (d) finally, cat prevYAML
+cat $prevYAML >> $thisYAML
 set prevYAML = $thisYAML
 
 # (iv) substitute allsky IR PerformActionFilters
@@ -475,7 +475,7 @@ foreach InfraredInstrument (abi_g16 ahi_himawari8)
   set performactiontemplate = PerformActionFilters_InfraredInstrument
   set thisSEDF = ${performactionsed}SEDF.yaml
 cat >! ${thisSEDF} << EOF
-/${performactionsed}/c\
+/{{${performactionsed}}}/c\
 EOF
 
   # add base anchors
