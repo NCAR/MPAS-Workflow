@@ -68,3 +68,6 @@ _get values: &GetValues
 
 _multi iteration filter: &multiIterationFilter
   _blank: null
+
+_abi_g16 channels: &abi_g16_channels 8-10
+_ahi_himawari8 channels: &ahi_himawari8_channels 8-10

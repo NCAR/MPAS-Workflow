@@ -1,6 +1,6 @@
 _error assign filter variables ahi_himawari8: &errorAssignFilterVariables_ahi_himawari8
-- name: brightness_temperature
+- name: brightnessTemperature
   channels: *ahi_himawari8_channels
 _error assign filter variables abi_g16: &errorAssignFilterVariables_abi_g16
-- name: brightness_temperature
+- name: brightnessTemperature
   channels: *abi_g16_channels

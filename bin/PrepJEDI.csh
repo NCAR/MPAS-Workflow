@@ -246,7 +246,7 @@ endif
 # Generate yaml
 # =============
 
-# (1) copy jedi/applications yaml
+# (I) copy jedi/applications yaml
 # ===============================
 
 set thisYAML = orig.yaml
@@ -258,14 +258,14 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-# (2) obs-related substitutions
-# =============================
+# (II) obs-related substitutions
+# ==============================
 
 ## indentation of observations vector members, specified in config/auto/$ArgAppType.csh
 set obsIndent = "`${nSpaces} $nObsIndent`"
 
 ## Add selected observations (see config/auto/$ArgAppType.csh)
-# (i) combine the observation YAML stubs into single file
+# (A) combine the observation YAML stubs into single file
 set observationsYAML = observations.yaml
 rm $observationsYAML
 touch $observationsYAML
@@ -334,7 +334,7 @@ if ($found == 0) then
   exit 1
 endif
 
-# (ii) insert Observations
+# (B) insert Observations
 set sedstring = Observers
 set thisSEDF = ${sedstring}SEDF.yaml
 cat >! ${thisSEDF} << EOF
@@ -350,33 +350,9 @@ sed -f ${thisSEDF} $prevYAML >! $thisYAML
 rm ${thisSEDF}
 set prevYAML = $thisYAML
 
-# (iii) insert re-usable YAML anchors
+# (C) insert re-usable YAML anchors
 
-# anchors that are specific to each application
-set appSpecificAnchors = (ObsAnchors)
-
-foreach anchor ($appSpecificAnchors)
-  # prepend prevYAML with prependYAML
-  set prependYAML = jedi/ObsPlugs/${ArgAppType}/${anchor}.yaml
-  set thisYAML = insert${anchor}.yaml
-  cat ${ConfigDir}/${prependYAML} > $thisYAML
-  cat $prevYAML >> $thisYAML
-  set prevYAML = $thisYAML
-end
-
-# anchors that are common across all applications
-set appAgnosticAnchors = (ObsErrorAnchors)
-
-foreach anchor ($appAgnosticAnchors)
-  # prepend prevYAML with prependYAML
-  set prependYAML = jedi/ObsPlugs/${anchor}.yaml
-  set thisYAML = insert${anchor}.yaml
-  cat ${ConfigDir}/${prependYAML} > $thisYAML
-  cat $prevYAML >> $thisYAML
-  set prevYAML = $thisYAML
-end
-
-# multiple kinds of anchors for allSkyIR ObsError
+# (1) multiple kinds of anchors for allSkyIR ObsError
 
 # (a) settings
 
@@ -386,18 +362,18 @@ end
 # Options: Okamoto, Polynomial2D, Polynomial2DByLatBand, Constant
 set allSkyIRErrorType = Okamoto
 
-#POLYNOMIAL2DFITDEGREE
+# POLYNOMIAL2DFITDEGREE
 # 2d polynomial fit degree for CFxMax vs. CFy, only applies when allSkyIRErrorType==Polynomial2D
 # Options: [10, 12]
 set POLYNOMIAL2DFITDEGREE = 12
 
-#Polynomial2DLatBands
+# Polynomial2DLatBands
 # + latitude bands for which individual fits are available for
 #   allSkyIRErrorType==Polynomial2DByLatBand
 # + see config/jedi/ObsPlugs/allSkyIR/Polynomial2DByLatBandAssignErrorFunction_InfraredInstrument.yaml
 set Polynomial2DLatBands = (NXTro NTro ITCZ STro SXTro Tro)
 
-#ConstantErrorValueAllChannels
+# ConstantErrorValueAllChannels
 # constant observation error value across all channels when allSkyIRErrorType==Constant
 set ConstantErrorValueAllChannels = "3.0"
 
@@ -463,11 +439,11 @@ else
   end
 endif
 
-# (d) finally, cat prevYAML
+# (d) cat prevYAML
 cat $prevYAML >> $thisYAML
 set prevYAML = $thisYAML
 
-# (iv) substitute allsky IR PerformActionFilters
+# (e) substitute allsky IR PerformActionFilters
 @ nIndent = $nObsIndent + 2
 set filtersIndent = "`${nSpaces} $nIndent`"
 foreach InfraredInstrument (abi_g16 ahi_himawari8)
@@ -494,11 +470,38 @@ EOF
   set prevYAML = $thisYAML
 end
 
+# (2) anchors that are specific to each application
+set appSpecificAnchors = (ObsAnchors)
 
-## QC characteristics
+foreach anchor ($appSpecificAnchors)
+  # prepend prevYAML with prependYAML
+  set prependYAML = jedi/ObsPlugs/${ArgAppType}/${anchor}.yaml
+  set thisYAML = insert${anchor}.yaml
+  cat ${ConfigDir}/${prependYAML} > $thisYAML
+  cat $prevYAML >> $thisYAML
+  set prevYAML = $thisYAML
+end
+
+# (3) anchors that are common across all applications
+set appAgnosticAnchors = (ObsErrorAnchors)
+
+foreach anchor ($appAgnosticAnchors)
+  # prepend prevYAML with prependYAML
+  set prependYAML = jedi/ObsPlugs/${anchor}.yaml
+  set thisYAML = insert${anchor}.yaml
+  cat ${ConfigDir}/${prependYAML} > $thisYAML
+  cat $prevYAML >> $thisYAML
+  set prevYAML = $thisYAML
+end
+
+# (D) QC characteristics
 sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $thisYAML
 
-## date-time information
+# method for the tropopause pressure determination
+sed -i 's@{{tropprsMethod}}@'${tropprsMethod}'@g' $prevYAML
+
+
+# (E) date-time information
 # current date
 sed -i 's@{{thisValidDate}}@'${thisValidDate}'@g' $thisYAML
 sed -i 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@g' $thisYAML
@@ -510,8 +513,12 @@ sed -i 's@{{windowLength}}@PT'${ArgWindowHR}'H@g' $thisYAML
 # window beginning
 sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
 
+# (F) common obs space settings
+# number of IODA pool writers
+sed -i 's@{{maxIODAPoolSize}}@'${maxIODAPoolSize}'@g' $prevYAML
 
-## obs-related file naming
+
+# (G) obs-related file naming
 # crtm tables
 sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 
@@ -528,14 +535,8 @@ sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${AppCategory}'@g' $thisYAML
 sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $prevYAML
 sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 
-# method for the tropopause pressure determination
-sed -i 's@{{tropprsMethod}}@'${tropprsMethod}'@g' $prevYAML
-
-# number of IODA pool writers
-sed -i 's@{{maxIODAPoolSize}}@'${maxIODAPoolSize}'@g' $prevYAML
-
-# (3) model-related substitutions
-# ===============================
+# (III) model-related substitutions
+# =================================
 
 # bg file
 sed -i 's@{{bgStatePrefix}}@'${BGFilePrefix}'@g' $thisYAML
