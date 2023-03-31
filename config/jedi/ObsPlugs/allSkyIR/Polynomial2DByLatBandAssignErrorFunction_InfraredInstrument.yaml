@@ -5,7 +5,7 @@ _poly2d error function {{InfraredInstrument}} NXTro: &Polynomial2DByLatBandAssig
     <<: *{{InfraredInstrument}}_fit2D_CldFrac2D_NXTro_degree{{POLYNOMIAL2DFITDEGREE}}
     filter variables: *errorAssignFilterVariables_{{InfraredInstrument}}
     xvar:
-      name: MetaData/cloud_area_fraction
+      name: MetaData/cloudAmount
     yvar:
       name: ObsFunction/MaxColumnGeoVaLs
       options:
@@ -17,7 +17,7 @@ _poly2d error function {{InfraredInstrument}} NTro: &Polynomial2DByLatBandAssign
     <<: *{{InfraredInstrument}}_fit2D_CldFrac2D_NTro_degree{{POLYNOMIAL2DFITDEGREE}}
     filter variables: *errorAssignFilterVariables_{{InfraredInstrument}}
     xvar:
-      name: MetaData/cloud_area_fraction
+      name: MetaData/cloudAmount
     yvar:
       name: ObsFunction/MaxColumnGeoVaLs
       options:
@@ -29,7 +29,7 @@ _poly2d error function {{InfraredInstrument}} ITCZ: &Polynomial2DByLatBandAssign
     <<: *{{InfraredInstrument}}_fit2D_CldFrac2D_ITCZ_degree{{POLYNOMIAL2DFITDEGREE}}
     filter variables: *errorAssignFilterVariables_{{InfraredInstrument}}
     xvar:
-      name: MetaData/cloud_area_fraction
+      name: MetaData/cloudAmount
     yvar:
       name: ObsFunction/MaxColumnGeoVaLs
       options:
@@ -41,7 +41,7 @@ _poly2d error function {{InfraredInstrument}} Tro: &Polynomial2DByLatBandAssignE
     <<: *{{InfraredInstrument}}_fit2D_CldFrac2D_Tro_degree{{POLYNOMIAL2DFITDEGREE}}
     filter variables: *errorAssignFilterVariables_{{InfraredInstrument}}
     xvar:
-      name: MetaData/cloud_area_fraction
+      name: MetaData/cloudAmount
     yvar:
       name: ObsFunction/MaxColumnGeoVaLs
       options:
@@ -53,7 +53,7 @@ _poly2d error function {{InfraredInstrument}} STro: &Polynomial2DByLatBandAssign
     <<: *{{InfraredInstrument}}_fit2D_CldFrac2D_STro_degree{{POLYNOMIAL2DFITDEGREE}}
     filter variables: *errorAssignFilterVariables_{{InfraredInstrument}}
     xvar:
-      name: MetaData/cloud_area_fraction
+      name: MetaData/cloudAmount
     yvar:
       name: ObsFunction/MaxColumnGeoVaLs
       options:
@@ -65,7 +65,7 @@ _poly2d error function {{InfraredInstrument}} SXTro: &Polynomial2DByLatBandAssig
     <<: *{{InfraredInstrument}}_fit2D_CldFrac2D_SXTro_degree{{POLYNOMIAL2DFITDEGREE}}
     filter variables: *errorAssignFilterVariables_{{InfraredInstrument}}
     xvar:
-      name: MetaData/cloud_area_fraction
+      name: MetaData/cloudAmount
     yvar:
       name: ObsFunction/MaxColumnGeoVaLs
       options:

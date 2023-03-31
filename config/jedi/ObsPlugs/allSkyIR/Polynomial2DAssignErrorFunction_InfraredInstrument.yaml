@@ -5,7 +5,7 @@ _poly2d error function {{InfraredInstrument}}: &Polynomial2DAssignErrorFunction_
     <<: *{{InfraredInstrument}}_fit2D_CldFrac2D_degree{{POLYNOMIAL2DFITDEGREE}}
     filter variables: *errorAssignFilterVariables_{{InfraredInstrument}}
     xvar:
-      name: MetaData/cloud_area_fraction
+      name: MetaData/cloudAmount
     yvar:
       name: ObsFunction/MaxColumnGeoVaLs
       options:
