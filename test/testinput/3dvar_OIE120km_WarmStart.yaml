@@ -1,0 +1,28 @@
+experiment:
+  name: '3dvar_OIE120km_WarmStart_TEST'
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.GFS"
+forecast:
+  # turn off post to reduce overhead
+  post: []
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+members:
+  n: 1
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+observations:
+  resource: PANDACArchive
+variational:
+  DAType: 3dvar
+  nInnerIterations: [15,]
+  # turn off post to reduce overhead
+  post: []
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180415T06

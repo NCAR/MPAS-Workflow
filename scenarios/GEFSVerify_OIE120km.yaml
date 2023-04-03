@@ -1,5 +1,5 @@
 experiment:
-  ExpSuffix: _GEFSVerify
+  suffix: _GEFSVerify
 externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:

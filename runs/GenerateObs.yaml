@@ -1,6 +1,0 @@
-run:
-  scenarios: [GenerateObs]
-  suite: GenerateObs
-  appIndependentConfigs: [job, observations, workflow]
-  appDependentConfigs: []
-  ExpConfigType: base

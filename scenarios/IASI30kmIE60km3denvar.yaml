@@ -1,36 +1,35 @@
 workflow:
-  firstCyclePoint: 20180414T18
-  initialCyclePoint: 20180415T06
-  finalCyclePoint: 20180514T18
-  InitializationType: WarmStart
-  VerifyDeterministicDA: True
-  VerifyEnsMeanBG: True
+  first cycle point: 20180414T18
+  final cycle point: 20180514T18
 observations:
   resource: PANDACArchive
-  PANDACArchive:
-    instrumentsAllowingBiasCorrection:
-    - iasi_metop-a
-    - iasi_metop-b
-    - iasi_metop-c
-    IODADirectory:
-      variational:
-        iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-        iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-        iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-        abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-        abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
-        ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-        ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-      hofx:
-        abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-        abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v2/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
-        ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-        ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v2/IODANC_SUPEROB15X15_no-bias-correct
-    IODASuperObGrid:
-      abi_g16: 15X15
-      ahi_himawari8: 15X15
+  resources:
+    PANDACArchive:
+      instrumentsAllowingBiasCorrection:
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+      IODADirectory:
+        variational:
+          iasi_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/iasi/6h
+          iasi_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/iasi/6h
+          iasi_metop-c: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/iasi/6h
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_no-bias-correct
+        hofx:
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obsiodav3_221216/newobs_2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_no-bias-correct
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15
 experiment:
-  ExperimentName: '3denvar_O30kmIE60km_WarmStart_IASI_6h_TEST_2-outer_60-inner'
+  name: '3denvar_O30kmIE60km_WarmStart_IASI_6h_TEST_2-outer_60-inner'
+members:
+  n: 1
 model:
   outerMesh: 30km
   innerMesh: 60km
@@ -45,9 +44,24 @@ variational:
     forecasts:
       resource: "PANDAC.GEFS"
   nInnerIterations: [60,60]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
   biasCorrection: True
   tropprsMethod: thompson
-  experimentalObservations: [
+  observers: [
+    aircraft,
+    gnssroref,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
     iasi_metop-b,
   ]
   job:
@@ -58,8 +72,8 @@ variational:
           nodes: 8
           PEPerNode: 16
           memory: 109
-job:
-  CPQueueName: premium
-  NCPQueueName: premium
+hpc:
+  CriticalQueue: premium
+  NonCriticalQueue: premium
 verifyobs:
-  pyVerifyDir: /glade/p/mmm/parc/ivette/pandac/graphics
+  script directory: /glade/p/mmm/parc/ivette/pandac/graphics

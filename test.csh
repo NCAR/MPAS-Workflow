@@ -1,8 +1,8 @@
 #!/bin/csh -f
 
-./run.csh test
+./Run.py test/testinput/test.yaml
 
 # only need to run these for modifications to scenario, suite, and environment setup
-#./run.csh GenerateGFSAnalyses
-#./run.csh GenerateObs
-#./run.csh ForecastFromGFSAnalyses
+#./Run.py scenarios/GenerateGFSAnalyses.yaml
+#./Run.py scenarios/GenerateObs.yaml
+#./Run.py scenarios/ForecastFromGFSAnalyses.yaml
