@@ -43,20 +43,6 @@ class PBSPro(Task):
     self.batchSystem = 'pbs'
 
   def directives(self):
-    nodes = self.r.getOrDefault('nodes', None)
-    if nodes is not None:
-      PEPerNode = self.r['PEPerNode']
-      memory = self.r.getOrDefault('memory', None)
-      if PEPerNode > 1:
-        select = str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)
-      else:
-        select = str(nodes)+':ncpus='+str(PEPerNode)
-
-      if memory is not None:
-        select += ':mem='+memory
-    else:
-      select = None
-
     unique = {}
     if self.r['queue'] is not None:
       unique['q'] = self.r['queue']

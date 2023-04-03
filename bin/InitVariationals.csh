@@ -8,7 +8,7 @@
 # Perform preparation for the variational application
 # + iterations
 # + ensemble Jb term
-# + TODO: static Jb term
+# + static Jb term
 
 date
 
