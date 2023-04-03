@@ -71,8 +71,8 @@ class Cycle(SuiteBase):
 
     defaultTitle = self.c['da'].title+'_'+meshTitle
 
-
     self.c['experiment'] = Experiment(conf, self.c['hpc'], defaultTitle)
+
     self.c['ss'] = StaticStream(conf, meshes, self.c['members'], self.c['workflow']['FirstCycleDate'],
                 self.c['externalanalyses'], self.c['experiment'])
 
