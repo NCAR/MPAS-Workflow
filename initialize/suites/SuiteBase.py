@@ -10,6 +10,7 @@
 import subprocess
 
 from initialize.config.Config import Config
+from initialize.config.TaskFamily import placeholdertask
 
 from initialize.framework.HPC import HPC
 from initialize.framework.Workflow import Workflow
@@ -83,12 +84,18 @@ conda activate npl
   [[Clean]]
     [[[job]]]
       execution time limit = PT5M
-      execution retry delays = 2*PT15S"""]
+      execution retry delays = 2*PT15S
+
+  [["""+placeholdertask+"""]]"""]
 
     for k in self.queueComponents:
       self._queues += ['''
     # '''+ k]
       self._queues += self.c[k]._queues
+      self._queues += ['''
+    [[['''+placeholdertask+''']]]
+      members = '''+placeholdertask+'''
+      limit = '''+str(self.c['workflow']['max concurrent placeholder tasks'])]
 
     for k in self.dependencyComponents:
       self._dependencies += ['''

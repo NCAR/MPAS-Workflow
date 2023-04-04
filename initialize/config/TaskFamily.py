@@ -9,6 +9,8 @@
 
 from copy import deepcopy
 
+placeholdertask = 'PlaceHolder'
+
 class TaskFamilyBase:
   def __init__(self, name:str, initialize:bool, execute:bool):
     self.base = name
@@ -44,6 +46,7 @@ class TaskFamilyBase:
 
     # _multiple tasks may be inherited by 1 or more parent tasks
     self._multiple = [self.init, self.execute]
+    self._placeholders = [self.pre, self.post, self.finished]
 
 class CylcTaskFamily(TaskFamilyBase):
   def __init__(self,
@@ -101,19 +104,24 @@ class CylcTaskFamily(TaskFamilyBase):
       if (p in allTasks or p in allDependencies) and tStr not in allTasks:
         t += [tStr]
 
+        inherit = []
         if p == self.clean:
           # all clean tasks derive from Clean base task
-          t += [self.inherit('Clean')]
+          inherit.append('Clean')
 
         else:
           # all tasks besides clean inherit from self.group
-          t += [self.inherit(self.group)]
+          inherit.append(self.group)
+
+        if p in self._placeholders:
+          inherit.append(placeholdertask)
+
+        t += [self.inherit(','.join(inherit))]
 
         # required for multi-tasks when parent does not inherit these phases
         if p in self._multiple:
           t += ['''
-  '''+self.wrap(p+'__')+self.inherit(p)]
-
+  '''+self.wrap(p+'__')+self.inherit(','.join([p, placeholdertask]))]
 
     return parentTasks+self.__t+t
 

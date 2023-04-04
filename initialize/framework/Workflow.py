@@ -25,6 +25,10 @@ class Workflow(Component):
     # maximum consecutive cycle points to be active at any time
     'max active cycle points': [4, int],
 
+    # maximum concurrent placeholder tasks
+    # constrains background placholder task count to avoid over-utilizing login node
+    'max concurrent placeholder tasks': [20, int],
+
     # default submission timeout for all cylc tasks
     # note: overridden in come cylc tasks (e.g., under InitIC and ExternalAnalyses)
     'submission timeout': ['PT90M', str],
