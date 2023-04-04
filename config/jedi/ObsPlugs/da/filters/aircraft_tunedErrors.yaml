@@ -1,0 +1,245 @@
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
+
+  ## Specify ObsError (T, U, V) or scale ObsError based on ObsValue (qv only)
+  # NXTro
+  # T
+  - filter: Perform Action
+    filter variables:
+    - name: airTemperature
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *aircraftErrorLevels
+          errors: *aircraftNXTro_TError
+  # U
+  - filter: Perform Action
+    filter variables:
+    - name: windEastward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *aircraftErrorLevels
+          errors: *aircraftNXTro_UError
+  # V
+  - filter: Perform Action
+    filter variables:
+    - name: windNorthward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *aircraftErrorLevels
+          errors: *aircraftNXTro_VError
+  # qv
+  - filter: Perform Action
+    filter variables:
+    - name: specificHumidity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          scale_factor_var:
+            name: ObsValue/specificHumidity
+          xvals: *aircraftErrorLevels
+          errors: *aircraftNXTro_qvError
+
+  # Tro
+  # T
+  - filter: Perform Action
+    filter variables:
+    - name: airTemperature
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *aircraftErrorLevels
+          errors: *aircraftTro_TError
+  # U
+  - filter: Perform Action
+    filter variables:
+    - name: windEastward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *aircraftErrorLevels
+          errors: *aircraftTro_UError
+  # V
+  - filter: Perform Action
+    filter variables:
+    - name: windNorthward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *aircraftErrorLevels
+          errors: *aircraftTro_VError
+  # qv
+  - filter: Perform Action
+    filter variables:
+    - name: specificHumidity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          scale_factor_var:
+            name: ObsValue/specificHumidity
+          xvals: *aircraftErrorLevels
+          errors: *aircraftTro_qvError
+
+  # SXTro
+  # T
+  - filter: Perform Action
+    filter variables:
+    - name: airTemperature
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *aircraftErrorLevels
+          errors: *aircraftSXTro_TError
+  # U
+  - filter: Perform Action
+    filter variables:
+    - name: windEastward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *aircraftErrorLevels
+          errors: *aircraftSXTro_UError
+  # V
+  - filter: Perform Action
+    filter variables:
+    - name: windNorthward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *aircraftErrorLevels
+          errors: *aircraftSXTro_VError
+  # qv
+  - filter: Perform Action
+    filter variables:
+    - name: specificHumidity
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          scale_factor_var:
+            name: ObsValue/specificHumidity
+          xvals: *aircraftErrorLevels
+          errors: *aircraftSXTro_qvError
+
+  # avoids large ObsError values polluting plots of ObsError
+  - filter: Bounds Check
+    filter variables:
+    - name: specificHumidity
+    test variables:
+    - name: ObsErrorData/specificHumidity
+    minvalue: 0.0
+    maxvalue: 1.0
+
+  - filter: Background Check
+    threshold: *aircraftBGRelThresh
+    <<: *multiIterationFilter

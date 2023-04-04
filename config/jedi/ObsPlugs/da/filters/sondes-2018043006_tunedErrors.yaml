@@ -1,0 +1,179 @@
+  obs filters:
+  - filter: PreQC
+    maxvalue: 3
+
+  ## Specify ObsError (T, Tv, U, V)
+  # NXTro
+  # T, Tv
+  - filter: Perform Action
+    filter variables:
+    - name: airTemperature
+    - name: virtualTemperature
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *sondesErrorLevels
+          errors: *sondesNXTro_TError
+  # U
+  - filter: Perform Action
+    filter variables:
+    - name: windEastward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *sondesErrorLevels
+          errors: *sondesNXTro_UError
+  # V
+  - filter: Perform Action
+    filter variables:
+    - name: windNorthward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minNXTro
+      maxvalue: *maxNXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *sondesErrorLevels
+          errors: *sondesNXTro_VError
+
+  # Tro
+  # T, Tv
+  - filter: Perform Action
+    filter variables:
+    - name: airTemperature
+    - name: virtualTemperature
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *sondesErrorLevels
+          errors: *sondesTro_TError
+  # U
+  - filter: Perform Action
+    filter variables:
+    - name: windEastward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *sondesErrorLevels
+          errors: *sondesTro_UError
+  # V
+  - filter: Perform Action
+    filter variables:
+    - name: windNorthward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minTro
+      maxvalue: *maxTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *sondesErrorLevels
+          errors: *sondesTro_VError
+
+  # SXTro
+  # T, Tv
+  - filter: Perform Action
+    filter variables:
+    - name: airTemperature
+    - name: virtualTemperature
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *sondesErrorLevels
+          errors: *sondesSXTro_TError
+  # U
+  - filter: Perform Action
+    filter variables:
+    - name: windEastward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *sondesErrorLevels
+          errors: *sondesSXTro_UError
+  # V
+  - filter: Perform Action
+    filter variables:
+    - name: windNorthward
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: *minSXTro
+      maxvalue: *maxSXTro
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelStepwiseLinear
+        options:
+          xvar:
+            name: MetaData/pressure
+          xvals: *sondesErrorLevels
+          errors: *sondesSXTro_VError
+
+  - filter: Background Check
+    threshold: *sondesBGRelThresh
+    <<: *multiIterationFilter
