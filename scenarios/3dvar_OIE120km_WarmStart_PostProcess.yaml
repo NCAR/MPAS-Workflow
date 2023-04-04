@@ -1,0 +1,41 @@
+experiment:
+  suite identifier: PostProcess
+
+extendedforecast:
+  #meanTimes: T00,T12 # uncomment to enable extended forecast verification
+  lengthHR: 120
+  outIntervalHR: 24
+  #execute: False # uncomment if forecasts are already completed
+
+  # optionally enable extended forecast post (requires meanTimes to be set)
+  post: [verifyobs, verifymodel]
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+
+firstbackground:
+  resource: "PANDAC.GFS"
+
+forecast:
+  execute: False
+  post: [verifyobs, verifymodel]
+
+members:
+  n: 1
+
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+
+observations:
+  resource: PANDACArchive
+
+variational:
+  DAType: 3dvar
+  execute: False
+  post: [verifyobs]
+
+workflow:
+  first cycle point: 20180415T00
+  final cycle point: 20180514T18

@@ -7,8 +7,10 @@
  which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 '''
 
+from copy import deepcopy
+
 class TaskFamilyBase:
-  def __init__(self, name):
+  def __init__(self, name:str, initialize:bool, execute:bool):
     self.base = name
 
     # For each of these cylc "task" names, some are family names, while others are marker names
@@ -24,7 +26,8 @@ class TaskFamilyBase:
     self.finished = self.base+'Finished__' # marker
     self.clean = 'Clean'+self.base # family
 
-    self.phases = [
+    # add all phases as tasks in case they are referenced externally
+    self._tPhases = [
       self.pre,
       self.init,
       self.execute,
@@ -32,16 +35,28 @@ class TaskFamilyBase:
       self.finished,
       self.clean,
     ]
+
+    # allow for parent app to control whether execute and initialize are added to
+    # internal dependencies
+    self._dPhases = deepcopy(self._tPhases)
+    if not initialize: self._dPhases.remove(self.init)
+    if not execute: self._dPhases.remove(self.execute)
+
     # _multiple tasks may be inherited by 1 or more parent tasks
     self._multiple = [self.init, self.execute]
 
 class CylcTaskFamily(TaskFamilyBase):
-  def __init__(self, name:str, groupSettings=['']):
+  def __init__(self,
+    name:str,
+    groupSettings=[''],
+    initialize:bool=True,
+    execute:bool=True,
+  ):
     '''
     populate internal task markers and dependencies
     '''
 
-    super().__init__(name)
+    super().__init__(name, initialize, execute)
 
     # tasks (i.e., cylc runtime)
     self.__t = []
@@ -80,7 +95,7 @@ class CylcTaskFamily(TaskFamilyBase):
     allDependencies = ''.join(parentDependencies)
 
     t = []
-    for p in self.phases:
+    for p in self._tPhases:
       tStr = '''
   '''+self.wrap(p)
       if (p in allTasks or p in allDependencies) and tStr not in allTasks:
@@ -108,13 +123,13 @@ class CylcTaskFamily(TaskFamilyBase):
     d = []
     # general dependency graph:
     #   pre => init:succeed-all => execute:succeed-all => post => finished => clean
-    for i, p in enumerate(self.phases[:-1]):
+    for i, p in enumerate(self._dPhases[:-1]):
       if p in self._multiple:
         success = ':succeed-all'
       else:
         success = ''
 
-      p_next = self.phases[i+1]
+      p_next = self._dPhases[i+1]
 
       dStr = '''
         '''+p+success+''' => '''+p_next

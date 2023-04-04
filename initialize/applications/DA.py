@@ -17,6 +17,7 @@ from initialize.applications.Variational import Variational
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
+from initialize.config.TaskFamily import CylcTaskFamily
 
 from initialize.data.Model import Model
 from initialize.data.Observations import Observations, benchmarkObservations
@@ -78,6 +79,12 @@ class DA(Component):
     else:
       self.enkf = None
 
+    # reinitialize TaskFamily with child initialize/execute settings
+    self._set('initialize', self.__da['initialize'])
+    self._set('execute', self.__da['execute'])
+    self.tf = CylcTaskFamily(self.base, [''], self['initialize'], self['execute'])
+
+    # DA title
     self.title = ''
     obsName = ''
     for o in self.__da['observers']:
@@ -167,14 +174,12 @@ class DA(Component):
         '''+self.obs['PrepareObservations']+''' => '''+self.tf.pre]
 
     # sub-tasks
-    if self.workflow['CriticalPathType'] in ['Normal', 'Reanalysis']:
-      for st in self.__subtasks:
-        self._tasks += st._tasks
-        self._dependencies += st._dependencies
+    for st in self.__subtasks:
+      self._tasks += st._tasks
+      self._dependencies += st._dependencies
 
-    if self.workflow['CriticalPathType'] == 'Normal':
-      # depends on previous Forecast
-      self.tf.addDependencies([previousForecast])
+    # depends on previous Forecast
+    self.tf.addDependencies([previousForecast])
 
     # update tasks and dependencies
     self._dependencies = self.tf.updateDependencies(self._dependencies)
@@ -187,19 +192,19 @@ class DA(Component):
     ######
     # post
     ######
-    postconf = {
-      'tasks': self.__da['post'],
-      'valid tasks': ['verifyobs'],
-      'verifyobs': {
-        'hpc': self.hpc,
-        'obs': self.outputs['obs']['members'],
-        'sub directory': 'da',
-        'dependencies': [self.tf.post],
-        'followon': [self.tf.clean],
-      },
-    }
+    if len(self.__da['post']) > 0:
+      postconf = {
+        'tasks': self.__da['post'],
+        'valid tasks': ['verifyobs'],
+        'verifyobs': {
+          'hpc': self.hpc,
+          'obs': self.outputs['obs']['members'],
+          'sub directory': 'da',
+          'dependencies': [self.tf.post],
+          'followon': [self.tf.clean],
+        },
+      }
 
-    if len(postconf['tasks']) > 0:
       post = Post(postconf, self.__globalConf)
       self._tasks += post._tasks
 

@@ -46,4 +46,3 @@ variational:
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180514T18
-  CriticalPathType: Normal
