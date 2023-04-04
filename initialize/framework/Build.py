@@ -16,10 +16,10 @@ class Build(Component):
   variablesWithDefaults = {
     ## mpas bundle
     # mpas-bundle build directory
-    'mpas bundle': ['/glade/work/bjung/panda-c/build/mpas-bundle_gnu-openmpi_24FEB2023_single', str],
+    'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22MAR2023_single', str],
 
     # optional double-precision build
-    #'mpas bundle': ['/glade/work/bjung/panda-c/build/mpas-bundle_gnu-openmpi_24FEB2023', str],
+    #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22MAR2023', str],
 
     ## compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
