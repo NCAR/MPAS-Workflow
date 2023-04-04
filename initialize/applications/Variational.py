@@ -298,10 +298,11 @@ class Variational(Component):
     initArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
     # 2 init phases
-    self._dependencies += ['''
+    if self['initialize']:
+      self._dependencies += ['''
         InitVariationals_0 => InitVariationals_1''']
 
-    self._tasks += ['''
+      self._tasks += ['''
   ## variational tasks
   [[InitVariationals_0]]
     inherit = '''+self.tf.init+''', SingleBatch
@@ -315,32 +316,35 @@ class Variational(Component):
     script = $origin/bin/InitVariationals.csh "1"
     [[[job]]]
       execution time limit = PT10M
-      execution retry delays = '''+varjob['retry']+'''
+      execution retry delays = '''+varjob['retry']]
 
+    if self['execute']:
+      self._tasks += ['''
   [[Variationals]]
     inherit = '''+self.tf.execute+'''
-'''+vartask.job()+vartask.directives()+'''
-
-  # clean
-  [[CleanVariationals]]
-    inherit = '''+self.tf.clean+'''
-    script = $origin/bin/Clean'''+self.base+'''.csh''']
-
-    if EDASize == 1:
-      # single instance or ensemble of Variational(s)
-      for mm in range(1, self.NN+1, 1):
-        self._tasks += ['''
+'''+vartask.job()+vartask.directives()]
+ 
+      if EDASize == 1:
+        # single instance or ensemble of Variational(s)
+        for mm in range(1, self.NN+1, 1):
+          self._tasks += ['''
   [['''+self.base+str(mm)+''']]
     inherit = Variationals, BATCH
     script = $origin/bin/'''+self.base+'''.csh "'''+str(mm)+'"']
 
-    else:
-      # single instance or ensemble of EnsembleOfVariational(s)
-      for instance in range(1, nDAInstances+1, 1):
-        self._tasks += ['''
+      else:
+        # single instance or ensemble of EnsembleOfVariational(s)
+        for instance in range(1, nDAInstances+1, 1):
+          self._tasks += ['''
   [[EDA'''+str(instance)+''']]
     inherit = Variationals, BATCH
     script = $origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
+
+    # clean
+    self._tasks += ['''
+  [[CleanVariationals]]
+    inherit = '''+self.tf.clean+'''
+    script = $origin/bin/Clean'''+self.base+'''.csh''']
 
     # TODO: make ABEI consistent with external class design
     # GenerateABEInflation
