@@ -1,6 +1,12 @@
 experiment:
   name: '3dvar_OIE120km_WarmStart_TEST'
   suite identifier: PostProcess
+extendedforecast:
+  meanTimes: T00
+  lengthHR: 24
+  outIntervalHR: 12
+  execute: True
+  post: [verifyobs, verifymodel]
 externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
