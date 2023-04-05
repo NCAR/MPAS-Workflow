@@ -1,11 +1,12 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  suffix: '_ensB-SE80+RTPP70_VarBC'
+  suffix: '_ensB-SE80+RTPP70_VarBC_Polynomial2DByLatBand_2ndDoaDob'
 
 firstbackground:
   resource: "PANDAC.GFS"
 
 forecast:
+  post: [verifymodel]
   job:
     30km:
       nodes: 8
@@ -32,6 +33,7 @@ observations:
   resource: PANDACArchiveForVarBC
 
 variational:
+  post: [verifyobs]
   DAType: 3dhybrid
   biasCorrection: True
   ensembleCovarianceWeight: 0.75
@@ -40,6 +42,25 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
+  allSkyIRErrorType: Polynomial2DByLatBand
+  observers:
+  # anchor
+  - aircraft
+  - gnssrobndropp1d
+  - satwind
+  - satwnd
+  - sfc
+  - sondes
+  # MW satellite-based
+  - amsua_aqua
+  - amsua_metop-a
+  - amsua_metop-b
+  - amsua_n15
+  - amsua_n18
+  - amsua_n19
+  # IR satellite-based
+  - abi_g16
+  - ahi_himawari8
 
   # resource requirements
   job:
