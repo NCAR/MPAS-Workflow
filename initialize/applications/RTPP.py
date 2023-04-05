@@ -53,7 +53,7 @@ class RTPP(Component):
 
     groupSettings = ['''
     inherit = '''+parent.tf.group]
-    self.tf = CylcTaskFamily(self.base, groupSettings)
+    self.tf = CylcTaskFamily(self.base, groupSettings, self['initialize'], self['execute'])
 
     # WorkDir is where RTPP is executed
     self.WorkDir = self.workDir+'/{{thisCycleDate}}'
@@ -69,7 +69,7 @@ class RTPP(Component):
     # used by experiment naming convention
     self._set('rtpp__relaxationFactor', relaxationFactor)
 
-    self.active = (relaxationFactor > 0. and members.n > 1)
+    self.active = (relaxationFactor > 0. and members.n > 1 and parent['execute'])
 
     if self.active:
       self._cshVars += list(self._vtable.keys())
@@ -111,7 +111,7 @@ class RTPP(Component):
 
   def export(self, dependency:str, followon:str):
     if self.active:
-      # insert between parent post and finished markers
+      # insert between dependency and followon
       self._dependencies += ['''
         '''+dependency+''' => '''+self.tf.pre+'''
         '''+self.tf.finished+''' => '''+followon]

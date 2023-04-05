@@ -205,13 +205,9 @@ class Forecast(Component):
         # ensure there is a valid sea-surface update file before forecast
         '''+self.ea['PrepareSeaSurfaceUpdate']+''' => '''+self.tf.pre]
 
-    if self.workflow['CriticalPathType'] == 'Normal':
-      previousDA = daFinished+'[-PT'+str(self.workflow['DA2FCOffsetHR'])+'H]'
-      # depends on previous DA
-      self.tf.addDependencies([previousDA])
-    else:
-      self._dependencies += ['''
-        '''+self.tf.finished]
+    # depends on previous DA
+    previousDA = daFinished+'[-PT'+str(self.workflow['DA2FCOffsetHR'])+'H]'
+    self.tf.addDependencies([previousDA])
 
     self._dependencies = self.tf.updateDependencies(self._dependencies)
     self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)

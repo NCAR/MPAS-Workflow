@@ -11,6 +11,7 @@ extendedforecast:
   meanTimes: T00,T12
   lengthHR: 24
   outIntervalHR: 12
+  #execute: False # uncomment if forecasts are already completed
 
   # optionally turn on extended forecast post
   post: [verifyobs, verifymodel]
