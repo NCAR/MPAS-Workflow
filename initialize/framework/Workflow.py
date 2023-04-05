@@ -98,7 +98,7 @@ class Workflow(Component):
 
     else:
       # The analysis will run every CyclingWindowHR hours, starting at the restartCyclePoint
-      self._set('AnalysisTimes', '+PT'+str(CyclingWindowHR)+'H')
+      self._set('AnalysisTimes', 'PT'+str(CyclingWindowHR)+'H')
 
       # The forecast will run every CyclingWindowHR hours, starting DA2FCOffsetHR hours after the
       # restartCyclePoint
