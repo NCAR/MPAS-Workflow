@@ -83,50 +83,51 @@ class FirstBackground(Component):
     ########################
     # tasks and dependencies
     ########################
+    if workflow['first cycle point'] == workflow['restart cycle point']:
 
-    # cold-start, only run R1 cycle, controlled in self.defaults
-    base = 'ColdForecast'
-    if base in self['PrepareFirstBackgroundOuter']:
-      # TODO: base task has no inheritance, would only work with 2 separate classes
-      #   consider refactoring; could move Cold* to FirstBackground and make that ctor
-      #   take a Forecast instance as an arg (swap dependence)
-      job = fc.job
-      task = TaskLookup[hpc.system](job)
-      self._tasks += ['''
+      # cold-start, only run R1 cycle, controlled in self.defaults
+      base = 'ColdForecast'
+      if base in self['PrepareFirstBackgroundOuter']:
+        # TODO: base task has no inheritance, would only work with 2 separate classes
+        #   consider refactoring; could move Cold* to FirstBackground and make that ctor
+        #   take a Forecast instance as an arg (swap dependence)
+        job = fc.job
+        task = TaskLookup[hpc.system](job)
+        self._tasks += ['''
   [['''+base+''']]
     inherit = '''+self.tf.execute+'''
 '''+task.job()+task.directives()]
 
-      for mm in range(1, fc.NN+1, 1):
-        # fcArgs explanation
-        # IAU (False) cannot be used until 1 cycle after DA analysis
-        # DACycling (False), IC ~is not~ a DA analysis for which re-coupling is required
-        # DeleteZerothForecast (True), not used anywhere else in the workflow
-        # updateSea (False) is not needed since the IC is already an external analysis
-        args = [
-          1,
-          fc['lengthHR'],
-          fc['outIntervalHR'],
-          False,
-          fc.mesh.name,
-          False,
-          True,
-          False,
-          fc.workDir+'/{{thisCycleDate}}'+fc.memFmt.format(mm),
-          coldIC[0].directory(),
-          coldIC[0].prefix(),
-        ]
-        fcArgs = ' '.join(['"'+str(a)+'"' for a in args])
+        for mm in range(1, fc.NN+1, 1):
+          # fcArgs explanation
+          # IAU (False) cannot be used until 1 cycle after DA analysis
+          # DACycling (False), IC ~is not~ a DA analysis for which re-coupling is required
+          # DeleteZerothForecast (True), not used anywhere else in the workflow
+          # updateSea (False) is not needed since the IC is already an external analysis
+          args = [
+            1,
+            fc['lengthHR'],
+            fc['outIntervalHR'],
+            False,
+            fc.mesh.name,
+            False,
+            True,
+            False,
+            fc.workDir+'/{{thisCycleDate}}'+fc.memFmt.format(mm),
+            coldIC[0].directory(),
+            coldIC[0].prefix(),
+          ]
+          fcArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
         self._tasks += ['''
   [['''+base+str(mm)+''']]
     inherit = '''+base+''', BATCH
     script = $origin/bin/Forecast.csh '''+fcArgs]
 
-    # link (prepares outer and inner meshes as needed)
-    base = 'LinkWarmStartBackgrounds'
-    if base in self['PrepareFirstBackgroundOuter']:
-      self._tasks += ['''
+      # link (prepares outer and inner meshes as needed)
+      base = 'LinkWarmStartBackgrounds'
+      if base in self['PrepareFirstBackgroundOuter']:
+        self._tasks += ['''
   [['''+base+''']]
     inherit = '''+self.tf.execute+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh
@@ -137,7 +138,6 @@ class FirstBackground(Component):
       execution time limit = PT10M
       execution retry delays = 1*PT5S''']
 
-    if workflow['first cycle point'] == workflow['restart cycle point']:
       # open graph
       self._dependencies += ['''
     [[[R1]]]
@@ -158,4 +158,4 @@ class FirstBackground(Component):
       self._dependencies += ['''
       """''']
 
-      self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
+    self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
