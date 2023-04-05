@@ -1,0 +1,64 @@
+_member: &memberConfig
+  date: &analysisDate {{thisISO8601Date}}
+  state variables: [{{StateVariables}}]
+  stream name: background
+
+_as observer: &asObserver
+  run as observer only: true
+  update obs config with geometry info: false
+
+_as solver: &asSolver
+  read HX from disk: true
+  #do test prints: false
+  do posterior observer: false
+  save posterior ensemble: true
+  save posterior mean: true
+
+{{ObsAnchors}}
+
+_letkf geometry: &3DLETKFGeometry
+  iterator dimension: 3
+
+_letkf geometry: &2DLETKFGeometry
+  iterator dimension: 2
+
+_lgetkf geometry: &3DGETKFGeometry
+  iterator dimension: 2
+
+geometry:
+  <<: *{{localizationDimension}}{{localEnsembleDASolver}}Geometry
+  nml_file: {{EnKFNamelistFile}}
+  streams_file: {{EnKFStreamsFile}}
+  deallocate non-da fields: true
+  #interpolation type: unstructured # no Increment/State interp in enkf
+
+window begin: {{windowBegin}}
+window length: {{windowLength}}
+
+background:
+{{EnsembleMembers}}
+
+increment variables: [{{AnalysisVariables}}]
+
+observations:
+  observers:
+{{Observers}}
+
+driver: *{{driver}}
+
+local ensemble DA:
+  solver: {{localEnsembleDASolver}}
+  vertical localization: # only used by GETKF solver
+    fraction of retained variance: 0.95
+    lengthscale: {{verticalLocalizationLengthscale}}
+    lengthscale units: modellevel
+
+# TODO: how do inflation settings impact result?
+#  inflation:
+#    rtps: 0.5
+#    rtpp: 0.6
+#    mult: 1.1
+
+output:
+  filename: {{anStateDir}}/mem%{member}%/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis

@@ -21,7 +21,7 @@ date
 # ArgDT: int, valid forecast length beyond CYLC_TASK_CYCLE_POINT in hours
 set ArgDT = "$1"
 
-# ArgAppType: str, either hofx or variational
+# ArgAppType: str, hofx, variational, or enkf
 set ArgAppType = "$2"
 
 # ArgWorkDir: str, where to run
@@ -38,10 +38,17 @@ if ( $isNotInt ) then
   exit 1
 endif
 
-if ("$ArgAppType" != hofx && "$ArgAppType" != variational) then
-  echo "$0 (ERROR): ArgAppType must be hofx or variational, not $ArgAppType"
+if ("$ArgAppType" != hofx && "$ArgAppType" != variational && "$ArgAppType" != enkf) then
+  echo "$0 (ERROR): ArgAppType must be hofx, variational, or enkf, not $ArgAppType"
   exit 1
 endif
+
+if ("$ArgAppType" == hofx) then
+  set AppCategory = hofx
+else
+  set AppCategory = da
+endif
+
 
 # Setup environment
 # =================
@@ -184,12 +191,12 @@ foreach instrument ($observers)
 
   # Check for instrument-specific directory first
   set key = IODADirectory
-  set address = "resources.${observations__resource}.${key}.${ArgAppType}.${instrument}"
+  set address = "resources.${observations__resource}.${key}.${AppCategory}.${instrument}"
   # TODO: this is somewhat slow with lots of redundant loads of the entire observations.yaml config
   set $key = "`$getObservationsOrNone ${address}`"
   if ("$IODADirectory" == None) then
     # Fall back on "common" directory, if present
-    set address_ = "resources.${observations__resource}.${key}.${ArgAppType}.common"
+    set address_ = "resources.${observations__resource}.${key}.${AppCategory}.common"
     set $key = "`$getObservationsOrNone ${address_}`"
     if ("$IODADirectory" == None) then
       echo "$0 (WARNING): skipping ${instrument} due to missing value at ${address} and ${address_}"
@@ -232,7 +239,7 @@ end
 if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
   set biasCorrectionDir = $initialVARBCcoeff
 else
-  set biasCorrectionDir = ${VariationalWorkDir}/$prevValidDate/dbOut
+  set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/dbOut
 endif
 
 # =============
@@ -254,10 +261,10 @@ endif
 # (2) obs-related substitutions
 # =============================
 
-## indentation of observations vector members, specified in config/$ArgAppType.csh
+## indentation of observations vector members, specified in config/auto/$ArgAppType.csh
 set obsIndent = "`${nSpaces} $nObsIndent`"
 
-## Add selected observations (see config/$ArgAppType.csh)
+## Add selected observations (see config/auto/$ArgAppType.csh)
 # (i) combine the observation YAML stubs into single file
 set observationsYAML = observations.yaml
 rm $observationsYAML
@@ -304,6 +311,9 @@ foreach instrument ($observers)
 
   foreach subdir (${AppYamlDirs})
     set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${subdir}/${instrument}
+    if ( ! -f ${SUBYAML}.yaml && ! -l ${SUBYAML}.yaml ) then
+      set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${AppCategory}/${subdir}/${instrument}
+    endif
     if ( "$instrument" =~ *"sondes"* ) then
       #KLUDGE to handle missing qv for sondes at single time
       if ( ${thisValidDate} == 2018043006 ) then
@@ -399,10 +409,10 @@ sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $thisYAML
 sed -i 's@{{OutDBDir}}@'${WorkDir}'/'${OutDBDir}'@g' $thisYAML
 
-# obs, geo, and diag files with ArgAppType suffixes
-sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${ArgAppType}'@g' $thisYAML
-sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${ArgAppType}'@g' $thisYAML
-sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${ArgAppType}'@g' $thisYAML
+# obs, geo, and diag files with AppCategory suffixes
+sed -i 's@{{obsPrefix}}@'${obsPrefix}'_'${AppCategory}'@g' $thisYAML
+sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${AppCategory}'@g' $thisYAML
+sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${AppCategory}'@g' $thisYAML
 
 # satellite bias correction directories
 sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $prevYAML

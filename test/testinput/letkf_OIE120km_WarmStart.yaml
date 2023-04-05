@@ -1,0 +1,34 @@
+experiment:
+  name: 'letkf_OIE120km_WarmStart_TEST'
+externalanalyses:
+  resource: "GFS.PANDAC"
+enkf:
+  solver: LETKF
+  horizontal localization lengthscale: 1.2e6
+  vertical localization lengthscale: 6.e3
+  retainObsFeedback: False
+  post: []
+firstbackground:
+  resource: "PANDAC.LaggedGEFS"
+forecast:
+  post: [verifyobs, verifymodel]
+hofx:
+  retainObsFeedback: False
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+members:
+  n: 5
+model:
+  outerMesh: 120km
+  # TODO: make inner and ensemble meshes unnecessary
+  # related to {{PrepareExternalAnalysisInner}} and {{PrepareExternalAnalysisEnsemble}}
+  innerMesh: 120km
+  ensembleMesh: 120km
+observations:
+  resource: PANDACArchive
+rtpp:
+  relaxationFactor: 0.8
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180415T00

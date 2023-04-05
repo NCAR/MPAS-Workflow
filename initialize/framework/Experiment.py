@@ -10,10 +10,6 @@
 import os
 import subprocess
 
-from initialize.applications.Members import Members
-from initialize.applications.RTPP import RTPP
-from initialize.applications.Variational import Variational
-
 from initialize.config.Component import Component
 from initialize.config.Config import Config
 
@@ -58,10 +54,7 @@ class Experiment(Component):
   def __init__(self,
     config:Config,
     hpc:HPC,
-    meshes:dict=None,
-    variational:Variational=None,
-    members:Members=None,
-    rtpp:RTPP=None,
+    defaultTitle:str='',
   ):
     super().__init__(config)
 
@@ -70,58 +63,9 @@ class Experiment(Component):
     ###################
     suiteName = self['name']
     if suiteName is None:
-      name = ''
-      if variational is not None:
-        name_ = variational['DAType']
-        for nInner in variational['nInnerIterations']:
-          name_ += '-'+str(nInner)
-        name_ += '-iter'
+      suiteName = defaultTitle
 
-        for o in variational['observers']:
-          if o not in variational.benchmarkObservations:
-            name_ += '_'+o
-
-        if members is not None:
-          if members.n > 1:
-            name_ = 'eda_'+name_
-            if variational['EDASize'] > 1:
-              name_ += '_NMEM'+str(variational['nDAInstances'])+'x'+str(variational['EDASize'])
-              if variational['MinimizerAlgorithm'] == variational['BlockEDA']:
-                name_ += 'Block'
-            else:
-              name_ += '_NMEM'+str(members.n)
-
-            if rtpp is not None:
-              if rtpp['relaxationFactor'] > 0.0:
-                name_ += '_RTPP'+str(rtpp['relaxationFactor'])
-
-            if variational['SelfExclusion']:
-              name_ += '_SelfExclusion'
-
-            if variational['ABEInflation']:
-              name_ += '_ABEI_BT'+str(variational['ABEIChannel'])
-
-        name += name_
-
-      if meshes is not None:
-        name_ = ''
-        mO = meshes['Outer'].name
-        name_ = 'O'+mO
-        mI = ''
-        if 'Inner' in meshes:
-          mI = meshes['Inner'].name
-          if mI != mO:
-            name_ += 'I'+mI
-        if 'Ensemble' in meshes:
-          mE = meshes['Ensemble'].name
-          if mE != mO and mE != mI:
-            name_ += 'E'+mE
-
-        name += '_'+name_
-
-      assert name != '', ('Must give a valid name')
-
-      suiteName = name
+    assert suiteName != '', ('Must give a valid suite name')
 
     user = os.getenv('USER')
 
@@ -170,4 +114,3 @@ class Experiment(Component):
     self._msg('')
 
     self._cshVars = ['cylcWorkDir', 'SuiteName', 'ExperimentDirectory', 'mainScriptDir', 'ConfigDir', 'ModelConfigDir']
-    self._cylcVars = ['mainScriptDir']

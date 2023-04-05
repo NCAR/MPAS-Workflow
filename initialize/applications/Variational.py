@@ -9,7 +9,6 @@
 
 from collections import OrderedDict
 
-#from initialize.applications.DA import DA
 from initialize.applications.Members import Members
 
 from initialize.config.Component import Component
@@ -19,7 +18,7 @@ from initialize.config.Task import TaskLookup
 from initialize.config.TaskFamily import CylcTaskFamily
 
 from initialize.data.Model import Model
-from initialize.data.Observations import Observations
+from initialize.data.Observations import benchmarkObservations
 
 from initialize.framework.HPC import HPC
 from initialize.framework.Workflow import Workflow
@@ -29,27 +28,6 @@ class ABEI(Component):
 
 class Variational(Component):
   defaults = 'scenarios/defaults/variational.yaml'
-  workDir = 'CyclingDA'
-
-  ## benchmarkObservations
-  # base set of observation types assimilated in all experiments
-  # not included in auto-generated experiment names
-  benchmarkObservations = [
-    # anchor
-    'aircraft',
-    'gnssroref',
-    'satwind',
-    'satwnd',
-    'sfc',
-    'sondes',
-    # MW satellite-based
-    'amsua_aqua',
-    'amsua_metop-a',
-    'amsua_metop-b',
-    'amsua_n15',
-    'amsua_n18',
-    'amsua_n19',
-  ]
 
   requiredVariables = {
     ## DAType [Required Parameter]
@@ -173,7 +151,6 @@ class Variational(Component):
     hpc:HPC,
     meshes:dict,
     model:Model,
-    obs:Observations,
     members:Members,
     workflow:Workflow,
     parent:Component,
@@ -186,6 +163,7 @@ class Variational(Component):
     #self.abei = ABEI()
 
     self.tf = parent.tf
+    self.workDir = parent.workDir
 
     ###################
     # derived variables
@@ -194,9 +172,6 @@ class Variational(Component):
     self._set('AppName', DAType)
     self._set('appyaml', DAType+'.yaml')
     self._set('YAMLPrefix', DAType+'_')
-
-    # needed in csh experiment naming; TODO: move experiment naming to python then remove this line
-    self._set('benchmarkObservations', self.benchmarkObservations)
 
     self._set('MeshList', ['Outer', 'Inner'])
     self._set('nCellsList', [meshes['Outer'].nCells, meshes['Inner'].nCells])

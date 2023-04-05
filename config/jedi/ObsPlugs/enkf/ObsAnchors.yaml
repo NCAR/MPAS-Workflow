@@ -1,0 +1,74 @@
+_hor obs localization: &HorizObsLoc
+  localization method: {{horizontalLocalizationMethod}}
+  lengthscale: &HorizObsLocLengthScale {{horizontalLocalizationLengthscale}}
+
+_conventional vertical localization: &HeightVertObsLoc
+  localization method: Vertical localization
+  vertical lengthscale: {{verticalLocalizationLengthscale}}
+  ioda vertical coordinate: height
+  ioda vertical coordinate group: MetaData
+  localization function: {{verticalLocalizationFunction}}
+
+_3d letkf localizations: &3DLETKFheightAndHorizObsLoc
+  obs localizations:
+  - <<: *HorizObsLoc
+  - <<: *HeightVertObsLoc
+
+_2d letkf obs localizations: &2DLETKFheightAndHorizObsLoc
+  obs localizations:
+  - <<: *HorizObsLoc
+
+_3d getkf obs localizations: &3DGETKFheightAndHorizObsLoc
+  obs localizations:
+  - <<: *HorizObsLoc
+
+_height-based obs localizations: &heightAndHorizObsLoc
+  <<: *{{localizationDimension}}{{localEnsembleDASolver}}heightAndHorizObsLoc
+
+_non-height-based obs localizations: &horizObsLoc
+  obs localizations:
+  - <<: *HorizObsLoc
+
+_round robin dist: &RoundRobinDistribution
+  name: RoundRobin
+
+_halo dist: &HaloDistribution
+  name: Halo
+  halo size: *HorizObsLocLengthScale
+
+_obs space: &ObsSpace
+  #io pool:
+  #  max pool size: {{maxIODAPoolSize}}
+  #  write multiple files: true
+  distribution: *{{ObsSpaceDistribution}}
+
+_obs error diagonal: &ObsErrorDiagonal
+  covariance model: diagonal
+
+_clear crtm: &clearCRTMObsOperator
+  name: CRTM
+  SurfaceWindGeoVars: uv
+  Absorbers: [H2O, O3]
+  linear obs operator:
+    Absorbers: [H2O]
+  obs options: &CRTMObsOptions
+    EndianType: little_endian
+    CoefficientPath: {{CRTMTABLES}}
+    IRVISlandCoeff: USGS
+
+_cloudy crtm: &cloudyCRTMObsOperator
+  name: CRTM
+  SurfaceWindGeoVars: uv
+  Absorbers: [H2O, O3]
+  Clouds: [Water, Ice, Rain, Snow, Graupel]
+  linear obs operator:
+    Absorbers: [H2O]
+    Clouds: [Water, Ice, Rain, Snow, Graupel]
+  obs options:
+    <<: *CRTMObsOptions
+
+_get values: &GetValues
+  nnearest: 3
+
+_multi iteration filter: &multiIterationFilter
+  _blank: null

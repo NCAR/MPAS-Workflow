@@ -31,12 +31,11 @@ set thisISO8601Date = ${yy}-${mm}-${dd}T${hh}:00:00Z
 # ==============================
 
 ## DA
-# Variational
-set CyclingDADir = ${VariationalWorkDir}/${thisCycleDate}
+set CyclingDADir = ${DAWorkDir}/${thisCycleDate}
 set CyclingDAInDir = $CyclingDADir/${backgroundSubDir}
 set CyclingDAOutDir = $CyclingDADir/${analysisSubDir}
 set CyclingDADirs = (${CyclingDADir})
-set BenchmarkCyclingDADirs = (${BenchmarkVariationalWorkDir}/${thisCycleDate})
+set BenchmarkCyclingDADirs = (${BenchmarkDAWorkDir}/${thisCycleDate})
 
 set memDir = /mean
 set MeanBackgroundDirs = (${CyclingDAInDir}${memDir})
