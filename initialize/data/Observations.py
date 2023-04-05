@@ -11,6 +11,7 @@ from copy import deepcopy
 
 from initialize.config.Config import Config
 from initialize.config.Component import Component
+from initialize.config.TaskFamily import placeholdertask
 
 from initialize.framework.HPC import HPC
 
@@ -194,7 +195,7 @@ class Observations(Component):
         taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+self.tf.group]
+    inherit = '''+self.tf.group+','+placeholdertask]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:

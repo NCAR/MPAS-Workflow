@@ -118,6 +118,7 @@ endif
 
 # ObsLocalization
 # ===============
+sed -i 's@{{localizationDimension}}@'"${localizationDimension}"'@' $prevYAML
 sed -i 's@{{horizontalLocalizationMethod}}@'"${horizontalLocalizationMethod}"'@' $prevYAML
 sed -i 's@{{horizontalLocalizationLengthscale}}@'${horizontalLocalizationLengthscale}'@' $prevYAML
 sed -i 's@{{verticalLocalizationFunction}}@'"${verticalLocalizationFunction}"'@' $prevYAML

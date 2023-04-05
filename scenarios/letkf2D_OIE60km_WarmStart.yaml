@@ -1,20 +1,23 @@
-experiment:
-  suffix: '_ensB-SE80+RTPP70'
-
+enkf:
+  solver: LETKF
+  # resource needs are much smaller for 2D than 3D
+  localization dimension: 2D
+  horizontal localization lengthscale: 1.2e6
+  post: []
 externalanalyses:
   resource: "GFS.PANDAC"
-
 firstbackground:
-  resource: "PANDAC.GFS"
-
+  resource: "PANDAC.LaggedGEFS"
+forecast:
+  post: [verifyobs, verifymodel]
 members:
-  n: 1
-
+  n: 20
 model:
-  outerMesh: 30km
+  outerMesh: 60km
+  # TODO: make inner and ensemble meshes unnecessary
+  # related to {{PrepareExternalAnalysisInner}} and {{PrepareExternalAnalysisEnsemble}}
   innerMesh: 60km
   ensembleMesh: 60km
-
 observations:
   resource: PANDACArchive
   resources:
@@ -33,16 +36,8 @@ observations:
       IODASuperObGrid:
         abi_g16: 15X15
         ahi_himawari8: 15X15
-
-variational:
-  DAType: 3dhybrid
-  ensembleCovarianceWeight: 0.75
-  staticCovarianceWeight: 0.25
-  nInnerIterations: [60,60,]
-  ensemble:
-    forecasts:
-      resource: "PANDAC.EDA"
-
+rtpp:
+  relaxationFactor: 0.8
 workflow:
   first cycle point: 20180414T18
-  final cycle point: 20180514T18
+  final cycle point: 20180415T00

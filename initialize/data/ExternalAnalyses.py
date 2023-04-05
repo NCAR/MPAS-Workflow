@@ -13,6 +13,7 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
+from initialize.config.TaskFamily import placeholdertask
 
 from initialize.data.StateEnsemble import StateEnsemble
 
@@ -231,7 +232,7 @@ class ExternalAnalyses(Component):
         taskName = base+dtLen
         self._tasks += ['''
   [['''+taskName+''']]
-    inherit = '''+self.tf.group]
+    inherit = '''+self.tf.group+','+placeholdertask]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:
