@@ -1,0 +1,3 @@
+Initial observation errors were provided by MonitorCycle15daysTwice using the Polynomial2DByLatBand
+option.  The 1stDoaDob values were trained using 1 month of full cycling, taking the RMS of the
+Desroziers et al. (2005) observation error diagnostic: E[{d^a_o}^T d^b_o]

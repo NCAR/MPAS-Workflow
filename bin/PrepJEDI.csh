@@ -356,11 +356,7 @@ set prevYAML = $thisYAML
 
 # (a) settings
 
-# allSkyIRErrorType
-# TODO: move to config/applications/${ArgAppType}.csh
-# function used for the all-sky IR ObsError parameterization
-# Options: Okamoto, Polynomial2D, Polynomial2DByLatBand, Constant
-set allSkyIRErrorType = Okamoto
+# Note: allSkyIRErrorType is set by calling application
 
 # POLYNOMIAL2DFITDEGREE
 # 2d polynomial fit degree for CFxMax vs. CFy, only applies when allSkyIRErrorType==Polynomial2D
@@ -418,11 +414,11 @@ else
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # polynomial2d fit parameters
     if ($allSkyIRErrorType == Polynomial2D) then
-      set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/MonitorCycle15daysTwice/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_0min_${InfraredInstrument}.yaml
+      set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/1stDoaDob/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_doadob_RMS_0min_${InfraredInstrument}.yaml
       cat ${SUBYAML} >> ${thisYAML}
     else if ($allSkyIRErrorType == Polynomial2DByLatBand) then
       foreach LatBand ($Polynomial2DLatBands)
-        set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/MonitorCycle15daysTwice/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_omf_STD_${LatBand}_0min_${InfraredInstrument}.yaml
+        set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/1stDoaDob/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_doadob_RMS_${LatBand}_0min_${InfraredInstrument}.yaml
         cat ${SUBYAML} >> ${thisYAML}
       end
     else

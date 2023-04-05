@@ -92,6 +92,14 @@ class EnKF(Component):
     # whether to retain the observation feedback files (obs, geovals, ydiag)
     'retainObsFeedback': [True, bool],
 
+    ## allSkyIRErrorType
+    # function used for the all-sky IR ObsError parameterization
+    'allSkyIRErrorType': [
+      'Okamoto',
+      str,
+      ['Okamoto', 'Constant', 'Polynomial2D', 'Polynomial2DByLatBand'],
+    ],
+
     ## post
     # list of tasks for Post
     'post': [['verifyobs'], list]

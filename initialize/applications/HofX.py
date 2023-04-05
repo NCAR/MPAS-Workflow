@@ -98,6 +98,16 @@ class HofX(Component):
     ## retainObsFeedback
     # whether to retain the observation feedback files (obs, geovals, ydiag)
     'retainObsFeedback': [True, bool],
+
+    ## allSkyIRErrorType
+    # function used for the all-sky IR ObsError parameterization
+    # Polynomial2D* options are not availble due to lack of omb/oma statistics
+    # for non-assimilated channels
+    'allSkyIRErrorType': [
+      'Okamoto',
+      str,
+      ['Okamoto', 'Constant'],
+    ],
   }
 
   def __init__(self,
