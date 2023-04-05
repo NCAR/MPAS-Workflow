@@ -16,14 +16,17 @@ _as solver: &asSolver
 
 {{ObsAnchors}}
 
-_letkf geometry: &LETKFGeometry
+_letkf geometry: &3DLETKFGeometry
   iterator dimension: 3
 
-_lgetkf geometry: &GETKFGeometry
+_letkf geometry: &2DLETKFGeometry
+  iterator dimension: 2
+
+_lgetkf geometry: &3DGETKFGeometry
   iterator dimension: 2
 
 geometry:
-  <<: *{{localEnsembleDASolver}}Geometry
+  <<: *{{localizationDimension}}{{localEnsembleDASolver}}Geometry
   nml_file: {{EnKFNamelistFile}}
   streams_file: {{EnKFStreamsFile}}
   deallocate non-da fields: true
