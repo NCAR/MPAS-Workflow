@@ -1,8 +1,8 @@
 enkf:
-  solver: GETKF
+  solver: LETKF
+  # resource needs are much smaller for 2D than 3D
+  localization dimension: 2D
   horizontal localization lengthscale: 1.2e6
-  vertical localization lengthscale: 10.0 # modellevel
-  retainObsFeedback: False
   post: []
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -10,8 +10,6 @@ firstbackground:
   resource: "PANDAC.LaggedGEFS"
 forecast:
   post: [verifyobs, verifymodel]
-hofx:
-  retainObsFeedback: False
 members:
   n: 20
 model:

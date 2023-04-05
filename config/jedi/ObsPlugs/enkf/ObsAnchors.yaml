@@ -9,17 +9,21 @@ _conventional vertical localization: &HeightVertObsLoc
   ioda vertical coordinate group: MetaData
   localization function: {{verticalLocalizationFunction}}
 
-_letkf height-based obs localizations: &LETKFheightAndHorizObsLoc
+_3d letkf localizations: &3DLETKFheightAndHorizObsLoc
   obs localizations:
   - <<: *HorizObsLoc
   - <<: *HeightVertObsLoc
 
-_getkf height-based obs localizations: &GETKFheightAndHorizObsLoc
+_2d letkf obs localizations: &2DLETKFheightAndHorizObsLoc
+  obs localizations:
+  - <<: *HorizObsLoc
+
+_3d getkf obs localizations: &3DGETKFheightAndHorizObsLoc
   obs localizations:
   - <<: *HorizObsLoc
 
 _height-based obs localizations: &heightAndHorizObsLoc
-  <<: *{{localEnsembleDASolver}}heightAndHorizObsLoc
+  <<: *{{localizationDimension}}{{localEnsembleDASolver}}heightAndHorizObsLoc
 
 _non-height-based obs localizations: &horizObsLoc
   obs localizations:

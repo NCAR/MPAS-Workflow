@@ -29,6 +29,7 @@ class EnKF(Component):
 
   variablesWithDefaults = {
     ## observation localization parameters
+    'localization dimension': ['3D', str, ['2D', '3D']],
     'horizontal localization method': ['Horizontal Gaspari-Cohn', str],
     'horizontal localization lengthscale': [1.2e6, float],
     # LETKF
@@ -126,6 +127,8 @@ class EnKF(Component):
     # derived variables
     ###################
     solver = self['solver']
+    if solver == 'GETKF':
+      assert self['localization dimension'] == '3D', ('only 3D localization is supported for GETKF')
     self._set('AppName', 'enkf')
     self._set('appyaml', 'enkf.yaml')
 
