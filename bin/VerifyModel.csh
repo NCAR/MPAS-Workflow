@@ -92,10 +92,8 @@ set EADir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \
   `
 setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $EADir/$externalanalyses__filePrefixOuter"
 
-# additionally analyze diagnostic variables for FCScoreCards
-if ($ArgDT > 0) then
-  setenv baseCommand "${baseCommand} -rd $ExternalAnalysisDirOuter/diag"
-endif
+# additionally analyze diagnostic variables interpolated to fixed presssure levels
+setenv baseCommand "${baseCommand} -rd $ExternalAnalysisDirOuter/diag"
 
 set success = 1
 while ( $success != 0 )
