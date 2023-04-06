@@ -35,7 +35,7 @@ variational:
   biasCorrection: True
   observers: [
     aircraft,
-    gnssrorefncep_NCEPErrors,
+    gnssrorefncep,
     satwind,
     satwnd,
     sfc,

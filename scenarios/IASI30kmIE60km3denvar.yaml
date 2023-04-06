@@ -51,7 +51,7 @@ variational:
   tropprsMethod: thompson
   observers: [
     aircraft,
-    gnssrorefncep_NCEPErrors,
+    gnssrorefncep,
     satwind,
     satwnd,
     sfc,

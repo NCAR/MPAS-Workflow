@@ -39,7 +39,8 @@ class HofX(Component):
       #'gnssrobndnbam',
       #'gnssrobndmo',
       #'gnssrobndmo-nopseudo',
-      'gnssrorefncep', # obs errors derived from cycling exp.
+      'gnssrorefncep',
+      #'gnssrorefncep_tunedErrors', # obs errors derived from cycling exp.
       'satwind',
       'satwnd',
       'sfc',
