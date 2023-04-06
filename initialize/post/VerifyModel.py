@@ -69,7 +69,7 @@ class VerifyModel(Component):
     inherit = '''+parent+'''
   [['''+parent+''']]''']
 
-    self.tf = CylcTaskFamily(group, groupSettings)
+    self.tf = CylcTaskFamily(group, groupSettings, self['initialize'], self['execute'])
     self.tf.addDependencies(dependencies)
     self.tf.addFollowons(followon)
 
