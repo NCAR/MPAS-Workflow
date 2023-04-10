@@ -13,8 +13,8 @@ Closes #(if applicable)
  - [ ] 3denvar_O30kmIE60km_WarmStart
  - [ ] eda_OIE120km_WarmStart
  - [ ] getkf_OIE120km_WarmStart
+ - [ ] ForecastFromGFSAnalysesMPT
 
 #### Tier 2 (optional):
  - [ ] GenerateGFSAnalyses
  - [ ] GenerateObs
- - [ ] ForecastFromGFSAnalyses

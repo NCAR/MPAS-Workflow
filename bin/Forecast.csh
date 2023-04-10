@@ -320,9 +320,9 @@ else
 
   # Run the executable
   # ==================
-  # load JEDI environment here to avoid conflict between multiple python versions
+  # load Forecast environment here to avoid conflict between multiple python versions
   cd ${mainScriptDir}
-  source config/environmentJEDI.csh
+  source config/environmentForecast.csh
   cd -
 
   set log = log.${MPASCore}.0000.out
@@ -330,9 +330,7 @@ else
     if ( -e $f ) rm -v $f
   end
   ln -sfv ${ForecastBuildDir}/${ForecastEXE} ./
-  # mpiexec is for Open MPI, mpiexec_mpt is for MPT
-  mpiexec ./${ForecastEXE}
-  #mpiexec_mpt ./${ForecastEXE}
+  ${mpiCommand} ./${ForecastEXE}
 
 
   # Check status

@@ -6,4 +6,3 @@
 # only need to run these for modifications to scenario, suite, and environment setup
 #./Run.py scenarios/GenerateGFSAnalyses.yaml
 #./Run.py scenarios/GenerateObs.yaml
-#./Run.py scenarios/ForecastFromGFSAnalyses.yaml
