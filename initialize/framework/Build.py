@@ -21,10 +21,14 @@ class Build(Component):
     # optional double-precision build
     #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22MAR2023', str],
 
-    ## compiler used
+    # forecast directory
+    # defaults to bundle build, otherwise specify full directory
+    'forecast directory': ['bundle', str],
+
+    ## bundle compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
     # the executables described herein
-    'compiler used': ['gnu-openmpi', str,
+    'bundle compiler used': ['gnu-openmpi', str,
       ['gnu-openmpi', 'intel-impi']],
   }
 
@@ -61,12 +65,16 @@ class Build(Component):
 
       # MPAS-Model
       # ----------
-      self._set('InitEXE', 'mpas_init_'+model['MPASCore'])
       self._set('InitBuildDir', self['mpas bundle']+'/bin')
+      self._set('InitEXE', 'mpas_init_'+model['MPASCore'])
 
-      # use forecast executable built in the bundle
-      self._set('ForecastBuildDir', self['mpas bundle']+'/bin')
-      self._set('ForecastEXE', 'mpas_'+model['MPASCore'])
+      # either use forecast executable from the bundle or a separate MPAS-Atmosphere build
+      if self['forecast directory'] == 'bundle':
+        self._set('ForecastBuildDir', self['mpas bundle']+'/bin')
+        self._set('ForecastEXE', 'mpas_'+model['MPASCore'])
+      else:
+        self._set('ForecastBuildDir', self['forecast directory'])
+        self._set('ForecastEXE', model['MPASCore']+'_model')
 
       self._set('MPASLookupDir', self['mpas bundle']+'/MPAS/core_'+model['MPASCore'])
       self._set('MPASLookupFileGlobs', ['.TBL', '.DBL', 'DATA', 'COMPATABILITY', 'VERSION'])
