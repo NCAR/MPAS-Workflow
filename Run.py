@@ -62,9 +62,6 @@ class Run():
     else:
       scenarios = [self.__configFile]
 
-    # suite name (defaults to Cycle)
-    suiteName = self.__config.getOrDefault('suite', 'Cycle')
-
     for scenarioFile in scenarios:
       assert Path(scenarioFile).is_file(), (self.logPrefix+'scenario ('+scenarioFile+') does not exist')
 
@@ -76,6 +73,9 @@ class Run():
 
       scenario = Scenario(scenarioFile)
       scenario.initialize()
+
+      # suite name (defaults to Cycle)
+      suiteName = scenario.getConfig().getOrDefault('suite', 'Cycle')
 
       suite = SuiteLookup(suiteName, scenario.getConfig())
       suite.submit()

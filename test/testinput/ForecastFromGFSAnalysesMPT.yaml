@@ -1,0 +1,52 @@
+suite: ForecastFromExternalAnalyses
+
+build:
+  forecast directory: /glade/p/mmm/parc/liuz/pandac_common/20230406_mpas_bundle/MPAS_intelmpt
+
+externalanalyses:
+  resource: "GFS.RDA"
+
+experiment:
+  name: 'ForecastFromGFSAnalysesMPT_TEST'
+
+extendedforecast:
+  meanTimes: T00
+  lengthHR: 24
+  outIntervalHR: 12
+  #execute: False # uncomment if forecasts are already completed
+
+  # optionally turn on extended forecast post
+  post: []
+
+forecast:
+  job:
+    30km:
+      # use 128 PE to match partition file in GraphInfoDir
+      nodes: 4
+      PEPerNode: 32
+
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+
+initic:
+  job:
+    30km:
+      # use 128 PE to match partition file in GraphInfoDir
+      nodes: 4
+      PEPerNode: 32
+
+members:
+  n: 1
+
+model:
+  outerMesh: 30km
+  GraphInfoDir: /glade/work/liuz/pandac/prepare_mpas/mpas_static_30km
+
+observations: # for optional verification
+  resource: PANDACArchive
+
+workflow:
+  first cycle point: 20220606T00
+  final cycle point: 20220607T00
+  max active cycle points: 4

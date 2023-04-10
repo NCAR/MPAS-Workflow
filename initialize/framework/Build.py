@@ -23,7 +23,7 @@ class Build(Component):
 
     # forecast directory
     # defaults to bundle build, otherwise specify full directory
-    'forecast directory': ['bundle', str]
+    'forecast directory': ['bundle', str],
 
     ## bundle compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
@@ -65,18 +65,15 @@ class Build(Component):
 
       # MPAS-Model
       # ----------
-      # use forecast executable built in the bundle
-      if self['forecast'] == 'bundle':
-        self._set('InitBuildDir', self['mpas bundle']+'/bin')
-        self._set('InitEXE', 'mpas_init_'+model['MPASCore'])
+      self._set('InitBuildDir', self['mpas bundle']+'/bin')
+      self._set('InitEXE', 'mpas_init_'+model['MPASCore'])
 
+      # either use forecast executable from the bundle or a separate MPAS-Atmosphere build
+      if self['forecast directory'] == 'bundle':
         self._set('ForecastBuildDir', self['mpas bundle']+'/bin')
         self._set('ForecastEXE', 'mpas_'+model['MPASCore'])
       else:
-        self._set('InitBuildDir', self['forecast'])
-        self._set('InitEXE', 'init_'+model['MPASCore']+'_model')
-
-        self._set('ForecastBuildDir', self['forecast'])
+        self._set('ForecastBuildDir', self['forecast directory'])
         self._set('ForecastEXE', model['MPASCore']+'_model')
 
       self._set('MPASLookupDir', self['mpas bundle']+'/MPAS/core_'+model['MPASCore'])
