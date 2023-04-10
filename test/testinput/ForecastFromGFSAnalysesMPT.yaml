@@ -11,8 +11,8 @@ experiment:
 
 extendedforecast:
   meanTimes: T00
-  lengthHR: 24
-  outIntervalHR: 12
+  lengthHR: 12
+  outIntervalHR: 6
   #execute: False # uncomment if forecasts are already completed
 
   # optionally turn on extended forecast post
