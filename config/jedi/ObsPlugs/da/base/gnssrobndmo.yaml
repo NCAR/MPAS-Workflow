@@ -16,6 +16,7 @@
     {{ObsDataOut}}
     simulated variables: [bendingAngle]
   obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLoc
   obs operator:
     name: GnssroBendMetOffice
     vert_interp_ops: true
