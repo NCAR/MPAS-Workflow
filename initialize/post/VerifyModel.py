@@ -25,7 +25,7 @@ class VerifyModel(Component):
   workDir = 'Verification'
   diagnosticsDir = 'diagnostic_stats/model'
   variablesWithDefaults = {
-    'script directory': ['/glade/work/guerrett/pandac/fixed_input/graphics_mpasScoreCard_iodaV3_latest', str],
+    'script directory': ['/glade/work/guerrett/pandac/fixed_input/graphics_10APR2023', str],
   }
 
   def __init__(self,
