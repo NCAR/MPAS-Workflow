@@ -34,5 +34,5 @@
   - filter: Background Check RONBAM
     filter variables:
     - name: bendingAngle
-    threshold: 3
+    threshold: *gnssrobndnbamBGRelThresh
     <<: *multiIterationFilter
