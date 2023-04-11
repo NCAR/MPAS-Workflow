@@ -77,6 +77,9 @@ set other = $StateDir
 set bgFileOther = ${other}/${ArgStatePrefix}.$thisMPASFileDate.nc
 ln -sf ${bgFileOther} ../restart.$thisMPASFileDate.nc
 
+set bgDiagnosticsOther = ${other}/${DIAGFilePrefix}.$thisMPASFileDate.nc
+ln -sf ${bgDiagnosticsOther} ../${DIAGFilePrefix}.$thisMPASFileDate.nc
+
 ln -fs ${scriptDirectory}/*.py ./
 
 set mainScript = DiagnoseModelStatistics
@@ -87,12 +90,14 @@ set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 set EADir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \
   | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
   `
+setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $EADir/$externalanalyses__filePrefixOuter"
+
+# additionally analyze diagnostic variables interpolated to fixed presssure levels
+setenv baseCommand "${baseCommand} -rd $EADir/diag"
 
 set success = 1
 while ( $success != 0 )
   mv log.$mainScript log.${mainScript}_LAST
-  setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $EADir/$externalanalyses__filePrefixOuter"
-
   if ($ArgNMembers > 1) then
     #Note: ensemble diagnostics only work for BG/AN verification, not extended ensemble forecasts
     # legacy file structure (deprecated)
@@ -102,11 +107,9 @@ while ( $success != 0 )
     # latest file structure
     echo "${baseCommand} -m $ArgNMembers" | tee ./myCommand
     ${baseCommand} -m $ArgNMembers >& log.${mainScript}
-
   else
     echo "${baseCommand}" | tee ./myCommand
     ${baseCommand} >& log.${mainScript}
-
   endif
   set success = $?
 end

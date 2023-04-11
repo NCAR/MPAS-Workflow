@@ -16,3 +16,4 @@
   - filter: ROobserror
     variable: refractivity
     errmodel: NCEP
+    <<: *multiIterationFilter

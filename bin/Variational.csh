@@ -60,6 +60,10 @@ if ( $ArgMember > $nMembers ) then
   exit 1
 endif
 
+# Remove old netcdf lock files
+rm *.nc*.lock
+rm */*.nc*.lock
+
 # ================================================================================================
 
 ## create then move to member-specific run directory

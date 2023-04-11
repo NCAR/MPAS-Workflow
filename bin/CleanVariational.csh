@@ -42,6 +42,7 @@ endif
 
 # Remove netcdf lock files
 rm *.nc*.lock
+rm */*.nc*.lock
 
 # Remove copies of templated fields files for inner loop
 if ("${TemplateFieldsFileInner}" != "${TemplateFieldsFileOuter}") then

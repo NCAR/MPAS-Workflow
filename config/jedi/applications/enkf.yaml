@@ -1,3 +1,4 @@
+# ObsAnchors and ObsErrorAnchors are automatically prepended above this line
 _member: &memberConfig
   date: &analysisDate {{thisISO8601Date}}
   state variables: [{{StateVariables}}]
@@ -13,8 +14,6 @@ _as solver: &asSolver
   do posterior observer: false
   save posterior ensemble: true
   save posterior mean: true
-
-{{ObsAnchors}}
 
 _letkf geometry: &3DLETKFGeometry
   iterator dimension: 3

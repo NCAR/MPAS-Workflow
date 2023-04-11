@@ -4,11 +4,11 @@
     _obsdatain: &ObsDataIn
       engine:
         type: H5File
-        obsfile: {{InDBDir}}/gnssroref_obs_{{thisValidDate}}.h5
+        obsfile: {{InDBDir}}/gnssrorefncep_tunedErrors_obs_{{thisValidDate}}.h5
     _obsdataout: &ObsDataOut
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssroref{{ObsOutSuffix}}.h5
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrorefncep_tunedErrors{{ObsOutSuffix}}.h5
     obsdatain: *{{ObsDataIn}}
     {{ObsDataOut}}
     simulated variables: [atmosphericRefractivity]

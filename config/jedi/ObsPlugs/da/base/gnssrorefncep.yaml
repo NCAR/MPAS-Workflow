@@ -1,16 +1,19 @@
 - obs space:
     <<: *ObsSpace
     name: GnssroRefNCEP
-    obsdatain:
+    _obsdatain: &ObsDataIn
       engine:
         type: H5File
-        obsfile: {{InDBDir}}/gnssroref_obs_{{thisValidDate}}.h5
-    obsdataout:
+        obsfile: {{InDBDir}}/gnssrorefncep_obs_{{thisValidDate}}.h5
+    _obsdataout: &ObsDataOut
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}/{{obsPrefix}}_gnssroref.h5
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrorefncep{{ObsOutSuffix}}.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
     simulated variables: [atmosphericRefractivity]
   obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLoc
   obs operator:
     name: GnssroRefNCEP
     obs options:

@@ -351,23 +351,30 @@ rm ${thisSEDF}
 set prevYAML = $thisYAML
 
 # (iii) insert re-usable YAML anchors
-set sedstring = ObsAnchors
-set thisSEDF = ${sedstring}SEDF.yaml
-cat >! ${thisSEDF} << EOF
-/{{${sedstring}}}/c\
-EOF
 
-# substitute with line breaks
-set SUBYAML=${ConfigDir}/jedi/ObsPlugs/${ArgAppType}/${sedstring}.yaml
-sed 's@$@\\@' ${SUBYAML} >> ${thisSEDF}
-echo '_blank: null' >> ${thisSEDF}
+# anchors that are specific to each application
+set appSpecificAnchors = (ObsAnchors)
 
-# insert into prevYAML
-set thisYAML = insert${sedstring}.yaml
-sed -f ${thisSEDF} $prevYAML >! $thisYAML
-rm ${thisSEDF}
-set prevYAML = $thisYAML
+foreach anchor ($appSpecificAnchors)
+  # prepend prevYAML with prependYAML
+  set prependYAML = jedi/ObsPlugs/${ArgAppType}/${anchor}.yaml
+  set thisYAML = insert${anchor}.yaml
+  cat ${ConfigDir}/${prependYAML} > $thisYAML
+  cat $prevYAML >> $thisYAML
+  set prevYAML = $thisYAML
+end
 
+# anchors that are common across all applications
+set appAgnosticAnchors = (ObsErrorAnchors)
+
+foreach anchor ($appAgnosticAnchors)
+  # prepend prevYAML with prependYAML
+  set prependYAML = jedi/ObsPlugs/${anchor}.yaml
+  set thisYAML = insert${anchor}.yaml
+  cat ${ConfigDir}/${prependYAML} > $thisYAML
+  cat $prevYAML >> $thisYAML
+  set prevYAML = $thisYAML
+end
 
 ## QC characteristics
 sed -i 's@{{RADTHINDISTANCE}}@'${radianceThinningDistance}'@g' $thisYAML

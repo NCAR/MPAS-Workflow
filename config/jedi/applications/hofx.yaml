@@ -1,4 +1,4 @@
-{{ObsAnchors}}
+# ObsAnchors and ObsErrorAnchors are automatically prepended above this line
 window begin: {{windowBegin}}
 window length: {{windowLength}}
 geometry:

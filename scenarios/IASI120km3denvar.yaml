@@ -36,7 +36,7 @@ variational:
   tropprsMethod: thompson
   observers: [
     aircraft,
-    gnssroref,
+    gnssrorefncep,
     satwind,
     satwnd,
     sfc,
