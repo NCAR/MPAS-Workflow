@@ -18,6 +18,7 @@
     {{ObsDataOut}}
     simulated variables: [bendingAngle]
   obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLoc
   obs operator:
     name: GnssroBndROPP1D
   get values:

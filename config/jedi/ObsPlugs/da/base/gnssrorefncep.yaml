@@ -13,6 +13,7 @@
     {{ObsDataOut}}
     simulated variables: [atmosphericRefractivity]
   obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLoc
   obs operator:
     name: GnssroRefNCEP
     obs options:
