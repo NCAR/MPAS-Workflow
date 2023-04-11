@@ -414,11 +414,11 @@ else
   foreach InfraredInstrument (abi_g16 ahi_himawari8)
     # polynomial2d fit parameters
     if ($allSkyIRErrorType == Polynomial2D) then
-      set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/1stDoaDob/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_doadob_RMS_0min_${InfraredInstrument}.yaml
+      set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/2ndDoaDob/Poly2D_2_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_doadob_RMS_0min_${InfraredInstrument}.yaml
       cat ${SUBYAML} >> ${thisYAML}
     else if ($allSkyIRErrorType == Polynomial2DByLatBand) then
       foreach LatBand ($Polynomial2DLatBands)
-        set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/1stDoaDob/30-60km_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_doadob_RMS_${LatBand}_0min_${InfraredInstrument}.yaml
+        set SUBYAML=${ConfigDir}/jedi/ObsPlugs/allSkyIR/${InfraredInstrument}/2ndDoaDob/Poly2D_2_degree=${POLYNOMIAL2DFITDEGREE}_fit2D_CldFrac2D_doadob_RMS_${LatBand}_0min_${InfraredInstrument}.yaml
         cat ${SUBYAML} >> ${thisYAML}
       end
     else

@@ -1,6 +1,6 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  suffix: '_ensB-SE80+RTPP70_VarBC_Polynomial2DByLatBand_2ndDoaDob'
+  suffix: '_ensB-SE80+RTPP70_VarBC_Polynomial2DByLatBand_3rdDoaDob'
 
 firstbackground:
   resource: "PANDAC.GFS"
