@@ -220,6 +220,12 @@ if ("${ArgUpdateSea}" == True) then
     setenv SeaAnaDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/surface/000hr/${model__precision}/${thisValidDate}
     setenv seaMemFmt "/{:02d}"
     setenv SeaFilePrefix x1.${nCells}.sfc_update
+  else if ( $nMembers > 1 && "$firstbackground__resource" == "SIO.GEFS" ) then
+    # using member-specific sst/xice data from GEFS, only works for this special case
+    # 60km and 30km
+    setenv SeaAnaDir /glade/scratch/ivette/GEFS_data/surface/$outerMesh/${thisValidDate}
+    setenv seaMemFmt "/{:02d}"
+    setenv SeaFilePrefix x1.${nCells}.sfc_update
   else
     # otherwise use deterministic analysis for all members
     # 60km and 120km

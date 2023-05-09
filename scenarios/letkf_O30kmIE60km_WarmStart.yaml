@@ -1,0 +1,51 @@
+experiment:
+  name: 'letkf_OIE60km_WarmStart_test_January60km_conv'
+enkf:
+  solver: LETKF
+  horizontal localization lengthscale: 1.2e6
+  vertical localization lengthscale: 6.e3
+  retainObsFeedback: False
+  post: []
+  job:
+    60km:
+      LETKF:
+        solver:
+          # cost for record (20 members, PBS JOB email, single precision)
+          # 16 x 32 PE, 3d iterator : 83.6 min., 275 GB
+          # 16 x 32 PE, 3d iterator (no vert loc.) : 108 min., 314 GB
+          # 16 x 32 PE, 2d iterator (no vert loc.) : 7.5 min., 274 GB
+          nodes: 16
+          PEPerNode: 32
+          threads: 1
+          memory: 45GB
+          baseSeconds: 200
+          secondsPerMember: 230 #350 #290
+externalanalyses:
+  resource: "GFS.SIO"
+firstbackground:
+  resource: "SIO.GEFS"
+forecast:
+  post: [] #verifyobs, verifymodel
+  job:
+    60km:
+      nodes: 2
+      PEPerNode: 36
+      baseSeconds: 140 #60
+      secondsPerForecastHR: 60 #40
+hofx:
+  retainObsFeedback: False
+members:
+  n: 30
+model:
+  outerMesh: 60km
+  # TODO: make inner and ensemble meshes unnecessary
+  # related to {{PrepareExternalAnalysisInner}} and {{PrepareExternalAnalysisEnsemble}}
+  innerMesh: 60km
+  ensembleMesh: 60km
+observations:
+  resource: SIOArchive
+rtpp:
+  relaxationFactor: 0.8
+workflow:
+  first cycle point: 20230106T12
+  final cycle point: 20230106T18

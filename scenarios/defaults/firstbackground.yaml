@@ -46,3 +46,23 @@ firstbackground:
           directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/EnsFCFirstCycle/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/{:02d}"
+
+    SIO:
+      GFS:
+        common:
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
+        30km: # only available 20180414T18
+          directory: "/glade/scratch/ivette/sio-cw3e/GenerateGFSAnalyses/ExternalAnalyses/30km/{{FirstCycleDate}}"
+        60km: # only available 20180414T18
+          directory: "/glade/scratch/ivette/sio-cw3e/GenerateGFSAnalyses/ExternalAnalyses/60km/{{FirstCycleDate}}"
+      GEFS:
+        common:
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
+        60km: # only available 20221231T18
+          directory: "/glade/scratch/ivette/GEFS_data/forecast/60km/EnsFCFirstCycle/{{FirstCycleDate}}"
+          maxMembers: 30
+          memberFormat: "/{:02d}"
+        30km: # only available 20230116T12
+          directory: "/glade/scratch/ivette/GEFS_data/forecast/30km/EnsFCFirstCycle/{{FirstCycleDate}}"
+          maxMembers: 30
+          memberFormat: "/{:02d}"

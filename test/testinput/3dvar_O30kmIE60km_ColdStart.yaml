@@ -35,5 +35,5 @@ variational:
   post: [verifyobs]
 workflow:
   # test a recent date
-  first cycle point: 20220201T00
-  final cycle point: 20220201T06
+  first cycle point: 20230201T00
+  final cycle point: 20230201T06

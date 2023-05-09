@@ -4,7 +4,7 @@ observations:
   resource: GladeRDAOnline
   convertToIODAObservations:
   - 1bamua
-  - 1bmhs
+  #- 1bmhs
   - airsev
   #- cris
   - gpsro
@@ -18,7 +18,7 @@ hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 workflow:
-  first cycle point: 20220606T00
-  final cycle point: 20220608T00
+  first cycle point: 20210122T18
+  final cycle point: 20210204T18
 
   max active cycle points: 60

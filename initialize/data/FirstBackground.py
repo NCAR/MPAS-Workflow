@@ -29,7 +29,7 @@ class FirstBackground(Component):
     # must be in quotes
     # e.g., "PANDAC.GFS"
     'resource': ['ForecastFromAnalysis', str,
-      ['ForecastFromAnalysis', 'PANDAC.GFS', 'PANDAC.LaggedGEFS']],
+      ['ForecastFromAnalysis', 'PANDAC.GFS', 'PANDAC.LaggedGEFS', 'SIO.GEFS']],
   }
 
   def __init__(self,

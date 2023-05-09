@@ -11,9 +11,12 @@ _as observer: &asObserver
 _as solver: &asSolver
   read HX from disk: true
   #do test prints: false
-  do posterior observer: false
+  do test prints: true
+  do posterior observer: true #false
   save posterior ensemble: true
   save posterior mean: true
+  save posterior variance: true #false
+  save posterior mean increment: true #false
 
 _letkf geometry: &3DLETKFGeometry
   iterator dimension: 3
@@ -61,3 +64,12 @@ local ensemble DA:
 output:
   filename: {{anStateDir}}/mem%{member}%/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis
+
+output variance posterior:
+  filename: {{anStateDir}}/mem%{member}%/{{anStatePrefix}}.var.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis
+
+output increment:
+  # requires external AddIncrement step with mem%{member}%/bg.$Y-$M-$D_$h.$m.$s.nc as background
+  filename: {{anStateDir}}/mem%{member}%/{{anStatePrefix}}.increment.$Y-$M-$D_$h.$m.$s.nc
+  stream name: control

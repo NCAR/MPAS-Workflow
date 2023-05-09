@@ -29,9 +29,13 @@ _non-height-based obs localizations: &horizObsLoc
   obs localizations:
   - <<: *HorizObsLoc
 
-_round robin dist: &RoundRobinDistribution
-  name: RoundRobin
+##_round robin dist: &RoundRobinDistribution
+##  name: RoundRobin
 
+#_obs distribution: &ObsSpaceDistribution
+#  name: Halo
+#  halo size: *HorizObsLocLengthScale
+  
 _halo dist: &HaloDistribution
   name: Halo
   halo size: *HorizObsLocLengthScale

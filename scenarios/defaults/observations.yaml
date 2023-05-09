@@ -389,3 +389,138 @@ observations:
       IODASuperObGrid:
         abi_g16: 15X15
         ahi_himawari8: 15X15
+
+    SIOArchive:
+      PrepareObservationsTasks: [ObsReady__]
+
+      instrumentsAllowingBiasCorrection:
+      - amsua_aqua
+      - amsua_metop-a
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+
+      IODAPrefix:
+        gnssarobndropp2d: gnssaro
+        gnssrobndropp2d: gnssro
+        gnssrobndropp1d: gnssro
+        gnssrobndnbam: gnssro
+        gnssrobndmo: gnssro
+        gnssrobndmo-nopseudo: gnssro
+        gnssrorefncep: gnssro
+        gnssrorefncep_tunedErrors: gnssro
+        amsua-cld_aqua: amsua_aqua
+        amsua-cld_metop-a: amsua_metop-a
+        amsua-cld_metop-b: amsua_metop-b
+        amsua-cld_n15: amsua_n15
+        amsua-cld_n18: amsua_n18
+        amsua-cld_n19: amsua_n19
+        abi-clr_g16: abi_g16
+        ahi-clr_himawari8: ahi_himawari8
+
+      IODADirectory:
+        da:
+          ##anchor
+          gnssarobndropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
+          gnssrobndropp2d: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrobndropp1d: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrobndnbam: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrobndmo: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrobndmo-nopseudo: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrorefncep: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrorefncep_tunedErrors: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          aircraft: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          satwind: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          satwnd: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          sfc: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          sondes: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+          ## amsua
+          amsua_aqua: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua_metop-a: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua_metop-b: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua_n15: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua_n18: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua_n19: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_aqua: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_metop-a: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_metop-b: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_n15: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_n18: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_n19: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+          ## mhs
+          mhs_metop-a: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          mhs_metop-b: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          mhs_n18: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          mhs_n19: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+          ## abi
+          abi_g16: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          abi-clr_g16: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+          ## ahi
+          ahi_himawari8: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          ahi-clr_himawari8: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+          ## iasi
+          iasi_metop-a: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          iasi_metop-b: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          iasi_metop-c: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+        hofx:
+          ## anchor
+          gnssarobndropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
+          aircraft: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrobndropp1d: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrobndnbam: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrobndmo: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrobndmo-nopseudo: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrorefncep: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          gnssrorefncep_tunedErrors: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          satwind: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          satwnd: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          sfc: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          sondes: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+          ## amsua
+          amsua_aqua: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua_metop-a: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua_metop-b: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua_n15: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua_n18: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua_n19: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_aqua: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_metop-a: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_metop-b: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_n15: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_n18: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          amsua-cld_n19: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+          ## mhs
+          mhs_metop-a: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          mhs_metop-b: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          mhs_n18: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          mhs_n19: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+          ## abi
+          abi_g16: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          abi-clr_g16: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+          ## ahi
+          ahi_himawari8: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          ahi-clr_himawari8: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+          ## iasi
+          iasi_metop-a: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          iasi_metop-b: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+          iasi_metop-c: /glade/scratch/ivette/sio-cw3e/ivette_3dvar_O30kmIE60km_ARO_bndsioropp2d_HOFX_ARO_202301_externalana_obs/Observations
+
+      IODASuperObGrid:
+        abi_g16: 59X59
+        ahi_himawari8: 101X101

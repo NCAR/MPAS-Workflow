@@ -48,7 +48,7 @@ class Experiment(Component):
     'suffix': ['', str],
 
     ## user directory child
-    'user directory child': ['pandac', str],
+    'user directory child': ['sio-cw3e', str],
 
     ## suite identifier
     'suite identifier': ['', str],

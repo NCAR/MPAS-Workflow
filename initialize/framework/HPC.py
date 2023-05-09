@@ -30,17 +30,17 @@ class HPC(Component):
     # Casper Options: casper@casper-pbs
 
     # Critical*: used for all critical path jobs, single or multi-node, multi-processor only
-    'CriticalAccount': ['NMMM0043', str],
+    'CriticalAccount': ['UCSD0041', str],
     'CriticalQueue': ['regular', str, ['economy', 'regular', 'premium']],
 
     # NonCritical*: used non-critical path jobs, single or multi-node, multi-processor only
-    'NonCriticalAccount': ['NMMM0043', str],
+    'NonCriticalAccount': ['UCSD0041', str],
     'NonCriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
 
     # SingleProc*: used for single-processor jobs, both critical and non-critical paths
     # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
-    'SingleProcAccount': ['NMMM0015', str],
-    'SingleProcQueue': ['casper@casper-pbs', str, ['casper@casper-pbs', 'share']],
+    'SingleProcAccount': ['UCSD0041', str],
+    'SingleProcQueue': ['economy', str, ['economy', 'regular', 'premium']], #['casper@casper-pbs', str, ['casper@casper-pbs', 'share']],
   }
   def __init__(self, config:Config):
     super().__init__(config)

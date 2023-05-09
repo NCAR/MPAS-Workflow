@@ -1,0 +1,132 @@
+workflow:
+  first cycle point: 20210122T18
+  #restart cycle point: 20210123T06
+  final cycle point: 20210128T00
+  max active cycle points: 8
+
+extendedforecast:
+  meanTimes: T00,T12 # uncomment to enable extended forecast verification
+  lengthHR: 168
+  outIntervalHR: 6
+  execute: True # uncomment if forecasts are already completed
+  # optionally enable extended forecast post (requires meanTimes to be set)
+  post: [verifyobs, verifymodel]
+
+build:
+  mpas bundle: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230418_aro_era5isolevels
+
+members:
+  n: 1
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+  GraphInfoDir: /glade/work/ivette/mpas_static_60kmduda-30kmjake
+firstbackground:
+  resource: "SIO.GEFS"
+externalanalyses:
+  resource: "GFS.SIO"
+variational:
+  execute: False
+  DAType: 3denvar
+  nInnerIterations: [60,60,]
+  biasCorrection: True
+  post: []  #verifyobs
+  job:
+    30km:
+      60km:
+        3denvar:
+          nodes: 12 #6  ##for _gnssarobndropp2d needs 12 to run ##gnssrobndropp2d 6
+          PEPerNode: 32
+          memory: 109GB
+          baseSeconds: 500
+          secondsPerEnVarMember: 9
+## GEFS
+  ensemble:
+    forecasts:
+      resource: "SIO.GEFS"
+experiment:
+  name: '3denvar_O30kmIE60km_WarmStart_SPACEBORNE_2021_benchmark_gnssrorefncep_tunedErrors_gwd' #_gnssrobndropp1d _gnssrobndropp2d' #' 'gnssrorefncep_tunedErrors',
+hofx:
+  job:
+    30km:
+      seconds: 600
+      nodes: 3
+      PEPerNode: 32
+      memory: 109GB
+forecast:
+  execute: False
+  job:
+    30km:
+      # more efficient
+      #nodes: 4
+      #PEPerNode: 36
+      nodes: 6
+      PEPerNode: 32
+      baseSeconds: 300 # 230 #120
+      secondsPerForecastHR: 200 #150
+  post: [] #verifyobs, verifymodel
+initic:
+  job:
+    30km:
+      # use 128 PE to match partition file in GraphInfoDir
+      nodes: 4
+      PEPerNode: 32
+observations:
+  resource: SIOArchive
+  resources:
+    SIOArchive:
+      instrumentsAllowingBiasCorrection:
+      - amsua_aqua
+      - amsua_metop-a
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
+      IODADirectory:
+        da:
+          gnssarobndropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
+          gnssrobndropp2d: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrobndropp1d: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrobndnbam: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrobndmo: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrobndmo-nopseudo: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrorefncep: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrorefncep_tunedErrors: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          aircraft: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          satwind: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          satwnd: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          sfc: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          sondes: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+
+          ## amsua
+          amsua_aqua: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          amsua_metop-a: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          amsua_metop-b: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          amsua_n15: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          amsua_n18: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          amsua_n19: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+
+        hofx:
+          gnssarobndropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
+          gnssrobndropp2d: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrobndropp1d: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrobndnbam: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrobndmo: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrobndmo-nopseudo: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrorefncep: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          gnssrorefncep_tunedErrors: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          aircraft: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          satwind: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          satwnd: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          sfc: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          sondes: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+
+          ## amsua
+          amsua_aqua: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          amsua_metop-a: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          amsua_metop-b: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          amsua_n15: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          amsua_n18: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
+          amsua_n19: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations

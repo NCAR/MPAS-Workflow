@@ -26,7 +26,7 @@ class ExternalAnalyses(Component):
     ## resource:
     # used to select from among available options (e.g., see defaults)
     # must be in quotes
-    # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC"
+    # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC", "GFS.SIO"
     'resource': str,
   }
 

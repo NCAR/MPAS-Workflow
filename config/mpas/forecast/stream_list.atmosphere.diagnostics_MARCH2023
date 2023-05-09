@@ -82,12 +82,6 @@ t_iso_levels
 z_isobaric
 z_iso_levels
 meanT_500_300
-rh_isobaric
-qv_isobaric
-ivtu
-ivtv
-uzonal_isobaric
-umeridional_isobaric
 cape
 cin
 lcl
@@ -112,3 +106,7 @@ h_oml
 h_oml_initial
 hu_oml
 hv_oml
+cldfrac_low_UPP
+cldfrac_mid_UPP
+cldfrac_high_UPP
+cldfrac_tot_UPP

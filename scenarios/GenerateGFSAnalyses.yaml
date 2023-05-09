@@ -1,5 +1,4 @@
 suite: GenerateExternalAnalyses
-
 externalanalyses:
   resource: "GFS.RDA"
 experiment:
@@ -9,8 +8,19 @@ hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 model:
-  outerMesh: 60km
+  outerMesh: 30km
+  GraphInfoDir: /glade/work/liuz/pandac/prepare_mpas/mpas_static_30km
 workflow:
-  first cycle point: 20220606T00
-  final cycle point: 20220608T00
+  first cycle point: 20210122T18
+  final cycle point: 20210204T18
   max active cycle points: 60
+initic:
+  job:
+    30km:
+      seconds: 320
+      nodes: 6
+      PEPerNode: 32
+    60km:
+      seconds: 160
+      nodes: 3
+      PEPerNode: 32

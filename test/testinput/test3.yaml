@@ -1,0 +1,4 @@
+# designed to run after test1.yaml scenarios complete
+scenarios: [
+  test/testinput/3dvar_O30kmIE60km_ColdStart.yaml,
+]

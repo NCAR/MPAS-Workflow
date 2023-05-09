@@ -92,6 +92,14 @@ variational:
             #  zero padding: 3
             #  nmembers: 80
 
+      SIO:
+        GEFS:
+          60km:
+            maxMembers: 30
+            directory0: '/glade/scratch/ivette/GEFS_data/forecast/60km/EnsForCov/{{prevDateTime}}'
+            memberPrefix:
+            memberNDigits: 2
+
     # externally-produced localization files
     localization:
       #{{ensembleMesh}}:

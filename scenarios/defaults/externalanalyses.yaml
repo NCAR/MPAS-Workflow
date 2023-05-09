@@ -37,6 +37,13 @@ externalanalyses:
           directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/GFSAna"
         30km:
           directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAna"
+
+      SIO: # only available 20230101T00-20230210T00
+        30km:
+          directory: "/glade/scratch/ivette/sio-cw3e/GenerateGFSAnalyses/ExternalAnalyses/30km/{{thisValidDate}}"
+        60km:
+          directory: "/glade/scratch/ivette/sio-cw3e/GenerateGFSAnalyses/ExternalAnalyses/60km/{{thisValidDate}}"
+
       RDA:
         common:
           PrepareExternalAnalysisTasks:

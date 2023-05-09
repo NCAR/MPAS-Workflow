@@ -28,3 +28,10 @@ staticstream:
           directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/{:02d}"
+
+    SIO:
+      GEFS:
+        60km: # only available 20221231T18
+          directory: "/glade/scratch/ivette/GEFS_data/init/60km/{{FirstCycleDate}}"
+          maxMembers: 30
+          memberFormat: "/{:02d}"

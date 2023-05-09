@@ -1,0 +1,28 @@
+- obs space:
+    <<: *ObsSpace
+    name: GnssroBndROPP2D
+    _obsdatain: &ObsDataIn
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/gnssrobndropp2d_obs_{{thisValidDate}}.h5
+    _obsdataout: &ObsDataOut
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrobndropp1d{{ObsOutSuffix}}.h5
+    obsdatain:
+      <<: *{{ObsDataIn}}
+      obsgrouping:
+        group variables: [ sequenceNumber ]
+        sort variable: impactHeightRO
+        sort order: ascending
+    {{ObsDataOut}}
+    simulated variables: [bendingAngle]
+  obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLoc
+  obs operator:
+    name: GnssroBndROPP2D
+    obs options:
+      n_horiz: 31
+      res: 40.0
+  get values:
+    <<: *GetValues
