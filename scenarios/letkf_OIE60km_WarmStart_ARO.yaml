@@ -1,13 +1,16 @@
 experiment:
-  name: 'letkf_OIE60km_WarmStart_test_2021iop3-8_gnssaroropp2d'
+  name: 'letkf_OIE60km_WarmStart_2021iop3-8_benchmark'
 build:
   mpas bundle: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230418_aro_era5isolevels
 workflow:
   first cycle point: 20210122T18
   #restart cycle point: 20210123T06
-  final cycle point: 20210123T00
+  final cycle point: 20210128T00
+members:
+  n: 30
 enkf:
   solver: LETKF
+  localization dimension: 3D
   horizontal localization lengthscale: 1.2e6
   vertical localization lengthscale: 6.e3
   retainObsFeedback: False
@@ -18,11 +21,11 @@ enkf:
         observer:
           # cost for record (20 members, PBS JOB email)
           # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
-          nodes: 6
+          nodes: 2 #6
           PEPerNode: 32
           memory: 109GB
           baseSeconds: 100
-          secondsPerMember: 50 #7 #20
+          secondsPerMember: 7 #50 #7 #20
         solver:
           # cost for record (20 members, PBS JOB email, single precision)
           # 16 x 32 PE, 3d iterator : 83.6 min., 275 GB
@@ -33,13 +36,13 @@ enkf:
           threads: 1
           memory: 109GB
           baseSeconds: 200
-          secondsPerMember: 240 #350 #290
+          secondsPerMember: 290 #400 #240 #350 #290
 externalanalyses:
   resource: "GFS.SIO"
 firstbackground:
   resource: "SIO.GEFS"
 forecast:
-  post: [] #verifyobs, verifymodel
+  post: [verifyobs, verifymodel] #
   job:
     60km:
       nodes: 6 #3 #2
@@ -54,8 +57,6 @@ hofx:
       nodes: 3
       PEPerNode: 32
       memory: 109GB
-members:
-  n: 30
 model:
   outerMesh: 60km
   # TODO: make inner and ensemble meshes unnecessary

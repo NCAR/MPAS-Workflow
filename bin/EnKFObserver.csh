@@ -67,8 +67,7 @@ ln -sfv ${myBuildDir}/${myEXE} ./
 # asObserver
 cp $myYAML observer.yaml
 sed -i 's@{{driver}}@asObserver@' observer.yaml
-##sed -i 's@{{ObsSpaceDistribution}}@RoundRobinDistribution@' observer.yaml # IHB: not working for ARO
-sed -i 's@{{ObsSpaceDistribution}}@HaloDistribution@' observer.yaml
+sed -i 's@{{ObsSpaceDistribution}}@RoundRobinDistribution@' observer.yaml
 sed -i 's@{{ObsDataIn}}@ObsDataIn@' observer.yaml
 sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' observer.yaml
 sed -i 's@{{ObsOutSuffix}}@@' observer.yaml

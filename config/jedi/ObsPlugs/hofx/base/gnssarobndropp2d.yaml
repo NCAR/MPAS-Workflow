@@ -1,6 +1,6 @@
 - obs space:
     <<: *ObsSpace
-    name: GnssaroBndSIOROPP2D 
+    name: GnssaroBndSIOROPP2D
     obsdatain:
       engine:
         type: H5File
