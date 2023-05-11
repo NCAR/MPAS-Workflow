@@ -8,7 +8,7 @@
     _obsdataout: &ObsDataOut
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrobndropp1d{{ObsOutSuffix}}.h5
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrobndropp2d{{ObsOutSuffix}}.h5
     obsdatain:
       <<: *{{ObsDataIn}}
       obsgrouping:

@@ -25,17 +25,17 @@ benchmarkObservations = [
   'satwnd',
   'sfc',
   'sondes',
-  'gnssrobndropp2d',
+#  'gnssrobndropp2d',
 #  'gnssarobndropp2d',
 #  'gnssrobndropp1d',
 #  'gnssrorefncep_tunedErrors',
   # MW satellite-based
-#  'amsua_aqua',
-#  'amsua_metop-a',
-#  'amsua_metop-b',
-#  'amsua_n15',
-#  'amsua_n18',
-#  'amsua_n19',
+  'amsua_aqua',
+  'amsua_metop-a',
+  'amsua_metop-b',
+  'amsua_n15',
+  'amsua_n18',
+  'amsua_n19',
 ]
 
 class Observations(Component):

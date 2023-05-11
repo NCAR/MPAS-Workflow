@@ -2,7 +2,7 @@ workflow:
   first cycle point: 20210122T18
   #restart cycle point: 20210123T06
   final cycle point: 20210128T00
-  max active cycle points: 8
+  max active cycle points: 60
 
 extendedforecast:
   meanTimes: T00,T12 # uncomment to enable extended forecast verification
@@ -10,7 +10,7 @@ extendedforecast:
   outIntervalHR: 6
   execute: True # uncomment if forecasts are already completed
   # optionally enable extended forecast post (requires meanTimes to be set)
-  post: [verifyobs, verifymodel]
+  post: [] #verifyobs, verifymodel
 
 build:
   mpas bundle: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230418_aro_era5isolevels
@@ -46,7 +46,7 @@ variational:
     forecasts:
       resource: "SIO.GEFS"
 experiment:
-  name: '3denvar_O30kmIE60km_WarmStart_SPACEBORNE_2021_benchmark_gnssrorefncep_tunedErrors_gwd' #_gnssrobndropp1d _gnssrobndropp2d' #' 'gnssrorefncep_tunedErrors',
+  name: '3denvar_O30kmIE60km_WarmStart_SPACEBORNE_2021_benchmark_gwd' #_gnssrobndropp1d _gnssrobndropp2d' #' 'gnssrorefncep_tunedErrors',
 hofx:
   job:
     30km:

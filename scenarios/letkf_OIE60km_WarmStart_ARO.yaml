@@ -1,11 +1,12 @@
 experiment:
-  name: 'letkf_OIE60km_WarmStart_2021iop3-8_benchmark'
+  name: 'letkf_OIE60km_WarmStart_2021iop3-8_benchmark_gnssarobndropp2d'
 build:
   mpas bundle: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230418_aro_era5isolevels
 workflow:
   first cycle point: 20210122T18
-  #restart cycle point: 20210123T06
+  restart cycle point: 20210123T18
   final cycle point: 20210128T00
+  max active cycle points: 8
 members:
   n: 30
 enkf:
