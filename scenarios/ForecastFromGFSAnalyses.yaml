@@ -3,18 +3,21 @@ suite: ForecastFromExternalAnalyses
 externalanalyses:
   resource: "GFS.RDA"
 
+build:
+  mpas bundle: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_develop_20230511
+
 experiment:
-  name: 'ForecastFromGFSAnalyses'
+  name: 'ForecastFromGFSAnalyses_only_gnssarobndropp2d_hofx_test'
   prefix: ''
 
 extendedforecast:
-  meanTimes: T00,T12
-  lengthHR: 24
-  outIntervalHR: 12
-  #execute: False # uncomment if forecasts are already completed
+  meanTimes: T00 #,T12
+  lengthHR: 6 #24
+  outIntervalHR: 6 #12
+  execute: True # uncomment if forecasts are already completed
 
   # optionally turn on extended forecast post
-  post: [verifyobs, verifymodel]
+  post: [verifyobs] #verifyobs,verifymodel 
 
 hpc:
   CriticalQueue: economy
@@ -30,6 +33,6 @@ observations: # for optional verification
   resource: GladeRDAOnline
 
 workflow:
-  first cycle point: 20220606T00
-  final cycle point: 20220607T00
+  first cycle point: 20210123T00
+  final cycle point: 20210123T00
   max active cycle points: 4

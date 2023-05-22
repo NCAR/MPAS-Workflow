@@ -1,94 +1,87 @@
-experiment:
-  name: 'letkf_OIE60km_WarmStart_2021iop3-8_conv_sat_gnssro1d_amsua_oneCycle_30mem' #'letkf_OIE60km_WarmStart_2021iop3-8_benchmark_gnssarobndropp2d_20mem' #'' #gnssarobndropp2d_ ivette_letkf_OIE60km_WarmStart_2021iop3-8_benchmark_gnssarobndropp2d_20mem
-build:
-  mpas bundle: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230418_aro_era5isolevels
 workflow:
   first cycle point: 20210122T18
   #restart cycle point: 20210123T06
-  final cycle point: 20210123T00
-  #max active cycle points: 60
+  final cycle point: 20210128T00
+  max active cycle points: 60
+experiment:
+  name: '3denvar_O30kmIE60km_WarmStart_SPACEBORNE_2021_benchmark_gnssrobndropp2d_gwd' #_gnssrobndropp1d _gnssrobndropp2d' _gnssarobndropp2d #' 'gnssrorefncep_tunedErrors',
+extendedforecast:
+  meanTimes: T00,T12 # uncomment to enable extended forecast verification
+  lengthHR: 168
+  outIntervalHR: 6
+  execute: False
+  post: [verifyobs, verifymodel] #verifyobs, verifymodel
+
+build:
+  mpas bundle: /glade/p/mmm/parc/ivette/sio/codes-builds/internal/build_20230418_aro_era5isolevels
+
 members:
-  n: 30
-enkf:
-  #execute: False
-  solver: LETKF
-  localization dimension: 3D
-  horizontal localization lengthscale: 1.2e6
-  vertical localization lengthscale: 6.e3
-  retainObsFeedback: True
-  biasCorrection: True
-  post: []
-  job:
-    60km:
-      LETKF:
-        observer:
-          # cost for record (20 members, PBS JOB email)
-          # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
-          nodes: 4 #2 #6
-          PEPerNode: 32
-          memory: 109GB
-          baseSeconds: 100
-          secondsPerMember: 7 #50 #7 #20
-        solver:
-          # cost for record (20 members, PBS JOB email, single precision)
-          # 16 x 32 PE, 3d iterator : 83.6 min., 275 GB
-          # 16 x 32 PE, 3d iterator (no vert loc.) : 108 min., 314 GB
-          # 16 x 32 PE, 2d iterator (no vert loc.) : 7.5 min., 274 GB
-          nodes: 16
-          PEPerNode: 32
-          threads: 1
-          memory: 109GB
-          baseSeconds: 200
-          secondsPerMember: 290 #400 #240 #350 #290
-  observers: [
-    aircraft,
-    satwind,
-    satwnd,
-    sfc,
-    sondes,
-    gnssrobndropp1d,
-#    gnssarobndropp2d,
-    amsua_aqua,
-    amsua_metop-a,
-    amsua_metop-b,
-    amsua_n15,
-    amsua_n18,
-    amsua_n19,
-  ]
-externalanalyses:
-  resource: "GFS.SIO"
+  n: 1
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+  GraphInfoDir: /glade/work/ivette/mpas_static_60kmduda-30kmjake
 firstbackground:
   resource: "SIO.GEFS"
-forecast:
-  #execute: False
-  post: [] #verifyobs, verifymodel
+externalanalyses:
+  resource: "GFS.SIO"
+variational:
+  execute: False
+  DAType: 3denvar
+  nInnerIterations: [60,60,]
+  biasCorrection: True
+  post: [verifyobs]  #verifyobs
   job:
-    60km:
-      nodes: 6 #3 #2
-      PEPerNode: 32 #36
-      baseSeconds: 140 #60
-      secondsPerForecastHR: 60 #40
+    30km:
+      60km:
+        3denvar:
+          nodes: 12 #6  ##for _gnssarobndropp2d needs 12 to run ##gnssrobndropp2d 6
+          PEPerNode: 32
+          memory: 109GB
+          baseSeconds: 500
+          secondsPerEnVarMember: 9
+## GEFS
+  ensemble:
+    forecasts:
+      resource: "SIO.GEFS"
 hofx:
-  retainObsFeedback: True
   job:
-    60km:
+    30km:
       seconds: 600
       nodes: 3
       PEPerNode: 32
       memory: 109GB
-model:
-  outerMesh: 60km
-  # TODO: make inner and ensemble meshes unnecessary
-  # related to {{PrepareExternalAnalysisInner}} and {{PrepareExternalAnalysisEnsemble}}
-  innerMesh: 60km
-  ensembleMesh: 60km
-  GraphInfoDir: /glade/work/ivette/mpas_static_60kmduda-30kmjake
+forecast:
+  execute: False
+  job:
+    30km:
+      # more efficient
+      #nodes: 4
+      #PEPerNode: 36
+      nodes: 6
+      PEPerNode: 32
+      baseSeconds: 300 # 230 #120
+      secondsPerForecastHR: 200 #150
+  post: [verifyobs, verifymodel] #verifyobs, verifymodel
+initic:
+  job:
+    30km:
+      # use 128 PE to match partition file in GraphInfoDir
+      nodes: 4
+      PEPerNode: 32
 observations:
-  fixedTlapmeanCov: /glade/p/mmm/parc/ivette/sio/SATBIAS_fixed/2021
-  initialVARBCcoeff: /glade/p/mmm/parc/ivette/sio/SATBIAS_fixed/2021
   resource: SIOArchive
   resources:
     SIOArchive:
+      instrumentsAllowingBiasCorrection:
+      - amsua_aqua
+      - amsua_metop-a
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
       IODADirectory:
         da:
           gnssarobndropp2d: /glade/p/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
@@ -135,5 +128,3 @@ observations:
           amsua_n15: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
           amsua_n18: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
           amsua_n19: /glade/scratch/ivette/sio-cw3e/GenerateObs/Observations
-rtpp:
-  relaxationFactor: 0.8

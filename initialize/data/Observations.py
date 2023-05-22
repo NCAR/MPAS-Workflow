@@ -20,11 +20,11 @@ from initialize.framework.HPC import HPC
 # not included in auto-generated experiment names
 benchmarkObservations = [
   # anchor
-  'aircraft',
-  'satwind',
-  'satwnd',
-  'sfc',
-  'sondes',
+#  'aircraft',
+#  'satwind',
+#  'satwnd',
+#  'sfc',
+#  'sondes',
 #  'gnssrobndropp2d',
 #  'gnssarobndropp2d',
 #  'gnssrobndropp1d',

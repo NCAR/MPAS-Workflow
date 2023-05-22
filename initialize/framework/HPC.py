@@ -39,8 +39,8 @@ class HPC(Component):
 
     # SingleProc*: used for single-processor jobs, both critical and non-critical paths
     # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
-    'SingleProcAccount': ['UCSD0041', str],
-    'SingleProcQueue': ['economy', str, ['economy', 'regular', 'premium']], #['casper@casper-pbs', str, ['casper@casper-pbs', 'share']],
+    'SingleProcAccount': ['UCSD0043', str],
+    'SingleProcQueue': ['casper@casper-pbs', str, ['casper@casper-pbs', 'share']], #['economy', str, ['economy', 'regular', 'premium']], #
   }
   def __init__(self, config:Config):
     super().__init__(config)

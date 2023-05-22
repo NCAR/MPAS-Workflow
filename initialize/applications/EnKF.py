@@ -70,8 +70,8 @@ class EnKF(Component):
     'nObsIndent': [2, int],
 
     ## biasCorrection
-    # whether to use bias correction coefficients from VarBC
-    # OPTIONS: False (not enabled yet)
+    # whether to use bias correction coefficients from VarBC or fixed
+    # OPTIONS: False/True
     'biasCorrection': [False, bool],
 
     ## tropprsMethod
@@ -196,10 +196,11 @@ class EnKF(Component):
     initArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
     # 2 init phases
-    self._dependencies += ['''
+    if self['execute']:
+      self._dependencies += ['''
         InitEnKF_0 => InitEnKF_1''']
 
-    self._tasks += ['''
+      self._tasks += ['''
   ## enkf tasks
   [[InitEnKF_0]]
     inherit = '''+self.tf.init+''', SingleBatch
@@ -230,7 +231,7 @@ class EnKF(Component):
     script = $origin/bin/EnKF.csh
 '''+solvertask.job()+solvertask.directives()]
 
-    self._dependencies += ['''
+      self._dependencies += ['''
 
         # EnKF
         EnKFObserver => EnKF''']

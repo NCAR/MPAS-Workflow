@@ -236,11 +236,13 @@ end
 # Satellite bias correction
 # =========================
 # next cycle after FirstCycleDate
-if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
+if ( ${thisValidDate} == ${nextFirstCycleDate} || ${AppName} == enkf ) then
   set biasCorrectionDir = $initialVARBCcoeff
 else
   set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/dbOut
 endif
+echo '{biasCorrectionDir}' ${biasCorrectionDir}
+echo '{AppName}' ${AppName}
 
 # =============
 # Generate yaml

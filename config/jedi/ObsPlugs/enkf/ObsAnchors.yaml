@@ -1,6 +1,7 @@
 _hor obs localization: &HorizObsLoc
   localization method: {{horizontalLocalizationMethod}}
   lengthscale: &HorizObsLocLengthScale {{horizontalLocalizationLengthscale}}
+  max nobs: 1.e3
 
 _conventional vertical localization: &HeightVertObsLoc
   localization method: Vertical localization
