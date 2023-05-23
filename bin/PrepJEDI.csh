@@ -241,8 +241,6 @@ if ( ${thisValidDate} == ${nextFirstCycleDate} || ${AppName} == enkf ) then
 else
   set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/dbOut
 endif
-echo '{biasCorrectionDir}' ${biasCorrectionDir}
-echo '{AppName}' ${AppName}
 
 # =============
 # Generate yaml

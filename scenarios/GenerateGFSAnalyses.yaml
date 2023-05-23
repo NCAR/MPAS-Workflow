@@ -8,11 +8,11 @@ hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 model:
-  outerMesh: 30km
-  GraphInfoDir: /glade/work/liuz/pandac/prepare_mpas/mpas_static_30km
+  outerMesh: 60km
+  GraphInfoDir: /glade/work/ivette/mpas_static_60kmduda-30kmjake
 workflow:
-  first cycle point: 20210122T18
-  final cycle point: 20210204T18
+  first cycle point: 20230106T12
+  final cycle point: 20230117T00
   max active cycle points: 60
 initic:
   job:

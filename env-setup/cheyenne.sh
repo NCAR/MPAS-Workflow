@@ -24,7 +24,7 @@ export PYTHONDONTWRITEBYTECODE=1 # avoid __pycache__ creation
 # Also the "-f" flag must not be present in the bash script that loads conda and activates npl,
 # because that flag prevents sourcing ~/.bashrc.
 
-module load cylc
+module load cylc #/8 #cylc
 module load graphviz
 module load git
 git lfs install
