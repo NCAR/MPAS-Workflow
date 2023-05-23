@@ -52,8 +52,8 @@ class Variational(Component):
     # Notes about DRPBlockLanczos:
     # + still experimental, and not reliable for this experiment
     # + only available when EDASize > 1
-    'MinimizerAlgorithm': ['DRIPCG', str,
-      ['DRIPCG', 'DRPLanczos', 'DRPBlockLanczos']
+    'MinimizerAlgorithm': ['DRPCG', str,
+      ['DRPCG','DRIPCG', 'DRPLanczos', 'DRPBlockLanczos']
     ],
 
     ## SelfExclusion, whether exclude own background from the ensemble B perturbations in EnVar during EDA cycling
