@@ -23,7 +23,7 @@
       step size: 1.0e-4
       largest analysis variance: 10000.0
       prior:
-        input file: {{fixedTlapmeanCov}}/satbias_cov_abi_g16.h5
+        input file: {{biasCorrectionDir}}/satbias_cov_abi_g16.h5
         inflation:
           ratio: 1.1
           ratio for small dataset: 2.0
