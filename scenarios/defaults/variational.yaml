@@ -44,7 +44,7 @@ variational:
         GEFS:
           120km:
             maxMembers: 20
-            directory0: '/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/EnsForCov/{{prevDateTime}}'
+            directory0: '/glade/p/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
             filePrefix: EnsForCov
             memberNDigits: 2
 
