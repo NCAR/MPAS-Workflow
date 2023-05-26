@@ -78,9 +78,9 @@ class Observations(Component):
     'CRTMTABLES': ['/glade/work/guerrett/pandac/fixed_input/crtm_bin/', str],
 
     # static directories for bias correction files
-    'fixedCoeff': ['/glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias', str],
-    'fixedTlapmeanCov': ['/glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias/2018', str],
-    'initialVARBCcoeff': ['/glade/p/mmm/parc/liuz/pandac_hybrid/fix_input/satbias/2018', str],
+    'fixedCoeff': ['/glade/p/mmm/parc/liuz/pandac_common/obs/satbias', str],
+    'fixedTlapmeanCov': ['/glade/p/mmm/parc/liuz/pandac_common/obs/satbias/2018', str],
+    'initialVARBCcoeff': ['/glade/p/mmm/parc/liuz/pandac_common/obs/satbias/2018', str],
   }
 
   def __init__(self,

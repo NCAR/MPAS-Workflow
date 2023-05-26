@@ -34,7 +34,7 @@ firstbackground:
         60km: # only available 20180414T18, 20200723T18
           directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/SingleFCFirstCycle/{{FirstCycleDate}}"
         30km: # only available 20180414T18
-          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/SingleFCFirstCycle/{{FirstCycleDate}}"
+          directory: "/glade/p/mmm/parc/liuz/pandac_common/30km/30km_1stCycle_background_single/{{FirstCycleDate}}"
       LaggedGEFS:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
