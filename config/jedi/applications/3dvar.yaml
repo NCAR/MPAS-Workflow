@@ -36,7 +36,7 @@ cost function:
     saber central block:
       saber block name: BUMP_NICAS
       active variables: &ctlvars [{{bumpCovControlVariables}}]
-      bump:
+      read:
         io:
           data directory: {{bumpCovDir}}
           files prefix: {{bumpCovPrefix}}
@@ -45,14 +45,13 @@ cost function:
           read local nicas: true
     saber outer blocks:
     - saber block name: StdDev
-      input fields:
-      - parameter: StdDev
-        file:
+      read:
+        model file:
           filename: {{bumpCovStdDevFile}}
           date: *analysisDate
           stream name: control
     - saber block name: BUMP_VerticalBalance
-      bump:
+      read:
         io:
           data directory: {{bumpCovVBalDir}}
           files prefix: {{bumpCovVBalPrefix}}

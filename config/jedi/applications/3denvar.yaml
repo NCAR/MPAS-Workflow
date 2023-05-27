@@ -50,7 +50,7 @@ cost function:
       saber central block:
         saber block name: BUMP_NICAS
         active variables: *incvars
-        bump:
+        read:
           io:
             data directory: {{bumpLocDir}}
             files prefix: {{bumpLocPrefix}}
