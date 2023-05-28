@@ -3,6 +3,9 @@ suite: ForecastFromExternalAnalyses
 externalanalyses:
   resource: "GFS.RDA"
 
+#build:
+#  forecast directory: path-for-mpas-model-build
+
 experiment:
   name: 'ForecastFromGFSAnalysesMPT_TEST'
 
