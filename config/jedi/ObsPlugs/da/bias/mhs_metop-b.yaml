@@ -1,0 +1,30 @@
+  obs bias:
+    input file: {{biasCorrectionDir}}/satbias_mhs_metop-b.h5
+    output file: {{OutDBDir}}{{MemberDir}}/satbias_mhs_metop-b.h5
+    variational bc:
+      predictors: &predictors1
+      - name: constant
+      - name: lapse_rate
+        order: 2
+        tlapse: &mhsmetopbtlap {{fixedTlapmeanCov}}/mhs_metop-b_tlapmean.txt
+      - name: lapse_rate
+        tlapse: *mhsmetopbtlap
+      - name: emissivity
+      - name: scan_angle
+        order: 4
+      - name: scan_angle
+        order: 3
+      - name: scan_angle
+        order: 2
+      - name: scan_angle
+    covariance:
+      minimal required obs number: 20
+      variance range: [1.0e-6, 10.]
+      step size: 1.0e-4
+      largest analysis variance: 10000.0
+      prior:
+        input file: {{biasCorrectionDir}}/satbias_cov_mhs_metop-b.h5
+        inflation:
+          ratio: 1.1
+          ratio for small dataset: 2.0
+      output file: {{OutDBDir}}{{MemberDir}}/satbias_cov_mhs_metop-b.h5

@@ -1,0 +1,24 @@
+- obs space:
+    <<: *ObsSpace
+    name: mhs_n19
+    _obsdatain: &ObsDataIn
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/mhs_n19_obs_{{thisValidDate}}.h5
+    _obsdataout: &ObsDataOut
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_mhs_n19{{ObsOutSuffix}}.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
+    simulated variables: [brightnessTemperature]
+    channels: &mhs_n19_channels 3-5
+  obs error: *ObsErrorDiagonal
+  <<: *horizObsLoc
+  obs operator:
+    <<: *clearCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: mhs_n19
+  get values:
+    <<: *GetValues
