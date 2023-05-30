@@ -33,6 +33,10 @@ benchmarkObservations = [
   'amsua_n15',
   'amsua_n18',
   'amsua_n19',
+  'mhs_metop-a',
+  'mhs_metop-b',
+  'mhs_n18',
+  'mhs_n19',
 ]
 
 class Observations(Component):

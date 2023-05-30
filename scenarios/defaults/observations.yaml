@@ -216,6 +216,10 @@ observations:
       - iasi_metop-a
       - iasi_metop-b
       - iasi_metop-c
+      - mhs_metop-a
+      - mhs_metop-b
+      - mhs_n18
+      - mhs_n19
 
       IODAPrefix:
         gnssrobndropp1d: gnssro
@@ -263,10 +267,10 @@ observations:
           amsua-cld_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
 
           ## mhs
-          mhs_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          mhs_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          mhs_n18: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          mhs_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          mhs_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          mhs_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          mhs_n18: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          mhs_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
 
           ## abi
           abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPEROB59X59_no-bias-correct
