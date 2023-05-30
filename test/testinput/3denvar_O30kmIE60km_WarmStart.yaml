@@ -39,7 +39,7 @@ variational:
   nInnerIterations: [15,]
   ensemble:
     forecasts:
-      resource: "PANDAC.GEFS"
+      resource: "PANDAC.EDA"
   job:
     30km:
       60km:

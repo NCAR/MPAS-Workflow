@@ -1,10 +1,10 @@
 suite: ForecastFromExternalAnalyses
 
-build:
-  forecast directory: /glade/p/mmm/parc/liuz/pandac_common/20230406_mpas_bundle/MPAS_intelmpt
-
 externalanalyses:
   resource: "GFS.RDA"
+
+#build:
+#  forecast directory: path-for-mpas-model-build
 
 experiment:
   name: 'ForecastFromGFSAnalysesMPT_TEST'
