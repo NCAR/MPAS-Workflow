@@ -281,8 +281,10 @@ observations:
           ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/ioda-v3/IODANC_SUPEROB101X101_no-bias-correct
 
           ## iasi
-          iasi_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/1h
-          iasi_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/1h
+          iasi_metop-a: /glade/p/mmm/parc/zhuming/pandac/hofx120km_thinningremoving_iasi/thinremove
+          iasi_metop-b: /glade/p/mmm/parc/zhuming/pandac/hofx120km_thinningremoving_iasi/thinremove
+          #iasi_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/1h
+          #iasi_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/1h
           iasi_metop-c: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/1h
 
         hofx:
@@ -328,8 +330,10 @@ observations:
           ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/ioda-v3/IODANC_SUPEROB15X15_no-bias-correct
 
           ## iasi
-          iasi_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
-          iasi_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+          iasi_metop-a: /glade/p/mmm/parc/zhuming/pandac/hofx120km_thinningremoving_iasi/thinremove
+          iasi_metop-b: /glade/p/mmm/parc/zhuming/pandac/hofx120km_thinningremoving_iasi/thinremove
+          #iasi_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+          #iasi_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
           iasi_metop-c: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
 
       IODASuperObGrid:

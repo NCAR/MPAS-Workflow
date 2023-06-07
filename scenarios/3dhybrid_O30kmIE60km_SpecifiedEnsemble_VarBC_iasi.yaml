@@ -1,0 +1,79 @@
+# settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
+experiment:
+  #suffix: '_ensB-SE80+RTPP70_VarBC'
+  name: '3dhybrid_O30kmI60km_ensB_VarBC_iasi'
+
+firstbackground:
+  resource: "PANDAC.GFS"
+
+forecast:
+  job:
+    30km:
+      nodes: 8
+      PEPerNode: 32
+      baseSeconds: 60
+      secondsPerForecastHR: 150
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+  resources:
+    GFS:
+      PANDAC: # only available 20180418T00-20180524T00
+        30km:
+          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAnaAndDiagnostics"
+members:
+  n: 1
+
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+
+observations:
+  resource: PANDACArchiveForVarBC
+
+variational:
+  DAType: 3dhybrid
+  biasCorrection: True
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  nInnerIterations: [60,60,]
+  observers: [
+    aircraft,
+    gnssrobndropp1d,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    mhs_metop-a,
+    mhs_metop-b,
+    mhs_n18,
+    mhs_n19,
+    iasi_metop-a,
+    iasi_metop-b,
+  ]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.EDA"
+
+  # resource requirements
+  job:
+    30km:
+      60km:
+        3dhybrid:
+          nodes: 6
+          PEPerNode: 32
+          memory: 109GB
+          baseSeconds: 700
+          secondsPerEnVarMember: 20
+
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180415T18
+  #final cycle point: 20180514T18
