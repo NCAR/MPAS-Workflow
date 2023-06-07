@@ -1,0 +1,20 @@
+observations:
+  resource: PANDACArchiveForVarBC
+experiment:
+  suffix: '_VarBC_120km'
+members:
+  n: 1
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+variational:
+  DAType: 3denvar
+  biasCorrection: True
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
