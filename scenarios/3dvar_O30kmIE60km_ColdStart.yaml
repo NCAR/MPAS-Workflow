@@ -1,6 +1,8 @@
 workflow:
   first cycle point: 20220217T18
-  final cycle point: 20220228T00
+  #restart cycle point: 20220218T00
+  final cycle point: 20220218T06
+  #final cycle point: 20220228T00
 observations:
   resource: GladeRDAOnline
 members:
