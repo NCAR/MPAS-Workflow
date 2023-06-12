@@ -17,3 +17,8 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS"
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180418T00
+  final cycle point:   20180415T06
+  #final cycle point: 20180514T18
