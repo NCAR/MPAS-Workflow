@@ -9,13 +9,13 @@ model:
     #  DiffusionLengthScale: float # only used for {{outerMesh}}
     30km:
       nCells: 655362
-      TimeStep: 180.0
+      TimeStep: 240.0
       DiffusionLengthScale: 30000.0
     60km:
       nCells: 163842
-      TimeStep: 360.0
+      TimeStep: 480.0
       DiffusionLengthScale: 60000.0
     120km:
       nCells: 40962
-      TimeStep: 720.0
+      TimeStep: 960.0
       DiffusionLengthScale: 120000.0
