@@ -71,7 +71,7 @@ variational:
           baseSeconds: 4500
           nodes: 8
           PEPerNode: 16
-          memory: 109
+          memory: 109GB
 hpc:
   CriticalQueue: premium
   NonCriticalQueue: premium
