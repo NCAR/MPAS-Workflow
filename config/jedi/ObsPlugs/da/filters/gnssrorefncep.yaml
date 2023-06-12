@@ -4,7 +4,7 @@
     - variable:
         name: MetaData/height
       minvalue: 0.0
-      maxvalue: 30000.0
+      maxvalue: 1500.0
     - variable:
         name: MetaData/earthRadiusCurvature
       minvalue: 6250000.0
