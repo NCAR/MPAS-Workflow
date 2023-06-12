@@ -3,7 +3,7 @@
     where:
     - variable:
         name: MetaData/impactHeightRO
-      minvalue: 1.55
+      minvalue: 1550.0
       maxvalue: 28000.0
     - variable:
         name: MetaData/earthRadiusCurvature
