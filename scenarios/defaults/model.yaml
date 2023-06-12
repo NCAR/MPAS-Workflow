@@ -17,5 +17,5 @@ model:
       DiffusionLengthScale: 60000.0
     120km:
       nCells: 40962
-      TimeStep: 960.0
+      TimeStep: 900.0
       DiffusionLengthScale: 120000.0
