@@ -34,3 +34,8 @@ observations:
       IODASuperObGrid:
         abi_g16: 15X15
         ahi_himawari8: 15X15
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180418T00
+  final cycle point: 20180415T12
+  #final cycle point: 20180514T18

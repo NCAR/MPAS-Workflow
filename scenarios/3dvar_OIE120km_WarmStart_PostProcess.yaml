@@ -37,5 +37,7 @@ variational:
   post: [verifyobs]
 
 workflow:
-  first cycle point: 20180415T00
-  final cycle point: 20180514T18
+  first cycle point: 20180414T18
+  #restart cycle point: 20180418T00
+  final cycle point:   20180415T06
+  #final cycle point: 20180514T18
