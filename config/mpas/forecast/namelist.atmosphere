@@ -4,7 +4,7 @@
     config_start_time = 'startTime'
     config_run_duration = 'fcLength'
     config_split_dynamics_transport = true
-    config_number_of_sub_steps = 2
+    config_number_of_sub_steps = 4
     config_dynamics_split_steps = 3
     config_h_mom_eddy_visc2 = 0.0
     config_h_mom_eddy_visc4 = 0.0
