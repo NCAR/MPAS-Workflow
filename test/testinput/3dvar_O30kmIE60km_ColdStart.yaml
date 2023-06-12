@@ -31,7 +31,7 @@ variational:
     30km:
       60km:
         3dvar:
-          memory: 45
+          memory: 45GB
   post: [verifyobs]
 workflow:
   # test a recent date
