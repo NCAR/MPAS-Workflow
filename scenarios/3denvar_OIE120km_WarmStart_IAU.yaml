@@ -36,6 +36,6 @@ variational:
 forecast:
   IAU: True
 hpc:
-  CriticalAccount: NMMM0013
-  NonCriticalAccount: NMMM0013
-  SingleProcAccount: NMMM0013
+  CriticalAccount: NMMM0015
+  NonCriticalAccount: NMMM0015
+  SingleProcAccount: NMMM0015

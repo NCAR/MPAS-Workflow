@@ -30,11 +30,11 @@ class HPC(Component):
     # Casper Options: casper@casper-pbs
 
     # Critical*: used for all critical path jobs, single or multi-node, multi-processor only
-    'CriticalAccount': ['NMMM0043', str],
+    'CriticalAccount': ['NMMM0015', str],
     'CriticalQueue': ['regular', str, ['economy', 'regular', 'premium']],
 
     # NonCritical*: used non-critical path jobs, single or multi-node, multi-processor only
-    'NonCriticalAccount': ['NMMM0043', str],
+    'NonCriticalAccount': ['NMMM0015', str],
     'NonCriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
 
     # SingleProc*: used for single-processor jobs, both critical and non-critical paths
