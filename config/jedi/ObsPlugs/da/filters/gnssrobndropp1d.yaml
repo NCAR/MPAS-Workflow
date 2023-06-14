@@ -2,9 +2,9 @@
   - filter: Domain Check
     where:
     - variable:
-        name: MetaData/impactHeightRO
-      minvalue: 0.0
-      maxvalue: 30000.0
+        name: MetaData/height
+      minvalue: 1550.0
+      maxvalue: 28000.0
     - variable:
         name: MetaData/earthRadiusCurvature
       minvalue: 6250000.0

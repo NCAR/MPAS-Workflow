@@ -17,5 +17,5 @@ verifymodel:
       seconds: 480
       secondsPerMember: 100
     120km:
-      seconds: 120
-      secondsPerMember: 40
+      seconds: 400
+      secondsPerMember: 80
