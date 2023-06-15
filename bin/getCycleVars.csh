@@ -27,6 +27,26 @@ set thisMPASFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set thisMPASNamelistDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set thisISO8601Date = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
+# Set time info for subwindow
+set window_dt = 3 #`echo ${subwindow}`
+set windowDate1 = "`$advanceCYMDH ${thisCycleDate} -${window_dt}`"
+set windowDate3 = "`$advanceCYMDH ${thisCycleDate} ${window_dt}`"
+
+set yy1 = `echo ${windowDate1} | cut -c 1-4`
+set mm1 = `echo ${windowDate1} | cut -c 5-6`
+set dd1 = `echo ${windowDate1} | cut -c 7-8`
+set hh1 = `echo ${windowDate1} | cut -c 9-10`
+
+set yy3 = `echo ${windowDate3} | cut -c 1-4`
+set mm3 = `echo ${windowDate3} | cut -c 5-6`
+set dd3 = `echo ${windowDate3} | cut -c 7-8`
+set hh3 = `echo ${windowDate3} | cut -c 9-10`
+
+set thisMPASFileDate1 = ${yy1}-${mm1}-${dd1}_${hh1}.00.00
+set thisISO8601Date1 = ${yy1}-${mm1}-${dd1}T${hh1}:00:00Z
+set thisMPASFileDate3 = ${yy3}-${mm3}-${dd3}_${hh3}.00.00
+set thisISO8601Date3 = ${yy3}-${mm3}-${dd3}T${hh3}:00:00Z
+
 # Date-dependent directory names
 # ==============================
 
