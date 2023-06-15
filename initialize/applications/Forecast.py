@@ -87,6 +87,10 @@ class Forecast(Component):
       outIntervalHR = window
       lengthHR = window
 
+    # For generating test ens forecasts
+    outIntervalHR = 1
+    lengthHR = 9
+
     self._set('outIntervalHR', outIntervalHR)
     self._set('lengthHR', lengthHR)
 
