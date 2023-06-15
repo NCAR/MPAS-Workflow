@@ -80,7 +80,7 @@ class Observations(Component):
     'GDASObsErrtable': ['/glade/work/guerrett/pandac/fixed_input/GSI_errtables/HRRRENS_errtable_10sep2018.r3dv', str],
 
     ## CRTM
-    'CRTMTABLES': ['/glade/p/mmm/parc/liuz/pandac_common/crtm_coeffs_v2.4.1/', str],
+    'CRTMTABLES': ['/glade/p/mmm/parc/liuz/pandac_common/crtm_coeffs/', str],
 
     # static directories for bias correction files
     'fixedCoeff': ['/glade/p/mmm/parc/liuz/pandac_common/obs/satbias', str],

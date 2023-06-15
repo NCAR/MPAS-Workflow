@@ -144,7 +144,7 @@ variational:
       memory: 45GB
 
       # cylc retry string
-      retry: '2*PT30S'
+      retry: '0*PT30S'
 
     ## FORMAT
     #{{outerMesh}}:

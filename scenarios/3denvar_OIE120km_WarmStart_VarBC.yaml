@@ -1,7 +1,7 @@
 observations:
   resource: PANDACArchiveForVarBC
 experiment:
-  suffix: '_VarBC_120km'
+  suffix: '_VarBC'
 members:
   n: 1
 model:
