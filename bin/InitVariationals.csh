@@ -207,9 +207,11 @@ endif # 3dvar || 3dhybrid
 # Ensemble Jb term
 # ================
 
-if ( "$DAType" == "3denvar" || "$DAType" == "3dhybrid" ) then
+if ( "$DAType" == "3denvar" || "$DAType" == "3dhybrid" || "$DAType" == "4denvar" ) then
   ## yaml indentation
   if ( "$DAType" == "3denvar" ) then
+    set nEnsPbIndent = 4
+  else if ( "$DAType" == "4denvar" ) then
     set nEnsPbIndent = 4
   else if ( "$DAType" == "3dhybrid" ) then
     set nEnsPbIndent = 8
@@ -322,6 +324,44 @@ if ( "$DAType" == "3denvar" || "$DAType" == "3dhybrid" ) then
 
 endif # envar || hybrid
 
+if ("$DAType" == "4denvar") then
+  ## members
+  # + pure envar: 'background error.members from template'
+  # + hybrid envar: 'background error.components[iEnsemble].covariance.members from template'
+  #   where iEnsemble is the ensemble component index of the hybrid B
+
+  # performs sed substitution for EnsemblePbMembers
+  set enspbmemsed = EnsemblePbMembers
+
+  @ dateOffset = ${self_WindowHR} + ${ensPbOffsetHR}
+  set prevDateTime = `$advanceCYMDH ${thisValidDate} -${dateOffset}`
+
+  # substitutions
+  # + previous forecast initilization date-time
+  # + ExperimentDirectory for EDA applications that use their own ensemble
+  set dir0 = `echo "${ensPbDir0}" \
+              | sed 's@{{prevDateTime}}@'${prevDateTime}'@' \
+              | sed 's@{{ExperimentDirectory}}@'${ExperimentDirectory}'@' \
+             `
+  set dir1 = `echo "${ensPbDir1}" \
+              | sed 's@{{prevDateTime}}@'${prevDateTime}'@'\
+             `
+
+  # substitute Jb members for 4d
+  
+  setenv myCommand "${substituteEnsembleBTemplate_4d} ${dir0} ${dir1} ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate1}.nc ${thisISO8601Date1} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${thisISO8601Date} ${ensPbFilePrefix}.${thisMPASFileDate3}.nc ${thisISO8601Date3} ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $SelfExclusion"
+
+  echo "$myCommand"
+
+  ${myCommand}
+
+  if ($status != 0) then
+    echo "$0 (ERROR): failed to substitute ${enspbmemsed}" > ./FAIL
+    exit 1
+  endif
+
+endif #4denvar
+
 rm $yamlFiles
 
 
@@ -390,12 +430,21 @@ while ( $member <= ${nMembers} )
 
   # Link bg from StateDirs
   # ======================
-  set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
+  set bgFileOther = ${other}/${self_StatePrefix}.*.nc
   set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
   rm ${bgFile}${OrigFileSuffix} ${bgFile}
   ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
-  ln -sfv ${bgFileOther} ${bgFile}
+  #ln -sfv ${bgFileOther} ${bgFile}
+
+  # Loop over background files
+  foreach bgFile ( `ls -d $bgFileOther`)
+    set temp_file = `echo $bgFile | sed 's:.*/::'`
+    set bgFileDate = `echo ${temp_file} | cut -c 9-27`
+    ln -sfv $bgFile ${bg}/${BGFilePrefix}.${bgFileDate}.nc
+  end
+
+  set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
   # determine analysis output precision
   ncdump -h ${bgFile} | grep uReconstruct | grep double
@@ -414,6 +463,16 @@ while ( $member <= ${nMembers} )
   # use the member-specific background as the TemplateFieldsFileOuter for this member
   rm ${TemplateFieldsFileOuter}${memSuffix}
   ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
+
+  # Loop over background files and set as the TemplateFieldsFileOuter for this member for each time
+  foreach bgFile (`ls -d ${bg}/*.nc`)
+    set temp_file = `echo $bgFile | sed 's:.*/::'`
+    set bgFileDate = `echo ${temp_file} | cut -c 4-22`
+    ln -sfv ${bgFile} templateFields.40962.${bgFileDate}.nc${memSuffix}
+  end
+
+  set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+  #
 
   if ($nCellsOuter != $nCellsInner) then
     set tFile = ${TemplateFieldsFileInner}${memSuffix}
