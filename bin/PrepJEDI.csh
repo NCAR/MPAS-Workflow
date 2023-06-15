@@ -400,9 +400,26 @@ sed -i 's@{{HofXMeshDescriptor}}@'${outerMesh}'@' $thisYAML
 sed -i 's@{{thisValidDate}}@'${thisValidDate}'@g' $thisYAML
 sed -i 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@g' $thisYAML
 sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $thisYAML
+if ("$ArgAppType" == "variational") then
+  if ("$DAType" == "4denvar") then
+    #Date1
+    sed -i 's@{{thisISO8601Date1}}@'${thisISO8601Date1}'@g' $thisYAML
+    sed -i 's@{{thisMPASFileDate1}}@'${thisMPASFileDate1}'@g' $thisYAML
+    #Date3
+    sed -i 's@{{thisISO8601Date3}}@'${thisISO8601Date3}'@g' $thisYAML
+    sed -i 's@{{thisMPASFileDate3}}@'${thisMPASFileDate3}'@g' $thisYAML
+  endif
+endif
 
 # window length
 sed -i 's@{{windowLength}}@PT'${ArgWindowHR}'H@g' $thisYAML
+
+if ("$ArgAppType" == "variational") then
+  if ("$DAType" == "4denvar") then
+    # subwindow length
+    sed -i 's@{{subwindowLength}}@PT'${subwindow}'H@g' $thisYAML
+  endif
+endif
 
 # window beginning
 sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
