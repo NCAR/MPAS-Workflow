@@ -46,3 +46,9 @@ firstbackground:
           directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/EnsFCFirstCycle/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/{:02d}"
+
+      GFS_4DEnVAR:
+        common:
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
+        120km:
+          directory: "/glade/scratch/nystrom/pandac/nystrom_3denvar-60-iter_O120km/CyclingFC/{{FirstCycleDate}}"
