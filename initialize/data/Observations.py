@@ -22,7 +22,7 @@ benchmarkObservations = [
   # anchor
   'aircraft',
   'gnssrorefncep',
-  'gnssrobndropp1d',
+#  'gnssrobndropp1d',
   'satwind',
   'satwnd',
   'sfc',
