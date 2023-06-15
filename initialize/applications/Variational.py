@@ -30,7 +30,7 @@ class Variational(Component):
 
   requiredVariables = {
     ## DAType [Required Parameter]
-    'DAType': [str, ['3dvar', '3denvar', '3dhybrid']],
+    'DAType': [str, ['3dvar', '3denvar', '3dhybrid', '4denvar']],
   }
 
   optionalVariables = {
@@ -142,7 +142,10 @@ class Variational(Component):
 
     ## post
     # list of tasks for Post
-    'post': [['verifyobs'], list]
+    'post': [['verifyobs'], list],
+
+    ## 4denvar
+    'subwindow': [3, float],
   }
 
   def __init__(self,
@@ -196,7 +199,7 @@ class Variational(Component):
       self._set('MinimizerAlgorithm', 'DRPLanczos')
 
     # ensemble
-    if DAType == '3denvar' or DAType == '3dhybrid':
+    if DAType == '3denvar' or DAType == '3dhybrid' or DAType == '4denvar':
       # localization
       r1 = 'ensemble.localization'
       r2 = meshes['Ensemble'].name
