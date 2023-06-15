@@ -1,0 +1,22 @@
+experiment:
+  name: '3denvar_6h_OIE120km_VarBC'
+workflow:
+  first cycle point: 20180415T00
+  final cycle point: 20180422T00
+observations:
+  resource: PANDACArchiveForVarBC
+members:
+  n: 1
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+firstbackground:
+  resource: "PANDAC.GFS_4DEnVAR"
+externalanalyses:
+  resource: "GFS.PANDAC"
+variational:
+  DAType: 3denvar
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS_4DEnVar"
