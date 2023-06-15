@@ -152,5 +152,5 @@
       name: reject
   - filter: Gaussian_Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
-  - filter: GOMsaver
-    filename: {{OutDBDir}}/{{geoPrefix}}_iasi_metop-c.nc4
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}/{{geoPrefix}}_iasi_metop-c.nc4
