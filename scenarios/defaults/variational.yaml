@@ -82,6 +82,13 @@ variational:
             memberPrefix: mem
             memberNDigits: 3
 
+        GEFS_4DEnVar:
+          120km:
+            maxMembers: 20
+            directory0: '/glade/scratch/nystrom/pandac/nystrom_eda_3denvar-60-iter_NMEM20_RTPP0.8_SelfExclusion_O120km/CyclingFC/{{prevDateTime}}'
+            memberPrefix: mem
+            memberNDigits: 3
+
             # the settings above produce the following yaml template:
             #members from template:
             #  template:
@@ -249,6 +256,12 @@ variational:
           PEPerNode: 32
           memory: 45GB
           baseSeconds: 300
+        4denvar:
+          nodes: 12
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 10
         ensemble:
           3denvar:
             nodesPerMember: 3
