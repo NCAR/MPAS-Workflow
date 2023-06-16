@@ -11,7 +11,7 @@ forecast:
       nodes: 8
       PEPerNode: 32
       baseSeconds: 60
-      secondsPerForecastHR: 150
+      secondsPerForecastHR: 80
 
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -19,7 +19,7 @@ externalanalyses:
     GFS:
       PANDAC: # only available 20180418T00-20180524T00
         30km:
-          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/GFSAnaAndDiagnostics"
+          directory: "/glade/p/mmm/parc/liuz/pandac_common/fixed_input/30km/GFSAnaAndDiagnostics"
 members:
   n: 1
 
@@ -49,11 +49,11 @@ variational:
           nodes: 6
           PEPerNode: 32
           memory: 109GB
-          baseSeconds: 700
-          secondsPerEnVarMember: 20
+          baseSeconds: 600
+          secondsPerEnVarMember: 8
 
 workflow:
   first cycle point: 20180414T18
-  #restart cycle point: 20180418T00
+  #restart cycle point: 20180415T00
   final cycle point: 20180415T06
   #final cycle point: 20180514T18
