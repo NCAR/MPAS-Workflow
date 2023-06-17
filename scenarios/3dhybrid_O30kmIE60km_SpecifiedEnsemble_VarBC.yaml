@@ -9,7 +9,7 @@ forecast:
   job:
     30km:
       nodes: 8
-      PEPerNode: 32
+      PEPerNode: 36
       baseSeconds: 60
       secondsPerForecastHR: 80
 
