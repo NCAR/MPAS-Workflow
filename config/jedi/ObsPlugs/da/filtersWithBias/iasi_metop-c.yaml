@@ -159,7 +159,7 @@
     minvalue: 1.0e-12
     action:
       name: reject
-  - filter: Gaussian_Thinning
-    horizontal_mesh: {{RADTHINDISTANCE}}
-  - filter: GOMsaver
-    filename: {{OutDBDir}}/{{geoPrefix}}_iasi_metop-c.nc4
+#  - filter: Gaussian_Thinning # assimilate already thinned iasi data
+#    horizontal_mesh: {{RADTHINDISTANCE}}
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}/{{geoPrefix}}_iasi_metop-c.nc4
