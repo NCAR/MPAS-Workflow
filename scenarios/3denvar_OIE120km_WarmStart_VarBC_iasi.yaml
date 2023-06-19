@@ -39,8 +39,22 @@ variational:
     iasi_metop-a,
     iasi_metop-b,
   ]
+  #execute: False # the default is True
+  #post: [] # this turns off verifyobs
+forecast:
+  #execute: False # the default is True
+  #post: [] # use this when doing extended forecast
+  post: [verifymodel] # this turns off verifyobs
+#extendedforecast:
+#  meanTimes: T00 # T00, T12
+#  lengthHR: 120
+#  outIntervalHR: 24
+#  execute: True # this is the default setting
+#  post: [verifymodel,verifyobs] # can be replaced by [verifyobs,verifymodel]
 workflow:
   first cycle point: 20180424T06
   #restart cycle point: 20180429T00
   final cycle point: 20180424T18
   #final cycle point: 20180514T18
+  #CyclingWindowHR: 24 # default is 6 for cycling DA
+  #max active cycle points: 4 # used for independent 'extendedforecast'
