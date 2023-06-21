@@ -1,0 +1,69 @@
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180418T00
+  final cycle point:   20180415T00
+  #final cycle point: 20180514T18
+build:
+  mpas bundle: /glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP_23March2023/build
+observations:
+  resource: PANDACArchive
+  resources:
+    PANDACArchive:
+#      instrumentsAllowingBiasCorrection:
+#      - abi_g16
+#      - ahi_himawari8
+      IODADirectory:
+        da:
+          ## abi
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+          ## ahi
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_const-bias-correct
+        hofx:
+          ## abi
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+          ## ahi
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_const-bias-correct
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15
+#  initialVARBCcoeff: /glade/scratch/ivette/pandac/ivette_3denvar_OIE120km_WarmStart_ABIAHI_10AUG2022_SUPEROBBING59_VarBC_2022ABI_2022AHI/CyclingDA/2018051418/dbOut
+#  fixedTlapmeanCov: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/new_20220816/2022ABI_2022AHI
+experiment:
+  name: '3denvar_O30kmI60km_WarmStart_ABIAHI_channel13'
+members:
+  n: 1
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+variational:
+  DAType: 3denvar
+  ensemble:
+    forecasts:
+      resource: "PANDAC.EDA"
+  nInnerIterations: [60,]
+  biasCorrection: True
+  observers: [
+    aircraft,
+    gnssroref,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    mhs_n18,
+    mhs_n19,
+    mhs_metop-a,
+    mhs_metop-b,
+    abi_g16,
+    ahi_himawari8,
+  ]

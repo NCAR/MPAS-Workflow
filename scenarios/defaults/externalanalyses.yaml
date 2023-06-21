@@ -27,7 +27,7 @@ externalanalyses:
         # job settings for "Get*AnalysisFrom*" tasks
         GetAnalysisFrom:
           # cylc retry string
-          retry: '0*PT5S'
+          retry: '2*PT5S'
 
     GFS:
       PANDAC: # only available 20180415T00-20180525T00

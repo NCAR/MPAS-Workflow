@@ -4,6 +4,15 @@
     - variable:
         name: MetaData/sensorZenithAngle
       maxvalue: 65.0
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 7,11-16
+    where:
+    - variable:
+        name: water_area_fraction@GeoVaLs
+      minvalue: 1.0
+    <<: *multiIterationFilter
   - filter: Perform Action
     filter variables:
     - name: brightnessTemperature
@@ -36,11 +45,16 @@
 ## 60 km, no bias correction - copy of 120km
         <<: *abi_g16_SymmCldFits15X15-120km
       _symmetric cld fits 15X15-30km: &abi_g16_SymmCldFits15X15-30km
+## 30 km, constant bias correction, first round of errors
+        x0: [0, 0, 0, 0, 0, 4, 0, 0, 0, 0]
+        x1: [21.31, 12.13, 14.29, 16.02, 25.55, 30.95, 27.48, 27.86, 26.91, 22.5]
+        err0: [1.04, 0.37, 0.41, 0.46, 0.77, -2.98, 0.87, 0.9, 0.78, 0.56]
+        err1: [23.56, 15.13, 17.74, 19.54, 28.87, 21.97, 31.3, 31.63, 31.02, 25.98]
 ## 30 km, no bias correction
-        x0: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0]
-        x1: [30.05, 29.09, 24.19, 32.35, 11.59, 39.3, 15.35, 21.21, 28.32, 29.77]
-        err0: [2.18, 2.06, 1.35, 3.10, 1.62, 4.11, 1.54, 1.33, 1.77, 1.94]
-        err1: [28.22, 27.64, 22.93, 21.59, 14.68, 19.97, 17.25, 17.77, 25.72, 27.92]
+#        x0: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0]
+#        x1: [30.05, 29.09, 24.19, 32.35, 11.59, 39.3, 15.35, 21.21, 28.32, 29.77]
+#        err0: [2.18, 2.06, 1.35, 3.10, 1.62, 4.11, 1.54, 1.33, 1.77, 1.94]
+#        err1: [28.22, 27.64, 22.93, 21.59, 14.68, 19.97, 17.25, 17.77, 25.72, 27.92]
       error function:
         name: ObsFunction/ObsErrorModelRamp
         channels: *abi_channels

@@ -12,7 +12,7 @@ initic:
       PEPerNode: 36
 
       # cylc retry string
-      retry: '0*PT30S'
+      retry: '3*PT30S'
 
     30km:
       seconds: 320

@@ -8,7 +8,7 @@ hofx:
       memory: 109GB
 
       # cylc retry string
-      retry: '0*PT30S'
+      retry: '3*PT30S'
 
     #{{outerMesh}}:
     #  seconds: int

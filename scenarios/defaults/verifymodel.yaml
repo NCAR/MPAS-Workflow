@@ -6,7 +6,7 @@ verifymodel:
       secondsPerMember: 500
 
       # cylc retry string
-      retry: '0*PT30S'
+      retry: '2*PT30S'
 
     #{{outerMesh}}:
     #  seconds: int
