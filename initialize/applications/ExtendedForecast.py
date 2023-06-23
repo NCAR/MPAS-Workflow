@@ -170,7 +170,7 @@ class ExtendedForecast(Component):
       self.fc.mesh.name,
       True,
       False,
-      False,
+      True,
       self.workDir+'/{{thisCycleDate}}/mean',
       meanInternalAnaIC.directory(),
       meanInternalAnaIC.prefix(),
