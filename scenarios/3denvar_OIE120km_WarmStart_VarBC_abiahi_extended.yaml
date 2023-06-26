@@ -1,3 +1,12 @@
+extendedforecast:
+  meanTimes: T00,T12 # uncomment to enable extended forecast verification
+  lengthHR: 120
+  outIntervalHR: 24
+  #execute: False # uncomment if forecasts are already completed
+
+  # optionally enable extended forecast post (requires meanTimes to be set)
+  post: [verifyobs, verifymodel]
+
 observations:
   resource: PANDACArchiveForVarBC
   resources:
@@ -28,7 +37,10 @@ firstbackground:
   resource: "PANDAC.GFS"
 externalanalyses:
   resource: "GFS.PANDAC"
+forecast:
+  execute: False
 variational:
+  execute: False
   DAType: 3denvar
   biasCorrection: True
   ensemble:
