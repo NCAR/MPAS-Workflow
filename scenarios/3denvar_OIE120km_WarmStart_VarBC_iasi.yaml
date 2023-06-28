@@ -1,7 +1,7 @@
 observations:
   resource: PANDACArchiveForVarBC
 experiment:
-  suffix: '_VarBC'
+  name: '3denvar-60-iter_O120km_VarBC_iasi'
 members:
   n: 1
 model:
@@ -18,6 +18,27 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS"
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    #gnssrobndropp1d,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    mhs_metop-a,
+    mhs_metop-b,
+    mhs_n18,
+    mhs_n19,
+    iasi_metop-a,
+    iasi_metop-b,
+  ]
   #execute: False # the default is True
   #post: [] # this turns off verifyobs
 forecast:
@@ -31,9 +52,9 @@ forecast:
 #  execute: True # this is the default setting
 #  post: [verifymodel,verifyobs] # can be replaced by [verifyobs,verifymodel]
 workflow:
-  first cycle point: 20180414T18
-  #restart cycle point: 20180418T00
-  final cycle point: 20180415T06
+  first cycle point: 20180424T06
+  #restart cycle point: 20180429T00
+  final cycle point: 20180424T18
   #final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'

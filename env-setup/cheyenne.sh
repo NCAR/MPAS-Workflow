@@ -1,9 +1,9 @@
 #!/bin/bash -f
 
 # Use deactivate to remove NPL from environment if it is activated
-type deactivate >& /dev/null
+type conda >& /dev/null
 if [ $? -eq 0 ]; then
-  deactivate
+  conda deactivate
 fi
 
 source /etc/profile.d/modules.sh

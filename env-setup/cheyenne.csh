@@ -1,9 +1,9 @@
 #!/bin/tcsh -f
 
 # Use deactivate to remove NPL from environment if it is activated
-which deactivate >& /dev/null
+which conda >& /dev/null
 if ($? == 0) then
-  deactivate
+  conda deactivate
 endif
 
 source /etc/profile.d/modules.csh
