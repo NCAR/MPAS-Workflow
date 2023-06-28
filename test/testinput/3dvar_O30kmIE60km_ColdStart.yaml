@@ -3,6 +3,12 @@ externalanalyses:
 experiment:
   name: '3dvar_O30kmIE60km_ColdStart_TEST'
 forecast:
+  job:
+    30km:
+      nodes: 8
+      PEPerNode: 32 # the default is 36 now, but no partition file for 288 core in Duda's directory
+      baseSeconds: 60
+      secondsPerForecastHR: 120
   post: [verifyobs, verifymodel]
 hpc:
   CriticalQueue: economy

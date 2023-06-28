@@ -22,6 +22,12 @@ model:
 externalanalyses:
   resource: "GFS.RDA"
 forecast:
+  job:
+    30km:
+      nodes: 8
+      PEPerNode: 32 # the default is 36 now, but no partition file for 288 core in Duda's directory
+      baseSeconds: 60
+      secondsPerForecastHR: 120
   post: []
 variational:
   DAType: 3dvar
