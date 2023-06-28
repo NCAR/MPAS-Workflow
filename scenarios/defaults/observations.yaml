@@ -133,17 +133,17 @@ observations:
           mhs_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
 
           ## abi
-          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPEROB59X59_no-bias-correct
-          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPERO59X59_no-bias-correct
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
 
           ## ahi
-          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/ioda-v3/IODANC_SUPEROB101X101_no-bias-correct
-          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/ioda-v3/IODANC_SUPEROB101X101_no-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
 
           ## iasi
-          iasi_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/1h
-          iasi_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/1h
-          iasi_metop-c: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/1h
+          iasi_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+          iasi_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+          iasi_metop-c: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
 
         hofx:
           ## anchor
@@ -179,21 +179,21 @@ observations:
           mhs_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
 
           ## abi
-          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPEROB59X59_no-bias-correct
-          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/ioda-v3/IODANC_THIN15KM_SUPERO59X59_no-bias-correct
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
 
           ## ahi
-          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/ioda-v3/IODANC_SUPEROB101X101_no-bias-correct
-          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/ioda-v3/IODANC_SUPEROB101X101_no-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
 
           ## iasi
-          iasi_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/1h
-          iasi_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/1h
-          iasi_metop-c: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/1h
+          iasi_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+          iasi_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+          iasi_metop-c: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
 
       IODASuperObGrid:
-        abi_g16: 59X59
-        ahi_himawari8: 101X101
+        abi_g16: 15X15
+        ahi_himawari8: 15X15
 
     PANDACArchiveForVarBC:
       PrepareObservationsTasks: [ObsReady__]
@@ -273,12 +273,12 @@ observations:
           mhs_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
 
           ## abi
-          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB59X59_no-bias-correct
-          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPERO59X59_no-bias-correct
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
 
           ## ahi
-          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB101X101_no-bias-correct
-          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB101X101_no-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
 
           ## iasi
           iasi_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi_thin145km
@@ -287,45 +287,45 @@ observations:
 
         hofx:
           ## anchor
-          aircraft: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          gnssrobndropp1d: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          gnssrobndnbam: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          gnssrobndmo: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          gnssrobndmo-nopseudo: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          gnssrorefncep: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          gnssrorefncep_tunedErrors: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          satwind: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
+          aircraft: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndropp1d: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndnbam: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndmo: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndmo-nopseudo: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrorefncep: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrorefncep_tunedErrors: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          satwind: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
           satwnd: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          sfc: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          sondes: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
+          sfc: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          sondes: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
 
           ## amsua
-          amsua_aqua: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          amsua_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          amsua_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          amsua_n15: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          amsua_n18: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          amsua_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          amsua-cld_aqua: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          amsua-cld_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          amsua-cld_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          amsua-cld_n15: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          amsua-cld_n18: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          amsua-cld_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
+          amsua_aqua: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua_n15: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua_n18: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_aqua: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_n15: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_n18: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
 
           ## mhs
-          mhs_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
-          mhs_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
-          mhs_n18: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
-          mhs_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          mhs_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          mhs_metop-b: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          mhs_n18: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          mhs_n19: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
 
           ## abi
-          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPERO15X15_const-bias-correct
 
           ## ahi
-          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
-          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_const-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_const-bias-correct
 
           ## iasi
           iasi_metop-a: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi_thin145km
