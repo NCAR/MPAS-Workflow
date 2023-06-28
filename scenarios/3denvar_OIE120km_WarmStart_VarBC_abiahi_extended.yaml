@@ -1,5 +1,5 @@
 extendedforecast:
-  meanTimes: T00,T12 # uncomment to enable extended forecast verification
+  meanTimes: T00 #,T12 # uncomment to enable extended forecast verification
   lengthHR: 120
   outIntervalHR: 24
   #execute: False # uncomment if forecasts are already completed
@@ -26,7 +26,7 @@ observations:
         abi_g16: 15X15
         ahi_himawari8: 15X15
 experiment:
-  suffix: '_VarBC_gnssrobndropp1d'
+  suffix: '_VarBC_ABIAHI_channel13'
 members:
   n: 1
 model:
@@ -48,8 +48,8 @@ variational:
       resource: "PANDAC.GEFS"
   observers: [
     aircraft,
-#    gnssrorefncep,
-    gnssrobndropp1d,
+    gnssrorefncep,
+#    gnssrobndropp1d,
     satwind,
     satwnd,
     sfc,
@@ -64,8 +64,8 @@ variational:
     mhs_metop-b,
     mhs_n18,
     mhs_n19,
-#    abi_g16,
-#    ahi_himawari8,
+    abi_g16,
+    ahi_himawari8,
   ]
 #  # resource requirements
   job:
@@ -82,4 +82,4 @@ workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180415T06
   final cycle point: 20180514T18
-  max active cycle points: 60
+  max active cycle points: 10

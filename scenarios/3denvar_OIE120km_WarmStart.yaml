@@ -18,4 +18,8 @@ variational:
 workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180418T00
-  final cycle point: 20180415T06
+  final cycle point: 20180415T00
+build:
+  mpas bundle: /glade/p/mmm/parc/ivette/pandac/codeBuild/build_flexible_state_write
+experiment:
+  name: 'test_flexible_state_write'

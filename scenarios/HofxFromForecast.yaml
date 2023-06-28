@@ -1,0 +1,52 @@
+#suite: HofxFromForecast
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180514T18
+  max active cycle points: 60
+observations:
+  resource: PANDACArchive
+  resources:
+    PANDACArchive:
+      IODADirectory:
+        hofx:
+          ## abi
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+          ## ahi
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          #IODANC_SUPEROB15X15_const-bias-correct
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15
+experiment:
+  name: 'Hofx_ABIAHI_IRwater_rawObs'
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.GFS"
+members:
+  n: 1
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+forecast:
+  execute: False
+  post: [verifyobs]
+variational:
+  DAType: 3denvar
+  execute: False
+  post: []
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
+hofx:
+  observers: [
+    abi_g16,
+    ahi_himawari8,
+  ]
+  maxIODAPoolSize: 1
+  retainObsFeedback: True
+hpc:
+  CriticalQueue: regular
+  NonCriticalQueue: regular
