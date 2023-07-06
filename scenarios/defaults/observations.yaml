@@ -220,6 +220,8 @@ observations:
       - mhs_metop-b
       - mhs_n18
       - mhs_n19
+      - abi_g16
+      - ahi_himawari8
 
       IODAPrefix:
         gnssrobndropp1d: gnssro

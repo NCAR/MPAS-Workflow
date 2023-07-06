@@ -1,23 +1,29 @@
 observations:
+  fixedTlapmeanCov: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
+  initialVARBCcoeff: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/2018
   resource: PANDACArchiveForVarBC
   resources:
     PANDACArchiveForVarBC:
       IODADirectory:
         da:
           ## abi
-          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
           ## ahi
-          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_const-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          #IODANC_SUPEROB15X15_const-bias-correct
         hofx:
           ## abi
-          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
           ## ahi
-          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_const-bias-correct
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          #IODANC_SUPEROB15X15_const-bias-correct
       IODASuperObGrid:
         abi_g16: 15X15
         ahi_himawari8: 15X15
 experiment:
-  suffix: '_VarBC_gnssrobndropp1d'
+  suffix: '_VarBC_channel13_constVarBC'
 members:
   n: 1
 model:
@@ -36,7 +42,6 @@ variational:
       resource: "PANDAC.GEFS"
   observers: [
     aircraft,
-#    gnssrorefncep,
     gnssrobndropp1d,
     satwind,
     satwnd,
@@ -52,8 +57,8 @@ variational:
     mhs_metop-b,
     mhs_n18,
     mhs_n19,
-#    abi_g16,
-#    ahi_himawari8,
+    abi_g16,
+    ahi_himawari8,
   ]
 #  # resource requirements
   job:
@@ -66,8 +71,12 @@ variational:
           memory: 109GB
           baseSeconds: 350
           secondsPerEnVarMember: 15
+hofx:
+  biasCorrection: True
+  maxIODAPoolSize: 1
+  retainObsFeedback: True
 workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180415T06
-  final cycle point: 20180514T18
-  max active cycle points: 60
+  final cycle point: 20180415T00 #20180514T18
+  #max active cycle points: 60

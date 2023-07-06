@@ -26,7 +26,7 @@ observations:
         abi_g16: 15X15
         ahi_himawari8: 15X15
 experiment:
-  suffix: '_VarBC_ABIAHI_channel13'
+  suffix: '_VarBC_gnssrobndropp1d'
 members:
   n: 1
 model:
@@ -49,7 +49,7 @@ variational:
   observers: [
     aircraft,
     gnssrorefncep,
-#    gnssrobndropp1d,
+    gnssrobndropp1d,
     satwind,
     satwnd,
     sfc,
@@ -64,8 +64,8 @@ variational:
     mhs_metop-b,
     mhs_n18,
     mhs_n19,
-    abi_g16,
-    ahi_himawari8,
+#    abi_g16,
+#    ahi_himawari8,
   ]
 #  # resource requirements
   job:

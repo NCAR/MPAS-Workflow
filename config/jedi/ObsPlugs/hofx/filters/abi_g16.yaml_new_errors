@@ -4,22 +4,19 @@
     - variable:
         name: MetaData/sensorZenithAngle
       maxvalue: 65.0
-  - filter: Gaussian Thinning
-    horizontal_mesh: {{RADTHINDISTANCE}}
   - filter: Domain Check
     filter variables:
     - name: brightnessTemperature
-      channels: 13
+      channels: 7,11-16
     where:
     - variable:
         name: water_area_fraction@GeoVaLs
       minvalue: 1.0
     <<: *multiIterationFilter
   - filter: Perform Action
-    <<: *multiIterationFilter
     filter variables:
     - name: brightnessTemperature
-      channels: *abi_g16_channels
+      channels: *abi_channels
 #  - filter: Domain Check
 #    where:
 #    - variable:
@@ -29,63 +26,39 @@
       name: assign error
       _symmetric cld fits 15X15-30km: &abi_g16_SymmCldFits15X15-30km
 ## 30 km, constant bias correction, first round of errors
-#        x0: [1.0]
-#        x1: [27.48]
-#        err0: [0.87]
-#        err1: [31.3]
-        x0: [1.0]
-        x1: [28.52]
-        err0: [0.77]
-        err1: [30.44]
+        x0: [0, 0, 0, 0, 0, 4, 0, 0, 0, 0]
+        x1: [21.31, 12.13, 14.29, 16.02, 25.55, 30.95, 27.48, 27.86, 26.91, 22.5]
+        err0: [1.04, 0.37, 0.41, 0.46, 0.77, 2.98, 0.87, 0.9, 0.78, 0.56]
+        err1: [23.56, 15.13, 17.74, 19.54, 28.87, 21.97, 31.3, 31.63, 31.02, 25.98]
       _symmetric cld fits 15X15-120km: &abi_g16_SymmCldFits15X15-120km
         <<: *abi_g16_SymmCldFits15X15-30km
       error function:
         name: ObsFunction/ObsErrorModelRamp
-        channels: *abi_g16_channels
+        channels: *abi_channels
         options:
           <<: *abi_g16_SymmCldFits{{ABISUPEROBGRID}}-{{HofXMeshDescriptor}}
-          channels: *abi_g16_channels
+          channels: *abi_channels
           xvar:
             name: ObsFunction/SymmCldImpactIR
-            channels: *abi_g16_channels
+            channels: *abi_channels
             options:
-              channels: *abi_g16_channels
-  - filter: Background Check
-    threshold: 3.0
-    <<: *multiIterationFilter
-## Ignore cloud-affected pixels in 1st iteration
-#  - filter: Domain Check
-#    <<: *multiIterationFilter
-#    filter variables:
-#    - name: brightnessTemperature
-#      channels: *abi_g16_channels
-#    where:
-#    - variable:
-##        name: MetaData/cloudAmount
-#        name: ObsFunction/SymmCldImpactIR
-#        channels: *abi_g16_channels
-#        options:
-#          channels: *abi_g16_channels
-#      maxvalue: 0.01
-#    action:
-#      name: assign error
-#      error parameter: 1000.0
+              channels: *abi_channels
   - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_abi_g16.nc4
+    filename: {{OutDBDir}}/{{geoPrefix}}_abi_g16.nc4
   - filter: YDIAGsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_abi_g16.nc4
+    filename: {{OutDBDir}}/{{diagPrefix}}_abi_g16.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
-      channels: *abi_g16_channels
+      channels: *abi_channels
     - name: weightingfunction_of_atmosphere_layer
-      channels: *abi_g16_channels
+      channels: *abi_channels
     - name: pressure_level_at_peak_of_weightingfunction
-      channels: *abi_g16_channels
+      channels: *abi_channels
     - name: brightness_temperature_jacobian_air_temperature
-      channels: *abi_g16_channels
+      channels: *abi_channels
     - name: brightness_temperature_jacobian_humidity_mixing_ratio
-      channels: *abi_g16_channels
+      channels: *abi_channels
     - name: brightness_temperature_jacobian_surface_emissivity
-      channels: *abi_g16_channels
+      channels: *abi_channels
     - name: brightness_temperature_jacobian_surface_temperature
-      channels: *abi_g16_channels
+      channels: *abi_channels

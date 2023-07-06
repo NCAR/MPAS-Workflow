@@ -215,11 +215,14 @@ class HofX(Component):
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
     [[[job]]]
       execution time limit = PT5M
-      execution retry delays = '''+job['retry']+'''
+      execution retry delays = '''+job['retry']]
+      if self['execute']:
+        self._tasks += ['''
   [['''+execute+''']]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+executeArgs+'''
-'''+task.job()+task.directives()+'''
+'''+task.job()+task.directives()]
+      self._tasks += ['''
   [['''+clean+''']]
     inherit = '''+self.tf.clean+'''
     script = $origin/bin/Clean'''+self.base+'''.csh '''+cleanArgs]
