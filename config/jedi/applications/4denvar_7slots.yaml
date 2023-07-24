@@ -1,0 +1,105 @@
+# ObsAnchors and ObsErrorAnchors are automatically prepended above this line
+_iteration: &iterationConfig
+  geometry:
+    nml_file: {{InnerNamelistFile}}
+    streams_file: {{InnerStreamsFile}}{{StreamsFileMember}}
+    deallocate non-da fields: true
+    interpolation type: unstructured
+  gradient norm reduction: 1e-3
+  #Several 'online diagnostics' are useful for checking the H correctness and Hessian symmetry
+#  online diagnostics:
+#    tlm taylor test: true
+#    tlm approx test: true
+#    adj tlm test: true
+#    adj obs test: true
+#    online adj test: true
+_member config1: &memberConfig1
+  date: &date1 {{thisISO8601Date1}}
+  state variables: &incvars [{{AnalysisVariables}}]
+  stream name: ensemble
+_member config2: &memberConfig2
+  <<: *memberConfig1
+  date: &date2 {{thisISO8601Date2}}
+_member config3: &memberConfig3
+  <<: *memberConfig1
+  date: &date3 {{thisISO8601Date3}}
+_member config4: &memberConfig4
+  <<: *memberConfig1
+  date: &date4 {{thisISO8601Date}}
+_member config5: &memberConfig5
+  <<: *memberConfig1
+  date: &date5 {{thisISO8601Date5}}
+_member config6: &memberConfig6
+  <<: *memberConfig1
+  date: &date6 {{thisISO8601Date6}}
+_member config7: &memberConfig7
+  <<: *memberConfig1
+  date: &date7 {{thisISO8601Date7}}
+output:
+  filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis
+variational:
+  minimizer:
+{{VariationalMinimizer}}
+  iterations:
+{{VariationalIterations}}
+final:
+  diagnostics:
+    departures: oman
+cost function:
+  cost type: 4D-Ens-Var
+  window begin: {{windowBegin}}
+  window length: {{windowLength}}
+  subwindow: {{subwindowLength}}
+  jb evaluation: false
+  geometry:
+    nml_file: {{OuterNamelistFile}}
+    streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
+    deallocate non-da fields: true
+    interpolation type: unstructured
+  analysis variables: *incvars
+  background:
+    states:
+    - state variables: &stvars [{{StateVariables}}]
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate1}}.nc
+      date: *date1
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate2}}.nc
+      date: *date2 
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate3}}.nc
+      date: *date3 
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
+      date: *date4 
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate5}}.nc
+      date: *date5 
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate6}}.nc
+      date: *date6 
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate7}}.nc
+      date: *date7
+  background error:
+    covariance model: ensemble
+    localization:
+      localization method: SABER
+      saber central block:
+        saber block name: BUMP_NICAS
+        active variables: *incvars
+        read:
+          io:
+            data directory: {{bumpLocDir}}
+            files prefix: {{bumpLocPrefix}}
+          drivers:
+            multivariate strategy: duplicated
+            read local nicas: true
+          model:
+            level for 2d variables: last
+{{EnsemblePbMembers}}
+{{EnsemblePbInflation}}
+  observations:
+    obs perturbations: {{ObsPerturbations}}
+    observers:
+{{Observers}}
