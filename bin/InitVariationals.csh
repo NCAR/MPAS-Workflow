@@ -348,10 +348,15 @@ if ("$DAType" == "4denvar") then
              `
 
   # substitute Jb members for 4d
-  
-  setenv myCommand "${substituteEnsembleBTemplate_4d} ${dir0} ${dir1} ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate1}.nc ${thisISO8601Date1} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${thisISO8601Date} ${ensPbFilePrefix}.${thisMPASFileDate3}.nc ${thisISO8601Date3} ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $SelfExclusion"
+  if ("$subwindow" == "3") then
+    setenv myCommand "${substituteEnsembleBTemplate_4d} ${dir0} ${dir1} ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate1}.nc ${thisISO8601Date1} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${thisISO8601Date} ${ensPbFilePrefix}.${thisMPASFileDate3}.nc ${thisISO8601Date3} ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $SelfExclusion"
+  endif
 
-  echo "$myCommand"
+  if ("$subwindow" == "1") then 
+    setenv myCommand "${substituteEnsembleBTemplate_4d_7slots} ${dir0} ${dir1} ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate1}.nc ${thisISO8601Date1} ${ensPbFilePrefix}.${thisMPASFileDate2}.nc ${thisISO8601Date2} ${ensPbFilePrefix}.${thisMPASFileDate3}.nc ${thisISO8601Date3} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${thisISO8601Date} ${ensPbFilePrefix}.${thisMPASFileDate5}.nc ${thisISO8601Date5} ${ensPbFilePrefix}.${thisMPASFileDate6}.nc ${thisISO8601Date6} ${ensPbFilePrefix}.${thisMPASFileDate7}.nc ${thisISO8601Date7} ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $SelfExclusion"
+  endif
+
+  echo "$myCommand" > ./substitute_command
 
   ${myCommand}
 
@@ -468,7 +473,9 @@ while ( $member <= ${nMembers} )
   foreach bgFile (`ls -d ${bg}/*.nc`)
     set temp_file = `echo $bgFile | sed 's:.*/::'`
     set bgFileDate = `echo ${temp_file} | cut -c 4-22`
-    ln -sfv ${bgFile} templateFields.40962.${bgFileDate}.nc${memSuffix}
+    #ln -sfv ${bgFile} templateFields.40962.${bgFileDate}.nc${memSuffix}
+    #ln -sfv ${bgFile} templateFields.163842.${bgFileDate}.nc${memSuffix}
+    ln -sfv ${bgFile} templateFields.${nCellsOuter}.${bgFileDate}.nc${memSuffix}
   end
 
   set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
@@ -483,14 +490,37 @@ while ( $member <= ${nMembers} )
     #       but dual-res EDA not working yet anyway
     cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
 
+    # Loop over times and set as the TemplateFieldsFileInner for this member for each time
+    foreach bgFile (`ls -d ${bg}/*.nc`)
+      set temp_file = `echo $bgFile | sed 's:.*/::'`
+      set bgFileDate = `echo ${temp_file} | cut -c 4-22`
+      cp -v ${localStaticFieldsFileInner} templateFields.${nCellsInner}.${bgFileDate}.nc${memSuffix}
+    end
+    set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+
+    echo "RGN: ${localStaticFieldsFileInner}" > test_inner.log
+
     # modify xtime
     # TODO: handle errors from python executions, e.g.:
     # '''
     #     import netCDF4 as nc
     # ImportError: No module named netCDF4
     # '''
-    echo "${updateXTIME} $tFile ${thisCycleDate}"
-    ${updateXTIME} $tFile ${thisCycleDate}
+    # loop over times
+    foreach tFile (`ls -d templateFields.${nCellsInner}.*.nc`)
+      set temp_file = `echo $tFile | sed 's:.*/::'`
+      set tFileDate = `echo ${temp_file} | cut -c 23-41`
+      set tyyyy = `echo ${tFileDate}| cut -c 1-4`
+      set tmm = `echo ${tFileDate}| cut -c 6-7`
+      set tdd = `echo ${tFileDate}| cut -c 9-10`
+      set thh = `echo ${tFileDate}| cut -c 12-13`
+      echo "${tFile}" >> test_inner.log
+      echo "${temp_file}" >> test_inner.log
+      echo "${tFileDate}" >> test_inner.log
+      echo "${tyyyy}${tmm}${tdd}${thh}" >> test_inner.log
+      echo "${updateXTIME} ${tFile} ${tyyyy}${tmm}${tdd}${thh}"
+      ${updateXTIME} $tFile ${tyyyy}${tmm}${tdd}${thh}
+    end
   endif
 
   if ($nCellsOuter != $nCellsEnsemble && $nCellsInner != $nCellsEnsemble) then
@@ -499,6 +529,8 @@ while ( $member <= ${nMembers} )
 
     # use localStaticFieldsFileInner as the TemplateFieldsFileInner
     cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
+
+    # Loop over times and set as the TemplateFieldsFileInner for this member for each time
 
     # modify xtime
     # TODO: handle errors from python executions, e.g.:
