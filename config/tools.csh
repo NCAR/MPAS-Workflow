@@ -16,6 +16,7 @@ set pyTools = ( \
   substituteEnsembleBMembers \
   substituteEnsembleBTemplate \
   substituteEnsembleBTemplate_4d \
+  substituteEnsembleBTemplate_4d_7slots \
   TimeFmtChange \
   updateXTIME \
 )
