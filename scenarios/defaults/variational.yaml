@@ -85,9 +85,16 @@ variational:
         GEFS_4DEnVar:
           120km:
             maxMembers: 20
-            directory0: '/glade/scratch/nystrom/pandac/nystrom_eda_3denvar-60-iter_NMEM20_RTPP0.8_SelfExclusion_O120km/CyclingFC/{{prevDateTime}}'
+            #directory0: '/glade/scratch/nystrom/pandac/nystrom_eda_3denvar-60-iter_NMEM20_RTPP0.8_SelfExclusion_O120km/CyclingFC/{{prevDateTime}}'
+            directory0: '/glade/scratch/nystrom/pandac/nystrom_eda_3denvar-60-iter_NMEM20_SelfExclusion_RTPP0.8_O120km/CyclingFC/{{prevDateTime}}'
             memberPrefix: mem
             memberNDigits: 3
+
+          60km:
+            maxMembers: 20
+            directory0: '/glade/campaign/mmm/parc/jban/pandac/EnsFC_60km/{{prevDateTime}}'
+            memberPrefix: EnsForCov
+            memberNDigits: 2
 
             # the settings above produce the following yaml template:
             #members from template:
@@ -179,6 +186,12 @@ variational:
           memory: 45GB
           baseSeconds: 1500
           secondsPerEnVarMember: 5
+        4denvar:
+          nodes: 448
+          PEPerNode: 8
+          memory: 45GB
+          baseSeconds: 1500
+          secondsPerEnVarMember: 5
         3dvar:
           nodes: 64
           PEPerNode: 8
@@ -193,10 +206,16 @@ variational:
             secondsPerEnVarMember: 10
       60km:
         3denvar:
-          nodes: 6
-          PEPerNode: 32
+          nodes: 12
+          PEPerNode: 16
           memory: 45GB
-          baseSeconds: 400
+          baseSeconds: 800
+          secondsPerEnVarMember: 9
+        4denvar:
+          nodes: 84
+          PEPerNode: 16
+          memory: 45GB
+          baseSeconds: 800
           secondsPerEnVarMember: 9
         3dhybrid:
           nodes: 6
@@ -224,6 +243,13 @@ variational:
           ##memory: 45GB
           ##baseSeconds: 200
           ##secondsPerEnVarMember: 6
+        4denvar:
+          #nodes: 12 #3 subwindow slots
+          nodes: 42 #7 subwindow slots
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 10
         3dhybrid:
           nodes: 4
           PEPerNode: 36
@@ -257,7 +283,8 @@ variational:
           memory: 45GB
           baseSeconds: 300
         4denvar:
-          nodes: 12
+          #nodes: 12 #3 subwindow slots
+          nodes: 28 #7 subwindow slots
           PEPerNode: 32
           memory: 45GB
           baseSeconds: 600
