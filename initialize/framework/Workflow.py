@@ -32,6 +32,9 @@ class Workflow(Component):
     # default submission timeout for all cylc tasks
     # note: overridden in come cylc tasks (e.g., under InitIC and ExternalAnalyses)
     'submission timeout': ['PT90M', str],
+
+    ## 4denvar
+    'subwindow': [1, int],
   }
   optionalVariables = {
     # restart cycle point is used to restart an existing suite from a previously-generated
@@ -48,6 +51,7 @@ class Workflow(Component):
 
     firstCyclePoint = self['first cycle point']
     CyclingWindowHR = self['CyclingWindowHR']
+    subwindow = self['subwindow']
 
     ## restart cycle point (optional)
     # OPTIONS: >= FirstCycleDate (see config/experiment.csh)
