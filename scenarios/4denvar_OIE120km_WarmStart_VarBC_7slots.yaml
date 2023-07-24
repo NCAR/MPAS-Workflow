@@ -1,9 +1,9 @@
 experiment:
-  name: '4denvar_6h_7slots_OIE120km_VarBC'
+  name: '4denvar_6h_7slots_OIE120km_VarBC_v2.0code'
 workflow:
   first cycle point: 20180415T00
   final cycle point: 20180501T00
-  restart cycle point: 20180422T12
+  subwindow: 1
 observations:
   resource: PANDACArchiveForVarBC
 members:
@@ -18,6 +18,7 @@ externalanalyses:
   resource: "GFS.PANDAC"
 variational:
   DAType: 4denvar
+  subwindow: 1
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS_4DEnVar"
