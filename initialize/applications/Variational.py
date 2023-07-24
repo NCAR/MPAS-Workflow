@@ -145,7 +145,7 @@ class Variational(Component):
     'post': [['verifyobs'], list],
 
     ## 4denvar
-    'subwindow': [3, float],
+    'subwindow': [1, int],
   }
 
   def __init__(self,
@@ -211,7 +211,8 @@ class Variational(Component):
         # EDA uses online ensemble updating
         self._set('ensPbMemPrefix', workflow.MemPrefix)
         self._set('ensPbMemNDigits', workflow.MemNDigits)
-        self._set('ensPbFilePrefix', 'mpasout')
+        #self._set('ensPbFilePrefix', 'mpasout')
+        self._set('ensPbFilePrefix', workflow.memberPrefix)
         self._set('ensPbDir0', '{{ExperimentDirectory}}/CyclingFC/{{prevDateTime}}')
         # TODO: replace two lines above with these when forecast includes these attributes
         #self._set('ensPbFilePrefix', forecast.outputFilePrefix)
@@ -238,7 +239,8 @@ class Variational(Component):
 
         self._set('ensPbMemPrefix', memberPrefix)
         self._set('ensPbMemNDigits', memberNDigits)
-        self._set('ensPbFilePrefix', filePrefix)
+        #self._set('ensPbFilePrefix', filePrefix)
+        self._set('ensPbFilePrefix', memberPrefix)
         self._set('ensPbDir0', directory0)
         self._set('ensPbDir1', directory1)
         ensPbNMembers = maxMembers
