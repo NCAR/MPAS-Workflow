@@ -2,7 +2,8 @@ experiment:
   name: '3denvar_6h_OIE120km_VarBC'
 workflow:
   first cycle point: 20180415T00
-  final cycle point: 20180422T00
+  final cycle point: 20180501T00
+  restart cycle point: 20180422T06
 observations:
   resource: PANDACArchiveForVarBC
 members:
