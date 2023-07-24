@@ -1,6 +1,8 @@
 workflow:
   first cycle point: 20220217T18
-  final cycle point: 20220228T00
+  #restart cycle point: 20220218T00
+  final cycle point: 20220218T06
+  #final cycle point: 20220228T00
 observations:
   resource: GladeRDAOnline
 members:
@@ -20,6 +22,12 @@ model:
 externalanalyses:
   resource: "GFS.RDA"
 forecast:
+  job:
+    30km:
+      nodes: 8
+      PEPerNode: 32 # the default is 36 now, but no partition file for 288 core in Duda's directory
+      baseSeconds: 60
+      secondsPerForecastHR: 120
   post: []
 variational:
   DAType: 3dvar

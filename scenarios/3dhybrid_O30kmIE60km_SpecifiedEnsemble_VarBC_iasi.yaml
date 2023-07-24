@@ -1,6 +1,7 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  suffix: '_ensB-SE80+RTPP70_VarBC'
+  #suffix: '_ensB-SE80+RTPP70_VarBC_iasi'
+  name: '3dhybrid_60-60-iter_O30kmI60km_ensB-SE80+RTPP70_VarBC_iasi'
 
 firstbackground:
   resource: "PANDAC.GFS"
@@ -41,6 +42,27 @@ variational:
   ensembleCovarianceWeight: 0.75
   staticCovarianceWeight: 0.25
   nInnerIterations: [60,60,]
+  observers: [
+    aircraft,
+    gnssrorefncep,
+    #gnssrobndropp1d,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    mhs_metop-a,
+    mhs_metop-b,
+    mhs_n18,
+    mhs_n19,
+    iasi_metop-a,
+    iasi_metop-b,
+  ]
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
@@ -54,15 +76,15 @@ variational:
           PEPerNode: 32
           memory: 109GB
           baseSeconds: 600
-          secondsPerEnVarMember: 8
+          secondsPerEnVarMember: 9
 
   #execute: False # the default is True
   #post: [] # this turns off verifyobs
 
 workflow:
-  first cycle point: 20180414T18
-  #restart cycle point: 20180415T00
-  final cycle point: 20180415T06
+  first cycle point: 20180424T06
+  #restart cycle point: 20180424T18
+  final cycle point: 20180424T18
   #final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'

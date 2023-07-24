@@ -1,6 +1,8 @@
 workflow:
   first cycle point: 20180414T18
-  final cycle point:   20180514T18
+  #restart cycle point: 20180418T00
+  final cycle point:   20180415T06
+  #final cycle point: 20180514T18
 
 extendedforecast:
   #meanTimes: T00  # uncomment to engage
@@ -34,6 +36,6 @@ variational:
 forecast:
   IAU: True
 hpc:
-  CriticalAccount: NMMM0013
-  NonCriticalAccount: NMMM0013
-  SingleProcAccount: NMMM0013
+  CriticalAccount: NMMM0015
+  NonCriticalAccount: NMMM0015
+  SingleProcAccount: NMMM0015

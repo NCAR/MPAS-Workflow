@@ -8,7 +8,7 @@ forecast:
       secondsPerForecastHR: 500
 
       # cylc retry string
-      retry: '2*PT30S'
+      retry: '0*PT30S'
 
     #{{outerMesh}}:
     #  baseSeconds: int
@@ -22,10 +22,10 @@ forecast:
       #baseSeconds: 60
       #secondsPerForecastHR: 120
       # more efficient
-      nodes: 4
+      nodes: 8
       PEPerNode: 36
       baseSeconds: 60
-      secondsPerForecastHR: 150
+      secondsPerForecastHR: 120
     60km:
       # faster turnaround
       #nodes: 4
@@ -33,12 +33,12 @@ forecast:
       #baseSeconds: 60
       #secondsPerForecastHR: 40
       # more efficient
-      nodes: 2
+      nodes: 4
       PEPerNode: 36
       baseSeconds: 60
-      secondsPerForecastHR: 40
+      secondsPerForecastHR: 70
     120km:
       nodes: 4
-      PEPerNode: 32
+      PEPerNode: 36
       baseSeconds: 60
-      secondsPerForecastHR: 60
+      secondsPerForecastHR: 20

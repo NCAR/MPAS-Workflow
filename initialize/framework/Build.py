@@ -16,7 +16,7 @@ class Build(Component):
   variablesWithDefaults = {
     ## mpas bundle
     # mpas-bundle build directory
-    'mpas bundle': ['/glade/p/mmm/parc/jban/pandac_common/code_230526_single/build', str],
+    'mpas bundle': ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build', str],
 
     # optional double-precision build
     #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22MAR2023', str],
@@ -24,7 +24,7 @@ class Build(Component):
     # forecast directory
     # defaults to bundle build, otherwise specify full directory
     #'forecast directory': ['bundle', str],
-    'forecast directory': ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/20230422_mpas_bundle_SP/MPAS_intelmpt', str],
+    'forecast directory': ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/MPAS_intelmpt', str],
 
     ## bundle compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
