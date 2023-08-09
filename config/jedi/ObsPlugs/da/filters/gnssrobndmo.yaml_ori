@@ -1,39 +1,10 @@
-#0 Blacklist data from some satellites
-  - filter: BlackList
-    where:
-    - variable:
-        name: MetaData/satelliteIdentifier
-      is_in: 41,265,266,267,268,421,440,724,725,726,727,728,729
-#1 gpstop
+  obs filters:
   - filter: Domain Check
-    filter variables:
-    - name: bendingAngle
     where:
     - variable:
         name: MetaData/impactHeightRO
-      minvalue: 0
-      maxvalue: 30000.1
-    action:
-      name: reject
-#2Remove MetOP/GRAS data below 8 km
-  - filter: Bounds Check
-    filter variables:
-    - name: bendingAngle
-    where:
-    - variable:
-        name: MetaData/satelliteIdentifier
-      is_in: 3-5
-    test variables:
-    - name: MetaData/impactHeightRO
-    minvalue: 8000.1
-    action:
-      name: reject      
-  - filter: Domain Check
-    where:
-#    - variable:
-#        name: MetaData/height
-#      minvalue: 0.0
-#      maxvalue: 30000.0
+      minvalue: 0.0
+      maxvalue: 30000.0
     - variable:
         name: MetaData/earthRadiusCurvature
       minvalue: 6250000.0

@@ -41,9 +41,6 @@ fields:
     mpas template field: theta
     mpas identity field: temperature
 
-  - field name: air_temperature_levels
-    mpas template field: w
-
   - field name: temperature
     mpas template field: theta
     mpas identity field: temperature
@@ -62,9 +59,6 @@ fields:
   - field name: specific_humidity
     mpas template field: theta
     mpas identity field: spechum
-
-  - field name: specific_humidity_levels
-    mpas template field: w
 
   - field name: surface_altitude
     mpas template field: u10
@@ -105,33 +99,6 @@ fields:
     mpas template field: theta
 
   - field name: mole_fraction_of_carbon_dioxide_in_air
-    mpas template field: theta
-
-  - field name: mixing_ratio_of_cloud_liquid_water
-    mpas template field: theta
-    mpas identity field: qc
-
-  - field name: mixing_ratio_of_cloud_ice
-    mpas template field: theta
-    mpas identity field: qi
-
-  - field name: mixing_ratio_of_rain
-    mpas template field: theta
-    mpas identity field: qr
-
-  - field name: mixing_ratio_of_snow
-    mpas template field: theta
-    mpas identity field: qs
-
-  - field name: mixing_ratio_of_graupel
-    mpas template field: theta
-    mpas identity field: qg
-
-  - field name: mixing_ratio_of_hail
-    mpas template field: theta
-    mpas identity field: qh
-
-  - field name: moist_air_density
     mpas template field: theta
 
   - field name: mass_content_of_cloud_liquid_water_in_atmosphere_layer
@@ -246,10 +213,6 @@ fields:
 
   - field name: tropopause_pressure
     mpas template field: u10
-
-  - field name: qv
-    mpas template field: theta
-    mpas identity field: qv
 
   - field name: qc
     mpas template field: theta

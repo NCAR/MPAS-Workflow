@@ -37,10 +37,11 @@ class HofX(Component):
       'aircraft',
       'gnssrobndropp1d',
       #'gnssrobndnbam',
-      #'gnssrobndmo',
-      #'gnssrobndmo-nopseudo',
+      'gnssrorefmetoffice',
+      'gnssrobndmo',
+      'gnssrobndmo-nopseudo',
       'gnssrorefncep',
-      #'gnssrorefncep_tunedErrors', # obs errors derived from cycling exp.
+      'gnssrorefncep_tunedErrors', # obs errors derived from cycling exp.
       'satwind',
       'satwnd',
       'sfc',

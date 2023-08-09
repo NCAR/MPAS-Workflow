@@ -1,10 +1,19 @@
 workflow:
-  first cycle point: 20220217T18
+  first cycle point: 20210122T12
   #restart cycle point: 20220218T00
-  final cycle point: 20220218T06
+  final cycle point: 20210122T18
   #final cycle point: 20220228T00
 observations:
   resource: GladeRDAOnline
+  convertToIODAObservations:
+  - 1bamua
+  - 1bmhs
+  - airsev
+  - cris
+  - gpsro
+  - mtiasi
+  - prepbufr
+  - satwnd
 members:
   n: 1
 model:
@@ -16,3 +25,5 @@ externalanalyses:
 variational:
   DAType: 3dvar
   biasCorrection: True
+experiment:
+  name: '3dvar_coldstart_test_GenerateObs'

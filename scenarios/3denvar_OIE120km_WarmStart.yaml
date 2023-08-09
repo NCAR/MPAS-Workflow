@@ -1,5 +1,14 @@
+experiment:
+  suffix: '_sondes_DP'
+build:
+  mpas bundle:/glade/p/mmm/parc/ivette/pandac/codeBuild/mpasBundle_2.0_double/build
 observations:
   resource: PANDACArchive
+  resources:
+    PANDACArchive:
+      IODADirectory:
+        da:
+          sondes: /glade/p/mmm/parc/ivette/pandac/Observations/sondes
 members:
   n: 1
 model:
@@ -15,7 +24,15 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS"
+  observers: [
+#    gnssrobndnbam,
+    sondes,
+  ]
+  post: []
+forecast:
+  deleteZerothForecast: False
+  post: [verifymodel]
 workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180418T00
-  final cycle point: 20180415T06
+  final cycle point: 20180419T18

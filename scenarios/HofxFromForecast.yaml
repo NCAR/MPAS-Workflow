@@ -1,0 +1,64 @@
+#suite: HofxFromForecast
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180514T18
+  max active cycle points: 8
+observations:
+  resource: PANDACArchive
+experiment:
+  name: 'Hofx_gnssro_30kmhybrid'
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.GFS"
+members:
+  n: 1
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+forecast:
+  execute: False
+  post: [verifyobs]
+variational:
+  DAType: 3denvar
+  execute: False
+  post: []
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
+hofx:
+  observers: [
+    aircraft,
+    gnssrobndropp1d,
+    gnssrorefmetoffice,
+    gnssrobndmo,
+    gnssrobndmo-nopseudo,
+    gnssrorefncep,
+    gnssrorefncep_tunedErrors,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    amsua-cld_aqua,
+    amsua-cld_metop-a,
+    amsua-cld_metop-b,
+    amsua-cld_n15,
+    amsua-cld_n18,
+    amsua-cld_n19,
+    mhs_n19,
+    mhs_n18,
+    mhs_metop-a,
+    mhs_metop-b,
+  ]
+  maxIODAPoolSize: 1
+  retainObsFeedback: True
+hpc:
+  CriticalQueue: regular
+  NonCriticalQueue: regular

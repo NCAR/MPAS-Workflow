@@ -281,7 +281,17 @@
           xvals: *gnssroErrorLevels
           errors: *gnssrobndropp1dSPolErrors
 
-# Inflate error for all latitudes and satellites above 16km -> factor of 1
+# Inflate error for all data above 28km -> factor of 2
+  - filter: Perform Action
+    filter variables:
+    - name: bendingAngle
+    action:
+      name: inflate error
+      inflation factor: 2.0
+    - variable: MetaData/impactHeightRO
+      minvalue: 28000.0
+      maxvalue: 30000.1
+# Inflate error for all latitudes and satellites between 16-28km -> factor of 1
   - filter: Perform Action
     filter variables:
     - name: bendingAngle
@@ -289,43 +299,38 @@
       name: inflate error
       inflation factor: 1.0
     where:
-    - variable: 
-        name: MetaData/impactHeightRO
+    - variable: MetaData/impactHeightRO
       minvalue: 16000.1
       maxvalue: 30000.1
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *maxTro
-      maxvalue: *maxSPol
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minTro
-      maxvalue: *maxNPol
-
-  - filter: Background Check
+# Inflate error for Cosmic1, Terrasar-x and Tandem-x data below 4km -> factor of 1
+  - filter: Perform Action
     filter variables:
     - name: bendingAngle
-    where:
-    - variable:
-        name: MetaData/impactHeightRO
-      minvalue: 5000.1
-      maxvalue: 30000.0
-    threshold: 3.0
     action:
-      name: reject
-    <<: *multiIterationFilter
-
-  - filter: Background Check
-    filter variables:
-    - name: bendingAngle
+      name: inflate error
+      inflation factor: 1.0
     where:
     - variable:
-        name: MetaData/impactHeightRO
+        name: MetaData/satelliteIdentifier
+      is_in: 740-745,42,43
+    - variable: MetaData/impactHeightRO
       minvalue: 0
-      maxvalue: 5000.0
-    threshold: 1.0
+      maxvalue: 4000.1
+# Inflate error for MetOP/GRAS data below 4km -> factor of 2
+  - filter: Perform Action
+    filter variables:
+    - name: bendingAngle
     action:
-      name: reject
+      name: inflate error
+      inflation factor: 2.0
+    where:
+    - variable:
+        name: MetaData/satelliteIdentifier
+      is_in: 3-5
+    - variable: MetaData/impactHeightRO
+      minvalue: 0
+      maxvalue: 4000.1
+
+  - filter: Background Check
+    threshold: 3.0
     <<: *multiIterationFilter

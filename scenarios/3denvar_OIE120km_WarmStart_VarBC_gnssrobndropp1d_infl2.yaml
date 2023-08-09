@@ -1,7 +1,7 @@
 observations:
   resource: PANDACArchiveForVarBC
 experiment:
-  suffix: '_gnssrorefncep_tunedErrors'
+  suffix: '_gnssrobndropp1d_infl3'
 members:
   n: 1
 model:
@@ -17,7 +17,7 @@ variational:
   observers: [
   # anchor
   'aircraft',
-  'gnssrorefncep_tunedErrors',
+  'gnssrobndropp1d',
   'satwind',
   'satwnd',
   'sfc',
@@ -40,6 +40,18 @@ variational:
       resource: "PANDAC.GEFS"
   #execute: False # the default is True
   post: [verifyobs] # this turns off verifyobs
+  #post: [] # this turns off verifyobs
+  job:
+    120km:
+      # Assuming 60 total inner iterations
+      120km:
+        3denvar:
+          nodes: 4
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 200
+          secondsPerEnVarMember: 30
+          retry: '3*PT30S'
 forecast:
   #execute: False # the default is True
   #post: [] # use this when doing extended forecast
@@ -50,10 +62,17 @@ forecast:
 #  outIntervalHR: 24
 #  execute: True # this is the default setting
 #  post: [verifymodel,verifyobs] # can be replaced by [verifyobs,verifymodel]
+  job:
+    120km:
+      nodes: 4
+      PEPerNode: 36
+      baseSeconds: 60
+      secondsPerForecastHR: 50
+      retry: '3*PT30S'
 workflow:
   first cycle point: 20180414T18
-  #restart cycle point: 20180418T00
+  #restart cycle point: 20180422T06
+  #final cycle point: 20180415T00 #20180514T18
   final cycle point: 20180514T18
-  #final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'

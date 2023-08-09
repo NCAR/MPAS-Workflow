@@ -47,7 +47,11 @@ class Forecast(Component):
 
     ## post
     # list of tasks for Post
-    'post': [['verifyobs', 'verifymodel'], list]
+    'post': [['verifyobs', 'verifymodel'], list],
+
+    ## deleteZerothForecast
+    # whether to delete the zero hour forecast
+    'deleteZerothForecast': [True, bool]
   }
 
   def __init__(self,
@@ -78,7 +82,9 @@ class Forecast(Component):
     ###################
 
     IAU = self['IAU']
-
+    
+    deleteZerothForecast = self['deleteZerothForecast']
+    
     window = workflow['CyclingWindowHR']
     if IAU:
       outIntervalHR = window // 2
@@ -133,7 +139,7 @@ class Forecast(Component):
         IAU,
         mesh.name,
         True,
-        True,
+        deleteZerothForecast,
         updateSea,
         self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
         warmIC[mm-1].directory(),

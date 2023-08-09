@@ -4,7 +4,7 @@ externalanalyses:
   resource: "GFS.RDA"
 
 experiment:
-  name: 'ForecastFromGFSAnalyses_ColdStart'
+  name: 'ForecastFromGFSAnalyses_ColdStart_gnssro'
   prefix: ''
 
 extendedforecast:
@@ -14,7 +14,7 @@ extendedforecast:
   #execute: False # uncomment if forecasts are already completed
   
   # optionally turn on extended forecast post
-  post: [verifymodel] #verifyobs,
+  post: [verifymodel,verifyobs]
 
 hpc:
   CriticalQueue: economy
@@ -34,7 +34,7 @@ hofx:
   retainObsFeedback: True
 
 workflow:
-  first cycle point: 20180414T18
-  restart cycle point: 20180420T18
+  first cycle point: 20180415T00
+  restart cycle point: 20180415T06
   final cycle point: 20180514T18
   max active cycle points: 4

@@ -1,0 +1,24 @@
+- obs space:
+    <<: *ObsSpace
+    name: GnssroRefMetOffice
+    _obsdatain: &ObsDataIn
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/gnssrorefmetoffice_obs_{{thisValidDate}}.h5
+    _obsdataout: &ObsDataOut
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrorefmetoffice{{ObsOutSuffix}}.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
+    simulated variables: [atmosphericRefractivity]
+  obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLoc
+  obs operator:
+    name: GnssroRefMetOffice
+    obs options:
+      vert_interp_ops: true
+      pseudo_ops: true
+      min_temp_grad: 1.0e-6
+  get values:
+    <<: *GetValues
