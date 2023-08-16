@@ -9,12 +9,12 @@ experiment:
 
 extendedforecast:
   meanTimes: T00,T06,T12,T18
-  lengthHR: 6
+  lengthHR: 0
   outIntervalHR: 6
-  #execute: False # uncomment if forecasts are already completed
+  execute: False # uncomment if forecasts are already completed
   
   # optionally turn on extended forecast post
-  post: [verifymodel,verifyobs]
+  post: [verifyobs] #verifymodel,
 
 hpc:
   CriticalQueue: economy
@@ -35,6 +35,6 @@ hofx:
 
 workflow:
   first cycle point: 20180415T00
-  restart cycle point: 20180415T06
+  #restart cycle point: 20180415T06
   final cycle point: 20180514T18
   max active cycle points: 4

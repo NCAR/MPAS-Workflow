@@ -1,0 +1,80 @@
+observations:
+  resource: PANDACArchiveForVarBC
+experiment:
+  suffix: '_gnssrobndropp1d_new_bangle_op'
+build:
+  mpas bundle: '/glade/p/mmm/parc/ivette/pandac/codeBuild/gnssro_testing/mpasBundle/build'
+members:
+  n: 1
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+variational:
+  DAType: 3denvar
+  observers: [
+  # anchor
+  'aircraft',
+  'gnssrobndropp1d',
+  'satwind',
+  'satwnd',
+  'sfc',
+  'sondes',
+  # MW satellite-based
+  'amsua_aqua',
+  'amsua_metop-a',
+  'amsua_metop-b',
+  'amsua_n15',
+  'amsua_n18',
+  'amsua_n19',
+  'mhs_metop-a',
+  'mhs_metop-b',
+  'mhs_n18',
+  'mhs_n19',
+]
+  biasCorrection: True
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
+  #execute: False # the default is True
+  post: [verifyobs] # this turns off verifyobs
+  #post: [] # this turns off verifyobs
+  job:
+    120km:
+      # Assuming 60 total inner iterations
+      120km:
+        3denvar:
+          nodes: 4
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 200
+          secondsPerEnVarMember: 30
+          retry: '3*PT30S'
+forecast:
+  #execute: False # the default is True
+  #post: [] # use this when doing extended forecast
+  post: [verifyobs,verifymodel] # this turns off verifyobs
+#extendedforecast:
+#  meanTimes: T00 # T00, T12
+#  lengthHR: 120
+#  outIntervalHR: 24
+#  execute: True # this is the default setting
+#  post: [verifymodel,verifyobs] # can be replaced by [verifyobs,verifymodel]
+  job:
+    120km:
+      nodes: 4
+      PEPerNode: 36
+      baseSeconds: 60
+      secondsPerForecastHR: 50
+      retry: '3*PT30S'
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180422T06
+  final cycle point: 20180514T18
+  #final cycle point: 20180514T18
+  #CyclingWindowHR: 24 # default is 6 for cycling DA
+  #max active cycle points: 4 # used for independent 'extendedforecast'
