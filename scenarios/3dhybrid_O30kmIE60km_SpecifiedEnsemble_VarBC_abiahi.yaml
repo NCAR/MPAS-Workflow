@@ -1,6 +1,9 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  name: 'amsua_mhs_clrsky_rawabiahi_ch8-10_ensB-SE80+RTPP70_VarBC'
+  name: 'amsua_mhs_clrsky_abiahi_rawobs_ch13_ensB-SE80+RTPP70_VarBC' #_noH2O
+
+verifyobs:
+  script directory: /glade/work/ivette/pandac/graphics/graphics_Aug2023_noCldfrac_byLats
 
 firstbackground:
   resource: "PANDAC.GFS"
@@ -54,16 +57,20 @@ observations:
         da:
           ## abi
           abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          #IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
           ## ahi
           ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          #IODANC_SUPEROB15X15_no-bias-correct
           #IODANC_SUPEROB15X15_const-bias-correct
         hofx:
           ## abi
           abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          #IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
           ## ahi
           ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          #IODANC_SUPEROB15X15_no-bias-correct
           #IODANC_SUPEROB15X15_const-bias-correct
       IODASuperObGrid:
         abi_g16: 15X15
@@ -120,3 +127,6 @@ workflow:
   #final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'
+hpc:
+  CriticalQueue: premium
+  NonCriticalQueue: premium

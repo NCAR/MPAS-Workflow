@@ -6,6 +6,15 @@
       maxvalue: 65.0
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 13
+    where:
+    - variable:
+        name: water_area_fraction@GeoVaLs
+      minvalue: 1.0
+    <<: *multiIterationFilter
   - filter: Perform Action
     <<: *multiIterationFilter
     filter variables:
@@ -41,11 +50,25 @@
         err0: [1.89, 1.8, 2.33]
         err1: [17.23, 20.12, 19.42]
       _symmetric cld fits 15X15-30km: &abi_g16_SymmCldFits15X15-30km
+## 30 km, using raw obs files - from Ivette
+        x0: [1.0]
+        x1: [28.52]
+        err0: [0.77]
+        err1: [30.44]
+#        x0: [1.0, 1.0, 1.0]
+#        x1: [11.28, 13.48, 15.53]
+#        err0: [0.48, 0.43, 0.51]
+#        err1: [15.68, 18.23, 19.01]
+## 30 km, using bias corrected files - from Ivette
+#        x0: [1.0, 1.0, 1.0]
+#        x1: [12.13, 14.29, 16.02]
+#        err0: [0.37, 0.41, 0.46]
+#        err1: [15.13, 17.74, 19.54]
 ## 30 km, no bias correction
-        x0: [1.0, 1.0, 1.0]
-        x1: [29.09, 24.19, 32.35]
-        err0: [2.06, 1.35, 3.10]
-        err1: [27.64, 22.93, 21.59]
+#        x0: [1.0, 1.0, 1.0]
+#        x1: [29.09, 24.19, 32.35]
+#        err0: [2.06, 1.35, 3.10]
+#        err1: [27.64, 22.93, 21.59]
 ## 30 km, bias correction? - from Yali Wu and Jake Liu
 #        x0: [0.4, 0.4, 0.2]
 #        x1: [11.20, 14.40, 19.40]

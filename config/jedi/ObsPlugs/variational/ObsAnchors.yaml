@@ -35,7 +35,7 @@ _cloudy crtm: &cloudyCRTMObsOperator
   Absorbers: [H2O, O3]
   Clouds: [Water, Ice, Rain, Snow, Graupel]
   linear obs operator:
-    Absorbers: [H2O]
+    Absorbers: [] #H2O IHB
     Clouds: [Water, Ice, Rain, Snow, Graupel]
   obs options:
     <<: *CRTMObsOptions
