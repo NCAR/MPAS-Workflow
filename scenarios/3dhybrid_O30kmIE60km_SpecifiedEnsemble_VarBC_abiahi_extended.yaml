@@ -1,7 +1,14 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  name: 'amsua_mhs_clrsky_abiahi_rawobs_ch13_constVarBC_ensB-SE80+RTPP70_VarBC_noH2O_noClearPixels'
+  name: 'amsua_mhs_clrsky_abiahi_rawobs_ch13_constVarBC_ensB-SE80+RTPP70_VarBC_noH2O'
 
+extendedforecast:
+  meanTimes: T00
+  lengthHR: 120
+  outIntervalHR: 24
+  execute: True
+  post: [verifyobs, verifymodel]
+  
 verifyobs:
   script directory: /glade/work/ivette/pandac/graphics/graphics_Aug2023_noCldfrac_byLats
 
@@ -30,9 +37,9 @@ forecast:
       PEPerNode: 36
       baseSeconds: 60
       secondsPerForecastHR: 80
-  execute: True # the default is True
-  #post: [] # use this when doing extended forecast
-  post: [verifyobs,verifymodel] # this turns off verifyobs,verifymodel
+  execute: False # the default is True
+  post: [] # use this when doing extended forecast
+  #post: [verifyobs] # this turns off verifyobs,verifymodel
 
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -65,8 +72,8 @@ observations:
       - mhs_metop-b
       - mhs_n18
       - mhs_n19
-      - ahi_himawari8
-      - abi_g16
+      #- ahi_himawari8
+      #- abi_g16
       IODADirectory:
         da:
           ## abi
@@ -131,16 +138,16 @@ variational:
           memory: 109GB
           baseSeconds: 800
           secondsPerEnVarMember: 8
-  execute: True # the default is True
-  post: [verifyobs] # this turns off verifyobs
+  execute: False # the default is True
+  post: [] # this turns off verifyobs
 
 workflow:
   first cycle point: 20180414T18
-  #restart cycle point: 20180415T00
+  restart cycle point: 20180418T00
   final cycle point: 20180420T00
   #final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
-  #max active cycle points: 4 # used for independent 'extendedforecast'
+  max active cycle points: 4 # used for independent 'extendedforecast'
 hpc:
   CriticalQueue: premium
   NonCriticalQueue: premium
