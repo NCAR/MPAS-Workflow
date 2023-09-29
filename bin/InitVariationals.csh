@@ -171,10 +171,13 @@ if ( "$DAType" == "3dhybrid" ) then
   sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
 endif
 
+if ( "$DAType" == "3dhybrid-allsky" ) then
+  sed -i 's@{{hybridCoefficientsDir}}@'${hybridCoefficientsDir}'@' $prevYAML
+endif
 
 # Static Jb term
 # ==============
-if ( "$DAType" == "3dvar" || "$DAType" == "3dhybrid" ) then
+if ( "$DAType" == "3dvar" || "$DAType" =~ *"3dhybrid"* ) then
   # bumpCovControlVariables
   set Variables = ($bumpCovControlVariables)
 #TODO: turn on hydrometeors in static B when applicable by uncommenting below
@@ -201,17 +204,17 @@ if ( "$DAType" == "3dvar" || "$DAType" == "3dhybrid" ) then
   sed -i 's@{{bumpCovStdDevFile}}@'${bumpCovStdDevFile}'@' $prevYAML
   sed -i 's@{{bumpCovVBalPrefix}}@'${bumpCovVBalPrefix}'@' $prevYAML
   sed -i 's@{{bumpCovVBalDir}}@'${bumpCovVBalDir}'@' $prevYAML
-endif # 3dvar || 3dhybrid
+endif # 3dvar || *"3dhybrid"*
 
 
 # Ensemble Jb term
 # ================
 
-if ( "$DAType" == "3denvar" || "$DAType" == "3dhybrid" ) then
+if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid"* ) then
   ## yaml indentation
   if ( "$DAType" == "3denvar" ) then
     set nEnsPbIndent = 4
-  else if ( "$DAType" == "3dhybrid" ) then
+  else if ( "$DAType" =~ *"3dhybrid"* ) then
     set nEnsPbIndent = 8
   endif
   set indentPb = "`${nSpaces} $nEnsPbIndent`"
@@ -282,7 +285,7 @@ end
 # Ensemble Jb term (member dependent)
 # ===================================
 
-if ( "$DAType" == "3denvar" || "$DAType" == "3dhybrid" ) then
+if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid"* ) then
   ## members
   # + pure envar: 'background error.members from template'
   # + hybrid envar: 'background error.components[iEnsemble].covariance.members from template'

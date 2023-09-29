@@ -1,0 +1,118 @@
+# ObsAnchors and ObsErrorAnchors are automatically prepended above this line
+_iteration: &iterationConfig
+  geometry:
+    nml_file: {{InnerNamelistFile}}
+    streams_file: {{InnerStreamsFile}}{{StreamsFileMember}}
+    deallocate non-da fields: true
+    interpolation type: unstructured
+  gradient norm reduction: 1e-3
+  #Several 'online diagnostics' are useful for checking the H correctness and Hessian symmetry
+#  online diagnostics:
+#    tlm taylor test: true
+#    tlm approx test: true
+#    adj tlm test: true
+#    adj obs test: true
+#    online adj test: true
+_member: &memberConfig
+  date: &analysisDate {{thisISO8601Date}}
+  state variables: &incvars [{{AnalysisVariables}}]
+  stream name: ensemble
+output:
+  filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis
+variational:
+  minimizer:
+{{VariationalMinimizer}}
+  iterations:
+{{VariationalIterations}}
+final:
+  diagnostics:
+    departures: oman
+cost function:
+  cost type: 3D-Var
+  window begin: {{windowBegin}}
+  window length: {{windowLength}}
+  jb evaluation: false
+  geometry:
+    nml_file: {{OuterNamelistFile}}
+    streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
+    deallocate non-da fields: true
+    interpolation type: unstructured
+  analysis variables: *incvars
+  background:
+    state variables: [{{StateVariables}}]
+    filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
+    date: *analysisDate
+  background error:
+    covariance model: hybrid
+    components:
+    - weight:
+        date: *analysisDate
+        stream name: control
+        filename: {{hybridCoefficientsDir}}/mpas.hyb_coef_sta2.2018-04-15_00.00.00.nc
+      covariance:
+        covariance model: SABER
+        saber central block:
+          saber block name: BUMP_NICAS
+          active variables: &ctlvars [{{bumpCovControlVariables}}]
+          read:
+            io:
+              data directory: {{bumpCovDir}}
+              files prefix: {{bumpCovPrefix}}
+            drivers:
+              multivariate strategy: univariate
+              read local nicas: true
+        saber outer blocks:
+        - saber block name: StdDev
+          read:
+            model file:
+              filename: {{bumpCovStdDevFile}}
+              date: *analysisDate
+              stream name: control
+        - saber block name: BUMP_VerticalBalance
+          read:
+            io:
+              data directory: {{bumpCovVBalDir}}
+              files prefix: {{bumpCovVBalPrefix}}
+            drivers:
+              read local sampling: true
+              read vertical balance: true
+            vertical balance:
+              vbal:
+              - balanced variable: velocity_potential
+                unbalanced variable: stream_function
+                diagonal regression: true
+              - balanced variable: temperature
+                unbalanced variable: stream_function
+              - balanced variable: surface_pressure
+                unbalanced variable: stream_function
+        linear variable change:
+          linear variable change name: Control2Analysis
+          input variables: *ctlvars
+          output variables: *incvars
+    - weight:
+        date: *analysisDate
+        stream name: control
+        filename: {{hybridCoefficientsDir}}/mpas.hyb_coef_ens2.2018-04-15_00.00.00.nc
+      covariance:
+        covariance model: ensemble
+        localization:
+          localization method: SABER
+          saber central block:
+            saber block name: BUMP_NICAS
+            active variables: *incvars
+            read:
+              io:
+                data directory: {{bumpLocDir}}
+                files prefix: {{bumpLocPrefix}}
+              drivers:
+                multivariate strategy: duplicated
+                read local nicas: true
+              model:
+                level for 2d variables: last
+{{EnsemblePbMembers}}
+{{EnsemblePbInflation}}
+  observations:
+    obs perturbations: {{ObsPerturbations}}
+    observers:
+{{Observers}}
