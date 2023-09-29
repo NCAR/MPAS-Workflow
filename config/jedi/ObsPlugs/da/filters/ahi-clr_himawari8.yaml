@@ -9,6 +9,15 @@
       maxvalue: 0.05
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 13
+    where:
+    - variable:
+        name: water_area_fraction@GeoVaLs
+      minvalue: 1.0
+    <<: *multiIterationFilter
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter

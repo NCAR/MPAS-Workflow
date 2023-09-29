@@ -25,8 +25,7 @@ class VerifyModel(Component):
   workDir = 'Verification'
   diagnosticsDir = 'diagnostic_stats/model'
   variablesWithDefaults = {
-    #'script directory': ['/glade/work/guerrett/pandac/fixed_input/graphics_10APR2023', str],
-    'script directory': ['/glade/work/ivette/pandac/graphics/graphics_Aug2023_noCldfrac_byLats', str],
+    'script directory': ['/glade/work/ivette/pandac/graphics/graphics_7SEPT2023', str],
   }
 
   def __init__(self,

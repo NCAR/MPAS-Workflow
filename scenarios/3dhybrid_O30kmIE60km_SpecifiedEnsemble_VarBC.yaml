@@ -4,7 +4,7 @@ experiment:
 
 firstbackground:
   resource: "PANDAC.GFS"
-  
+
 hofx:
   job:
       retry: '3*PT30S'
@@ -27,6 +27,7 @@ forecast:
       PEPerNode: 36
       baseSeconds: 60
       secondsPerForecastHR: 80
+
   #execute: False # the default is True
   #post: [] # use this when doing extended forecast
   post: [verifyobs,verifymodel] # this turns off verifyobs
@@ -78,6 +79,7 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
+
   observers: [
     aircraft,
     gnssrobndropp1d,
@@ -110,6 +112,7 @@ variational:
           memory: 109GB
           baseSeconds: 800
           secondsPerEnVarMember: 8
+
   #execute: False # the default is True
   post: [verifyobs] # this turns off verifyobs
 

@@ -1,0 +1,17 @@
+  obs bias:
+    input file: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/constant_bias_abiahi/satbias_abi_g16.h5
+    #output file: {{OutDBDir}}{{MemberDir}}/satbias_abi_g16.h5
+    variational bc:
+      predictors:
+      - name: constant
+    covariance:
+      minimal required obs number: 20
+      variance range: [1.0e-6, 10.]
+      step size: 1.0e-4
+      largest analysis variance: 10000.0
+      prior:
+        input file: /glade/p/mmm/parc/ivette/pandac/SATBIAS_fixed/constant_bias_abiahi/satbias_cov_abi_g16.h5
+        inflation:
+          ratio: 1.1
+          ratio for small dataset: 2.0
+      #output file: {{OutDBDir}}{{MemberDir}}/satbias_cov_abi_g16.h5

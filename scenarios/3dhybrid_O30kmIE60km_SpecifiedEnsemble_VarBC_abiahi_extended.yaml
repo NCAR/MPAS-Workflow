@@ -8,13 +8,13 @@ extendedforecast:
   outIntervalHR: 24
   execute: True
   post: [verifyobs, verifymodel]
-  
+
 verifyobs:
   script directory: /glade/work/ivette/pandac/graphics/graphics_Aug2023_noCldfrac_byLats
 
 firstbackground:
   resource: "PANDAC.GFS"
-  
+
 hofx:
   job:
       retry: '3*PT30S'

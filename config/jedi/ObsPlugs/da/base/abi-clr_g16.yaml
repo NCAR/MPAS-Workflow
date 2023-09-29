@@ -12,7 +12,7 @@
     obsdatain: *{{ObsDataIn}}
     {{ObsDataOut}}
     simulated variables: [brightnessTemperature]
-    channels: &clrabi_channels 8-10
+    channels: &clrabi_channels 13
   obs error: *ObsErrorDiagonal
   <<: *horizObsLoc
   obs operator:
