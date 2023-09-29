@@ -136,7 +136,7 @@ variational:
       bumpCovDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.NICAS_00
       bumpCovStdDevFile: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
       bumpCovVBalDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.VBAL_00
-      hybridCoefficientsDir: None
+      hybridCoefficientsDir: /glade/p/mmm/parc/liuz/pandac_hybrid/120km.allsky_hybrid
 
   # resource requirements
   job:
