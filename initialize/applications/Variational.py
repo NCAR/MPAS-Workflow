@@ -30,7 +30,7 @@ class Variational(Component):
 
   requiredVariables = {
     ## DAType [Required Parameter]
-    'DAType': [str, ['3dvar', '3denvar', '3dhybrid']],
+    'DAType': [str, ['3dvar', '3denvar', '3dhybrid', '3dhybrid-allsky']],
   }
 
   optionalVariables = {
@@ -196,7 +196,7 @@ class Variational(Component):
       self._set('MinimizerAlgorithm', 'DRPLanczos')
 
     # ensemble
-    if DAType == '3denvar' or DAType == '3dhybrid':
+    if DAType == '3denvar' or '3dhybrid' in DAType:
       # localization
       r1 = 'ensemble.localization'
       r2 = meshes['Ensemble'].name
@@ -247,7 +247,7 @@ class Variational(Component):
     self._set('ensPbNMembers', ensPbNMembers)
 
     # covariance
-    if DAType == '3dvar' or DAType == '3dhybrid':
+    if DAType == '3dvar' or '3dhybrid' in DAType:
       r = meshes['Inner'].name
       self._setOrDie('covariance.bumpCovControlVariables', list, None, 'bumpCovControlVariables')
       self._setOrDie('covariance.bumpCovPrefix', str, None, 'bumpCovPrefix')
@@ -255,6 +255,7 @@ class Variational(Component):
       self._setOrDie('.'.join(['covariance', r, 'bumpCovDir']), str, None, 'bumpCovDir')
       self._setOrDie('.'.join(['covariance', r, 'bumpCovStdDevFile']), str, None, 'bumpCovStdDevFile')
       self._setOrDie('.'.join(['covariance', r, 'bumpCovVBalDir']), str, None, 'bumpCovVBalDir')
+      self._setOrDie('.'.join(['covariance', r, 'hybridCoefficientsDir']), str, None, 'hybridCoefficientsDir')
 
     self._cshVars = list(self._vtable.keys())
 
