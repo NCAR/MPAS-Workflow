@@ -35,7 +35,9 @@ observations:
         ahi_himawari8: 15X15
 
 variational:
-  DAType: 3dhybrid-allsky
+  DAType: 3dhybrid
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
   nInnerIterations: [60,60,]
   ensemble:
     forecasts:
