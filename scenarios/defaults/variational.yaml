@@ -82,13 +82,19 @@ variational:
             memberPrefix: mem
             memberNDigits: 3
 
+        GEFS_4DEnVar_80mem:
+          60km:
+            maxMembers: 80
+            directory0: '/glade/scratch/nystrom/pandac/80mem_60km_eda_ens/CyclingFC/{{prevDateTime}}'
+            memberPrefix: mem
+            memberNDigits: 3
+
         GEFS_4DEnVar:
           120km:
             maxMembers: 20
-            #directory0: '/glade/scratch/nystrom/pandac/nystrom_eda_3denvar-60-iter_NMEM20_RTPP0.8_SelfExclusion_O120km/CyclingFC/{{prevDateTime}}'
-            directory0: '/glade/scratch/nystrom/pandac/nystrom_eda_3denvar-60-iter_NMEM20_SelfExclusion_RTPP0.8_O120km/CyclingFC/{{prevDateTime}}'
-            memberPrefix: mem
-            memberNDigits: 3
+            directory0: '/glade/p/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
+            memberPrefix: EnsForCov
+            memberNDigits: 2
 
           60km:
             maxMembers: 20
@@ -115,8 +121,10 @@ variational:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
       60km:
+        #bumpLocPrefix: bumploc_1200.0km_6.0km
+        #bumpLocDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.bumploc.duplicated.limited.1200km6km
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.bumploc.duplicated.limited.1200km6km
+        bumpLocDir: /glade/scratch/nystrom/pandac/60km.bumploc.duplicated.limited
       120km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.bumploc.duplicated.limited.1200km6km
@@ -211,12 +219,30 @@ variational:
           memory: 45GB
           baseSeconds: 800
           secondsPerEnVarMember: 9
+        #4denvar:
+        #  nodes: 84
+        #  PEPerNode: 16
+        #  memory: 45GB
+        #  baseSeconds: 800
+        #  secondsPerEnVarMember: 20
+        #4denvar:
+        #  nodes: 84
+        #  PEPerNode: 16
+        #  memory: 45GB
+        #  baseSeconds: 800
+        #  secondsPerEnVarMember: 9
         4denvar:
-          nodes: 84
-          PEPerNode: 16
+          nodes: 63
+          PEPerNode: 24
           memory: 45GB
           baseSeconds: 800
-          secondsPerEnVarMember: 9
+          secondsPerEnVarMember: 24
+        #4denvar:
+        #  nodes: 42
+        #  PEPerNode: 32
+        #  memory: 45GB
+        #  baseSeconds: 800
+        #  secondsPerEnVarMember: 9
         3dhybrid:
           nodes: 6
           PEPerNode: 32
