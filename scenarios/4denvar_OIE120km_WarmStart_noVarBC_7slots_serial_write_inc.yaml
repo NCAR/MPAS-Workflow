@@ -1,0 +1,26 @@
+experiment:
+  name: '4denvar_6h_7slots_OIE120km_noVarBC_v2.0_serial_write_inc_test2'
+workflow:
+  first cycle point: 20180415T00
+  final cycle point: 20180415T06
+  subwindow: 1
+observations:
+  resource: PANDACArchiveForVarBC
+members:
+  n: 1
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+firstbackground:
+  resource: "PANDAC.GFS_4DEnVAR"
+externalanalyses:
+  resource: "GFS.PANDAC"
+variational:
+  DAType: 4denvar
+  nInnerIterations: [60,60,]
+#  biasCorrection: True
+  subwindow: 1
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS_4DEnVar"

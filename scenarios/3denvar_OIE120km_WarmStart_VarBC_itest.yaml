@@ -1,0 +1,41 @@
+experiment:
+  name: '3denvar_6h_OIE120km_VarBC_v2.0_myitest3'
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180422T00
+  restart cycle point: 20180416T06
+observations:
+  resource: PANDACArchiveForVarBC
+  #resource: PANDACArchiveForVarBC_4d
+members:
+  n: 1
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+firstbackground:
+  #resource: "PANDAC.GFS_4DEnVAR"
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+variational:
+  DAType: 3denvar
+  biasCorrection: True
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS_4DEnVar"
+  #ensemble:
+  #  forecasts:
+  #    resource: "PANDAC.GEFS"
+  #execute: False # the default is True
+  #post: [] # this turns off verifyobs
+#forecast:
+  #execute: False # the default is True
+  #post: [] # use this when doing extended forecast
+#  post: [verifymodel] # this turns off verifyobs
+#extendedforecast:
+#  meanTimes: T00 # T00, T12
+#  lengthHR: 120
+#  outIntervalHR: 24
+#  execute: True # this is the default setting
+#  post: [verifymodel,verifyobs] # can be replaced by [verifyobs,verifymodel]
