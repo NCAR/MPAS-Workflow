@@ -52,4 +52,4 @@ firstbackground:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
         120km:
-          directory: "/glade/scratch/nystrom/pandac/nystrom_3denvar-60-iter_O120km/CyclingFC/{{FirstCycleDate}}"
+          directory: "/glade/scratch/nystrom/pandac/120km_1stCycle_background_single/{{FirstCycleDate}}"
