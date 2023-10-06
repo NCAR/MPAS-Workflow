@@ -84,6 +84,8 @@ cost function:
   background error:
     covariance model: ensemble
     localization:
+      #communication mode: fast
+      time decay: PT3H
       localization method: SABER
       saber central block:
         saber block name: BUMP_NICAS
