@@ -1,11 +1,12 @@
 experiment:
-  name: '3denvar_6h_OIE120km_VarBC'
+  name: '3denvar_6h_OIE120km_VarBC_v2.0_mybenchmark'
 workflow:
-  first cycle point: 20180415T00
+  first cycle point: 20180414T18
   final cycle point: 20180501T00
-  restart cycle point: 20180422T06
+  #restart cycle point: 20180416T06
 observations:
   resource: PANDACArchiveForVarBC
+  #resource: PANDACArchiveForVarBC_4d
 members:
   n: 1
 model:
@@ -18,30 +19,22 @@ externalanalyses:
   resource: "GFS.PANDAC"
 variational:
   DAType: 3denvar
-  ensemble:
-    forecasts:
-      resource: "PANDAC.GEFS_4DEnVar"
   biasCorrection: True
   ensemble:
     forecasts:
-      resource: "PANDAC.GEFS"
+      resource: "PANDAC.GEFS_4DEnVar"
+  #ensemble:
+  #  forecasts:
+  #    resource: "PANDAC.GEFS"
   #execute: False # the default is True
   #post: [] # this turns off verifyobs
-forecast:
+#forecast:
   #execute: False # the default is True
   #post: [] # use this when doing extended forecast
-  post: [verifymodel] # this turns off verifyobs
+#  post: [verifymodel] # this turns off verifyobs
 #extendedforecast:
 #  meanTimes: T00 # T00, T12
 #  lengthHR: 120
 #  outIntervalHR: 24
 #  execute: True # this is the default setting
 #  post: [verifymodel,verifyobs] # can be replaced by [verifyobs,verifymodel]
-workflow:
-  first cycle point: 20180414T18
-  #restart cycle point: 20180418T00
-  final cycle point: 20180415T06
-  #final cycle point: 20180514T18
-  #CyclingWindowHR: 24 # default is 6 for cycling DA
-  #max active cycle points: 4 # used for independent 'extendedforecast'
->>>>>>> develop
