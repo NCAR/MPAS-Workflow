@@ -1,6 +1,10 @@
 _obs space: &ObsSpace
+  obs perturbations seed: 1
   io pool:
     max pool size: {{maxIODAPoolSize}}
+    write multiple files: true
+  distribution:
+    name: RoundRobin
 _obs error diagonal: &ObsErrorDiagonal
   covariance model: diagonal
 _clear crtm: &clearCRTMObsOperator
