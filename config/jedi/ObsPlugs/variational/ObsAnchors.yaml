@@ -8,6 +8,7 @@ _obs space: &ObsSpace
   obs perturbations seed: 1
   io pool:
     max pool size: {{maxIODAPoolSize}}
+    write multiple files: true
   distribution:
     name: RoundRobin
 
@@ -42,6 +43,7 @@ _cloudy crtm: &cloudyCRTMObsOperator
 
 _get values: &GetValues
   nnearest: 3
+  #linear time interpolation: true
 
 _multi iteration filter: &multiIterationFilter
   apply at iterations: 0,1,2,3,4,5
