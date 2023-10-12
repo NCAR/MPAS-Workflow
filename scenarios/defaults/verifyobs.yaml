@@ -1,8 +1,12 @@
 verifyobs:
   # resource requirements
   job:
-    # cylc retry string
-    retry: '0*PT30S'
+    defaults:
+      seconds: 2000
+      secondsPerMember: 500
+      nodes: 1
+      PEPerNode: 128
+      memory: 235GB
 
-    seconds: 1100
-    secondsPerMember: 120
+      # cylc retry string
+      retry: '0*PT30S'

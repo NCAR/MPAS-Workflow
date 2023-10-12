@@ -15,6 +15,16 @@ _as solver: &asSolver
   save posterior ensemble: true
   save posterior mean: true
 
+_as LETKF solver: &asLETKF
+  solver: GSI LETKF
+
+_as GETKF solver: &asGETKF
+  solver: GETKF
+  vertical localization: # only used by GETKF solver
+    fraction of retained variance: {{fractionofvariance}}    
+    lengthscale: {{verticalLocalizationLengthscale}}
+    lengthscale units: modellevel
+
 _letkf geometry: &3DLETKFGeometry
   iterator dimension: 3
 
@@ -46,17 +56,11 @@ observations:
 driver: *{{driver}}
 
 local ensemble DA:
-  solver: {{localEnsembleDASolver}}
-  vertical localization: # only used by GETKF solver
-    fraction of retained variance: 0.95
-    lengthscale: {{verticalLocalizationLengthscale}}
-    lengthscale units: modellevel
-
-# TODO: how do inflation settings impact result?
-#  inflation:
-#    rtps: 0.5
-#    rtpp: 0.6
-#    mult: 1.1
+  <<: *{{LocalEnKFSolver}}
+  inflation:
+    rtps: {{rtps_value}}
+    rtpp: {{rtpp_value}}
+    mult: {{mult_value}}
 
 output:
   filename: {{anStateDir}}/mem%{member}%/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc

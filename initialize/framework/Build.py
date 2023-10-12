@@ -16,7 +16,7 @@ class Build(Component):
   variablesWithDefaults = {
     ## mpas bundle
     # mpas-bundle build directory
-    'mpas bundle': ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build', str],
+    'mpas bundle': ['/glade/work/taosun/Derecho/MPAS/JEDI_MPAS/build2', str],
 
     # optional double-precision build
     #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22MAR2023', str],
@@ -24,13 +24,12 @@ class Build(Component):
     # forecast directory
     # defaults to bundle build, otherwise specify full directory
     #'forecast directory': ['bundle', str],
-    'forecast directory': ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/MPAS_intelmpt', str],
+    'forecast directory': ['/glade/work/taosun/Derecho/MPAS/JEDI_MPAS/build2', str],
 
     ## bundle compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
     # the executables described herein
-    'bundle compiler used': ['gnu-openmpi', str,
-      ['gnu-openmpi', 'intel-impi']],
+    'bundle compiler used': ['intel-cray', str],
   }
 
   def __init__(self, config:Config, model:Model=None):
@@ -62,6 +61,10 @@ class Build(Component):
     self._set('RTPPEXE', 'mpasjedi_rtpp.x')
     self._set('RTPPBuildDir', self['mpas bundle']+'/bin')
 
+    ## RTPS
+    self._set('RTPSEXE', 'mpasjedi_rtps.x')
+    self._set('RTPSBuildDir', self['mpas bundle']+'/bin')
+  
     if model is not None:
 
       # MPAS-Model
@@ -77,8 +80,8 @@ class Build(Component):
         self._set('ForecastBuildDir', self['forecast directory'])
         self._set('ForecastEXE', model['MPASCore']+'_model')
 
-      self._set('MPASLookupDir', self['mpas bundle']+'/MPAS/core_'+model['MPASCore'])
-      self._set('MPASLookupFileGlobs', ['.TBL', '.DBL', 'DATA', 'COMPATABILITY', 'VERSION'])
+      self._set('MPASLookupDir', self['mpas bundle']+'/MPAS/core_atmosphere')
+      self._set('MPASLookupFileGlobs', ['.TBL', '.DBL', 'DATA', 'VERSION'])
 
       # Alternatively, use a stand-alone single-precision build of MPAS-A with GNU-MPT
       #self._set('ForecastBuildDir', '/glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single')
@@ -104,14 +107,14 @@ class Build(Component):
     # Obs2IODA-v2
     # -----------
     self._set('obs2iodaEXE', 'obs2ioda-v2.x')
-    self._set('obs2iodaBuildDir', '/glade/p/mmm/parc/ivette/pandac/fork_obs2ioda/obs2ioda/obs2ioda-v2/src')
+    self._set('obs2iodaBuildDir', '/glade/work/taosun/Derecho/MPAS/Obs2IODA')
     self._set('iodaUpgradeEXE1', 'ioda-upgrade-v1-to-v2.x')
     self._set('iodaUpgradeEXE2', 'ioda-upgrade-v2-to-v3.x')
     self._set('iodaUpgradeBuildDir', self['mpas bundle']+'/bin')
 
     # Mean state calculator
     # ---------------------
-    self._set('meanStateExe', 'average_netcdf_files_parallel_mpas.x')
-    self._set('meanStateBuildDir', '/glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1')
+    self._set('meanStateExe', 'mpasjedi_ens_mean_variance.x')
+    self._set('meanStateBuildDir', self['mpas bundle']+'/bin')
 
     self._cshVars = list(self._vtable.keys())

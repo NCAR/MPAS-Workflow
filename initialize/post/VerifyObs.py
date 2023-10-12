@@ -26,7 +26,7 @@ class VerifyObs(Component):
   workDir = 'Verification'
   diagnosticsDir = 'diagnostic_stats/obs'
   variablesWithDefaults = {
-    'script directory': ['/glade/work/ivette/pandac/graphics/graphics_7SEPT2023', str],
+    'script directory': ['/glade/u/home/taosun/work/Derecho/MPAS/Graphics_Python', str],
   }
 
   def __init__(self,
@@ -91,8 +91,8 @@ class VerifyObs(Component):
       'seconds': {'typ': int},
       'secondsPerMember': {'typ': int},
       'nodes': {'def': 1, 'typ': int},
-      'PEPerNode': {'def': 36, 'typ': int},
-      'memory': {'def': '45GB', 'typ': str},
+      'PEPerNode': {'def': 128, 'typ': int},
+      'memory': {'def': '235GB', 'typ': str},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }

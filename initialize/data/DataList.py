@@ -11,7 +11,7 @@
 
 import collections
 
-class DataList(list, collections.MutableSequence):
+class DataList(list, collections.abc.MutableSequence):
     def __init__(self, check_method, iterator_arg=None):
         self.__check_method = check_method
         if not iterator_arg is None:

@@ -182,6 +182,11 @@ mkdir -p ${InDBDir}
 rm -r ${OutDBDir}
 mkdir -p ${OutDBDir}
 
+if ("$ArgAppType" == enkf) then
+  rm -r ${AnaDBDir}
+  mkdir -p ${AnaDBDir}
+endif
+
 date
 
 foreach instrument ($observers)

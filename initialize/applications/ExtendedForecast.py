@@ -136,7 +136,7 @@ class ExtendedForecast(Component):
     attr = {
       'seconds': {'def': 300},
       'nodes': {'def': 1, 'typ': int},
-      'PEPerNode': {'def': 36, 'typ': int},
+      'PEPerNode': {'def': 128, 'typ': int},
       'queue': {'def': self.hpc['NonCriticalQueue']},
       'account': {'def': self.hpc['NonCriticalAccount']},
     }

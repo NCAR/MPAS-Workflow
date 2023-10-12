@@ -36,7 +36,11 @@ class EnKF(Component):
     'vertical localization function': ['Gaspari Cohn', str],
     'vertical localization lengthscale': [6.e3, float],
     # GETKF
-    #'vertical localization lengthscale': [5.0, float],
+    'fractionofvariance': [0.95, float],
+    # Inflation
+    'rtps_value': ['0.95', float],
+    'rtpp_value': ['0.0', float],
+    'mult_value': ['1.0', float],
 
     ## observers
     # observation types assimilated in the enkf application
@@ -123,6 +127,7 @@ class EnKF(Component):
       assert self['localization dimension'] == '3D', ('only 3D localization is supported for GETKF')
     self._set('AppName', 'enkf')
     self._set('appyaml', 'enkf.yaml')
+    self._set('diagyaml', 'diagoma.yaml')
 
     self._set('MeshList', ['EnKF'])
     self._set('nCellsList', [meshes['Outer'].nCells])
@@ -158,7 +163,7 @@ class EnKF(Component):
       'secondsPerMember': {'t': int},
       'nodes': {'t': int},
       'PEPerNode': {'t': int},
-      'memory': {'def': '45GB', 't': str},
+      'memory': {'def': '235GB', 't': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
       'email': {'def': True, 't': bool},
@@ -186,6 +191,13 @@ class EnKF(Component):
 
     self._set('solverThreads', solverjob.get('threads'))
     self._cshVars.append('solverThreads')
+
+    # EnKFOMADiag
+    r2diagoma = meshes['Outer'].name
+    r2diagoma += '.'+solver+'.diagoma'
+    diagomajob = Resource(self._conf, attr, ('job', r2diagoma))
+    diagomajob._set('seconds', diagomajob['baseSeconds'] + diagomajob['secondsPerMember'] * NN)
+    diagomatask = TaskLookup[hpc.system](diagomajob)
 
     args = [
       0,
@@ -228,9 +240,19 @@ class EnKF(Component):
   [[EnKF]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh
-'''+solvertask.job()+solvertask.directives()]
+'''+solvertask.job()+solvertask.directives()+'''
+
+  [[EnKFDiagOMA]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnKFDiagOMA.csh
+'''+diagomatask.job()+diagomatask.directives()]
 
     self._dependencies += ['''
 
         # EnKF
         EnKFObserver => EnKF''']
+
+    self._dependencies += ['''
+
+        # EnKFDiagOMA
+        EnKF => EnKFDiagOMA''']

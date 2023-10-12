@@ -31,7 +31,7 @@ class SuiteBase():
     self._tasks = []
 
     self.logPrefix = self.__class__.__name__+': '
-    self.suiteFileName = 'suite.rc'
+    self.suiteFileName = 'flow.cylc'
   def __msg(self, text):
     print(self.logPrefix+text)
     return
@@ -60,9 +60,9 @@ class SuiteBase():
   [[BATCH]]
     # load conda + activate npl
     init-script = '''
-source /etc/profile.d/modules.sh
-module load conda/latest
-conda activate npl
+source /etc/profile.d/z00_modules.sh
+#module load conda/latest
+#conda activate npl
 '''
     # default job and directives
 """+self.c['hpc'].multitask.job()+self.c['hpc'].multitask.directives()+"""
@@ -70,9 +70,9 @@ conda activate npl
   [[SingleBatch]]
     # load conda + activate npl
     init-script = '''
-source /etc/profile.d/modules.sh
-module load conda/latest
-conda activate npl
+source /etc/profile.d/z00_modules.sh
+#module load conda/latest
+#conda activate npl
 '''
     # default job and directives
 """+self.c['hpc'].singletask.job()+self.c['hpc'].singletask.directives()+"""

@@ -3,13 +3,15 @@ enkf:
   horizontal localization lengthscale: 1.2e6
   vertical localization lengthscale: 10.0 # modellevel
   retainObsFeedback: False
+  rtpp_value: 0.8
+  rtps_value: 0.0
   post: []
 externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
   resource: "PANDAC.LaggedGEFS"
 forecast:
-  post: [verifyobs, verifymodel]
+  post: []
 hofx:
   retainObsFeedback: False
 members:
@@ -39,7 +41,7 @@ observations:
         abi_g16: 15X15
         ahi_himawari8: 15X15
 rtpp:
-  relaxationFactor: 0.8
+  relaxationFactor: 0.0
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T00

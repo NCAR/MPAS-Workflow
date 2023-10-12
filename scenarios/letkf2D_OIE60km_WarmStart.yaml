@@ -3,13 +3,16 @@ enkf:
   # resource needs are much smaller for 2D than 3D
   localization dimension: 2D
   horizontal localization lengthscale: 1.2e6
+  rtpp_value: 0.8
+  rtps_value: 0.0
+  mult_value: 1.0
   post: []
 externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
   resource: "PANDAC.LaggedGEFS"
 forecast:
-  post: [verifyobs, verifymodel]
+  post: []
 members:
   n: 20
 model:

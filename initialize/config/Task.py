@@ -52,7 +52,7 @@ class PBSPro(Task):
     unique['k'] = 'eod'
     unique['S'] = '/bin/tcsh'
 
-    if self.email: unique['m'] = 'ae'
+    if self.email: unique['m'] = 'a'
 
     flags = ''
     for f, v in unique.items():
@@ -81,10 +81,10 @@ class PBSPro(Task):
 
     return text
 
-class Cheyenne(PBSPro):
-  name = 'cheyenne'
-  maxProcPerNode = 36
+class Derecho(PBSPro):
+  name = 'derecho'
+  maxProcPerNode = 128
 
 TaskLookup = {
-  'cheyenne': Cheyenne,
+  'derecho': Derecho,
 }

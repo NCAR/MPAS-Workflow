@@ -28,8 +28,12 @@ while ( $member <= $nMembers )
       set fcFile = $CyclingFCDirs[$member]/${FCFilePrefix}.${nextFirstFileDate}.nc
       set InitialMemberFC = "$firstbackground__directoryOuter"`${memberDir} 2 $member "${firstbackground__memberFormatOuter}"`
       ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixOuter}.${nextFirstFileDate}.nc ${fcFile}${OrigFileSuffix}
-      # rm ${fcFile}
-      cp ${fcFile}${OrigFileSuffix} ${fcFile}
+      ncdump -h ${fcFile}${OrigFileSuffix} | grep uReconstruct | grep float
+      if ($status == 0) then  # Double 
+         ncpdq -5 --pck_map=dbl_flt ${fcFile}${OrigFileSuffix} ${fcFile}
+      else
+         cp ${fcFile}${OrigFileSuffix} ${fcFile}
+      endif
 
       # Inner loop mesh
       if ($nCellsOuter != $nCellsInner) then
