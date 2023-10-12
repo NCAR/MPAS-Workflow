@@ -88,7 +88,7 @@ class Run():
 
     for g in [
       "config/auto/*.csh",
-      "suite.rc",
+      "flow.cylc",
     ]:
       files = glob.glob(g)
       for file in files:
