@@ -16,10 +16,10 @@ class Build(Component):
   variablesWithDefaults = {
     ## mpas bundle
     # mpas-bundle build directory
-    'mpas bundle': ['/glade/work/taosun/Derecho/MPAS/JEDI_MPAS/build2', str],
+    'mpas bundle': ['/glade/work/taosun/Derecho/MPAS/JEDI_MPAS/build_intel', str],
 
-    # optional double-precision build
-    #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22MAR2023', str],
+    # Optional bundle built with gnu
+    # 'mpas bundle': ['/glade/work/taosun/Derecho/MPAS/JEDI_MPAS/build_gnu', str],
 
     # forecast directory
     # defaults to bundle build, otherwise specify full directory
@@ -29,7 +29,7 @@ class Build(Component):
     ## bundle compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
     # the executables described herein
-    'bundle compiler used': ['intel-cray', str],
+    'bundle compiler used': ['intel-cray', str, ['intel-cray', 'gnu-cary']],
   }
 
   def __init__(self, config:Config, model:Model=None):
