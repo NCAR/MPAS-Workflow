@@ -6,9 +6,6 @@ forecast:
   post: [verifyobs, verifymodel]
 firstbackground:
   resource: "PANDAC.GFS"
-hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
 members:
   n: 1
 model:
