@@ -4,9 +4,6 @@ externalanalyses:
   resource: "GFS.RDA"
 forecast:
   post: [verifyobs, verifymodel]
-hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
 members:
   n: 1
 model:
