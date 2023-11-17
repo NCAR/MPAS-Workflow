@@ -7,9 +7,6 @@ firstbackground:
 forecast:
   IAU: True
   post: [verifyobs, verifymodel]
-hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
 members:
   n: 1
 model:
