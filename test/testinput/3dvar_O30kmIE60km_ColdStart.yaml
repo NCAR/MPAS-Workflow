@@ -10,9 +10,6 @@ forecast:
       baseSeconds: 60
       secondsPerForecastHR: 120
   post: [verifyobs, verifymodel]
-hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
 members:
   n: 1
 model:
