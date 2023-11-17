@@ -14,9 +14,6 @@ forecast:
   post: [verifyobs, verifymodel]
 hofx:
   retainObsFeedback: False
-hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
 members:
   n: 5
 model:
