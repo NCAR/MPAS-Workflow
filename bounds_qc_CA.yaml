@@ -1,0 +1,24 @@
+
+#  Hydrometeor Check (cloud/precipitation affected chanels)
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *abi_channels
+    test variables:
+      - name: ObsFunction/ObsErrorModelRamp
+        channels: *abi_channels
+        options:
+## 30 km, no bias correction
+          x0: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0]
+          x1: [30.05, 29.09, 24.19, 32.35, 11.59, 39.3, 15.35, 21.21, 28.32, 29.77]
+          err0: [2.18, 2.06, 1.35, 3.10, 1.62, 4.11, 1.54, 1.33, 1.77, 1.94]
+          err1: [28.22, 27.64, 22.93, 21.59, 14.68, 19.97, 17.25, 17.77, 25.72, 27.92]
+          channels: *abi_channels
+          xvar:
+            name: ObsFunction/SymmCldImpactIR
+            channels: *abi_channels
+            options:
+              channels: *abi_channels
+    maxvalue: 20.0
+    action:
+      name: reject

@@ -1,0 +1,57 @@
+  obs filters:
+  - filter: Domain Check
+    where:
+    - variable:
+        name: MetaData/sensorZenithAngle
+      maxvalue: 65.0
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 7,11,13-16
+    where:
+    - variable:
+        name: water_area_fraction@GeoVaLs
+      minvalue: 1.0
+    <<: *multiIterationFilter
+#  Hydrometeor Check (cloud/precipitation affected chanels)
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *abi_channels
+    test variables:
+      - name: ObsFunction/ObsErrorModelRamp
+        channels: *abi_channels
+        options:
+## 30 km, no bias correction
+          x0: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0]
+          x1: [30.05, 29.09, 24.19, 32.35, 11.59, 39.3, 15.35, 21.21, 28.32, 29.77]
+          err0: [2.18, 2.06, 1.35, 3.10, 1.62, 4.11, 1.54, 1.33, 1.77, 1.94]
+          err1: [28.22, 27.64, 22.93, 21.59, 14.68, 19.97, 17.25, 17.77, 25.72, 27.92]
+          channels: *abi_channels
+          xvar:
+            name: ObsFunction/SymmCldImpactIR
+            channels: *abi_channels
+            options:
+              channels: *abi_channels
+    maxvalue: 20.0
+    action:
+      name: reject
+  - filter: GOMsaver
+    filename: {{OutDBDir}}/{{geoPrefix}}_abi_g16.nc4
+  - filter: YDIAGsaver
+    filename: {{OutDBDir}}/{{diagPrefix}}_abi_g16.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *abi_channels
+    - name: weightingfunction_of_atmosphere_layer
+      channels: *abi_channels
+    - name: pressure_level_at_peak_of_weightingfunction
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_air_temperature
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_humidity_mixing_ratio
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *abi_channels
+    - name: brightness_temperature_jacobian_surface_temperature
+      channels: *abi_channels

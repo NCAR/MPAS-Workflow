@@ -1,0 +1,101 @@
+# settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
+experiment:
+  name: 'Hofx_ABIAHI_IRwater_rawObs_bnd'
+
+firstbackground:
+  resource: "PANDAC.GFS"
+
+hofx:
+  job:
+      retry: '3*PT30S'
+initic:
+  job:
+      retry: '2*PT30S'
+verifymodel:
+  job:
+      retry: '3*PT30S'
+verifyobs:
+    defaults:
+      retry: '3*PT30S'
+
+forecast:
+  job:
+    defaults:
+      retry: '3*PT30S'
+  job:
+    30km:
+      nodes: 8
+      PEPerNode: 36
+      baseSeconds: 60
+      secondsPerForecastHR: 80
+
+  execute: False # the default is True
+  post: [verifyobs] # use this when doing extended forecast
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+  resources:
+    GFS:
+      PANDAC: # only available 20180418T00-20180524T00
+        30km:
+          directory: "/glade/p/mmm/parc/liuz/pandac_common/fixed_input/30km/GFSAnaAndDiagnostics"
+members:
+  n: 1
+
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+
+observations:
+  resource: PANDACArchiveForVarBC
+  resources:
+    PANDACArchiveForVarBC:
+      IODADirectory:
+        da:
+          ## abi
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          #IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+          ## ahi
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          #IODANC_SUPEROB15X15_no-bias-correct
+          #IODANC_SUPEROB15X15_const-bias-correct
+        hofx:
+          ## abi
+          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          #IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+          ## ahi
+          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          #IODANC_SUPEROB15X15_no-bias-correct
+          #IODANC_SUPEROB15X15_const-bias-correct
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15
+
+variational:
+  execute: False
+  DAType: 3dhybrid-allsky
+  biasCorrection: True
+  nInnerIterations: [60,60,]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.EDA"
+  post: []
+
+hofx:
+  observers: [
+    abi_g16,
+    ahi_himawari8,
+  ]
+workflow:
+  first cycle point: 20180419T18
+  #restart cycle point: 20180415T00
+  final cycle point: 20180420T00
+  #final cycle point: 20180514T18
+  #CyclingWindowHR: 24 # default is 6 for cycling DA
+  max active cycle points: 12 # used for independent 'extendedforecast'
+#hpc:
+#  CriticalQueue: premium
+#  NonCriticalQueue: premium

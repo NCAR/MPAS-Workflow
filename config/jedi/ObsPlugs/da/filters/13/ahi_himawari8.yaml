@@ -1,0 +1,74 @@
+  obs filters:
+  - filter: Domain Check
+    where:
+    - variable:
+        name: MetaData/sensorZenithAngle
+      maxvalue: 65.0
+  - filter: Gaussian Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 13
+    where:
+    - variable:
+        name: water_area_fraction@GeoVaLs
+      minvalue: 1.0
+    <<: *multiIterationFilter
+  - filter: Perform Action
+    <<: *multiIterationFilter
+    filter variables:
+    - name: brightnessTemperature
+      channels: *ahi_himawari8_channels
+#  - filter: Domain Check
+#    where:
+#    - variable:
+#        name: MetaData/cloudAmount
+#      minvalue: 0.05
+    action:
+      name: assign error
+      _symmetric cld fits 15X15-30km: &ahi_himawari8_SymmCldFits15X15-30km
+## 30 km, constant bias correction, first round of errors
+#        x0: [1.0]
+#        x1: [30.1]
+#        err0: [1.25]
+#        err1: [28.92]
+        x0: [1.0]
+        x1: [25.92]
+        err0: [0.9]
+        err1: [28.32]
+      _symmetric cld fits 15X15-120km: &ahi_himawari8_SymmCldFits15X15-120km
+        <<: *ahi_himawari8_SymmCldFits15X15-30km
+      error function:
+        name: ObsFunction/ObsErrorModelRamp
+        channels: *ahi_himawari8_channels
+        options:
+          <<: *ahi_himawari8_SymmCldFits{{AHISUPEROBGRID}}-{{HofXMeshDescriptor}}
+          channels: *ahi_himawari8_channels
+          xvar:
+            name: ObsFunction/SymmCldImpactIR
+            channels: *ahi_himawari8_channels
+            options:
+              channels: *ahi_himawari8_channels
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi_himawari8.nc4
+  - filter: YDIAGsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_ahi_himawari8.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *ahi_himawari8_channels
+    - name: weightingfunction_of_atmosphere_layer
+      channels: *ahi_himawari8_channels
+    - name: pressure_level_at_peak_of_weightingfunction
+      channels: *ahi_himawari8_channels
+    - name: brightness_temperature_jacobian_air_temperature
+      channels: *ahi_himawari8_channels
+    - name: brightness_temperature_jacobian_humidity_mixing_ratio
+      channels: *ahi_himawari8_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *ahi_himawari8_channels
+    - name: brightness_temperature_jacobian_surface_temperature
+      channels: *ahi_himawari8_channels
