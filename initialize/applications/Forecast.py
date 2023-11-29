@@ -106,7 +106,7 @@ class Forecast(Component):
       'secondsPerForecastHR': {'typ': int},
       'nodes': {'typ': int},
       'PEPerNode': {'typ': int},
-      'memory': {'def': '45GB', 'typ': str},
+      'memory': {'def': '235GB', 'typ': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
       'email': {'def': True, 'typ': bool},
@@ -231,7 +231,7 @@ class Forecast(Component):
       attr = {
         'seconds': {'def': 300},
         'nodes': {'def': 1, 'typ': int},
-        'PEPerNode': {'def': 36, 'typ': int},
+        'PEPerNode': {'def': 128, 'typ': int},
         'queue': {'def': self.hpc['NonCriticalQueue']},
         'account': {'def': self.hpc['NonCriticalAccount']},
       }
