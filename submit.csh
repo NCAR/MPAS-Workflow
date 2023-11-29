@@ -21,31 +21,47 @@ source config/auto/experiment.csh
 ## Change to the cylc suite directory
 cd ${mainScriptDir}
 
-module purge
-module load cylc
-module load graphviz
+#module purge
+#module load cylc
+#module load graphviz
+module load conda/latest
+conda activate cylc8
 
 date
 
 echo "$0 (INFO): checking if a suite with the same name is already running"
 
-cylc poll $SuiteName >& /dev/null
-if ( $status == 0 ) then
-  echo "$0 (INFO): a cylc suite named $SuiteName is already running!"
-  echo "$0 (INFO): stopping the suite (30 sec.), then starting a new one..."
-  cylc stop --kill $SuiteName
-  sleep 30
-else
-  echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not already running"
-  echo "$0 (INFO): starting a new suite..."
-endif
+#cylc poll $SuiteName >& /dev/null
+#if ( $status == 0 ) then
+#  echo "$0 (INFO): a cylc suite named $SuiteName is already running!"
+#  echo "$0 (INFO): stopping the suite (30 sec.), then starting a new one..."
+#  cylc stop --kill $SuiteName
+#  sleep 30
+#else
+#  echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not already running"
+#  echo "$0 (INFO): starting a new suite..."
+#endif
+cylc stop --kill MPAS-Workflow/$SuiteName
+#sleep 30
 
 rm -rf ${cylcWorkDir}/${SuiteName}
 
 echo "$0 (INFO): register, validate, and run the suite"
-cylc register ${SuiteName} ${mainScriptDir}
-cylc validate --strict ${SuiteName}
-cylc run ${SuiteName}
+#cylc register ${SuiteName} ${mainScriptDir}
+#cylc validate --strict ${SuiteName}
+#cylc run ${SuiteName}
+if ( -e ~/cylc-run/MPAS-Workflow/${SuiteName} ) then
+  rm -r ~/cylc-run/MPAS-Workflow/${SuiteName}
+  echo "Already has this suite, replay it"
+endif
+echo "cylc-flow install suite ${SuiteName}"
+cylc install --run-name=${SuiteName}
+
+echo "cylc-flow validate suite ${SuiteName}"
+cylc validate MPAS-Workflow/${SuiteName}
+
+echo "cylc-flow strats running suite ${SuiteName}"
+cylc play MPAS-Workflow/${SuiteName}
 
 cd -
 
