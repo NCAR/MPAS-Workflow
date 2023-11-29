@@ -16,10 +16,10 @@ from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
 
 class HPC(Component):
-  system = 'cheyenne'
+  system = 'derecho'
   variablesWithDefaults = {
-    'top directory': ['/glade/scratch', str],
-    'TMPDIR': ['/glade/scratch/{{USER}}/temp', str],
+    'top directory': ['/glade/derecho/scratch', str],
+    'TMPDIR': ['/glade/derecho/scratch/{{USER}}/temp', str],
 
     # TODO: place these configuration elements in a user- and/or hpc-specific resource
     ## *Account
@@ -31,16 +31,19 @@ class HPC(Component):
 
     # Critical*: used for all critical path jobs, single or multi-node, multi-processor only
     'CriticalAccount': ['NMMM0015', str],
-    'CriticalQueue': ['regular', str, ['economy', 'regular', 'premium']],
+    #'CriticalQueue': ['regular', str, ['economy', 'regular', 'premium']],
+    'CriticalQueue': ['main', str, ['main']],
 
     # NonCritical*: used non-critical path jobs, single or multi-node, multi-processor only
     'NonCriticalAccount': ['NMMM0015', str],
-    'NonCriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
+    #'NonCriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
+    'NonCriticalQueue': ['main', str, ['main']],
 
     # SingleProc*: used for single-processor jobs, both critical and non-critical paths
     # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
     'SingleProcAccount': ['NMMM0015', str],
-    'SingleProcQueue': ['casper@casper-pbs', str, ['casper@casper-pbs', 'share']],
+    #'SingleProcQueue': ['casper@casper-pbs', str, ['casper@casper-pbs', 'share']],
+    'SingleProcQueue': ['main', str, ['main', 'casper@casper-pbs']],
   }
   def __init__(self, config:Config):
     super().__init__(config)
