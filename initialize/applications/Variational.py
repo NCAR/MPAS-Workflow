@@ -209,9 +209,9 @@ class Variational(Component):
       # forecasts
       if self.NN > 1:
         # EDA uses online ensemble updating
-        self._set('ensPbMemPrefix', workflow.MemPrefix)
+        #self._set('ensPbMemPrefix', workflow.MemPrefix)
         self._set('ensPbMemNDigits', workflow.MemNDigits)
-        #self._set('ensPbFilePrefix', 'mpasout')
+        self._set('ensPbFilePrefix', 'mpasout')
         self._set('ensPbFilePrefix', workflow.memberPrefix)
         self._set('ensPbDir0', '{{ExperimentDirectory}}/CyclingFC/{{prevDateTime}}')
         # TODO: replace two lines above with these when forecast includes these attributes
@@ -239,8 +239,8 @@ class Variational(Component):
 
         self._set('ensPbMemPrefix', memberPrefix)
         self._set('ensPbMemNDigits', memberNDigits)
-        #self._set('ensPbFilePrefix', filePrefix)
-        self._set('ensPbFilePrefix', memberPrefix)
+        self._set('ensPbFilePrefix', filePrefix)
+        #self._set('ensPbFilePrefix', memberPrefix)
         self._set('ensPbDir0', directory0)
         self._set('ensPbDir1', directory1)
         ensPbNMembers = maxMembers
@@ -283,7 +283,7 @@ class Variational(Component):
       'secondsPerEnVarMember': {'typ': int},
       nodeCount: {'typ': int},
       'PEPerNode': {'typ': int},
-      'memory': {'def': '45GB', 'typ': str},
+      'memory': {'def': '235GB', 'typ': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
       'email': {'def': True, 'typ': bool},
@@ -357,7 +357,7 @@ class Variational(Component):
       attr = {
         'seconds': {'def': 1200},
         'nodes': {'def': 1},
-        'PEPerNode': {'def': 36},
+        'PEPerNode': {'def': 128},
         'queue': {'def': hpc['CriticalQueue']},
         'account': {'def': hpc['CriticalAccount']},
       }
