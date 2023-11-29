@@ -1,8 +1,8 @@
 experiment:
-  name: '3denvar_6h_OIE120km_VarBC_v2.0_mybenchmark'
+  name: '3denvar_6h_OIE120km_VarBC_v2.0_derechoTest'
 workflow:
   first cycle point: 20180414T18
-  final cycle point: 20180501T00
+  final cycle point: 20180416T00
   #restart cycle point: 20180416T06
 observations:
   resource: PANDACArchiveForVarBC
@@ -14,7 +14,8 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 firstbackground:
-  resource: "PANDAC.GFS_4DEnVAR"
+  resource: "PANDAC.GFS"
+  #resource: "PANDAC.GFS_4DEnVAR"
 externalanalyses:
   resource: "GFS.PANDAC"
 variational:
@@ -22,7 +23,8 @@ variational:
   biasCorrection: True
   ensemble:
     forecasts:
-      resource: "PANDAC.GEFS_4DEnVar"
+      resource: "PANDAC.GEFS"
+      #resource: "PANDAC.GEFS_4DEnVar"
   #ensemble:
   #  forecasts:
   #    resource: "PANDAC.GEFS"
