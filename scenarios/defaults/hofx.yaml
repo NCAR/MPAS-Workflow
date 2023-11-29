@@ -3,9 +3,9 @@ hofx:
   job:
     defaults:
       seconds: 1000
-      nodes: 4
-      PEPerNode: 32
-      memory: 109GB
+      nodes: 1
+      PEPerNode: 128
+      memory: 235GB
 
       # cylc retry string
       retry: '0*PT30S'
@@ -17,16 +17,16 @@ hofx:
     #  memory: int
     30km:
       seconds: 600
-      nodes: 2
-      PEPerNode: 36
-      memory: 109GB
+      nodes: 1
+      PEPerNode: 128
+      memory: 235GB
     60km:
       seconds: 600
       nodes: 1
-      PEPerNode: 36
-      memory: 109GB
+      PEPerNode: 128
+      memory: 235GB
     120km:
       seconds: 600
       nodes: 1
-      PEPerNode: 36
-      memory: 109GB
+      PEPerNode: 128
+      memory: 235GB
