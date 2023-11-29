@@ -44,8 +44,9 @@ variational:
         GEFS:
           120km:
             maxMembers: 20
-            directory0: '/glade/p/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
+            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
             filePrefix: EnsForCov
+            memberPrefix: EnsForCov
             memberNDigits: 2
 
             # the settings above produce the following yaml template:
@@ -85,14 +86,14 @@ variational:
         GEFS_4DEnVar_80mem:
           60km:
             maxMembers: 80
-            directory0: '/glade/scratch/nystrom/pandac/80mem_60km_eda_ens/CyclingFC/{{prevDateTime}}'
+            directory0: '/glade/derecho/scratch/nystrom/pandac/80mem_60km_eda_ens/CyclingFC/{{prevDateTime}}'
             memberPrefix: mem
             memberNDigits: 3
 
         GEFS_4DEnVar:
           120km:
             maxMembers: 20
-            directory0: '/glade/p/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
+            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
             memberPrefix: EnsForCov
             memberNDigits: 2
 
@@ -124,7 +125,7 @@ variational:
         #bumpLocPrefix: bumploc_1200.0km_6.0km
         #bumpLocDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.bumploc.duplicated.limited.1200km6km
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/scratch/nystrom/pandac/60km.bumploc.duplicated.limited
+        bumpLocDir: /glade/derecho/scratch/nystrom/pandac/60km.bumploc.duplicated.limited_derecho
       120km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.bumploc.duplicated.limited.1200km6km
@@ -161,9 +162,9 @@ variational:
     defaults:
       baseSeconds: 1500
       secondsPerEnVarMember: 10
-      nodes: 8
-      PEPerNode: 16
-      memory: 45GB
+      nodes: 1
+      PEPerNode: 128
+      memory: 235GB
 
       # cylc retry string
       retry: '0*PT30S'
@@ -189,78 +190,60 @@ variational:
       # Assuming 120 total inner iterations
       30km:
         3denvar:
-          nodes: 64
-          PEPerNode: 8
-          memory: 45GB
+          nodes: 4
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 1500
           secondsPerEnVarMember: 5
         4denvar:
-          nodes: 448
-          PEPerNode: 8
-          memory: 45GB
+          nodes: 28
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 1500
           secondsPerEnVarMember: 5
         3dvar:
-          nodes: 64
-          PEPerNode: 8
-          memory: 45GB
+          nodes: 4
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 1500
         ensemble: # i.e., EDASize > 1, multiple background members treated per executable
           3denvar:
-            nodesPerMember: 3
-            PEPerNode: 12
-            memory: 45GB
+            nodesPerMember: 8
+            PEPerNode: 128
+            memory: 235GB
             baseSeconds: 1200
             secondsPerEnVarMember: 10
       60km:
         3denvar:
-          nodes: 12
-          PEPerNode: 16
-          memory: 45GB
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 800
           secondsPerEnVarMember: 9
-        #4denvar:
-        #  nodes: 84
-        #  PEPerNode: 16
-        #  memory: 45GB
-        #  baseSeconds: 800
-        #  secondsPerEnVarMember: 20
-        #4denvar:
-        #  nodes: 84
-        #  PEPerNode: 16
-        #  memory: 45GB
-        #  baseSeconds: 800
-        #  secondsPerEnVarMember: 9
         4denvar:
-          nodes: 63
-          PEPerNode: 24
-          memory: 45GB
+          nodes: 14
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 800
           secondsPerEnVarMember: 24
-        #4denvar:
-        #  nodes: 42
-        #  PEPerNode: 32
-        #  memory: 45GB
-        #  baseSeconds: 800
-        #  secondsPerEnVarMember: 9
         3dhybrid:
-          nodes: 6
-          PEPerNode: 32
-          memory: 45GB
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 500
           secondsPerEnVarMember: 9
         3dvar:
-          nodes: 6
-          PEPerNode: 32
-          memory: 45GB
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 500
     60km:
       # Assuming 60 total inner iterations
       60km:
         3denvar:
-          nodes: 4
-          PEPerNode: 36
-          memory: 45GB
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 200
           secondsPerEnVarMember: 6
           # double-precision bundle build
@@ -270,55 +253,53 @@ variational:
           ##baseSeconds: 200
           ##secondsPerEnVarMember: 6
         4denvar:
-          #nodes: 12 #3 subwindow slots
-          nodes: 42 #7 subwindow slots
-          PEPerNode: 32
-          memory: 45GB
+          nodes: 14 #7 subwindow slots
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 600
           secondsPerEnVarMember: 10
         3dhybrid:
-          nodes: 4
-          PEPerNode: 36
-          memory: 45GB
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 250
           secondsPerEnVarMember: 6
         3dvar:
-          nodes: 6
-          PEPerNode: 32
-          memory: 45GB
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 250
         ensemble:
           3denvar:
-            nodesPerMember: 3
-            PEPerNode: 12
-            memory: 45GB
+            nodesPerMember: 4
+            PEPerNode: 128
+            memory: 235GB
             baseSeconds: 1200
             secondsPerEnVarMember: 10
     120km:
       # Assuming 60 total inner iterations
       120km:
         3denvar:
-          nodes: 4
-          PEPerNode: 32
-          memory: 45GB
+          nodes: 1
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 200
           secondsPerEnVarMember: 15
         3dvar:
-          nodes: 4
-          PEPerNode: 32
-          memory: 45GB
+          nodes: 1
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 300
         4denvar:
-          #nodes: 12 #3 subwindow slots
-          nodes: 28 #7 subwindow slots
-          PEPerNode: 32
-          memory: 45GB
+          nodes: 7 #7 subwindow slots
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 600
           secondsPerEnVarMember: 10
         ensemble:
           3denvar:
-            nodesPerMember: 3
-            PEPerNode: 12
-            memory: 45GB
+            nodesPerMember: 2
+            PEPerNode: 128
+            memory: 235GB
             baseSeconds: 1200
             secondsPerEnVarMember: 10
