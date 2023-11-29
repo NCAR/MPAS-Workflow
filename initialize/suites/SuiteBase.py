@@ -31,7 +31,8 @@ class SuiteBase():
     self._tasks = []
 
     self.logPrefix = self.__class__.__name__+': '
-    self.suiteFileName = 'suite.rc'
+    #self.suiteFileName = 'suite.rc'
+    self.suiteFileName = 'flow.cylc'
   def __msg(self, text):
     print(self.logPrefix+text)
     return
@@ -58,21 +59,23 @@ class SuiteBase():
       submission timeout handler = cylc poll %(suite)s '%(id)s:*'; sleep 20; cylc trigger %(suite)s '%(id)s:*' ''']
 
   [[BATCH]]
-    # load conda + activate npl
+    # load conda + activate cylc8
     init-script = '''
-source /etc/profile.d/modules.sh
+source /etc/profile.d/z00_modules.sh
 module load conda/latest
-conda activate npl
+#conda activate cylc7
+conda activate cylc8
 '''
     # default job and directives
 """+self.c['hpc'].multitask.job()+self.c['hpc'].multitask.directives()+"""
 
   [[SingleBatch]]
-    # load conda + activate npl
+    # load conda + activate cylcc
     init-script = '''
-source /etc/profile.d/modules.sh
+source /etc/profile.d/z00_modules.sh
 module load conda/latest
-conda activate npl
+#conda activate cylc7
+conda activate cylc8
 '''
     # default job and directives
 """+self.c['hpc'].singletask.job()+self.c['hpc'].singletask.directives()+"""
