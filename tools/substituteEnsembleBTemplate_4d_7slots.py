@@ -182,21 +182,21 @@ def substituteEnsembleB_4d_7slots():
   for member, file in enumerate(filedata.split('\n')[:-1]):
     yamls[str(member+1)] = file
 
-  #filename1 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File1
-  #filename2 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File2
-  #filename3 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File3
-  #filename4 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File4
-  #filename5 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File5
-  #filename6 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File6
-  #filename7 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File7
+  filename1 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File1
+  filename2 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File2
+  filename3 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File3
+  filename4 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File4
+  filename5 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File5
+  filename6 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File6
+  filename7 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File7
 
-  filename1 = args.directory0+'/'+'%iMember%/'+directory1+args.File1
-  filename2 = args.directory0+'/'+'%iMember%/'+directory1+args.File2
-  filename3 = args.directory0+'/'+'%iMember%/'+directory1+args.File3
-  filename4 = args.directory0+'/'+'%iMember%/'+directory1+args.File4
-  filename5 = args.directory0+'/'+'%iMember%/'+directory1+args.File5
-  filename6 = args.directory0+'/'+'%iMember%/'+directory1+args.File6
-  filename7 = args.directory0+'/'+'%iMember%/'+directory1+args.File7
+  #filename1 = args.directory0+'/'+'%iMember%/'+directory1+args.File1
+  #filename2 = args.directory0+'/'+'%iMember%/'+directory1+args.File2
+  #filename3 = args.directory0+'/'+'%iMember%/'+directory1+args.File3
+  #filename4 = args.directory0+'/'+'%iMember%/'+directory1+args.File4
+  #filename5 = args.directory0+'/'+'%iMember%/'+directory1+args.File5
+  #filename6 = args.directory0+'/'+'%iMember%/'+directory1+args.File6
+  #filename7 = args.directory0+'/'+'%iMember%/'+directory1+args.File7
 
 
   # Modified to include multiple time files, currently 3 times for 3 h window 
