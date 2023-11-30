@@ -6,6 +6,7 @@
  This software is licensed under the terms of the Apache Licence Version 2.0
  which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 '''
+import os
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
@@ -34,6 +35,43 @@ class Build(Component):
   }
 
   def __init__(self, config:Config, model:Model=None):
+    self.logPrefix = self.__class__.__name__+': '
+
+    # set system dependent defaults before invoking Component ctor
+    system = os.getenv('NCAR_HOST')
+    if system == 'derecho':
+      self.variablesWithDefaults['mpas bundle'] = \
+          ['/glade/work/jwittig/repos1/mpas-bundle-r2.0/build-gnu-derecho-single/', str]
+      self.variablesWithDefaults['bundle compiler used'] = ['intel-cray', str,
+        ['gnu-cray', 'intel-cray']]
+      self.variablesWithDefaults['forecast directory'] = ['bundle', str]
+
+      # Ungrib
+      wpsBuildDir = '/glade/work/jwittig/repos1/WPS/'
+      # Obs2IODA-v2
+      obs2iodaBuildDir = '/glade/work/taosun/Derecho/MPAS/Obs2IODA'
+      # Mean state calculator
+      meanStateBuildDir = self.variablesWithDefaults['mpas bundle'][0]+'/bin'
+    elif system == 'cheyenne':
+      self.variablesWithDefaults['mpas bundle'] = \
+        ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build', str]
+      self.variablesWithDefaults['bundle compiler used'] = ['gnu-openmpi', str,
+        ['gnu-openmpi', 'intel-cray']]
+      self.variablesWithDefaults['forecast directory'] = \
+        ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/MPAS_intelmpt', str]
+
+      # Ungrib
+      wpsBuildDir = '/glade/work/guerrett/pandac/data/GEFS'
+      # Obs2IODA-v2
+      obs2iodaBuildDir = '/glade/p/mmm/parc/ivette/pandac/fork_obs2ioda/obs2ioda/obs2ioda-v2/src'
+      # Mean state calculator
+      meanStateBuildDir = '/glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1'
+    else:
+      self._msg('unknown host:' + system)
+      wpsBuildDir = ''
+      obs2iodaBuildDir = ''
+      meanStateBuildDir = ''
+
     super().__init__(config)
 
     ###################
@@ -62,6 +100,10 @@ class Build(Component):
     self._set('RTPPEXE', 'mpasjedi_rtpp.x')
     self._set('RTPPBuildDir', self['mpas bundle']+'/bin')
 
+    ## RTPS
+    self._set('RTPSEXE', 'mpasjedi_rtps.x')
+    self._set('RTPSBuildDir', self['mpas bundle']+'/bin')
+  
     if model is not None:
 
       # MPAS-Model
@@ -77,8 +119,12 @@ class Build(Component):
         self._set('ForecastBuildDir', self['forecast directory'])
         self._set('ForecastEXE', model['MPASCore']+'_model')
 
-      self._set('MPASLookupDir', self['mpas bundle']+'/MPAS/core_'+model['MPASCore'])
-      self._set('MPASLookupFileGlobs', ['.TBL', '.DBL', 'DATA', 'COMPATABILITY', 'VERSION'])
+      if system == 'derecho':
+        self._set('MPASLookupDir', self['mpas bundle']+'/MPAS/core_atmosphere')
+        self._set('MPASLookupFileGlobs', ['.TBL', '.DBL', 'DATA', 'VERSION'])
+      elif system == 'cheyenne':
+        self._set('MPASLookupDir', self['mpas bundle']+'/MPAS/core_'+model['MPASCore'])
+        self._set('MPASLookupFileGlobs', ['.TBL', '.DBL', 'DATA', 'COMPATABILITY', 'VERSION'])
 
       # Alternatively, use a stand-alone single-precision build of MPAS-A with GNU-MPT
       #self._set('ForecastBuildDir', '/glade/p/mmm/parc/liuz/pandac_common/20220309_mpas_bundle/code/MPAS-gnumpt-single')
@@ -99,19 +145,21 @@ class Build(Component):
     # Ungrib
     # ------
     self._set('ungribEXE', 'ungrib.exe')
-    self._set('WPSBuildDir', '/glade/work/guerrett/pandac/data/GEFS')
+    self._set('WPSBuildDir', wpsBuildDir)
 
     # Obs2IODA-v2
     # -----------
     self._set('obs2iodaEXE', 'obs2ioda-v2.x')
-    self._set('obs2iodaBuildDir', '/glade/p/mmm/parc/ivette/pandac/fork_obs2ioda/obs2ioda/obs2ioda-v2/src')
+    self._set('obs2iodaBuildDir', obs2iodaBuildDir)
     self._set('iodaUpgradeEXE1', 'ioda-upgrade-v1-to-v2.x')
     self._set('iodaUpgradeEXE2', 'ioda-upgrade-v2-to-v3.x')
     self._set('iodaUpgradeBuildDir', self['mpas bundle']+'/bin')
 
     # Mean state calculator
     # ---------------------
+    #self._set('meanStateExe', 'mpasjedi_ens_mean_variance.x')
+    #self._set('meanStateBuildDir', '/glade/work/taosun/Derecho/MPAS/JEDI_MPAS/build_intel'+'/bin')
     self._set('meanStateExe', 'average_netcdf_files_parallel_mpas.x')
-    self._set('meanStateBuildDir', '/glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1')
+    self._set('meanStateBuildDir', meanStateBuildDir)
 
     self._cshVars = list(self._vtable.keys())
