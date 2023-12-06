@@ -12,6 +12,7 @@ if ( "$NCAR_HOST" == "derecho" ) then
   else
     source /etc/profile.d/z00_modules.csh
     module purge
+    module load ncarenv/23.06
     module load intel-oneapi/2023.0.0
     module load cray-mpich/8.1.25
     module load parallel-netcdf/1.12.3
