@@ -87,7 +87,7 @@ conda activate """ + conda + """
 """+self.c['hpc'].multitask.job()+self.c['hpc'].multitask.directives()+"""
 
   [[SingleBatch]]
-    # load conda + activate cylcc
+    # load conda + activate npl
     init-script = '''
 source """ + modScript + """
 module load conda/latest
