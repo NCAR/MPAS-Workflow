@@ -210,14 +210,14 @@ endif # 3dvar || *"3dhybrid"*
 # Ensemble Jb term
 # ================
 
-if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid" || "$DAType" == "4denvar" ) then
+if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid"* || "$DAType" == "4denvar" ) then
   ## yaml indentation
   if ( "$DAType" == "3denvar" ) then
     set nEnsPbIndent = 4
+  else if ( "$DAType" =~ *"3dhybrid"* ) then
+    set nEnsPbIndent = 8
   else if ( "$DAType" == "4denvar" ) then
     set nEnsPbIndent = 4
-  else if ( "$DAType" =~ "3dhybrid" ) then
-    set nEnsPbIndent = 8
   endif
   set indentPb = "`${nSpaces} $nEnsPbIndent`"
 
