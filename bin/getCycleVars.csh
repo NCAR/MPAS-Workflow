@@ -14,8 +14,6 @@ source config/auto/members.csh
 source config/auto/naming.csh
 source config/auto/workflow.csh
 
-#source config/auto/variational.csh
-
 # Universal time info for namelist, yaml etc
 # ==========================================
 setenv prevCycleDate "`$advanceCYMDH ${thisCycleDate} -${CyclingWindowHR}`"

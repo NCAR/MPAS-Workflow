@@ -443,7 +443,6 @@ while ( $member <= ${nMembers} )
 
   rm ${bgFile}${OrigFileSuffix} ${bgFile}
   ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
-  #ln -sfv ${bgFileOther} ${bgFile}
 
   # Loop over background files
   foreach bgFile ( `ls -d $bgFileOther`)
@@ -476,13 +475,10 @@ while ( $member <= ${nMembers} )
   foreach bgFile (`ls -d ${bg}/*.nc`)
     set temp_file = `echo $bgFile | sed 's:.*/::'`
     set bgFileDate = `echo ${temp_file} | cut -c 4-22`
-    #ln -sfv ${bgFile} templateFields.40962.${bgFileDate}.nc${memSuffix}
-    #ln -sfv ${bgFile} templateFields.163842.${bgFileDate}.nc${memSuffix}
     ln -sfv ${bgFile} templateFields.${nCellsOuter}.${bgFileDate}.nc${memSuffix}
   end
 
   set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
-  #
 
   if ($nCellsOuter != $nCellsInner) then
     set tFile = ${TemplateFieldsFileInner}${memSuffix}
@@ -501,8 +497,6 @@ while ( $member <= ${nMembers} )
     end
     set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
-    echo "RGN: ${localStaticFieldsFileInner}" > test_inner.log
-
     # modify xtime
     # TODO: handle errors from python executions, e.g.:
     # '''
@@ -517,10 +511,6 @@ while ( $member <= ${nMembers} )
       set tmm = `echo ${tFileDate}| cut -c 6-7`
       set tdd = `echo ${tFileDate}| cut -c 9-10`
       set thh = `echo ${tFileDate}| cut -c 12-13`
-      echo "${tFile}" >> test_inner.log
-      echo "${temp_file}" >> test_inner.log
-      echo "${tFileDate}" >> test_inner.log
-      echo "${tyyyy}${tmm}${tdd}${thh}" >> test_inner.log
       echo "${updateXTIME} ${tFile} ${tyyyy}${tmm}${tdd}${thh}"
       ${updateXTIME} $tFile ${tyyyy}${tmm}${tdd}${thh}
     end
@@ -532,8 +522,6 @@ while ( $member <= ${nMembers} )
 
     # use localStaticFieldsFileInner as the TemplateFieldsFileInner
     cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
-
-    # Loop over times and set as the TemplateFieldsFileInner for this member for each time
 
     # modify xtime
     # TODO: handle errors from python executions, e.g.:

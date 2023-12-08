@@ -263,7 +263,7 @@ class ExternalAnalyses(Component):
       execution time limit = PT90S
       execution retry delays = 5*PT30S
     [[[events]]]
-      submission timeout = PT5M''']
+      submission timeout = PT1M''']
 
           # generic 0hr task name for external classes/tasks to grab
           if dt == 0:

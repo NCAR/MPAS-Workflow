@@ -54,8 +54,7 @@ class PBSPro(Task):
     unique['k'] = 'eod'
     unique['S'] = '/bin/tcsh'
 
-    #if self.email: unique['m'] = 'ae'
-    if self.email: unique['m'] = 'a'
+    if self.email: unique['m'] = 'ae'
 
     flags = ''
     for f, v in unique.items():
