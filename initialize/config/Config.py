@@ -66,8 +66,6 @@ class Config():
     if options is not None and v is not None:
       assert isinstance(options, Iterable) and not isinstance(options, str), (
         'options must be a list of valid values or not present at all, not '+str(options))
-      #assert v in options, ('invalid value for '+dotSeparatedKey+': '+str(v)+
-        #'; choose one of '+str(options))
 
     if typ is not None and v is not None:
       return typ(v)

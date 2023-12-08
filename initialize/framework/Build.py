@@ -17,7 +17,7 @@ class Build(Component):
   variablesWithDefaults = {
     ## mpas bundle
     # mpas-bundle build directory
-    'mpas bundle': ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build', str],
+    'mpas bundle': ['/replace/this/in/host/specific/code/below', str],
 
     # optional double-precision build
     #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22MAR2023', str],
@@ -25,7 +25,7 @@ class Build(Component):
     # forecast directory
     # defaults to bundle build, otherwise specify full directory
     #'forecast directory': ['bundle', str],
-    'forecast directory': ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/MPAS_intelmpt', str],
+    'forecast directory': ['/replace/this/in/host/specific/code/below/', str],
 
     ## bundle compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
@@ -41,17 +41,17 @@ class Build(Component):
     system = os.getenv('NCAR_HOST')
     if system == 'derecho':
       self.variablesWithDefaults['mpas bundle'] = \
-          ['/glade/work/jwittig/repos1/mpas-bundle-r2.0/build-gnu-derecho-single/', str]
-      self.variablesWithDefaults['bundle compiler used'] = ['intel-cray', str,
+          ['/glade/work/nystrom/Code/JEDI/jcsda_internal/gnu_build_2.1.0_derecho/', str]
+      self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
       self.variablesWithDefaults['forecast directory'] = ['bundle', str]
 
       # Ungrib
       wpsBuildDir = '/glade/work/jwittig/repos1/WPS/'
-      # Obs2IODA-v2
-      obs2iodaBuildDir = '/glade/work/taosun/Derecho/MPAS/Obs2IODA'
       # Mean state calculator
-      meanStateBuildDir = self.variablesWithDefaults['mpas bundle'][0]+'/bin'
+      # FIXME the source for the app in this directory was copied from
+      # /glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1
+      meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-r2.0/build-gnu-derecho-single/bin'
     elif system == 'cheyenne':
       self.variablesWithDefaults['mpas bundle'] = \
         ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build', str]
@@ -62,14 +62,11 @@ class Build(Component):
 
       # Ungrib
       wpsBuildDir = '/glade/work/guerrett/pandac/data/GEFS'
-      # Obs2IODA-v2
-      obs2iodaBuildDir = '/glade/p/mmm/parc/ivette/pandac/fork_obs2ioda/obs2ioda/obs2ioda-v2/src'
       # Mean state calculator
       meanStateBuildDir = '/glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1'
     else:
       self._msg('unknown host:' + system)
       wpsBuildDir = ''
-      obs2iodaBuildDir = ''
       meanStateBuildDir = ''
 
     super().__init__(config)
@@ -150,7 +147,7 @@ class Build(Component):
     # Obs2IODA-v2
     # -----------
     self._set('obs2iodaEXE', 'obs2ioda-v2.x')
-    self._set('obs2iodaBuildDir', obs2iodaBuildDir)
+    self._set('obs2iodaBuildDir', '/glade/campaign/mmm/parc/ivette/pandac/fork_obs2ioda/obs2ioda/obs2ioda-v2/src')
     self._set('iodaUpgradeEXE1', 'ioda-upgrade-v1-to-v2.x')
     self._set('iodaUpgradeEXE2', 'ioda-upgrade-v2-to-v3.x')
     self._set('iodaUpgradeBuildDir', self['mpas bundle']+'/bin')

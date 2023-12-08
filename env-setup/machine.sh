@@ -8,7 +8,8 @@ fi
 
 if [[ "$NCAR_HOST" == "derecho" ]]; then
   if [[ "$CYLC_ENV" == "" ]]; then
-    echo "set CYLC_ENV environment variable to the name of the cylc8 conda package"
+    echo 'CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2'
+    export CYLC_ENV=/glade/work/jwittig/conda-envs/my-cylc8.2
     return
   fi
 

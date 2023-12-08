@@ -36,8 +36,8 @@ def main():
   hname = os.getenv('NCAR_HOST')
   cylc = os.getenv('CYLC_ENV')
   if  hname == "derecho" and cylc is None:
-    print('set CYLC_ENV environment variable to the name of the cylc conda package')
-    return
+    print('CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2')
+    os.environ['CYLC_ENV'] = '/glade/work/jwittig/conda-envs/my-cylc8.2'
 
   run = Run()
   run.execute()
