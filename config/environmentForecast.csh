@@ -1,5 +1,6 @@
 #!/bin/csh -f
 
+if ( $?config_environmentForecast ) exit 0
 setenv config_environmentForecast 1
 
 source config/auto/build.csh # for forecastDirectory
@@ -51,5 +52,3 @@ else
     module list
 
 endif
-
-module list
