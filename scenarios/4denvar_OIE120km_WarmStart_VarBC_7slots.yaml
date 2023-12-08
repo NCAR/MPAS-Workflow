@@ -1,9 +1,9 @@
 experiment:
-  name: '4denvar_6h_7slots_OIE120km_VarBC_v2.0_test_timeVarBC'
+  name: '4denvar_6h_7slots_OIE120km_VarBC'
 workflow:
-  first cycle point: 20180415T00
+  first cycle point: 20180414T18
   final cycle point: 20180422T00
-  #restart cycle point: 20180417T06
+  #restart cycle point: 20180415T06
   subwindow: 1
 observations:
   resource: PANDACArchiveForVarBC
@@ -24,3 +24,13 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS_4DEnVar"
+  #execute: False
+  #post: []
+forecast:
+#  execute: False
+#  post: []
+#extendedforecast:
+#  meanTimes: T00
+#  lengthHR: 168
+#  outIntervalHR: 24
+#  execute: False

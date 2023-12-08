@@ -1,5 +1,5 @@
 experiment:
-  name: '4denvar_6h_7slots_OIE60km_VarBC_2out'
+  name: '4denvar_6h_7slots_OIE60km_VarBC_2outer'
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T00
@@ -19,6 +19,7 @@ externalanalyses:
 variational:
   DAType: 4denvar
   nInnerIterations: [60,60,]
+  biasCorrection: True
   subwindow: 1
   ensemble:
     forecasts:

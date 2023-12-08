@@ -18,6 +18,7 @@ externalanalyses:
   resource: "GFS.PANDAC"
 variational:
   DAType: 4denvar
+  biasCorrection: True
   subwindow: 1
   ensemble:
     forecasts:
