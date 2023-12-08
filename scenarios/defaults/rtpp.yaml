@@ -10,9 +10,9 @@ rtpp:
     defaults:
       baseSeconds: 10
       secondsPerMember: 10
-      nodes: 1
-      PEPerNode: 128
-      memory: 235GB
+      nodes: 4
+      PEPerNode: 24
+      memory: 109GB
 
       # cylc retry string
       retry: '2*PT30S'
@@ -21,12 +21,12 @@ rtpp:
     60km:
       baseSeconds: 10
       secondsPerMember: 10
-      nodes: 1
-      PEPerNode: 128
-      memory: 235GB
+      nodes: 4
+      PEPerNode: 24
+      memory: 109GB
     120km:
       baseSeconds: 10
       secondsPerMember: 15
       nodes: 1
-      PEPerNode: 128
-      memory: 235GB
+      PEPerNode: 36
+      memory: 45GB

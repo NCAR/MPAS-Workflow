@@ -16,7 +16,7 @@ from initialize.config.Resource import Resource
 from initialize.config.Task import TaskLookup
 
 class HPC(Component):
-  system = 'derecho'
+  system = 'cheyenne'
   variablesWithDefaults = {
       # override these below based on host
     'top directory': ['/glade/scratch', str],
@@ -44,8 +44,7 @@ class HPC(Component):
     # SingleProc*: used for single-processor jobs, both critical and non-critical paths
     # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
     'SingleProcAccount': ['NMMM0015', str],
-    #'SingleProcQueue': ['casper@casper-pbs', str, ['casper@casper-pbs', 'share']],
-    'SingleProcQueue': ['main', str, ['main', 'casper@casper-pbs']],
+    'SingleProcQueue': ['casper@casper-pbs', str, ['casper@casper-pbs', 'share']],
   }
   def __init__(self, config:Config):
     self.logPrefix = self.__class__.__name__+': '

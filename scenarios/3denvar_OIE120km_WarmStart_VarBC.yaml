@@ -1,12 +1,7 @@
-experiment:
-  name: '3denvar_6h_OIE120km_VarBC_v2.0_derechoTest'
-workflow:
-  first cycle point: 20180414T18
-  final cycle point: 20180416T00
-  #restart cycle point: 20180416T06
 observations:
   resource: PANDACArchiveForVarBC
-  #resource: PANDACArchiveForVarBC_4d
+experiment:
+  suffix: '_VarBC'
 members:
   n: 1
 model:
@@ -24,10 +19,6 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS"
-      #resource: "PANDAC.GEFS_4DEnVar"
-  #ensemble:
-  #  forecasts:
-  #    resource: "PANDAC.GEFS"
   #execute: False # the default is True
   #post: [] # this turns off verifyobs
 #forecast:

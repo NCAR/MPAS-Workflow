@@ -116,10 +116,8 @@ class Build(Component):
         self._set('ForecastBuildDir', self['mpas bundle']+'/bin')
         self._set('ForecastEXE', 'mpas_'+model['MPASCore'])
       else:
-        #self._set('ForecastBuildDir', self['forecast directory'])
-        self._set('ForecastBuildDir', self['forecast directory']+'/bin')
-        #self._set('ForecastEXE', model['MPASCore']+'_model')
-        self._set('ForecastEXE', 'mpas_'+model['MPASCore'])
+        self._set('ForecastBuildDir', self['forecast directory'])
+        self._set('ForecastEXE', model['MPASCore']+'_model')
 
       if system == 'derecho':
         self._set('MPASLookupDir', self['mpas bundle']+'/MPAS/core_atmosphere')

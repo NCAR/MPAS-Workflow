@@ -2,8 +2,8 @@ forecast:
   # resource requirements (used for both Forecast and ExtendedForecast)
   job:
     defaults:
-      nodes: 1
-      PEPerNode: 128
+      nodes: 4
+      PEPerNode: 32
       baseSeconds: 60
       secondsPerForecastHR: 500
 
@@ -22,8 +22,8 @@ forecast:
       #baseSeconds: 60
       #secondsPerForecastHR: 120
       # more efficient
-      nodes: 2
-      PEPerNode: 128
+      nodes: 8
+      PEPerNode: 36
       baseSeconds: 60
       secondsPerForecastHR: 120
     60km:
@@ -33,12 +33,12 @@ forecast:
       #baseSeconds: 60
       #secondsPerForecastHR: 40
       # more efficient
-      nodes: 2
-      PEPerNode: 128
+      nodes: 4
+      PEPerNode: 36
       baseSeconds: 60
       secondsPerForecastHR: 70
     120km:
-      nodes: 1
-      PEPerNode: 128
+      nodes: 4
+      PEPerNode: 36
       baseSeconds: 60
       secondsPerForecastHR: 20

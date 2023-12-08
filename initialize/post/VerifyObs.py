@@ -96,8 +96,8 @@ class VerifyObs(Component):
       'seconds': {'typ': int},
       'secondsPerMember': {'typ': int},
       'nodes': {'def': 1, 'typ': int},
-      'PEPerNode': {'def': 128, 'typ': int},
-      'memory': {'def': '235GB', 'typ': str},
+      'PEPerNode': {'def': 36, 'typ': int},
+      'memory': {'def': '45GB', 'typ': str},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
     }

@@ -4,9 +4,6 @@ verifymodel:
     defaults:
       seconds: 2000
       secondsPerMember: 500
-      nodes: 1
-      PEPerNode: 128
-      memory: 235GB
 
       # cylc retry string
       retry: '0*PT30S'
