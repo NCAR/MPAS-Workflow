@@ -1,9 +1,9 @@
 experiment:
-  name: '4denvar_6h_7slots_O30kmIE60km_VarBC_2out_v2.0_80mem_qtest'
+  name: '4denvar_6h_7slots_O30kmIE60km_VarBC_2out_v2.0_80mem'
 workflow:
   first cycle point: 20180414T18
-  final cycle point: 20180415T00
-  #restart cycle point: 20180417T18
+  final cycle point: 20180501T00
+  restart cycle point: 20180422T06
   subwindow: 1
 observations:
   resource: PANDACArchiveForVarBC
