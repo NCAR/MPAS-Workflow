@@ -48,6 +48,8 @@ class PBSPro(Task):
       unique['q'] = self.r['queue']
     if self.r['account'] is not None:
       unique['A'] = self.r['account']
+    if self.r['job_priority'] is not None:
+      unique['l'] = 'job_priority=' + self.r['job_priority']
     unique['j'] = 'oe'
     unique['k'] = 'eod'
     unique['S'] = '/bin/tcsh'
@@ -77,14 +79,30 @@ class PBSPro(Task):
         select += ':mem='+memory
 
       text += '''
-      -l = select='''+select
+      -l select='''+select
 
     return text
 
-class Cheyenne(PBSPro):
+class CheyenneTask(PBSPro):
   name = 'cheyenne'
   maxProcPerNode = 36
+  maxMemPerNode = "45GB"
+
+
+class DerechoTask(PBSPro):
+  name = 'derecho'
+  maxProcPerNode = 128
+  maxMemPerNode = "235GB"
+
+  def __init__(self, r:Resource):
+    # convert any cheyenne queue's to derecho
+    #print('resource table', r._table)
+    #print('resource defaults', r._defaults)
+    r.convertToDerecho()
+    super().__init__(r)
+
 
 TaskLookup = {
-  'cheyenne': Cheyenne,
+  'cheyenne': CheyenneTask,
+  'derecho': DerechoTask,
 }
