@@ -4,14 +4,14 @@
 #  intended result.  See Cycle class for implementation information.
 
 [meta]
-  title = MPAS-Workflow--nystrom_4denvar_6h_7slots_O30kmIE60km_VarBC_2out_v2.0_80mem_qtest
+  title = MPAS-Workflow--nystrom_4denvar_6h_7slots_O30kmIE60km_VarBC_2out_v2.0_80mem
 
 [cylc]
   UTC mode = False
 
 [scheduling]
-  initial cycle point = 20180414T18
-  final cycle point   = 20180415T00
+  initial cycle point = 20180422T06
+  final cycle point   = 20180501T00
 
   # Maximum number of simultaneous active dates;
   # useful for constraining non-blocking flows
@@ -41,7 +41,7 @@
   [[dependencies]]
 
     # da
-    [[[+PT6H/PT6H]]]
+    [[[PT6H]]]
       graph = """
         ObsReady__ => PreDA__
         InitVariationals_0 => InitVariationals_1
@@ -52,7 +52,7 @@
         DAPost__ => DAFinished__
         DAFinished__ => CleanDA
       """
-      [[[+PT6H/PT6H]]]
+      [[[PT6H]]]
         graph = """
         DAPost__ => PreVerifyObsDA-0hr__
         VerifyObsDA-0hrFinished__ => CleanDA
@@ -64,7 +64,7 @@
         ForecastFinished__[-PT6H] => PreDA__
         """
     # forecast
-    [[[+PT6H/PT6H]]]
+    [[[+PT0H/PT6H]]]
       graph = """
         # ensure there is a valid sea-surface update file before forecast
         LinkExternalAnalysis-30km => ExternalAnalysisReady__ => PreForecast__
@@ -75,7 +75,7 @@
         ForecastPost__ => ForecastFinished__
         ForecastFinished__ => CleanForecast
       """
-      [[[+PT6H/PT6H]]]
+      [[[PT6H]]]
         graph = """
         ForecastFinished__[-PT6H] => PreHofXBG-0hr__
         ObsReady__ => PreHofXBG-0hr__
@@ -103,21 +103,6 @@
         DAFinished__[-PT0H] => PreForecast__
         """
     # firstbackground
-    [[[R1]]]
-      graph = """
-        # prepare first DA background state
-        LinkExternalAnalysis-30km => ExternalAnalysisReady__ => LinkWarmStartBackgrounds => ForecastFinished__
-
-        # prepare analyses (init) files (for dual-mesh Variational) for reading to
-        # static and input stream in all cycles for inner and ensemble geometries
-        LinkExternalAnalysis-60km => ExternalAnalysisReady__
-        LinkExternalAnalysis-60km => ExternalAnalysisReady__
-        PreFirstBackground__ => InitFirstBackground
-        InitFirstBackground:succeed-all => FirstBackgroundExec
-        FirstBackgroundExec:succeed-all => FirstBackgroundPost__
-        FirstBackgroundPost__ => FirstBackgroundFinished__
-        FirstBackgroundFinished__ => CleanFirstBackground
-      """
     # extendedforecast
 
 [runtime]
@@ -125,7 +110,7 @@
   [[root]]
     pre-script = "cd  $origin/"
     [[[environment]]]
-      origin = /glade/derecho/scratch/nystrom/pandac/nystrom_4denvar_6h_7slots_O30kmIE60km_VarBC_2out_v2.0_80mem_qtest/MPAS-Workflow
+      origin = /glade/derecho/scratch/nystrom/pandac/nystrom_4denvar_6h_7slots_O30kmIE60km_VarBC_2out_v2.0_80mem/MPAS-Workflow
     [[[events]]]
       # prevents jobs from sitting in submitted state for longer than 'submission timeout'
       submission timeout = PT90M
@@ -429,32 +414,7 @@ conda activate cylc8
     inherit = Clean
   [[ForecastFamily]]
   # firstbackground
-  [[LinkWarmStartBackgrounds]]
-    inherit = FirstBackgroundExec, SingleBatch
-    script = $origin/bin/LinkWarmStartBackgrounds.csh
-    [[[job]]]
-      # give longer for higher resolution and more EDA members
-      # TODO: set time limit based on outerMesh AND (number of members OR
-      #       independent task for each member)
-      execution time limit = PT10M
-      execution retry delays = 1*PT5S
   [[FirstBackgroundFamily]]
-  [[PreFirstBackground__]]
-    inherit = FirstBackgroundFamily,PlaceHolder
-  [[InitFirstBackground]]
-    inherit = FirstBackgroundFamily
-  [[InitFirstBackground__]]
-    inherit = InitFirstBackground,PlaceHolder
-  [[FirstBackgroundExec]]
-    inherit = FirstBackgroundFamily
-  [[FirstBackgroundExec__]]
-    inherit = FirstBackgroundExec,PlaceHolder
-  [[FirstBackgroundPost__]]
-    inherit = FirstBackgroundFamily,PlaceHolder
-  [[FirstBackgroundFinished__]]
-    inherit = FirstBackgroundFamily,PlaceHolder
-  [[CleanFirstBackground]]
-    inherit = Clean
   # extendedforecast
   [[ExtendedForecast]]
 
@@ -957,7 +917,7 @@ conda activate cylc8
     inherit = Clean
 
 [visualization]
-  initial cycle point = 20180414T18
-  final cycle point   = 20180415T00
+  initial cycle point = 20180422T06
+  final cycle point   = 20180501T00
   number of cycle points = 200
   default node attributes = "style=filled", "fillcolor=grey"
