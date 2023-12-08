@@ -7,6 +7,7 @@
  which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 '''
 
+import os
 import subprocess
 
 from initialize.config.Config import Config
@@ -31,8 +32,12 @@ class SuiteBase():
     self._tasks = []
 
     self.logPrefix = self.__class__.__name__+': '
-    #self.suiteFileName = 'suite.rc'
-    self.suiteFileName = 'flow.cylc'
+    host = os.getenv('NCAR_HOST')
+    if host == "derecho":
+      self.suiteFileName = 'flow.cylc'
+    elif host == "cheyenne":
+      self.suiteFileName = 'suite.rc'
+
   def __msg(self, text):
     print(self.logPrefix+text)
     return
@@ -47,6 +52,18 @@ class SuiteBase():
     self.__msg(' '.join(cmd))
     sub = subprocess.run(cmd)
 
+    host = os.getenv('NCAR_HOST')
+    cylcEnv = os.getenv('CYLC_ENV')
+    if host == "derecho":
+      modScript = '/etc/profile.d/z00_modules.sh'
+      conda = cylcEnv
+    elif host == "cheyenne":
+      modScript = '/etc/profile.d/modules.sh'
+      conda = 'npl'
+    else:
+      modScript = ''
+      conda = ''
+
     ## task defaults inherited by others
     self._tasks += ["""
   [[root]]
@@ -59,12 +76,12 @@ class SuiteBase():
       submission timeout handler = cylc poll %(suite)s '%(id)s:*'; sleep 20; cylc trigger %(suite)s '%(id)s:*' ''']
 
   [[BATCH]]
-    # load conda + activate cylc8
+    # load conda + activate """ + conda + """
     init-script = '''
-source /etc/profile.d/z00_modules.sh
-module load conda/latest
-#conda activate cylc7
-conda activate cylc8
+source """ + modScript + """
+module load conda//latest
+conda activate """ + conda + """
+
 '''
     # default job and directives
 """+self.c['hpc'].multitask.job()+self.c['hpc'].multitask.directives()+"""
@@ -72,10 +89,9 @@ conda activate cylc8
   [[SingleBatch]]
     # load conda + activate cylcc
     init-script = '''
-source /etc/profile.d/z00_modules.sh
+source """ + modScript + """
 module load conda/latest
-#conda activate cylc7
-conda activate cylc8
+conda activate """ + conda + """
 '''
     # default job and directives
 """+self.c['hpc'].singletask.job()+self.c['hpc'].singletask.directives()+"""

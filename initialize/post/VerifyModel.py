@@ -7,6 +7,7 @@
  which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 '''
 
+import os
 from initialize.applications.Members import Members
 
 from initialize.config.Component import Component
@@ -25,13 +26,19 @@ class VerifyModel(Component):
   workDir = 'Verification'
   diagnosticsDir = 'diagnostic_stats/model'
   variablesWithDefaults = {
-    'script directory': ['/glade/u/home/taosun/work/Derecho/MPAS/Graphics_Python', str],
+    'script directory': ['/glade/work/ivette/pandac/graphics/graphics_7SEPT2023', str],
   }
 
   def __init__(self,
     config:Config,
     localConf:dict,
   ):
+    # adjust script directory for derecho
+    hname = os.getenv('NCAR_HOST')
+    if  hname == "derecho":
+      self.variablesWithDefaults['script directory'] = \
+          ['/glade/u/home/taosun/work/Derecho/MPAS/Graphics_Python', str]
+
     super().__init__(config)
 
     hpc = localConf['hpc']; assert isinstance(hpc, HPC), self.base+': incorrect type for hpc'

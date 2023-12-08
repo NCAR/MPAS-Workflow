@@ -11,7 +11,9 @@
 # running, then executing this script will automatically kill that running suite.
 ####################################################################################################
 
-echo "$0 (INFO): Generating the scenario-specific MPAS-Workflow directory"
+set workflow_dir="MPAS-Workflow"
+
+echo "$0 (INFO): Generating the scenario-specific ${workflow_dir} directory"
 
 # Create/copy the task shell scripts
 
@@ -19,49 +21,88 @@ echo "$0 (INFO): Generating the scenario-specific MPAS-Workflow directory"
 source config/auto/experiment.csh
 
 ## Change to the cylc suite directory
+echo $0 cd ${mainScriptDir}
 cd ${mainScriptDir}
 
-#module purge
-#module load cylc
-#module load graphviz
-module load conda/latest
-conda activate cylc8
+set NCARHOST=$NCAR_HOST
+if ( "$NCARHOST" == "derecho" ) then
+  if ( ! $?CYLC_ENV ) then
+    echo 'CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2')
+    setenv CYLC_ENV /glade/work/jwittig/conda-envs/my-cylc8.2
+  endif
 
+  echo $0 conda activate $CYLC_ENV
+  conda activate $CYLC_ENV
+  #set cylc_timeout="--comms-timeout=10"
+else if ( "$NCARHOST" == "cheyenne" ) then
+  module purge
+  echo $0 module load cylc
+  module load cylc
+  module load graphviz
+else
+  echo "unknown NCARHOST:" $NCARHOST
+  exit 1
+endif
+
+echo $0 cylc version: `cylc --version`
 date
 
 echo "$0 (INFO): checking if a suite with the same name is already running"
 
-#cylc poll $SuiteName >& /dev/null
-#if ( $status == 0 ) then
-#  echo "$0 (INFO): a cylc suite named $SuiteName is already running!"
-#  echo "$0 (INFO): stopping the suite (30 sec.), then starting a new one..."
-#  cylc stop --kill $SuiteName
-#  sleep 30
-#else
-#  echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not already running"
-#  echo "$0 (INFO): starting a new suite..."
-#endif
-cylc stop --kill MPAS-Workflow/$SuiteName
-#sleep 30
+if ( "$NCARHOST" == "derecho" ) then
+  set status = `cylc scan -t rich | grep -c "${SuiteName} "`
+  if ( $status > 0 ) then
+    echo "$0 (INFO): a cylc suite named $SuiteName is already running!"
+    echo "$0 (INFO): stopping the suite (30 sec.), then starting a new one..."
+    echo $0 cylc stop --kill ${workflow_dir}/$SuiteName
+    cylc stop --kill ${workflow_dir}/$SuiteName
+    sleep 5
+  else
+    echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not already running"
+    echo "$0 (INFO): starting a new suite..."
+  endif
+  echo $0 cylc scan -t rich
+  cylc scan -t rich
+else if ( "$NCARHOST" == "cheyenne" ) then
+  echo $0 cylc poll $SuiteName 
+  cylc poll $SuiteName 
+  if ( $status == 0 ) then
+    echo "$0 (INFO): a cylc suite named $SuiteName is already running!"
+    echo "$0 (INFO): stopping the suite (30 sec.), then starting a new one..."
+    cylc stop --kill $SuiteName
+    sleep 30
+  else
+    echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not already running"
+    echo "$0 (INFO): starting a new suite..."
+  endif
+endif
 
+echo $0 cylcWorkDir  ${cylcWorkDir}
+echo $0 SuiteName ${SuiteName}
+echo $0 mainScriptDir ${mainScriptDir}
 rm -rf ${cylcWorkDir}/${SuiteName}
 
-echo "$0 (INFO): register, validate, and run the suite"
-#cylc register ${SuiteName} ${mainScriptDir}
-#cylc validate --strict ${SuiteName}
-#cylc run ${SuiteName}
-if ( -e ~/cylc-run/MPAS-Workflow/${SuiteName} ) then
-  rm -r ~/cylc-run/MPAS-Workflow/${SuiteName}
-  echo "Already has this suite, replay it"
+if ( "$NCARHOST" == "derecho" ) then
+  if ( -e ~/cylc-run/${workflow_dir}/${SuiteName} ) then
+    echo $0 rm -r ~/cylc-run/${workflow_dir}/${SuiteName}
+    rm -r ~/cylc-run/${workflow_dir}/${SuiteName}
+  #  echo "Already has this suite, replay it"
+  endif
+  echo $0 cylc install --run-name=${SuiteName}
+  cylc install --run-name=${SuiteName}
+  echo $0  cylc validate ${workflow_dir}/${SuiteName}
+  cylc validate ${workflow_dir}/${SuiteName}
+  echo $0 cylc play ${workflow_dir}/${SuiteName}
+  cylc play ${workflow_dir}/${SuiteName}
+else if ( "$NCARHOST" == "cheyenne" ) then
+  echo "$0 (INFO): register, validate, and run the suite:", ${SuiteName}
+  echo $0 cylc register ${SuiteName} ${mainScriptDir}
+  cylc register ${SuiteName} ${mainScriptDir}
+  echo $0  cylc validate --strict ${SuiteName}
+  cylc validate --strict ${SuiteName}
+  echo $0 cylc run ${SuiteName}
+  cylc run ${SuiteName}
 endif
-echo "cylc-flow install suite ${SuiteName}"
-cylc install --run-name=${SuiteName}
-
-echo "cylc-flow validate suite ${SuiteName}"
-cylc validate MPAS-Workflow/${SuiteName}
-
-echo "cylc-flow strats running suite ${SuiteName}"
-cylc play MPAS-Workflow/${SuiteName}
 
 cd -
 

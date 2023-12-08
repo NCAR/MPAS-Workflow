@@ -144,18 +144,22 @@ variational:
     #  bumpCovDir: str
     #  bumpCovStdDevFile: str
     #  bumpCovVBalDir: str
+    #  hybridCoefficientsDir: str
     30km:
       bumpCovDir: None
       bumpCovStdDevFile: None
       bumpCovVBalDir: None
+      hybridCoefficientsDir: None
     60km:
       bumpCovDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.NICAS_00
       bumpCovStdDevFile: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
       bumpCovVBalDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.VBAL_00
+      hybridCoefficientsDir: /glade/p/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
     120km:
       bumpCovDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.NICAS_00
       bumpCovStdDevFile: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
       bumpCovVBalDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.VBAL_00
+      hybridCoefficientsDir: /glade/p/mmm/parc/liuz/pandac_hybrid/120km.allsky_hybrid
 
   # resource requirements
   job:
@@ -232,6 +236,12 @@ variational:
           memory: 235GB
           baseSeconds: 500
           secondsPerEnVarMember: 9
+        3dhybrid-allsky:
+          nodes: 6
+          PEPerNode: 32
+          memory: 45GB
+          baseSeconds: 500
+          secondsPerEnVarMember: 9
         3dvar:
           nodes: 2
           PEPerNode: 128
@@ -262,6 +272,12 @@ variational:
           nodes: 2
           PEPerNode: 128
           memory: 235GB
+          baseSeconds: 250
+          secondsPerEnVarMember: 6
+        3dhybrid-allsky:
+          nodes: 4
+          PEPerNode: 36
+          memory: 45GB
           baseSeconds: 250
           secondsPerEnVarMember: 6
         3dvar:
