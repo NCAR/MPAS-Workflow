@@ -17,24 +17,20 @@ class Build(Component):
   variablesWithDefaults = {
     ## mpas bundle
     # mpas-bundle build directory
-    'mpas bundle': ['/glade/work/nystrom/Code/JEDI/jcsda_internal/build_2.0_w_4D_VarBC_derecho', str],
-    #'mpas bundle': ['/replace/this/in/host/specific/code/below', str],
+    'mpas bundle': ['/replace/this/in/host/specific/code/below', str],
 
     # optional double-precision build
     #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22MAR2023', str],
 
     # forecast directory
     # defaults to bundle build, otherwise specify full directory
-    'forecast directory': ['bundle', str],
-    #'forecast directory': ['/replace/this/in/host/specific/code/below/', str],
+    #'forecast directory': ['bundle', str],
+    'forecast directory': ['/replace/this/in/host/specific/code/below/', str],
 
     ## bundle compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
     # the executables described herein
-    #'bundle compiler used': ['gnu-openmpi', str,
-    #  ['gnu-openmpi', 'intel-impi']],
-    #'bundle compiler used': ['intel-cray', str],
-    'bundle compiler used': ['gnu-cray', str],
+
   }
 
   def __init__(self, config:Config, model:Model=None):
