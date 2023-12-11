@@ -82,12 +82,12 @@ class Observations(Component):
     'GDASObsErrtable': ['/glade/work/guerrett/pandac/fixed_input/GSI_errtables/HRRRENS_errtable_10sep2018.r3dv', str],
 
     ## CRTM
-    'CRTMTABLES': ['/glade/p/mmm/parc/liuz/pandac_common/crtm_coeffs/', str],
+    'CRTMTABLES': ['/glade/campaign/mmm/parc/liuz/pandac_common/crtm_coeffs/', str],
 
     # static directories for bias correction files
-    'fixedCoeff': ['/glade/p/mmm/parc/liuz/pandac_common/obs/satbias', str],
-    'fixedTlapmeanCov': ['/glade/p/mmm/parc/liuz/pandac_common/obs/satbias/2018', str],
-    'initialVARBCcoeff': ['/glade/p/mmm/parc/liuz/pandac_common/obs/satbias/2018', str],
+    'fixedCoeff': ['/glade/campaign/mmm/parc/liuz/pandac_common/obs/satbias', str],
+    'fixedTlapmeanCov': ['/glade/campaign/mmm/parc/liuz/pandac_common/obs/satbias/2018', str],
+    'initialVARBCcoeff': ['/glade/campaign/mmm/parc/liuz/pandac_common/obs/satbias/2018', str],
   }
 
   def __init__(self,

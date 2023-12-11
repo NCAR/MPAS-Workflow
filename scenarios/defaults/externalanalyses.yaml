@@ -32,11 +32,11 @@ externalanalyses:
     GFS:
       PANDAC: # only available 20180415T00-20180525T00
         120km:
-          directory: "/glade/p/mmm/parc/liuz/pandac_common/120km/120km_GFSANA"
+          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_GFSANA"
         60km:
-          directory: "/glade/p/mmm/parc/liuz/pandac_common/60km/60km_GFSANA"
+          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_GFSANA"
         30km:
-          directory: "/glade/p/mmm/parc/liuz/pandac_common/30km/30km_GFSANA"
+          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_GFSANA"
       RDA:
         common:
           PrepareExternalAnalysisTasks:
