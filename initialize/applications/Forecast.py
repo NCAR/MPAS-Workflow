@@ -84,12 +84,12 @@ class Forecast(Component):
       outIntervalHR = window // 2
       lengthHR = 3 * outIntervalHR
     else:
-      outIntervalHR = window
-      lengthHR = window
+      #outIntervalHR = window
+      #lengthHR = window
+      # For generating hourly output for 4DEnVar
+      outIntervalHR = 1
+      lengthHR = 9
 
-    # For generating hourly output for 4DEnVar
-    outIntervalHR = 1
-    lengthHR = 9
 
     self._set('outIntervalHR', outIntervalHR)
     self._set('lengthHR', lengthHR)

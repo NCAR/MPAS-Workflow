@@ -121,10 +121,9 @@ variational:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
       60km:
-        #bumpLocPrefix: bumploc_1200.0km_6.0km
-        #bumpLocDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.bumploc.duplicated.limited.1200km6km
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/derecho/scratch/nystrom/pandac/60km.bumploc.duplicated.limited_derecho
+        bumpLocDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.bumploc.duplicated.limited.1200km6km
+        #bumpLocDir: /glade/derecho/scratch/nystrom/pandac/60km.bumploc.duplicated.limited_derecho
       120km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.bumploc.duplicated.limited.1200km6km

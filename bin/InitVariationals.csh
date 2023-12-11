@@ -438,20 +438,26 @@ while ( $member <= ${nMembers} )
 
   # Link bg from StateDirs
   # ======================
-  set bgFileOther = ${other}/${self_StatePrefix}.*.nc
+  set bgFileOther = ${other}/${self_StatePrefix}.${thisMPASFileDate}.nc
+  if ( "$DAType" == "4denvar" ) then
+    set bgFileOther = ${other}/${self_StatePrefix}.*.nc
+  endif
   set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
   rm ${bgFile}${OrigFileSuffix} ${bgFile}
   ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
+  ln -sfv ${bgFileOther} ${bgFile}
 
-  # Loop over background files
-  foreach bgFile ( `ls -d $bgFileOther`)
-    set temp_file = `echo $bgFile | sed 's:.*/::'`
-    set bgFileDate = `echo ${temp_file} | cut -c 9-27`
-    ln -sfv $bgFile ${bg}/${BGFilePrefix}.${bgFileDate}.nc
-  end
+  if ( "$DAType" == "4denvar" ) then
+    # Loop over background files
+    foreach bgFile ( `ls -d $bgFileOther`)
+      set temp_file = `echo $bgFile | sed 's:.*/::'`
+      set bgFileDate = `echo ${temp_file} | cut -c 9-27`
+      ln -sfv $bgFile ${bg}/${BGFilePrefix}.${bgFileDate}.nc
+    end
 
-  set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+    set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+  endif
 
   # determine analysis output precision
   ncdump -h ${bgFile} | grep uReconstruct | grep double
@@ -469,19 +475,20 @@ while ( $member <= ${nMembers} )
 
   # use the member-specific background as the TemplateFieldsFileOuter for this member
   rm ${TemplateFieldsFileOuter}${memSuffix}
-  ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
+  ln -sfv ${bgFile} templateFields.${nCellsOuter}.${thisMPASFileDate}.nc${memSuffix}
 
-  # Loop over background files and set as the TemplateFieldsFileOuter for this member for each time
-  foreach bgFile (`ls -d ${bg}/*.nc`)
-    set temp_file = `echo $bgFile | sed 's:.*/::'`
-    set bgFileDate = `echo ${temp_file} | cut -c 4-22`
-    ln -sfv ${bgFile} templateFields.${nCellsOuter}.${bgFileDate}.nc${memSuffix}
-  end
-
-  set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+  if ( "$DAType" == "4denvar" ) then
+    # Loop over background files and set as the TemplateFieldsFileOuter for this member for each time
+    foreach bgFile (`ls -d ${bg}/*.nc`)
+      set temp_file = `echo $bgFile | sed 's:.*/::'`
+      set bgFileDate = `echo ${temp_file} | cut -c 4-22`
+      ln -sfv ${bgFile} templateFields.${nCellsOuter}.${bgFileDate}.nc${memSuffix}
+    end
+    set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+  endif
 
   if ($nCellsOuter != $nCellsInner) then
-    set tFile = ${TemplateFieldsFileInner}${memSuffix}
+    set tFile = templateFields.${nCellsInner}.${thisMPASFileDate}.nc${memSuffix}
     rm $tFile
 
     # use localStaticFieldsFileInner as the TemplateFieldsFileInner
@@ -489,13 +496,15 @@ while ( $member <= ${nMembers} )
     #       but dual-res EDA not working yet anyway
     cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
 
-    # Loop over times and set as the TemplateFieldsFileInner for this member for each time
-    foreach bgFile (`ls -d ${bg}/*.nc`)
-      set temp_file = `echo $bgFile | sed 's:.*/::'`
-      set bgFileDate = `echo ${temp_file} | cut -c 4-22`
-      cp -v ${localStaticFieldsFileInner} templateFields.${nCellsInner}.${bgFileDate}.nc${memSuffix}
-    end
-    set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+    if ( "$DAType" == "4denvar" ) then
+      # Loop over times and set as the TemplateFieldsFileInner for this member for each time
+      foreach bgFile (`ls -d ${bg}/*.nc`)
+        set temp_file = `echo $bgFile | sed 's:.*/::'`
+        set bgFileDate = `echo ${temp_file} | cut -c 4-22`
+        cp -v ${localStaticFieldsFileInner} templateFields.${nCellsInner}.${bgFileDate}.nc${memSuffix}
+      end
+      set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+    endif 
 
     # modify xtime
     # TODO: handle errors from python executions, e.g.:
@@ -504,16 +513,20 @@ while ( $member <= ${nMembers} )
     # ImportError: No module named netCDF4
     # '''
     # loop over times
-    foreach tFile (`ls -d templateFields.${nCellsInner}.*.nc`)
-      set temp_file = `echo $tFile | sed 's:.*/::'`
-      set tFileDate = `echo ${temp_file} | cut -c 23-41`
-      set tyyyy = `echo ${tFileDate}| cut -c 1-4`
-      set tmm = `echo ${tFileDate}| cut -c 6-7`
-      set tdd = `echo ${tFileDate}| cut -c 9-10`
-      set thh = `echo ${tFileDate}| cut -c 12-13`
-      echo "${updateXTIME} ${tFile} ${tyyyy}${tmm}${tdd}${thh}"
-      ${updateXTIME} $tFile ${tyyyy}${tmm}${tdd}${thh}
-    end
+    echo "${updateXTIME} $tFile ${thisCycleDate}"
+    ${updateXTIME} $tFile ${thisCycleDate}
+    if ( "$DAType" == "4denvar" ) then
+      foreach tFile (`ls -d templateFields.${nCellsInner}.*.nc`)
+        set temp_file = `echo $tFile | sed 's:.*/::'`
+        set tFileDate = `echo ${temp_file} | cut -c 23-41`
+        set tyyyy = `echo ${tFileDate}| cut -c 1-4`
+        set tmm = `echo ${tFileDate}| cut -c 6-7`
+        set tdd = `echo ${tFileDate}| cut -c 9-10`
+        set thh = `echo ${tFileDate}| cut -c 12-13`
+        echo "${updateXTIME} ${tFile} ${tyyyy}${tmm}${tdd}${thh}"
+        ${updateXTIME} $tFile ${tyyyy}${tmm}${tdd}${thh}
+      end
+    endif
   endif
 
   if ($nCellsOuter != $nCellsEnsemble && $nCellsInner != $nCellsEnsemble) then
