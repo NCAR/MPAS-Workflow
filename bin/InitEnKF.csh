@@ -219,7 +219,7 @@ while ( $member <= 1 )
   set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
   rm ${TemplateFieldsFileOuter}${memSuffix}
-  ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
+  ln -sfv ${bgFile} templateFields.${nCellsOuter}.${thisMPASFileDate}.nc${memSuffix}
 
   foreach StreamsFile_ ($StreamsFileList)
     if (${memSuffix} != "") then

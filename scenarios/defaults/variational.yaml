@@ -46,7 +46,6 @@ variational:
             maxMembers: 20
             directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
             filePrefix: EnsForCov
-            memberPrefix: EnsForCov
             memberNDigits: 2
 
             # the settings above produce the following yaml template:
