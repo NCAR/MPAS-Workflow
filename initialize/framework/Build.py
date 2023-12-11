@@ -30,7 +30,8 @@ class Build(Component):
     ## bundle compiler used
     # {compiler}-{mpi-implementation}/{version} combination that selects the JEDI module used to build
     # the executables described herein
-
+    'bundle compiler used': ['gnu-openmpi', str,
+     ['gnu-openmpi', 'intel-impi']],
   }
 
   def __init__(self, config:Config, model:Model=None):
