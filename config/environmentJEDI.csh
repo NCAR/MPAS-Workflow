@@ -5,6 +5,7 @@ if ( $?config_environmentJEDI ) exit 0
 set spack_version="1.5.1"
 echo "Loading Spack-Stack $spack_version"
 setenv config_environmentJEDI 1
+
 source config/auto/build.csh
 
 if ( "$NCAR_HOST" == "derecho" ) then
