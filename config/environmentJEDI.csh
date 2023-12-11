@@ -5,7 +5,6 @@ if ( $?config_environmentJEDI ) exit 0
 set spack_version="1.5.1"
 echo "Loading Spack-Stack $spack_version"
 setenv config_environmentJEDI 1
-source /etc/profile.d/z00_modules.csh
 source config/auto/build.csh
 
 if ( "$NCAR_HOST" == "derecho" ) then
@@ -69,5 +68,3 @@ setenv OMP_NUM_THREADS 1
 setenv FI_CXI_RX_MATCH_MODE 'hybrid'
 
 module list
-
-setenv LD_LIBRARY_PATH ${mpasBundle}/lib:$LD_LIBRARY_PATH
