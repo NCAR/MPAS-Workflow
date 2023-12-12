@@ -20,6 +20,7 @@
 import argparse
 from collections.abc import Iterable
 import glob
+import os
 from pathlib import Path
 import subprocess
 
@@ -32,6 +33,12 @@ def main():
   '''
   main program
   '''
+  hname = os.getenv('NCAR_HOST')
+  cylc = os.getenv('CYLC_ENV')
+  if  hname == "derecho" and cylc is None:
+    print('CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2')
+    os.environ['CYLC_ENV'] = '/glade/work/jwittig/conda-envs/my-cylc8.2'
+
   run = Run()
   run.execute()
 

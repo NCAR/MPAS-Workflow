@@ -11,6 +11,8 @@ from copy import deepcopy
 
 from initialize.config.Config import Config
 from initialize.config.Component import Component
+from initialize.config.Resource import Resource
+from initialize.config.Task import TaskLookup
 from initialize.config.TaskFamily import placeholdertask
 
 from initialize.framework.HPC import HPC
@@ -132,6 +134,22 @@ class Observations(Component):
     self.Queue = hpc['CriticalQueue']
     self.Account = hpc['CriticalAccount']
 
+    '''
+    Create a Task to automatically convert to derecho PBS args if neccessary.
+    This may specify a job priority for derecho based on the queue type.
+    '''
+    attr = {
+      'seconds': {'def': 600, 'typ': int},
+      'nodes': {'def': 1, 'typ': int},
+      'PEPerNode': {'def': 1, 'typ': int},
+      'memory': {'def': '10GB', 'typ': str},
+      'queue': {'def': self.Queue},
+      'account': {'def': self.Account},
+      'email': {'def': True, 'typ': bool},
+    }
+    resource = Resource(self._conf, attr, ('job',))
+    self.task = TaskLookup[hpc.system](resource)
+
   def export(self, dtOffsets:list=[0]):
 
     subqueues = []
@@ -171,19 +189,13 @@ class Observations(Component):
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
-    [[[job]]]
-      execution time limit = PT600S
-      execution retry delays = '''+self['convertRetry']+'''
-    [[[directives]]]
+'''+self.task.job()+'''
       # currently ObsToIODA has to be on Cheyenne, because ioda-upgrade.x is built there
       # TODO: build ioda-upgrade.x on casper, remove Critical directives below, deferring to
       #       SingleBatch inheritance
       # Note: memory for ObsToIODA may need to be increased when hyperspectral and/or
       #       geostationary instruments are added
-      -m = ae
-      -q = '''+self.Queue+'''
-      -A = '''+self.Account+'''
-      -l = select=1:ncpus=1:mem=10GB''']
+'''+self.task.directives()]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:
