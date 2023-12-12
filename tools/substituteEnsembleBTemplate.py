@@ -105,7 +105,6 @@ def substituteEnsembleB():
     yamls[str(member+1)] = file
 
   filename = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File
-  #filename = args.directory0+'/'+'%iMember%/'+directory1+args.File
 
   membersTemplate = \
 '''

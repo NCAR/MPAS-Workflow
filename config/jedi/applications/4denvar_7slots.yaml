@@ -65,19 +65,19 @@ cost function:
       date: *date1
     - state variables: *stvars
       filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate2}}.nc
-      date: *date2 
+      date: *date2
     - state variables: *stvars
       filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate3}}.nc
-      date: *date3 
+      date: *date3
     - state variables: *stvars
       filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
-      date: *date4 
+      date: *date4
     - state variables: *stvars
       filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate5}}.nc
-      date: *date5 
+      date: *date5
     - state variables: *stvars
       filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate6}}.nc
-      date: *date6 
+      date: *date6
     - state variables: *stvars
       filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate7}}.nc
       date: *date7

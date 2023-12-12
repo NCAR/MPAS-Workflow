@@ -33,7 +33,7 @@ firstbackground:
           directory: "/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_1stCycle_background_single/{{FirstCycleDate}}"
         60km: # only available 20180414T18, 20200723T18
           #directory: "/glade/p/mmm/parc/liuz/pandac_common/60km/60km_1stCycle_background_single/{{FirstCycleDate}}"
-          directory: "/glade/scratch/nystrom/pandac/60km_1stCycle_background_single/{{FirstCycleDate}}" 
+          directory: "/glade/scratch/nystrom/pandac/60km_1stCycle_background_single/{{FirstCycleDate}}"
         30km: # only available 20180414T18
           directory: "/glade/p/mmm/parc/liuz/pandac_common/30km/30km_1stCycle_background_single/{{FirstCycleDate}}"
       LaggedGEFS:

@@ -41,8 +41,8 @@ It is required to set the `work` and `run` directories in $HOME/.cylc/global.rc 
 ```
 [hosts]
   [[localhost]]
-    work directory = /glade/derecho/scratch/USER/cylc-run
-    run directory = /glade/derecho/scratch/USER/cylc-run
+    work directory = /glade/scratch/USER/cylc-run
+    run directory = /glade/scratch/USER/cylc-run
     [[[batch systems]]]
       [[[[pbs]]]]
         job name length maximum = 236

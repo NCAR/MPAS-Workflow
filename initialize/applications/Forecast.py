@@ -80,16 +80,13 @@ class Forecast(Component):
     IAU = self['IAU']
 
     window = workflow['CyclingWindowHR']
+    subwindow = workflow['subwindow']
     if IAU:
       outIntervalHR = window // 2
       lengthHR = 3 * outIntervalHR
     else:
-      #outIntervalHR = window
-      #lengthHR = window
-      # For generating hourly output for 4DEnVar
-      outIntervalHR = 1
-      lengthHR = 9
-
+      outIntervalHR = subwindow
+      lengthHR = window + window // 2
 
     self._set('outIntervalHR', outIntervalHR)
     self._set('lengthHR', lengthHR)

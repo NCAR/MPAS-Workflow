@@ -139,7 +139,7 @@ def substituteEnsembleB_4d():
   filename3 = args.directory0+'/'+memberPrefix+'%iMember%/'+directory1+args.File3
 
 
-  # Modified to include multiple time files, currently 3 times for 3 h window 
+  # Modified to include multiple time files, currently 3 times for 3 h subwindow
   membersTemplate = \
 '''
 members from template:
