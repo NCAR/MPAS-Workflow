@@ -71,7 +71,7 @@ rm -rf GRIBFILE.*
 
 echo "Getting GFS analysis from RDA"
 # RDA GFS forecasts directory
-set GFSgribdirRDA = /gpfs/fs1/collections/rda/data/ds084.1
+set GFSgribdirRDA = /glade/campaign/collections/rda/data/ds084.1
 
 if ( ! -e ${GFSgribdirRDA}/${gribFile} ) then
    set preVyymmdd = `echo ${prevValidDate} | cut -c 1-8`

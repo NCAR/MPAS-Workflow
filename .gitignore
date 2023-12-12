@@ -4,5 +4,7 @@ config/auto/*.csh
 suite.rc
 
 ~*
+__pycache__
+flow.cylc
 
 config/jedi/ObsPlugs/retrieveObsErrors/*.yaml
