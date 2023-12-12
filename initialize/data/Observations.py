@@ -79,7 +79,7 @@ class Observations(Component):
     # This file provides observation errors for all types of conventional and satwnd data
     # for 33 pressure levels (1100 hPa to 0 hPa). More information on this table can be
     # found in the GSI User's guide (https://dtcenter.ucar.edu/com-GSI/users/docs/users_guide/GSIUserGuide_v3.7.pdf)
-    'GDASObsErrtable': ['/glade/work/guerrett/pandac/fixed_input/GSI_errtables/HRRRENS_errtable_10sep2018.r3dv', str],
+    'GDASObsErrtable': ['/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GSI_errtables/HRRRENS_errtable_10sep2018.r3dv', str],
 
     ## CRTM
     'CRTMTABLES': ['/glade/campaign/mmm/parc/liuz/pandac_common/crtm_coeffs/', str],

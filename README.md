@@ -8,26 +8,22 @@ A tool for cycling forecast and data assimilation experiments with the
 data assimilation package. The workflow is orchestrated using the [Cylc](https://cylc.github.io/)
 general purpose workflow engine.
 
-Starting a cycling experiment on the Cheyenne HPC
+Starting a cycling experiment on the Derecho HPC
 -------------------------------------------------
 
 ```shell
- #login to Cheyenne
+ #login to derecho.hpc.ucar.edu
 
  mkdir -p /fresh/path/for/submitting/experiments
 
  cd /fresh/path/for/submitting/experiments
 
- module load git
-
  git clone https://github.com/NCAR/MPAS-Workflow
+
+ cd MPAS-Workflow
 
  #modify configuration as needed in `scenarios/*.yaml`, `scenarios/defaults/*.yaml`, or
  # `test/testinput/*.yaml`
-
- source env-setup/cheyenne.csh
- #OR
- source env-setup/cheyenne.sh
 
  ./Run.py {{scenarioConfig}}
  #OR
@@ -37,18 +33,19 @@ Starting a cycling experiment on the Cheyenne HPC
 `{{scenarioConfig}}` is a yaml-based configuration file, examples of which are given in
 `scenarios/*.yaml` and `test/testinput/*.yaml`
 
-It is required to set the `work` and `run` directories in $HOME/.cylc/global.rc as follows:
+It is required to set the content of $HOME/.cylc/flow/global.cylc as follows:
 ```
-[hosts]
-  [[localhost]]
-    work directory = /glade/scratch/USER/cylc-run
-    run directory = /glade/scratch/USER/cylc-run
-    [[[batch systems]]]
-      [[[[pbs]]]]
-        job name length maximum = 236
+[platforms]
+    # The localhost platform is available by default
+    # [[localhost]]
+    #     hosts = localhost
+    #     install target = localhost
+    [[pbs_cluster]]
+        hosts = localhost
+        job runner = pbs
+        install target = localhost
 ```
-`USER` must be filled in with your user-name.  It is
-recommended to set `job name length maximum` to a large value.
+The [[pbs_cluster]] entries tell cylc how to submit jobs.
 
 Build
 -----
