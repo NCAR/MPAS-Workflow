@@ -1,0 +1,74 @@
+  obs filters:
+  - filter: Domain Check
+    where:
+    - variable:
+        name: MetaData/sensorZenithAngle
+      maxvalue: 65.0
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 7,11,13-16
+    where:
+    - variable:
+        name: water_area_fraction@GeoVaLs
+      minvalue: 1.0
+    <<: *multiIterationFilter
+  - filter: Perform Action
+    filter variables:
+    - name: brightnessTemperature
+      channels: *ahi_channels
+#  - filter: Domain Check
+#    where:
+#    - variable:
+#        name: MetaData/cloudAmount
+#      minvalue: 0.05
+    action:
+      name: assign error
+      _symmetric cld fits 59X59-120km: &ahi_himawari8_SymmCldFits101X101-120km
+## 120 km, no bias correction
+        x0: [1, 1, 1, 1, 1, 11, 1, 1, 1, 1]
+        x1: [33.95, 12.58, 15.65, 19.98, 47.76, 45.78, 45.67, 49.44, 31.96, 26.67]
+        err0: [3.28, 1.87, 1.85, 2.17, 3.53, 4.76, 4.19, 4.44, 2.79, 1.79]
+        err1: [17.73, 12.72, 14.65, 15.36, 24.62, 16.82, 23.8, 25.14, 22.66, 19.3]
+      _symmetric cld fits 59X59-120km: &ahi_himawari8_SymmCldFits15X15-120km
+## 120 km, no bias correction
+        x0: [1, 1, 1, 1, 1, 10, 1, 1, 1, 1]
+        x1: [34.74, 12.27, 15.52, 22.96, 35.04, 29.69, 30.99, 30.84, 28.13, 26.35]
+        err0: [3.86, 1.96, 1.95, 2.62, 3.53, 3.24, 3.02, 3.12, 2.75, 2.22]
+        err1: [18.9, 13.1, 15.51, 17.16, 23.79, 18.86, 25.65, 25.72, 24.91, 21.39]
+      _symmetric cld fits 15X15-60km: &ahi_himawari8_SymmCldFits15X15-60km
+## 60 km, no bias correction - copy of 120km
+        <<: *ahi_himawari8_SymmCldFits15X15-120km
+      _symmetric cld fits 15X15-30km: &ahi_himawari8_SymmCldFits15X15-30km
+## 30 km, no bias correction - copy of 120km
+        <<: *ahi_himawari8_SymmCldFits15X15-120km
+      error function:
+        name: ObsFunction/ObsErrorModelRamp
+        channels: *ahi_channels
+        options:
+          <<: *ahi_himawari8_SymmCldFits{{AHISUPEROBGRID}}-{{HofXMeshDescriptor}}
+          channels: *ahi_channels
+          xvar:
+            name: ObsFunction/SymmCldImpactIR
+            channels: *ahi_channels
+            options:
+              channels: *ahi_channels
+  - filter: GOMsaver
+    filename: {{OutDBDir}}/{{geoPrefix}}_ahi_himawari8.nc4
+  - filter: YDIAGsaver
+    filename: {{OutDBDir}}/{{diagPrefix}}_ahi_himawari8.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *ahi_channels
+    - name: weightingfunction_of_atmosphere_layer
+      channels: *ahi_channels
+    - name: pressure_level_at_peak_of_weightingfunction
+      channels: *ahi_channels
+    - name: brightness_temperature_jacobian_air_temperature
+      channels: *ahi_channels
+    - name: brightness_temperature_jacobian_humidity_mixing_ratio
+      channels: *ahi_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *ahi_channels
+    - name: brightness_temperature_jacobian_surface_temperature
+      channels: *ahi_channels

@@ -41,17 +41,6 @@
     - name: brightnessTemperature
       channels: *abi_g16_channels
     test variables:
-      - name: MetaData/brightness_temperature_13_so_std
-    maxvalue: 5.0
-    action:
-      name: reject
-    <<: *multiIterationFilter
-
-  - filter: Bounds Check
-    filter variables:
-    - name: brightnessTemperature
-      channels: *abi_g16_channels
-    test variables:
       - name: ObsFunction/ObsErrorModelRamp
         channels: *abi_g16_channels
         options:

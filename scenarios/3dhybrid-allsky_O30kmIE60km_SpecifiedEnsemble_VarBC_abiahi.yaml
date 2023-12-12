@@ -1,6 +1,6 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  name: 'abiahi_ch13_noH2O_rawobs_QC-230k_CA-5K'
+  name: 'abi_ch13_noH2O_rawobs_QC-230k_CA-15K_homogeneity'
 
 #build:
 #  mpas bundle: /glade/p/mmm/parc/ivette/pandac/codeBuild/mpasBundle_2.0_SP_T_jacobian/build
@@ -73,7 +73,8 @@ observations:
       IODADirectory:
         da:
           ## abi
-          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi_g16: /glade/p/mmm/parc/ivette/pandac/Observations/abi/bj_so_abi
+          #abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
           ## ahi
@@ -88,7 +89,8 @@ observations:
           ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
         hofx:
           ## abi
-          abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi_g16: /glade/p/mmm/parc/ivette/pandac/Observations/abi/bj_so_abi
+          #abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
           ## ahi
@@ -130,7 +132,7 @@ variational:
     mhs_n18,
     mhs_n19,
     abi_g16,
-    ahi_himawari8,
+    #ahi_himawari8,
     #abi-clr_g16,
     #ahi-clr_himawari8,
   ]
