@@ -44,7 +44,7 @@ variational:
         GEFS:
           120km:
             maxMembers: 20
-            directory0: '/glade/p/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
+            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
             filePrefix: EnsForCov
             memberNDigits: 2
 
@@ -52,7 +52,7 @@ variational:
             #members from template:
             #  template:
             #    <<: *memberConfig
-            #    filename: /glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/EnsForCov/{{prevDateTime}}/%iMember%/EnsForCov.{{thisMPASFileDate}}.nc
+            #    filename: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/120km/EnsForCov/{{prevDateTime}}/%iMember%/EnsForCov.{{thisMPASFileDate}}.nc
             #  pattern: %iMember%
             #  start: 1
             #  zero padding: 2
@@ -64,7 +64,7 @@ variational:
 
           60km:
             maxMembers: 20
-            directory0: '/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/EnsForCov/{{prevDateTime}}'
+            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/60km/EnsForCov/{{prevDateTime}}'
             filePrefix: EnsForCov
             memberNDigits: 2
 
@@ -78,7 +78,7 @@ variational:
         EDA:
           60km:
             maxMembers: 80
-            directory0: '/glade/p/mmm/parc/liuz/pandac_common/60km/60km_EnsFC_80EDA/{{prevDateTime}}'
+            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_EnsFC_80EDA/{{prevDateTime}}'
             memberPrefix: mem
             memberNDigits: 3
 
@@ -99,13 +99,13 @@ variational:
       #  bumpLocDir: str
       30km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/p/mmm/parc/guerrett/pandac/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
+        bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
       60km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.bumploc.duplicated.limited.1200km6km
+        bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.bumploc.duplicated.limited.1200km6km
       120km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.bumploc.duplicated.limited.1200km6km
+        bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.bumploc.duplicated.limited.1200km6km
 
   # externally-produced background covariance files (var or hybrid)
   covariance:
@@ -128,15 +128,15 @@ variational:
       bumpCovVBalDir: None
       hybridCoefficientsDir: None
     60km:
-      bumpCovDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.NICAS_00
-      bumpCovStdDevFile: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.VBAL_00
-      hybridCoefficientsDir: /glade/p/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
+      bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.NICAS_00
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/60km.VBAL_00
+      hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
     120km:
-      bumpCovDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.NICAS_00
-      bumpCovStdDevFile: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/p/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.VBAL_00
-      hybridCoefficientsDir: /glade/p/mmm/parc/liuz/pandac_hybrid/120km.allsky_hybrid
+      bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.NICAS_00
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.VBAL_00
+      hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/120km.allsky_hybrid
 
   # resource requirements
   job:

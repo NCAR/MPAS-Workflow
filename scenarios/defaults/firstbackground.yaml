@@ -30,19 +30,19 @@ firstbackground:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
         120km: # only available 20180414T18, 20200723T18
-          directory: "/glade/p/mmm/parc/liuz/pandac_common/120km/120km_1stCycle_background_single/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_1stCycle_background_single/{{FirstCycleDate}}"
         60km: # only available 20180414T18, 20200723T18
-          directory: "/glade/p/mmm/parc/liuz/pandac_common/60km/60km_1stCycle_background_single/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_1stCycle_background_single/{{FirstCycleDate}}"
         30km: # only available 20180414T18
-          directory: "/glade/p/mmm/parc/liuz/pandac_common/30km/30km_1stCycle_background_single/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_1stCycle_background_single/{{FirstCycleDate}}"
       LaggedGEFS:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
         120km: # only available 20180414T18, 20200723T18
-          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/120km/EnsFCFirstCycle/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/120km/EnsFCFirstCycle/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/{:02d}"
         60km: # only available 20180414T18, 20200723T18
-          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/60km/EnsFCFirstCycle/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/60km/EnsFCFirstCycle/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/{:02d}"
