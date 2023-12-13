@@ -27,6 +27,75 @@ set thisMPASFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set thisMPASNamelistDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set thisISO8601Date = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
+# Set time info for subwindow
+if ("$subwindow" == "3") then
+  set window_dt = `echo ${subwindow}`
+  set windowDate1 = "`$advanceCYMDH ${thisCycleDate} -${window_dt}`"
+  set windowDate3 = "`$advanceCYMDH ${thisCycleDate} ${window_dt}`"
+
+  set yy1 = `echo ${windowDate1} | cut -c 1-4`
+  set mm1 = `echo ${windowDate1} | cut -c 5-6`
+  set dd1 = `echo ${windowDate1} | cut -c 7-8`
+  set hh1 = `echo ${windowDate1} | cut -c 9-10`
+  set yy3 = `echo ${windowDate3} | cut -c 1-4`
+  set mm3 = `echo ${windowDate3} | cut -c 5-6`
+  set dd3 = `echo ${windowDate3} | cut -c 7-8`
+  set hh3 = `echo ${windowDate3} | cut -c 9-10`
+
+  set thisMPASFileDate1 = ${yy1}-${mm1}-${dd1}_${hh1}.00.00
+  set thisISO8601Date1 = ${yy1}-${mm1}-${dd1}T${hh1}:00:00Z
+  set thisMPASFileDate3 = ${yy3}-${mm3}-${dd3}_${hh3}.00.00
+  set thisISO8601Date3 = ${yy3}-${mm3}-${dd3}T${hh3}:00:00Z
+endif
+
+if ("$subwindow" == "1") then
+  set window_dt = `echo ${subwindow}`
+  set windowDate1 = "`$advanceCYMDH ${thisCycleDate} -3`"
+  set windowDate2 = "`$advanceCYMDH ${thisCycleDate} -2`"
+  set windowDate3 = "`$advanceCYMDH ${thisCycleDate} -1`"
+  set windowDate5 = "`$advanceCYMDH ${thisCycleDate} 1`"
+  set windowDate6 = "`$advanceCYMDH ${thisCycleDate} 2`"
+  set windowDate7 = "`$advanceCYMDH ${thisCycleDate} 3`"
+
+  set yy1 = `echo ${windowDate1} | cut -c 1-4`
+  set mm1 = `echo ${windowDate1} | cut -c 5-6`
+  set dd1 = `echo ${windowDate1} | cut -c 7-8`
+  set hh1 = `echo ${windowDate1} | cut -c 9-10`
+  set yy2 = `echo ${windowDate2} | cut -c 1-4`
+  set mm2 = `echo ${windowDate2} | cut -c 5-6`
+  set dd2 = `echo ${windowDate2} | cut -c 7-8`
+  set hh2 = `echo ${windowDate2} | cut -c 9-10`
+  set yy3 = `echo ${windowDate3} | cut -c 1-4`
+  set mm3 = `echo ${windowDate3} | cut -c 5-6`
+  set dd3 = `echo ${windowDate3} | cut -c 7-8`
+  set hh3 = `echo ${windowDate3} | cut -c 9-10`
+  set yy5 = `echo ${windowDate5} | cut -c 1-4`
+  set mm5 = `echo ${windowDate5} | cut -c 5-6`
+  set dd5 = `echo ${windowDate5} | cut -c 7-8`
+  set hh5 = `echo ${windowDate5} | cut -c 9-10`
+  set yy6 = `echo ${windowDate6} | cut -c 1-4`
+  set mm6 = `echo ${windowDate6} | cut -c 5-6`
+  set dd6 = `echo ${windowDate6} | cut -c 7-8`
+  set hh6 = `echo ${windowDate6} | cut -c 9-10`
+  set yy7 = `echo ${windowDate7} | cut -c 1-4`
+  set mm7 = `echo ${windowDate7} | cut -c 5-6`
+  set dd7 = `echo ${windowDate7} | cut -c 7-8`
+  set hh7 = `echo ${windowDate7} | cut -c 9-10`
+
+  set thisMPASFileDate1 = ${yy1}-${mm1}-${dd1}_${hh1}.00.00
+  set thisISO8601Date1 = ${yy1}-${mm1}-${dd1}T${hh1}:00:00Z
+  set thisMPASFileDate2 = ${yy2}-${mm2}-${dd2}_${hh2}.00.00
+  set thisISO8601Date2 = ${yy2}-${mm2}-${dd2}T${hh2}:00:00Z
+  set thisMPASFileDate3 = ${yy3}-${mm3}-${dd3}_${hh3}.00.00
+  set thisISO8601Date3 = ${yy3}-${mm3}-${dd3}T${hh3}:00:00Z
+  set thisMPASFileDate5 = ${yy5}-${mm5}-${dd5}_${hh5}.00.00
+  set thisISO8601Date5 = ${yy5}-${mm5}-${dd5}T${hh5}:00:00Z
+  set thisMPASFileDate6 = ${yy6}-${mm6}-${dd6}_${hh6}.00.00
+  set thisISO8601Date6 = ${yy6}-${mm6}-${dd6}T${hh6}:00:00Z
+  set thisMPASFileDate7 = ${yy7}-${mm7}-${dd7}_${hh7}.00.00
+  set thisISO8601Date7 = ${yy7}-${mm7}-${dd7}T${hh7}:00:00Z
+endif
+
 # Date-dependent directory names
 # ==============================
 
