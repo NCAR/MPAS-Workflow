@@ -44,8 +44,17 @@ It is required to set the content of $HOME/.cylc/flow/global.cylc as follows:
         hosts = localhost
         job runner = pbs
         install target = localhost
+    # to have the cylc run output in your scratch directory uncomment the following 4 lines
+    #[install]
+    #   [[symlink dirs]]
+    #      [[[localhost]]]
+    #        run = /glade/derecho/scratch/$USER/
 ```
 The [[pbs_cluster]] entries tell cylc how to submit jobs.
+The [instal] section will create both $HOME/cylc-run/MPAS-Workflow and 
+/glade/derecho/scratch/$USER/cylc-run/MPAS-Workflow directories to be created.
+A symlink will be created in $HOME/cylc-run/MPAS-Workflow for each workflow,
+which will point to a directory in the run/cylc-run/MPAS-Workflow where the actual data will be written.
 
 Build
 -----
