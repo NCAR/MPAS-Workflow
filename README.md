@@ -52,9 +52,10 @@ It is required to set the content of $HOME/.cylc/flow/global.cylc as follows:
 ```
 The [[pbs_cluster]] entries tell cylc how to submit jobs.
 The [instal] section will create both $HOME/cylc-run/MPAS-Workflow and 
-/glade/derecho/scratch/$USER/cylc-run/MPAS-Workflow directories to be created.
+/glade/derecho/scratch/$USER/cylc-run/MPAS-Workflow directories.
 A symlink will be created in $HOME/cylc-run/MPAS-Workflow for each workflow,
 which will point to a directory in the run/cylc-run/MPAS-Workflow where the actual data will be written.
+When setting up symlinks, ensure the run/cylc-run/MPAS-Workflow directory is empty.
 
 Build
 -----
