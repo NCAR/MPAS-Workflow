@@ -148,7 +148,7 @@ variational:
       bumpCovVBalDir: None
       hybridCoefficientsDir: None
     60km:
-      hybridCoefficientsDir: /glade/p/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
+      hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
       bumpCovDir: /glade/derecho/scratch/bjung/pandac/20230923_release_v2.0.0_derecho/60km.NICAS_00global
       bumpCovStdDevFile: /glade/derecho/scratch/bjung/pandac/20230923_release_v2.0.0_derecho/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
       bumpCovVBalDir: /glade/derecho/scratch/bjung/pandac/20230923_release_v2.0.0_derecho/60km.VBAL_00
