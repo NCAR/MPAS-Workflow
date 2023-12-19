@@ -122,7 +122,7 @@ variational:
         bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
       60km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/derecho/scratch/nystrom/pandac/60km.bumploc.duplicated.limited_derecho
+        bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.bumploc.duplicated.limited.1200km6km
       120km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.bumploc.duplicated.limited.1200km6km
@@ -149,9 +149,9 @@ variational:
       hybridCoefficientsDir: None
     60km:
       hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
-      bumpCovDir: /glade/derecho/scratch/bjung/pandac/20230923_release_v2.0.0_derecho/60km.NICAS_00global
-      bumpCovStdDevFile: /glade/derecho/scratch/bjung/pandac/20230923_release_v2.0.0_derecho/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/derecho/scratch/bjung/pandac/20230923_release_v2.0.0_derecho/60km.VBAL_00
+      bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.NICAS_00global
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.VBAL_00
     120km:
       bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.NICAS_00
       bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
