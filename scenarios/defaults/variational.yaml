@@ -192,7 +192,7 @@ variational:
       30km:
         3denvar:
           nodes: 4
-          PEPerNode: 128
+          PEPerNode: 64
           memory: 235GB
         4denvar:
           nodes: 28
@@ -202,12 +202,12 @@ variational:
           secondsPerEnVarMember: 5
         3dvar:
           nodes: 4
-          PEPerNode: 128
+          PEPerNode: 64
           memory: 235GB
           baseSeconds: 1500
         ensemble: # i.e., EDASize > 1, multiple background members treated per executable
           3denvar:
-            nodesPerMember: 3
+            nodesPerMember: 4
             PEPerNode: 128
             memory: 235GB
             baseSeconds: 1200
@@ -217,7 +217,7 @@ variational:
           nodes: 2
           PEPerNode: 128
           memory: 235GB
-          baseSeconds: 400
+          baseSeconds: 800
           secondsPerEnVarMember: 9
         4denvar:
           nodes: 14
