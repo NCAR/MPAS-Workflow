@@ -217,7 +217,7 @@ if ("${ArgUpdateSea}" == True) then
   if ( $nMembers > 1 && "$firstbackground__resource" == "PANDAC.LaggedGEFS" ) then
     # using member-specific sst/xice data from GEFS, only works for this special case
     # 60km and 120km
-    setenv SeaAnaDir /glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/surface/000hr/${model__precision}/${thisValidDate}
+    setenv SeaAnaDir /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GEFS/surface/000hr/${model__precision}/${thisValidDate}
     setenv seaMemFmt "/{:02d}"
     setenv SeaFilePrefix x1.${nCells}.sfc_update
   else

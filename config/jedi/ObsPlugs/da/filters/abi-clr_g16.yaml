@@ -24,8 +24,8 @@
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter
-  - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_abi-clr_g16.nc4
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_abi-clr_g16.nc4
   - filter: YDIAGsaver
     filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_abi-clr_g16.nc4
     filter variables:

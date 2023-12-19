@@ -218,8 +218,8 @@ while ( $member <= 1 )
   set bg = $CyclingDAInDirs[$member]
   set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
-  rm ${TemplateFieldsFileOuter}${memSuffix}
-  ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
+  rm templateFields.${nCellsOuter}.${thisMPASFileDate}.nc${memSuffix}
+  ln -sfv ${bgFile} templateFields.${nCellsOuter}.${thisMPASFileDate}.nc${memSuffix}
 
   foreach StreamsFile_ ($StreamsFileList)
     if (${memSuffix} != "") then

@@ -45,7 +45,6 @@ else
 endif
 
 echo $0 cylc version: `cylc --version`
-date
 
 echo "$0 (INFO): checking if a suite with the same name is already running"
 
@@ -61,8 +60,6 @@ if ( "$NCARHOST" == "derecho" ) then
     echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not already running"
     echo "$0 (INFO): starting a new suite..."
   endif
-  echo $0 cylc scan -t rich
-  cylc scan -t rich
 else if ( "$NCARHOST" == "cheyenne" ) then
   echo $0 cylc poll $SuiteName 
   cylc poll $SuiteName 
@@ -84,8 +81,8 @@ rm -rf ${cylcWorkDir}/${SuiteName}
 
 if ( "$NCARHOST" == "derecho" ) then
   if ( -e ~/cylc-run/${workflow_dir}/${SuiteName} ) then
-    echo $0 rm -r ~/cylc-run/${workflow_dir}/${SuiteName}
-    rm -r ~/cylc-run/${workflow_dir}/${SuiteName}
+    echo $0 cylc clean ${workflow_dir}/${SuiteName}
+    cylc clean ${workflow_dir}/${SuiteName}
   #  echo "Already has this suite, replay it"
   endif
   echo $0 cylc install --run-name=${SuiteName}

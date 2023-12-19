@@ -6,5 +6,5 @@
     <<: *multiIterationFilter
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: {{RADTHINDISTANCE}}
-  - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_n19.nc4
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_n19.nc4
