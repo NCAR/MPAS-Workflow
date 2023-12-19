@@ -9,7 +9,7 @@
 #        name: MetaData/cloudAmount
 #      minvalue: 0.05
   - filter: Gaussian Thinning
-    horizontal_mesh: {{RADTHINDISTANCE}}
+    horizontal_mesh: 90.0 #{{RADTHINDISTANCE}}
   - filter: Domain Check
     filter variables:
     - name: brightnessTemperature
@@ -52,20 +52,10 @@
     - name: brightnessTemperature
       channels: *abi_g16_channels
     test variables:
-      - name: ObsFunction/ObsErrorModelRamp
+      - name: ObsFunction/SymmCldImpactIR
         channels: *abi_g16_channels
         options:
-## 30 km, no bias correction
-          x0: [1.5]
-          x1: [34.20]
-          err0: [0.72]
-          err1: [30.76]
           channels: *abi_g16_channels
-          xvar:
-            name: ObsFunction/SymmCldImpactIR
-            channels: *abi_g16_channels
-            options:
-              channels: *abi_g16_channels
     maxvalue: 15.0
     action:
       name: reject
@@ -102,10 +92,14 @@
         err1: [17.23, 20.12, 19.42]
       _symmetric cld fits 15X15-30km: &abi_g16_SymmCldFits15X15-30km
 ## 30 km, using raw obs files - from Ivette using matlab code and fcst with bnd
+#        x0: [1.5]
+#        x1: [34.20]
+#        err0: [0.72]
+#        err1: [30.76]
         x0: [1.5]
-        x1: [34.20]
-        err0: [0.72]
-        err1: [30.76]
+        x1: [14.80]
+        err0: [0.66]
+        err1: [17.30]
 ## 30 km, using raw obs files - from Ivette using JJ's code
 #        x0: [1.0]
 #        x1: [28.52]
