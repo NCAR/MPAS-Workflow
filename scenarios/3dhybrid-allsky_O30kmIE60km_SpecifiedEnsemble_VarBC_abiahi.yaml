@@ -3,7 +3,8 @@ experiment:
   name: 'abi_ch13_noH2O_bjobs_QC-230k_CA-15K_homogeneity'
 
 build:
-  mpas bundle: /glade/p/mmm/parc/ivette/pandac/codeBuild/mpasBundle_2.0_varbc_CA/build
+  mpas bundle: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_2.1_varbc_CA/build
+#/glade/p/mmm/parc/ivette/pandac/codeBuild/mpasBundle_2.0_varbc_CA/build
 #/glade/p/mmm/parc/ivette/pandac/codeBuild/mpasBundle_2.0_SP_T_jacobian/build
 
 firstbackground:
@@ -26,11 +27,11 @@ forecast:
   job:
     defaults:
       retry: '3*PT30S'
-    30km:
-      nodes: 8
-      PEPerNode: 36
-      baseSeconds: 60
-      secondsPerForecastHR: 80
+  #  30km:
+  #    nodes: 8
+  #    PEPerNode: 36
+  #    baseSeconds: 60
+  #    secondsPerForecastHR: 80
 
   #execute: False # the default is True
   #post: [verifyobs] # use this when doing extended forecast
