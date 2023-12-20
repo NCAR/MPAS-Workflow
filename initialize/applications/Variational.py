@@ -30,7 +30,7 @@ class Variational(Component):
 
   requiredVariables = {
     ## DAType [Required Parameter]
-    'DAType': [str, ['3dvar', '3denvar', '3dhybrid', '3dhybrid-allsky']],
+    'DAType': [str, ['3dvar', '3denvar', '3dhybrid', '3dhybrid-allsky', '4denvar']],
   }
 
   optionalVariables = {
@@ -142,7 +142,10 @@ class Variational(Component):
 
     ## post
     # list of tasks for Post
-    'post': [['verifyobs'], list]
+    'post': [['verifyobs'], list],
+
+    ## 4denvar
+    'subwindow': [1, int],
   }
 
   def __init__(self,
@@ -196,7 +199,7 @@ class Variational(Component):
       self._set('MinimizerAlgorithm', 'DRPLanczos')
 
     # ensemble
-    if DAType == '3denvar' or '3dhybrid' in DAType:
+    if (DAType == '3denvar') or (DAType == '3dhybrid') or (DAType == '4denvar'):
       # localization
       r1 = 'ensemble.localization'
       r2 = meshes['Ensemble'].name
@@ -209,6 +212,7 @@ class Variational(Component):
         self._set('ensPbMemPrefix', workflow.MemPrefix)
         self._set('ensPbMemNDigits', workflow.MemNDigits)
         self._set('ensPbFilePrefix', 'mpasout')
+        #self._set('ensPbFilePrefix', workflow.memberPrefix)
         self._set('ensPbDir0', '{{ExperimentDirectory}}/CyclingFC/{{prevDateTime}}')
         # TODO: replace two lines above with these when forecast includes these attributes
         #self._set('ensPbFilePrefix', forecast.outputFilePrefix)
@@ -236,6 +240,7 @@ class Variational(Component):
         self._set('ensPbMemPrefix', memberPrefix)
         self._set('ensPbMemNDigits', memberNDigits)
         self._set('ensPbFilePrefix', filePrefix)
+        #self._set('ensPbFilePrefix', memberPrefix)
         self._set('ensPbDir0', directory0)
         self._set('ensPbDir1', directory1)
         ensPbNMembers = maxMembers

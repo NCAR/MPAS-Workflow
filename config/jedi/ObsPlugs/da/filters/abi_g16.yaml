@@ -159,8 +159,8 @@
 #    action:
 #      name: assign error
 #      error parameter: 1000.0
-  - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_abi_g16.nc4
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_abi_g16.nc4
   - filter: YDIAGsaver
     filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_abi_g16.nc4
     filter variables:

@@ -21,10 +21,10 @@ staticstream:
     PANDAC:
       LaggedGEFS:
         120km: # only available 20180414T18, 20200723T18
-          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/{:02d}"
         60km: # only available 20180414T18, 20200723T18
-          directory: "/glade/p/mmm/parc/guerrett/pandac/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/{:02d}"

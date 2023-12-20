@@ -11,9 +11,9 @@ observations:
       - iasi_metop-c
       IODADirectory:
         da:
-          iasi_metop-a: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-          iasi_metop-b: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
-          iasi_metop-c: /glade/p/mmm/parc/ivette/pandac/Observations/iasi/6h
+          iasi_metop-a: /glade/campaign/mmm/parc/ivette/pandac/Observations/iasi/6h
+          iasi_metop-b: /glade/campaign/mmm/parc/ivette/pandac/Observations/iasi/6h
+          iasi_metop-c: /glade/campaign/mmm/parc/ivette/pandac/Observations/iasi/6h
 experiment:
   name: '3denvar_OIE120km_WarmStart_IASI'
 members:
@@ -62,7 +62,7 @@ hpc:
   CriticalQueue: premium
   NonCriticalQueue: premium
 verifyobs:
-  script directory: /glade/p/mmm/parc/ivette/pandac/graphics
+  script directory: /glade/campaign/mmm/parc/ivette/pandac/graphics
 hofx:
   job:
     120km:

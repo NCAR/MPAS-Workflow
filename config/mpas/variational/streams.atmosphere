@@ -9,7 +9,7 @@
 <immutable_stream name="input"
                   type="input"
                   precision="{{PRECISION}}"
-                  filename_template="{{TemplateFieldsPrefix}}.{{nCells}}.nc{{TemplateFieldsMember}}"
+                  filename_template="{{TemplateFieldsPrefix}}.{{nCells}}.$Y-$M-$D_$h.$m.$s.nc{{TemplateFieldsMember}}"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 

@@ -210,12 +210,14 @@ endif # 3dvar || *"3dhybrid"*
 # Ensemble Jb term
 # ================
 
-if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid"* ) then
+if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid"* || "$DAType" == "4denvar" ) then
   ## yaml indentation
   if ( "$DAType" == "3denvar" ) then
     set nEnsPbIndent = 4
   else if ( "$DAType" =~ *"3dhybrid"* ) then
     set nEnsPbIndent = 8
+  else if ( "$DAType" == "4denvar" ) then
+    set nEnsPbIndent = 4
   endif
   set indentPb = "`${nSpaces} $nEnsPbIndent`"
 
@@ -325,6 +327,50 @@ if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid"* ) then
 
 endif # envar || hybrid
 
+if ("$DAType" == "4denvar") then
+  ## members
+  # + pure envar: 'background error.members from template'
+  # + hybrid envar: 'background error.components[iEnsemble].covariance.members from template'
+  #   where iEnsemble is the ensemble component index of the hybrid B
+
+  # performs sed substitution for EnsemblePbMembers
+  set enspbmemsed = EnsemblePbMembers
+
+  @ dateOffset = ${self_WindowHR} + ${ensPbOffsetHR}
+  set prevDateTime = `$advanceCYMDH ${thisValidDate} -${dateOffset}`
+
+  # substitutions
+  # + previous forecast initilization date-time
+  # + ExperimentDirectory for EDA applications that use their own ensemble
+  set dir0 = `echo "${ensPbDir0}" \
+              | sed 's@{{prevDateTime}}@'${prevDateTime}'@' \
+              | sed 's@{{ExperimentDirectory}}@'${ExperimentDirectory}'@' \
+             `
+  set dir1 = `echo "${ensPbDir1}" \
+              | sed 's@{{prevDateTime}}@'${prevDateTime}'@'\
+             `
+
+  # substitute Jb members for 4d
+  if ("$subwindow" == "3") then
+    setenv myCommand "${substituteEnsembleBTemplate_4d} ${dir0} ${dir1} ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate1}.nc ${thisISO8601Date1} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${thisISO8601Date} ${ensPbFilePrefix}.${thisMPASFileDate3}.nc ${thisISO8601Date3} ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $SelfExclusion"
+  else if ("$subwindow" == "1") then
+    setenv myCommand "${substituteEnsembleBTemplate_4d_7slots} ${dir0} ${dir1} ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate1}.nc ${thisISO8601Date1} ${ensPbFilePrefix}.${thisMPASFileDate2}.nc ${thisISO8601Date2} ${ensPbFilePrefix}.${thisMPASFileDate3}.nc ${thisISO8601Date3} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${thisISO8601Date} ${ensPbFilePrefix}.${thisMPASFileDate5}.nc ${thisISO8601Date5} ${ensPbFilePrefix}.${thisMPASFileDate6}.nc ${thisISO8601Date6} ${ensPbFilePrefix}.${thisMPASFileDate7}.nc ${thisISO8601Date7} ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsPbIndent} $SelfExclusion"
+  else
+    echo "$0 (ERROR): invalid subwindow value:${subwindow}" > ./FAIL
+    exit 1
+  endif
+
+  echo "$myCommand" > ./substitute_command
+
+  ${myCommand}
+
+  if ($status != 0) then
+    echo "$0 (ERROR): failed to substitute ${enspbmemsed}" > ./FAIL
+    exit 1
+  endif
+
+endif #4denvar
+
 rm $yamlFiles
 
 
@@ -393,12 +439,23 @@ while ( $member <= ${nMembers} )
 
   # Link bg from StateDirs
   # ======================
-  set bgFileOther = ${other}/${self_StatePrefix}.$thisMPASFileDate.nc
+  set bgFileOther = ${other}/${self_StatePrefix}.${thisMPASFileDate}.nc
   set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
 
   rm ${bgFile}${OrigFileSuffix} ${bgFile}
   ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
   ln -sfv ${bgFileOther} ${bgFile}
+
+  if ( "$DAType" == "4denvar" ) then
+    set bgFileOther = ${other}/${self_StatePrefix}.*.nc
+    # Loop over background files
+    foreach bgFile ( `ls -d $bgFileOther`)
+      set temp_file = `echo $bgFile | sed 's:.*/::'`
+      set bgFileDate = `echo ${temp_file} | cut -c 9-27`
+      ln -sfv $bgFile ${bg}/${BGFilePrefix}.${bgFileDate}.nc
+    end
+    set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+  endif
 
   # determine analysis output precision
   ncdump -h ${bgFile} | grep uReconstruct | grep double
@@ -415,11 +472,21 @@ while ( $member <= ${nMembers} )
   endif
 
   # use the member-specific background as the TemplateFieldsFileOuter for this member
-  rm ${TemplateFieldsFileOuter}${memSuffix}
-  ln -sfv ${bgFile} ${TemplateFieldsFileOuter}${memSuffix}
+  rm templateFields.${nCellsOuter}.${thisMPASFileDate}.nc${memSuffix}
+  ln -sfv ${bgFile} templateFields.${nCellsOuter}.${thisMPASFileDate}.nc${memSuffix}
+
+  if ( "$DAType" == "4denvar" ) then
+    # Loop over background files and set as the TemplateFieldsFileOuter for this member for each time
+    foreach bgFile (`ls -d ${bg}/*.nc`)
+      set temp_file = `echo $bgFile | sed 's:.*/::'`
+      set bgFileDate = `echo ${temp_file} | cut -c 4-22`
+      ln -sfv ${bgFile} templateFields.${nCellsOuter}.${bgFileDate}.nc${memSuffix}
+    end
+    set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+  endif
 
   if ($nCellsOuter != $nCellsInner) then
-    set tFile = ${TemplateFieldsFileInner}${memSuffix}
+    set tFile = templateFields.${nCellsInner}.${thisMPASFileDate}.nc${memSuffix}
     rm $tFile
 
     # use localStaticFieldsFileInner as the TemplateFieldsFileInner
@@ -427,14 +494,37 @@ while ( $member <= ${nMembers} )
     #       but dual-res EDA not working yet anyway
     cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
 
+    if ( "$DAType" == "4denvar" ) then
+      # Loop over times and set as the TemplateFieldsFileInner for this member for each time
+      foreach bgFile (`ls -d ${bg}/*.nc`)
+        set temp_file = `echo $bgFile | sed 's:.*/::'`
+        set bgFileDate = `echo ${temp_file} | cut -c 4-22`
+        cp -v ${localStaticFieldsFileInner} templateFields.${nCellsInner}.${bgFileDate}.nc${memSuffix}
+      end
+      set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+    endif
+
     # modify xtime
     # TODO: handle errors from python executions, e.g.:
     # '''
     #     import netCDF4 as nc
     # ImportError: No module named netCDF4
     # '''
+    # loop over times
     echo "${updateXTIME} $tFile ${thisCycleDate}"
     ${updateXTIME} $tFile ${thisCycleDate}
+    if ( "$DAType" == "4denvar" ) then
+      foreach tFile (`ls -d templateFields.${nCellsInner}.*.nc`)
+        set temp_file = `echo $tFile | sed 's:.*/::'`
+        set tFileDate = `echo ${temp_file} | cut -c 23-41`
+        set tyyyy = `echo ${tFileDate}| cut -c 1-4`
+        set tmm = `echo ${tFileDate}| cut -c 6-7`
+        set tdd = `echo ${tFileDate}| cut -c 9-10`
+        set thh = `echo ${tFileDate}| cut -c 12-13`
+        echo "${updateXTIME} ${tFile} ${tyyyy}${tmm}${tdd}${thh}"
+        ${updateXTIME} $tFile ${tyyyy}${tmm}${tdd}${thh}
+      end
+    endif
   endif
 
   if ($nCellsOuter != $nCellsEnsemble && $nCellsInner != $nCellsEnsemble) then
