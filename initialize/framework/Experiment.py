@@ -107,7 +107,7 @@ class Experiment(Component):
     self._msg('======================================================================')
     self._msg('')
 
-    cmd = ['rm', '-rf', self['ExperimentDirectory']]
+    cmd = ['rm', '-rf', self['mainScriptDir']]
     self._msg(' '.join(cmd))
     sub = subprocess.run(cmd)
 
