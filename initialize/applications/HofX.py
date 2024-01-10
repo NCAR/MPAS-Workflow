@@ -213,9 +213,8 @@ class HofX(Component):
   [['''+init+''']]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
-    [[[job]]]
-      execution time limit = PT5M
-      execution retry delays = '''+job['retry']+'''
+    execution time limit = PT5M
+    execution retry delays = '''+job['retry']+'''
   [['''+execute+''']]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+executeArgs+'''

@@ -169,9 +169,8 @@ class Observations(Component):
   [['''+taskName+''']]
     inherit = '''+self.tf.group+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
-    [[[job]]]
-      execution time limit = PT10M
-      execution retry delays = '''+self['getRetry']]
+    execution time limit = PT10M
+    execution retry delays = '''+self['getRetry']]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:

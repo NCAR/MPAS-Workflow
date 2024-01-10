@@ -21,13 +21,14 @@ class Task():
     seconds = self.r['seconds']
 
     text = '''
-    [[[job]]]
-      batch system = '''+self.batchSystem+'''
-      execution time limit = PT'''+str(int(seconds))+'S'
+    execution time limit = PT'''+str(int(seconds))+'S'
     if retry is not None:
       text += '''
-      execution retry delays = '''+str(retry)
+    execution retry delays = '''+str(retry)
+    text += '''
+    platform = '''+self.batchSystem+'_cluster'
 
+    print('job() text:', text)
     return text
 
   def directives(self):

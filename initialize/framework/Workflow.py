@@ -23,7 +23,7 @@ class Workflow(Component):
     'CyclingWindowHR': [6, int, [6]],
 
     # maximum consecutive cycle points to be active at any time
-    'max active cycle points': [4, int],
+    'max active cycle points': [3, int],
 
     # maximum concurrent placeholder tasks
     # constrains background placholder task count to avoid over-utilizing login node

@@ -166,8 +166,7 @@ class DA(Component):
     ########################
     # open graph
     self._dependencies += ['''
-    [[['''+self.workflow['AnalysisTimes']+''']]]
-      graph = """''']
+    '''+self.workflow['AnalysisTimes']+''' = """''']
 
     # pre-da observation processing
     self._dependencies += ['''
@@ -210,8 +209,7 @@ class DA(Component):
 
       # open graph
       self._dependencies += ['''
-      [[['''+self.workflow['AnalysisTimes']+''']]]
-        graph = """''']
+      '''+self.workflow['AnalysisTimes']+''' = """''']
 
       self._dependencies += post._dependencies
 
