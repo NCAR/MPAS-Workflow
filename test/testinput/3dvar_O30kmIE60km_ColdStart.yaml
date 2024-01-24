@@ -33,11 +33,6 @@ variational:
   DAType: 3dvar
   nInnerIterations: [30,]
   biasCorrection: True
-  job:
-    30km:
-      60km:
-        3dvar:
-          memory: 45GB
   post: [verifyobs]
 workflow:
   # test a recent date

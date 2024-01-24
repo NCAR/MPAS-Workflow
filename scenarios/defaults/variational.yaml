@@ -193,54 +193,45 @@ variational:
         3denvar:
           nodes: 4
           PEPerNode: 64
-          memory: 235GB
         4denvar:
           nodes: 28
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 1500
           secondsPerEnVarMember: 5
         3dvar:
           nodes: 4
           PEPerNode: 64
-          memory: 235GB
           baseSeconds: 1500
         ensemble: # i.e., EDASize > 1, multiple background members treated per executable
           3denvar:
             nodesPerMember: 4
             PEPerNode: 128
-            memory: 235GB
             baseSeconds: 1200
             secondsPerEnVarMember: 10
       60km:
         3denvar:
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 800
           secondsPerEnVarMember: 9
         4denvar:
           nodes: 14
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 800
           secondsPerEnVarMember: 24
         3dhybrid:
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 500
           secondsPerEnVarMember: 9
         3dhybrid-allsky:
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 500
           secondsPerEnVarMember: 9
         3dvar:
-          nodes: 6
-          PEPerNode: 32
-          memory: 45GB
+          nodes: 2
+          PEPerNode: 128
           baseSeconds: 500
     60km:
       # Assuming 60 total inner iterations
@@ -248,7 +239,6 @@ variational:
         3denvar:
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 200
           secondsPerEnVarMember: 6
           # double-precision bundle build
@@ -260,31 +250,26 @@ variational:
         4denvar:
           nodes: 14 #7 subwindow slots
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 600
           secondsPerEnVarMember: 10
         3dhybrid:
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 250
           secondsPerEnVarMember: 6
         3dhybrid-allsky:
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 250
           secondsPerEnVarMember: 6
         3dvar:
           nodes: 2
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 250
         ensemble:
           3denvar:
             nodesPerMember: 2
             PEPerNode: 128
-            memory: 235GB
             baseSeconds: 1200
             secondsPerEnVarMember: 10
     120km:
@@ -293,24 +278,20 @@ variational:
         3denvar:
           nodes: 1
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 200
           secondsPerEnVarMember: 15
         3dvar:
           nodes: 1
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 300
         4denvar:
           nodes: 7 #7 subwindow slots
           PEPerNode: 128
-          memory: 235GB
           baseSeconds: 600
           secondsPerEnVarMember: 10
         ensemble:
           3denvar:
             nodesPerMember: 1
             PEPerNode: 128
-            memory: 235GB
             baseSeconds: 1200
             secondsPerEnVarMember: 10

@@ -40,11 +40,6 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
-  job:
-    30km:
-      60km:
-        3denvar:
-          memory: 45GB
   post: [verifyobs]
 workflow:
   first cycle point: 20180414T18

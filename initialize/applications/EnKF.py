@@ -158,7 +158,7 @@ class EnKF(Component):
       'secondsPerMember': {'t': int},
       'nodes': {'t': int},
       'PEPerNode': {'t': int},
-      'memory': {'def': '45GB', 't': str},
+      'memory': {'def': '235GB', 't': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
       'email': {'def': True, 't': bool},
