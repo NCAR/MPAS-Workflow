@@ -44,7 +44,7 @@ variational:
     30km:
       60km:
         3denvar:
-          memory: 45GB
+          memory: 235GB
   post: [verifyobs]
 workflow:
   first cycle point: 20180414T18
