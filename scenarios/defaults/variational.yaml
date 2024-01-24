@@ -238,9 +238,9 @@ variational:
           baseSeconds: 500
           secondsPerEnVarMember: 9
         3dvar:
-          nodes: 6
-          PEPerNode: 32
-          memory: 45GB
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 500
     60km:
       # Assuming 60 total inner iterations
@@ -251,12 +251,6 @@ variational:
           memory: 235GB
           baseSeconds: 200
           secondsPerEnVarMember: 6
-          # double-precision bundle build
-          ##nodes: 6
-          ##PEPerNode: 32
-          ##memory: 45GB
-          ##baseSeconds: 200
-          ##secondsPerEnVarMember: 6
         4denvar:
           nodes: 14 #7 subwindow slots
           PEPerNode: 128
