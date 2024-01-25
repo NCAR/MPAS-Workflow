@@ -28,7 +28,6 @@ class Task():
     text += '''
     platform = '''+self.batchSystem+'_cluster'
 
-    print('job() text:', text)
     return text
 
   def directives(self):
