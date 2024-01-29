@@ -22,6 +22,10 @@ Starting a cycling experiment on the Derecho HPC
 
  cd MPAS-Workflow
 
+ # run one of the following:
+ source env-setup/machine.sh # if running bash or zsh
+ source env-setup/machine.csh # if running tcshrc
+
  #modify configuration as needed in `scenarios/*.yaml`, `scenarios/defaults/*.yaml`, or
  # `test/testinput/*.yaml`
 
@@ -32,6 +36,8 @@ Starting a cycling experiment on the Derecho HPC
 
 `{{scenarioConfig}}` is a yaml-based configuration file, examples of which are given in
 `scenarios/*.yaml` and `test/testinput/*.yaml`
+
+The workflow uses cylc version 8. That will be loaded when you `source env-setup/machime.[c]sh`
 
 It is required to set the content of $HOME/.cylc/flow/global.cylc as follows:
 ```
@@ -50,12 +56,14 @@ It is required to set the content of $HOME/.cylc/flow/global.cylc as follows:
     #      [[[localhost]]]
     #        run = /glade/derecho/scratch/$USER/
 ```
-The [[pbs_cluster]] entries tell cylc how to submit jobs.
-The [instal] section will create both $HOME/cylc-run/MPAS-Workflow and 
-/glade/derecho/scratch/$USER/cylc-run/MPAS-Workflow directories.
-A symlink will be created in $HOME/cylc-run/MPAS-Workflow for each workflow,
+* The [[pbs_cluster]] entries tell cylc how to submit jobs.
+* The [install] section is optional
+  - If used, the [install] section will create both `$HOME/cylc-run/MPAS-Workflow` and 
+`/glade/derecho/scratch/$USER/cylc-run/MPAS-Workflow` directories.
+    - A symlink will be created in $HOME/cylc-run/MPAS-Workflow for each workflow,
 which will point to a directory in the run/cylc-run/MPAS-Workflow where the actual data will be written.
 When setting up symlinks, ensure the run/cylc-run/MPAS-Workflow directory is empty.
+  - If not used, data for workflows will be written to `$HOME/cycl-run/MPAS-Workflow`
 
 Build
 -----
