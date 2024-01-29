@@ -11,18 +11,8 @@ if ( "$NCAR_HOST" == "derecho" ) then
     echo 'CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2'
     setenv CYLC_ENV /glade/work/jwittig/conda-envs/my-cylc8.2
   endif
-  source /etc/profile.d/z00_modules.csh
-  module purge
-  module load ncarenv/23.06
-  module load intel-oneapi/2023.0.0
-  module load cray-mpich/8.1.25
-  module load parallel-netcdf/1.12.3
-  module load parallelio/2.5.10
-  module load ncl/6.6.2
-  module load hdf5/1.12.2
-  module load netcdf/4.9.2
-  module load ncarcompilers/1.0.0
-  module load nco/5.1.4
+#  source /etc/profile.d/z00_modules.csh
+#  module purge
   module load conda/latest
 
   conda activate $CYLC_ENV
