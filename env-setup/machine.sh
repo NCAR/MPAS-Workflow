@@ -12,7 +12,7 @@ if [[ "$NCAR_HOST" == "derecho" ]]; then
     export CYLC_ENV=/glade/work/jwittig/conda-envs/my-cylc8.2
   fi
 
-#  source /etc/profile.d/z00_modules.sh
+  source /etc/profile.d/z00_modules.sh
 #  module purge
   module load conda/latest
   module list

@@ -11,9 +11,10 @@ if ( "$NCAR_HOST" == "derecho" ) then
     echo 'CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2'
     setenv CYLC_ENV /glade/work/jwittig/conda-envs/my-cylc8.2
   endif
-#  source /etc/profile.d/z00_modules.csh
+  source /etc/profile.d/z00_modules.csh
 #  module purge
   module load conda/latest
+  module list
 
   conda activate $CYLC_ENV
 else if ( "$NCAR_HOST" == "cheyenne" ) then
