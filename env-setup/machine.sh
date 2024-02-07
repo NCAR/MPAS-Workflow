@@ -13,18 +13,9 @@ if [[ "$NCAR_HOST" == "derecho" ]]; then
   fi
 
   source /etc/profile.d/z00_modules.sh
-  module purge
-  module load ncarenv/23.06
-  module load intel-oneapi/2023.0.0
-  module load cray-mpich/8.1.25
-  module load parallel-netcdf/1.12.3
-  module load parallelio/2.5.10
-  module load ncl/6.6.2
-  module load hdf5/1.12.2
-  module load netcdf/4.9.2
-  module load ncarcompilers/1.0.0
-  module load nco/5.1.4
+#  module purge
   module load conda/latest
+  module list
 
   conda activate $CYLC_ENV
 
