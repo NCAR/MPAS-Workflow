@@ -170,7 +170,7 @@ conda activate """ + conda + """
   # and to avoid over-utilization of login nodes
   # hint: execute 'ps aux | grep $USER' to check your login node overhead
   # default: 3
-  runahead limit = P'''+str(self.c['workflow']['max active cycle points'])+'''
+  runahead limit = P'''+str(self.c['workflow']['max active cycle points']-1)+'''
 
   [[queues]]
 '''+''.join(self._queues)+'''
