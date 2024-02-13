@@ -313,16 +313,14 @@ class Variational(Component):
   [[InitVariationals_0]]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
-    [[[job]]]
-      execution time limit = PT10M
-      execution retry delays = '''+varjob['retry']+'''
+    execution time limit = PT10M
+    execution retry delays = '''+varjob['retry']+'''
 
   [[InitVariationals_1]]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/InitVariationals.csh "1"
-    [[[job]]]
-      execution time limit = PT10M
-      execution retry delays = '''+varjob['retry']]
+    execution time limit = PT10M
+    execution retry delays = '''+varjob['retry']]
 
     if self['execute']:
       self._tasks += ['''

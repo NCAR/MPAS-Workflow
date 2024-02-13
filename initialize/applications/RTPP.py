@@ -98,9 +98,8 @@ class RTPP(Component):
     # note: does not depend on any other tasks
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/Init'''+self.base+'''.csh "'''+self.WorkDir+'''"
-    [[[job]]]
-      execution time limit = PT1M
-      execution retry delays = '''+job['retry']+'''
+    execution time limit = PT1M
+    execution retry delays = '''+job['retry']+'''
   [['''+self.base+''']]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh "'''+self.WorkDir+'''"

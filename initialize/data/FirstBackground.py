@@ -131,17 +131,15 @@ class FirstBackground(Component):
   [['''+base+''']]
     inherit = '''+self.tf.execute+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh
-    [[[job]]]
-      # give longer for higher resolution and more EDA members
-      # TODO: set time limit based on outerMesh AND (number of members OR
-      #       independent task for each member)
-      execution time limit = PT10M
-      execution retry delays = 1*PT5S''']
+    # give longer for higher resolution and more EDA members
+    # TODO: set time limit based on outerMesh AND (number of members OR
+    #       independent task for each member)
+    execution time limit = PT10M
+    execution retry delays = 1*PT5S''']
 
       # open graph
       self._dependencies += ['''
-    [[[R1]]]
-      graph = """''']
+    R1 = """''']
 
       self._dependencies += ['''
         # prepare first DA background state

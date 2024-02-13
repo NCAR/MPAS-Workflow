@@ -73,7 +73,7 @@ class SuiteBase():
     [[[events]]]
       # prevents jobs from sitting in submitted state for longer than 'submission timeout'
       submission timeout = """+self.c['workflow']['submission timeout']+"""
-      submission timeout handler = cylc poll %(suite)s '%(id)s:*'; sleep 20; cylc trigger %(suite)s '%(id)s:*' ''']
+      submission timeout handlers = cylc poll %(workflow)s '%(id)s:*'; sleep 20; cylc trigger %(workflow)s '%(id)s:*' ''']
 
   [[BATCH]]
     # load conda + activate """ + conda + """
@@ -101,9 +101,8 @@ conda activate """ + conda + """
       submission timeout = PT3M
 
   [[Clean]]
-    [[[job]]]
-      execution time limit = PT5M
-      execution retry delays = 2*PT15S
+    execution time limit = PT5M
+    execution retry delays = 2*PT15S
 
   [["""+placeholdertask+"""]]"""]
 
@@ -159,7 +158,7 @@ conda activate """ + conda + """
 [meta]
   title = '''+self.c['experiment']['title']+'''
 
-[cylc]
+[scheduler]
   UTC mode = False
 
 [scheduling]
@@ -171,22 +170,16 @@ conda activate """ + conda + """
   # and to avoid over-utilization of login nodes
   # hint: execute 'ps aux | grep $USER' to check your login node overhead
   # default: 3
-  max active cycle points = '''+str(self.c['workflow']['max active cycle points'])+'''
+  runahead limit = P'''+str(self.c['workflow']['max active cycle points']-1)+'''
 
   [[queues]]
 '''+''.join(self._queues)+'''
 
-  [[dependencies]]
+  [[graph]]
 '''+''.join(self._dependencies)+'''
 
 [runtime]
-'''+''.join(self._tasks)+'''
-
-[visualization]
-  initial cycle point = '''+self.c['workflow']['restart cycle point']+'''
-  final cycle point   = '''+self.c['workflow']['final cycle point']+'''
-  number of cycle points = 200
-  default node attributes = "style=filled", "fillcolor=grey"''']
+'''+''.join(self._tasks)]
 
     # write suite to text file
     with open(self.suiteFileName, 'w') as f:

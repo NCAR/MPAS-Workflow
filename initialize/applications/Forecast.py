@@ -206,8 +206,7 @@ class Forecast(Component):
 
     # open graph
     self._dependencies += ['''
-    [[['''+self.workflow['ForecastTimes']+''']]]
-      graph = """''']
+    '''+self.workflow['ForecastTimes']+''' = """''']
 
     # {{ForecastTimes}} dependencies only, not the R1 cycle
     self._dependencies += ['''
@@ -250,8 +249,7 @@ class Forecast(Component):
 '''+meantask.job()+meantask.directives()]
 
       self._dependencies += ['''
-      [[['''+self.workflow['AnalysisTimes']+''']]]
-        graph = """
+      '''+self.workflow['AnalysisTimes']+''' = """
           '''+self.previousForecast+''' => MeanBackground
         """''']
 
@@ -297,8 +295,7 @@ class Forecast(Component):
 
       # open graph
       self._dependencies += ['''
-      [[['''+self.workflow['AnalysisTimes']+''']]]
-        graph = """''']
+      '''+self.workflow['AnalysisTimes']+''' = """''']
 
       for p in posts:
         self._tasks += p._tasks

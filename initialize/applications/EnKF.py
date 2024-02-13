@@ -204,16 +204,14 @@ class EnKF(Component):
   [[InitEnKF_0]]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
-    [[[job]]]
-      execution time limit = PT10M
-      execution retry delays = '''+solverjob['retry']+'''
+    execution time limit = PT10M
+    execution retry delays = '''+solverjob['retry']+'''
 
   [[InitEnKF_1]]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/InitEnKF.csh
-    [[[job]]]
-      execution time limit = PT10M
-      execution retry delays = '''+solverjob['retry']+'''
+    execution time limit = PT10M
+    execution retry delays = '''+solverjob['retry']+'''
 
   # clean
   [[CleanEnKFs]]

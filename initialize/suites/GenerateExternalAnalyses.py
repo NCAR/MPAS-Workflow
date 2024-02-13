@@ -40,8 +40,8 @@ class GenerateExternalAnalyses(SuiteBase):
       c_.export()
 
     self._dependencies += ['''
-    [[[PT'''+str(self.c['workflow']['CyclingWindowHR'])+'''H]]]
-      graph = '''+self.c['externalanalyses']['PrepareExternalAnalysisOuter']]
+    PT'''+str(self.c['workflow']['CyclingWindowHR'])+'''H
+      = '''+self.c['externalanalyses']['PrepareExternalAnalysisOuter']]
 
     self.taskComponents += [
       'externalanalyses',

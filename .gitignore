@@ -8,3 +8,6 @@ __pycache__
 flow.cylc
 
 config/jedi/ObsPlugs/retrieveObsErrors/*.yaml
+
+# ctags symbol file
+tags
