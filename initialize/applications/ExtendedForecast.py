@@ -303,8 +303,7 @@ class ExtendedForecast(Component):
 
       # open graph
       self._dependencies += ['''
-    [[['''+self['meanTimes']+''']]]
-      graph = """''']
+    '''+self['meanTimes']+''' = """''']
 
       for p in meanposts:
         self._tasks += p._tasks
@@ -339,8 +338,7 @@ class ExtendedForecast(Component):
 
       # open graph
       self._dependencies += ['''
-    [[['''+self['ensTimes']+''']]]
-      graph = """''']
+    '''+self['ensTimes']+''' = """''']
 
       for p in ensposts:
         self._tasks += p._tasks

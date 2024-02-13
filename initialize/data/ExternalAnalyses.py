@@ -155,9 +155,8 @@ class ExternalAnalyses(Component):
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh
-    [[[job]]]
-      execution time limit = PT45M
-      execution retry delays = '''+self.__getRetry]
+    execution time limit = PT45M
+    execution retry delays = '''+self.__getRetry]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:
@@ -175,9 +174,8 @@ class ExternalAnalyses(Component):
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
-    [[[job]]]
-      execution time limit = PT20M
-      execution retry delays = '''+self.__getRetry]
+    execution time limit = PT20M
+    execution retry delays = '''+self.__getRetry]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:
@@ -195,9 +193,8 @@ class ExternalAnalyses(Component):
   [['''+taskNames[base]+''']]
     inherit = '''+queue+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
-    [[[job]]]
-      execution time limit = PT20M
-      execution retry delays = '''+self.__getRetry]
+    execution time limit = PT20M
+    execution retry delays = '''+self.__getRetry]
 
         # generic 0hr task name for external classes/tasks to grab
         if dt == 0:
@@ -259,9 +256,8 @@ class ExternalAnalyses(Component):
   [['''+taskNames[(base, meshName)]+''']]
     inherit = '''+queue+''', SingleBatch
     script = $origin/bin/'''+base+'''.csh '''+linkArgs+'''
-    [[[job]]]
-      execution time limit = PT90S
-      execution retry delays = 5*PT30S
+    execution time limit = PT90S
+    execution retry delays = 5*PT30S
     [[[events]]]
       submission timeout = PT1M''']
 
