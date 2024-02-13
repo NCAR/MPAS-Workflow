@@ -25,3 +25,5 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS_4DEnVar_80mem"
+forecast:
+  FourD: True

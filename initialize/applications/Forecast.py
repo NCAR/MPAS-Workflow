@@ -45,6 +45,10 @@ class Forecast(Component):
     # whether to use incremental analysis update
     'IAU': [False, bool],
 
+    ## 4D
+    # whether to use 4D forecast outputs
+    'FourD': [False, bool],
+
     ## post
     # list of tasks for Post
     'post': [['verifyobs', 'verifymodel'], list]
@@ -78,15 +82,19 @@ class Forecast(Component):
     ###################
 
     IAU = self['IAU']
+    FourD = self['FourD']
 
     window = workflow['CyclingWindowHR']
     subwindow = workflow['subwindow']
     if IAU:
       outIntervalHR = window // 2
       lengthHR = 3 * outIntervalHR
-    else:
+    elif FourD:
       outIntervalHR = subwindow
       lengthHR = window + window // 2
+    else:
+      outIntervalHR = window
+      lengthHR = window
 
     self._set('outIntervalHR', outIntervalHR)
     self._set('lengthHR', lengthHR)
@@ -126,7 +134,7 @@ class Forecast(Component):
     for mm in range(1, self.NN+1, 1):
       # fcArgs explanation
       # DACycling (True), IC ~is~ a DA analysis for which re-coupling is required
-      # DeleteZerothForecast (True), not used anywhere else in the workflow
+      # DeleteZerothForecast (False), not used anywhere else in the workflow
       args = [
         mm,
         lengthHR,
@@ -134,7 +142,7 @@ class Forecast(Component):
         IAU,
         mesh.name,
         True,
-        True,
+        False,
         updateSea,
         self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
         warmIC[mm-1].directory(),
