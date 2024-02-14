@@ -5,6 +5,7 @@ externalanalyses:
 firstbackground:
   resource: "PANDAC.GFS_4DEnVAR"
 forecast:
+  FourD: True
   post: [verifyobs, verifymodel]
 hpc:
   CriticalQueue: economy

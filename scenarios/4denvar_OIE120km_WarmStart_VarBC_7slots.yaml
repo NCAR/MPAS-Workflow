@@ -27,6 +27,7 @@ variational:
   #execute: False
   #post: []
 forecast:
+  FourD: True
 #  execute: False
 #  post: []
 #extendedforecast:
