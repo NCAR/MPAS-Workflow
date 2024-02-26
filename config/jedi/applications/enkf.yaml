@@ -31,8 +31,9 @@ geometry:
   deallocate non-da fields: true
   #interpolation type: unstructured # no Increment/State interp in enkf
 
-window begin: {{windowBegin}}
-window length: {{windowLength}}
+time window:
+  begin: {{windowBegin}}
+  length: {{windowLength}}
 
 background:
 {{EnsembleMembers}}
