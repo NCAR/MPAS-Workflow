@@ -1,6 +1,7 @@
 # ObsAnchors and ObsErrorAnchors are automatically prepended above this line
-window begin: {{windowBegin}}
-window length: {{windowLength}}
+time window:
+  begin: {{windowBegin}}
+  length: {{windowLength}}
 geometry:
   nml_file: {{HofXNamelistFile}}
   streams_file: {{HofXStreamsFile}}
