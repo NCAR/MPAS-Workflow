@@ -30,8 +30,9 @@ final:
     departures: oman
 cost function:
   cost type: 3D-Var
-  window begin: {{windowBegin}}
-  window length: {{windowLength}}
+  time window:
+    begin: {{windowBegin}}
+    length: {{windowLength}}
   jb evaluation: false
   geometry:
     nml_file: {{OuterNamelistFile}}

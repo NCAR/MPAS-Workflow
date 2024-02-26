@@ -48,8 +48,9 @@ final:
     departures: oman
 cost function:
   cost type: 4D-Ens-Var
-  window begin: {{windowBegin}}
-  window length: {{windowLength}}
+  time window:
+    begin: {{windowBegin}}
+    length: {{windowLength}}
   subwindow: {{subwindowLength}}
   jb evaluation: false
   geometry:
