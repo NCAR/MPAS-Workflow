@@ -339,6 +339,8 @@ via shell scripts. The argument definitions for each script can be retrieved by 
 
 `advanceCYMDH`: time-stepping used to figure out dates relative to an arbitrary input date
 
+`fix_float2int`: use h5py module to open/read/alter the netcdf file. Work together with `update_sensorScanPosition` to convert float point sensorScanPosition to integer.
+
 `getYAMLNode`: retrieves a `yaml` node key or value from a `yaml` file
 
 `memberDir`: generates an ensemble member directory string, dependent on experiment- and
@@ -352,6 +354,8 @@ controlling indentation of some `yaml` components
 `substituteEnsembleBTemplate`: generates and substitutes the ensemble background error
 covariance `members from template` configuration into application yamls that match `*envar*`
 and `*hybrid*`. See `InitVariationals.csh` for the specific behavior.
+
+`update_sensorScanPosition`: convert float point sensorScanPosition to integer.  This code piece utilizes the second File (in its entirety called "fix_float2int.py") that contains the method using h5py module to open/read/alter the netcdf file.
 
 `updateXTIME`: updates the `xtime` variable in an `MPAS-Atmosphere` state file so that it can be read
 into the model as though it had the correct time stamp
@@ -457,6 +461,7 @@ Contributors:
  - Soyoung Ha
  - BJ Jung
  - Zhiquan Liu
+ - Robert Nystrom
  - Chris Snyder
  - Craig Schwartz
  - Steven Vahl
