@@ -11,6 +11,7 @@ set pyTools = ( \
   checkMissingChannels \
   create_amb_in_nc \
   dateList \
+  fix_float2int \
   memberDir \
   nSpaces \
   substituteEnsembleBMembers \
@@ -18,6 +19,7 @@ set pyTools = ( \
   substituteEnsembleBTemplate_4d \
   substituteEnsembleBTemplate_4d_7slots \
   TimeFmtChange \
+  update_sensorScanPosition \
   updateXTIME \
 )
 foreach tool ($pyTools)

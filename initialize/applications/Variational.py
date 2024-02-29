@@ -65,7 +65,7 @@ class Variational(Component):
 
     # One can modify EDASize such that members.n=(EDASize * nDAInstances)
     # members.n is also the number of forecasts used to represent the flow-dependent background
-    # error covariance when DAType is 3denvar or 3dhybrid
+    # error covariance when DAType is 3denvar or 3dhybrid or 4denvar
 
     ## EDASize
     # ensemble size of each DA instance

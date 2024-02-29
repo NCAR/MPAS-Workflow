@@ -2,7 +2,7 @@
 
 if ( $?config_environmentJEDI ) exit 0
 
-set spack_version="1.5.1"
+set spack_version="1.6.0"
 echo "Loading Spack-Stack $spack_version"
 setenv config_environmentJEDI 1
 

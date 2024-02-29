@@ -9,6 +9,7 @@ geometry:
   nml_file: {{EnsembleNamelistFile}}
   streams_file: {{EnsembleStreamsFile}}
   deallocate non-da fields: true
+analysis type: "state"
 analysis variables: [{{AnalysisVariables}}]
 background:
   members:
@@ -16,4 +17,8 @@ background:
 analysis:
   members:
 {{EnsemblePaMembers}}
-factor: {{relaxationFactor}}
+inflation:
+- method: RTPP
+  factor: {{relaxationFactor}}
+#- method: RTPS
+#  factor: {{relaxationFactor}}

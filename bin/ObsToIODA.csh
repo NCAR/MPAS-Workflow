@@ -149,6 +149,23 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
     ascat \
     profiler \
   )
+  set ScanPositionUpdate = ( \
+    amsua_n15 \
+    amsua_n18 \
+    amsua_n19 \
+    amsua_aqua \
+    amsua_metop-a \
+    amsua_metop-b \
+    amsua_metop-c \
+    mhs_n18 \
+    mhs_n19 \
+    mhs_metop-a \
+    mhs_metop-b \
+    mhs_metop-c \
+    iasi_metop-a \
+    iasi_metop-b \
+    iasi_metop-c \
+  )
   foreach ty ( ${V1toV2} )
     if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
       set ty_obs = ${ty}_obs_${thisValidDate}.h5
@@ -212,6 +229,17 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
       endif
 
     endif
+  end
+
+  foreach ty ( ${ScanPositionUpdate} )
+    echo 'begin ScanPositionUpdate' $ty
+    ln -fs ${pyDir}/update_sensorScanPosition.py .
+    ln -fs ${pyDir}/fix_float2int.py .
+    set ty_obs = ${ty}_obs_${thisValidDate}.h5
+    setenv fname ${ty_obs}
+    python update_sensorScanPosition.py
+    mv ${ty_obs}.modified   ${ty_obs}
+    echo 'end of ScanPositionUpdate'
   end
 endif
 

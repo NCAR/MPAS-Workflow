@@ -5,7 +5,7 @@
       engine:
         type: H5File
         obsfile: {{InDBDir}}/satwnd_obs_{{thisValidDate}}.h5
-      max frame size: 80000
+      #max frame size: 80000
     obsdataout:
       engine:
         type: H5File

@@ -19,8 +19,9 @@ final:
     departures: oman
 cost function:
   cost type: 3D-Var
-  window begin: {{windowBegin}}
-  window length: {{windowLength}}
+  time window:
+    begin: {{windowBegin}}
+    length: {{windowLength}}
   geometry:
     nml_file: {{OuterNamelistFile}}
     streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
