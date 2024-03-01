@@ -142,7 +142,7 @@ class Observations(Component):
       'seconds': {'def': 600, 'typ': int},
       'nodes': {'def': 1, 'typ': int},
       'PEPerNode': {'def': 1, 'typ': int},
-      'memory': {'def': '10GB', 'typ': str},
+      'memory': {'def': '20GB', 'typ': str},
       'queue': {'def': self.Queue},
       'account': {'def': self.Account},
       'email': {'def': True, 'typ': bool},
