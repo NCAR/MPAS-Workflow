@@ -298,7 +298,7 @@ foreach instrument ($observers)
       set allowsBiasCorrection = True
       # if no obs file exists, link satbias file from the previous cycle
       if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
-        ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${CyclingDADir}/${thisValidDate}/dbOut
+        ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
       endif
     endif
   end
