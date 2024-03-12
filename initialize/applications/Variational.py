@@ -129,8 +129,8 @@ class Variational(Component):
 
     ## maxIODAPoolSize
     # maximum number of IO pool members in IODA writer class
-    # OPTIONS: 1 to NPE, default: 10
-    'maxIODAPoolSize': [10, int],
+    # OPTIONS: 1 to NPE, default: 1
+    'maxIODAPoolSize': [1, int],
 
     ## radianceThinningDistance
     # distance (km) used for the Gaussian Thinning filter for all radiance-based observations
