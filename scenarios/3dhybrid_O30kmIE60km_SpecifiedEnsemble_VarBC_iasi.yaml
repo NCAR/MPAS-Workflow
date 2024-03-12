@@ -9,10 +9,10 @@ firstbackground:
 forecast:
   job:
     30km:
-      nodes: 8
-      PEPerNode: 36
+      nodes: 2
+      PEPerNode: 128
       baseSeconds: 60
-      secondsPerForecastHR: 80
+      secondsPerForecastHR: 240
 
   #execute: False # the default is True
   #post: [] # use this when doing extended forecast
@@ -72,10 +72,10 @@ variational:
     30km:
       60km:
         3dhybrid:
-          nodes: 6
-          PEPerNode: 32
-          memory: 109GB
-          baseSeconds: 600
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 800
           secondsPerEnVarMember: 9
 
   #execute: False # the default is True
