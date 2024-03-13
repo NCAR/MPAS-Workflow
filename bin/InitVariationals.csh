@@ -166,7 +166,7 @@ sed -i 's@{{anStateDir}}@'${self_WorkDir}'/'${analysisSubDir}'@g' $prevYAML
 
 # Hybrid Jb weights
 # =================
-if ( "$DAType" == "3dhybrid" ) then
+if ( "$DAType" == "3dhybrid" || "$DAType" == "4dhybrid" ) then
   sed -i 's@{{staticCovarianceWeight}}@'${staticCovarianceWeight}'@' $prevYAML
   sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
 endif
@@ -177,7 +177,7 @@ endif
 
 # Static Jb term
 # ==============
-if ( "$DAType" == "3dvar" || "$DAType" =~ *"3dhybrid"* ) then
+if ( "$DAType" == "3dvar" || "$DAType" =~ *"3dhybrid"* || "$DAType" =~ *"4dhybrid"* ) then
   # bumpCovControlVariables
   set Variables = ($bumpCovControlVariables)
 #TODO: turn on hydrometeors in static B when applicable by uncommenting below
@@ -204,17 +204,17 @@ if ( "$DAType" == "3dvar" || "$DAType" =~ *"3dhybrid"* ) then
   sed -i 's@{{bumpCovStdDevFile}}@'${bumpCovStdDevFile}'@' $prevYAML
   sed -i 's@{{bumpCovVBalPrefix}}@'${bumpCovVBalPrefix}'@' $prevYAML
   sed -i 's@{{bumpCovVBalDir}}@'${bumpCovVBalDir}'@' $prevYAML
-endif # 3dvar || *"3dhybrid"*
+endif # 3dvar || *"3dhybrid"* || *"4dhybrid"*
 
 
 # Ensemble Jb term
 # ================
 
-if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid"* || "$DAType" == "4denvar" ) then
+if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid"* || "$DAType" == "4denvar" || "$DAType" =~ *"4dhybrid"* ) then
   ## yaml indentation
   if ( "$DAType" == "3denvar" || "$DAType" == "4denvar" ) then
     set nEnsPbIndent = 4
-  else if ( "$DAType" =~ *"3dhybrid"* ) then
+  else if ( "$DAType" =~ *"3dhybrid"* || "$DAType" =~ *"4dhybrid"* ) then
     set nEnsPbIndent = 8
   endif
   set indentPb = "`${nSpaces} $nEnsPbIndent`"
@@ -325,7 +325,7 @@ if ( "$DAType" == "3denvar" || "$DAType" =~ *"3dhybrid"* ) then
 
 endif # envar || hybrid
 
-if ("$DAType" == "4denvar") then
+if ("$DAType" == "4denvar" || "$DAType" =~ *"4dhybrid"* ) then
   ## members
   # + pure envar: 'background error.members from template'
   # + hybrid envar: 'background error.components[iEnsemble].covariance.members from template'
@@ -367,7 +367,7 @@ if ("$DAType" == "4denvar") then
     exit 1
   endif
 
-endif #4denvar
+endif #4denvar || 4dhybrid
 
 rm $yamlFiles
 
@@ -444,7 +444,7 @@ while ( $member <= ${nMembers} )
   ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
   ln -sfv ${bgFileOther} ${bgFile}
 
-  if ( "$DAType" == "4denvar" ) then
+  if ( "$DAType" == "4denvar" || "$DAType" == "4dhybrid" ) then
     set bgFileOther = ${other}/${self_StatePrefix}.*.nc
     # Loop over background files
     foreach bgFile ( `ls -d $bgFileOther`)
@@ -473,7 +473,7 @@ while ( $member <= ${nMembers} )
   rm templateFields.${nCellsOuter}.${thisMPASFileDate}.nc${memSuffix}
   ln -sfv ${bgFile} templateFields.${nCellsOuter}.${thisMPASFileDate}.nc${memSuffix}
 
-  if ( "$DAType" == "4denvar" ) then
+  if ( "$DAType" == "4denvar" || "$DAType" == "4dhybrid" ) then
     # Loop over background files and set as the TemplateFieldsFileOuter for this member for each time
     foreach bgFile (`ls -d ${bg}/*.nc`)
       set temp_file = `echo $bgFile | sed 's:.*/::'`
@@ -492,7 +492,7 @@ while ( $member <= ${nMembers} )
     #       but dual-res EDA not working yet anyway
     cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
 
-    if ( "$DAType" == "4denvar" ) then
+    if ( "$DAType" == "4denvar" || "$DAType" == "4dhybrid" ) then
       # Loop over times and set as the TemplateFieldsFileInner for this member for each time
       foreach bgFile (`ls -d ${bg}/*.nc`)
         set temp_file = `echo $bgFile | sed 's:.*/::'`
@@ -511,7 +511,7 @@ while ( $member <= ${nMembers} )
     # loop over times
     echo "${updateXTIME} $tFile ${thisCycleDate}"
     ${updateXTIME} $tFile ${thisCycleDate}
-    if ( "$DAType" == "4denvar" ) then
+    if ( "$DAType" == "4denvar" || "$DAType" == "4dhybrid" ) then
       foreach tFile (`ls -d templateFields.${nCellsInner}.*.nc`)
         set temp_file = `echo $tFile | sed 's:.*/::'`
         set tFileDate = `echo ${temp_file} | cut -c 23-41`

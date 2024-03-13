@@ -30,7 +30,7 @@ class Variational(Component):
 
   requiredVariables = {
     ## DAType [Required Parameter]
-    'DAType': [str, ['3dvar', '3denvar', '3dhybrid', '3dhybrid-allsky', '4denvar']],
+    'DAType': [str, ['3dvar', '3denvar', '3dhybrid', '3dhybrid-allsky', '4denvar', '4dhybrid']],
   }
 
   optionalVariables = {
@@ -65,7 +65,7 @@ class Variational(Component):
 
     # One can modify EDASize such that members.n=(EDASize * nDAInstances)
     # members.n is also the number of forecasts used to represent the flow-dependent background
-    # error covariance when DAType is 3denvar or 3dhybrid or 4denvar
+    # error covariance when DAType is 3denvar or 3dhybrid or 4denvar or 4dhybrid
 
     ## EDASize
     # ensemble size of each DA instance
@@ -144,7 +144,7 @@ class Variational(Component):
     # list of tasks for Post
     'post': [['verifyobs'], list],
 
-    ## 4denvar
+    ## 4denvar || 4dhybrid
     'subwindow': [1, int],
   }
 
@@ -199,7 +199,7 @@ class Variational(Component):
       self._set('MinimizerAlgorithm', 'DRPLanczos')
 
     # ensemble
-    if (DAType == '3denvar') or (DAType == '3dhybrid') or (DAType == '4denvar'):
+    if (DAType == '3denvar') or (DAType == '3dhybrid') or (DAType == '4denvar') or (DAType == '4dhybrid'):
       # localization
       r1 = 'ensemble.localization'
       r2 = meshes['Ensemble'].name
@@ -252,7 +252,7 @@ class Variational(Component):
     self._set('ensPbNMembers', ensPbNMembers)
 
     # covariance
-    if DAType == '3dvar' or '3dhybrid' in DAType:
+    if DAType == '3dvar' or '3dhybrid' or '4dhybrid' in DAType:
       r = meshes['Inner'].name
       self._setOrDie('covariance.bumpCovControlVariables', list, None, 'bumpCovControlVariables')
       self._setOrDie('covariance.bumpCovPrefix', str, None, 'bumpCovPrefix')

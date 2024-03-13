@@ -23,7 +23,7 @@ variational:
   subwindow: 1
   ensemble:
     forecasts:
-      resource: "PANDAC.GEFS_4DEnVar"
+      resource: "PANDAC.GEFS"
   #execute: False
   #post: []
 forecast:

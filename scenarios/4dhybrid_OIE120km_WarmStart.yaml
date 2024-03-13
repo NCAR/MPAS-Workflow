@@ -1,0 +1,28 @@
+experiment:
+  name: '4dhybrid_OIE120km_WarmStart'
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.GFS_4DEnVAR"
+forecast:
+  FourD: True
+  post: [verifyobs, verifymodel]
+members:
+  n: 1
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+observations:
+  resource: PANDACArchive
+variational:
+  DAType: 4dhybrid
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180418T00
+  final cycle point:   20180422T00
