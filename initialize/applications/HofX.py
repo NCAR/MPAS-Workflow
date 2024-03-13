@@ -99,6 +99,10 @@ class HofX(Component):
     ## retainObsFeedback
     # whether to retain the observation feedback files (obs, geovals, ydiag)
     'retainObsFeedback': [True, bool],
+
+    ## concatenateObsFeedback
+    # whether to concatenate the geovals and ydiag feedback files
+    'concatenateObsFeedback': [False, bool],
   }
 
   def __init__(self,
@@ -218,7 +222,30 @@ class HofX(Component):
   [['''+execute+''']]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh '''+executeArgs+'''
-'''+task.job()+task.directives()+'''
+'''+task.job()+task.directives()]
+
+    if self['concatenateObsFeedback']:
+      attr = {
+        'seconds': {'def': 300},
+        'nodes': {'def': 1},
+        'PEPerNode': {'def': 128},
+        'memory': {'def': '235GB', 'typ': str},
+        'queue': {'def': hpc['CriticalQueue']},
+        'account': {'def': hpc['CriticalAccount']},
+      }
+      concatjob = Resource(self._conf, attr, ('concat.job', mesh.name))
+      concattask = TaskLookup[hpc.system](concatjob)
+
+      self._tasks += ['''
+  [[ConcatenateObsFeedback_HofXBG]]
+    inherit = '''+self.tf.group+''', BATCH
+    script = $origin/bin/ConcatenateObsFeedback.csh "'''+self.lower+'''" "'''+memFmt+'''"
+'''+concattask.job()+concattask.directives()]
+
+      self._dependencies += ['''
+        '''+self.tf.finished+''' => ConcatenateObsFeedback_HofXBG''']
+
+    self._tasks += ['''
   [['''+clean+''']]
     inherit = '''+self.tf.clean+'''
     script = $origin/bin/Clean'''+self.base+'''.csh '''+cleanArgs]
