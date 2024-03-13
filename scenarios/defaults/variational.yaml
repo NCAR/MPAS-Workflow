@@ -85,7 +85,7 @@ variational:
         GEFS_4DEnVar_80mem:
           60km:
             maxMembers: 80
-            directory0: '/glade/derecho/scratch/nystrom/pandac/80mem_60km_eda_ens/CyclingFC/{{prevDateTime}}'
+            directory0: '/glade/campaign/mmm/parc/nystrom/pandac/80mem_60km_eda_ens/CyclingFC/{{prevDateTime}}'
             memberPrefix: mem
             memberNDigits: 3
 
