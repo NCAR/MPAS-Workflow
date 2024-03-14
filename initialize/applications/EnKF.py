@@ -95,7 +95,11 @@ class EnKF(Component):
 
     ## post
     # list of tasks for Post
-    'post': [['verifyobs'], list]
+    'post': [['verifyobs'], list],
+
+    ## concatenateObsFeedback
+    # whether to concatenate the geovals and ydiag feedback files
+    'concatenateObsFeedback': [False, bool]
   }
 
   def __init__(self,
@@ -227,6 +231,25 @@ class EnKF(Component):
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh
 '''+solvertask.job()+solvertask.directives()]
+
+    if self['concatenateObsFeedback']:
+      concatattr = {
+        'seconds': {'def': 300},
+        'nodes': {'def': 1},
+        'PEPerNode': {'def': 128},
+        'memory': {'def': '235GB', 'typ': str},
+        'queue': {'def': hpc['CriticalQueue']},
+        'account': {'def': hpc['CriticalAccount']},
+      }
+      concatjob = Resource(self._conf, concatattr, ('concat.job'))
+      concattask = TaskLookup[hpc.system](concatjob)
+      self._tasks += ['''
+  [[ConcatenateObsFeedback]]
+    inherit = BATCH
+    script = $origin/bin/ConcatenateObsFeedback.csh "'''+self.lower+'''" ""
+'''+concattask.job()+concattask.directives()]
+      self._dependencies += ['''
+        EnKF => ConcatenateObsFeedback]
 
     self._dependencies += ['''
 

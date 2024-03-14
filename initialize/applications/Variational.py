@@ -149,7 +149,7 @@ class Variational(Component):
 
     ## concatenateObsFeedback
     # whether to concatenate the geovals and ydiag feedback files
-    'concatenateObsFeedback': [False, bool],
+    'concatenateObsFeedback': [False, bool]
   }
 
   def __init__(self,
@@ -299,6 +299,17 @@ class Variational(Component):
       varjob._set('nodes', varjob['nodesPerMember'] * EDASize)
     vartask = TaskLookup[hpc.system](varjob)
 
+    concatattr = {
+      'seconds': {'def': 300},
+      'nodes': {'def': 1},
+      'PEPerNode': {'def': 128},
+      'memory': {'def': '235GB', 'typ': str},
+      'queue': {'def': hpc['CriticalQueue']},
+      'account': {'def': hpc['CriticalAccount']},
+    }
+    concatjob = Resource(self._conf, concatattr, ('concat.job'))
+    concattask = TaskLookup[hpc.system](concatjob)
+
     args = [
       0,
       self.lower,
@@ -340,6 +351,15 @@ class Variational(Component):
     inherit = Variationals, BATCH
     script = $origin/bin/'''+self.base+'''.csh "'''+str(mm)+'"']
 
+          if self['concatenateObsFeedback']:
+            self._tasks += ['''
+  [[ConcatenateObsFeedback_'''+str(mm)+''']]
+    inherit = BATCH
+    script = $origin/bin/ConcatenateObsFeedback.csh "'''+self.lower+'''" "'''+self.memFmt.format(mm)+'''"
+'''+concattask.job()+concattask.directives()]
+          self._dependencies += ['''
+        '''+self.base+str(mm)+''' => ConcatenateObsFeedback_'''+str(mm)]
+
       else:
         # single instance or ensemble of EnsembleOfVariational(s)
         for instance in range(1, nDAInstances+1, 1):
@@ -348,33 +368,20 @@ class Variational(Component):
     inherit = Variationals, BATCH
     script = $origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
-    if self['concatenateObsFeedback']:
-      attr = {
-        'seconds': {'def': 300},
-        'nodes': {'def': 1},
-        'PEPerNode': {'def': 128},
-        'memory': {'def': '235GB', 'typ': str},
-        'queue': {'def': hpc['CriticalQueue']},
-        'account': {'def': hpc['CriticalAccount']},
-      }
-      concatjob = Resource(self._conf, attr, ('concat.job', meshes['Outer'].name))
-      concattask = TaskLookup[hpc.system](concatjob)
-
-      self._tasks += ['''
-  [[ConcatenateObsFeedback_Variationals]]
-    inherit = '''+self.tf.group+''', BATCH
-    script = $origin/bin/ConcatenateObsFeedback.csh "'''+self.lower+'''" " "
+          if self['concatenateObsFeedback']:
+            self._tasks += ['''
+  [[ConcatenateObsFeedback_'''+str(instance)+''']]
+    inherit = BATCH
+    script = $origin/bin/ConcatenateObsFeedback.csh "'''+self.lower+'''" "'''+self.memFmt.format(instance)+'''"
 '''+concattask.job()+concattask.directives()]
-
-      self._dependencies += ['''
-        DAFinished__ => ConcatenateObsFeedback_Variationals''']
+            self._dependencies += ['''
+        EDA'''+str(instance)+''' => ConcatenateObsFeedback_'''+str(instance)]
 
     # clean
     self._tasks += ['''
   [[CleanVariationals]]
     inherit = '''+self.tf.clean+'''
     script = $origin/bin/Clean'''+self.base+'''.csh''']
-
 
     # TODO: make ABEI consistent with external class design
     # GenerateABEInflation
