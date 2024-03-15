@@ -1,5 +1,5 @@
 experiment:
-  name: '4denvar_6h_7slots_O30kmIE60km_VarBC_2out_v2.0_80mem'
+  name: '4denvar_7slots_O30kmIE60km_VarBC_2out_80mem'
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T00
