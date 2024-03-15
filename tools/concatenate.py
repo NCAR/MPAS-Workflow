@@ -7,7 +7,7 @@ import netCDF4
 import argparse
 import logging
 
-logging.basicConfig(filename='log.concatenate', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
+logging.basicConfig(filename='log.concatenate', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
 
 IODAfloat_missing_value = float(-3.3687953e+38)
 YDIAGfloat_missing_value = float(9.969209968386869e+36)
@@ -16,7 +16,7 @@ YDIAGfloat_missing_value = float(9.969209968386869e+36)
 def from_h5(fn,var):
     try:
       return h5.File(fn, 'r')[var]
-    except OSError as error : 
+    except OSError as error:
       logging.warning(error)
       pass
 

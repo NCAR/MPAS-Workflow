@@ -89,7 +89,7 @@ class HofX(Component):
 
     ## maxIODAPoolSize
     # maximum number of IO pool members in IODA writer class
-    # OPTIONS: 1 to NPE, default: 1
+    # OPTIONS: 1 to NPE, default: 10
     'maxIODAPoolSize': [1, int],
 
     ## radianceThinningDistance
@@ -102,7 +102,7 @@ class HofX(Component):
 
     ## concatenateObsFeedback
     # whether to concatenate the geovals and ydiag feedback files
-    'concatenateObsFeedback': [False, bool]
+    'concatenateObsFeedback': [False, bool],
   }
 
   def __init__(self,
@@ -226,7 +226,7 @@ class HofX(Component):
 
       if self['concatenateObsFeedback']:
         concatattr = {
-        'seconds': {'def': 300},
+        'seconds': {'def': 900},
         'nodes': {'def': 1},
         'PEPerNode': {'def': 128},
         'memory': {'def': '235GB', 'typ': str},
@@ -235,13 +235,20 @@ class HofX(Component):
         }
         concatjob = Resource(self._conf, concatattr, ('concat.job'))
         concattask = TaskLookup[hpc.system](concatjob)
+        args = [
+          self.lower,
+          workDir,
+          "",
+        ]
+        concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
+        concat = 'Concat'+group+suffix
         self._tasks += ['''
-  [[ConcatenateObsFeedback'''+suffix+''']]
+  [['''+concat+''']]
     inherit = BATCH
-    script = $origin/bin/ConcatenateObsFeedback.csh "'''+self.lower+'''" "'''+memFmt.format(mm+1)+'''"
+    script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
         self._dependencies += ['''
-        '''+execute+''' => ConcatenateObsFeedback'''+suffix]
+        '''+execute+''' => '''+concat]
 
     self._tasks += ['''
   [['''+clean+''']]

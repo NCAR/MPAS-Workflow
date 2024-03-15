@@ -14,35 +14,36 @@ date
 # ArgAppType: str, hofx, variational
 set ArgAppType = "$1"
 
-# ArgSubPath: str, /mean, /mem{:03d}, or ""
-set ArgSubPath = "$2"
+# ArgWorkDir: str, where to run
+set ArgWorkDir = "$2"
+
+# ArgDAMem: str, /mean, /mem{:03d}, or ""
+set ArgDAMem = "$3"
 
 # Setup environment
 # =================
 source config/environmentNPL.csh
 source config/tools.csh
 source config/auto/experiment.csh
-source config/auto/workflow.csh
-source config/auto/naming.csh
 source config/auto/observations.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 
-# Concatenate the geovals and ydiag feedback files
-# =======================================
-if ( ${ArgAppType} == "hofx" ) then
-  set AppCategory = ${ArgAppType}
-  set obsFeedbackDir = ${VerifyObsWorkDir}/${backgroundSubDir}${ArgSubPath}/${thisCycleDate}/${OutDBDir}
-else if ( ${ArgAppType} == "variational" ) then
-  set AppCategory = "da"
-  set obsFeedbackDir = ${DAWorkDir}/${thisCycleDate}/${OutDBDir}${ArgSubPath}
-endif
-
-set WorkDir = ${obsFeedbackDir}
+set cycleDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \
+  | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
+  `
+set WorkDir = ${cycleDir}/${OutDBDir}${ArgDAMem}
 echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
+# ================================================================================================
+
+if ("$ArgAppType" == hofx) then
+  set AppCategory = hofx
+else
+  set AppCategory = da
+endif
 
 # Sanity check
 set fileCount = `ls -1 *0*.nc4 | wc -l`
@@ -62,7 +63,7 @@ endif
 
 # Execute python script
 set pyScript = "concatenate"
-setenv myCommand `$concatenate ${AppCategory} ${obsFeedbackDir}`
+setenv myCommand `$concatenate ${AppCategory} ${WorkDir}`
 echo "$myCommand"
 ${myCommand}
 

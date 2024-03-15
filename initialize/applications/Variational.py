@@ -129,7 +129,7 @@ class Variational(Component):
 
     ## maxIODAPoolSize
     # maximum number of IO pool members in IODA writer class
-    # OPTIONS: 1 to NPE, default: 1
+    # OPTIONS: 1 to NPE, default: 10
     'maxIODAPoolSize': [1, int],
 
     ## radianceThinningDistance
@@ -149,7 +149,7 @@ class Variational(Component):
 
     ## concatenateObsFeedback
     # whether to concatenate the geovals and ydiag feedback files
-    'concatenateObsFeedback': [False, bool]
+    'concatenateObsFeedback': [False, bool],
   }
 
   def __init__(self,
@@ -352,13 +352,20 @@ class Variational(Component):
     script = $origin/bin/'''+self.base+'''.csh "'''+str(mm)+'"']
 
           if self['concatenateObsFeedback']:
+            args = [
+              self.lower,
+              self.workDir+'/{{thisCycleDate}}',
+              self.memFmt.format(mm),
+            ]
+            concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
+            concat = 'Concat'+self.base+str(mm)
             self._tasks += ['''
-  [[ConcatenateObsFeedback_'''+str(mm)+''']]
+  [['''+concat+''']]
     inherit = BATCH
-    script = $origin/bin/ConcatenateObsFeedback.csh "'''+self.lower+'''" "'''+self.memFmt.format(mm)+'''"
+    script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
-          self._dependencies += ['''
-        '''+self.base+str(mm)+''' => ConcatenateObsFeedback_'''+str(mm)]
+            self._dependencies += ['''
+        '''+self.base+str(mm)+''' => '''+concat]
 
       else:
         # single instance or ensemble of EnsembleOfVariational(s)
@@ -369,13 +376,20 @@ class Variational(Component):
     script = $origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
 
           if self['concatenateObsFeedback']:
+            args = [
+              self.lower,
+              self.workDir+'/{{thisCycleDate}}',
+              self.memFmt.format(instance),
+            ]
+            concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
+            concat = 'Concat'+self.base+str(instance)
             self._tasks += ['''
-  [[ConcatenateObsFeedback_'''+str(instance)+''']]
+  [['''+concat+''']]
     inherit = BATCH
-    script = $origin/bin/ConcatenateObsFeedback.csh "'''+self.lower+'''" "'''+self.memFmt.format(instance)+'''"
+    script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
             self._dependencies += ['''
-        EDA'''+str(instance)+''' => ConcatenateObsFeedback_'''+str(instance)]
+        EDA'''+str(instance)+''' => '''+concat]
 
     # clean
     self._tasks += ['''

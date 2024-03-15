@@ -82,7 +82,7 @@ class EnKF(Component):
 
     ## maxIODAPoolSize
     # maximum number of IO pool members in IODA writer class
-    # OPTIONS: 1 to NPE, default: 1
+    # OPTIONS: 1 to NPE, default: 10
     'maxIODAPoolSize': [1, int],
 
     ## radianceThinningDistance
@@ -99,7 +99,7 @@ class EnKF(Component):
 
     ## concatenateObsFeedback
     # whether to concatenate the geovals and ydiag feedback files
-    'concatenateObsFeedback': [False, bool]
+    'concatenateObsFeedback': [False, bool],
   }
 
   def __init__(self,
@@ -243,13 +243,19 @@ class EnKF(Component):
       }
       concatjob = Resource(self._conf, concatattr, ('concat.job'))
       concattask = TaskLookup[hpc.system](concatjob)
+      args = [
+      self.lower,
+      self.workDir+'/{{thisCycleDate}}',
+      "",
+      ]
+      concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
       self._tasks += ['''
-  [[ConcatenateObsFeedback]]
+  [[ConcatEnKF]]
     inherit = BATCH
-    script = $origin/bin/ConcatenateObsFeedback.csh "'''+self.lower+'''" ""
+    script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
       self._dependencies += ['''
-        EnKF => ConcatenateObsFeedback]
+        EnKF => ConcatEnKF''']
 
     self._dependencies += ['''
 
