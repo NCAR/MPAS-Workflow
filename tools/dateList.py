@@ -12,7 +12,7 @@ def main(dateIni, dateEnd, delta):
       datestr  = date.strftime("%Y%m%d%H")
       print(datestr)
       date = date - timedelta(hours=int(delta))
-
+            
 if __name__ == '__main__': 
     dateIni = str(sys.argv[1])
     dateEnd = str(sys.argv[2])
