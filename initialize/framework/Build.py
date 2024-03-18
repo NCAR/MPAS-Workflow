@@ -51,7 +51,8 @@ class Build(Component):
       # Mean state calculator
       # FIXME the source for the app in this directory was copied from
       # /glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1
-      meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-r2.0/build-gnu-derecho-single/bin'
+      # meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-r2.0/build-gnu-derecho-single/bin'
+      meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-dev-new/build-gnu-1p-ss1.6.0/bin'
     elif system == 'cheyenne':
       self.variablesWithDefaults['mpas bundle'] = \
         ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build', str]
