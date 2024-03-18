@@ -1,5 +1,5 @@
 experiment:
-  name: '4dhybrid_OIE120km_WarmStart'
+  name: '4dhybrid_OIE120km_WarmStart_VarBC'
 externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
@@ -17,6 +17,7 @@ observations:
   resource: PANDACArchive
 variational:
   DAType: 4dhybrid
+  biasCorrection: True
   ensembleCovarianceWeight: 0.75
   staticCovarianceWeight: 0.25
   ensemble:
