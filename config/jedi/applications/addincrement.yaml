@@ -1,0 +1,29 @@
+test:
+  float relative tolerance: 1.e-1
+  float absolute tolerance: 1.e-1
+  integer tolerance: 0
+  reference filename: addincrement.ref
+  test output filename: addincrement.run.ref
+
+state geometry: &geom
+  nml_file: {{SACANamelistFile}}
+  streams_file: {{SACAStreamsFile}}
+  deallocate non-da fields: true
+
+increment geometry: *geom
+
+state:
+  date: &date '2018-04-15T00:00:00Z'
+  state variables: [temperature, spechum, theta, u, rho, qv, qc, qi, qs, cldfrac, xland, pressure, pressure_p] [{{SACAStateVariables}}]
+  stream name: saca_background
+  filename: ./bg.nc
+
+increment:
+  date: *date
+  added variables: [brtemp, cldmask]
+  stream name: saca_obs
+  filename: ./saca_obs.nc
+
+output:
+  stream name: saca_analysis
+  filename: ./update.nc

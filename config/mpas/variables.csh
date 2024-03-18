@@ -41,3 +41,19 @@ set MPASJEDIVariablesFiles = (\
   obsop_name_map.yaml \
   keptvars.yaml \
 )
+
+set SACAStateVariables = ( \
+  temperature \
+  spechum \
+  theta \
+  u \
+  rho \
+  qv \
+  qc \
+  qi \
+  qs \
+  cldfrac \
+  xland \
+  pressure \
+  pressure_p \
+)

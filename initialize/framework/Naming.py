@@ -43,6 +43,7 @@ class Naming(Component):
       #VerifyModel, #only need VerifyObs, because they are the same
       Observations,
       ExternalAnalyses,
+      SACA,
     ]
 
     # experiment directories

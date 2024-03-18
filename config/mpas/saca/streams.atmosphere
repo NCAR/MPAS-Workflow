@@ -1,0 +1,113 @@
+<streams>
+<immutable_stream name="static"
+                  type="input"
+                  filename_template="{{StaticFieldsPrefix}}.{{nCells}}.nc"
+                  precision="{{PRECISION}}"
+                  io_type="pnetcdf,cdf5"
+                  input_interval="initial_only" />
+
+<immutable_stream name="input"
+                  type="input"
+                  filename_template="{{TemplateFieldsPrefix}}.{{nCells}}.nc"
+                  precision="{{PRECISION}}"
+                  io_type="pnetcdf,cdf5"
+                  input_interval="initial_only" />
+
+<immutable_stream name="da_state"
+                  type="output"
+                  filename_template="mpasout.$Y-$M-$D_$h.$m.$s.nc"
+                  precision="{{PRECISION}}"
+                  io_type="pnetcdf,cdf5"
+                  clobber_mode="overwrite"
+                  output_interval="none" />
+
+<stream name="background"
+        type="input;output"
+        precision="{{PRECISION}}"
+        io_type="pnetcdf,cdf5"
+        filename_template="background.nc"
+        input_interval="none"
+        output_interval="none"
+        clobber_mode="overwrite">
+        <file name="stream_list.atmosphere.background"/>
+</stream>
+
+<stream name="analysis"
+        type="output"
+        precision="{{PRECISION}}"
+        io_type="pnetcdf,cdf5"
+        filename_template="analysis.nc"
+        output_interval="none"
+        clobber_mode="overwrite">
+        <file name="stream_list.atmosphere.analysis"/>
+</stream>
+
+<stream name="ensemble"
+        type="input;output"
+        precision="{{PRECISION}}"
+        io_type="pnetcdf,cdf5"
+        filename_template="ensemble.nc"
+        input_interval="none"
+        output_interval="none"
+        clobber_mode="overwrite">
+        <file name="stream_list.atmosphere.ensemble"/>
+</stream>
+
+<stream name="control"
+        type="input;output"
+        precision="{{PRECISION}}"
+        io_type="pnetcdf,cdf5"
+        filename_template="control.nc"
+        input_interval="none"
+        output_interval="none"
+        clobber_mode="overwrite">
+        <file name="stream_list.atmosphere.control"/>
+</stream>
+
+<stream name="saca_background"
+        type="input;output"
+        precision="{{PRECISION}}"
+        io_type="pnetcdf,cdf5"
+        filename_template="saca_background.nc"
+        input_interval="none"
+        output_interval="none"
+        clobber_mode="overwrite">
+        <file name="stream_list.atmosphere.saca_background"/>
+</stream>
+
+<stream name="saca_obs"
+        type="input;output"
+        precision="{{PRECISION}}"
+        io_type="pnetcdf,cdf5"
+        filename_template="saca_obs.nc"
+        input_interval="none"
+        output_interval="none"
+        clobber_mode="overwrite">
+        <file name="stream_list.atmosphere.saca_obs"/>
+</stream>
+
+<stream name="saca_analysis"
+        type="input;output"
+        precision="{{PRECISION}}"
+        io_type="pnetcdf,cdf5"
+        filename_template="saca_analysis.nc"
+        input_interval="none"
+        output_interval="none"
+        clobber_mode="overwrite">
+        <file name="stream_list.atmosphere.saca_analysis"/>
+</stream>
+
+
+<stream name="output"
+        type="none"
+        filename_template="output.nc"
+        output_interval="0_01:00:00" >
+</stream>
+
+<stream name="diagnostics"
+        type="none"
+        filename_template="diagnostics.nc"
+        output_interval="0_01:00:00" >
+</stream>
+
+</streams>
