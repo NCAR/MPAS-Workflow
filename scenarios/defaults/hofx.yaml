@@ -15,6 +15,11 @@ hofx:
     #  nodes: int
     #  PEPerNode: int
     #  memory: int
+    60-3km:
+      seconds: 600
+      nodes: 2
+      PEPerNode: 64
+      memory: 235GB
     30km:
       seconds: 600
       nodes: 2

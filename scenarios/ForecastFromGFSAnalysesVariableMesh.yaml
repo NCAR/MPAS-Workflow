@@ -1,0 +1,47 @@
+suite: ForecastFromExternalAnalyses
+
+externalanalyses:
+  resource: "GFS.GFS_ungrib"
+
+#build:
+#  forecast directory: path-for-mpas-model-build
+
+experiment:
+  name: 'ForecastFromGFSAnalysesMPT_60-3km_TEST'
+
+build:
+  mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle/build_single
+
+extendedforecast:
+  meanTimes: T00
+  lengthHR: 12
+  outIntervalHR: 6
+  #execute: False # uncomment if forecasts are already completed
+
+  # optionally turn on extended forecast post
+  post: []
+
+forecast:
+  job:
+    60-3km:
+      nodes: 4
+      PEPerNode: 128
+
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+
+members:
+  n: 1
+
+model:
+  outerMesh: 60-3km
+  GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/saca/all_graph
+
+observations: # for optional verification
+  resource: PANDACArchive
+
+workflow:
+  first cycle point: 20180415T00
+  final cycle point: 20180416T00
+  max active cycle points: 4
