@@ -31,7 +31,7 @@ class Model(Component):
   defaults = 'scenarios/defaults/model.yaml'
   # mesh descriptors, e.g.:
   # uniform spacing: 30km, 60km, 120km
-  # variable spacing: ?
+  # variable spacing: 60-3km
 
   requiredVariables = {
   }
@@ -61,6 +61,10 @@ class Model(Component):
     # floating-point precision of all application output
     # OPTIONS: single, double
     'precision': ['single', str],
+
+    ## MPThompsonTablesDir
+    # directory containing MP Thompson tables
+    'MPThompsonTablesDir': ['/glade/campaign/mmm/parc/ivette/pandac/saca/thompson_tables',str],
   }
 
   def __init__(self, config:Config):
@@ -111,6 +115,18 @@ class Model(Component):
         if Typ == 'Outer':
           self._set('TimeStep', self._conf.getOrDie('resources.'+name+'.TimeStep'))
           self._set('DiffusionLengthScale', self._conf.getOrDie('resources.'+name+'.DiffusionLengthScale'))
+          self._set('RadiationLWInterval', self._conf.getOrDie('resources.'+name+'.RadiationLWInterval'))
+          self._set('RadiationSWInterval', self._conf.getOrDie('resources.'+name+'.RadiationSWInterval'))
+          self._set('PhysicsSuite', self._conf.getOrDie('resources.'+name+'.PhysicsSuite'))
+          self._set('Microphysics', self._conf.getOrDie('resources.'+name+'.Microphysics'))
+          self._set('Convection', self._conf.getOrDie('resources.'+name+'.Convection'))
+          self._set('PBL', self._conf.getOrDie('resources.'+name+'.PBL'))
+          self._set('Gwdo', self._conf.getOrDie('resources.'+name+'.Gwdo'))
+          self._set('RadiationCloud', self._conf.getOrDie('resources.'+name+'.RadiationCloud'))
+          self._set('RadiationLW', self._conf.getOrDie('resources.'+name+'.RadiationLW'))
+          self._set('RadiationSW', self._conf.getOrDie('resources.'+name+'.RadiationSW'))
+          self._set('SfcLayer', self._conf.getOrDie('resources.'+name+'.SfcLayer'))
+          self._set('LSM', self._conf.getOrDie('resources.'+name+'.LSM'))
 
     self._cshVars = list(self._vtable.keys())
 

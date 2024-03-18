@@ -48,6 +48,17 @@ externalanalyses:
           job:
             GetAnalysisFrom:
               retry: '1*PT20S'
+      GFS_ungrib:
+        common:
+          PrepareExternalAnalysisTasks:
+          - "LinkUngribbedExternalAnalysis-{{mesh}}"
+          - "ExternalAnalysisToMPAS-{{mesh}}"
+          - "ExternalAnalysisReady__"
+          Vtable: /glade/work/liuz/pandac/prepare_mpas/Vtable.GFS.O3MR
+          directory: /glade/campaign/mmm/parc/liuz/pandac_common/ungrib_GFS_o3
+          job:
+            GetAnalysisFrom:
+              retry: '1*PT20S'
 
       NCEPFTP:
         common:
