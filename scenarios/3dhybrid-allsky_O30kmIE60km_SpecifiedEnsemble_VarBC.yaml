@@ -42,20 +42,10 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
-
-  # resource requirements
-  job:
-    30km:
-      60km:
-        3dhybrid:
-          nodes: 6
-          PEPerNode: 32
-          memory: 109GB
-          baseSeconds: 600
-          secondsPerEnVarMember: 8
-
   #execute: False # the default is True
   #post: [] # this turns off verifyobs
+hofx:
+  concatenateObsFeedback: True
 
 workflow:
   first cycle point: 20180414T18

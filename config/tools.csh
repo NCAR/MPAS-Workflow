@@ -19,6 +19,7 @@ set pyTools = ( \
   substituteEnsembleBTemplate_4d_7slots \
   TimeFmtChange \
   updateXTIME \
+  concatenate \
 )
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"

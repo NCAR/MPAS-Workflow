@@ -130,7 +130,7 @@ class Variational(Component):
     ## maxIODAPoolSize
     # maximum number of IO pool members in IODA writer class
     # OPTIONS: 1 to NPE, default: 10
-    'maxIODAPoolSize': [10, int],
+    'maxIODAPoolSize': [1, int],
 
     ## radianceThinningDistance
     # distance (km) used for the Gaussian Thinning filter for all radiance-based observations
@@ -146,6 +146,10 @@ class Variational(Component):
 
     ## 4denvar || 4dhybrid
     'subwindow': [1, int],
+
+    ## concatenateObsFeedback
+    # whether to concatenate the geovals and ydiag feedback files
+    'concatenateObsFeedback': [False, bool],
   }
 
   def __init__(self,
@@ -295,6 +299,17 @@ class Variational(Component):
       varjob._set('nodes', varjob['nodesPerMember'] * EDASize)
     vartask = TaskLookup[hpc.system](varjob)
 
+    concatattr = {
+      'seconds': {'def': 300},
+      'nodes': {'def': 1},
+      'PEPerNode': {'def': 128},
+      'memory': {'def': '235GB', 'typ': str},
+      'queue': {'def': hpc['CriticalQueue']},
+      'account': {'def': hpc['CriticalAccount']},
+    }
+    concatjob = Resource(self._conf, concatattr, ('concat.job'))
+    concattask = TaskLookup[hpc.system](concatjob)
+
     args = [
       0,
       self.lower,
@@ -336,6 +351,22 @@ class Variational(Component):
     inherit = Variationals, BATCH
     script = $origin/bin/'''+self.base+'''.csh "'''+str(mm)+'"']
 
+          if self['concatenateObsFeedback']:
+            args = [
+              self.lower,
+              self.workDir+'/{{thisCycleDate}}',
+              self.memFmt.format(mm),
+            ]
+            concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
+            concat = 'Concat'+self.base+str(mm)
+            self._tasks += ['''
+  [['''+concat+''']]
+    inherit = BATCH
+    script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
+'''+concattask.job()+concattask.directives()]
+            self._dependencies += ['''
+        '''+self.base+str(mm)+''' => '''+concat]
+
       else:
         # single instance or ensemble of EnsembleOfVariational(s)
         for instance in range(1, nDAInstances+1, 1):
@@ -343,6 +374,22 @@ class Variational(Component):
   [[EDA'''+str(instance)+''']]
     inherit = Variationals, BATCH
     script = $origin/bin/EnsembleOfVariational.csh "'''+str(instance)+'"']
+
+          if self['concatenateObsFeedback']:
+            args = [
+              self.lower,
+              self.workDir+'/{{thisCycleDate}}',
+              self.memFmt.format(instance),
+            ]
+            concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
+            concat = 'Concat'+self.base+str(instance)
+            self._tasks += ['''
+  [['''+concat+''']]
+    inherit = BATCH
+    script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
+'''+concattask.job()+concattask.directives()]
+            self._dependencies += ['''
+        EDA'''+str(instance)+''' => '''+concat]
 
     # clean
     self._tasks += ['''
