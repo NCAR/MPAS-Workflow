@@ -93,7 +93,7 @@ variational:
           120km:
             maxMembers: 20
             directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_EnsFC/{{prevDateTime}}'
-            memberPrefix: EnsForCov
+            filePrefix: EnsForCov
             memberNDigits: 2
 
           60km:
@@ -173,7 +173,7 @@ variational:
     ## FORMAT
     #{{outerMesh}}:
     #  {{innerMesh}}:
-    #    {{DAType}}: # i.e., 3dvar, 3denvar, 3dhybrid, 4denvar, etc...
+    #    {{DAType}}: # i.e., 3dvar, 3denvar, 3dhybrid, 4denvar, 4dhybrid etc...
     #      baseSeconds: int
     #      secondsPerEnVarMember: int, default is 0
     #      #@ seconds = $secondsPerEnVarMember * $ensPbNMembers + $baseSeconds
@@ -269,6 +269,12 @@ variational:
           memory: 235GB
           baseSeconds: 250
           secondsPerEnVarMember: 6
+        4dhybrid:
+          nodes: 14 #7 subwindow slots
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 10
         3dvar:
           nodes: 2
           PEPerNode: 128
@@ -295,7 +301,18 @@ variational:
           PEPerNode: 128
           memory: 235GB
           baseSeconds: 300
+        3dhybrid:
+          nodes: 1
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 300
         4denvar:
+          nodes: 7 #7 subwindow slots
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 600
+          secondsPerEnVarMember: 10
+        4dhybrid:
           nodes: 7 #7 subwindow slots
           PEPerNode: 128
           memory: 235GB

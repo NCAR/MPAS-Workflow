@@ -33,7 +33,7 @@ class Workflow(Component):
     # note: overridden in come cylc tasks (e.g., under InitIC and ExternalAnalyses)
     'submission timeout': ['PT90M', str],
 
-    ## 4denvar
+    ## 4denvar || 4dhybrid
     'subwindow': [1, int],
   }
   optionalVariables = {
