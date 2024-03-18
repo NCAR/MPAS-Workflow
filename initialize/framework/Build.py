@@ -41,7 +41,7 @@ class Build(Component):
     system = os.getenv('NCAR_HOST')
     if system == 'derecho':
       self.variablesWithDefaults['mpas bundle'] = \
-          ['/glade/work/nystrom/Code/JEDI/jcsda_internal/mpas-bundle_develop_2-28-24/gnu_build_SP/', str]
+          ['/glade/work/nystrom/Code/JEDI/jcsda_internal/mpas-bundle_develop_2-28-24/gnu_build_4dhybrid/', str]
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
       self.variablesWithDefaults['forecast directory'] = ['bundle', str]

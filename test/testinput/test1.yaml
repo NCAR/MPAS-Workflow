@@ -9,6 +9,7 @@ scenarios: [
   test/testinput/3dvar_O30kmIE60km_ColdStart.yaml,
   test/testinput/3denvar_O30kmIE60km_WarmStart.yaml,
   test/testinput/4denvar_OIE120km_WarmStart.yaml,
+  test/testinput/4dhybrid_OIE120km_WarmStart.yaml,
   test/testinput/eda_OIE120km_WarmStart.yaml,
   test/testinput/getkf_OIE120km_WarmStart.yaml,
   test/testinput/ForecastFromGFSAnalysesMPT.yaml,
