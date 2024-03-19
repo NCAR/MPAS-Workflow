@@ -62,7 +62,6 @@
     config_bucket_update       = 'none'
     config_physics_suite       = 'physicsSuite'
     config_microp_scheme       = 'micropScheme'
-    config_radt_cld_scheme     = 'radtCldScheme'
     config_convection_scheme   = 'convectionScheme'
     config_pbl_scheme          = 'pblScheme'
     config_gwdo_scheme         = 'gwdoScheme'
