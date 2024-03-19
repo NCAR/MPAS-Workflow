@@ -47,7 +47,7 @@ model:
   GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/saca/all_graph
 
 observations: # for optional verification
-  resource: PANDACArchiveForVarBC
+  resource: PANDACArchive
 
 workflow:
   first cycle point: 20180415T00
