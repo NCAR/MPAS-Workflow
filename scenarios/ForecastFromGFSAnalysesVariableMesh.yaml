@@ -47,9 +47,9 @@ model:
   GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/saca/all_graph
 
 observations: # for optional verification
-  resource: PANDACArchive
+  resource: PANDACArchiveForVarBC
 
 workflow:
   first cycle point: 20180415T00
   final cycle point: 20180430T00
-  max active cycle points: 4
+  max active cycle points: 15
