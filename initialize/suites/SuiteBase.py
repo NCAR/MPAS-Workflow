@@ -79,7 +79,8 @@ class SuiteBase():
     # load conda + activate """ + conda + """
     init-script = '''
 source """ + modScript + """
-module load conda//latest
+module load nco
+module load conda/latest
 conda activate """ + conda + """
 
 '''
@@ -90,6 +91,7 @@ conda activate """ + conda + """
     # load conda + activate npl
     init-script = '''
 source """ + modScript + """
+module load nco
 module load conda/latest
 conda activate """ + conda + """
 '''
