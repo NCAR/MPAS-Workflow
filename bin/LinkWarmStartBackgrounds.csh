@@ -28,23 +28,24 @@ while ( $member <= $nMembers )
       # Outer loop mesh
       set fcFile = $CyclingFCDirs[$member]/${FCFilePrefix}.${nextFirstFileDate}.nc
       set InitialMemberFC = "$firstbackground__directoryOuter"`${memberDir} 2 $member "${firstbackground__memberFormatOuter}"`
-      ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixOuter}.*.nc ${fcFile}${OrigFileSuffix}
-      set varinfo = `ncdump -h ${fcFile}${OrigFileSuffix} | grep surface_pressure`
-      if ( "$varinfo" =~ "*double*" ) then
-         if ( "$bundlePrecision" == "single" ) then
-            ncpdq -5 --pck_map=dbl_flt ${fcFile}${OrigFileSuffix} ${fcFile}
-         else
-            mv ${fcFile}${OrigFileSuffix} ${fcFile}
-         endif
-      else if ( "$varinfo" =~ "*float*" ) then
-         if ( "$bundlePrecision" == "double" ) then
-            ncpdq -5 --pck_map=flt_dbl ${fcFile}${OrigFileSuffix} ${fcFile}
-         else
-            mv ${fcFile}${OrigFileSuffix} ${fcFile}
-         endif
-      else
-         echo "netCDF file Error: ${fcFile}${OrigFileSuffix}"
-      endif
+      ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixOuter}.*.nc $CyclingFCDirs[$member]/.
+      # Handling double/single precision files
+      foreach file ($CyclingFCDirs[$member]/*.nc)
+        set varinfo = `ncdump -h ${file} | grep surface_pressure`
+        if ( "$varinfo" =~ "*double*" ) then
+           if ( "$bundlePrecision" == "single" ) then
+              mv ${file} ${file}${OrigFileSuffix}
+              ncpdq -5 --pck_map=dbl_flt ${file}${OrigFileSuffix} ${file}
+           endif
+        else if ( "$varinfo" =~ "*float*" ) then
+           if ( "$bundlePrecision" == "double" ) then
+              mv ${file} ${file}${OrigFileSuffix}
+              ncpdq -5 --pck_map=flt_dbl ${file}${OrigFileSuffix} ${file}
+           endif
+        else
+           echo "netCDF file Error: ${fcFile}${OrigFileSuffix}"
+        endif
+      end
 
       # Inner loop mesh
       if ($nCellsOuter != $nCellsInner) then
