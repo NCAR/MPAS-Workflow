@@ -9,6 +9,7 @@ source config/auto/firstbackground.csh
 source config/auto/members.csh
 source config/auto/model.csh
 source config/auto/workflow.csh
+source config/auto/build.csh
 
 set thisCycleDate = $FirstCycleDate
 set thisValidDate = $thisCycleDate
@@ -27,9 +28,23 @@ while ( $member <= $nMembers )
       # Outer loop mesh
       set fcFile = $CyclingFCDirs[$member]/${FCFilePrefix}.${nextFirstFileDate}.nc
       set InitialMemberFC = "$firstbackground__directoryOuter"`${memberDir} 2 $member "${firstbackground__memberFormatOuter}"`
-      ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixOuter}.*.nc $CyclingFCDirs[$member]/.
-      # rm ${fcFile}
-      cp ${fcFile}${OrigFileSuffix} ${fcFile}
+      ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixOuter}.*.nc ${fcFile}${OrigFileSuffix}
+      set varinfo = `ncdump -h ${fcFile}${OrigFileSuffix} | grep surface_pressure`
+      if ( "$varinfo" =~ "*double*" ) then
+         if ( "$bundlePrecision" == "single" ) then
+            ncpdq -5 --pck_map=dbl_flt ${fcFile}${OrigFileSuffix} ${fcFile}
+         else
+            mv ${fcFile}${OrigFileSuffix} ${fcFile}
+         endif
+      else if ( "$varinfo" =~ "*float*" ) then
+         if ( "$bundlePrecision" == "double" ) then
+            ncpdq -5 --pck_map=flt_dbl ${fcFile}${OrigFileSuffix} ${fcFile}
+         else
+            mv ${fcFile}${OrigFileSuffix} ${fcFile}
+         endif
+      else
+         echo "netCDF file Error: ${fcFile}${OrigFileSuffix}"
+      endif
 
       # Inner loop mesh
       if ($nCellsOuter != $nCellsInner) then
@@ -39,8 +54,22 @@ while ( $member <= $nMembers )
         set fcFile = $innerFCDir/${FCFilePrefix}.${nextFirstFileDate}.nc
         set InitialMemberFC = "$firstbackground__directoryInner"`${memberDir} 2 $member "${firstbackground__memberFormatInner}"`
         ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixInner}.${nextFirstFileDate}.nc ${fcFile}${OrigFileSuffix}
-        # rm ${fcFile}
-        cp ${fcFile}${OrigFileSuffix} ${fcFile}
+        set varinfo = `ncdump -h ${fcFile}${OrigFileSuffix} | grep surface_pressure`
+        if ( "$varinfo" =~ "*double*" ) then
+           if ( "$bundlePrecision" == "single" ) then
+              ncpdq -5 --pck_map=dbl_flt ${fcFile}${OrigFileSuffix} ${fcFile}
+           else
+              mv ${fcFile}${OrigFileSuffix} ${fcFile}
+           endif
+        else if ( "$varinfo" =~ "*float*" ) then
+           if ( "$bundlePrecision" == "double" ) then
+              ncpdq -5 --pck_map=flt_dbl ${fcFile}${OrigFileSuffix} ${fcFile}
+           else
+              mv ${fcFile}${OrigFileSuffix} ${fcFile}
+           endif
+        else
+           echo "netCDF file Error: ${fcFile}${OrigFileSuffix}"
+        endif
       endif
 
   @ member++
