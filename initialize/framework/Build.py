@@ -19,6 +19,8 @@ class Build(Component):
     # mpas-bundle build directory
     'mpas bundle': ['/replace/this/in/host/specific/code/below', str],
 
+    'bundle precision': ['single', str, ['single', 'double']],
+
     # optional double-precision build
     #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22MAR2023', str],
 
