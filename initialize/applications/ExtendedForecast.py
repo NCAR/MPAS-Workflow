@@ -119,7 +119,7 @@ class ExtendedForecast(Component):
       self.fc.mesh.name,
       False,
       False,
-      True,
+      False,
       self.workDir+'/{{thisCycleDate}}/mean',
       states[0].directory(),
       states[0].prefix(),
