@@ -80,7 +80,7 @@ class SuiteBase():
     init-script = '''
 source """ + modScript + """
 module load nco
-module load conda//latest
+module load conda/latest
 conda activate """ + conda + """
 
 '''
