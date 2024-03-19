@@ -115,20 +115,6 @@ sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@nCells@'${ArgNCells}'@' $NamelistFileInit
 sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileInit
 
-## modify namelist physics
-sed -i 's@radtlwInterval@'${RadiationLWInterval}'@' $NamelistFile
-sed -i 's@radtswInterval@'${RadiationSWInterval}'@' $NamelistFile
-sed -i 's@physicsSuite@'${PhysicsSuite}'@' $NamelistFile
-sed -i 's@micropScheme@'${Microphysics}'@' $NamelistFile
-sed -i 's@convectionScheme@'${Convection}'@' $NamelistFile
-sed -i 's@pblScheme@'${PBL}'@' $NamelistFile
-sed -i 's@gwdoScheme@'${Gwdo}'@' $NamelistFile
-sed -i 's@radtCldScheme@'${RadiationCloud}'@' $NamelistFile
-sed -i 's@radtLWScheme@'${RadiationLW}'@' $NamelistFile
-sed -i 's@radtSWScheme@'${RadiationSW}'@' $NamelistFile
-sed -i 's@sfcLayerScheme@'${SfcLayer}'@' $NamelistFile
-sed -i 's@lsmScheme@'${LSM}'@' $NamelistFile
-
 # Run the executable
 # ==================
 rm ./${InitEXE}

@@ -7,25 +7,33 @@ externalanalyses:
 #  forecast directory: path-for-mpas-model-build
 
 experiment:
-  name: 'ForecastFromGFSAnalysesMPT_60-3km_TEST'
+  name: 'ForecastFromGFSAnalysesMPT_60-3km_coldstart'
 
 build:
   mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle/build_single
 
 extendedforecast:
-  meanTimes: T00
-  lengthHR: 12
-  outIntervalHR: 6
+  meanTimes: T00 #T12
+  lengthHR: 36
+  outIntervalHR: 1
   #execute: False # uncomment if forecasts are already completed
 
   # optionally turn on extended forecast post
   post: []
+
+initic:
+  job:
+    60-3km:
+      nodes: 4
+      PEPerNode: 32
 
 forecast:
   job:
     60-3km:
       nodes: 4
       PEPerNode: 128
+      baseSeconds: 60
+      secondsPerForecastHR: 210
 
 hpc:
   CriticalQueue: economy
@@ -43,5 +51,5 @@ observations: # for optional verification
 
 workflow:
   first cycle point: 20180415T00
-  final cycle point: 20180416T00
+  final cycle point: 20180430T00
   max active cycle points: 4
