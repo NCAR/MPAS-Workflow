@@ -83,7 +83,7 @@ class EnKF(Component):
     ## maxIODAPoolSize
     # maximum number of IO pool members in IODA writer class
     # OPTIONS: 1 to NPE, default: 10
-    'maxIODAPoolSize': [10, int],
+    'maxIODAPoolSize': [1, int],
 
     ## radianceThinningDistance
     # distance (km) used for the Gaussian Thinning filter for all radiance-based observations
@@ -95,7 +95,11 @@ class EnKF(Component):
 
     ## post
     # list of tasks for Post
-    'post': [['verifyobs'], list]
+    'post': [['verifyobs'], list],
+
+    ## concatenateObsFeedback
+    # whether to concatenate the geovals and ydiag feedback files
+    'concatenateObsFeedback': [False, bool],
   }
 
   def __init__(self,
@@ -227,6 +231,31 @@ class EnKF(Component):
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh
 '''+solvertask.job()+solvertask.directives()]
+
+    if self['concatenateObsFeedback']:
+      concatattr = {
+        'seconds': {'def': 300},
+        'nodes': {'def': 1},
+        'PEPerNode': {'def': 128},
+        'memory': {'def': '235GB', 'typ': str},
+        'queue': {'def': hpc['CriticalQueue']},
+        'account': {'def': hpc['CriticalAccount']},
+      }
+      concatjob = Resource(self._conf, concatattr, ('concat.job'))
+      concattask = TaskLookup[hpc.system](concatjob)
+      args = [
+      self.lower,
+      self.workDir+'/{{thisCycleDate}}',
+      "",
+      ]
+      concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
+      self._tasks += ['''
+  [[ConcatEnKF]]
+    inherit = BATCH
+    script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
+'''+concattask.job()+concattask.directives()]
+      self._dependencies += ['''
+        EnKF => ConcatEnKF''']
 
     self._dependencies += ['''
 
