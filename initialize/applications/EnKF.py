@@ -38,6 +38,11 @@ class EnKF(Component):
     # GETKF
     #'vertical localization lengthscale': [5.0, float],
 
+    # Inflation
+    'mult value': [1.0, float],
+    'rtpp value': [0.5, float],
+    'rtps value': [0.9, float],
+
     ## observers
     # observation types assimilated in the enkf application
     # Abbreviations:

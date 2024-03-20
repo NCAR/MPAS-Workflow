@@ -3,6 +3,9 @@ enkf:
   # resource needs are much smaller for 2D than 3D
   localization dimension: 2D
   horizontal localization lengthscale: 1.2e6
+  rtps value: 0.9
+  rtpp value: 0.5
+  mult value: 1.0
   post: []
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -37,7 +40,7 @@ observations:
         abi_g16: 15X15
         ahi_himawari8: 15X15
 rtpp:
-  relaxationFactor: 0.8
+  relaxationFactor: 0.0
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T00

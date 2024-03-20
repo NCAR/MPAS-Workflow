@@ -1,0 +1,23 @@
+_state read: &stateReadConfig
+  date: {{thisISO8601Date}}
+  state variables: [{{StateVariables}}]
+  stream name: background
+geometry:
+  nml_file: {{EnsembleNamelistFile}}
+  streams_file: {{EnsembleStreamsFile}}
+  deallocate non-da fields: true
+ensemble:
+  members from template:
+    template:
+      <<: *stateReadConfig
+      filename: {{EnsembleMember}}%iMember%
+    pattern: %iMember%
+    start: 1
+    zero padding: 3
+    nmembers: {{EnsembleNumber}}
+mean output: 
+  filename: {{EnsembleMeanFile}}
+  stream name: background
+variance output: 
+  filename: {{EnsembleVarianceFile}}
+  stream name: background

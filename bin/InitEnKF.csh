@@ -124,6 +124,11 @@ sed -i 's@{{horizontalLocalizationLengthscale}}@'${horizontalLocalizationLengths
 sed -i 's@{{verticalLocalizationFunction}}@'"${verticalLocalizationFunction}"'@' $prevYAML
 sed -i 's@{{verticalLocalizationLengthscale}}@'${verticalLocalizationLengthscale}'@' $prevYAML
 
+# Variance Inflation
+sed -i 's@{{rtpsValue}}@'${rtpsValue}'@' $prevYAML
+sed -i 's@{{rtppValue}}@'${rtppValue}'@' $prevYAML
+sed -i 's@{{multValue}}@'${multValue}'@' $prevYAML
+
 # Jo term (member dependence)
 # ===========================
 
@@ -142,12 +147,6 @@ echo "Starting model state preparation stage"
 # ====================================
 # Input/Output model state preparation
 # ====================================
-
-# mean background/analysis directories
-set member = 0
-set memDir = `${memberDir} $nMembers $member`
-mkdir -p ${backgroundSubDir}${memDir}
-mkdir -p ${analysisSubDir}${memDir}
 
 # member background/analysis directories and files
 set member = 1
@@ -189,6 +188,16 @@ while ( $member <= ${nMembers} )
 
   @ member++
 end
+
+# mean background/analysis directories
+set member = 0
+set memDir = `${memberDir} $nMembers $member`
+mkdir -p ${backgroundSubDir}${memDir}
+mkdir -p ${analysisSubDir}${memDir}
+set member = 1
+set memDir1 = `${memberDir} $nMembers $member`
+cp -v ${backgroundSubDir}${memDir1}/${BGFilePrefix}.$thisMPASFileDate.nc ${backgroundSubDir}${memDir}/${BGFilePrefix}.$thisMPASFileDate.nc
+cp -v ${analysisSubDir}${memDir1}/${ANFilePrefix}.$thisMPASFileDate.nc   ${analysisSubDir}${memDir}/${ANFilePrefix}.$thisMPASFileDate.nc
 
 # get source static fields
 set StaticFieldsDirList = ($StaticFieldsDirOuter)

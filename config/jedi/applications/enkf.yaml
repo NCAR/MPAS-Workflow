@@ -14,6 +14,7 @@ _as solver: &asSolver
   do posterior observer: false
   save posterior ensemble: true
   save posterior mean: true
+  save prior mean: true
 
 _letkf geometry: &3DLETKFGeometry
   iterator dimension: 3
@@ -52,13 +53,15 @@ local ensemble DA:
     fraction of retained variance: 0.95
     lengthscale: {{verticalLocalizationLengthscale}}
     lengthscale units: modellevel
-
-# TODO: how do inflation settings impact result?
-#  inflation:
-#    rtps: 0.5
-#    rtpp: 0.6
-#    mult: 1.1
+  inflation:
+    rtps: {{rtpsValue}}
+    rtpp: {{rtppValue}}
+    mult: {{multValue}}
 
 output:
   filename: {{anStateDir}}/mem%{member}%/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis
+
+output mean prior:
+  filename: {{bgStateDir}}/mem000/{{bgStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis

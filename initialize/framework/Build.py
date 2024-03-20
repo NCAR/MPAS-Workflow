@@ -20,7 +20,6 @@ class Build(Component):
     'mpas bundle': ['/replace/this/in/host/specific/code/below', str],
 
     'bundle precision': ['single', str, ['single', 'double']],
-
     # optional double-precision build
     #'mpas bundle': ['/glade/work/guerrett/pandac/build/mpas-bundle_gnu-openmpi_22MAR2023', str],
 
@@ -43,7 +42,7 @@ class Build(Component):
     system = os.getenv('NCAR_HOST')
     if system == 'derecho':
       self.variablesWithDefaults['mpas bundle'] = \
-          ['/glade/work/nystrom/Code/JEDI/jcsda_internal/mpas-bundle_develop_2-28-24/gnu_build_4dhybrid/', str]
+          ['/glade/u/home/taosun/work/Derecho/MPAS/JEDI_MPAS/mpas-bundle-develop/build', str]
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
       self.variablesWithDefaults['forecast directory'] = ['bundle', str]
@@ -54,7 +53,7 @@ class Build(Component):
       # FIXME the source for the app in this directory was copied from
       # /glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1
       # meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-r2.0/build-gnu-derecho-single/bin'
-      meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-dev-new/build-gnu-1p-ss1.6.0/bin'
+      # meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-dev-new/build-gnu-1p-ss1.6.0/bin'
     elif system == 'cheyenne':
       self.variablesWithDefaults['mpas bundle'] = \
         ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build', str]
@@ -66,7 +65,7 @@ class Build(Component):
       # Ungrib
       wpsBuildDir = '/glade/work/guerrett/pandac/data/GEFS'
       # Mean state calculator
-      meanStateBuildDir = '/glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1'
+      # meanStateBuildDir = '/glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1'
     else:
       self._msg('unknown host:' + system)
       wpsBuildDir = ''
@@ -157,9 +156,7 @@ class Build(Component):
 
     # Mean state calculator
     # ---------------------
-    #self._set('meanStateExe', 'mpasjedi_ens_mean_variance.x')
-    #self._set('meanStateBuildDir', '/glade/work/taosun/Derecho/MPAS/JEDI_MPAS/build_intel'+'/bin')
-    self._set('meanStateExe', 'average_netcdf_files_parallel_mpas.x')
-    self._set('meanStateBuildDir', meanStateBuildDir)
+    self._set('meanStateExe', 'mpasjedi_ens_mean_variance.x')
+    self._set('meanStateBuildDir', self['mpas bundle']+'/bin')
 
     self._cshVars = list(self._vtable.keys())
