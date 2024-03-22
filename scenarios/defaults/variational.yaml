@@ -232,10 +232,10 @@ variational:
           baseSeconds: 500
           secondsPerEnVarMember: 9
         3dhybrid-allsky:
-          nodes: 2
-          PEPerNode: 128
+          nodes: 4
+          PEPerNode: 64
           memory: 235GB
-          baseSeconds: 500
+          baseSeconds: 800
           secondsPerEnVarMember: 9
         3dvar:
           nodes: 2
