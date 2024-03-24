@@ -1,6 +1,6 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  suffix: '_ensB-SE80+RTPP70_VarBC'
+  suffix: '_ensB-SE80+RTPP70_VarBCclr'
 
 firstbackground:
   resource: "PANDAC.GFS"
@@ -58,6 +58,9 @@ variational:
 
   #execute: False # the default is True
   #post: [] # this turns off verifyobs
+
+hofx:
+  concatenateObsFeedback: True
 
 workflow:
   first cycle point: 20180414T18
