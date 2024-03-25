@@ -1,7 +1,9 @@
 suite: GenerateExternalAnalyses
 
+build:
+  mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle/build_single
 externalanalyses:
-  resource: "GFS.RDA"
+  resource: "GFS.GFS_ungrib"
 experiment:
   name: 'GenerateGFSAnalyses'
   prefix: ''
@@ -9,8 +11,14 @@ hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 model:
-  outerMesh: 60km
+  outerMesh: 60-3km
+  GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/saca/all_graph
+initic:
+  job:
+    60-3km:
+      nodes: 4
+      PEPerNode: 32
 workflow:
-  first cycle point: 20220606T00
-  final cycle point: 20220608T00
-  max active cycle points: 60
+  first cycle point: 20180414T18
+  final cycle point: 20180525T00
+  max active cycle points: 20

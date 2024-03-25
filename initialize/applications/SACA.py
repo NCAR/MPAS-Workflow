@@ -7,9 +7,6 @@
  which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 '''
 
-#from initialize.applications.DA import DA
-from initialize.applications.Members import Members
-
 from initialize.config.Component import Component
 from initialize.config.Config import Config
 from initialize.config.Resource import Resource
@@ -17,108 +14,146 @@ from initialize.config.Task import TaskLookup
 from initialize.config.TaskFamily import CylcTaskFamily
 
 from initialize.data.Model import Mesh
-from initialize.data.Observations import Observations
 from initialize.data.StateEnsemble import StateEnsemble
 
 from initialize.framework.HPC import HPC
 
+from initialize.applications.ExtendedForecast import ExtendedForecast
+from initialize.applications.Forecast import Forecast
+from initialize.framework.Workflow import Workflow
 class SACA(Component):
   defaults = 'scenarios/defaults/saca.yaml'
-  workDir = 'CloudDirectInsert/SACA'
+  workDir = 'CloudDirectInsertion/SACA'
+  analysisPrefix = 'an'
 
   variablesWithDefaults = {
-    ## relaxationFactor
-    # parameter for the relaxation to prior perturbation (RTPP) mechanism
-    # only applies to EDA cycling and must be set in order to use RTPP
-    # Typical Values: 0. to 0.9
-    'relaxationFactor': [0., float],
-
-    ## retainOriginalAnalyses
-    # whether to retain the analyses taken as inputs to RTPP
-    # OPTIONS: True/False
-    'retainOriginalAnalyses': [False, bool],
+    # UTC times to run SACA and extended forecast from SACA analysis
+    # formatted as comma-separated string, e.g., T00,T06,T12,T18
+    # note: must be supplied in order to do single-state verification
+    'meanTimes': [None, str],
   }
 
   def __init__(self,
     config:Config,
     hpc:HPC,
     mesh:Mesh,
-    members:Members,
-    parent:Component,
-    ensBackgrounds:StateEnsemble,
-    ensAnalyses:StateEnsemble,
+    workflow:Workflow,
   ):
-    self.NN = members.n
     super().__init__(config)
-
-    groupSettings = ['''
-    inherit = '''+parent.tf.group]
-    self.tf = CylcTaskFamily(self.base, groupSettings, self['initialize'], self['execute'])
-
-    # WorkDir is where RTPP is executed
-    self.WorkDir = self.workDir+'/{{thisCycleDate}}'
 
     ###################
     # derived variables
     ###################
-    self._set('appyaml', 'saca.yaml')
-    relaxationFactor = self['relaxationFactor']
-    assert relaxationFactor >= 0. and relaxationFactor <= 1., (
-      self._msg('invalid relaxationFactor: '+str(relaxationFactor)))
+    self.app = 'saca'
+    self._set('AppName', self.app)
+    self._set('appyaml', self.app+'.yaml')
+    self.doMean = (self['meanTimes'] is not None)
+    self.workflow = workflow
 
-    # used by experiment naming convention
-    self._set('rtpp__relaxationFactor', relaxationFactor)
-
-    self.active = (relaxationFactor > 0. and members.n > 1 and parent['execute'])
-
-    if self.active:
-      self._cshVars += list(self._vtable.keys())
+    # all csh variables above
+    self._cshVars = list(self._vtable.keys())
 
     ########################
     # tasks and dependencies
     ########################
-    if self.active:
-      attr = {
-        'retry': {'typ': str},
-        'baseSeconds': {'typ': int},
-        'secondsPerMember': {'typ': int},
-        'nodes': {'typ': int},
-        'PEPerNode': {'typ': int},
-        'memory': {'def': '45GB', 'typ': str},
-        'queue': {'def': hpc['CriticalQueue']},
-        'account': {'def': hpc['CriticalAccount']},
-        'email': {'def': True, 'typ': bool},
-      }
-      job = Resource(self._conf, attr, ('job', mesh.name))
-      job._set('seconds', job['baseSeconds'] + job['secondsPerMember'] * members.n)
-      task = TaskLookup[hpc.system](job)
 
-      self._tasks += ['''
-  [['''+self.tf.init+'''Job]]
-    # note: does not depend on any other tasks
-    inherit = '''+self.tf.init+''', SingleBatch
-    script = $origin/bin/Init'''+self.base+'''.csh "'''+self.WorkDir+'''"
-    execution time limit = PT1M
-    execution retry delays = '''+job['retry']+'''
+    ## class-specific tasks
+    # job settings
+    attr = {
+      'retry': {'typ': str},
+      'seconds': {'typ': int},
+      'nodes': {'def': 2, 'typ': int},
+      'PEPerNode': {'def': 128, 'typ': int},
+      'memory': {'def': '235GB', 'typ': str},
+      'queue': {'def': hpc['NonCriticalQueue']},
+      'account': {'def': hpc['NonCriticalAccount']},
+      'email': {'def': True, 'typ': bool},
+    }
+    self.job = Resource(self._conf, attr, ('job', mesh.name))
+    self.task = TaskLookup[hpc.system](self.job)
+
+    self._tasks += ['''
   [['''+self.base+''']]
-    inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/bin/'''+self.base+'''.csh "'''+self.WorkDir+'''"
-'''+task.job()+task.directives()+'''
+    inherit = '''+self.tf.execute+'''
+'''+self.task.job()+self.task.directives()]
+
+    # WorkDir is where SACA is executed
+    self.workDir = self.workDir+'/{{thisCycleDate}}'
+
+    self.ICFilePrefix = 'mpasin'
+    bgdirectory = 'ColdStartFC'
+
+    #########
+    # outputs
+    #########
+    self.outputs = {}
+    self.outputs['state'] = {}
+    self.outputs['state']['members'] = StateEnsemble(mesh)
+    self.outputs['state']['members'].append({
+      'directory': self.workDir+'/'+self.app+'_'+self.analysisPrefix,
+      'prefix': self.ICFilePrefix,
+    })
+    self.outputs['doMean'] = {}
+    self.outputs['doMean'] = self.doMean
+    self.outputs['meanTimes'] = {}
+    self.outputs['meanTimes'] = self['meanTimes']
+
+    # init
+    args = [
+      self.workDir,
+    ]
+    self.initArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+    # execute
+    args = [
+      self.workDir,
+      bgdirectory,
+    ]
+    self.executeArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+    # clean
+    args = [
+      self.workDir,
+    ]
+    self.cleanArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+    self._tasks += ['''
+
+  [['''+self.tf.init+'''Job]]
+    inherit = '''+self.tf.init+''', SingleBatch
+    script = $origin/bin/Init'''+self.base+'''.csh '''+self.initArgs+'''
+    execution time limit = PT1M
+    execution retry delays = '''+self.job['retry']+'''
+
+  [['''+self.base+'''Job]]
+    inherit = '''+self.base+''', BATCH
+    script = $origin/bin/'''+self.base+'''.csh '''+self.executeArgs+'''
 
   [['''+self.tf.clean+''']]
-    script = $origin/bin/Clean'''+self.base+'''.csh "'''+self.WorkDir+'"']
+    inherit = Clean
+    script = $origin/bin/Clean'''+self.base+'''.csh '''+self.cleanArgs]
 
-  def export(self, dependency:str, followon:str):
-    if self.active:
-      # insert between dependency and followon
-      self._dependencies += ['''
-        '''+dependency+''' => '''+self.tf.pre+'''
-        '''+self.tf.finished+''' => '''+followon]
+  def export(self, previousForecast:str):
+    ###########################
+    # update tasks/dependencies
+    ###########################
+    # open graph
+    if self.doMean:
+      recurrence = self['meanTimes']
+    else:
+      recurrence = self.workflow['AnalysisTimesSACA']
 
-      ###########################
-      # update tasks/dependencies
-      ###########################
-      self._dependencies = self.tf.updateDependencies(self._dependencies)
-      self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
+    self._dependencies += ['''
+    '''+recurrence+''' = """''']
 
-      super().export()
+    # depends on previous Forecast
+    self.tf.addDependencies([previousForecast])
+
+    self._dependencies = self.tf.updateDependencies(self._dependencies)
+    self._tasks = self.tf.updateTasks(self._tasks, self._dependencies)
+
+    # close graph
+    self._dependencies += ['''
+      """''']
+
+    super().export()

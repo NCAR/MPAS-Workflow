@@ -2,8 +2,8 @@ test:
   float relative tolerance: 1.e-1
   float absolute tolerance: 1.e-1
   integer tolerance: 0
-  reference filename: {{AppCategory}}.ref
-  test output filename: {{AppCategory}}.run.ref
+  reference filename: {{AppName}}.ref
+  test output filename: {{AppName}}.run.ref
 
 state geometry: &geom
   nml_file: {{SACANamelistFile}}
@@ -15,15 +15,15 @@ increment geometry: *geom
 state:
   date: &date {{thisISO8601Date}}
   state variables: [{{SACAStateVariables}}]
-  stream name: {{AppCategory}}_background
+  stream name: {{AppName}}_background
   filename: {{bgStateDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
 
 increment:
   date: *date
   added variables: [{{addedVars}}]
-  stream name: {{AppCategory}}_obs
+  stream name: {{AppName}}_obs
   filename: {{InDBDir}}/{{SACAObs}}
 
 output:
-  stream name: {{AppCategory}}_analysis
+  stream name: {{AppName}}_analysis
   filename: {{anStateDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc

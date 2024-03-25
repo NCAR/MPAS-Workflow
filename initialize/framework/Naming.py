@@ -10,8 +10,10 @@
 from initialize.applications.DA import DA
 from initialize.applications.ExtendedForecast import ExtendedForecast
 from initialize.applications.Forecast import Forecast
+from initialize.applications.ForecastSACA import ForecastSACA
 from initialize.applications.RTPP import RTPP
 from initialize.applications.Variational import ABEI
+from initialize.applications.SACA import SACA
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
@@ -44,6 +46,7 @@ class Naming(Component):
       Observations,
       ExternalAnalyses,
       SACA,
+      ForecastSACA,
     ]
 
     # experiment directories

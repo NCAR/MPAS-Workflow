@@ -1,0 +1,57 @@
+suite: CloudDirectInsertion
+
+experiment:
+  name: 'CloudDirectInsertion_60-3km'
+
+build:
+  mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle/build_single
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+
+firstbackground:
+  resource: "PANDAC.GFS"
+
+saca:
+  meanTimes: T00 #,T06
+
+extendedforecast:
+  meanTimes: T00 #,T06
+  lengthHR: 36
+  outIntervalHR: 1
+  #execute: False # uncomment if forecasts are already completed
+
+  # optionally turn on extended forecast post
+  post: []
+
+forecastsaca:
+  #execute: False
+  #job:
+  #  60-3km:
+  #    nodes: 4
+  #    PEPerNode: 128
+  #    baseSeconds: 60
+  #    secondsPerForecastHR: 240
+  post: [] #verifymodel
+
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+
+members:
+  n: 1
+
+model:
+  outerMesh: 60-3km
+  innerMesh: 60km
+  ensembleMesh:  60km
+  GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/saca/all_graph
+
+observations:
+  resource: SacaObs
+
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180415T00
+  prevBgHR: 6
+  #max active cycle points: 15

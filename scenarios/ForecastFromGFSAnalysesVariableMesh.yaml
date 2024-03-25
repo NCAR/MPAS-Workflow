@@ -1,7 +1,7 @@
 suite: ForecastFromExternalAnalyses
 
 externalanalyses:
-  resource: "GFS.GFS_ungrib"
+  resource: "GFS.PANDAC"
 
 #build:
 #  forecast directory: path-for-mpas-model-build
@@ -13,7 +13,7 @@ build:
   mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle/build_single
 
 extendedforecast:
-  meanTimes: T00 #T12
+  meanTimes: T12 #T00, T12
   lengthHR: 36
   outIntervalHR: 1
   #execute: False # uncomment if forecasts are already completed
@@ -50,6 +50,6 @@ observations: # for optional verification
   resource: PANDACArchive
 
 workflow:
-  first cycle point: 20180415T00
-  final cycle point: 20180430T00
+  first cycle point: 20180415T12
+  final cycle point: 20180430T12
   max active cycle points: 15

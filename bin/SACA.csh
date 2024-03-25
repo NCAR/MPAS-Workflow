@@ -11,8 +11,8 @@
 # ArgWorkDir: my location
 set ArgWorkDir = "$1"
 
-# AppCategory: saca
-set AppCategory = "$2"
+# ArgStateDir: where the initial condition state is located
+set ArgStateDir = "$2"
 
 date
 
@@ -27,11 +27,18 @@ source config/auto/model.csh
 source config/auto/staticstream.csh
 source config/auto/workflow.csh
 source config/auto/saca.csh
+source config/auto/naming.csh
+source config/auto/observations.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
 set thisValidDate = ${thisCycleDate}
 source ./bin/getCycleVars.csh
+
+# getObservationsOrNone exposes the observations section of the config for run-time-dependent
+# behaviors
+source config/auto/scenario.csh observations
+setenv getObservationsOrNone "${getLocalOrNone}"
 
 # static work directory
 set WorkDir = "${ExperimentDirectory}/"`echo "$ArgWorkDir" \
@@ -46,30 +53,42 @@ set myBuildDir = ${SACABuildDir}
 set myEXE = ${SACAEXE}
 set myYAML = ${WorkDir}/$appyaml
 
-# cold start forecst folder
-set ColdStartFCDir = "ColdStartFC"
+# AppName
+set AppName = "saca"
 
 # Remove old logs
 rm addincrement.log*
 
 # ================================================================================================
+# Previous time info for yaml entries
+# ===================================
+set prevValidDate = `$advanceCYMDH ${thisValidDate} -${prevBgHR}`
+set yy = `echo ${prevValidDate} | cut -c 1-4`
+set mm = `echo ${prevValidDate} | cut -c 5-6`
+set dd = `echo ${prevValidDate} | cut -c 7-8`
+set hh = `echo ${prevValidDate} | cut -c 9-10`
+
+# cold start forecst folder
+set StateDir = ${ExperimentDirectory}/${ArgStateDir}/${prevValidDate}
+
+set nCells = $nCellsOuter
 
 # ====================================
 # Input/Output model state preparation
 # ====================================
-set bg = ${AppCategory}_$backgroundSubDir
+set bg = ${AppName}_$backgroundSubDir
 mkdir -p ${bg}
 
-# Link bg from StateDirs
+# Link bg from StateDir
 # ======================
-set bgFileOther = ${ColdStartFCDir}/${thisValidDate}/${FCFilePrefix}.${thisMPASFileDate}.nc
+set bgFileOther = ${StateDir}/${FCFilePrefix}.${thisMPASFileDate}.nc
 set bgFile = ${bg}/${FCFilePrefix}.$thisMPASFileDate.nc #bg.nc
 
 rm ${bgFile}${OrigFileSuffix} ${bgFile}
 ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
 ln -sfv ${bgFileOther} ${bgFile}
 
-set an = ${AppCategory}_$analysisSubDir
+set an = ${AppName}_$analysisSubDir
 mkdir -p ${an}
 
 set anFile = ${an}/${ICFilePrefix}.$thisMPASFileDate.nc #update.nc
@@ -77,10 +96,13 @@ rm ${anFile}
 cp ${bgFile} ${anFile}
 
 # Link static and template fields files
+set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ./${localStaticFieldsFile}
+ln -sfv $GraphInfoDir/x1.${nCells}.${localStaticFieldsPrefix}.nc ./${localStaticFieldsFile}
+
+set TemplateFieldsFile = ${TemplateFieldsFileOuter}
 rm ./${TemplateFieldsFile}
-ln -sfv $GraphInfoDir/${localStaticFieldsFile} .
-ln -sfv ${bgFile} ${TemplateFieldsFile} .
+ln -sfv ${bgFile} ${TemplateFieldsFile}
 
 # ====================
 # Model-specific files
@@ -94,7 +116,7 @@ foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
-if (${MicropScheme} == 'mp_thompson' ) then
+if (${Microphysics} == 'mp_thompson' ) then
   ln -svf $MPThompsonTablesDir/* .
 endif
 
@@ -104,15 +126,15 @@ stream_list.${MPASCore}.background \
 stream_list.${MPASCore}.analysis \
 stream_list.${MPASCore}.ensemble \
 stream_list.${MPASCore}.control \
-stream_list.${MPASCore}.${AppCategory}_analysis \
-stream_list.${MPASCore}.${AppCategory}_background \
-stream_list.${MPASCore}.${AppCategory}_obs \
+stream_list.${MPASCore}.${AppName}_analysis \
+stream_list.${MPASCore}.${AppName}_background \
+stream_list.${MPASCore}.${AppName}_obs \
 )
-  ln -sfv $ModelConfigDir/${AppCategory}/$staticfile .
+  ln -sfv $ModelConfigDir/${AppName}/$staticfile .
 end
 
 rm ${StreamsFile}
-cp -v $ModelConfigDir/${AppCategory}/${StreamsFile} .
+cp -v $ModelConfigDir/${AppName}/${StreamsFile} .
 sed -i 's@{{nCells}}@'${nCells}'@' ${StreamsFile}
 sed -i 's@{{TemplateFieldsPrefix}}@'${WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@{{StaticFieldsPrefix}}@'${WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
@@ -122,14 +144,15 @@ sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 rm $NamelistFile
 cp -v $ModelConfigDir/saca/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
-sed -i 's@blockDecompPrefix@'${WorkDir}'/x1.'${nCells}'@' ${NamelistFile}
+sed -i 's@blockDecompPrefix@'${WorkDir}'/x1.'${nCells}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
+
 ## modify namelist physics
 sed -i 's@radtlwInterval@'${RadiationLWInterval}'@' $NamelistFile
 sed -i 's@radtswInterval@'${RadiationSWInterval}'@' $NamelistFile
 sed -i 's@physicsSuite@'${PhysicsSuite}'@' $NamelistFile
-sed -i 's@micropScheme@'${MicropScheme}'@' $NamelistFile
+sed -i 's@micropScheme@'${Microphysics}'@' $NamelistFile
 sed -i 's@convectionScheme@'${Convection}'@' $NamelistFile
 sed -i 's@pblScheme@'${PBL}'@' $NamelistFile
 sed -i 's@gwdoScheme@'${Gwdo}'@' $NamelistFile
@@ -160,16 +183,16 @@ cd ${mainScriptDir}
 
 # Check for instrument-specific directory first
 set key = IODADirectory
-set address = "resources.${observations__resource}.${key}.${AppCategory}.common"
+set address = "resources.${observations__resource}.${key}.${AppName}.common"
 set $key = "`$getObservationsOrNone ${address}`"
 
 # prefix
 set key = IODAPrefix
-set address = "resources.${observations__resource}.${AppCategory}"
+set address = "resources.${observations__resource}.${key}.${AppName}"
 set $key = "`$getObservationsOrNone ${address}`"
 
 cd ${WorkDir}
-set obsFile = ${IODADirectory}/${IODAPrefix}_obs_$thisMPASFileDate.nc
+set obsFile = ${IODADirectory}/${IODAPrefix}_obs.$thisMPASFileDate.nc
 set sacaObsFile = ${IODAPrefix}_obs_${thisValidDate}.nc
 ln -sfv ${obsFile} ${InDBDir}/${sacaObsFile}
 
@@ -178,6 +201,9 @@ module load nco
 ncrename -v BCM_G16,cldmask  ${InDBDir}/${sacaObsFile}
 ncrename -v BT_G16C13,brtemp ${InDBDir}/${sacaObsFile}
 
+# Link reference files
+ln -svf ${ConfigDir}/jedi/refFiles/${AppName}.* .
+
 # =============
 # Generate yaml
 # =============
@@ -185,8 +211,8 @@ ncrename -v BT_G16C13,brtemp ${InDBDir}/${sacaObsFile}
 set thisYAML = orig.yaml
 cp -v ${ConfigDir}/jedi/applications/$appyaml $thisYAML
 
-## AppCategory
-sed -i 's@{{AppCategory}}@'${AppCategory}'@g' $thisYAML
+## AppName
+sed -i 's@{{AppName}}@'${AppName}'@g' $thisYAML
 
 ## namelist
 sed -i 's@{{SACANamelistFile}}@'${WorkDir}'/'${NamelistFile}'@' $thisYAML
@@ -209,11 +235,11 @@ sed -i 's@{{SACAStateVariables}}@'$VarSub'@' $thisYAML
 
 # saca bg file
 sed -i 's@{{bgStateDir}}@'${WorkDir}'/'${bg}'@g' $thisYAML
-sed -i 's@{{bgStatePrefix}}@'${bgPrefix}'@g' $thisYAML
+sed -i 's@{{bgStatePrefix}}@'${FCFilePrefix}'@g' $thisYAML
 sed -i 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@g' $thisYAML
 
 # added variables
-set addedVars = `cat stream_list.atmosphere.${AppCategory}_obs`
+set addedVars = `cat stream_list.atmosphere.${AppName}_obs`
 set addedVarSub = ""
 foreach var ($addedVars)
   set addedVarSub = "$addedVarSub$var,"
@@ -228,10 +254,17 @@ sed -i 's@{{anStatePrefix}}@'${ICFilePrefix}'@g' $thisYAML
 
 # saca obs
 sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $thisYAML
-sed -i 's@{{SACAObs}}@'${${sacaObsFile}}'@g' $thisYAML
+sed -i 's@{{SACAObs}}@'${sacaObsFile}'@g' $thisYAML
 
 cp $thisYAML $appyaml
 
+limit stacksize unlimited
+setenv GFORTRAN_CONVERT_UNIT 'big_endian:101-200'
+setenv FI_CXI_RX_MATCH_MODE 'hybrid'
+
+setenv OOPS_TRACE 1
+setenv OOPS_DEBUG 1
+setenv OOPS_INFO 1
 
 # Run the executable
 # ==================

@@ -130,6 +130,10 @@ foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
+if (${Microphysics} == 'mp_thompson' ) then
+  ln -svf $MPThompsonTablesDir/* .
+endif
+
 ## link stream_list configs
 foreach staticfile ( \
 stream_list.${MPASCore}.background \
@@ -167,18 +171,18 @@ foreach NamelistFile_ ($NamelistFileList)
 end
 
 ## modify namelist physics
-sed -i 's@radtlwInterval@'${RadiationLWInterval}'@' $NamelistFile
-sed -i 's@radtswInterval@'${RadiationSWInterval}'@' $NamelistFile
-sed -i 's@physicsSuite@'${PhysicsSuite}'@' $NamelistFile
-sed -i 's@micropScheme@'${Microphysics}'@' $NamelistFile
-sed -i 's@convectionScheme@'${Convection}'@' $NamelistFile
-sed -i 's@pblScheme@'${PBL}'@' $NamelistFile
-sed -i 's@gwdoScheme@'${Gwdo}'@' $NamelistFile
-sed -i 's@radtCldScheme@'${RadiationCloud}'@' $NamelistFile
-sed -i 's@radtLWScheme@'${RadiationLW}'@' $NamelistFile
-sed -i 's@radtSWScheme@'${RadiationSW}'@' $NamelistFile
-sed -i 's@sfcLayerScheme@'${SfcLayer}'@' $NamelistFile
-sed -i 's@lsmScheme@'${LSM}'@' $NamelistFile
+sed -i 's@radtlwInterval@'${RadiationLWInterval}'@' ${NamelistFile_}
+sed -i 's@radtswInterval@'${RadiationSWInterval}'@' ${NamelistFile_}
+sed -i 's@physicsSuite@'${PhysicsSuite}'@' ${NamelistFile_}
+sed -i 's@micropScheme@'${Microphysics}'@' ${NamelistFile_}
+sed -i 's@convectionScheme@'${Convection}'@' ${NamelistFile_}
+sed -i 's@pblScheme@'${PBL}'@' ${NamelistFile_}
+sed -i 's@gwdoScheme@'${Gwdo}'@' ${NamelistFile_}
+sed -i 's@radtCldScheme@'${RadiationCloud}'@' ${NamelistFile_}
+sed -i 's@radtLWScheme@'${RadiationLW}'@' ${NamelistFile_}
+sed -i 's@radtSWScheme@'${RadiationSW}'@' ${NamelistFile_}
+sed -i 's@sfcLayerScheme@'${SfcLayer}'@' ${NamelistFile_}
+sed -i 's@lsmScheme@'${LSM}'@' ${NamelistFile_}
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)

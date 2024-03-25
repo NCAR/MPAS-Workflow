@@ -37,6 +37,8 @@ externalanalyses:
           directory: "/glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_GFSANA"
         30km:
           directory: "/glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_GFSANA"
+        60-3km:
+          directory: "/glade/campaign/mmm/parc/ivette/pandac/saca/60-3km/60-3km_GFSANA"
       RDA:
         common:
           PrepareExternalAnalysisTasks:
