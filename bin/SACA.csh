@@ -194,7 +194,7 @@ set $key = "`$getObservationsOrNone ${address}`"
 cd ${WorkDir}
 set obsFile = ${IODADirectory}/${IODAPrefix}_obs.$thisMPASFileDate.nc
 set sacaObsFile = ${IODAPrefix}_obs_${thisValidDate}.nc
-ln -sfv ${obsFile} ${InDBDir}/${sacaObsFile}
+cp ${obsFile} ${InDBDir}/${sacaObsFile}
 
 # Rename variables
 module load nco
