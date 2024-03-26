@@ -2,7 +2,7 @@ saca:
   # resource requirements
   job:
     defaults:
-      seconds: 500
+      seconds: 100
 
       # cylc retry string
       retry: '0*PT30S'
@@ -11,10 +11,10 @@ saca:
     #  seconds: int
     #  secondsPerMember: int
     60-3km:
-      seconds: 300
+      seconds: 120
     30km:
-      seconds: 1200
+      seconds: 80
     60km:
-      seconds: 800
+      seconds: 80
     120km:
-      seconds: 500
+      seconds: 80

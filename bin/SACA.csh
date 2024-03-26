@@ -144,7 +144,7 @@ sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 rm $NamelistFile
 cp -v $ModelConfigDir/saca/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
-sed -i 's@blockDecompPrefix@'${WorkDir}'/x1.'${nCells}'@' $NamelistFile
+sed -i 's@nCells@'${nCells}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 

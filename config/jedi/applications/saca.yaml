@@ -13,7 +13,7 @@ state geometry: &geom
 increment geometry: *geom
 
 state:
-  date: &date {{thisISO8601Date}}
+  date: &date '{{thisISO8601Date}}'
   state variables: [{{SACAStateVariables}}]
   stream name: {{AppName}}_background
   filename: {{bgStateDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
