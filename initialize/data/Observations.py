@@ -139,10 +139,10 @@ class Observations(Component):
     This may specify a job priority for derecho based on the queue type.
     '''
     attr = {
-      'seconds': {'def': 600, 'typ': int},
+      'seconds': {'def': 900, 'typ': int},
       'nodes': {'def': 1, 'typ': int},
       'PEPerNode': {'def': 1, 'typ': int},
-      'memory': {'def': '20GB', 'typ': str},
+      'memory': {'def': '125GB', 'typ': str},
       'queue': {'def': self.Queue},
       'account': {'def': self.Account},
       'email': {'def': True, 'typ': bool},
