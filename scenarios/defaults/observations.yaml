@@ -313,11 +313,17 @@ observations:
           amsua-cld_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
           amsua-cld_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
 
+          amsr2_gcom-w1: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_floatScanP/AMSR2_L1R
+          atms_n20: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
+          atms_npp: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
+          gmi_gpm: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_floatScanP/GMI_L1B_JAXA
+
           ## mhs
           mhs_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
           mhs_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
           mhs_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
           mhs_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+
 
           ## abi
           abi_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct

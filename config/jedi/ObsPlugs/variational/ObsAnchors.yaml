@@ -8,7 +8,7 @@ _obs space: &ObsSpace
   obs perturbations seed: 1
   io pool:
     max pool size: {{maxIODAPoolSize}}
-    write multiple files: true
+    write multiple files: false 
   distribution:
     name: RoundRobin
 

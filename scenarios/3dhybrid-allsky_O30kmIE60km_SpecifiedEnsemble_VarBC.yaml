@@ -16,6 +16,7 @@ forecast:
   #execute: False # the default is True
   #post: [] # use this when doing extended forecast
   post: [verifymodel] # this turns off verifyobs
+  #post: [verifyobs]  # hofx
 
 externalanalyses:
   resource: "GFS.PANDAC"
