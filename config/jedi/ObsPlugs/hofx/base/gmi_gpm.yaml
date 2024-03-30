@@ -1,0 +1,21 @@
+- obs space:
+    <<: *ObsSpace
+    name: gmi_gpm
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/gmi_gpm_obs_{{thisValidDate}}.h5
+    obsdataout:
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_gmi_gpm.h5
+    simulated variables: [brightnessTemperature]
+    channels: &gmi_gpm_channels 1-9
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: gmi_gpm
+  get values:
+    <<: *GetValues

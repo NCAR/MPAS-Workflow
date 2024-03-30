@@ -1,0 +1,21 @@
+- obs space:
+    <<: *ObsSpace
+    name: amsr2_gcom-w1 
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/amsr2_gcom-w1_obs_{{thisValidDate}}.h5
+    obsdataout:
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_amsr2_gcom-w1.h5
+    simulated variables: [brightnessTemperature]
+    channels: &amsr2_gcom-w1_channels 1-14 
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: amsr2_gcom-w1 
+  get values:
+    <<: *GetValues
