@@ -15,8 +15,8 @@ forecast:
 
   #execute: False # the default is True
   #post: [] # use this when doing extended forecast
-  post: [verifymodel] # this turns off verifyobs
-  #post: [verifyobs]  # hofx
+  #post: [verifymodel] # this turns off verifyobs
+  post: [verifyobs]  # hofx
 
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -53,7 +53,7 @@ hofx:
 workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180429T12
-  #final cycle point: 20180415T06
-  final cycle point: 20180514T18
+  final cycle point: 20180415T06
+  #final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'

@@ -266,6 +266,11 @@ observations:
           amsua-cld_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
           amsua-cld_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
 
+          amsr2_gcom-w1: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_floatScanP/AMSR2_L1R
+          atms_n20: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
+          atms_npp: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
+          gmi_gpm: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_floatScanP/GMI_L1B_JAXA
+
           ## mhs
           mhs_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
           mhs_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
