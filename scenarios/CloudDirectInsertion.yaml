@@ -1,27 +1,44 @@
 suite: CloudDirectInsertion
 
 experiment:
-  name: 'CloudDirectInsertion_60-3km'
+  name: 'CloudDirectInsertion_from0hr_60-3km'
+  #'CloudDirectInsertion_60-3km_from0hr'
+  #'ForecastFromColdStartFC-6hr_60-3km'
+  #'CloudDirectInsertion_60-3km_modif2'
 
 build:
   mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle/build_single
+  # modif2 98% + update T and Qv
+  # /glade/derecho/scratch/bjung/saca/mpas-bundle.modif2/build_single
+  # modif 98%
+  # /glade/derecho/scratch/bjung/saca/mpas-bundle.modif/build_single
+  # default 50%
+  #/glade/derecho/scratch/bjung/saca/mpas-bundle/build_single
 
 externalanalyses:
   resource: "GFS.PANDAC"
 
 saca:
   meanTimes: T00
+  #runSaca: False #this does not run saca but copies the 6hr fcst
+  #execute: False
 
 extendedforecast:
   meanTimes: T00
   lengthHR: 36
-  outIntervalHR: 1
+  outIntervalHR: 1 #6 #1
   #execute: False # uncomment if forecasts are already completed
   post: []
 
 forecastsaca:
-  #execute: False
-  post: [] #verifymodel
+  execute: False
+  post: [] #verifymodel,verifyobs
+
+#hofx:
+#  observers: [
+#    abi_g16,
+#  ]
+#  concatenateObsFeedback: True
 
 hpc:
   CriticalQueue: economy
@@ -40,7 +57,7 @@ observations:
   resource: SacaObs
 
 workflow:
-  first cycle point: 20180414T18
-  final cycle point: 20180430T00
-  prevBgHR: 6
-  max active cycle points: 16
+  first cycle point: 20180415T00
+  final cycle point: 20180514T00
+  prevBgHR: 0 #6
+  max active cycle points: 31

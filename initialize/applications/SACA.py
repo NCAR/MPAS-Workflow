@@ -31,6 +31,9 @@ class SACA(Component):
     # formatted as comma-separated string, e.g., T00,T06,T12,T18
     # note: must be supplied in order to do single-state verification
     'meanTimes': [None, str],
+
+    # whether to run saca or not, but copy the 6hr forecast from previous cycle
+    'runSaca': [True, bool],
   }
 
   def __init__(self,
@@ -108,6 +111,7 @@ class SACA(Component):
     args = [
       self.workDir,
       bgdirectory,
+      self['runSaca'],
     ]
     self.executeArgs = ' '.join(['"'+str(a)+'"' for a in args])
 

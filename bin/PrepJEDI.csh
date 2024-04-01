@@ -168,21 +168,21 @@ foreach NamelistFile_ ($NamelistFileList)
   sed -i 's@blockDecompPrefix@'${WorkDir}'/x1.'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'${TimeStep}'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' ${NamelistFile_}
-end
 
-## modify namelist physics
-sed -i 's@radtlwInterval@'${RadiationLWInterval}'@' ${NamelistFile_}
-sed -i 's@radtswInterval@'${RadiationSWInterval}'@' ${NamelistFile_}
-sed -i 's@physicsSuite@'${PhysicsSuite}'@' ${NamelistFile_}
-sed -i 's@micropScheme@'${Microphysics}'@' ${NamelistFile_}
-sed -i 's@convectionScheme@'${Convection}'@' ${NamelistFile_}
-sed -i 's@pblScheme@'${PBL}'@' ${NamelistFile_}
-sed -i 's@gwdoScheme@'${Gwdo}'@' ${NamelistFile_}
-sed -i 's@radtCldScheme@'${RadiationCloud}'@' ${NamelistFile_}
-sed -i 's@radtLWScheme@'${RadiationLW}'@' ${NamelistFile_}
-sed -i 's@radtSWScheme@'${RadiationSW}'@' ${NamelistFile_}
-sed -i 's@sfcLayerScheme@'${SfcLayer}'@' ${NamelistFile_}
-sed -i 's@lsmScheme@'${LSM}'@' ${NamelistFile_}
+  ## modify namelist physics
+  sed -i 's@radtlwInterval@'${RadiationLWInterval}'@' ${NamelistFile_}
+  sed -i 's@radtswInterval@'${RadiationSWInterval}'@' ${NamelistFile_}
+  sed -i 's@physicsSuite@'${PhysicsSuite}'@' ${NamelistFile_}
+  sed -i 's@micropScheme@'${Microphysics}'@' ${NamelistFile_}
+  sed -i 's@convectionScheme@'${Convection}'@' ${NamelistFile_}
+  sed -i 's@pblScheme@'${PBL}'@' ${NamelistFile_}
+  sed -i 's@gwdoScheme@'${Gwdo}'@' ${NamelistFile_}
+  sed -i 's@radtCldScheme@'${RadiationCloud}'@' ${NamelistFile_}
+  sed -i 's@radtLWScheme@'${RadiationLW}'@' ${NamelistFile_}
+  sed -i 's@radtSWScheme@'${RadiationSW}'@' ${NamelistFile_}
+  sed -i 's@sfcLayerScheme@'${SfcLayer}'@' ${NamelistFile_}
+  sed -i 's@lsmScheme@'${LSM}'@' ${NamelistFile_}
+end
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)

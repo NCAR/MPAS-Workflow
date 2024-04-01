@@ -14,6 +14,9 @@ set ArgWorkDir = "$1"
 # ArgStateDir: where the initial condition state is located
 set ArgStateDir = "$2"
 
+# ArgRunSaca: whether to run saca or not, but copy the 6hr forecast from previous cycle
+set ArgRunSaca = "$3"
+
 date
 
 # Setup environment
@@ -68,7 +71,7 @@ set mm = `echo ${prevValidDate} | cut -c 5-6`
 set dd = `echo ${prevValidDate} | cut -c 7-8`
 set hh = `echo ${prevValidDate} | cut -c 9-10`
 
-# cold start forecst folder
+# cold start forecast folder
 set StateDir = ${ExperimentDirectory}/${ArgStateDir}/${prevValidDate}
 
 set nCells = $nCellsOuter
@@ -95,6 +98,12 @@ set anFile = ${an}/${ICFilePrefix}.$thisMPASFileDate.nc #update.nc
 rm ${anFile}
 cp ${bgFile} ${anFile}
 
+if ( "${ArgRunSaca}" == "False" ) then
+  echo "$0 (INFO): RunSaca is False, 6hr fcst copied, exiting with success"
+  date
+  exit 0
+endif
+
 # Link static and template fields files
 set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ./${localStaticFieldsFile}
@@ -116,7 +125,7 @@ foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
-if (${Microphysics} == 'mp_thompson' ) then
+if ( ${Microphysics} == 'mp_thompson' ) then
   ln -svf $MPThompsonTablesDir/* .
 endif
 
@@ -223,6 +232,19 @@ sed -i 's@{{SACAStreamsFile}}@'${WorkDir}'/'${StreamsFile}'@' $thisYAML
 ## current date
 sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $thisYAML
 
+# saca bg file
+sed -i 's@{{bgStateDir}}@'${WorkDir}'/'${bg}'@g' $thisYAML
+sed -i 's@{{bgStatePrefix}}@'${FCFilePrefix}'@g' $thisYAML
+sed -i 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@g' $thisYAML
+
+# saca an file
+sed -i 's@{{anStateDir}}@'${WorkDir}'/'${an}'@g' $thisYAML
+sed -i 's@{{anStatePrefix}}@'${ICFilePrefix}'@g' $thisYAML
+
+# saca obs
+sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $thisYAML
+sed -i 's@{{SACAObs}}@'${sacaObsFile}'@g' $thisYAML
+
 # state variables
 set Variables = ($SACAStateVariables)
 set VarSub = ""
@@ -231,12 +253,6 @@ foreach var ($Variables)
 end
 # remove trailing comma
 set VarSub = `echo "$VarSub" | sed 's/.$//'`
-sed -i 's@{{SACAStateVariables}}@'$VarSub'@' $thisYAML
-
-# saca bg file
-sed -i 's@{{bgStateDir}}@'${WorkDir}'/'${bg}'@g' $thisYAML
-sed -i 's@{{bgStatePrefix}}@'${FCFilePrefix}'@g' $thisYAML
-sed -i 's@{{thisMPASFileDate}}@'${thisMPASFileDate}'@g' $thisYAML
 
 # added variables
 set addedVars = `cat stream_list.atmosphere.${AppName}_obs`
@@ -246,15 +262,25 @@ foreach var ($addedVars)
 end
 # remove trailing comma
 set addedVarSub = `echo "$addedVarSub" | sed 's/.$//'`
+
+# Additions for new code
+set build = `echo ${mpasBundle} | cut -d '/' -f7 | cut -d '.' -f2`
+if ( "${build}" == "modif2" ) then
+  set addSACAAnalysisVariables = ( \
+    pressure_p \
+    theta \
+    rho \
+  )
+  set Variables = ($addSACAAnalysisVariables)
+  foreach var ($Variables)
+    echo "$var"  >> stream_list.${MPASCore}.${AppName}_analysis
+  end
+  set VarSub = $VarSub",surface_pressure"
+  set addedVarSub = $addedVarSub",temperature,qv,surface_pressure"
+endif
+
+sed -i 's@{{SACAStateVariables}}@'$VarSub'@' $thisYAML
 sed -i 's@{{addedVars}}@'${addedVarSub}'@g' $thisYAML
-
-# saca an file
-sed -i 's@{{anStateDir}}@'${WorkDir}'/'${an}'@g' $thisYAML
-sed -i 's@{{anStatePrefix}}@'${ICFilePrefix}'@g' $thisYAML
-
-# saca obs
-sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $thisYAML
-sed -i 's@{{SACAObs}}@'${sacaObsFile}'@g' $thisYAML
 
 cp $thisYAML $appyaml
 

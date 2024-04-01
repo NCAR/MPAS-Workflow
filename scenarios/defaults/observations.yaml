@@ -558,7 +558,8 @@ observations:
 
       IODADirectory:
         saca:
-          common: /glade/derecho/scratch/bjung/saca_new_mesh/obs_processing/convert.mpas_moreL2/output
+          common: /glade/campaign/mmm/parc/ivette/pandac/saca/obs
+          #/glade/derecho/scratch/bjung/saca_new_mesh/obs_processing/convert.mpas_moreL2/output
 
         da:
           common: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018
