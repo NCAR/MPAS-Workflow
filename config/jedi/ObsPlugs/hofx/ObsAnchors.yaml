@@ -20,6 +20,7 @@ _cloudy crtm: &cloudyCRTMObsOperator
   SurfaceWindGeoVars: uv
   Absorbers: [H2O, O3]
   Clouds: [Water, Ice, Rain, Snow, Graupel]
+  Cloud_Seeding: true
   obs options:
     <<: *CRTMObsOptions
 _get values: &GetValues
