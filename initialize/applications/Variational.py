@@ -150,6 +150,10 @@ class Variational(Component):
     ## concatenateObsFeedback
     # whether to concatenate the geovals and ydiag feedback files
     'concatenateObsFeedback': [False, bool],
+
+    ## IR/VIS land surface coefficients classification
+    # OPTIONS: USGS, IGBP, NPOESS
+    'IRVISlandCoeff': ['USGS', str],
   }
 
   def __init__(self,

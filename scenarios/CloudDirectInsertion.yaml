@@ -1,10 +1,13 @@
 suite: CloudDirectInsertion
 
 experiment:
-  name: 'CloudDirectInsertion_from0hr_60-3km'
+  name: 'ForecastFromGFSAnalysesMPT_60-3km_coldstart'
+  #'CloudDirectInsertion_60-3km_dependencies'
+  #'CloudDirectInsertion_from0hr_60-3km'
   #'CloudDirectInsertion_60-3km_from0hr'
   #'ForecastFromColdStartFC-6hr_60-3km'
   #'CloudDirectInsertion_60-3km_modif2'
+  #'ForecastFromGFSAnalysesMPT_60-3km_coldstart'
 
 build:
   mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle/build_single
@@ -21,24 +24,22 @@ externalanalyses:
 saca:
   meanTimes: T00
   #runSaca: False #this does not run saca but copies the 6hr fcst
-  #execute: False
+  execute: False
 
 extendedforecast:
   meanTimes: T00
-  lengthHR: 36
+  lengthHR: 6
   outIntervalHR: 1 #6 #1
-  #execute: False # uncomment if forecasts are already completed
-  post: []
+  execute: False # uncomment if forecasts are already completed
+  post: [verifyobs]
 
 forecastsaca:
   execute: False
   post: [] #verifymodel,verifyobs
 
-#hofx:
-#  observers: [
-#    abi_g16,
-#  ]
-#  concatenateObsFeedback: True
+hofx:
+  concatenateObsFeedback: True
+  IRVISlandCoeff: USGS
 
 hpc:
   CriticalQueue: economy
@@ -58,6 +59,6 @@ observations:
 
 workflow:
   first cycle point: 20180415T00
-  final cycle point: 20180514T00
-  prevBgHR: 0 #6
+  final cycle point: 20180415T06 #20180514T00
+  prevBgHR: 6 #0 #6
   max active cycle points: 31

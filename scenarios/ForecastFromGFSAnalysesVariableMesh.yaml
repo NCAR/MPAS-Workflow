@@ -13,19 +13,18 @@ build:
   mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle/build_single
 
 extendedforecast:
-  meanTimes: T12 #T00, T12
+  meanTimes: T00 #T00, T12
   lengthHR: 36
   outIntervalHR: 1
-  #execute: False # uncomment if forecasts are already completed
-
+  execute: False # uncomment if forecasts are already completed
   # optionally turn on extended forecast post
-  post: []
+  post: [verifyobs]
 
-initic:
-  job:
-    60-3km:
-      nodes: 4
-      PEPerNode: 32
+#initic:
+#  job:
+#    60-3km:
+#      nodes: 4
+#      PEPerNode: 32
 
 forecast:
   job:
@@ -34,6 +33,12 @@ forecast:
       PEPerNode: 128
       baseSeconds: 60
       secondsPerForecastHR: 210
+
+hofx:
+  observers: [
+    abi_g16,
+  ]
+  concatenateObsFeedback: True
 
 hpc:
   CriticalQueue: economy
@@ -47,9 +52,9 @@ model:
   GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/saca/all_graph
 
 observations: # for optional verification
-  resource: PANDACArchive
+  resource: SacaObs
 
 workflow:
-  first cycle point: 20180415T12
-  final cycle point: 20180430T12
-  max active cycle points: 15
+  first cycle point: 20180415T00
+  final cycle point: 20180415T00
+  max active cycle points: 37

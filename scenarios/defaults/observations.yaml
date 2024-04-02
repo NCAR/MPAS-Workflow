@@ -599,7 +599,8 @@ observations:
           mhs_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
 
           ## abi
-          abi_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi_g16: /glade/campaign/mmm/parc/ivette/pandac/saca/obs/ioda_v3_60-3km
+          #/glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           abi-clr_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
 
           ## ahi
