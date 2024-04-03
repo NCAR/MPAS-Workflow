@@ -140,7 +140,6 @@ cd -
 
 set V1toV2 = ( \
     aircraft \
-    gnssro \
     satwind \
     satwnd \
     sfc \
