@@ -128,6 +128,7 @@ foreach gdasfile ( *"gdas."* )
 
   # remove BURF/PrepBUFR files
   rm -rf $gdasfile
+
 end # gdasfile loop
 
 # need to change to mainScriptDir in order for environmentJEDI.csh to be sourced
@@ -137,7 +138,7 @@ cd -
 
 # upgrade from IODA v1 to v2
 
-  set V1toV2 = ( \
+set V1toV2 = ( \
     aircraft \
     gnssro \
     satwind \
@@ -146,7 +147,7 @@ cd -
     sondes \
     ascat \
     profiler \
-  )
+)
 
 if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservations}" =~ *"satwnd"* ) then
   # Run the ioda-upgrade executable to upgrade to get string station_id and string variable_names
@@ -186,7 +187,7 @@ endif
 
 # upgrade for IODA v2 to v3
 
-  set V2toV3 = ( $V1toV2 \
+set V2toV3 = ( $V1toV2 \
     amsua_n15 \
     amsua_n18 \
     amsua_n19 \
@@ -206,39 +207,40 @@ endif
     cris_npp \
     cris_n20 \
     #cris_n21 \
-  )
+)
 
-  set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
-  rm -f $iodaUpgradeEXE2 
-  ln -sfv ${iodaUpgradeBuildDir}/${iodaUpgradeEXE2} ./
+set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
+rm -f $iodaUpgradeEXE2 
+ln -sfv ${iodaUpgradeBuildDir}/${iodaUpgradeEXE2} ./
 
-  foreach ty ( ${V2toV3} )
-    echo 'begin ioda-upgrade-v2-to-v3 ' $ty        
-    if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
-      set ty_obs = ${ty}_obs_${thisValidDate}.h5
-      set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
+foreach ty ( ${V2toV3} )
+  echo 'begin ioda-upgrade-v2-to-v3 ' $ty        
+  if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
 
-      set log = logs/log-upgradeV2-to-V3_${ty}
-      rm $log
+    set ty_obs = ${ty}_obs_${thisValidDate}.h5
+    set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
 
-      ./${iodaUpgradeEXE2} ${ty_obs} ${ty_obs_base}_tmp.h5 $iodaUpgradeV3Config >&! $log
-      rm -f ${ty_obs}
-      mv ${ty_obs_base}_tmp.h5 $ty_obs
+    set log = logs/log-upgradeV2-to-V3_${ty}
+    rm $log
 
-      # Check status
-      # ============
-      grep "Success!" $log
-      if ( $status != 0 ) then
-        echo "$0 (ERROR): ${exec} failed for $ty" > ./FAIL-upgradeV2-to-V3_${ty}
-        exit 1
-      endif
+    ./${iodaUpgradeEXE2} ${ty_obs} ${ty_obs_base}_tmp.h5 $iodaUpgradeV3Config >&! $log
+    rm -f ${ty_obs}
+    mv ${ty_obs_base}_tmp.h5 $ty_obs
 
+    # Check status
+    # ============
+    grep "Success!" $log
+    if ( $status != 0 ) then
+      echo "$0 (ERROR): ${exec} failed for $ty" > ./FAIL-upgradeV2-to-V3_${ty}
+      exit 1
     endif
-  end
+
+  endif
+end
 
 # upgrade for sensorScanPosition
 
-  set ScanPositionUpdate = ( \
+set ScanPositionUpdate = ( \
     amsua_n15 \
     amsua_n18 \
     amsua_n19 \
@@ -257,37 +259,37 @@ endif
     cris_npp \
     cris_n20 \
     #cris_n21 \
-  )
+)
 
-  ln -fs ${pyDir}/update_sensorScanPosition.py .
-  ln -fs ${pyDir}/fix_float2int.py .
+ln -fs ${pyDir}/update_sensorScanPosition.py .
+ln -fs ${pyDir}/fix_float2int.py .
 
-  foreach ty ( ${ScanPositionUpdate} )
-    echo 'begin ScanPositionUpdate' $ty
+foreach ty ( ${ScanPositionUpdate} )
+  echo 'begin ScanPositionUpdate' $ty
 
-    if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
+  if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
 
-      set ty_obs = ${ty}_obs_${thisValidDate}.h5
-      setenv fname ${ty_obs}
+    set ty_obs = ${ty}_obs_${thisValidDate}.h5
+    setenv fname ${ty_obs}
 
-      set log = logs/log-update_sensorScanPosition_${ty}
-      rm $log
+    set log = logs/log-update_sensorScanPosition_${ty}
+    rm $log
 
-      python update_sensorScanPosition.py
+    python update_sensorScanPosition.py
 
-      if ( ${ty} =~ *"cris"* && ${ccyy} >= 2021 ) then
+    if ( ${ty} =~ *"cris"* && ${ccyy} >= 2021 ) then
        if ( ${ty} == "cris_npp" ) set tyy = "cris-fsr_npp"
        if ( ${ty} == "cris_n20" ) set tyy = "cris-fsr_n20"
        #if ( ${ty} == "cris_n21" ) set tyy = "cris-fsr_n21"
        mv -f ${ty_obs}.modified ${tyy}_obs_${thisValidDate}.h5
-      else
+    else
        mv -f ${ty_obs}.modified ${ty_obs}
-      endif
-
     endif
 
-    echo 'end of ScanPositionUpdate' $ty
-  end
+  endif
+
+  echo 'end of ScanPositionUpdate' $ty
+end
 
 date
 
