@@ -136,7 +136,7 @@ cd ${mainScriptDir}
 source config/environmentJEDI.csh
 cd -
 
-# upgrade from IODA v1 to v2
+# upgrade from IODA v1 to v2 (convert char to string for /MetaData/stationIdentification & /MetaData/variable_names)
 
 set V1toV2 = ( \
     aircraft \
@@ -156,11 +156,11 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
   #  rm ./${exec}
   #  ln -sfv ${iodaUpgradeBuildDir}/${exec} ./
   #end
-  rm -f $iodaUpgradeEXE1 
+  rm -f $iodaUpgradeEXE1
   ln -sfv ${iodaUpgradeBuildDir}/${iodaUpgradeEXE1} ./
 
   foreach ty ( ${V1toV2} )
-    echo 'begin ioda-upgrade-v1-to-v2 ' $ty        
+    echo 'begin ioda-upgrade-v1-to-v2 ' $ty
     if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
       set ty_obs = ${ty}_obs_${thisValidDate}.h5
       set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
@@ -209,11 +209,11 @@ set V2toV3 = ( $V1toV2 \
 )
 
 set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
-rm -f $iodaUpgradeEXE2 
+rm -f $iodaUpgradeEXE2
 ln -sfv ${iodaUpgradeBuildDir}/${iodaUpgradeEXE2} ./
 
 foreach ty ( ${V2toV3} )
-  echo 'begin ioda-upgrade-v2-to-v3 ' $ty        
+  echo 'begin ioda-upgrade-v2-to-v3 ' $ty
   if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
 
     set ty_obs = ${ty}_obs_${thisValidDate}.h5
