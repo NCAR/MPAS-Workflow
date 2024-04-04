@@ -75,8 +75,10 @@ if ( $status != 0 ) then
 endif
 
 # Remove each processor feedback files
-rm -rf ${geoPrefix}*0*.nc4
-rm -rf ${diagPrefix}*0*.nc4
+#rm -rf ${geoPrefix}*0*.nc4
+#rm -rf ${diagPrefix}*0*.nc4
+rm -rf ${geoPrefix}*_????.nc4
+rm -rf ${diagPrefix}*_????.nc4
 
 touch CONCATENATESUCCESS
 
