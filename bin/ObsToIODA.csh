@@ -79,6 +79,7 @@ foreach gdasfile ( *"gdas."* )
    if ( ${gdasfile} =~ *"cris"* && ${ccyy} >= '2021' ) then
      ln -sf ${CRTMTABLES}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
      ln -sf ${CRTMTABLES}/cris-fsr431_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
+     #ln -sf ${CRTMTABLES}/cris-fsr431_n21.SpcCoeff.bin  ./cris_n21.SpcCoeff.bin
    else if ( ${gdasfile} =~ *"cris"* && ${ccyy} < '2021' ) then
      ln -sf ${CRTMTABLES}/cris399_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
      ln -sf ${CRTMTABLES}/cris399_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
@@ -98,7 +99,8 @@ foreach gdasfile ( *"gdas."* )
    rm $log
 
    if ( ${gdasfile} =~ *"mtiasi"* ) then
-     ./${obs2iodaEXE} ${SPLIThourly} ${gdasfile} >&! $log
+     #./${obs2iodaEXE} ${SPLIThourly} ${gdasfile} >&! $log
+     ./${obs2iodaEXE} ${gdasfile} >&! $log
    else if ( ${gdasfile} =~ *"prepbufr"* ) then
      set inst = `echo "$gdasfile" | cut -d'.' -f1`
      # run obs2ioda for preburf with additional QC as in GSI
@@ -109,12 +111,13 @@ foreach gdasfile ( *"gdas."* )
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXE} ./
      ./${obs2iodaEXE} ${noGSIQCFilters} ../${gdasfile} >&! logs/log-converter_sfc
      # replace surface obs file with file created without additional QC
-     mv sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
+     mv -f sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
      cd ..
      rm -rf sfc
    else
      ./${obs2iodaEXE} ${gdasfile} >&! $log
    endif
+
    # Check status
    # ============
    grep "all done!" $log
@@ -122,74 +125,68 @@ foreach gdasfile ( *"gdas."* )
      echo "$0 (ERROR): Pre-processing observations to IODA-v2 failed" > ./FAIL-converter_${inst}
      exit 1
    endif
+
   # remove BURF/PrepBUFR files
   rm -rf $gdasfile
+
 end # gdasfile loop
 
-if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservations}" =~ *"satwnd"* ) then
-  # Run the ioda-upgrade executable to upgrade to get string station_id and string variable_names
-  # ==================
-  # need to change to mainScriptDir in order for environmentJEDI.csh to be sourced
-  cd ${mainScriptDir}
-  source config/environmentJEDI.csh
-  cd -
-  foreach exec ($iodaUpgradeEXE1 $iodaUpgradeEXE2)
-    rm ./${exec}
-    ln -sfv ${iodaUpgradeBuildDir}/${exec} ./
-  end
+# need to change to mainScriptDir in order for environmentJEDI.csh to be sourced
+cd ${mainScriptDir}
+source config/environmentJEDI.csh
+cd -
 
-  # upgrade from IODA v1 to v2
-  set V1toV2 = ( \
+# upgrade from IODA v1 to v2 (convert char to string for /MetaData/stationIdentification & /MetaData/variable_names)
+
+set V1toV2 = ( \
     aircraft \
-    gnssro \
     satwind \
     satwnd \
     sfc \
     sondes \
     ascat \
     profiler \
-  )
-  set ScanPositionUpdate = ( \
-    amsua_n15 \
-    amsua_n18 \
-    amsua_n19 \
-    amsua_aqua \
-    amsua_metop-a \
-    amsua_metop-b \
-    amsua_metop-c \
-    mhs_n18 \
-    mhs_n19 \
-    mhs_metop-a \
-    mhs_metop-b \
-    mhs_metop-c \
-    iasi_metop-a \
-    iasi_metop-b \
-    iasi_metop-c \
-  )
+)
+
+if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservations}" =~ *"satwnd"* ) then
+  # Run the ioda-upgrade executable to upgrade to get string station_id and string variable_names
+  # ==================
+
+  #foreach exec ($iodaUpgradeEXE1 $iodaUpgradeEXE2)
+  #  rm ./${exec}
+  #  ln -sfv ${iodaUpgradeBuildDir}/${exec} ./
+  #end
+  rm -f $iodaUpgradeEXE1
+  ln -sfv ${iodaUpgradeBuildDir}/${iodaUpgradeEXE1} ./
+
   foreach ty ( ${V1toV2} )
+    echo 'begin ioda-upgrade-v1-to-v2 ' $ty
     if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
       set ty_obs = ${ty}_obs_${thisValidDate}.h5
       set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
 
-      set ii = 1
-      set log = logs/log-upgrade${ii}_${ty}
+      set log = logs/log-upgradeV1-to-V2_${ty}
       rm $log
-      ./$iodaUpgradeEXE1 ${ty_obs} ${ty_obs_base}_tmp.h5 >&! $log
-      rm -rf $ty_obs
-      mv ${ty_obs_base}_tmp.h5 $ty_obs
+
+      ./${iodaUpgradeEXE1} ${ty_obs} ${ty_obs_base}_tmp.h5 >&! $log
+      rm -f ${ty_obs}
+      mv ${ty_obs_base}_tmp.h5 ${ty_obs}
 
       # Check status
       # ============
       grep "Success!" $log
       if ( $status != 0 ) then
-        echo "$0 (ERROR): ${exec} failed for $ty" > ./FAIL-upgrade${ii}_${ty}
+        echo "$0 (ERROR): ${exec} failed for $ty" > ./FAIL-upgradeV1-to-V2_${ty}
         exit 1
       endif
     endif
   end
 
-  # upgrade from IODA v2 to v3
-  set V2toV3 = ( $V1toV2 \
+endif
+
+# upgrade for IODA v2 to v3
+
+set V2toV3 = ( $V1toV2 \
     amsua_n15 \
     amsua_n18 \
     amsua_n19 \
@@ -206,42 +203,92 @@ if ( "${convertToIODAObservations}" =~ *"prepbufr"* || "${convertToIODAObservati
     iasi_metop-a \
     iasi_metop-b \
     iasi_metop-c \
-  )
-  set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
-  foreach ty ( ${V2toV3} )
-    if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
-      set ty_obs = ${ty}_obs_${thisValidDate}.h5
-      set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
+    cris_npp \
+    cris_n20 \
+    #cris_n21 \
+)
 
-      set ii = 2
-      set log = logs/log-upgrade${ii}_${ty}
-      rm $log
-      ./$iodaUpgradeEXE2 ${ty_obs} ${ty_obs_base}_tmp.h5 $iodaUpgradeV3Config >&! $log
-      rm -rf $ty_obs
-      mv ${ty_obs_base}_tmp.h5 $ty_obs
+set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
+rm -f $iodaUpgradeEXE2
+ln -sfv ${iodaUpgradeBuildDir}/${iodaUpgradeEXE2} ./
 
-      # Check status
-      # ============
-      grep "Success!" $log
-      if ( $status != 0 ) then
-        echo "$0 (ERROR): ${exec} failed for $ty" > ./FAIL-upgrade${ii}_${ty}
-        exit 1
-      endif
+foreach ty ( ${V2toV3} )
+  echo 'begin ioda-upgrade-v2-to-v3 ' $ty
+  if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
 
+    set ty_obs = ${ty}_obs_${thisValidDate}.h5
+    set ty_obs_base = `echo "$ty_obs" | cut -d'.' -f1`
+
+    set log = logs/log-upgradeV2-to-V3_${ty}
+    rm $log
+
+    ./${iodaUpgradeEXE2} ${ty_obs} ${ty_obs_base}_tmp.h5 $iodaUpgradeV3Config >&! $log
+    rm -f ${ty_obs}
+    mv ${ty_obs_base}_tmp.h5 $ty_obs
+
+    # Check status
+    # ============
+    grep "Success!" $log
+    if ( $status != 0 ) then
+      echo "$0 (ERROR): ${exec} failed for $ty" > ./FAIL-upgradeV2-to-V3_${ty}
+      exit 1
     endif
-  end
 
-  foreach ty ( ${ScanPositionUpdate} )
-    echo 'begin ScanPositionUpdate' $ty
-    ln -fs ${pyDir}/update_sensorScanPosition.py .
-    ln -fs ${pyDir}/fix_float2int.py .
+  endif
+end
+
+# upgrade for sensorScanPosition
+
+set ScanPositionUpdate = ( \
+    amsua_n15 \
+    amsua_n18 \
+    amsua_n19 \
+    amsua_aqua \
+    amsua_metop-a \
+    amsua_metop-b \
+    amsua_metop-c \
+    mhs_n18 \
+    mhs_n19 \
+    mhs_metop-a \
+    mhs_metop-b \
+    mhs_metop-c \
+    iasi_metop-a \
+    iasi_metop-b \
+    iasi_metop-c \
+    cris_npp \
+    cris_n20 \
+    #cris_n21 \
+)
+
+ln -fs ${pyDir}/update_sensorScanPosition.py .
+ln -fs ${pyDir}/fix_float2int.py .
+
+foreach ty ( ${ScanPositionUpdate} )
+  echo 'begin ScanPositionUpdate' $ty
+
+  if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
+
     set ty_obs = ${ty}_obs_${thisValidDate}.h5
     setenv fname ${ty_obs}
+
+    set log = logs/log-update_sensorScanPosition_${ty}
+    rm $log
+
     python update_sensorScanPosition.py
-    mv ${ty_obs}.modified   ${ty_obs}
-    echo 'end of ScanPositionUpdate'
-  end
-endif
+
+    if ( ${ty} =~ *"cris"* && ${ccyy} >= 2021 ) then
+       if ( ${ty} == "cris_npp" ) set tyy = "cris-fsr_npp"
+       if ( ${ty} == "cris_n20" ) set tyy = "cris-fsr_n20"
+       #if ( ${ty} == "cris_n21" ) set tyy = "cris-fsr_n21"
+       mv -f ${ty_obs}.modified ${tyy}_obs_${thisValidDate}.h5
+    else
+       mv -f ${ty_obs}.modified ${ty_obs}
+    endif
+
+  endif
+
+  echo 'end of ScanPositionUpdate' $ty
+end
 
 date
 
