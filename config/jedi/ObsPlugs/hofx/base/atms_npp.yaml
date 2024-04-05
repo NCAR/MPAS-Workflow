@@ -1,21 +1,21 @@
 - obs space:
     <<: *ObsSpace
-    name: amsua-cld_metop-a
+    name: atms_npp
     obsdatain:
       engine:
         type: H5File
-        obsfile: {{InDBDir}}/amsua-cld_metop-a_obs_{{thisValidDate}}.h5
+        obsfile: {{InDBDir}}/atms_npp_obs_{{thisValidDate}}.h5
     obsdataout:
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}/{{obsPrefix}}_amsua-cld_metop-a.h5
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_atms_npp.h5
     simulated variables: [brightnessTemperature]
-    channels: &amsua-cld_metop-a_channels 1-6,15
+    channels: &atms_npp_channels 1-7,16,17,18-22
   obs error: *ObsErrorDiagonal
   obs operator:
     <<: *cloudyCRTMObsOperator
     obs options:
       <<: *CRTMObsOptions
-      Sensor_ID: amsua_metop-a
+      Sensor_ID: atms_npp
   get values:
     <<: *GetValues
