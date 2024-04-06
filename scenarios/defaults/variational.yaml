@@ -226,16 +226,16 @@ variational:
           baseSeconds: 800
           secondsPerEnVarMember: 24
         3dhybrid:
-          nodes: 2
-          PEPerNode: 128
+          nodes: 4
+          PEPerNode: 64
           memory: 235GB
-          baseSeconds: 500
+          baseSeconds: 660
           secondsPerEnVarMember: 9
         3dhybrid-allsky:
-          nodes: 2 
-          PEPerNode: 128
+          nodes: 4
+          PEPerNode: 64
           memory: 235GB
-          baseSeconds: 800
+          baseSeconds: 960
           secondsPerEnVarMember: 9
         3dvar:
           nodes: 2
