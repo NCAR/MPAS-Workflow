@@ -1,0 +1,46 @@
+  obs filters:
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_n15.nc4
+  - filter: Domain Check
+    where:
+    - variable:
+        name: MetaData/sensorZenithAngle
+      maxvalue: 45.0
+
+  - filter: Background Check
+    threshold: 3.0
+    <<: *multiIterationFilter
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-4,15
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelRamp
+        channels: 1-4,15
+        options:
+          channels: 1-4,15
+          xvar:
+            name: ObsFunction/CLWRetSymmetricMW
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [ObsValue, HofX]
+              bias_application: ObsValue
+          x0:    [  0.03,  0.03,  0.03,  0.03,  0.03]
+          x1:    [  0.57,  0.58,  0.38,  0.43,  0.25]
+          err0:  [  4.44,  3.26,  2.41,  0.51,  5.73]
+          err1:  [ 38.24, 47.49, 13.74,  2.84,  16.11]
+    <<: *multiIterationFilter
+  - filter: Gaussian_Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-4,15
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    <<: *multiIterationFilter
