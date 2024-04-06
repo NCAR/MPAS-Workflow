@@ -1,7 +1,7 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  suffix: '_ensB-SE80+RTPP70_VarBCamsua'
-
+  #suffix: '_ensB-SE80+RTPP70_VarBCamsua'
+  name: 'hybrid_amsuaAllsky'
 firstbackground:
   resource: "PANDAC.GFS"
 
@@ -52,8 +52,8 @@ hofx:
 
 workflow:
   first cycle point: 20180414T18
-  #restart cycle point: 20180429T12
-  final cycle point: 20180415T06
-  #final cycle point: 20180514T18
+  restart cycle point: 20180415T06
+  #final cycle point: 20180415T06
+  final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'
