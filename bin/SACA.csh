@@ -135,12 +135,12 @@ stream_list.${MPASCore}.background \
 stream_list.${MPASCore}.analysis \
 stream_list.${MPASCore}.ensemble \
 stream_list.${MPASCore}.control \
-stream_list.${MPASCore}.${AppName}_analysis \
 stream_list.${MPASCore}.${AppName}_background \
 stream_list.${MPASCore}.${AppName}_obs \
 )
   ln -sfv $ModelConfigDir/${AppName}/$staticfile .
 end
+cp -v $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_analysis .
 
 rm ${StreamsFile}
 cp -v $ModelConfigDir/${AppName}/${StreamsFile} .
@@ -264,15 +264,13 @@ end
 set addedVarSub = `echo "$addedVarSub" | sed 's/.$//'`
 
 # Additions for new code
-set build = `echo ${mpasBundle} | cut -d '/' -f7 | cut -d '.' -f2`
-if ( "${build}" == "modif2" ) then
+if ( "${mpasBundle}" =~ *"modif2"* ) then
   set addSACAAnalysisVariables = ( \
     pressure_p \
     theta \
     rho \
   )
-  set Variables = ($addSACAAnalysisVariables)
-  foreach var ($Variables)
+  foreach var ($addSACAAnalysisVariables)
     echo "$var"  >> stream_list.${MPASCore}.${AppName}_analysis
   end
   set VarSub = $VarSub",surface_pressure"

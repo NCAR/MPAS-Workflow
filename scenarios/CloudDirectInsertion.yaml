@@ -1,7 +1,8 @@
 suite: CloudDirectInsertion
 
 experiment:
-  name: 'ForecastFromGFSAnalysesMPT_60-3km_coldstart'
+  name: 'CloudDirectInsertion_from0hr_60-3km_bugfix'
+  #'ForecastFromColdStartFC-6hr_60-3km'
   #'CloudDirectInsertion_60-3km_dependencies'
   #'CloudDirectInsertion_from0hr_60-3km'
   #'CloudDirectInsertion_60-3km_from0hr'
@@ -10,7 +11,8 @@ experiment:
   #'ForecastFromGFSAnalysesMPT_60-3km_coldstart'
 
 build:
-  mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle/build_single
+  mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle.modif2_bugfix/build_single
+  #/glade/derecho/scratch/bjung/saca/mpas-bundle/build_single
   # modif2 98% + update T and Qv
   # /glade/derecho/scratch/bjung/saca/mpas-bundle.modif2/build_single
   # modif 98%
@@ -23,23 +25,27 @@ externalanalyses:
 
 saca:
   meanTimes: T00
-  #runSaca: False #this does not run saca but copies the 6hr fcst
-  execute: False
+  #runSaca: False #this does not run saca but copies the 6hr fcst for exp starting from 6hr
+  #execute: False
 
 extendedforecast:
   meanTimes: T00
-  lengthHR: 6
+  lengthHR: 36
   outIntervalHR: 1 #6 #1
-  execute: False # uncomment if forecasts are already completed
-  post: [verifyobs]
+  DACycling: True
+  #execute: False # uncomment if forecasts are already completed
+  post: [] #verifyobs
 
 forecastsaca:
-  execute: False
+  #execute: False
   post: [] #verifymodel,verifyobs
 
 hofx:
+  observers: [
+    abi_g16,
+  ]
   concatenateObsFeedback: True
-  IRVISlandCoeff: USGS
+  IRVISlandCoeff: IGBP
 
 hpc:
   CriticalQueue: economy
@@ -59,6 +65,6 @@ observations:
 
 workflow:
   first cycle point: 20180415T00
-  final cycle point: 20180415T06 #20180514T00
-  prevBgHR: 6 #0 #6
-  max active cycle points: 31
+  final cycle point: 20180430T00
+  prevBgHR: 0 #0 #6
+  max active cycle points: 16

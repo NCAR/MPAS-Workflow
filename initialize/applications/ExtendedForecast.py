@@ -47,7 +47,14 @@ class ExtendedForecast(Component):
 
     ## post
     # list of tasks for Post
-    'post': [['verifyobs', 'verifymodel'], list]
+    'post': [['verifyobs', 'verifymodel'], list],
+
+    ## DACycling
+    # turn config_do_DAcycling true or false in namelist
+    # False: when running forecast from external analysis
+    # True: when running forecast from ensemble analysis (hard coded below)
+    # note: turn True when running forecast from SACA analysis
+    'DACycling': ['False', bool],
   }
 
   def __init__(self,
@@ -117,7 +124,7 @@ class ExtendedForecast(Component):
       self['outIntervalHR'],
       False,
       self.fc.mesh.name,
-      False,
+      self['DACycling'],
       False,
       False,
       self.workDir+'/{{thisCycleDate}}/mean',
