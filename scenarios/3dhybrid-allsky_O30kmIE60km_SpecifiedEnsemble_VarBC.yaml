@@ -2,7 +2,7 @@
 experiment:
   #suffix: '_ensB-SE80+RTPP70_VarBCamsua'
   #name: 'hybrid_amsuaAllsky_test1'
-  name: 'hybrid_amsuaAllsky'
+  name: 'hybrid_amsuaAllsky60n60s'
 
 firstbackground:
   resource: "PANDAC.GFS"

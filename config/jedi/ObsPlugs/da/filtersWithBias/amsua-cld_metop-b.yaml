@@ -15,8 +15,9 @@
         name: GeoVaLs/water_area_fraction
       minvalue: 1.0
     - variable:
-        name: GeoVaLs/surface_temperature_where_sea
-      minvalue: 274
+        name: MetaData/latitude
+      minvalue: -60.0
+      maxvalue: 60.0
     <<: *multiIterationFilter
 
   - filter: BlackList
@@ -37,10 +38,10 @@
               clwret_ch314: 2
               clwret_types: [ObsValue, HofX]
               bias_application: ObsValue
-          x0:    [  0.03,  0.03, 0.03, 0.03]
-          x1:    [  0.59,  0.59, 0.39, 0.45]
-          err0:  [  4.40,  3.20, 2.32, 0.58]
-          err1:  [ 32.12, 44.39, 14.29, 2.90]
+          x0:    [  0.03,   0.03,   0.03,   0.03]
+          x1:    [  0.57,   0.57,   0.37,   0.42]
+          err0:  [  4.47,   3.24,   2.35,   0.58]
+          err1:  [ 30.85,  43.02,  14.17,   2.89]
     <<: *multiIterationFilter
 
 
@@ -142,10 +143,10 @@
                 clwret_ch314: 2
                 clwret_types: [ObsValue, HofX]
                 bias_application: HofX
-            x0:    [  0.03,  0.03, 0.03, 0.03]
-            x1:    [  0.59,  0.59, 0.39, 0.45]
-            err0:  [  4.40,  3.20, 2.32, 0.58]
-            err1:  [ 32.12, 44.39, 14.29, 2.90]
+            x0:    [  0.03,   0.03,   0.03,   0.03]
+            x1:    [  0.57,   0.57,   0.37,   0.42]
+            err0:  [  4.47,   3.24,   2.35,   0.58]
+            err1:  [ 30.85,  43.02,  14.17,   2.89]
         obserr_bound_max: [4.5, 4.5, 4.5, 2.5, 2.0,
                            2.0, 2.0, 2.0, 2.0, 2.0,
                            2.5, 3.5, 4.5, 4.5, 4.5]
