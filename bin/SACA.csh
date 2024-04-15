@@ -26,6 +26,7 @@ source config/mpas/variables.csh
 source config/tools.csh
 source config/auto/build.csh
 source config/auto/experiment.csh
+source config/auto/externalanalyses.csh
 source config/auto/model.csh
 source config/auto/staticstream.csh
 source config/auto/workflow.csh
@@ -105,9 +106,13 @@ if ( "${ArgRunSaca}" == "False" ) then
 endif
 
 # Link static and template fields files
+rm ${localStaticFieldsPrefix}*.nc
+rm ${localStaticFieldsPrefix}*.nc-lock
+set StaticFieldsFile = ${StaticFieldsDirOuter}/${StaticFieldsFileOuter}
 set localStaticFieldsFile = ${localStaticFieldsFileOuter}
 rm ./${localStaticFieldsFile}
-ln -sfv $GraphInfoDir/x1.${nCells}.${localStaticFieldsPrefix}.nc ./${localStaticFieldsFile}
+ln -sfv ${StaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
+cp -v ${StaticFieldsFile} ${localStaticFieldsFile}
 
 set TemplateFieldsFile = ${TemplateFieldsFileOuter}
 rm ./${TemplateFieldsFile}

@@ -17,6 +17,7 @@ from initialize.applications.Members import Members
 from initialize.config.Config import Config
 
 from initialize.data.ExternalAnalyses import ExternalAnalyses
+from initialize.data.FirstBackground import FirstBackground
 from initialize.data.Model import Model
 from initialize.data.Observations import Observations
 from initialize.data.StaticStream import StaticStream
@@ -52,6 +53,10 @@ class CloudDirectInsertion(SuiteBase):
     self.c['forecast'] = Forecast(conf, self.c['hpc'], meshes['Outer'], self.c['members'], self.c['model'], self.c['observations'],
                 self.c['workflow'], self.c['externalanalyses'],
                 self.c['externalanalyses'].outputs['state']['Outer'])
+
+    self.c['firstbackground'] = FirstBackground(conf, self.c['hpc'], meshes, self.c['members'], self.c['workflow'],
+                self.c['externalanalyses'],
+                self.c['externalanalyses'].outputs['state']['Outer'], self.c['forecast'])
 
     self.c['forecastSACA'] = ForecastSACA(conf, self.c['hpc'], meshes['Outer'], self.c['members'], self.c['model'], self.c['observations'],
                 self.c['workflow'], self.c['externalanalyses'],
@@ -99,4 +104,5 @@ class CloudDirectInsertion(SuiteBase):
       'observations',
       'saca',
       'forecastSACA',
+      'firstbackground',
     ]

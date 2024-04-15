@@ -17,9 +17,9 @@ extendedforecast:
   meanTimes: T00 #T00, T12
   lengthHR: 36
   outIntervalHR: 1
-  #execute: False # uncomment if forecasts are already completed
+  execute: False # uncomment if forecasts are already completed
   # optionally turn on extended forecast post
-  post: [] #verifyobs
+  post: [verifyobs] #verifyobs
 
 #initic:
 #  job:
@@ -59,4 +59,4 @@ observations: # for optional verification
 workflow:
   first cycle point: 20180415T00
   final cycle point: 20180430T00
-  max active cycle points: 16
+  max active cycle points: 1

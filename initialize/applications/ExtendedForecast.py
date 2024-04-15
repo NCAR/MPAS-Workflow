@@ -55,6 +55,10 @@ class ExtendedForecast(Component):
     # True: when running forecast from ensemble analysis (hard coded below)
     # note: turn True when running forecast from SACA analysis
     'DACycling': ['False', bool],
+
+    ## updateSea
+    # whether to update surface fields before a forecast (e.g., sst, xice)
+    'updateSea': [False, bool],
   }
 
   def __init__(self,
@@ -126,7 +130,7 @@ class ExtendedForecast(Component):
       self.fc.mesh.name,
       self['DACycling'],
       False,
-      False,
+      self['updateSea'],
       self.workDir+'/{{thisCycleDate}}/mean',
       states[0].directory(),
       states[0].prefix(),
@@ -306,6 +310,10 @@ class ExtendedForecast(Component):
       ##############
       # dependencies
       ##############
+      if self['updateSea']:
+        sfc_prepEA = (" => ").join(prepEATasks)
+        self.tf.addDependencies([sfc_prepEA])
+
       self.tf.addDependencies([dependency])
 
       # open graph

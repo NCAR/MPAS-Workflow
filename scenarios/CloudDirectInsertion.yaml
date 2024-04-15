@@ -23,21 +23,25 @@ build:
 externalanalyses:
   resource: "GFS.PANDAC"
 
+firstbackground:
+  resource: "PANDAC.GFS"
+
 saca:
   meanTimes: T00
   #runSaca: False #this does not run saca but copies the 6hr fcst for exp starting from 6hr
-  #execute: False
+  execute: False
 
 extendedforecast:
   meanTimes: T00
   lengthHR: 36
   outIntervalHR: 1 #6 #1
   DACycling: True
+  updateSea: True
   #execute: False # uncomment if forecasts are already completed
   post: [] #verifyobs
 
 forecastsaca:
-  #execute: False
+  execute: False
   post: [] #verifymodel,verifyobs
 
 hofx:
@@ -66,5 +70,5 @@ observations:
 workflow:
   first cycle point: 20180415T00
   final cycle point: 20180430T00
-  prevBgHR: 0 #0 #6
+  prevBgHR: 0 #6
   max active cycle points: 16
