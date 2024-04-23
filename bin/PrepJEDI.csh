@@ -130,6 +130,10 @@ foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
+if (${Microphysics} == 'mp_thompson' ) then
+  ln -svf $MPThompsonTablesDir/* .
+endif
+
 ## link stream_list configs
 foreach staticfile ( \
 stream_list.${MPASCore}.background \
