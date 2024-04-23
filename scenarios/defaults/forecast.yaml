@@ -15,6 +15,17 @@ forecast:
     #  secondsPerForecastHR: int
     #  nodes: int
     #  PEPerNode: int
+    60-3km:
+      # faster turnaround
+      #nodes:
+      #PEPerNode:
+      #baseSeconds: 60
+      #secondsPerForecastHR: 120
+      # more efficient
+      nodes: 4
+      PEPerNode: 128
+      baseSeconds: 60
+      secondsPerForecastHR: 240
     30km:
       # faster turnaround
       #nodes: 16
