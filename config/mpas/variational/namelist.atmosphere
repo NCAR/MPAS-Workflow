@@ -53,16 +53,24 @@
     config_IAU_window_length_s = 21600.
 /
 &physics
-    config_sst_update = false
-    config_sstdiurn_update = false
+    config_sst_update          = false
+    config_sstdiurn_update     = false
     config_deepsoiltemp_update = false
-    config_radtlw_interval = '00:30:00'
-    config_radtsw_interval = '00:30:00'
-    config_o3climatology = true
-    config_bucket_update = 'none'
-    config_physics_suite = 'mesoscale_reference'
-!    config_gwdo_scheme = 'off'
-    config_microp_re = true
+    config_radtlw_interval     = 'radtlwInterval'
+    config_radtsw_interval     = 'radtswInterval'
+    config_o3climatology       = true
+    config_bucket_update       = 'none'
+    config_physics_suite       = 'physicsSuite'
+    config_microp_scheme       = 'micropScheme'
+    config_convection_scheme   = 'convectionScheme'
+    config_pbl_scheme          = 'pblScheme'
+    config_gwdo_scheme         = 'gwdoScheme'
+    config_radt_cld_scheme     = 'radtCldScheme'
+    config_radt_lw_scheme      = 'radtLWScheme'
+    config_radt_sw_scheme      = 'radtSWScheme'
+    config_sfclayer_scheme     = 'sfcLayerScheme'
+    config_lsm_scheme          = 'lsmScheme'
+    config_microp_re           = true
 /
 &soundings
     config_sounding_interval = 'none'
