@@ -199,21 +199,11 @@ class EnKF(Component):
     ]
     initArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-    # 2 init phases
-    self._dependencies += ['''
-        InitEnKF_0 => InitEnKF_1''']
-
     self._tasks += ['''
   ## enkf tasks
-  [[InitEnKF_0]]
+  [[InitEnKF]]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
-    execution time limit = PT10M
-    execution retry delays = '''+solverjob['retry']+'''
-
-  [[InitEnKF_1]]
-    inherit = '''+self.tf.init+''', SingleBatch
-    script = $origin/bin/InitEnKF.csh
     execution time limit = PT10M
     execution retry delays = '''+solverjob['retry']+'''
 

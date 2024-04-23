@@ -320,20 +320,11 @@ class Variational(Component):
 
     # 2 init phases
     if self['initialize']:
-      self._dependencies += ['''
-        InitVariationals_0 => InitVariationals_1''']
-
       self._tasks += ['''
   ## variational tasks
-  [[InitVariationals_0]]
+  [[InitVariationals]]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
-    execution time limit = PT10M
-    execution retry delays = '''+varjob['retry']+'''
-
-  [[InitVariationals_1]]
-    inherit = '''+self.tf.init+''', SingleBatch
-    script = $origin/bin/InitVariationals.csh "1"
     execution time limit = PT10M
     execution retry delays = '''+varjob['retry']]
 
