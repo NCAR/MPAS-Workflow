@@ -391,12 +391,6 @@ class Variational(Component):
             self._dependencies += ['''
         EDA'''+str(instance)+''' => '''+concat]
 
-    # clean
-    self._tasks += ['''
-  [[CleanVariationals]]
-    inherit = '''+self.tf.clean+'''
-    script = $origin/bin/Clean'''+self.base+'''.csh''']
-
     # TODO: make ABEI consistent with external class design
     # GenerateABEInflation
     if self['ABEInflation']:
@@ -420,5 +414,4 @@ class Variational(Component):
         # abei
         '''+self.tf.pre+''' =>
         MeanBackground => HofXBG
-        HofXBG:succeed-all => GenerateABEInflation => '''+self.tf.init+'''
-        GenerateABEInflation => CleanHofXBG''']
+        HofXBG:succeed-all => GenerateABEInflation => '''+self.tf.init]

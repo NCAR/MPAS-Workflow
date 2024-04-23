@@ -147,8 +147,6 @@ class VerifyObs(Component):
       self._dependencies += self.__hofx._dependencies
       self._dependencies += ['''
         '''+self.__hofx.tf.group+''':succeed-all => '''+self.tf.pre]
-      self._dependencies += ['''
-        '''+self.tf.group+''':succeed-all => '''+self.__hofx.tf.clean]
 
     ##############
     # update tasks

@@ -53,6 +53,7 @@ source config/auto/experiment.csh
 source config/auto/hofx.csh
 source config/auto/model.csh
 source config/auto/staticstream.csh
+source config/auto/observations.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -131,12 +132,26 @@ if ( $status != 0 ) then
   exit 1
 endif
 
+# ================================================================================================
+
 ## change static fields to a link, keeping for transparency
 rm ${localStaticFieldsFile}
 mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 
 # Remove netcdf lock files
 rm *.nc*.lock
+
+# Remove unnecessary model state files
+# ====================================
+rm ${WorkDir}/${backgroundSubDir}/${BGFilePrefix}.$thisMPASFileDate.nc
+
+# Remove obs-database output files
+# ================================
+if ("$retainObsFeedback" != True) then
+  rm ${WorkDir}/${OutDBDir}/${obsPrefix}*.h5
+  rm ${WorkDir}/${OutDBDir}/${geoPrefix}*.nc4
+  rm ${WorkDir}/${OutDBDir}/${diagPrefix}*.nc4
+endif
 
 date
 
