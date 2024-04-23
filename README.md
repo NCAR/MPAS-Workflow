@@ -258,9 +258,6 @@ is carried out by the python scripts under the `initialize/` directory.  Many sh
 corresponding python class in the `initialize/` directory, or else serve as one task of many in a
 `TaskFamily` class member belonging to a derived `Component` class.
 
-`CleanHofx.csh`: used to clean `HofX` working directories (e.g., under `Verification/fc/`) in order
-to reduce experiment disk resource requirements.
-
 `HofX.csh`: used to execute the `mpasjedi_hofx3d` application. Can read any forecast state written
  through the `MPAS-Atmosphere` `da_state` stream.
 
@@ -300,11 +297,6 @@ AHI
 background and analysis ensembles of the ensemble of `Variational*` tasks
 
 `Variational`-related:
- - `CleanVariational.csh`: optionally cleans expensive and reproducible files from the `CyclingDA`
-   working directories in order to reduce experiment disk resource requirements.  This is most
-   important for EDA experiments than for single-state deterministic cycling. The relevant scenario
-   option is `variational.retainObsFeedback`.
-
  - `EnsembleOfVariational.csh`: used in the `EDA*` `Cylc` task; executes the
    `mpasjedi_eda` application.  Similar to `Variational.csh`, except that the EDA is conducted in
    a single executable.  Multiple `EDA*` members with a small number of sub-members can

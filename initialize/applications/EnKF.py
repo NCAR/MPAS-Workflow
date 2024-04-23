@@ -217,11 +217,6 @@ class EnKF(Component):
     execution time limit = PT10M
     execution retry delays = '''+solverjob['retry']+'''
 
-  # clean
-  [[CleanEnKFs]]
-    inherit = '''+self.tf.clean+'''
-    script = $origin/bin/CleanEnKF.csh
-
   [[EnKFObserver]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKFObserver.csh

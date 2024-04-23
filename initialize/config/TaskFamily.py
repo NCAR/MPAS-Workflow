@@ -26,7 +26,6 @@ class TaskFamilyBase:
     self.execute = self.base+'Exec' # family*
     self.post = self.base+'Post__' # marker
     self.finished = self.base+'Finished__' # marker
-    self.clean = 'Clean'+self.base # family
 
     # add all phases as tasks in case they are referenced externally
     self._tPhases = [
@@ -35,7 +34,6 @@ class TaskFamilyBase:
       self.execute,
       self.post,
       self.finished,
-      self.clean,
     ]
 
     # allow for parent app to control whether execute and initialize are added to
@@ -105,13 +103,8 @@ class CylcTaskFamily(TaskFamilyBase):
         t += [tStr]
 
         inherit = []
-        if p == self.clean:
-          # all clean tasks derive from Clean base task
-          inherit.append('Clean')
-
-        else:
-          # all tasks besides clean inherit from self.group
-          inherit.append(self.group)
+        # all tasks inherit from self.group
+        inherit.append(self.group)
 
         if p in self._placeholders:
           inherit.append(placeholdertask)
@@ -130,7 +123,7 @@ class CylcTaskFamily(TaskFamilyBase):
 
     d = []
     # general dependency graph:
-    #   pre => init:succeed-all => execute:succeed-all => post => finished => clean
+    #   pre => init:succeed-all => execute:succeed-all => post => finished
     for i, p in enumerate(self._dPhases[:-1]):
       if p in self._multiple:
         success = ':succeed-all'

@@ -35,10 +35,14 @@ if (${nMembers} < 2) then
   exit 0
 endif
 
-# static work directory
+# remove static work directory if it already exists
 set self_WorkDir = "${ExperimentDirectory}/"`echo "$ArgWorkDir" \
   | sed 's@{{thisCycleDate}}@'${thisCycleDate}'@' \
   `
+if ( -d $self_WorkDir ) then
+  rm -r $self_WorkDir
+endif
+
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
 cd ${self_WorkDir}
@@ -272,9 +276,17 @@ if ( $status != 0 ) then
   exit 1
 endif
 
+# ================================================================================================
+
 ## change static fields to a link, keeping for transparency
 rm ${localStaticFieldsFile}
 mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
+
+# Remove original analyses before RTPP
+# ====================================
+if ("${retainOriginalAnalyses}" == False) then
+  rm -r ${analysisSubDir}BeforeRTPP
+endif
 
 date
 

@@ -205,14 +205,6 @@ class HofX(Component):
       executeArgs = ' '.join(['"'+str(a)+'"' for a in args])
       execute = self.tf.execute+suffix
 
-      # clean
-      args = [
-        dt,
-        workDir,
-      ]
-      cleanArgs = ' '.join(['"'+str(a)+'"' for a in args])
-      clean = self.tf.clean+suffix
-
       self._tasks += ['''
   [['''+init+''']]
     inherit = '''+self.tf.init+''', SingleBatch
@@ -249,11 +241,6 @@ class HofX(Component):
 '''+concattask.job()+concattask.directives()]
         self._dependencies += ['''
         '''+execute+''' => '''+concat]
-
-    self._tasks += ['''
-  [['''+clean+''']]
-    inherit = '''+self.tf.clean+'''
-    script = $origin/bin/Clean'''+self.base+'''.csh '''+cleanArgs]
 
     #########
     # outputs

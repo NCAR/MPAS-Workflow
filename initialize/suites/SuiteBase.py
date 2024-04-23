@@ -100,10 +100,6 @@ conda activate """ + conda + """
     [[[events]]]
       submission timeout = PT3M
 
-  [[Clean]]
-    execution time limit = PT5M
-    execution retry delays = 2*PT15S
-
   [["""+placeholdertask+"""]]"""]
 
     for k in self.queueComponents:
