@@ -26,7 +26,7 @@ class ExternalAnalyses(Component):
     ## resource:
     # used to select from among available options (e.g., see defaults)
     # must be in quotes
-    # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC"
+    # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC", "GFS.GFS_ungrib"
     'resource': str,
   }
 
@@ -219,6 +219,36 @@ class ExternalAnalyses(Component):
           self._tasks += ['''
   [['''+base+''']]
     inherit = '''+base+zeroHR]
+
+      # link ungrib
+      base = 'LinkUngribbedExternalAnalysis'
+      queue = 'LinkUngribbedExternalAnalysis'
+      if base in self['PrepareExternalAnalysisOuter']:
+        subqueues.append(queue)
+        for meshTyp, meshName in zip(meshTypes, meshNames):
+          taskNames[(base, meshName)] = base+'-'+meshName+dtLen
+          args = [
+            dt,
+            self.WorkDir,
+            self['externalanalyses__directory'+meshTyp],
+          ]
+          linkArgs = ' '.join(['"'+str(a)+'"' for a in args])
+
+          self._tasks += ['''
+  [['''+taskNames[(base, meshName)]+''']]
+    inherit = '''+queue+''', SingleBatch
+    script = $origin/bin/'''+base+'''.csh '''+linkArgs+'''
+    execution time limit = PT90S
+    execution retry delays = 5*PT30S
+    [[[events]]]
+      submission timeout = PT1M''']
+
+          # generic 0hr task name for external classes/tasks to grab
+          if dt == 0:
+            self._tasks += ['''
+  [['''+base+'''-'''+meshName+''']]
+    inherit = '''+base+'''-'''+meshName+zeroHR]
+
 
       # ready (not part of subqueue, order does not matter)
       base = 'ExternalAnalysisReady__'

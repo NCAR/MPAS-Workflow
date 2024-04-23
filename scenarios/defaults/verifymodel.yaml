@@ -11,6 +11,8 @@ verifymodel:
     #{{outerMesh}}:
     #  seconds: int
     #  secondsPerMember: int
+    60-3km:
+      seconds: 2000
     30km:
       seconds: 1200
     60km:
