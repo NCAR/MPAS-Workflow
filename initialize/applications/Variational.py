@@ -315,10 +315,10 @@ class Variational(Component):
       self.lower,
       self.workDir+'/{{thisCycleDate}}',
       workflow['CyclingWindowHR'],
+      self.NN,
     ]
     initArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-    # 2 init phases
     if self['initialize']:
       self._tasks += ['''
   ## variational tasks

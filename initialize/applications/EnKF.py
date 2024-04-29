@@ -196,6 +196,7 @@ class EnKF(Component):
       self.lower,
       self.workDir+'/{{thisCycleDate}}',
       workflow['CyclingWindowHR'],
+      NN,
     ]
     initArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
