@@ -244,10 +244,15 @@ sed -i 's@{{SACANamelistFile}}@'${WorkDir}'/'${NamelistFile}'@' $thisYAML
 sed -i 's@{{SACAStreamsFile}}@'${WorkDir}'/'${StreamsFile}'@' $thisYAML
 
 ## cloud building algorithm configuration
-sed -i 's@{{buildMADWRF}}@'${buildMADWRF}'@g' $thisYAML
-sed -i 's@{{buildGSDCloud}}@'${buildGSDCloud}'@g' $thisYAML
-sed -i 's@{{saturateQv}}@'${saturateQv}'@g' $thisYAML
-sed -i 's@{{conserveThetaV}}@'${conserveThetaV}'@g' $thisYAML
+# convert to lower-case
+set buildMADWRF_lower    = `echo "${buildMADWRF}"    | sed 's/\(.*\)/\L\1/'`
+set buildGSDCloud_lower  = `echo "${buildGSDCloud}"  | sed 's/\(.*\)/\L\1/'`
+set saturateQv_lower     = `echo "${saturateQv}"     | sed 's/\(.*\)/\L\1/'`
+set conserveThetaV_lower = `echo "${conserveThetaV}" | sed 's/\(.*\)/\L\1/'`
+sed -i 's@{{buildMADWRF}}@'${buildMADWRF_lower}'@g' $thisYAML
+sed -i 's@{{buildGSDCloud}}@'${buildGSDCloud_lower}'@g' $thisYAML
+sed -i 's@{{saturateQv}}@'${saturateQv_lower}'@g' $thisYAML
+sed -i 's@{{conserveThetaV}}@'${conserveThetaV_lower}'@g' $thisYAML
 sed -i 's@{{cldfraDef}}@'${cldfraDef}'@g' $thisYAML
 sed -i 's@{{cldBluidHeigt}}@'${cldBluidHeigt}'@g' $thisYAML
 
