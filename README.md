@@ -204,7 +204,7 @@ their needs.  If those changes/enhancements would be beneficial for multiple use
 consider submitting a pull request to share your enhancements.
 
 `config/jedi/applications/*.yaml`: MPAS-JEDI application-specific `yaml` templates.  These will be
-further populated by `bin/PrepJEDI.csh` and/or `bin/InitVariationals.csh`.
+further populated by `bin/PrepJEDI.csh`.
 
 `config/jedi/ObsPlugs/variational/*.yaml`: observation `yaml` stubs that get plugged into `Variational`
 `jedi/applications` yamls, e.g., `3dvar.yaml`, `3denvar.yaml`, and `3dhybrid.yaml`.  The yaml
@@ -258,9 +258,6 @@ is carried out by the python scripts under the `initialize/` directory.  Many sh
 corresponding python class in the `initialize/` directory, or else serve as one task of many in a
 `TaskFamily` class member belonging to a derived `Component` class.
 
-`CleanHofx.csh`: used to clean `HofX` working directories (e.g., under `Verification/fc/`) in order
-to reduce experiment disk resource requirements.
-
 `HofX.csh`: used to execute the `mpasjedi_hofx3d` application. Can read any forecast state written
  through the `MPAS-Atmosphere` `da_state` stream.
 
@@ -300,20 +297,11 @@ AHI
 background and analysis ensembles of the ensemble of `Variational*` tasks
 
 `Variational`-related:
- - `CleanVariational.csh`: optionally cleans expensive and reproducible files from the `CyclingDA`
-   working directories in order to reduce experiment disk resource requirements.  This is most
-   important for EDA experiments than for single-state deterministic cycling. The relevant scenario
-   option is `variational.retainObsFeedback`.
-
  - `EnsembleOfVariational.csh`: used in the `EDA*` `Cylc` task; executes the
    `mpasjedi_eda` application.  Similar to `Variational.csh`, except that the EDA is conducted in
    a single executable.  Multiple `EDA*` members with a small number of sub-members can
    be conducted simultaneously if it is beneficial to group members instead of running them all
    independently like what is achieved via `Variational*` member tasks.
-
- - `InitVariationals.csh`: further modifies the application `yaml` file(s) for the `Variational`
-   task. The primary function is to populate the background error covariance and EDA-relevant
-   entries.
 
  - `Variational.csh`: used in the `Variational*` `Cylc` task; executes the `mpasjedi_variational`
    application.  Reads one output forecast state from a `Forecast*` task.  Multiple instances
@@ -353,7 +341,7 @@ controlling indentation of some `yaml` components
 
 `substituteEnsembleBTemplate`: generates and substitutes the ensemble background error
 covariance `members from template` configuration into application yamls that match `*envar*`
-and `*hybrid*`. See `InitVariationals.csh` for the specific behavior.
+and `*hybrid*`. See `PrepJEDI.csh` for the specific behavior.
 
 `update_sensorScanPosition`: convert float point sensorScanPosition to integer.  This code piece utilizes the second File (in its entirety called "fix_float2int.py") that contains the method using h5py module to open/read/alter the netcdf file.
 

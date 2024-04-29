@@ -178,7 +178,7 @@ class Forecast(Component):
       },
     }
 
-  def export(self, daFinished:str, daClean:str, daMeanDir:str):
+  def export(self, daFinished:str, daMeanDir:str):
     #########
     # outputs
     #########
@@ -268,7 +268,6 @@ class Forecast(Component):
         # mean-state model verification
         # also diagnoses posterior/inflated ensemble spread (after RTPP)
         self.postconf['verifymodel']['dependencies'] += [daFinished]
-        self.postconf['verifymodel']['followon'] = [daClean]
 
         self.postconf['hofx'] = self.postconf['verifyobs']
 

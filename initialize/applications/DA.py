@@ -200,7 +200,6 @@ class DA(Component):
           'obs': self.outputs['obs']['members'],
           'sub directory': 'da',
           'dependencies': [self.tf.post],
-          'followon': [self.tf.clean],
         },
       }
 
