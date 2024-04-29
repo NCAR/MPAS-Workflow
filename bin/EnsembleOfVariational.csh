@@ -38,9 +38,6 @@ source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/variational.csh
 source config/auto/workflow.csh
-source config/auto/members.csh
-source config/auto/model.csh
-source config/auto/observations.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -83,6 +80,7 @@ while ( $instance <= ${nDAInstances} )
   @ instance++
 end
 
+# ================================================================================================
 
 ## create then move to single run directory
 set instDir = `${memberDir} 2 ${ArgInstance} "${flowInstanceFmt}"`
@@ -90,19 +88,6 @@ set runDir = run${instDir}
 rm -r ${runDir}
 mkdir -p ${runDir}
 cd ${runDir}
-
-## link MPAS-Atmosphere lookup tables
-foreach fileGlob ($MPASLookupFileGlobs)
-  ln -sfv ${MPASLookupDir}/*${fileGlob} .
-end
-
-## link stream_list.atmosphere.* files
-ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
-
-## MPASJEDI variable configs
-foreach file ($MPASJEDIVariablesFiles)
-  ln -sfv $ModelConfigDir/$file .
-end
 
 # Link+Run the executable
 # =======================

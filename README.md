@@ -204,7 +204,7 @@ their needs.  If those changes/enhancements would be beneficial for multiple use
 consider submitting a pull request to share your enhancements.
 
 `config/jedi/applications/*.yaml`: MPAS-JEDI application-specific `yaml` templates.  These will be
-further populated by `bin/PrepJEDI.csh` and/or `bin/InitVariationals.csh`.
+further populated by `bin/PrepJEDI.csh`.
 
 `config/jedi/ObsPlugs/variational/*.yaml`: observation `yaml` stubs that get plugged into `Variational`
 `jedi/applications` yamls, e.g., `3dvar.yaml`, `3denvar.yaml`, and `3dhybrid.yaml`.  The yaml
@@ -303,10 +303,6 @@ background and analysis ensembles of the ensemble of `Variational*` tasks
    be conducted simultaneously if it is beneficial to group members instead of running them all
    independently like what is achieved via `Variational*` member tasks.
 
- - `InitVariationals.csh`: further modifies the application `yaml` file(s) for the `Variational`
-   task. The primary function is to populate the background error covariance and EDA-relevant
-   entries.
-
  - `Variational.csh`: used in the `Variational*` `Cylc` task; executes the `mpasjedi_variational`
    application.  Reads one output forecast state from a `Forecast*` task.  Multiple instances
    can be launched in parallel to conduct an ensemble of data assimilations (EDA).
@@ -343,7 +339,7 @@ controlling indentation of some `yaml` components
 
 `substituteEnsembleBTemplate`: generates and substitutes the ensemble background error
 covariance `members from template` configuration into application yamls that match `*envar*`
-and `*hybrid*`. See `InitVariationals.csh` for the specific behavior.
+and `*hybrid*`. See `PrepJEDI.csh` for the specific behavior.
 
 `updateXTIME`: updates the `xtime` variable in an `MPAS-Atmosphere` state file so that it can be read
 into the model as though it had the correct time stamp
