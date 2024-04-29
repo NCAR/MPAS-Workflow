@@ -89,6 +89,19 @@ rm -r ${runDir}
 mkdir -p ${runDir}
 cd ${runDir}
 
+## link MPAS-Atmosphere lookup tables
+foreach fileGlob ($MPASLookupFileGlobs)
+  ln -sfv ${MPASLookupDir}/*${fileGlob} .
+end
+
+## link stream_list.atmosphere.* files
+ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
+
+## MPASJEDI variable configs
+foreach file ($MPASJEDIVariablesFiles)
+  ln -sfv $ModelConfigDir/$file .
+end
+
 # Link+Run the executable
 # =======================
 ln -sfv ${myBuildDir}/${myEXE} ./
