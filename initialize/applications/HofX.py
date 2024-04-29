@@ -194,6 +194,7 @@ class HofX(Component):
         self.lower,
         workDir,
         6, # window (hr); TODO: to be provided by parent
+        NN,
       ]
       initArgs = ' '.join(['"'+str(a)+'"' for a in args])
       init = self.tf.init+suffix

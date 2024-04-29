@@ -129,12 +129,12 @@ class FirstBackground(Component):
       if base in self['PrepareFirstBackgroundOuter']:
         self._tasks += ['''
   [['''+base+''']]
-    inherit = '''+self.tf.execute+''', SingleBatch
+    inherit = '''+self.tf.execute+'''
     script = $origin/bin/'''+base+'''.csh
     # give longer for higher resolution and more EDA members
     # TODO: set time limit based on outerMesh AND (number of members OR
     #       independent task for each member)
-    execution time limit = PT10M
+    execution time limit = PT60S
     execution retry delays = 1*PT5S''']
 
       # open graph
