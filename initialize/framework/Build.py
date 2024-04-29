@@ -41,7 +41,7 @@ class Build(Component):
     system = os.getenv('NCAR_HOST')
     if system == 'derecho':
       self.variablesWithDefaults['mpas bundle'] = \
-        ['/glade/work/nystrom/Code/JEDI/jcsda_internal/mpas-bundle_develop_2-28-24/gnu_build_4dhybrid/', str]
+        ['/glade/derecho/scratch/bjung/saca/mpas-bundle.to_develop/build_single', str]
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
       self.variablesWithDefaults['forecast directory'] = ['bundle', str]
@@ -101,7 +101,11 @@ class Build(Component):
     ## RTPS
     self._set('RTPSEXE', 'mpasjedi_rtps.x')
     self._set('RTPSBuildDir', self['mpas bundle']+'/bin')
-  
+
+    ## SACA
+    self._set('SACAEXE', 'mpasjedi_addincrement.x')
+    self._set('SACABuildDir', self['mpas bundle']+'/bin')
+
     if model is not None:
 
       # MPAS-Model

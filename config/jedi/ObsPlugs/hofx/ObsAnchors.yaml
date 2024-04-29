@@ -14,7 +14,7 @@ _clear crtm: &clearCRTMObsOperator
   obs options: &CRTMObsOptions
     EndianType: little_endian
     CoefficientPath: {{CRTMTABLES}}
-    IRVISlandCoeff: USGS
+    IRVISlandCoeff: {{IRVISlandCoeff}}
 _cloudy crtm: &cloudyCRTMObsOperator
   name: CRTM
   SurfaceWindGeoVars: uv

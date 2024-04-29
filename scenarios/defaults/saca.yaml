@@ -1,0 +1,20 @@
+saca:
+  # resource requirements
+  job:
+    defaults:
+      seconds: 100
+
+      # cylc retry string
+      retry: '0*PT30S'
+
+    #{{outerMesh}}:
+    #  seconds: int
+    #  secondsPerMember: int
+    60-3km:
+      seconds: 200
+    30km:
+      seconds: 80
+    60km:
+      seconds: 80
+    120km:
+      seconds: 80

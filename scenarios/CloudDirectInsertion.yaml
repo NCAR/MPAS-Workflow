@@ -1,0 +1,57 @@
+suite: CloudDirectInsertion
+
+experiment:
+  name: 'CloudDirectInsertion_TEST'
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+
+firstbackground:
+  resource: "PANDAC.GFS"
+
+saca:
+  meanTimes: T00
+  #runSaca: False #this does not run saca but copies the 6hr fcst for exp starting from 6hr
+  execute: False
+
+extendedforecast:
+  meanTimes: T00
+  lengthHR: 1
+  outIntervalHR: 1
+  DACycling: True
+  updateSea: True
+  #execute: False # uncomment if forecasts are already completed
+  post: [verifyobs] #verifyobs
+
+forecastsaca:
+  execute: False
+  post: [] #verifymodel,verifyobs
+
+hofx:
+  observers: [
+    abi_g16,
+  ]
+  concatenateObsFeedback: True
+  IRVISlandCoeff: IGBP
+
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+
+members:
+  n: 1
+
+model:
+  outerMesh: 60-3km
+  innerMesh: 60km
+  ensembleMesh:  60km
+  GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/all_graph
+
+observations:
+  resource: SacaObs
+
+workflow:
+  first cycle point: 20180415T00
+  final cycle point: 20180415T00
+  prevBgHR: 0 #6
+  max active cycle points: 4

@@ -485,6 +485,9 @@ sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
 # crtm tables
 sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
 
+# IR/VIS land surface coefficients
+sed -i 's@{{IRVISlandCoeff}}@'${IRVISlandCoeff}'@g' $thisYAML
+
 # input and output IODA DB directories
 sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $thisYAML
 sed -i 's@{{OutDBDir}}@'${WorkDir}'/'${OutDBDir}'@g' $thisYAML

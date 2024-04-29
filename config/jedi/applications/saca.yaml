@@ -1,0 +1,29 @@
+test:
+  float relative tolerance: 1.e-06
+  float absolute tolerance: 1.e-06
+  integer tolerance: 0
+  reference filename: {{AppName}}.ref
+  test output filename: {{AppName}}.run.ref
+
+state geometry: &geom
+  nml_file: {{SACANamelistFile}}
+  streams_file: {{SACAStreamsFile}}
+  deallocate non-da fields: true
+
+increment geometry: *geom
+
+state:
+  date: &date '{{thisISO8601Date}}'
+  state variables: [{{SACAStateVariables}}]
+  stream name: {{AppName}}_background
+  filename: {{bgStateDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
+
+increment:
+  date: *date
+  added variables: [{{addedVars}}]
+  stream name: {{AppName}}_obs
+  filename: {{InDBDir}}/{{SACAObs}}
+
+output:
+  stream name: {{AppName}}_analysis
+  filename: {{anStateDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
