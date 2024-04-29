@@ -236,9 +236,9 @@ class ExternalAnalyses(Component):
 
           self._tasks += ['''
   [['''+taskNames[(base, meshName)]+''']]
-    inherit = '''+queue+''', SingleBatch
+    inherit = '''+queue+'''
     script = $origin/bin/'''+base+'''.csh '''+linkArgs+'''
-    execution time limit = PT90S
+    execution time limit = PT60S
     execution retry delays = 5*PT30S
     [[[events]]]
       submission timeout = PT1M''']
