@@ -35,6 +35,27 @@ class SACA(Component):
 
     # whether to run saca or not, but copy the 6hr forecast from previous cycle
     'runSaca': [True, bool],
+
+    # whether to use MADWRF's cloud building algorithm
+    'buildMADWRF': [True, bool],
+
+    # whether to use GSD's cloud building algorithm
+    'buildGSDCloud': [False, bool],
+
+    # whether to saturate water vapor mixing ratio (Qv)
+    'saturateQv': [False, bool],
+
+    # whether to conserve Theta V
+    'conserveThetaV': [True, bool],
+
+    # cloud fraction value for cloud insertion
+    'cldfraDef': [0.98, float],
+
+    # limit the cloud building within 1200 [meters] above ground level
+    'cldBluidHeigt': [1200.0, float],
+
+    # whether to run saca diagnostics or not
+    'runSacaDiag': [False, bool],
   }
 
   def __init__(self,

@@ -128,7 +128,7 @@ ln -sfv ${bgFile} ${TemplateFieldsFile}
 ## link MPAS mesh graph info
 rm ./x1.${nCells}.graph.info*
 ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
-  
+
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
@@ -189,6 +189,11 @@ echo "  - xland"   >> keptvars.yaml
 echo "  - cldmask" >> keptvars.yaml
 echo "  - brtemp"  >> keptvars.yaml
 
+echo ""                               >> geovars.yaml
+echo "  - field name: ni"             >> geovars.yaml
+echo "    mpas template field: theta" >> geovars.yaml
+echo "    mpas identity field: ni"    >> geovars.yaml
+
 # ======================
 # Link observations data
 # ======================
@@ -238,6 +243,14 @@ sed -i 's@{{SACANamelistFile}}@'${WorkDir}'/'${NamelistFile}'@' $thisYAML
 ## streams
 sed -i 's@{{SACAStreamsFile}}@'${WorkDir}'/'${StreamsFile}'@' $thisYAML
 
+## cloud building algorithm configuration
+sed -i 's@{{buildMADWRF}}@'${buildMADWRF}'@g' $thisYAML
+sed -i 's@{{buildGSDCloud}}@'${buildGSDCloud}'@g' $thisYAML
+sed -i 's@{{saturateQv}}@'${saturateQv}'@g' $thisYAML
+sed -i 's@{{conserveThetaV}}@'${conserveThetaV}'@g' $thisYAML
+sed -i 's@{{cldfraDef}}@'${cldfraDef}'@g' $thisYAML
+sed -i 's@{{cldBluidHeigt}}@'${cldBluidHeigt}'@g' $thisYAML
+
 ## current date
 sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $thisYAML
 
@@ -262,7 +275,10 @@ foreach var ($Variables)
 end
 # remove trailing comma
 set VarSub = `echo "$VarSub" | sed 's/.$//'`
-set VarSub = $VarSub",surface_pressure"
+# optional for diag and diag_cldfra
+if (${runSacaDiag} == True) then
+  set VarSub = $VarSub",uReconstructZonal,uReconstructMeridional"
+endif
 
 # added variables to saca_obs
 set addedVars = `cat stream_list.atmosphere.${AppName}_obs`
@@ -272,7 +288,6 @@ foreach var ($addedVars)
 end
 # remove trailing comma
 set addedVarSub = `echo "$addedVarSub" | sed 's/.$//'`
-set addedVarSub = $addedVarSub",temperature,qv,surface_pressure"
 
 # added variable to saca analysis
 set addSACAAnalysisVariables = ( \
@@ -319,6 +334,9 @@ mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 # Remove netcdf lock files
 rm *.nc*.lock
 rm */*.nc*.lock
+
+# Remove core file
+rm core
 
 date
 
