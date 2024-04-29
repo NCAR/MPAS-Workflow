@@ -37,7 +37,7 @@ class Workflow(Component):
     'subwindow': [1, int],
 
     # interval between `saca` analyses and forecast background
-    'prevBgHR': [6, int, [6]],
+    'prevBgHR': [0, int, [0]],
   }
   optionalVariables = {
     # restart cycle point is used to restart an existing suite from a previously-generated

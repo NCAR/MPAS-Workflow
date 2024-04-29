@@ -53,5 +53,4 @@ observations:
 workflow:
   first cycle point: 20180415T00
   final cycle point: 20180415T00
-  prevBgHR: 0 #6
-  max active cycle points: 4
+  #max active cycle points: 4
