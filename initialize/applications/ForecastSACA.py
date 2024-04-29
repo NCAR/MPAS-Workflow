@@ -151,7 +151,7 @@ class ForecastSACA(Component):
         warmIC[mm-1].prefix(),
       ]
       fcArgs = ' '.join(['"'+str(a)+'"' for a in args])
-      
+
       self._tasks += ['''
   [['''+self.base+str(mm)+''']]
     inherit = '''+self.base+''', BATCH

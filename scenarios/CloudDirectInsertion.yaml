@@ -12,7 +12,7 @@ firstbackground:
 saca:
   meanTimes: T00
   #runSaca: False #this does not run saca but copies the 6hr fcst for exp starting from 6hr
-  execute: False
+  #execute: False
 
 extendedforecast:
   meanTimes: T00
@@ -24,7 +24,7 @@ extendedforecast:
   post: [verifyobs] #verifyobs
 
 forecastsaca:
-  execute: False
+  #execute: False
   post: [] #verifymodel,verifyobs
 
 hofx:

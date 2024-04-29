@@ -39,7 +39,7 @@ class CloudDirectInsertion(SuiteBase):
     self.c['model'] = Model(conf)
     meshes = self.c['model'].getMeshes()
     self.c['worklow'] = Workflow(conf)
-    
+
     self.c['build'] = Build(conf, self.c['model'])
     self.c['observations'] = Observations(conf, self.c['hpc'])
     self.c['members'] = Members(conf)

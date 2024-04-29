@@ -41,7 +41,7 @@ class Build(Component):
     system = os.getenv('NCAR_HOST')
     if system == 'derecho':
       self.variablesWithDefaults['mpas bundle'] = \
-        ['/glade/derecho/scratch/bjung/saca/mpas-bundle.to_develop/build_single', str]
+        ['/glade/work/bjung/panda-c/build/mpas-bundle_20240425_saca/build_single', str]
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
       self.variablesWithDefaults['forecast directory'] = ['bundle', str]
