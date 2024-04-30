@@ -94,19 +94,10 @@ class RTPP(Component):
       task = TaskLookup[hpc.system](job)
 
       self._tasks += ['''
-  [['''+self.tf.init+'''Job]]
-    # note: does not depend on any other tasks
-    inherit = '''+self.tf.init+''', SingleBatch
-    script = $origin/bin/Init'''+self.base+'''.csh "'''+self.WorkDir+'''"
-    execution time limit = PT1M
-    execution retry delays = '''+job['retry']+'''
   [['''+self.base+''']]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/'''+self.base+'''.csh "'''+self.WorkDir+'''"
-'''+task.job()+task.directives()+'''
-
-  [['''+self.tf.clean+''']]
-    script = $origin/bin/Clean'''+self.base+'''.csh "'''+self.WorkDir+'"']
+'''+task.job()+task.directives()]
 
   def export(self, dependency:str, followon:str):
     if self.active:

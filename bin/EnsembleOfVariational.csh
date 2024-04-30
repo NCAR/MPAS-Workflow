@@ -80,6 +80,7 @@ while ( $instance <= ${nDAInstances} )
   @ instance++
 end
 
+# ================================================================================================
 
 ## create then move to single run directory
 set instDir = `${memberDir} 2 ${ArgInstance} "${flowInstanceFmt}"`
@@ -117,6 +118,30 @@ grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
   echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
+endif
+
+# ================================================================================================
+
+# Remove obs-database output files
+# ================================
+if ("$retainObsFeedback" != True) then
+  set member = 1
+  while ( $member <= ${nMembers} )
+    set memDir = `${memberDir} $nMembers $member`
+    rm ${self_WorkDir}/${OutDBDir}${memDir}/${obsPrefix}*.h5
+    rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.nc4
+    rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.nc4
+    @ member++
+  end
+endif
+
+# Remove netcdf lock files
+rm *.nc*.lock
+rm */*.nc*.lock
+
+# Remove copies of templated fields files for inner loop
+if ("${TemplateFieldsFileInner}" != "${TemplateFieldsFileOuter}") then
+  rm ${TemplateFieldsFileInner}*
 endif
 
 date

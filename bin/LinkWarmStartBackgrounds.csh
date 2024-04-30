@@ -29,7 +29,7 @@ while ( $member <= $nMembers )
       set InitialMemberFC = "$firstbackground__directoryOuter"`${memberDir} 2 $member "${firstbackground__memberFormatOuter}"`
       ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixOuter}.*.nc $CyclingFCDirs[$member]/.
       # rm ${fcFile}
-      cp ${fcFile}${OrigFileSuffix} ${fcFile}
+      #cp ${fcFile}${OrigFileSuffix} ${fcFile}
 
       # Inner loop mesh
       if ($nCellsOuter != $nCellsInner) then
@@ -38,9 +38,10 @@ while ( $member <= $nMembers )
         mkdir -p ${innerFCDir}
         set fcFile = $innerFCDir/${FCFilePrefix}.${nextFirstFileDate}.nc
         set InitialMemberFC = "$firstbackground__directoryInner"`${memberDir} 2 $member "${firstbackground__memberFormatInner}"`
-        ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixInner}.${nextFirstFileDate}.nc ${fcFile}${OrigFileSuffix}
+        ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixInner}.${nextFirstFileDate}.nc ${fcFile}
+        #${OrigFileSuffix}
         # rm ${fcFile}
-        cp ${fcFile}${OrigFileSuffix} ${fcFile}
+        #cp ${fcFile}${OrigFileSuffix} ${fcFile}
       endif
 
   @ member++
