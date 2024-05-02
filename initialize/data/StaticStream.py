@@ -50,6 +50,7 @@ class StaticStream(Component):
     for meshTyp, m in meshes.items():
       mesh = m.name
       nCells = str(m.nCells)
+      meshRatio = str(m.meshRatio)
 
       for key in ['directory', 'filePrefix']:
         value = self.extractResource(('resources', resource, mesh), key, str)
@@ -58,6 +59,7 @@ class StaticStream(Component):
 
         if key == 'filePrefix':
           value = value.replace('{{nCells}}', nCells)
+          value = value.replace('{{meshRatio}}', meshRatio)
 
         # auto-generated csh variables
         variable = key+meshTyp

@@ -47,6 +47,7 @@ class ExternalAnalyses(Component):
 
     for meshTyp, mesh in meshes.items():
       nCells = str(mesh.nCells)
+      meshRatio = str(mesh.meshRatio)
       # 'ExternalAnalysesDir'+meshTyp is where external analyses converted to MPAS meshes are
       # created and/or stored
       self._set('ExternalAnalysesDir'+meshTyp, self.workDir+'/'+mesh.name+'/{{thisValidDate}}')
@@ -89,6 +90,7 @@ class ExternalAnalyses(Component):
 
           if key == 'filePrefix' and isinstance(value, str):
             value = value.replace('{{nCells}}', nCells)
+            value = value.replace('{{meshRatio}}', meshRatio)
 
           self._set(variable, value)
           self._cshVars.append(variable)
