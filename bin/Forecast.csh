@@ -165,8 +165,8 @@ if ( ${self_IAU} == True ) then
 endif
 
 ## link MPAS mesh graph info
-rm ./x1.${nCells}.graph.info*
-ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
+rm ./x${meshRatio}.${nCells}.graph.info*
+ln -sfv $GraphInfoDir/x${meshRatio}.${nCells}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -198,7 +198,7 @@ sed -i 's@{{FCFilePrefix}}@'${FCFilePrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 ## Update sea-surface variables from GFS/GEFS analyses
-set localSeaUpdateFile = x1.${nCells}.sfc_update.nc
+set localSeaUpdateFile = x${meshRatio}.${nCells}.sfc_update.nc
 sed -i 's@{{surfaceUpdateFile}}@'${localSeaUpdateFile}'@' ${StreamsFile}
 
 if ("${ArgUpdateSea}" == True) then
@@ -210,7 +210,7 @@ if ("${ArgUpdateSea}" == True) then
     `
   setenv deterministicSeaAnaDir ${EADir}
   setenv deterministicSeaMemFmt " "
-  setenv deterministicSeaFilePrefix x1.${nCells}.init
+  setenv deterministicSeaFilePrefix x${meshRatio}.${nCells}.init
 
   # need to change to mainScriptDir to source firstbackground
   # TODO: remove this dependence
@@ -223,7 +223,7 @@ if ("${ArgUpdateSea}" == True) then
     # 60km and 120km
     setenv SeaAnaDir /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GEFS/surface/000hr/${model__precision}/${thisValidDate}
     setenv seaMemFmt "/{:02d}"
-    setenv SeaFilePrefix x1.${nCells}.sfc_update
+    setenv SeaFilePrefix x${meshRatio}.${nCells}.sfc_update
   else
     # otherwise use deterministic analysis for all members
     # 60km and 120km
@@ -288,6 +288,7 @@ cp -v $ModelConfigDir/forecast/$NamelistFile .
 sed -i 's@startTime@'${StartDate}'@' $NamelistFile
 sed -i 's@fcLength@'${self_FCLengthHR}':00:00@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile
+sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 set configDODACycling = `echo "$ArgDACycling" | sed 's/\(.*\)/\L\1/'` # converts to lower-case

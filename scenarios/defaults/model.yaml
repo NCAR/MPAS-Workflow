@@ -1,6 +1,7 @@
 model:
   resources:
     #{{mesh}}:
+    #  meshRatio: 1 for uniform meshes
     #  nCells: float
     #    number of horizontal cells for each valid mesh descriptor
     #    serves as a convenience for file naming when distinguishing between
@@ -20,6 +21,7 @@ model:
     #  SfcLayer: str
     #  LSM: str
     60-3km:
+      meshRatio: 20
       nCells: 835586
       TimeStep: 20.0
       DiffusionLengthScale: 3000.0
@@ -36,6 +38,7 @@ model:
       SfcLayer: sf_monin_obukhov
       LSM: noah
     30km:
+      meshRatio: 1
       nCells: 655362
       TimeStep: 180.0
       DiffusionLengthScale: 30000.0
@@ -52,6 +55,7 @@ model:
       SfcLayer: sf_monin_obukhov
       LSM: noah
     60km:
+      meshRatio: 1
       nCells: 163842
       TimeStep: 360.0
       DiffusionLengthScale: 60000.0
@@ -68,6 +72,7 @@ model:
       SfcLayer: sf_monin_obukhov
       LSM: noah
     120km:
+      meshRatio: 1
       nCells: 40962
       TimeStep: 720.0
       DiffusionLengthScale: 120000.0

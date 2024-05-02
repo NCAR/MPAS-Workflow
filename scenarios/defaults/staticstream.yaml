@@ -8,7 +8,7 @@ staticstream:
       directory: "{{ExternalAnalysesDir}}/{{FirstCycleDate}}"
 
       ## filePrefix: prefix of static stream file
-      filePrefix: "x1.{{nCells}}.init"
+      filePrefix: "x{{meshRatio}}.{{nCells}}.init"
 
       ## maxMembers: maximum number of static stream members available for this resource
       maxMembers: None
