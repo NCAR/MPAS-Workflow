@@ -133,7 +133,7 @@ sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile}
 rm $NamelistFile
 cp -v $ModelConfigDir/rtpp/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
-sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x${meshRatio}.'${nCellsEnsemble}'@' ${NamelistFile}
+sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x'${meshRatio}'.'${nCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 
