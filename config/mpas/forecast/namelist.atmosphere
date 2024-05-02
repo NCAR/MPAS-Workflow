@@ -38,7 +38,7 @@
     config_pio_stride = 1
 /
 &decomposition
-    config_block_decomp_file_prefix = 'x1.nCells.graph.info.part.'
+    config_block_decomp_file_prefix = 'x{{meshRatio}}.nCells.graph.info.part.'
 /
 &restart
     config_do_restart = false

@@ -138,7 +138,7 @@ set halfprevISO8601Date = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 
 ## link MPAS mesh graph info
 foreach nCells ($nCellsList)
-  ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
+  ln -sfv $GraphInfoDir/x${meshRatio}.${nCells}.graph.info* .
 end
 
 ## link MPAS-Atmosphere lookup tables
@@ -181,7 +181,7 @@ foreach NamelistFile_ ($NamelistFileList)
   cp -v $ModelConfigDir/$ArgAppType/${NamelistFile} ./${NamelistFile_}
   sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
   sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${NamelistFile_}
-  sed -i 's@blockDecompPrefix@'${WorkDir}'/x1.'$nCellsList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@blockDecompPrefix@'${WorkDir}'/x${meshRatio}.'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'${TimeStep}'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' ${NamelistFile_}
 

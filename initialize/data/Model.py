@@ -13,9 +13,10 @@ from initialize.config.Component import Component
 from initialize.config.Config import Config
 
 class Mesh():
-  def __init__(self, name, nCells, attrib=None):
+  def __init__(self, name, nCells, meshRatio, attrib=None):
     self.name = str(name)
     self.nCells = int(nCells)
+    self.meshRatio = int(meshRatio)
     self.attrib = attrib
 
   def __eq__(self, other):
@@ -23,6 +24,7 @@ class Mesh():
       isinstance(other, Mesh),
       other.name == self.name,
       other.nCells == self.nCells,
+      other.meshRatio == self.meshRatio,
       (other.attrib is None and self.attrib is None) or (other.attrib == self.attrib),
     ])
 
@@ -54,7 +56,7 @@ class Model(Component):
 
   variablesWithDefaults = {
     ## GraphInfoDir
-    # directory containing x1.{{nCells}}.graph.info* files
+    # directory containing x{{meshRatio}}.{{nCells}}.graph.info* files
     'GraphInfoDir': ['/glade/campaign/mmm/parc/liuz/pandac_common/static_from_duda', str],
 
     ## precision
@@ -103,10 +105,12 @@ class Model(Component):
       if name is not None:
         self._set('nCells'+Typ, self._conf.getOrDie('resources.'+name+'.nCells'))
         nCells = self['nCells'+Typ]
+        self._set('meshRatio', self._conf.getOrDie('resources.'+name+'.meshRatio'))
+        meshRatio = self['meshRatio']
 
-        self.__meshes[Typ] = Mesh(name, nCells)
+        self.__meshes[Typ] = Mesh(name, nCells, meshRatio)
 
-        self._set('InitFilePrefix'+Typ, 'x1.'+str(nCells)+'.init')
+        self._set('InitFilePrefix'+Typ, 'x'+str(meshRatio)+'.'+str(nCells)+'.init')
         self._set(meshTyp+'StreamsFile', StreamsFile+'_'+name)
         self._set(meshTyp+'NamelistFile', NamelistFile+'_'+name)
         self._set('TemplateFieldsFile'+Typ, TemplateFieldsPrefix+'.'+str(nCells)+'.nc')
