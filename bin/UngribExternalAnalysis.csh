@@ -65,7 +65,6 @@ rm ${NamelistFileWPS}
 cp -v $ModelConfigDir/initic/${NamelistFileWPS} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
 sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileWPS
-sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFileWPS
 
 # Run the executable
 # ==================
