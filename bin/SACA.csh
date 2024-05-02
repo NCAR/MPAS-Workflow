@@ -126,8 +126,8 @@ ln -sfv ${bgFile} ${TemplateFieldsFile}
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-rm ./x1.${nCells}.graph.info*
-ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
+rm ./x${meshRatio}.${nCells}.graph.info*
+ln -sfv $GraphInfoDir/x${meshRatio}.${nCells}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -138,18 +138,10 @@ if ( ${Microphysics} == 'mp_thompson' ) then
   ln -svf $MPThompsonTablesDir/* .
 endif
 
-## link/copy stream_list/streams configs
-foreach staticfile ( \
-stream_list.${MPASCore}.background \
-stream_list.${MPASCore}.analysis \
-stream_list.${MPASCore}.ensemble \
-stream_list.${MPASCore}.control \
-stream_list.${MPASCore}.${AppName}_background \
-stream_list.${MPASCore}.${AppName}_obs \
-)
-  ln -sfv $ModelConfigDir/${AppName}/$staticfile .
-end
-cp -v $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_analysis .
+## link stream_list/streams configs
+ln -sfv $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_background .
+ln -sfv $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}obs .
+ln -sfv $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_analysis .
 
 rm ${StreamsFile}
 cp -v $ModelConfigDir/${AppName}/${StreamsFile} .
@@ -165,6 +157,7 @@ sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@nCells@'${nCells}'@' $NamelistFile
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
+sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFile
 
 ## modify namelist physics
 sed -i 's@radtlwInterval@'${RadiationLWInterval}'@' $NamelistFile
@@ -293,16 +286,6 @@ foreach var ($addedVars)
 end
 # remove trailing comma
 set addedVarSub = `echo "$addedVarSub" | sed 's/.$//'`
-
-# added variable to saca analysis
-set addSACAAnalysisVariables = ( \
-  pressure_p \
-  theta \
-  rho \
-)
-foreach var ($addSACAAnalysisVariables)
-  echo "$var"  >> stream_list.${MPASCore}.${AppName}_analysis
-end
 
 sed -i 's@{{SACAStateVariables}}@'$VarSub'@' $thisYAML
 sed -i 's@{{addedVars}}@'${addedVarSub}'@g' $thisYAML
