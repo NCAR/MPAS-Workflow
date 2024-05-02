@@ -21,49 +21,6 @@
                   clobber_mode="overwrite"
                   output_interval="none" />
 
-<stream name="background"
-        type="input;output"
-        precision="{{PRECISION}}"
-        io_type="pnetcdf,cdf5"
-        filename_template="background.nc"
-        input_interval="none"
-        output_interval="none"
-        clobber_mode="overwrite">
-        <file name="stream_list.atmosphere.background"/>
-</stream>
-
-<stream name="analysis"
-        type="output"
-        precision="{{PRECISION}}"
-        io_type="pnetcdf,cdf5"
-        filename_template="analysis.nc"
-        output_interval="none"
-        clobber_mode="overwrite">
-        <file name="stream_list.atmosphere.analysis"/>
-</stream>
-
-<stream name="ensemble"
-        type="input;output"
-        precision="{{PRECISION}}"
-        io_type="pnetcdf,cdf5"
-        filename_template="ensemble.nc"
-        input_interval="none"
-        output_interval="none"
-        clobber_mode="overwrite">
-        <file name="stream_list.atmosphere.ensemble"/>
-</stream>
-
-<stream name="control"
-        type="input;output"
-        precision="{{PRECISION}}"
-        io_type="pnetcdf,cdf5"
-        filename_template="control.nc"
-        input_interval="none"
-        output_interval="none"
-        clobber_mode="overwrite">
-        <file name="stream_list.atmosphere.control"/>
-</stream>
-
 <stream name="saca_background"
         type="input;output"
         precision="{{PRECISION}}"
