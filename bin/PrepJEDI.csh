@@ -181,7 +181,7 @@ foreach NamelistFile_ ($NamelistFileList)
   cp -v $ModelConfigDir/$ArgAppType/${NamelistFile} ./${NamelistFile_}
   sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
   sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${NamelistFile_}
-  sed -i 's@blockDecompPrefix@'${WorkDir}'/x${meshRatio}.'$nCellsList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@blockDecompPrefix@'${WorkDir}'/x'${meshRatio}'.'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@modelDT@'${TimeStep}'@' ${NamelistFile_}
   sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' ${NamelistFile_}
 
