@@ -106,8 +106,10 @@ class ExternalAnalyses(Component):
 
     attr = {
       'seconds': {'def': 300},
+      'nodes': {'def': 1},
+      'PEPerNode': {'def': 128},
       'retry': {'def': '2*PT30S'},
-      # currently UngribExternalAnalysis has to be on Cheyenne, because ungrib.exe is built there
+      # currently UngribExternalAnalysis has to be on Derecho, because ungrib.exe is built there
       # TODO: build ungrib.exe on casper, remove Critical directives below, deferring to
       #       SingleBatch inheritance
       'queue': {'def': hpc['CriticalQueue']},
@@ -212,7 +214,7 @@ class ExternalAnalyses(Component):
         taskNames[base] = base+dtLen
         self._tasks += ['''
   [['''+taskNames[base]+''']]
-    inherit = '''+queue+''', SingleBatch
+    inherit = '''+queue+''', BATCH
     script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
 '''+self.__ungribtask.job()+self.__ungribtask.directives()]
 

@@ -84,6 +84,21 @@ source ./bin/getCycleVars.csh
 # nCells
 if ("$ArgMesh" == "$outerMesh") then
   set nCells = $nCellsOuter
+  set meshRatio = $meshRatioOuter
+  set TimeStep = $TimeStepOuter
+  set DiffusionLengthScale = $DiffusionLengthScaleOuter
+  set RadiationLWInterval = $RadiationLWIntervalOuter
+  set RadiationSWInterval = $RadiationSWIntervalOuter
+  set PhysicsSuite = $PhysicsSuiteOuter
+  set Microphysics = $MicrophysicsOuter
+  set Convection = $ConvectionOuter
+  set PBL = $PBLOuter
+  set Gwdo = $GwdoOuter
+  set RadiationCloud = $RadiationCloudOuter
+  set RadiationLW = $RadiationLWOuter
+  set RadiationSW = $RadiationSWOuter
+  set SfcLayer = $SfcLayerOuter
+  set LSM = $LSMOuter
 # not used presently
 #else if ("$ArgMesh" == "$innerMesh") then
 #  set nCells = $nCellsInner

@@ -39,6 +39,8 @@
       _symmetric cld fits 15X15-60km: &ahi_himawari8_SymmCldFits15X15-60km
 ## 60 km, no bias correction - copy of 30km
         <<: *ahi_himawari8_SymmCldFits15X15-30km
+      _symmetric cld fits 15X15-60-3km: &ahi_himawari8_SymmCldFits15X15-60-3km
+        <<: *ahi_himawari8_SymmCldFits15X15-30km
       error function:
         name: ObsFunction/ObsErrorModelRamp
         channels: *ahi_himawari8_channels

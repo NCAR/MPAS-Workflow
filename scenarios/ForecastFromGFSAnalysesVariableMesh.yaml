@@ -17,6 +17,10 @@ extendedforecast:
   # optionally turn on extended forecast post
   post: [verifyobs, verifymodel]
 
+hofx:
+  concatenateObsFeedback: True
+  IRVISlandCoeff: IGBP
+
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
@@ -34,4 +38,4 @@ observations: # for optional verification
 workflow:
   first cycle point: 20180415T00
   final cycle point: 20180415T12
-  max active cycle points: 4
+  #max active cycle points: 4

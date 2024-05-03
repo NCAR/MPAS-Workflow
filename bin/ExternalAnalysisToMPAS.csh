@@ -91,6 +91,8 @@ endif
 ## link ungribbed files
 ln -sfv ${ExternalAnalysesDir}/${externalanalyses__UngribPrefix}* ./
 
+set meshRatio = $meshRatioOuter
+
 ## link MPAS mesh graph info and static field
 rm ./x${meshRatio}.${ArgNCells}.graph.info*
 ln -sfv $GraphInfoDir/x${meshRatio}.${ArgNCells}.graph.info* .

@@ -12,7 +12,7 @@ verifymodel:
     #  seconds: int
     #  secondsPerMember: int
     60-3km:
-      seconds: 2000
+      seconds: 500
     30km:
       seconds: 1200
     60km:

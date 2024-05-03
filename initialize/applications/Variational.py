@@ -185,9 +185,25 @@ class Variational(Component):
 
     self._set('MeshList', ['Outer', 'Inner'])
     self._set('nCellsList', [meshes['Outer'].nCells, meshes['Inner'].nCells])
+    self._set('meshRatioList', [meshes['Outer'].meshRatio, meshes['Inner'].meshRatio])
     self._set('StreamsFileList', [model['outerStreamsFile'], model['innerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile'], model['innerNamelistFile']])
     self._set('localStaticFieldsFileList', [model['localStaticFieldsFileOuter'], model['localStaticFieldsFileInner']])
+
+    self._set('TimeStepList', [model['TimeStepOuter'], model['TimeStepInner']])
+    self._set('DiffusionLengthScaleList', [model['DiffusionLengthScaleOuter'], model['DiffusionLengthScaleInner']])
+    self._set('RadiationLWIntervalList', [model['RadiationLWIntervalOuter'], model['RadiationLWIntervalInner']])
+    self._set('RadiationSWIntervalList', [model['RadiationSWIntervalOuter'], model['RadiationSWIntervalInner']])
+    self._set('PhysicsSuiteList', [model['PhysicsSuiteOuter'], model['PhysicsSuiteInner']])
+    self._set('MicrophysicsList', [model['MicrophysicsOuter'], model['MicrophysicsInner']])
+    self._set('ConvectionList', [model['ConvectionOuter'], model['ConvectionInner']])
+    self._set('PBLList', [model['PBLOuter'], model['PBLInner']])
+    self._set('GwdoList', [model['GwdoOuter'], model['GwdoInner']])
+    self._set('RadiationCloudList', [model['RadiationCloudOuter'], model['RadiationCloudInner']])
+    self._set('RadiationLWList', [model['RadiationLWOuter'], model['RadiationLWInner']])
+    self._set('RadiationSWList', [model['RadiationSWOuter'], model['RadiationSWInner']])
+    self._set('SfcLayerList', [model['SfcLayerOuter'], model['SfcLayerInner']])
+    self._set('LSMList', [model['LSMOuter'], model['LSMInner']])
 
     # nOuterIterations, automatically determined from length of nInnerIterations
     self._set('nOuterIterations', len(self['nInnerIterations']))
