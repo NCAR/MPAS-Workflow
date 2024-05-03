@@ -80,6 +80,7 @@ set hh = `echo ${prevValidDate} | cut -c 9-10`
 set StateDir = ${ExperimentDirectory}/${ArgStateDir}/${prevValidDate}
 
 set nCells = $nCellsOuter
+set meshRatio = $meshRatioOuter
 
 # ====================================
 # Input/Output model state preparation
@@ -140,7 +141,7 @@ endif
 
 ## link stream_list/streams configs
 ln -sfv $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_background .
-ln -sfv $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}obs .
+ln -sfv $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_obs .
 ln -sfv $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_analysis .
 
 rm ${StreamsFile}
