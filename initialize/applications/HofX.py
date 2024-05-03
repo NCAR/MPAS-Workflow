@@ -103,6 +103,10 @@ class HofX(Component):
     ## concatenateObsFeedback
     # whether to concatenate the geovals and ydiag feedback files
     'concatenateObsFeedback': [False, bool],
+
+    ## IR/VIS land surface coefficients classification
+    # OPTIONS: USGS, IGBP, NPOESS
+    'IRVISlandCoeff': ['USGS', str],
   }
 
   def __init__(self,
@@ -138,6 +142,7 @@ class HofX(Component):
 
     self._set('MeshList', ['HofX'])
     self._set('nCellsList', [mesh.nCells])
+    self._set('meshRatioList', [mesh.meshRatio])
     self._set('StreamsFileList', [model['outerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile']])
 

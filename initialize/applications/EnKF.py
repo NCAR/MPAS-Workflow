@@ -100,6 +100,10 @@ class EnKF(Component):
     ## concatenateObsFeedback
     # whether to concatenate the geovals and ydiag feedback files
     'concatenateObsFeedback': [False, bool],
+
+    ## IR/VIS land surface coefficients classification
+    # OPTIONS: USGS, IGBP, NPOESS
+    'IRVISlandCoeff': ['USGS', str],
   }
 
   def __init__(self,
@@ -130,6 +134,7 @@ class EnKF(Component):
 
     self._set('MeshList', ['EnKF'])
     self._set('nCellsList', [meshes['Outer'].nCells])
+    self._set('meshRatioList', [meshes.meshRatio])
     self._set('StreamsFileList', [model['outerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile']])
     self._set('localStaticFieldsFileList', [model['localStaticFieldsFileOuter']])
