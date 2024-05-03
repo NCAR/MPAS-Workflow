@@ -54,6 +54,8 @@
       _symmetric cld fits 15X15-60km: &abi_g16_SymmCldFits15X15-60km
 ## 60 km, no bias correction - copy of 30km
         <<: *abi_g16_SymmCldFits15X15-30km
+      _symmetric cld fits 15X15-60-3km: &abi_g16_SymmCldFits15X15-60-3km
+        <<: *abi_g16_SymmCldFits15X15-30km
       error function:
         name: ObsFunction/ObsErrorModelRamp
         channels: *abi_g16_channels
