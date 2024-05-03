@@ -134,6 +134,7 @@ class EnKF(Component):
 
     self._set('MeshList', ['EnKF'])
     self._set('nCellsList', [meshes['Outer'].nCells])
+    self._set('meshRatioList', [meshes.meshRatio])
     self._set('StreamsFileList', [model['outerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile']])
     self._set('localStaticFieldsFileList', [model['localStaticFieldsFileOuter']])

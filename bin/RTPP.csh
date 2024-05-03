@@ -86,7 +86,7 @@ cp ${firstANFile} ${meanDir}
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sfv $GraphInfoDir/x${meshRatio}.${nCellsEnsemble}.graph.info* .
+ln -sfv $GraphInfoDir/x${meshRatioEnsemble}.${nCellsEnsemble}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -133,7 +133,7 @@ sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile}
 rm $NamelistFile
 cp -v $ModelConfigDir/rtpp/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
-sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x'${meshRatio}'.'${nCellsEnsemble}'@' ${NamelistFile}
+sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x'${meshRatioEnsemble}'.'${nCellsEnsemble}'@' ${NamelistFile}
 sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
 sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
 

@@ -84,6 +84,7 @@ source ./bin/getCycleVars.csh
 # nCells
 if ("$ArgMesh" == "$outerMesh") then
   set nCells = $nCellsOuter
+  set meshRatio = $meshRatioOuter
 # not used presently
 #else if ("$ArgMesh" == "$innerMesh") then
 #  set nCells = $nCellsInner

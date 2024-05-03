@@ -105,8 +105,8 @@ class Model(Component):
       if name is not None:
         self._set('nCells'+Typ, self._conf.getOrDie('resources.'+name+'.nCells'))
         nCells = self['nCells'+Typ]
-        self._set('meshRatio', self._conf.getOrDie('resources.'+name+'.meshRatio'))
-        meshRatio = self['meshRatio']
+        self._set('meshRatio'+Typ, self._conf.getOrDie('resources.'+name+'.meshRatio'))
+        meshRatio = self['meshRatio'+Typ]
 
         self.__meshes[Typ] = Mesh(name, nCells, meshRatio)
 

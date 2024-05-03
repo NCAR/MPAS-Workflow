@@ -185,6 +185,7 @@ class Variational(Component):
 
     self._set('MeshList', ['Outer', 'Inner'])
     self._set('nCellsList', [meshes['Outer'].nCells, meshes['Inner'].nCells])
+    self._set('meshRatioList', [meshes['Outer'].meshRatio, meshes['Inner'].meshRatio])
     self._set('StreamsFileList', [model['outerStreamsFile'], model['innerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile'], model['innerNamelistFile']])
     self._set('localStaticFieldsFileList', [model['localStaticFieldsFileOuter'], model['localStaticFieldsFileInner']])
