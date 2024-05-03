@@ -141,7 +141,7 @@ class Observations(Component):
     attr = {
       'seconds': {'def': 900, 'typ': int},
       'nodes': {'def': 1, 'typ': int},
-      'PEPerNode': {'def': 1, 'typ': int},
+      'PEPerNode': {'def': 128, 'typ': int},
       'memory': {'def': '125GB', 'typ': str},
       'queue': {'def': self.Queue},
       'account': {'def': self.Account},
