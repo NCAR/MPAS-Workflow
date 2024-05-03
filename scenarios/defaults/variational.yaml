@@ -187,6 +187,61 @@ variational:
     # memmbers) than is available in default resource requests below, use more nodes and keep
     # the product of (nodes x PEPerNode) constant. If (nodes x PEPerNode) is modifed, new
     # localization or covariance files may be needed.
+    60-3km:
+      # Assuming 120 total inner iterations
+      30km:
+        3denvar:
+          nodes: 4
+          PEPerNode: 64
+          memory: 235GB
+        4denvar:
+          nodes: 28
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 1500
+          secondsPerEnVarMember: 5
+        3dvar:
+          nodes: 4
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 1500
+        ensemble: # i.e., EDASize > 1, multiple background members treated per executable
+          3denvar:
+            nodesPerMember: 4
+            PEPerNode: 128
+            memory: 235GB
+            baseSeconds: 1200
+            secondsPerEnVarMember: 10
+      60km:
+        3denvar:
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 800
+          secondsPerEnVarMember: 9
+        4denvar:
+          nodes: 14
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 800
+          secondsPerEnVarMember: 24
+        3dhybrid:
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 500
+          secondsPerEnVarMember: 9
+        3dhybrid-allsky:
+          nodes: 4
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 800
+          secondsPerEnVarMember: 9
+        3dvar:
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 500
     30km:
       # Assuming 120 total inner iterations
       30km:

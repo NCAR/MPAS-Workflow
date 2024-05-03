@@ -146,7 +146,7 @@ foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
 
-if (${Microphysics} == 'mp_thompson' ) then
+if (${MicrophysicsOuter} == 'mp_thompson' ) then
   ln -svf $MPThompsonTablesDir/* .
 endif
 
@@ -182,22 +182,22 @@ foreach NamelistFile_ ($NamelistFileList)
   sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
   sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${NamelistFile_}
   sed -i 's@blockDecompPrefix@'${WorkDir}'/x'$meshRatioList[$iMesh]'.'$nCellsList[$iMesh]'@' ${NamelistFile_}
-  sed -i 's@modelDT@'${TimeStep}'@' ${NamelistFile_}
-  sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' ${NamelistFile_}
+  sed -i 's@modelDT@'$TimeStepList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@diffusionLengthScale@'$DiffusionLengthScaleList[$iMesh]'@' ${NamelistFile_}
 
   ## modify namelist physics
-  sed -i 's@radtlwInterval@'${RadiationLWInterval}'@' $NamelistFile_
-  sed -i 's@radtswInterval@'${RadiationSWInterval}'@' $NamelistFile_
-  sed -i 's@physicsSuite@'${PhysicsSuite}'@' $NamelistFile_
-  sed -i 's@micropScheme@'${Microphysics}'@' $NamelistFile_
-  sed -i 's@convectionScheme@'${Convection}'@' $NamelistFile_
-  sed -i 's@pblScheme@'${PBL}'@' $NamelistFile_
-  sed -i 's@gwdoScheme@'${Gwdo}'@' $NamelistFile_
-  sed -i 's@radtCldScheme@'${RadiationCloud}'@' $NamelistFile_
-  sed -i 's@radtLWScheme@'${RadiationLW}'@' $NamelistFile_
-  sed -i 's@radtSWScheme@'${RadiationSW}'@' $NamelistFile_
-  sed -i 's@sfcLayerScheme@'${SfcLayer}'@' $NamelistFile_
-  sed -i 's@lsmScheme@'${LSM}'@' $NamelistFile_
+  sed -i 's@radtlwInterval@'$RadiationLWIntervalList[$iMesh]'@' $NamelistFile_
+  sed -i 's@radtswInterval@'$RadiationSWIntervalList[$iMesh]'@' $NamelistFile_
+  sed -i 's@physicsSuite@'$PhysicsSuiteList[$iMesh]'@' $NamelistFile_
+  sed -i 's@micropScheme@'$MicrophysicsList[$iMesh]'@' $NamelistFile_
+  sed -i 's@convectionScheme@'$ConvectionList[$iMesh]'@' $NamelistFile_
+  sed -i 's@pblScheme@'$PBLList[$iMesh]'@' $NamelistFile_
+  sed -i 's@gwdoScheme@'$GwdoList[$iMesh]'@' $NamelistFile_
+  sed -i 's@radtCldScheme@'$RadiationCloudList[$iMesh]'@' $NamelistFile_
+  sed -i 's@radtLWScheme@'$RadiationLWList[$iMesh]'@' $NamelistFile_
+  sed -i 's@radtSWScheme@'$RadiationSWList[$iMesh]'@' $NamelistFile_
+  sed -i 's@sfcLayerScheme@'$SfcLayerList[$iMesh]'@' $NamelistFile_
+  sed -i 's@lsmScheme@'$LSMList[$iMesh]'@' $NamelistFile_
 end
 
 ## MPASJEDI variable configs

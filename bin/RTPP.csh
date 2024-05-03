@@ -134,22 +134,22 @@ rm $NamelistFile
 cp -v $ModelConfigDir/rtpp/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x'${meshRatioEnsemble}'.'${nCellsEnsemble}'@' ${NamelistFile}
-sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
-sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
+sed -i 's@modelDT@'${TimeStepEnsemble}'@' $NamelistFile
+sed -i 's@diffusionLengthScale@'${DiffusionLengthScaleEnsemble}'@' $NamelistFile
 
 ## modify namelist physics
-sed -i 's@radtlwInterval@'${RadiationLWInterval}'@' $NamelistFile
-sed -i 's@radtswInterval@'${RadiationSWInterval}'@' $NamelistFile
-sed -i 's@physicsSuite@'${PhysicsSuite}'@' $NamelistFile
-sed -i 's@micropScheme@'${Microphysics}'@' $NamelistFile
-sed -i 's@convectionScheme@'${Convection}'@' $NamelistFile
-sed -i 's@pblScheme@'${PBL}'@' $NamelistFile
-sed -i 's@gwdoScheme@'${Gwdo}'@' $NamelistFile
-sed -i 's@radtCldScheme@'${RadiationCloud}'@' $NamelistFile
-sed -i 's@radtLWScheme@'${RadiationLW}'@' $NamelistFile
-sed -i 's@radtSWScheme@'${RadiationSW}'@' $NamelistFile
-sed -i 's@sfcLayerScheme@'${SfcLayer}'@' $NamelistFile
-sed -i 's@lsmScheme@'${LSM}'@' $NamelistFile
+sed -i 's@radtlwInterval@'${RadiationLWIntervalEnsemble}'@' $NamelistFile
+sed -i 's@radtswInterval@'${RadiationSWIntervalEnsemble}'@' $NamelistFile
+sed -i 's@physicsSuite@'${PhysicsSuiteEnsemble}'@' $NamelistFile
+sed -i 's@micropScheme@'${MicrophysicsEnsemble}'@' $NamelistFile
+sed -i 's@convectionScheme@'${ConvectionEnsemble}'@' $NamelistFile
+sed -i 's@pblScheme@'${PBLEnsemble}'@' $NamelistFile
+sed -i 's@gwdoScheme@'${GwdoEnsemble}'@' $NamelistFile
+sed -i 's@radtCldScheme@'${RadiationCloudEnsemble}'@' $NamelistFile
+sed -i 's@radtLWScheme@'${RadiationLWEnsemble}'@' $NamelistFile
+sed -i 's@radtSWScheme@'${RadiationSWEnsemble}'@' $NamelistFile
+sed -i 's@sfcLayerScheme@'${SfcLayerEnsemble}'@' $NamelistFile
+sed -i 's@lsmScheme@'${LSMEnsemble}'@' $NamelistFile
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)
