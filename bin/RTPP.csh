@@ -86,12 +86,16 @@ cp ${firstANFile} ${meanDir}
 # Model-specific files
 # ====================
 ## link MPAS mesh graph info
-ln -sfv $GraphInfoDir/x1.${nCellsEnsemble}.graph.info* .
+ln -sfv $GraphInfoDir/x${meshRatioEnsemble}.${nCellsEnsemble}.graph.info* .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
+
+if (${MicrophysicsOuter} == 'mp_thompson' ) then
+  ln -svf $MPThompsonTablesDir/* .
+endif
 
 ## link/copy stream_list/streams configs
 foreach staticfile ( \
@@ -129,9 +133,23 @@ sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile}
 rm $NamelistFile
 cp -v $ModelConfigDir/rtpp/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
-sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${nCellsEnsemble}'@' ${NamelistFile}
-sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
-sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
+sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x'${meshRatioEnsemble}'.'${nCellsEnsemble}'@' ${NamelistFile}
+sed -i 's@modelDT@'${TimeStepEnsemble}'@' $NamelistFile
+sed -i 's@diffusionLengthScale@'${DiffusionLengthScaleEnsemble}'@' $NamelistFile
+
+## modify namelist physics
+sed -i 's@radtlwInterval@'${RadiationLWIntervalEnsemble}'@' $NamelistFile
+sed -i 's@radtswInterval@'${RadiationSWIntervalEnsemble}'@' $NamelistFile
+sed -i 's@physicsSuite@'${PhysicsSuiteEnsemble}'@' $NamelistFile
+sed -i 's@micropScheme@'${MicrophysicsEnsemble}'@' $NamelistFile
+sed -i 's@convectionScheme@'${ConvectionEnsemble}'@' $NamelistFile
+sed -i 's@pblScheme@'${PBLEnsemble}'@' $NamelistFile
+sed -i 's@gwdoScheme@'${GwdoEnsemble}'@' $NamelistFile
+sed -i 's@radtCldScheme@'${RadiationCloudEnsemble}'@' $NamelistFile
+sed -i 's@radtLWScheme@'${RadiationLWEnsemble}'@' $NamelistFile
+sed -i 's@radtSWScheme@'${RadiationSWEnsemble}'@' $NamelistFile
+sed -i 's@sfcLayerScheme@'${SfcLayerEnsemble}'@' $NamelistFile
+sed -i 's@lsmScheme@'${LSMEnsemble}'@' $NamelistFile
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)

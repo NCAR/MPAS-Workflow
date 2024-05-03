@@ -100,6 +100,10 @@ class EnKF(Component):
     ## concatenateObsFeedback
     # whether to concatenate the geovals and ydiag feedback files
     'concatenateObsFeedback': [False, bool],
+
+    ## IR/VIS land surface coefficients classification
+    # OPTIONS: USGS, IGBP, NPOESS
+    'IRVISlandCoeff': ['USGS', str],
   }
 
   def __init__(self,
@@ -130,9 +134,25 @@ class EnKF(Component):
 
     self._set('MeshList', ['EnKF'])
     self._set('nCellsList', [meshes['Outer'].nCells])
+    self._set('meshRatioList', [meshes['Outer'].meshRatio])
     self._set('StreamsFileList', [model['outerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile']])
     self._set('localStaticFieldsFileList', [model['localStaticFieldsFileOuter']])
+
+    self._set('TimeStepList', [model['TimeStepOuter'], model['TimeStepInner']])
+    self._set('DiffusionLengthScaleList', [model['DiffusionLengthScaleOuter'], model['DiffusionLengthScaleInner']])
+    self._set('RadiationLWIntervalList', [model['RadiationLWIntervalOuter'], model['RadiationLWIntervalInner']])
+    self._set('RadiationSWIntervalList', [model['RadiationSWIntervalOuter'], model['RadiationSWIntervalInner']])
+    self._set('PhysicsSuiteList', [model['PhysicsSuiteOuter'], model['PhysicsSuiteInner']])
+    self._set('MicrophysicsList', [model['MicrophysicsOuter'], model['MicrophysicsInner']])
+    self._set('ConvectionList', [model['ConvectionOuter'], model['ConvectionInner']])
+    self._set('PBLList', [model['PBLOuter'], model['PBLInner']])
+    self._set('GwdoList', [model['GwdoOuter'], model['GwdoInner']])
+    self._set('RadiationCloudList', [model['RadiationCloudOuter'], model['RadiationCloudInner']])
+    self._set('RadiationLWList', [model['RadiationLWOuter'], model['RadiationLWInner']])
+    self._set('RadiationSWList', [model['RadiationSWOuter'], model['RadiationSWInner']])
+    self._set('SfcLayerList', [model['SfcLayerOuter'], model['SfcLayerInner']])
+    self._set('LSMList', [model['LSMOuter'], model['LSMInner']])
 
     # ensemble forecasts
     # EnKF uses online ensemble updating

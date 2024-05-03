@@ -1,0 +1,41 @@
+suite: ForecastFromExternalAnalyses
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+
+experiment:
+  name: 'ForecastFromGFSAnalyses'
+  prefix: ''
+
+
+extendedforecast:
+  meanTimes: T00,T12
+  lengthHR: 24
+  outIntervalHR: 12
+  #execute: False # uncomment if forecasts are already completed
+
+  # optionally turn on extended forecast post
+  post: [verifyobs, verifymodel]
+
+hofx:
+  concatenateObsFeedback: True
+  IRVISlandCoeff: IGBP
+
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+
+members:
+  n: 1
+
+model:
+  outerMesh: 60-3km
+  GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/all_graph
+
+observations: # for optional verification
+  resource: PANDACArchive
+
+workflow:
+  first cycle point: 20180415T00
+  final cycle point: 20180415T12
+  #max active cycle points: 4

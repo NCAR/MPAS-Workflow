@@ -23,6 +23,7 @@ source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/enkf.csh
 source config/auto/workflow.csh
+source config/auto/model.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -51,6 +52,10 @@ cd ${runDir}
 foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
+
+if (${MicrophysicsOuter} == 'mp_thompson' ) then
+  ln -svf $MPThompsonTablesDir/* .
+endif
 
 ## link stream_list.atmosphere.* files
 ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./

@@ -1,21 +1,90 @@
 model:
   resources:
     #{{mesh}}:
+    #  meshRatio: 1 for uniform meshes
     #  nCells: float
     #    number of horizontal cells for each valid mesh descriptor
     #    serves as a convenience for file naming when distinguishing between
     #    multiple meshes, but does not affect any calculations
     #  TimeStep: float # only used for {{outerMesh}}
     #  DiffusionLengthScale: float # only used for {{outerMesh}}
+    #  RadiationLWInterval: hh:mm:ss
+    #  RadiationSWInterval: hh:mm:ss
+    #  PhysicsSuite: str
+    #  Microphysics: str
+    #  Convection: str
+    #  PBL: str
+    #  Gwdo: str inside quotation marks
+    #  RadiationCloud: str
+    #  RadiationLW: str
+    #  RadiationSW: str
+    #  SfcLayer: str
+    #  LSM: str
+    60-3km:
+      meshRatio: 20
+      nCells: 835586
+      TimeStep: 20.0
+      DiffusionLengthScale: 3000.0
+      RadiationLWInterval: 00:03:00
+      RadiationSWInterval: 00:03:00
+      PhysicsSuite: convection_permitting
+      Microphysics: mp_thompson
+      Convection: cu_grell_freitas
+      PBL: bl_mynn
+      Gwdo: 'off'
+      RadiationCloud: cld_fraction_thompson
+      RadiationLW: rrtmg_lw
+      RadiationSW: rrtmg_sw
+      SfcLayer: sf_mynn
+      LSM: noah
     30km:
+      meshRatio: 1
       nCells: 655362
       TimeStep: 180.0
       DiffusionLengthScale: 30000.0
+      RadiationLWInterval: 00:30:00
+      RadiationSWInterval: 00:30:00
+      PhysicsSuite: mesoscale_reference
+      Microphysics: mp_wsm6
+      Convection: cu_ntiedtke
+      PBL: bl_ysu
+      Gwdo: bl_ysu_gwdo
+      RadiationCloud: cld_fraction
+      RadiationLW: rrtmg_lw
+      RadiationSW: rrtmg_sw
+      SfcLayer: sf_monin_obukhov
+      LSM: noah
     60km:
+      meshRatio: 1
       nCells: 163842
       TimeStep: 360.0
       DiffusionLengthScale: 60000.0
+      RadiationLWInterval: 00:30:00
+      RadiationSWInterval: 00:30:00
+      PhysicsSuite: mesoscale_reference
+      Microphysics: mp_wsm6
+      Convection: cu_ntiedtke
+      PBL: bl_ysu
+      Gwdo: bl_ysu_gwdo
+      RadiationCloud: cld_fraction
+      RadiationLW: rrtmg_lw
+      RadiationSW: rrtmg_sw
+      SfcLayer: sf_monin_obukhov
+      LSM: noah
     120km:
+      meshRatio: 1
       nCells: 40962
       TimeStep: 720.0
       DiffusionLengthScale: 120000.0
+      RadiationLWInterval: 00:30:00
+      RadiationSWInterval: 00:30:00
+      PhysicsSuite: mesoscale_reference
+      Microphysics: mp_wsm6
+      Convection: cu_ntiedtke
+      PBL: bl_ysu
+      Gwdo: bl_ysu_gwdo
+      RadiationCloud: cld_fraction
+      RadiationLW: rrtmg_lw
+      RadiationSW: rrtmg_sw
+      SfcLayer: sf_monin_obukhov
+      LSM: noah

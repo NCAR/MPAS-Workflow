@@ -135,16 +135,20 @@ set halfprevISO8601Date = ${yy}-${mm}-${dd}T${hh}:${HALF_mi}:00Z
 # ====================
 # Model-specific files
 # ====================
-
-## link MPAS mesh graph info
+set iRatio = 0
 foreach nCells ($nCellsList)
-  ln -sfv $GraphInfoDir/x1.${nCells}.graph.info* .
+  @ iRatio++
+  ln -sfv $GraphInfoDir/x$meshRatioList[$iRatio].${nCells}.graph.info* .
 end
 
 ## link MPAS-Atmosphere lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
   ln -sfv ${MPASLookupDir}/*${fileGlob} .
 end
+
+if (${MicrophysicsOuter} == 'mp_thompson' ) then
+  ln -svf $MPThompsonTablesDir/* .
+endif
 
 ## link stream_list configs
 foreach staticfile ( \
@@ -177,9 +181,23 @@ foreach NamelistFile_ ($NamelistFileList)
   cp -v $ModelConfigDir/$ArgAppType/${NamelistFile} ./${NamelistFile_}
   sed -i 's@startTime@'${thisMPASNamelistDate}'@' ${NamelistFile_}
   sed -i 's@nCells@'$nCellsList[$iMesh]'@' ${NamelistFile_}
-  sed -i 's@blockDecompPrefix@'${WorkDir}'/x1.'$nCellsList[$iMesh]'@' ${NamelistFile_}
-  sed -i 's@modelDT@'${TimeStep}'@' ${NamelistFile_}
-  sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' ${NamelistFile_}
+  sed -i 's@blockDecompPrefix@'${WorkDir}'/x'$meshRatioList[$iMesh]'.'$nCellsList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@modelDT@'$TimeStepList[$iMesh]'@' ${NamelistFile_}
+  sed -i 's@diffusionLengthScale@'$DiffusionLengthScaleList[$iMesh]'@' ${NamelistFile_}
+
+  ## modify namelist physics
+  sed -i 's@radtlwInterval@'$RadiationLWIntervalList[$iMesh]'@' $NamelistFile_
+  sed -i 's@radtswInterval@'$RadiationSWIntervalList[$iMesh]'@' $NamelistFile_
+  sed -i 's@physicsSuite@'$PhysicsSuiteList[$iMesh]'@' $NamelistFile_
+  sed -i 's@micropScheme@'$MicrophysicsList[$iMesh]'@' $NamelistFile_
+  sed -i 's@convectionScheme@'$ConvectionList[$iMesh]'@' $NamelistFile_
+  sed -i 's@pblScheme@'$PBLList[$iMesh]'@' $NamelistFile_
+  sed -i 's@gwdoScheme@'$GwdoList[$iMesh]'@' $NamelistFile_
+  sed -i 's@radtCldScheme@'$RadiationCloudList[$iMesh]'@' $NamelistFile_
+  sed -i 's@radtLWScheme@'$RadiationLWList[$iMesh]'@' $NamelistFile_
+  sed -i 's@radtSWScheme@'$RadiationSWList[$iMesh]'@' $NamelistFile_
+  sed -i 's@sfcLayerScheme@'$SfcLayerList[$iMesh]'@' $NamelistFile_
+  sed -i 's@lsmScheme@'$LSMList[$iMesh]'@' $NamelistFile_
 end
 
 ## MPASJEDI variable configs
@@ -466,6 +484,9 @@ sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
 ## obs-related file naming
 # crtm tables
 sed -i 's@{{CRTMTABLES}}@'${CRTMTABLES}'@g' $thisYAML
+
+# IR/VIS land surface coefficients
+sed -i 's@{{IRVISlandCoeff}}@'${IRVISlandCoeff}'@g' $thisYAML
 
 # input and output IODA DB directories
 sed -i 's@{{InDBDir}}@'${WorkDir}'/'${InDBDir}'@g' $thisYAML

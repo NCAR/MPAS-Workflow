@@ -91,10 +91,12 @@ endif
 ## link ungribbed files
 ln -sfv ${ExternalAnalysesDir}/${externalanalyses__UngribPrefix}* ./
 
+set meshRatio = $meshRatioOuter
+
 ## link MPAS mesh graph info and static field
-rm ./x1.${ArgNCells}.graph.info*
-ln -sfv $GraphInfoDir/x1.${ArgNCells}.graph.info* .
-ln -sfv $GraphInfoDir/x1.${ArgNCells}.static.nc .
+rm ./x${meshRatio}.${ArgNCells}.graph.info*
+ln -sfv $GraphInfoDir/x${meshRatio}.${ArgNCells}.graph.info* .
+ln -sfv $GraphInfoDir/x${meshRatio}.${ArgNCells}.static.nc .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -107,12 +109,14 @@ rm ${StreamsFileInit}
 cp -v $ModelConfigDir/initic/${StreamsFileInit} .
 sed -i 's@{{nCells}}@'${ArgNCells}'@' ${StreamsFileInit}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFileInit}
+sed -i 's@{{meshRatio}}@'${meshRatio}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}
 cp -v $ModelConfigDir/initic/${NamelistFileInit} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@nCells@'${ArgNCells}'@' $NamelistFileInit
+sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFileInit
 sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileInit
 
 # Run the executable
