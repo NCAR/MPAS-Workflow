@@ -81,6 +81,20 @@ set StateDir = ${ExperimentDirectory}/${ArgStateDir}/${prevValidDate}
 
 set nCells = $nCellsOuter
 set meshRatio = $meshRatioOuter
+set TimeStep = $TimeStepOuter
+set DiffusionLengthScale = $DiffusionLengthScaleOuter
+set RadiationLWInterval = $RadiationLWIntervalOuter
+set RadiationSWInterval = $RadiationSWIntervalOuter
+set PhysicsSuite = $PhysicsSuiteOuter
+set Microphysics = $MicrophysicsOuter
+set Convection = $ConvectionOuter
+set PBL = $PBLOuter
+set Gwdo = $GwdoOuter
+set RadiationCloud = $RadiationCloudOuter
+set RadiationLW = $RadiationLWOuter
+set RadiationSW = $RadiationSWOuter
+set SfcLayer = $SfcLayerOuter
+set LSM = $LSMOuter
 
 # ====================================
 # Input/Output model state preparation
