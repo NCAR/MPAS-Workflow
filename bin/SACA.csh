@@ -232,9 +232,6 @@ module load nco
 ncrename -v BCM_G16,cldmask  ${InDBDir}/${sacaObsFile}
 ncrename -v BT_G16C13,brtemp ${InDBDir}/${sacaObsFile}
 
-# Link reference files
-ln -svf ${ConfigDir}/jedi/refFiles/${AppName}.* .
-
 # =============
 # Generate yaml
 # =============
@@ -291,10 +288,14 @@ set VarSub = `echo "$VarSub" | sed 's/.$//'`
 # optional for diag and diag_cldfra
 if (${runSacaDiag} == True) then
   set VarSub = $VarSub",uReconstructZonal,uReconstructMeridional"
+  echo "uReconstructZonal"      >> stream_list.${MPASCore}.${AppName}_background
+  echo "uReconstructMeridional" >> stream_list.${MPASCore}.${AppName}_background
+  echo "uReconstructZonal"      >> stream_list.${MPASCore}.${AppName}_analysis
+  echo "uReconstructMeridional" >> stream_list.${MPASCore}.${AppName}_analysis
 endif
 
 # added variables to saca_obs
-set addedVars = `cat stream_list.atmosphere.${AppName}_obs`
+set addedVars = `cat stream_list.${MPASCore}.${AppName}_obs`
 set addedVarSub = ""
 foreach var ($addedVars)
   set addedVarSub = "$addedVarSub$var,"
