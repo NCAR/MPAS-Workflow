@@ -340,11 +340,8 @@ controlling indentation of some `yaml` components
 `substituteEnsembleBTemplate`: generates and substitutes the ensemble background error
 covariance `members from template` configuration into application yamls that match `*envar*`
 and `*hybrid*`. See `PrepJEDI.csh` for the specific behavior.
-<<<<<<< HEAD
-=======
 
 `update_sensorScanPosition`: convert float point sensorScanPosition to integer.  This code piece utilizes the second File (in its entirety called "fix_float2int.py") that contains the method using h5py module to open/read/alter the netcdf file.
->>>>>>> 7c02ee3 (Refactor Clean and Init tasks, move linking jobs to run in the background (#303))
 
 `updateXTIME`: updates the `xtime` variable in an `MPAS-Atmosphere` state file so that it can be read
 into the model as though it had the correct time stamp

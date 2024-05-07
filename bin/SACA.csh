@@ -197,10 +197,10 @@ echo "  - xland"   >> keptvars.yaml
 echo "  - cldmask" >> keptvars.yaml
 echo "  - brtemp"  >> keptvars.yaml
 
-echo ""                               >> geovars.yaml
-echo "  - field name: ni"             >> geovars.yaml
-echo "    mpas template field: theta" >> geovars.yaml
-echo "    mpas identity field: ni"    >> geovars.yaml
+#echo ""                               >> geovars.yaml
+#echo "  - field name: ni"             >> geovars.yaml
+#echo "    mpas template field: theta" >> geovars.yaml
+#echo "    mpas identity field: ni"    >> geovars.yaml
 
 # ======================
 # Link observations data
@@ -302,6 +302,7 @@ foreach var ($addedVars)
 end
 # remove trailing comma
 set addedVarSub = `echo "$addedVarSub" | sed 's/.$//'`
+set addedVarSub = $addedVarSub",temperature,qv,surface_pressure"
 
 sed -i 's@{{SACAStateVariables}}@'$VarSub'@' $thisYAML
 sed -i 's@{{addedVars}}@'${addedVarSub}'@g' $thisYAML

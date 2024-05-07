@@ -52,10 +52,10 @@ set SACAStateVariables = ( \
   qc \
   qi \
   qs \
-  ni \
   cldfrac \
   xland \
   pressure \
   pressure_p \
   surface_pressure \
 )
+#ni \

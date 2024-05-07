@@ -1,7 +1,10 @@
 suite: CloudDirectInsertion
 
 experiment:
-  name: 'CloudDirectInsertion_TEST'
+  name: 'CloudDirectInsertion_TEST_2.1_with_latest_changes'
+
+build:
+  mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle.modif2_bugfix/build_single
 
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -11,12 +14,12 @@ firstbackground:
 
 saca:
   meanTimes: T00
-  #runSaca: False #this does not run saca but copies the 6hr fcst for exp starting from 6hr
+  #runSaca: False #this does not run saca but copies the 6hr fcst (the specified prevBgHR) for exp starting from 6hr
   #execute: False
 
 extendedforecast:
   meanTimes: T00
-  lengthHR: 1
+  lengthHR: 6
   outIntervalHR: 1
   DACycling: True
   updateSea: True

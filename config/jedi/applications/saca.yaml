@@ -2,12 +2,12 @@ state geometry: &geom
   nml_file: {{SACANamelistFile}}
   streams_file: {{SACAStreamsFile}}
   deallocate non-da fields: true
-  l_build_madwrf: {{buildMADWRF}}
-  l_build_gsdcloud: {{buildGSDCloud}}
-  l_saturate_qv: {{saturateQv}}
-  l_conserve_thetaV: {{conserveThetaV}}
-  cldfra_def: {{cldfraDef}}
-  cld_bld_hgt: {{cldBluidHeigt}}
+  #l_build_madwrf: {{buildMADWRF}}
+  #l_build_gsdcloud: {{buildGSDCloud}}
+  #l_saturate_qv: {{saturateQv}}
+  #l_conserve_thetaV: {{conserveThetaV}}
+  #cldfra_def: {{cldfraDef}}
+  #cld_bld_hgt: {{cldBluidHeigt}}
 
 increment geometry: *geom
 
