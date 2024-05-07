@@ -153,10 +153,10 @@ if ( ${Microphysics} == 'mp_thompson' ) then
   ln -svf $MPThompsonTablesDir/* .
 endif
 
-## link stream_list/streams configs
-ln -sfv $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_background .
-ln -sfv $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_obs .
-ln -sfv $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_analysis .
+## copy stream_list/streams configs
+cp -v $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_background .
+cp -v $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_obs .
+cp -v $ModelConfigDir/${AppName}/stream_list.${MPASCore}.${AppName}_analysis .
 
 rm ${StreamsFile}
 cp -v $ModelConfigDir/${AppName}/${StreamsFile} .
