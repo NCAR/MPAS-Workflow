@@ -4,19 +4,26 @@ externalanalyses:
   resource: "GFS.PANDAC"
 
 experiment:
-  name: 'ForecastFromGFSAnalyses'
+  name: 'ForecastFromGFSAnalyses_MPAS_v8.1_NTiedtke_convection-permitting'
   prefix: ''
 
+build:
+  mpas bundle: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model
+  #forecast directory: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model
 
 extendedforecast:
-  meanTimes: T00,T12
-  lengthHR: 24
-  outIntervalHR: 12
+  meanTimes: T00
+  lengthHR: 18
+  outIntervalHR: 6
   #execute: False # uncomment if forecasts are already completed
 
   # optionally turn on extended forecast post
-  post: [verifyobs, verifymodel]
+  post: [verifymodel]
 
+forecast:
+  job:
+    60-3km:
+      secondsPerForecastHR: 500
 hofx:
   concatenateObsFeedback: True
   IRVISlandCoeff: IGBP

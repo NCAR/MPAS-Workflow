@@ -1,7 +1,7 @@
 suite: CloudDirectInsertion
 
 experiment:
-  name: 'CloudDirectInsertion_TEST'
+  name: 'CloudDirectInsertion_TEST_dev'
 
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -16,7 +16,7 @@ saca:
 
 extendedforecast:
   meanTimes: T00
-  lengthHR: 1
+  lengthHR: 6
   outIntervalHR: 1
   DACycling: True
   updateSea: True
@@ -46,6 +46,18 @@ model:
   innerMesh: 60km
   ensembleMesh:  60km
   GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/all_graph
+  RadiationLWInterval: 00:30:00
+  RadiationSWInterval: 00:30:00
+  PhysicsSuite: mesoscale_reference
+  Microphysics: mp_thompson
+  Convection: cu_ntiedtke
+  PBL: bl_ysu
+  Gwdo: 'off'
+  RadiationCloud: cld_fraction_thompson
+  RadiationLW: rrtmg_lw
+  RadiationSW: rrtmg_sw
+  SfcLayer: sf_monin_obukhov
+  LSM: noah
 
 observations:
   resource: SacaObs

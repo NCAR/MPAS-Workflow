@@ -201,6 +201,7 @@ stream_list.${MPASCore}.diagnostics \
   if( -e $staticfile ) rm ./$staticfile
   ln -sfv $ModelConfigDir/forecast/$staticfile .
 end
+ln -svf /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model/stream_list.atmosphere.output .
 
 ## copy/modify dynamic streams file
 if( -e ${StreamsFile}) rm ${StreamsFile}

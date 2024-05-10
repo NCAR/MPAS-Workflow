@@ -1,10 +1,25 @@
 <streams>
+<immutable_stream name="static"
+                  type="input"
+                  precision="{{PRECISION}}"
+                  filename_template="{{StaticFieldsPrefix}}.{{nCells}}.nc"
+                  io_type="pnetcdf,cdf5"
+                  input_interval="initial_only" />
+
 <immutable_stream name="input"
                   type="input"
                   precision="{{PRECISION}}"
                   filename_template="{{ICFilePrefix}}.$Y-$M-$D_$h.$m.$s.nc"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
+
+<immutable_stream name="da_state"
+                  type="output"
+                  precision="{{PRECISION}}"
+                  clobber_mode="truncate"
+                  filename_template="{{FCFilePrefix}}.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
+                  output_interval="{{outputInterval}}" />
 
 <immutable_stream name="iau"
                   type="input"
@@ -14,13 +29,11 @@
                   packages="iau"
                   io_type="netcdf4"
                   input_interval="initial_only" />
-<stream name="output"
-        type="output"
-        filename_template="{{FCFilePrefix}}.$Y-$M-$D_$h.$m.$s.nc"
-        io_type="pnetcdf,cdf5"
-        output_interval="{{outputInterval}}" >
 
-        <file name="stream_list.atmosphere.output"/>
+<stream name="output"
+        type="none"
+        filename_template="history.$Y-$M-$D_$h.$m.$s.nc"
+        output_interval="none" >
 </stream>
 
 <stream name="diagnostics"

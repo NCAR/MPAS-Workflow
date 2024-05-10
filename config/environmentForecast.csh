@@ -32,16 +32,26 @@ else
       source /etc/profile.d/z00_modules.csh
       module purge
 
-      module load intel-oneapi/2023.0.0
-      module load cray-mpich/8.1.25
-      module load parallel-netcdf/1.12.3
-      module load parallelio/2.5.10
-      module load ncl/6.6.2
-      module load hdf5/1.12.2
-      module load netcdf/4.9.2
+      #module load intel-oneapi/2023.0.0
+      #module load cray-mpich/8.1.25
+      #module load parallel-netcdf/1.12.3
+      #module load parallelio/2.5.10
+      #module load ncl/6.6.2
+      #module load hdf5/1.12.2
+      #module load netcdf/4.9.2
+      #module load ncarcompilers/1.0.0
+      #module load nco/5.1.4
+
+      module load ncarenv/23.09
+      module load craype/2.7.23
+      module load gcc/13.2.0
       module load ncarcompilers/1.0.0
-      module load nco/5.1.4
+      module load cray-mpich/8.1.27
+      module load parallel-netcdf/1.12.3
+      module load netcdf/4.9.2
+
       setenv mpiCommand mpiexec
+
     else
       echo "unknown NCAR_HOST: $NCAR_HOST"
     endif

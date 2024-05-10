@@ -37,7 +37,8 @@ class VerifyModel(Component):
     hname = os.getenv('NCAR_HOST')
     if  hname == "derecho":
       self.variablesWithDefaults['script directory'] = \
-          ['/glade/u/home/taosun/work/Derecho/MPAS/Graphics_Python', str]
+          ['/glade/work/ivette/pandac/graphics/Graphics_Python', str]
+          #['/glade/u/home/taosun/work/Derecho/MPAS/Graphics_Python', str]
 
     super().__init__(config)
 
