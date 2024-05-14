@@ -1,10 +1,11 @@
 suite: CloudDirectInsertion
 
 experiment:
-  name: 'CloudDirectInsertion_TEST_2.1_with_latest_changes'
+  name: 'CloudDirectInsertion_clean2.1'
+  prefix: ''
 
 build:
-  mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle.modif2_bugfix/build_single
+  mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle.modif2_bugfix.traj_fix/build_single
 
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -15,19 +16,19 @@ firstbackground:
 saca:
   meanTimes: T00
   #runSaca: False #this does not run saca but copies the 6hr fcst (the specified prevBgHR) for exp starting from 6hr
-  #execute: False
+  execute: False
 
 extendedforecast:
   meanTimes: T00
-  lengthHR: 6
+  lengthHR: 18
   outIntervalHR: 1
   DACycling: True
   updateSea: True
-  #execute: False # uncomment if forecasts are already completed
-  post: [verifyobs] #verifyobs
+  execute: False # uncomment if forecasts are already completed
+  post: [verifyobs] #verifyobs, verifymodel
 
 forecastsaca:
-  #execute: False
+  execute: False
   post: [] #verifymodel,verifyobs
 
 hofx:
@@ -55,5 +56,5 @@ observations:
 
 workflow:
   first cycle point: 20180415T00
-  final cycle point: 20180415T00
-  #max active cycle points: 4
+  final cycle point: 20180430T00
+  max active cycle points: 16

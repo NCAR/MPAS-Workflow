@@ -4,20 +4,24 @@ externalanalyses:
   resource: "GFS.PANDAC"
 
 experiment:
-  name: 'ForecastFromGFSAnalyses'
+  name: 'ColdStart_clean2.1'
   prefix: ''
 
+build:
+  mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle.modif2_bugfix.traj_fix/build_single
 
 extendedforecast:
-  meanTimes: T00,T12
-  lengthHR: 24
-  outIntervalHR: 12
-  #execute: False # uncomment if forecasts are already completed
-
+  meanTimes: T00
+  lengthHR: 18
+  outIntervalHR: 1
+  execute: False # uncomment if forecasts are already completed
   # optionally turn on extended forecast post
-  post: [verifyobs, verifymodel]
+  post: [verifyobs] #verifyobs, verifymodel
 
 hofx:
+  observers: [
+    abi_g16,
+  ]
   concatenateObsFeedback: True
   IRVISlandCoeff: IGBP
 
@@ -30,12 +34,13 @@ members:
 
 model:
   outerMesh: 60-3km
+  innerMesh: 60km
   GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/all_graph
 
 observations: # for optional verification
-  resource: PANDACArchive
+  resource: SacaObs
 
 workflow:
   first cycle point: 20180415T00
-  final cycle point: 20180415T12
-  #max active cycle points: 4
+  final cycle point: 20180430T00
+  max active cycle points: 16

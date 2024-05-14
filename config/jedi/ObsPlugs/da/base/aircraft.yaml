@@ -5,6 +5,7 @@
       engine:
         type: H5File
         obsfile: {{InDBDir}}/aircraft_obs_{{thisValidDate}}.h5
+      max frame size: 40000
     _obsdataout: &ObsDataOut
       engine:
         type: H5File

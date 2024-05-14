@@ -225,6 +225,11 @@ set $key = "`$getObservationsOrNone ${address}`"
 cd ${WorkDir}
 set obsFile = ${IODADirectory}/${IODAPrefix}_obs.$thisMPASFileDate.nc
 set sacaObsFile = ${IODAPrefix}_obs_${thisValidDate}.nc
+if ( ! -e ${obsFile} ) then
+  echo "$0 (WARNING): skipping ${thisValidDate}, no SACA observation is available for this date"
+  date
+  exit 0
+endif
 cp ${obsFile} ${InDBDir}/${sacaObsFile}
 
 # Rename variables
