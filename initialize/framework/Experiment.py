@@ -87,7 +87,7 @@ class Experiment(Component):
     cylcWorkDir = hpc['top directory']+'/'+user+'/cylc-run'
     self._set('cylcWorkDir', cylcWorkDir)
     cmd = ['mkdir', '-p', cylcWorkDir]
-    self._msg(' '.join(cmd))
+    self._msg(' '.join(cmd), level=self.MSG_DEBUG)
     sub = subprocess.run(cmd)
 
     ## absolute experiment directory
@@ -98,23 +98,23 @@ class Experiment(Component):
     self._set('ModelConfigDir', self['mainScriptDir']+'/config/mpas')
     self._set('title', self.PackageBaseName+'--'+self['SuiteName'])
 
-    self._msg('')
+    self._msg('', level=self.MSG_DEBUG)
     self._msg('======================================================================')
     self._msg('Setting up a new suite')
     self._msg('  SuiteName: '+self['SuiteName'])
     self._msg('  mainScriptDir: '+self['mainScriptDir'])
     self._msg('  ExperimentDirectory: '+self['ExperimentDirectory'])
     self._msg('======================================================================')
-    self._msg('')
+    self._msg('', level=self.MSG_DEBUG)
 
     cmd = ['rm', '-rf', self['mainScriptDir']]
-    self._msg(' '.join(cmd))
+    self._msg(' '.join(cmd), level=self.MSG_DEBUG)
     sub = subprocess.run(cmd)
 
     cmd = ['mkdir', '-p', self['mainScriptDir']]
-    self._msg(' '.join(cmd))
+    self._msg(' '.join(cmd), level=self.MSG_DEBUG)
     sub = subprocess.run(cmd)
 
-    self._msg('')
+    self._msg('', level=self.MSG_DEBUG)
 
     self._cshVars = ['cylcWorkDir', 'SuiteName', 'ExperimentDirectory', 'mainScriptDir', 'ConfigDir', 'ModelConfigDir']

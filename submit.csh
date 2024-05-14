@@ -13,7 +13,14 @@
 
 set workflow_dir="MPAS-Workflow"
 
-echo "$0 (INFO): Generating the scenario-specific ${workflow_dir} directory"
+# set up how much to log
+if (! $?CYLC_DEBUG) then
+   set CYLC_DEBUG=1
+endif
+
+if ( $CYLC_DEBUG > 1) then
+  echo "$0 (INFO): Generating the scenario-specific ${workflow_dir} directory"
+endif
 
 # Create/copy the task shell scripts
 
@@ -21,7 +28,9 @@ echo "$0 (INFO): Generating the scenario-specific ${workflow_dir} directory"
 source config/auto/experiment.csh
 
 ## Change to the cylc suite directory
-echo $0 cd ${mainScriptDir}
+if ( $CYLC_DEBUG > 1) then
+  echo $0 cd ${mainScriptDir}
+endif
 cd ${mainScriptDir}
 
 set NCARHOST=$NCAR_HOST
@@ -31,8 +40,10 @@ if ( "$NCARHOST" == "derecho" ) then
     setenv CYLC_ENV /glade/work/jwittig/conda-envs/my-cylc8.2
   endif
 
-  echo $0 conda activate $CYLC_ENV
-  conda activate $CYLC_ENV
+  if ( $CYLC_DEBUG > 1) then
+    echo $0 conda activate $CYLC_ENV
+  endif
+  conda activate $CYLC_ENV >& /dev/null
   #set cylc_timeout="--comms-timeout=10"
 else if ( "$NCARHOST" == "cheyenne" ) then
   module purge
@@ -57,8 +68,10 @@ if ( "$NCARHOST" == "derecho" ) then
     cylc stop --kill ${workflow_dir}/$SuiteName
     sleep 5
   else
-    echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not already running"
-    echo "$0 (INFO): starting a new suite..."
+    if ( $CYLC_DEBUG > 1) then
+      echo "$0 (INFO): confirmed that a cylc suite named $SuiteName is not already running"
+      echo "$0 (INFO): starting a new suite..."
+    endif
   endif
 else if ( "$NCARHOST" == "cheyenne" ) then
   echo $0 cylc poll $SuiteName 
@@ -74,22 +87,30 @@ else if ( "$NCARHOST" == "cheyenne" ) then
   endif
 endif
 
-echo $0 cylcWorkDir  ${cylcWorkDir}
-echo $0 SuiteName ${SuiteName}
-echo $0 mainScriptDir ${mainScriptDir}
+if ( $CYLC_DEBUG > 1) then
+  echo $0 cylcWorkDir  ${cylcWorkDir}
+  echo $0 SuiteName ${SuiteName}
+  echo $0 mainScriptDir ${mainScriptDir}
+endif
 rm -rf ${cylcWorkDir}/${SuiteName}
 
 if ( "$NCARHOST" == "derecho" ) then
   if ( -e ~/cylc-run/${workflow_dir}/${SuiteName} ) then
-    echo $0 cylc clean ${workflow_dir}/${SuiteName}
-    cylc clean ${workflow_dir}/${SuiteName}
+    if ( $CYLC_DEBUG > 1) then
+      echo $0 cylc clean ${workflow_dir}/${SuiteName}
+    endif
+    cylc clean ${workflow_dir}/${SuiteName} >& /dev/null
   #  echo "Already has this suite, replay it"
   endif
   echo $0 cylc install --run-name=${SuiteName}
-  cylc install --run-name=${SuiteName}
-  echo $0  cylc validate ${workflow_dir}/${SuiteName}
+  cylc install --run-name=${SuiteName} >& /dev/null
+  if ( $CYLC_DEBUG > 1) then
+    echo $0  cylc validate ${workflow_dir}/${SuiteName}
+  endif
   cylc validate ${workflow_dir}/${SuiteName}
-  echo $0 cylc play ${workflow_dir}/${SuiteName}
+  if ( $CYLC_DEBUG > 1) then
+    echo $0 cylc play ${workflow_dir}/${SuiteName}
+  endif
   cylc play ${workflow_dir}/${SuiteName}
 else if ( "$NCARHOST" == "cheyenne" ) then
   echo "$0 (INFO): register, validate, and run the suite:", ${SuiteName}

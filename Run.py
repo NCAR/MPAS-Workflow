@@ -26,6 +26,7 @@ import subprocess
 
 # local modules
 from initialize.config.Config import Config
+from initialize.config.Logger import Logger
 from initialize.config.Scenario import Scenario
 from initialize.suites.SuiteBase import SuiteLookup
 
@@ -91,7 +92,8 @@ class Run():
 
   @staticmethod
   def clean():
-    print('cleaning up auto-generated files...')
+    logger = Logger()
+    logger.log('cleaning up auto-generated files...', level=logger.MSG_DEBUG)
 
     for g in [
       "config/auto/*.csh",

@@ -12,13 +12,15 @@ from copy import deepcopy
 import yaml
 import sys
 import traceback
+from initialize.config.Logger import Logger
 
-class Config():
+class Config(Logger):
   def __init__(self,
       filename: str,
       defaultsFile:str = None,
     ):
 
+   super().__init__()
    with open(filename) as file:
      self._table = yaml.load(file, Loader=yaml.FullLoader)
 
@@ -124,7 +126,7 @@ class Config():
         # do we ever want to use the preempt queue? this could lead to starvation.
         #if queue == 'share':
           #newqueue = 'preempt'
-        print('Config converting queue:', queue, ' to:', newqueue)
+        self.log('Config converting queue:', queue, ' to:', newqueue, level=self.MSG_DEBUG)
         if subtable != None:
           self.__setitem2__(subtable, attrName, newqueue)
         else:
@@ -135,7 +137,7 @@ class Config():
         #print('job_priority:', self['job_priority'], ' ', self.has('hpc.job_priority'))
         if subtable == None and self.has('hpc.job_priority') == False and queue in ['economy', 'premium']:
           self.__setitem__('job_priority', queue)
-          print('Adding job_priority ', queue)
+          self.log('Adding job_priority ', queue, level=self.MSG_DEBUG)
 
         '''
         print('################################################################################')
