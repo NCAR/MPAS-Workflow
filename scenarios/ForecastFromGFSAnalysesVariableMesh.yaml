@@ -30,6 +30,7 @@ members:
 
 model:
   outerMesh: 60-3km
+  innerMesh: 60km
   GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/all_graph
 
 observations: # for optional verification
