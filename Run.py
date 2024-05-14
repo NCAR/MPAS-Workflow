@@ -44,9 +44,9 @@ def main():
   run.execute()
 
 
-class Run():
+class Run(Logger):
   def __init__(self):
-    self.logPrefix = self.__class__.__name__+': '
+    super().__init__()
 
     # Parse command line
     ap = argparse.ArgumentParser()
@@ -77,7 +77,7 @@ class Run():
       print("Running the scenario: "+scenarioFile)
       print("#########################################################################")
 
-      self.clean()
+      self.clean(self)
 
       scenario = Scenario(scenarioFile)
       scenario.initialize()
@@ -88,12 +88,11 @@ class Run():
       suite = SuiteLookup(suiteName, scenario.getConfig())
       suite.submit()
 
-    self.clean()
+    self.clean(self)
 
   @staticmethod
-  def clean():
-    logger = Logger()
-    logger.log('cleaning up auto-generated files...', level=logger.MSG_DEBUG)
+  def clean(self):
+    self.log('cleaning up auto-generated files...', level=self.MSG_DEBUG)
 
     for g in [
       "config/auto/*.csh",
