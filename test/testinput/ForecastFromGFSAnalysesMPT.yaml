@@ -41,7 +41,7 @@ members:
 
 model:
   outerMesh: 30km
-  GraphInfoDir: /glade/work/liuz/pandac/prepare_mpas/mpas_static_30km
+  GraphInfoDir: /glade/campaign/mmm/parc/liuz/pandac_common/mpas_meshes/30km_mesh
 
 observations: # for optional verification
   resource: PANDACArchive
