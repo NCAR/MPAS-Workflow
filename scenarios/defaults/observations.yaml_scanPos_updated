@@ -1,0 +1,535 @@
+observations:
+  resources:
+    # resource options available for selection with observations.resource
+    # the selected resource is parsed in bin/PrepJEDI.csh
+
+    ## IODADirectory (used below)
+    # locations of raw bufr and prepbufr observation data, separated by resource
+    NCEPFTPOnline:
+      PrepareObservationsTasks:
+      - GetObs
+      - ObsToIODA
+      - ObsReady__
+
+      instrumentsAllowingBiasCorrection:
+      - amsua_aqua
+      - amsua_metop-a
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+
+      IODAPrefix:
+        gnssrobndropp1d: gnssro
+        gnssrobndnbam: gnssro
+        gnssrobndmo: gnssro
+        gnssrobndmo-nopseudo: gnssro
+        gnssrorefncep: gnssro
+        gnssrorefncep_tunedErrors: gnssro
+
+      IODADirectory:
+        da:
+          common: "{{ObservationsWorkDir}}"
+
+        hofx:
+          common: "{{ObservationsWorkDir}}"
+
+    GladeRDAOnline:
+      PrepareObservationsTasks:
+      - GetObs
+      - ObsToIODA
+      - ObsReady__
+
+      instrumentsAllowingBiasCorrection:
+      - amsua_aqua
+      - amsua_metop-a
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+
+      IODAPrefix:
+        gnssrobndropp1d: gnssro
+        gnssrobndnbam: gnssro
+        gnssrobndmo: gnssro
+        gnssrobndmo-nopseudo: gnssro
+        gnssrorefncep: gnssro
+        gnssrorefncep_tunedErrors: gnssro
+        amsua-cld_aqua: amsua_aqua
+        amsua-cld_metop-a: amsua_metop-a
+        amsua-cld_metop-b: amsua_metop-b
+        amsua-cld_n15: amsua_n15
+        amsua-cld_n18: amsua_n18
+        amsua-cld_n19: amsua_n19
+
+      IODADirectory:
+        da:
+          common: "{{ObservationsWorkDir}}"
+
+        hofx:
+          common: "{{ObservationsWorkDir}}"
+
+    PANDACArchive:
+      PrepareObservationsTasks: [ObsReady__]
+
+      instrumentsAllowingBiasCorrection: [None]
+
+      IODAPrefix:
+        gnssrobndropp1d: gnssro
+        gnssrobndnbam: gnssro
+        gnssrobndmo: gnssro
+        gnssrobndmo-nopseudo: gnssro
+        gnssrorefncep: gnssro
+        gnssrorefncep_tunedErrors: gnssro
+        amsua-cld_aqua: amsua_aqua
+        amsua-cld_metop-a: amsua_metop-a
+        amsua-cld_metop-b: amsua_metop-b
+        amsua-cld_n15: amsua_n15
+        amsua-cld_n18: amsua_n18
+        amsua-cld_n19: amsua_n19
+        abi-clr_g16: abi_g16
+        ahi-clr_himawari8: ahi_himawari8
+
+      IODADirectory:
+        da:
+          ##anchor
+          aircraft: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndropp1d: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndnbam: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndmo: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrorefncep: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrorefncep_tunedErrors: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          satwind: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          sfc: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          sondes: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+
+          ## amsua
+          amsua_aqua: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua_n15: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_aqua: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_n15: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua-cld_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+
+          ## mhs
+          mhs_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          mhs_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          mhs_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          mhs_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+
+          ## abi
+          abi_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+
+          ## ahi
+          ahi_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+
+          ## iasi
+          iasi_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+          iasi_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+          iasi_metop-c: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+
+        hofx:
+          ## anchor
+          aircraft: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndropp1d: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndnbam: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndmo: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrorefncep: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          gnssrorefncep_tunedErrors: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          satwind: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          sfc: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          sondes: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+
+          ## amsua
+          amsua_aqua: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          amsua_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          amsua_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          amsua_n15: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          amsua_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          amsua_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          amsua-cld_aqua: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          amsua-cld_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          amsua-cld_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          amsua-cld_n15: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          amsua-cld_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          amsua-cld_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+
+          ## mhs
+          mhs_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          mhs_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          mhs_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+          mhs_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/no_bias
+
+          ## abi
+          abi_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+
+          ## ahi
+          ahi_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+
+          ## iasi
+          iasi_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+          iasi_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+          iasi_metop-c: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi/6h
+
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15
+
+    PANDACArchiveForVarBC:
+      PrepareObservationsTasks: [ObsReady__]
+
+      instrumentsAllowingBiasCorrection:
+      - amsua_aqua
+      - amsua_metop-a
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
+      - amsua-cld_aqua
+      - amsua-cld_metop-a
+      - amsua-cld_metop-b
+      - amsua-cld_metop-c
+      - amsua-cld_n15
+      - amsua-cld_n18
+      - amsua-cld_n19
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+      - mhs_metop-a
+      - mhs_metop-b
+      - mhs_n18
+      - mhs_n19
+
+      IODAPrefix:
+        gnssrobndropp1d: gnssro
+        gnssrobndnbam: gnssro
+        gnssrobndmo: gnssro
+        gnssrobndmo-nopseudo: gnssro
+        gnssrorefncep: gnssro
+        gnssrorefncep_tunedErrors: gnssro
+        amsua-cld_aqua: amsua_aqua
+        amsua-cld_metop-a: amsua_metop-a
+        amsua-cld_metop-b: amsua_metop-b
+        amsua-cld_n15: amsua_n15
+        amsua-cld_n18: amsua_n18
+        amsua-cld_n19: amsua_n19
+        abi-clr_g16: abi_g16
+        ahi-clr_himawari8: ahi_himawari8
+
+      IODADirectory:
+        da:
+          ##anchor
+          aircraft: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrobndropp1d: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrobndnbam: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrobndmo: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrorefncep: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrorefncep_tunedErrors: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          satwind: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          satwnd: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          sfc: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          sondes: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+
+          ## amsua
+          amsua_aqua: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_n15: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_aqua: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_n15: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+
+          ## mhs
+          mhs_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
+          mhs_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
+          mhs_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
+          mhs_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
+
+          ## abi
+          abi_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+
+          ## ahi
+          ahi_himawari8: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+
+          ## iasi
+          iasi_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+          iasi_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+          iasi_metop-c: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+
+        hofx:
+          ## anchor
+          aircraft: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrobndropp1d: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrobndnbam: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrobndmo: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrorefncep: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrorefncep_tunedErrors: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          satwind: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          satwnd: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          sfc: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          sondes: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+
+          ## amsua
+          amsua_aqua: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua_n15: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_aqua: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_n15: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+
+          ## mhs
+          mhs_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          mhs_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          mhs_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          mhs_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+
+          ## abi
+          abi_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+
+          ## ahi
+          ahi_himawari8: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+
+          ## iasi
+          iasi_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+          iasi_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+          iasi_metop-c: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15
+
+    PANDACArchiveForVarBC_4d:
+      PrepareObservationsTasks: [ObsReady__]
+
+      instrumentsAllowingBiasCorrection:
+      - amsua_aqua
+      - amsua_metop-a
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
+      - amsua-cld_aqua
+      - amsua-cld_metop-a
+      - amsua-cld_metop-b
+      - amsua-cld_metop-c
+      - amsua-cld_n15
+      - amsua-cld_n18
+      - amsua-cld_n19
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+      - mhs_metop-a
+      - mhs_metop-b
+      - mhs_n18
+      - mhs_n19
+
+      IODAPrefix:
+        gnssrobndropp1d: gnssro
+        gnssrobndnbam: gnssro
+        gnssrobndmo: gnssro
+        gnssrobndmo-nopseudo: gnssro
+        gnssrorefncep: gnssro
+        gnssrorefncep_tunedErrors: gnssro
+        amsua-cld_aqua: amsua_aqua
+        amsua-cld_metop-a: amsua_metop-a
+        amsua-cld_metop-b: amsua_metop-b
+        amsua-cld_n15: amsua_n15
+        amsua-cld_n18: amsua_n18
+        amsua-cld_n19: amsua_n19
+        abi-clr_g16: abi_g16
+        ahi-clr_himawari8: ahi_himawari8
+
+      IODADirectory:
+        da:
+          ##anchor
+          aircraft: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrobndropp1d: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrobndnbam: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrobndmo: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrobndmo-nopseudo: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrorefncep: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrorefncep_tunedErrors: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          satwind: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          satwnd: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          sfc: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          sondes: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+
+          ## amsua
+          amsua_aqua: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua_metop-a: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua_metop-b: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua_n15: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua_n18: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua_n19: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_aqua: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_metop-a: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_metop-b: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_n15: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_n18: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_n19: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+
+          ## mhs
+          mhs_metop-a: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          mhs_metop-b: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          mhs_n18: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          mhs_n19: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+
+          ## abi
+          abi_g16: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPERO15X15_no-bias-correct
+
+          ## ahi
+          ahi_himawari8: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+
+          ## iasi
+          iasi_metop-a: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/iasi_thin145km
+          iasi_metop-b: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/iasi_thin145km
+          iasi_metop-c: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/iasi_thin145km
+
+        hofx:
+          ## anchor
+          aircraft: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrobndropp1d: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrobndnbam: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrobndmo: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrobndmo-nopseudo: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrorefncep: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          gnssrorefncep_tunedErrors: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          satwind: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          satwnd: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          sfc: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          sondes: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+
+          ## amsua
+          amsua_aqua: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua_metop-a: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua_metop-b: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua_n15: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua_n18: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua_n19: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_aqua: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_metop-a: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_metop-b: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_n15: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_n18: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          amsua-cld_n19: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+
+          ## mhs
+          mhs_metop-a: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          mhs_metop-b: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          mhs_n18: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+          mhs_n19: /glade/scratch/jban/pandac/obsiodav3_intScanP_20230812/2018/raw_obs
+
+          ## abi
+          abi_g16: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
+          abi-clr_g16: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPERO15X15_const-bias-correct
+
+          ## ahi
+          ahi_himawari8: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_const-bias-correct
+          ahi-clr_himawari8: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_const-bias-correct
+
+          ## iasi
+          iasi_metop-a: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/iasi_thin145km
+          iasi_metop-b: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/iasi_thin145km
+          iasi_metop-c: /glade/p/mmm/parc/jban/pandac_common/obs/ioda_v3/2018/iasi_thin145km
+
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15
+
+    GenerateObs:
+      PrepareObservationsTasks: [ObsReady__]
+
+      instrumentsAllowingBiasCorrection:
+      - amsua_aqua
+      - amsua_metop-a
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
+      - amsua-cld_aqua
+      - amsua-cld_metop-a
+      - amsua-cld_metop-b
+      - amsua-cld_metop-c
+      - amsua-cld_n15
+      - amsua-cld_n18
+      - amsua-cld_n19
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+
+      IODAPrefix:
+        gnssrobndropp1d: gnssro
+        gnssrobndnbam: gnssro
+        gnssrobndmo: gnssro
+        gnssrobndmo-nopseudo: gnssro
+        gnssrorefncep: gnssro
+        gnssrorefncep_tunedErrors: gnssro
+        amsua-cld_aqua: amsua_aqua
+        amsua-cld_metop-a: amsua_metop-a
+        amsua-cld_metop-b: amsua_metop-b
+        amsua-cld_n15: amsua_n15
+        amsua-cld_n18: amsua_n18
+        amsua-cld_n19: amsua_n19
+        abi-clr_g16: abi_g16
+        ahi-clr_himawari8: ahi_himawari8
+
+      IODADirectory:
+        da:
+          common: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/GenerateObs/Observations
+          abi_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          ahi_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+
+        hofx:
+          common: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/GenerateObs/Observations
+          abi_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          ahi_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15

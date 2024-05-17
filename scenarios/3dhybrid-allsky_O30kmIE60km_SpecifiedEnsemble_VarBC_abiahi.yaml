@@ -1,9 +1,9 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  name: 'abi_ch13_noH2O_bjobs_QC-230k_CA-15K_homogeneity'
+  name: 'abi_ch13_noH2O_bjobs_QC-230k_CA-15K_homogeneity_2.1_anotherTest1'
 
 build:
-  mpas bundle: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_2.1_varbc_CA/build
+  mpas bundle: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_2.1_varbc_CA_SP/build
 #/glade/p/mmm/parc/ivette/pandac/codeBuild/mpasBundle_2.0_varbc_CA/build
 #/glade/p/mmm/parc/ivette/pandac/codeBuild/mpasBundle_2.0_SP_T_jacobian/build
 
@@ -44,7 +44,7 @@ externalanalyses:
     GFS:
       PANDAC: # only available 20180418T00-20180524T00
         30km:
-          directory: "/glade/p/mmm/parc/liuz/pandac_common/fixed_input/30km/GFSAnaAndDiagnostics"
+          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/30km/GFSAnaAndDiagnostics"
 members:
   n: 1
 
@@ -76,36 +76,36 @@ observations:
       IODADirectory:
         da:
           ## abi
-          abi_g16: /glade/p/mmm/parc/ivette/pandac/Observations/abi/bj_so_abi/v3_nc_renamed
+          abi_g16: /glade/campaign/mmm/parc/ivette/pandac/Observations/abi/bj_so_abi/v3_nc_renamed
           #abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
           ## ahi
-          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
           #IODANC_SUPEROB15X15_no-bias-correct
           #IODANC_SUPEROB15X15_const-bias-correct
           
-          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
           ## ahi
-          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
         hofx:
           ## abi
-          abi_g16: /glade/p/mmm/parc/ivette/pandac/Observations/abi/bj_so_abi/v3_nc_renamed
+          abi_g16: /glade/campaign/mmm/parc/ivette/pandac/Observations/abi/bj_so_abi/v3_nc_renamed
           #abi_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
           ## ahi
-          ahi_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
           #IODANC_SUPEROB15X15_no-bias-correct
           #IODANC_SUPEROB15X15_const-bias-correct
           
-          abi-clr_g16: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           #IODANC_THIN15KM_SUPEROB15X15_const-bias-correct
           ## ahi
-          ahi-clr_himawari8: /glade/p/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
       IODASuperObGrid:
         abi_g16: 15X15
         ahi_himawari8: 15X15
@@ -144,14 +144,14 @@ variational:
   job:
     defaults:
       retry: '3*PT30S'
-  #  30km:
-  #    60km:
-  #      3dhybrid-allsky:
-  #        nodes: 6 #8
-  #        PEPerNode: 32 #24
-  #        memory: 109GB #45GB
-  #        baseSeconds: 1000
-  #        secondsPerEnVarMember: 8
+    30km:
+      60km:
+        3dhybrid-allsky:
+          nodes: 4 #6 #8
+          PEPerNode: 64 #32 #24
+          memory: 235 #109GB #45GB
+          baseSeconds: 2000
+          secondsPerEnVarMember: 8
 
   #execute: False # the default is True
   #post: []
@@ -160,10 +160,12 @@ variational:
 workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180415T00
-  #final cycle point: 20180415T00
-  final cycle point: 20180514T18
+  final cycle point: 20180415T00
+  #final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'
-#hpc:
-#  CriticalAccount: UCSD0041
-#  NonCriticalAccount: UCSD0041
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+#  CriticalAccount:
+#  NonCriticalAccount:

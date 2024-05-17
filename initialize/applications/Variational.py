@@ -199,7 +199,7 @@ class Variational(Component):
       self._set('MinimizerAlgorithm', 'DRPLanczos')
 
     # ensemble
-    if (DAType == '3denvar') or (DAType == '3dhybrid') or (DAType == '4denvar'):
+    if (DAType == '3denvar') or ('3dhybrid' in DAType) or (DAType == '4denvar'):
       # localization
       r1 = 'ensemble.localization'
       r2 = meshes['Ensemble'].name
