@@ -124,7 +124,8 @@ if ("$outerMesh" == "60-3km") then
   mv ${anFile} ${anFile}.new
   mv ${anFile}.bak ${anFile}
 
-$update_analysis_states -i ${anFile}.new -o ${anFile}
+  $update_analysis_states -i ${anFile}.new -o ${anFile}
+  rm ${anFile}.new #remove file (~2.8G)
 endif
 # ================================================================================================
 
