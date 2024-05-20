@@ -78,6 +78,11 @@ class Experiment(Component):
     if self['prefix'] is None:
       self._set('prefix', user+'_')
 
+    # if config has a suffix, use it
+    if config._suffix != None:
+      suffix = self['suffix'] if self['suffix'] != None else ''
+      self._set('suffix', suffix + config._suffix)
+
     ParentDirectory = hpc['top directory']+'/'+self['user directory']+'/'+self['user directory child']
 
     expName = self['prefix']+suiteName+self['suffix']
