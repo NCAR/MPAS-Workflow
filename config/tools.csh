@@ -20,6 +20,7 @@ set pyTools = ( \
   TimeFmtChange \
   updateXTIME \
   concatenate \
+  update_analysis_states \
 )
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"

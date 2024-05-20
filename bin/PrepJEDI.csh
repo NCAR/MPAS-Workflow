@@ -1161,8 +1161,8 @@ if ("$ArgAppType" == variational) then
     set an = $CyclingDAOutDirs[$member]
     mkdir -p ${an}
     set anFile = ${an}/${ANFilePrefix}.$thisMPASFileDate.nc
-    rm ${anFile}
-    cp -v ${bgFile} ${anFile}
+    rm ${anFile}*
+    cp -v ${bgFile} ${anFile}.bak
 
     @ member++
   end
