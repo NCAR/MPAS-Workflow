@@ -1161,8 +1161,12 @@ if ("$ArgAppType" == variational) then
     set an = $CyclingDAOutDirs[$member]
     mkdir -p ${an}
     set anFile = ${an}/${ANFilePrefix}.$thisMPASFileDate.nc
-    rm ${anFile}*
-    cp -v ${bgFile} ${anFile}.bak
+    rm ${anFile}
+    if ("$outerMesh" == "60-3km") then
+      cp -v ${bgFile} ${anFile}.bak
+    else
+      cp -v ${bgFile} ${anFile}
+    endif
 
     @ member++
   end

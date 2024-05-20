@@ -115,16 +115,17 @@ if ( $status != 0 ) then
   exit 1
 endif
 
-# Update state variables of analysis
-set an = $CyclingDAOutDirs[$ArgMember]
-set anFile = ${ANFilePrefix}.$thisMPASFileDate.nc
+if ("$outerMesh" == "60-3km") then
+  # Update state variables of analysis
+  set an = $CyclingDAOutDirs[$ArgMember]
+  set anFile = ${ANFilePrefix}.$thisMPASFileDate.nc
 
-cd ${an}
-mv ${anFile} ${anFile}.new
-mv ${anFile}.bak ${anFile}
+  cd ${an}
+  mv ${anFile} ${anFile}.new
+  mv ${anFile}.bak ${anFile}
 
 $update_analysis_states -i ${anFile}.new -o ${anFile}
-
+endif
 # ================================================================================================
 
 # Remove obs-database output files
