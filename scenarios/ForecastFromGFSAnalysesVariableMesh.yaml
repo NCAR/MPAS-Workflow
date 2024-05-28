@@ -41,6 +41,6 @@ observations: # for optional verification
   resource: SacaObs
 
 workflow:
-  first cycle point: 20180415T00
-  final cycle point: 20180430T00
+  first cycle point: 20180424T00
+  final cycle point: 20180425T00
   max active cycle points: 16

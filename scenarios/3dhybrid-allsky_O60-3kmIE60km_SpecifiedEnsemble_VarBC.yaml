@@ -9,8 +9,16 @@ firstbackground:
 externalanalyses:
   resource: "GFS.PANDAC"
 
+extendedforecast:
+  meanTimes: T00 #,T12 # uncomment to enable extended forecast verification
+  lengthHR: 18
+  outIntervalHR: 1
+  execute: False # uncomment if forecasts are already completed
+  # optionally enable extended forecast post (requires meanTimes to be set)
+  post: [verifyobs] #verifyobs, verifymodel
+
 forecast:
-  #execute: False # the default is True
+  execute: False # the default is True
   #post: [] # use this when doing extended forecast
   post: [] # this turns off verifyobs,verifymodel
 
@@ -33,7 +41,7 @@ observations:
           abi_g16: /glade/campaign/mmm/parc/ivette/pandac/Observations/abi/bj_so_abi/v3_nc_renamed
         hofx:
           ## abi
-          abi_g16: /glade/campaign/mmm/parc/ivette/pandac/Observations/abi/bj_so_abi/v3_nc_renamed
+          abi_g16: /glade/campaign/mmm/parc/ivette/pandac/saca/obs/ioda_v3_60-3km
 
 variational:
   DAType: 3dhybrid-allsky
@@ -42,19 +50,22 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
-  #execute: False # the default is True
-  #post: [] # this turns off verifyobs
+  execute: False # the default is True
+  post: [] # this turns off verifyobs
   concatenateObsFeedback: True
   IRVISlandCoeff: IGBP
 
 hofx:
+#  observers: [
+#    abi_g16,
+#  ]
   concatenateObsFeedback: True
   IRVISlandCoeff: IGBP
 
 workflow:
   first cycle point: 20180414T18
-  #restart cycle point: 20180415T00
-  final cycle point: 20180415T00
-  #final cycle point: 20180514T18
+  restart cycle point: 20180419T00
+  #final cycle point: 20180415T00
+  final cycle point: 20180419T00 #20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
-  #max active cycle points: 4 # used for independent 'extendedforecast'
+  max active cycle points: 16 # used for independent 'extendedforecast'
