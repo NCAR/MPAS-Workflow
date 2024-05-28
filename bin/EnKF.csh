@@ -82,14 +82,14 @@ endif
 # Remove obs-database output files
 # ================================
 if ("$retainObsFeedback" != True) then
-  set member = 1
-  while ( $member <= ${nMembers} )
-    set memDir = `${memberDir} $nMembers $member`
-    rm ${self_WorkDir}/${OutDBDir}${memDir}/${obsPrefix}*.h5
-    rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.nc4
-    rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.nc4
-    @ member++
-  end
+  echo " ls ${self_WorkDir}/${OutDBDir}/"
+  ls ${self_WorkDir}/${OutDBDir}/
+  echo "rm ${self_WorkDir}/${OutDBDir}/${obsPrefix}*.h5"
+  rm ${self_WorkDir}/${OutDBDir}/${obsPrefix}*.h5
+  echo "rm ${self_WorkDir}/${OutDBDir}/${geoPrefix}*.nc4"
+  rm ${self_WorkDir}/${OutDBDir}/${geoPrefix}*.nc4
+  echo "rm ${self_WorkDir}/${OutDBDir}/${diagPrefix}*.nc4"
+  rm ${self_WorkDir}/${OutDBDir}/${diagPrefix}*.nc4
 endif
 
 # Remove netcdf lock files
