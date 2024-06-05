@@ -77,15 +77,15 @@ foreach inst ( ${convertToIODAObservations} )
        endif
     # for prepbufr observations
     else if ( ${inst} == prepbufr ) then
-       setenv THIS_FILE prepbufr.gdas.${thisValidDate}.nr
+       setenv THIS_FILE prepbufr.gdas.${ccyymmdd}.t${hh}z.nr.48h
        if ( ! -e ${THIS_FILE}) then
-          if ( -e ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE} ) then
-             echo "Source file: ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE}"
-             cp -p ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE} .
-          else
-             setenv THIS_FILE prepbufr.gdas.${ccyymmdd}.t${hh}z.nr.48h
+          if ( -e ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE} ) then
              echo "Source file: ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE}"
              cp -p ${PrepBUFRDirectory}/prep48h/${ccyy}/${THIS_FILE} .
+          else
+             setenv THIS_FILE prepbufr.gdas.${thisValidDate}.nr
+             echo "Source file: ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE}"
+             cp -p ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE} .
           endif
        endif
        # use obs errors embedded in prepbufr file
