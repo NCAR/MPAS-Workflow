@@ -5,7 +5,7 @@ externalanalyses:
 
 experiment:
   name: 'ForecastFromGFSAnalyses'
-  prefix: ''
+  suffix: '_V60-3km'
 
 
 extendedforecast:
