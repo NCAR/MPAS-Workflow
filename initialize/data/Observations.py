@@ -86,8 +86,8 @@ class Observations(Component):
 
     # static directories for bias correction files
     'fixedCoeff': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias', str],
-    'fixedTlapmeanCov': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2023', str],
-    'initialVARBCcoeff': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2023', str],
+    'fixedTlapmeanCov': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2018', str],
+    'initialVARBCcoeff': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2018', str],
   }
 
   def __init__(self,
