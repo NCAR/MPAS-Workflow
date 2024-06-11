@@ -120,14 +120,15 @@ endif
 # Remove obs-database output files
 # ================================
 if ("$retainObsFeedback" != True) then
-  set member = 1
-  while ( $member <= ${nMembers} )
-    set memDir = `${memberDir} $nMembers $member`
-    rm ${self_WorkDir}/${OutDBDir}${memDir}/${obsPrefix}*.h5
-    rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.nc4
-    rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.nc4
-    @ member++
-  end
+  set memDir = `${memberDir} $nMembers $ArgMember`
+  echo "ls ${self_WorkDir}/${OutDBDir}${memDir}/"
+  ls ${self_WorkDir}/${OutDBDir}${memDir}/
+  echo "rm ${self_WorkDir}/${OutDBDir}${memDir}/${obsPrefix}*.h5"
+  rm ${self_WorkDir}/${OutDBDir}${memDir}/${obsPrefix}*.h5
+  echo "rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.nc4"
+  rm ${self_WorkDir}/${OutDBDir}${memDir}/${geoPrefix}*.nc4
+  echo "rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.nc4"
+  rm ${self_WorkDir}/${OutDBDir}${memDir}/${diagPrefix}*.nc4
 endif
 
 # Remove netcdf lock files
@@ -136,6 +137,7 @@ rm */*.nc*.lock
 
 # Remove copies of templated fields files for inner loop
 if ("${TemplateFieldsFileInner}" != "${TemplateFieldsFileOuter}") then
+  echo "rm ${TemplateFieldsFileInner}*"
   rm ${TemplateFieldsFileInner}*
 endif
 
