@@ -29,9 +29,9 @@ model:
       RadiationSWInterval: 00:03:00
       PhysicsSuite: convection_permitting
       Microphysics: mp_thompson
-      Convection: cu_grell_freitas
+      Convection: cu_ntiedtke
       PBL: bl_mynn
-      Gwdo: 'off'
+      Gwdo: bl_ysu_gwdo
       RadiationCloud: cld_fraction_thompson
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw

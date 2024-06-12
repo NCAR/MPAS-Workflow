@@ -5,7 +5,7 @@ externalanalyses:
 
 experiment:
   name: 'ForecastFromGFSAnalyses'
-  prefix: ''
+  suffix: '_V60-3km'
 
 
 extendedforecast:
@@ -30,6 +30,7 @@ members:
 
 model:
   outerMesh: 60-3km
+  innerMesh: 60km
   GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/all_graph
 
 observations: # for optional verification

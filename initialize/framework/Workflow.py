@@ -35,6 +35,9 @@ class Workflow(Component):
 
     ## 4denvar || 4dhybrid
     'subwindow': [1, int],
+
+    # interval between `saca` analyses and forecast background
+    'prevBgHR': [0, int, [0]],
   }
   optionalVariables = {
     # restart cycle point is used to restart an existing suite from a previously-generated
@@ -72,7 +75,6 @@ class Workflow(Component):
     self._set('nextFirstCycleDate', (first+step).strftime(dtf.cycleFmt))
     self._set('nextFirstFileDate', (first+step).strftime(dtf.MPASFileFmt))
 
-
     ## DA2FCOffsetHR and FC2DAOffsetHR: control the offsets between DA and Forecast
     # tasks in the critical path
     # TODO: set DA2FCOffsetHR and FC2DAOffsetHR based on IAU controls
@@ -87,6 +89,9 @@ class Workflow(Component):
     self._set('flowMemFmt', '/'+MemPrefix+'{:0'+str(MemNDigits)+'d}')
     self._set('flowInstanceFmt', '/instance{:0'+str(MemNDigits)+'d}')
     self._set('flowMemFileFmt', '_{:0'+str(MemNDigits)+'d}')
+
+    self._set('AnalysisTimesSACA', '+PT'+str(CyclingWindowHR)+'H/PT'+str(CyclingWindowHR)+'H')
+    self._set('ForecastTimesSACA', '+PT'+str(CyclingWindowHR)+'H/PT'+str(CyclingWindowHR)+'H')
 
     # Differentiate between creating the workflow suite for the first time
     # and restarting (i.e., when restartCyclePoint > firstCyclePoint)
