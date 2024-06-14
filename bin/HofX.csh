@@ -95,28 +95,35 @@ rm ${localStaticFieldsPrefix}*.nc*
 
 # ==================================================================================================
 
-## copy static fields
-set localStaticFieldsFile = ${localStaticFieldsFileOuter}
-rm ${localStaticFieldsFile}
-set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
-set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
-
 # Link/copy bg from other directory
 # =================================
+set backgroundSubDir = "bg"
 set bg = ./${backgroundSubDir}
 mkdir -p ${bg}
 
-set bgFileOther = ${StateDir}/${ArgStatePrefix}.$thisMPASFileDate.nc
-set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
+set ArgStatePrefix = "mpasout"
+set OrigFileSuffix = "_orig"
+set initPrefix = x1.${nCellsOuter}.init
+set StateDir = ${ExperimentDirectory}/MPAS_IC/${thisCycleDate}
+set bgFileOther = ${StateDir}/${initPrefix}.$thisMPASFileDate.nc
+set bgFile = ${bg}/${backgroundSubDir}.$thisMPASFileDate.nc
 
 rm ${bgFile}${OrigFileSuffix} ${bgFile}
 ln -sfv ${bgFileOther} ${bgFile}${OrigFileSuffix}
 ln -sfv ${bgFileOther} ${bgFile}
 
 # use the background as the TemplateFieldsFileOuter
+set TemplateFieldsFileOuter = "templateFields.${nCellsOuter}.nc"
 ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
+# ==================================================================================================
+
+## copy static fields
+setenv static_file ${StateDir}/${initPrefix}.$thisMPASFileDate.nc
+#x1.${nCellsOuter}.static.nc
+
+## link static file
+ln -sf ${static_file} ./static.${nCellsOuter}.nc
+
 
 # Run the executable
 # ==================
@@ -135,15 +142,15 @@ endif
 # ================================================================================================
 
 ## change static fields to a link, keeping for transparency
-rm ${localStaticFieldsFile}
-mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
+#rm ${localStaticFieldsFile}
+#mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
 
 # Remove netcdf lock files
 rm *.nc*.lock
 
 # Remove unnecessary model state files
 # ====================================
-rm ${WorkDir}/${backgroundSubDir}/${BGFilePrefix}.$thisMPASFileDate.nc
+#rm ${WorkDir}/${backgroundSubDir}/${BGFilePrefix}.$thisMPASFileDate.nc
 
 # Remove obs-database output files
 # ================================

@@ -102,7 +102,8 @@ cd ${WorkDir}
 
 # Previous time info for yaml entries
 # ===================================
-set prevValidDate = `$advanceCYMDH ${thisValidDate} -${ArgWindowHR}`
+set WindowHR = "0" #${CyclingWindowHR}
+set prevValidDate = `$advanceCYMDH ${thisValidDate} -${WindowHR}`
 set yy = `echo ${prevValidDate} | cut -c 1-4`
 set mm = `echo ${prevValidDate} | cut -c 5-6`
 set dd = `echo ${prevValidDate} | cut -c 7-8`
