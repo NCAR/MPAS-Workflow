@@ -1,0 +1,19 @@
+  obs bias:
+    input file: {{biasCorrectionDir}}/satbias_amsua-cld_n19.h5
+    output file: {{OutDBDir}}{{MemberDir}}/satbias_amsua-cld_n19.h5
+    variational bc:
+      predictors: &predictors1
+      - name: constant
+      - name: lapseRate
+        order: 2
+        tlapse: &amsuacld19tlap {{fixedTlapmeanCov}}/amsua_n19_tlapmean.txt
+      - name: lapseRate
+        tlapse: *amsuacld19tlap
+      - name: emissivityJacobian
+      - name: sensorScanAngle
+        order: 4
+      - name: sensorScanAngle
+        order: 3
+      - name: sensorScanAngle
+        order: 2
+      - name: sensorScanAngle

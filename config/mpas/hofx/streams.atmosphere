@@ -1,5 +1,5 @@
 <streams>
-<immutable_stream name="invariant"
+<immutable_stream name="static"
                   type="input"
                   precision="{{PRECISION}}"
                   filename_template="{{StaticFieldsPrefix}}.{{nCells}}.nc"

@@ -36,7 +36,7 @@ model:
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
       SfcLayer: sf_mynn
-      LSM: sf_noah
+      LSM: noah
     30km:
       meshRatio: 1
       nCells: 655362
@@ -53,7 +53,7 @@ model:
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
       SfcLayer: sf_monin_obukhov
-      LSM: sf_noah
+      LSM: noah
     60km:
       meshRatio: 1
       nCells: 163842
@@ -70,7 +70,7 @@ model:
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
       SfcLayer: sf_monin_obukhov
-      LSM: sf_noah
+      LSM: noah
     120km:
       meshRatio: 1
       nCells: 40962
@@ -87,4 +87,4 @@ model:
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
       SfcLayer: sf_monin_obukhov
-      LSM: sf_noah
+      LSM: noah

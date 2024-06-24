@@ -47,6 +47,7 @@ class Observations(Component):
   workDir = 'Observations'
   InDBDir = 'dbIn'
   OutDBDir = 'dbOut'
+  AnaDBDir = 'dbAna'
   VarBCAnalysis = OutDBDir+'/satbias_crtm_ana'
   obsPrefix = 'obsout'
   geoPrefix = 'geoval'
@@ -82,7 +83,7 @@ class Observations(Component):
     'GDASObsErrtable': ['/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GSI_errtables/HRRRENS_errtable_10sep2018.r3dv', str],
 
     ## CRTM
-    'CRTMTABLES': ['/glade/work/nystrom/Code/JEDI/jcsda_internal/CRTM_V3_coeffs/', str],
+    'CRTMTABLES': ['/glade/campaign/mmm/parc/liuz/pandac_common/crtm_coeffs_v2.4.1/', str],
 
     # static directories for bias correction files
     'fixedCoeff': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias', str],
@@ -108,6 +109,7 @@ class Observations(Component):
 
     self._set('InDBDir', self.InDBDir)
     self._set('OutDBDir', self.OutDBDir)
+    self._set('AnaDBDir', self.AnaDBDir)
     self._set('VarBCAnalysis', self.VarBCAnalysis)
     self._set('obsPrefix', self.obsPrefix)
     self._set('geoPrefix', self.geoPrefix)

@@ -1,6 +1,12 @@
 _hor obs localization: &HorizObsLoc
   localization method: {{horizontalLocalizationMethod}}
   lengthscale: &HorizObsLocLengthScale {{horizontalLocalizationLengthscale}}
+  max nobs: 1000
+
+_hor cloud obs localization: &HorizObsLocCloud
+  localization method: {{horizontalLocalizationMethod}}
+  lengthscale: &HorizObsLocLengthScaleCloud {{horizontalLocalizationLengthscaleCloud}}
+  max nobs: 1000
 
 _conventional vertical localization: &HeightVertObsLoc
   localization method: Vertical localization
@@ -14,20 +20,40 @@ _3d letkf localizations: &3DLETKFheightAndHorizObsLoc
   - <<: *HorizObsLoc
   - <<: *HeightVertObsLoc
 
+_3d letkf localizations cloud: &3DLETKFheightAndHorizObsLocCloud
+  obs localizations:
+  - <<: *HorizObsLocCloud
+  - <<: *HeightVertObsLoc
+
 _2d letkf obs localizations: &2DLETKFheightAndHorizObsLoc
   obs localizations:
   - <<: *HorizObsLoc
+
+_2d letkf obs localizations cloud: &2DLETKFheightAndHorizObsLocCloud
+  obs localizations:
+  - <<: *HorizObsLocCloud
 
 _3d getkf obs localizations: &3DGETKFheightAndHorizObsLoc
   obs localizations:
   - <<: *HorizObsLoc
 
+_3d getkf obs localizations cloud: &3DGETKFheightAndHorizObsLocCloud
+  obs localizations:
+  - <<: *HorizObsLocCloud
+
 _height-based obs localizations: &heightAndHorizObsLoc
   <<: *{{localizationDimension}}{{localEnsembleDASolver}}heightAndHorizObsLoc
+
+_height-based obs localizations cloud: &heightAndHorizObsLocCloud
+  <<: *{{localizationDimension}}{{localEnsembleDASolver}}heightAndHorizObsLocCloud
 
 _non-height-based obs localizations: &horizObsLoc
   obs localizations:
   - <<: *HorizObsLoc
+
+_non-height-based obs localizations cloud: &horizObsLocCloud
+  obs localizations:
+  - <<: *HorizObsLocCloud
 
 _round robin dist: &RoundRobinDistribution
   name: RoundRobin

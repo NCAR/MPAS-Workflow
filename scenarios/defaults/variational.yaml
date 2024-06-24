@@ -48,23 +48,9 @@ variational:
             filePrefix: EnsForCov
             memberNDigits: 2
 
-            # the settings above produce the following yaml template:
-            #members from template:
-            #  template:
-            #    <<: *memberConfig
-            #    filename: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/120km/EnsForCov/{{prevDateTime}}/%iMember%/EnsForCov.{{thisMPASFileDate}}.nc
-            #  pattern: %iMember%
-            #  start: 1
-            #  zero padding: 2
-            #  nmembers: 20
-            #
-            # note that when SelfExclusion is True, nmembers will be 19 and another key:value pair
-            # is added as with `except: [{{backgroundMember}}]`, where {{backgroundMember}} is equal
-            # to the member iterator (i.e., 1 for member 1, 2 for member 2, etc.)
-
           60km:
-            maxMembers: 20
-            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/60km/EnsForCov/{{prevDateTime}}'
+            maxMembers: 30
+            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/GEFS/60km_GEFS_EnsFC/{{prevDateTime}}'
             filePrefix: EnsForCov
             memberNDigits: 2
 
@@ -121,8 +107,8 @@ variational:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
       60km:
-        bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.bumploc.duplicated.limited.1200km6km
+        bumpLocPrefix: bumploc_1200.0km_6.0km #bumploc_1200.0km_6.0km_hydro600.0km_6.0km
+        bumpLocDir: /glade/u/home/taosun/scratch/temp/ens_bec_loc # /glade/derecho/scratch/bjung/pandac/20231211_release_v2.1_derecho/60km.bumploc.crossed 
       120km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.bumploc.duplicated.limited.1200km6km
@@ -135,8 +121,8 @@ variational:
     - temperature
     - spechum
     - surface_pressure
-    bumpCovPrefix: mpas_parametersbump_cov
-    bumpCovVBalPrefix: mpas_vbal
+    bumpCovPrefix: mpas
+    bumpCovVBalPrefix: mpas
     #{{innerMesh}}:
     #  bumpCovDir: str
     #  bumpCovStdDevFile: str
@@ -149,9 +135,13 @@ variational:
       hybridCoefficientsDir: None
     60km:
       hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
-      bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.NICAS_00global
-      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.VBAL_00
+      #bumpCovDir: /glade/derecho/scratch/bjung/Bflow/2023_ENS_global60km/NICAS.split/merge
+      #bumpCovStdDevFile: /glade/derecho/scratch/bjung/Bflow/2023_ENS_global60km/HDIAG_VAR/merge/mpas.stddev.nc
+      bumpCovDir: /glade/derecho/scratch/zhuming/2023_ENS_global60km/NICAS.split11_tune/merge
+      bumpCovStdDevFile: /glade/derecho/scratch/zhuming/2023_ENS_global60km/HDIAG_VAR/merge11_tune/mpas.stddev.nc
+      bumpCovDir: /glade/derecho/scratch/zhuming/2023_ENS_global60km/NICAS.split11_tune/merge
+      bumpCovStdDevFile: /glade/derecho/scratch/zhuming/2023_ENS_global60km/HDIAG_VAR/merge11_tune/mpas.stddev.nc
+      bumpCovVBalDir: /glade/derecho/scratch/bjung/Bflow/2023_ENS_global60km/VBAL_iterative/2023070406-2023071100
     120km:
       bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.NICAS_00
       bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
@@ -161,10 +151,10 @@ variational:
   # resource requirements
   job:
     defaults:
-      baseSeconds: 1500
-      secondsPerEnVarMember: 10
-      nodes: 2
-      PEPerNode: 128
+      baseSeconds: 2100
+      secondsPerEnVarMember: 30
+      nodes: 4
+      PEPerNode: 64
       memory: 235GB
 
       # cylc retry string
@@ -187,61 +177,6 @@ variational:
     # memmbers) than is available in default resource requests below, use more nodes and keep
     # the product of (nodes x PEPerNode) constant. If (nodes x PEPerNode) is modifed, new
     # localization or covariance files may be needed.
-    60-3km:
-      # Assuming 120 total inner iterations
-      30km:
-        3denvar:
-          nodes: 4
-          PEPerNode: 64
-          memory: 235GB
-        4denvar:
-          nodes: 28
-          PEPerNode: 128
-          memory: 235GB
-          baseSeconds: 1500
-          secondsPerEnVarMember: 5
-        3dvar:
-          nodes: 4
-          PEPerNode: 64
-          memory: 235GB
-          baseSeconds: 1500
-        ensemble: # i.e., EDASize > 1, multiple background members treated per executable
-          3denvar:
-            nodesPerMember: 4
-            PEPerNode: 128
-            memory: 235GB
-            baseSeconds: 1200
-            secondsPerEnVarMember: 10
-      60km:
-        3denvar:
-          nodes: 2
-          PEPerNode: 128
-          memory: 235GB
-          baseSeconds: 800
-          secondsPerEnVarMember: 9
-        4denvar:
-          nodes: 14
-          PEPerNode: 128
-          memory: 235GB
-          baseSeconds: 800
-          secondsPerEnVarMember: 24
-        3dhybrid:
-          nodes: 2
-          PEPerNode: 128
-          memory: 235GB
-          baseSeconds: 500
-          secondsPerEnVarMember: 9
-        3dhybrid-allsky:
-          nodes: 4
-          PEPerNode: 64
-          memory: 235GB
-          baseSeconds: 800
-          secondsPerEnVarMember: 9
-        3dvar:
-          nodes: 2
-          PEPerNode: 128
-          memory: 235GB
-          baseSeconds: 500
     30km:
       # Assuming 120 total inner iterations
       30km:
@@ -290,7 +225,7 @@ variational:
           nodes: 4
           PEPerNode: 64
           memory: 235GB
-          baseSeconds: 800
+          baseSeconds: 2400
           secondsPerEnVarMember: 9
         3dvar:
           nodes: 2

@@ -28,43 +28,28 @@ class EnKF(Component):
   }
 
   variablesWithDefaults = {
+    ## Inflation
+    'rtps_value': ['0.0', float],
+    'rtpp_value': ['0.0', float],
+    'mult_value': ['1.0', float],
+    'rtpp_first': [True, bool],
     ## observation localization parameters
     'localization dimension': ['3D', str, ['2D', '3D']],
     'horizontal localization method': ['Horizontal Gaspari-Cohn', str],
     'horizontal localization lengthscale': [1.2e6, float],
-    # LETKF
+    'horizontal localization lengthscale cloud': [6.0e5, float],
+    # LETKF/GETKF
     'vertical localization function': ['Gaspari Cohn', str],
     'vertical localization lengthscale': [6.e3, float],
-    # GETKF
-    #'vertical localization lengthscale': [5.0, float],
-
+    'vertical localization scaleunit': ['modellevel', str],
+    'fractionofvariance': [0.95, float],
     ## observers
-    # observation types assimilated in the enkf application
-    # Abbreviations:
-    #   clr == clear-sky
-    #   cld == cloudy-sky
-    # OPTIONS besides benchmarkObservations
-    ## MW satellite-based
-    # amsua-cld_aqua 
-    # amsua-cld_metop-a 
-    # amsua-cld_metop-b 
-    # amsua-cld_n15 
-    # amsua-cld_n18 
-    # amsua-cld_n19 
-    # mhs_n19 
-    # mhs_n18 
-    # mhs_metop-a 
-    # mhs_metop-b 
-    ## IR satellite-based
-    # abi_g16 
-    # ahi_himawari8 
-    # abi-clr_g16 
-    # ahi-clr_himawari8 
-    # iasi_metop-a 
-    # iasi_metop-b 
-    # iasi_metop-c 
     'observers': [benchmarkObservations, list],
-
+    'save single hofx': [False, bool],
+    'observer hofx number': [1, int],
+    'thinning hofx': [False, bool],
+    'diag enkf oma': [True, bool],
+    'use control member': [False, bool],
     ## nObsIndent
     # number of spaces to precede members of the 'observers' list in the JEDI YAML
     'nObsIndent': [2, int],
@@ -73,6 +58,7 @@ class EnKF(Component):
     # whether to use bias correction coefficients from VarBC
     # OPTIONS: False (not enabled yet)
     'biasCorrection': [False, bool],
+    'varbcOutput':['',str],
 
     ## tropprsMethod
     # method for the tropopause pressure determination used in the
@@ -119,6 +105,10 @@ class EnKF(Component):
 
     NN = members.n
     assert NN > 1, ('members.n must be greater than 1')
+    totalMember = self['observer hofx number']
+    MM = (NN + 1) // totalMember
+    if (NN + 1) % totalMember != 0:
+       MM += 1
 
     self.tf = parent.tf
     self.workDir = parent.workDir
@@ -131,6 +121,7 @@ class EnKF(Component):
       assert self['localization dimension'] == '3D', ('only 3D localization is supported for GETKF')
     self._set('AppName', 'enkf')
     self._set('appyaml', 'enkf.yaml')
+    self._set('diagyaml','diagoma.yaml')
 
     self._set('MeshList', ['EnKF'])
     self._set('nCellsList', [meshes['Outer'].nCells])
@@ -169,6 +160,9 @@ class EnKF(Component):
     # TODO: this needs to be non-zero for EnKF workflows that use IAU, get value from forecast
     self._set('ensPbOffsetHR', 0)
 
+    varbcoutput = self['varbcOutput']
+    self._set('VarBcDir',varbcoutput)
+
     self._cshVars = list(self._vtable.keys())
 
     ########################
@@ -186,31 +180,54 @@ class EnKF(Component):
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
       'email': {'def': True, 't': bool},
+      'threads': {'def': 1, 't': int}
     }
 
-    # EnKFObserver
-    # r2observer = {{outerMesh}}.observer
+    # 1.0: ObserverMean
+    if self['save single hofx']:
+      r2hofxmean = meshes['Outer'].name
+      r2hofxmean += '.'+solver+'.hofxmean'
+      hofxmeanjob = Resource(self._conf, attr, ('job', r2hofxmean))
+      hofxmeanjob._set('seconds', hofxmeanjob['baseSeconds'] + hofxmeanjob['secondsPerMember'] * NN)
+      hofxmeantask = TaskLookup[hpc.system](hofxmeanjob)
+
+    # 1.1: Observer across members
     r2observer = meshes['Outer'].name
     r2observer += '.'+solver+'.observer'
     observerjob = Resource(self._conf, attr, ('job', r2observer))
-    observerjob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
+    if self['save single hofx']:
+      observerjob._set('seconds', (observerjob['baseSeconds'] + observerjob['secondsPerMember']) * totalMember)
+    else:
+      observerjob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
     observertask = TaskLookup[hpc.system](observerjob)
 
-    # EnKF solver
-    # r2solver = {{outerMesh}}.{{solver}}
+    # 1.3: EnKFCombineHofX
+    if self['save single hofx']:
+      r2combinehofx = meshes['Outer'].name
+      r2combinehofx = meshes['Outer'].name
+      r2combinehofx += '.'+solver+'.combinehofx'
+      combinehofxjob = Resource(self._conf, attr, ('job', r2combinehofx))
+      combinehofxjob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'])
+      combinehofxtask = TaskLookup[hpc.system](combinehofxjob)
+
+    # 2.0: EnKF solver
     r2solver = meshes['Outer'].name
     r2solver += '.'+solver+'.solver'
-
-    # add threads attribute
-    attr['threads'] = {'def': 1, 't': int}
-
     solverjob = Resource(self._conf, attr, ('job', r2solver))
     solverjob._set('seconds', solverjob['baseSeconds'] + solverjob['secondsPerMember'] * NN)
     solvertask = TaskLookup[hpc.system](solverjob)
-
     self._set('solverThreads', solverjob.get('threads'))
     self._cshVars.append('solverThreads')
 
+    # 3.0: EnKF OMA diagnosis
+    r2diagoma = meshes['Outer'].name
+    r2diagoma += '.'+solver+'.diagoma'
+    diagomajob = Resource(self._conf, attr, ('job', r2diagoma))
+    diagomajob._set('seconds', diagomajob['baseSeconds'] + diagomajob['secondsPerMember'] * NN)
+    diagomatask = TaskLookup[hpc.system](diagomajob)
+
+  #################################################################################
+  ## Init EnKF
     args = [
       0,
       self.lower,
@@ -225,19 +242,70 @@ class EnKF(Component):
   [[InitEnKF]]
     inherit = '''+self.tf.init+''', SingleBatch
     script = $origin/bin/PrepJEDI.csh '''+initArgs+'''
-    execution time limit = PT10M
-    execution retry delays = '''+solverjob['retry']+'''
-
+    execution time limit = PT15M
+    execution retry delays = '''+solverjob['retry']]
+  #################################################################################
+  ## EnKF Observer tasks
+    if self['save single hofx']:
+      ## Calculate Ensemble HofXs in different steps using multiple jobs
+      if self['thinning hofx']:
+        ## Ensemble mean for smoothing
+        args = [
+          True,
+          0,
+          1,
+        ]
+        ObserverArgs = ' '.join(['"'+str(a)+'"' for a in args])
+        self._tasks += ['''
+  [[EnKFHofXMean]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnKFObserver.csh ''' +ObserverArgs+'''
+'''+hofxmeantask.job()+hofxmeantask.directives()]
+      ## Ensemble observer memebrs
+      for mm in range(0, MM, 1):
+          mem_mm = totalMember * mm + 1
+          args = [
+            True,
+            mem_mm,
+            totalMember,
+          ]
+          ObserverArgs = ' '.join(['"'+str(a)+'"' for a in args])
+          self._tasks += ['''
+  [[EnKFObserver_'''+str(mm+1)+''']] 
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnKFObserver.csh ''' +ObserverArgs+'''
+'''+observertask.job()+observertask.directives()]
+      ## Combine all EnKF HofXs
+      self._tasks += ['''
+  [[EnKFCombineHofX]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnKFCombineHofX.csh
+'''+combinehofxtask.job()+combinehofxtask.directives()]
+  #################################################################################
+    else:
+      ## Calculate Ensemble HofXs in one job!
+      self._tasks += ['''
   [[EnKFObserver]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKFObserver.csh
-'''+observertask.job()+observertask.directives()+'''
-
-  [[EnKF]]
+'''+observertask.job()+observertask.directives()]
+  #################################################################################
+  ## EnKF Solver step
+    self._tasks += ['''
+  [[EnKFSolver]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh
 '''+solvertask.job()+solvertask.directives()]
-
+  #################################################################################
+  ## EnKF OMB Diagnosis
+    if self['diag enkf oma']:
+      self._tasks += ['''
+  [[EnKFDiagOMA]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnKFDiagOMA.csh
+'''+diagomatask.job()+diagomatask.directives()]
+  #################################################################################
+  ## Concatennate feed back files (Not sure whether it will work or not?)
     if self['concatenateObsFeedback']:
       concatattr = {
         'seconds': {'def': 300},
@@ -260,10 +328,24 @@ class EnKF(Component):
     inherit = BATCH
     script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
+  #################################################################################
+  ## Job dependence
+    if self['save single hofx']:
+      if self['thinning hofx']:
+        for mm in range(0, MM, 1):
+          self._dependencies += ['''
+        EnKFHofXMean => EnKFObserver_'''+str(mm+1)]
+      for mm in range(0, MM, 1):
+        self._dependencies += ['''
+        EnKFObserver_'''+str(mm+1)+''' => EnKFCombineHofX''']
       self._dependencies += ['''
-        EnKF => ConcatEnKF''']
-
-    self._dependencies += ['''
-
-        # EnKF
-        EnKFObserver => EnKF''']
+        EnKFCombineHofX => EnKFSolver''']
+    else:
+      self._dependencies += ['''
+        EnKFObserver => EnKFSolver''']
+    if self['concatenateObsFeedback']:
+      self._dependencies += ['''
+        EnKFSolver => ConcatEnKF''']
+    if self['diag enkf oma']:
+      self._dependencies += ['''
+        EnKFSolver => EnKFDiagOMA''']

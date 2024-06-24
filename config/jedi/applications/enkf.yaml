@@ -7,13 +7,25 @@ _member: &memberConfig
 _as observer: &asObserver
   run as observer only: true
   update obs config with geometry info: false
+  save single member for observer: {{SaveSingleMember}}
+  single memeber number for save: {{SingleMemberNumber}}
 
 _as solver: &asSolver
   read HX from disk: true
-  #do test prints: false
   do posterior observer: false
   save posterior ensemble: true
   save posterior mean: true
+  save prior mean: true
+
+_as LETKF solver: &asLETKF
+  solver: GSI LETKF
+
+_as GETKF solver: &asGETKF
+  solver: GETKF
+  vertical localization: # only used by GETKF solver
+    fraction of retained variance: {{fractionofvariance}}    
+    lengthscale: {{verticalLocalizationLengthscale}}
+    lengthscale units: {{verticalLocalizationScaleunit}}
 
 _letkf geometry: &3DLETKFGeometry
   iterator dimension: 3
@@ -29,14 +41,21 @@ geometry:
   nml_file: {{EnKFNamelistFile}}
   streams_file: {{EnKFStreamsFile}}
   deallocate non-da fields: true
-  #interpolation type: unstructured # no Increment/State interp in enkf
+  vunit: {{verticalLocalizationScaleunit}}
 
 time window:
   begin: {{windowBegin}}
   length: {{windowLength}}
 
 background:
-{{EnsembleMembers}}
+  members from template:
+    template:
+      <<: *memberConfig
+      filename: {{bgStateDir}}/mem%iMember%/{{bgStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+    pattern: %iMember%
+    start: {{StartMember}}
+    zero padding: {{MemNDigits}}
+    nmembers: {{NumEnsMember}}
 
 increment variables: [{{AnalysisVariables}}]
 
@@ -47,18 +66,17 @@ observations:
 driver: *{{driver}}
 
 local ensemble DA:
-  solver: {{localEnsembleDASolver}}
-  vertical localization: # only used by GETKF solver
-    fraction of retained variance: 0.95
-    lengthscale: {{verticalLocalizationLengthscale}}
-    lengthscale units: modellevel
-
-# TODO: how do inflation settings impact result?
-#  inflation:
-#    rtps: 0.5
-#    rtpp: 0.6
-#    mult: 1.1
+  <<: *{{LocalEnKFSolver}}
+  inflation:
+    rtps: {{rtps_value}}
+    rtpp: {{rtpp_value}}
+    mult: {{mult_value}}
+    rtpp first: {{rtpp_first}}
 
 output:
   filename: {{anStateDir}}/mem%{member}%/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+  stream name: analysis
+
+output mean prior:
+  filename: {{bgStateDir}}/mem000/{{bgStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis

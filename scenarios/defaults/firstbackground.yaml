@@ -48,6 +48,17 @@ firstbackground:
           directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/60km/EnsFCFirstCycle/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/{:02d}"
+        30km:
+          directory: "/glade/u/home/taosun/scratch/pandac/30kmEnsFC/GEFS_FCST/{{FirstCycleDate}}"
+          maxMembers: 30
+          memberFormat: "/{:02d}"
+      EnsPertB:
+        common:
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
+        30km:
+          directory: "/glade/u/home/taosun/scratch/pandac/30kmEnsFC/ENS_FCST/{{FirstCycleDate}}"
+          maxMembers: 80
+          memberFormat: "/{:02d}"
 
       GFS_4DEnVAR:
         common:

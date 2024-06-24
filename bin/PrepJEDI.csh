@@ -216,6 +216,11 @@ mkdir -p ${InDBDir}
 rm -r ${OutDBDir}
 mkdir -p ${OutDBDir}
 
+if ("$ArgAppType" == enkf) then
+  rm -r ${AnaDBDir}
+  mkdir -p ${AnaDBDir}
+endif
+
 date
 
 foreach instrument ($observers)
@@ -270,12 +275,16 @@ end
 # Satellite bias correction
 # =========================
 # next cycle after FirstCycleDate
-if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
-  set biasCorrectionDir = $initialVARBCcoeff
+if ( $ArgAppType == 'enkf' ) then
+  #offline bias correction is done in EnKF currently!
+  set biasCorrectionDir = ${VarBcDir}/${thisValidDate}/${OutDBDir}
 else
-  set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/dbOut
+  if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
+    set biasCorrectionDir = $initialVARBCcoeff
+  else
+    set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/dbOut
+  endif
 endif
-
 # =============
 # Generate yaml
 # =============
@@ -335,13 +344,24 @@ foreach instrument ($observers)
         ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
         ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
       endif
+      if ( $ArgAppType == 'enkf' ) then
+        if ( ! -f ${biasCorrectionDir}/satbias_${i}.h5 ) then
+          ln -sf ${initialVARBCcoeff}/satbias_${i}.h5 ${CyclingDADir}/${InDBDir}
+        else
+          ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${CyclingDADir}/${InDBDir}
+        endif
+      endif
     endif
   end
 
   # declare subdirectories for YAML stubs, which depends on whether bias correction is applied
   set AppYamlDirs = (base filters)
   if ($biasCorrection == True && $allowsBiasCorrection == True) then
-    set AppYamlDirs = (base bias filtersWithBias)
+    if ( $ArgAppType == 'enkf' ) then
+      set AppYamlDirs = (base biasEnKF filtersWithBias)
+    else
+      set AppYamlDirs = (base biasVAR filtersWithBias)
+    endif
   endif
 
   foreach subdir (${AppYamlDirs})
@@ -367,6 +387,11 @@ end
 if ($found == 0) then
   echo "ERROR in $0 : no observation data is available for this date" > ./FAIL
   exit 1
+endif
+
+# Redifine the bias correction dir for EnKF
+if ( $ArgAppType == 'enkf' ) then
+   set biasCorrectionDir = ${CyclingDADir}/${InDBDir}
 endif
 
 # (ii) insert Observations
@@ -480,7 +505,6 @@ endif
 
 # window beginning
 sed -i 's@{{windowBegin}}@'${halfprevISO8601Date}'@' $thisYAML
-
 
 ## obs-related file naming
 # crtm tables
@@ -659,12 +683,10 @@ EOF
   rm ${thisSEDF}
   set prevYAML = $thisYAML
 
-
   # Analysis directory
   # ==================
   sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $prevYAML
   sed -i 's@{{anStateDir}}@'${WorkDir}'/'${analysisSubDir}'@g' $prevYAML
-
 
   # Hybrid Jb weights
   # =================
@@ -923,63 +945,51 @@ else if ("$ArgAppType" == enkf) then
   # ==================
   sed -i 's@{{localEnsembleDASolver}}@'${solver}'@g' $prevYAML
 
-  # TODO:
-  # Ensemble background members
-  # ===========================
-  set yamlFiles = enkfs.txt
-  echo $appyaml > $yamlFiles
-  ## yaml indentation
-  set nEnsIndent = 2
-
-  ## members: 'background.members from template'
-
-  # performs sed substitution for EnsembleMembers
-  set enspbmemsed = EnsembleMembers
-
-  @ dateOffset = ${ArgWindowHR} + ${ensPbOffsetHR}
-  set prevDateTime = `$advanceCYMDH ${thisValidDate} -${dateOffset}`
-
-  # substitutions
-  # + previous forecast initilization date-time
-  # + ExperimentDirectory for EDA applications that use their own ensemble
-  set dir0 = `echo "${ensPbDir0}" \
-              | sed 's@{{prevDateTime}}@'${prevDateTime}'@' \
-              | sed 's@{{ExperimentDirectory}}@'${ExperimentDirectory}'@' \
-             `
-  set dir1 = `echo "${ensPbDir1}" \
-              | sed 's@{{prevDateTime}}@'${prevDateTime}'@'\
-             `
-
-  #set dir0 = "`echo "${dir0}" | sed 's@{{ExperimentDirectory}}@'${ExperimentDirectory}'@'`"
-
-  # substitute Jb members
-  setenv myCommand "${substituteEnsembleBTemplate} ${dir0} ${dir1} ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsIndent} False"
-
-  echo "$myCommand"
-  #${substituteEnsembleBTemplate} "${ensPbDir0}" "${ensPbDir1}" ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsIndent} $SelfExclusion
-
-  ${myCommand}
-
-  rm $yamlFiles
-
-  if ($status != 0) then
-    echo "$0 (ERROR): failed to substitute ${enspbmemsed}" > ./FAIL
-    exit 1
-  endif
+  # background
+  # ==================
+  sed -i 's@{{NumEnsMember}}@'${ensPbNMembers}'@g' $prevYAML
+  sed -i 's@{{StartMember}}@1@g' $prevYAML
+  sed -i 's@{{MemNDigits}}@'${ensPbMemNDigits}'@g' $prevYAML
 
   # ObsLocalization
   # ===============
   sed -i 's@{{localizationDimension}}@'"${localizationDimension}"'@' $prevYAML
   sed -i 's@{{horizontalLocalizationMethod}}@'"${horizontalLocalizationMethod}"'@' $prevYAML
   sed -i 's@{{horizontalLocalizationLengthscale}}@'${horizontalLocalizationLengthscale}'@' $prevYAML
+  sed -i 's@{{horizontalLocalizationLengthscaleCloud}}@'${horizontalLocalizationLengthscaleCloud}'@' $prevYAML
   sed -i 's@{{verticalLocalizationFunction}}@'"${verticalLocalizationFunction}"'@' $prevYAML
   sed -i 's@{{verticalLocalizationLengthscale}}@'${verticalLocalizationLengthscale}'@' $prevYAML
+  sed -i 's@{{verticalLocalizationScaleunit}}@'"${verticalLocalizationScaleunit}"'@' $prevYAML
+  sed -i 's@{{fractionofvariance}}@'"${fractionofvariance}"'@' $prevYAML
+
+  # Variance inlfation
+  # ==================
+  sed -i 's@{{rtps_value}}@'"${rtps_value}"'@' $prevYAML
+  sed -i 's@{{rtpp_value}}@'"${rtpp_value}"'@' $prevYAML
+  sed -i 's@{{mult_value}}@'"${mult_value}"'@' $prevYAML
+  sed -i 's@{{rtpp_first}}@'"${rtpp_first}"'@' $prevYAML
 
   # Jo term (member dependence)
   # ===========================
 
   # eliminate member-specific file output directory substitutions
   sed -i 's@{{MemberDir}}@@g' $prevYAML
+
+  # Ensemble background members
+  cp $prevYAML $diagyaml   # Copy it for diagnozing the OMA after EnKF Analysis.
+
+  if ( ${solver} == "LETKF" ) then
+    sed -i 's@{{LocalEnKFSolver}}@asLETKF@' ${prevYAML}
+  else if ( ${solver} == "GETKF" ) then
+    sed -i 's@{{LocalEnKFSolver}}@asGETKF@' ${prevYAML}
+  else
+    echo "$0 (ERROR): JEDI only support LETKF and GETKF method ${enspbmemsed}" > ./FAIL
+    exit 1
+  endif
+
+  # For DiagOMA
+  sed -i 's@'${OutDBDir}'@'${AnaDBDir}'@' $diagyaml
+  sed -i 's@{{LocalEnKFSolver}}@asLETKF@' $diagyaml
 
   echo "Completed YAML preparation stage ${ArgAppType} application"
 
@@ -1223,8 +1233,8 @@ else if ("$ArgAppType" == enkf) then
     set an = $CyclingDAOutDirs[$member]
     mkdir -p ${an}
     set anFile = ${an}/${ANFilePrefix}.$thisMPASFileDate.nc
-    rm ${anFile}*
-    cp -v ${bgFile} ${anFile}.bak
+    rm ${anFile}
+    cp -v ${bgFile} ${anFile}
 
     @ member++
   end
@@ -1267,7 +1277,6 @@ else if ("$ArgAppType" == enkf) then
       sed -i 's@{{TemplateFieldsMember}}@'${memSuffix}'@' ${StreamsFile_}${memSuffix}
       sed -i 's@{{analysisPRECISION}}@'${analysisPrecision}'@' ${StreamsFile_}${memSuffix}
     end
-    sed -i 's@{{StreamsFileMember}}@'${memSuffix}'@' $appyaml
 
     @ member++
   end

@@ -22,6 +22,8 @@ set pyTools = ( \
   update_sensorScanPosition \
   updateXTIME \
   concatenate \
+  combine_ensemble_hofx \
+  thinning_hofx \
   update_analysis_states \
 )
 foreach tool ($pyTools)

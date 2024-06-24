@@ -1,0 +1,158 @@
+  obs filters:
+    #- filter: GOMsaver
+    #  filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_metop-b.nc4
+  - filter: Domain Check
+    where:
+    - variable:
+        name: MetaData/sensorZenithAngle
+      maxvalue: 45.0
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-4
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    - variable:
+        name: MetaData/latitude
+      minvalue: -60.0
+      maxvalue: 60.0
+    <<: *multiIterationFilter
+
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-4
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelRamp
+        channels: 1-4
+        options:
+          channels: 1-4
+          xvar:
+            name: ObsFunction/CLWRetSymmetricMW
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [ObsValue, HofX]
+              bias_application: ObsValue
+          x0:    [  0.03,   0.03,   0.03,   0.03]
+          x1:    [  0.57,   0.57,   0.37,   0.42]
+          err0:  [  4.47,   3.24,   2.35,   0.58]
+          err1:  [ 30.85,  43.02,  14.17,   2.89]
+    <<: *multiIterationFilter
+
+
+#  Situation dependent Check
+  - filter: Perform Action
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua-cld_metop-b_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorSituDependMW
+        channels: *amsua-cld_metop-b_channels
+        options:
+          sensor: amsua_metop-b
+          channels: *amsua-cld_metop-b_channels
+          clwobs_function:
+            name: ObsFunction/CLWRetMW
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [ObsValue]
+          clwbkg_function:
+            name: ObsFunction/CLWRetMW
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [HofX]
+              bias_application: HofX
+          scatobs_function:
+            name: ObsFunction/SCATRetMW
+            options:
+              scatret_ch238: 1
+              scatret_ch314: 2
+              scatret_ch890: 15
+              scatret_types: [ObsValue]
+              bias_application: HofX
+          clwmatchidx_function:
+            name: ObsFunction/CLWMatchIndexMW
+            channels: *amsua-cld_metop-b_channels
+            options:
+              channels: *amsua-cld_metop-b_channels
+              clwobs_function:
+                name: ObsFunction/CLWRetMW
+                options:
+                  clwret_ch238: 1
+                  clwret_ch314: 2
+                  clwret_types: [ObsValue]
+              clwbkg_function:
+                name: ObsFunction/CLWRetMW
+                options:
+                  clwret_ch238: 1
+                  clwret_ch314: 2
+                  clwret_types: [HofX]
+                  bias_application: HofX
+              clwret_clearsky: [0.050, 0.030, 0.030, 0.020, 0.000,
+                                0.100, 0.000, 0.000, 0.000, 0.000,
+                                0.000, 0.000, 0.000, 0.000, 0.030]
+          obserr_clearsky: [2.500, 2.200, 2.000, 0.550, 0.300,
+                            0.230, 0.230, 0.250, 0.250, 0.350,
+                            0.400, 0.550, 0.800, 3.000, 3.500]
+    <<: *multiIterationFilter
+#  Gross check
+  - filter: Background Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua-cld_metop-b_channels
+    function absolute threshold:
+    - name: ObsFunction/ObsErrorBoundMW
+      channels: *amsua-cld_metop-b_channels
+      options:
+        sensor: amsua_metop-b
+        channels: *amsua-cld_metop-b_channels
+        #thresholdfactor: 1
+        obserr_bound_latitude:
+          name: ObsFunction/ObsErrorFactorLatRad
+          options:
+            latitude_parameters: [25.0, 0.25, 0.04, 3.0]
+        obserr_bound_transmittop:
+          name: ObsFunction/ObsErrorFactorTransmitTopRad
+          channels: *amsua-cld_metop-b_channels
+          options:
+            channels: *amsua-cld_metop-b_channels
+        obserr_bound_topo:
+          name: ObsFunction/ObsErrorFactorTopoRad
+          channels: *amsua-cld_metop-b_channels
+          options:
+            channels: *amsua-cld_metop-b_channels
+            sensor: amsua_metop-b
+        obserr_function:
+          name: ObsFunction/ObsErrorModelRamp
+          channels: *amsua-cld_metop-b_channels
+          options:
+            channels: *amsua-cld_metop-b_channels
+            xvar:
+              name: ObsFunction/CLWRetSymmetricMW
+              options:
+                clwret_ch238: 1
+                clwret_ch314: 2
+                clwret_types: [ObsValue, HofX]
+                bias_application: HofX
+            x0:    [  0.03,   0.03,   0.03,   0.03]
+            x1:    [  0.57,   0.57,   0.37,   0.42]
+            err0:  [  4.47,   3.24,   2.35,   0.58]
+            err1:  [ 30.85,  43.02,  14.17,   2.89]
+        obserr_bound_max: [4.5, 4.5, 4.5, 2.5, 2.0,
+                           2.0, 2.0, 2.0, 2.0, 2.0,
+                           2.5, 3.5, 4.5, 4.5, 4.5]
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+  - filter: Gaussian_Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}

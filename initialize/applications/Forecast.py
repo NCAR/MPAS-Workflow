@@ -49,6 +49,9 @@ class Forecast(Component):
     # whether to use 4D forecast outputs
     'FourD': [False, bool],
 
+    ## Multiple ensemble memebrs per job
+    'MultiMemNum': [1, int],
+
     ## post
     # list of tasks for Post
     'post': [['verifyobs', 'verifymodel'], list]
@@ -74,6 +77,15 @@ class Forecast(Component):
     self.ea = ea
     self.NN = members.n
     self.memFmt = members.memFmt
+
+    MultiMemNum = self['MultiMemNum']
+    if self.NN == 1:
+       MM = 1
+    else:
+       MM = (self.NN + 1) // MultiMemNum
+    if self.NN % MultiMemNum != 0:
+       MM += 1
+    assert MM > 0, ('MM must be greater than 1')
 
     assert mesh == warmIC.mesh(), 'warmIC must be on same mesh as forecast'
 
@@ -118,7 +130,7 @@ class Forecast(Component):
     }
     # store job for ExtendedForecast to re-use
     self.job = Resource(self._conf, attr, ('job', mesh.name))
-    self.job._set('seconds', self.job['baseSeconds'] + self.job['secondsPerForecastHR'] * lengthHR)
+    self.job._set('seconds', self.job['baseSeconds'] + self.job['secondsPerForecastHR'] * lengthHR * MultiMemNum)
     task = TaskLookup[hpc.system](self.job)
 
     #######
@@ -131,22 +143,24 @@ class Forecast(Component):
     inherit = '''+self.tf.execute+'''
 '''+task.job()+task.directives()]
 
-    for mm in range(1, self.NN+1, 1):
+    for mm in range(0, MM, 1):
       # fcArgs explanation
       # DACycling (True), IC ~is~ a DA analysis for which re-coupling is required
       # DeleteZerothForecast (False), not used anywhere else in the workflow
+      mem_mm = MultiMemNum * mm + 1
       args = [
-        mm,
+        mem_mm,
         lengthHR,
         outIntervalHR,
         IAU,
         mesh.name,
         True,
-        False,
+        True,
         updateSea,
-        self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
-        warmIC[mm-1].directory(),
+        'CyclingFC/{{thisCycleDate}}',
+        'CyclingDA/{{thisCycleDate}}/an',
         warmIC[mm-1].prefix(),
+        MultiMemNum
       ]
       fcArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
@@ -233,9 +247,9 @@ class Forecast(Component):
       # MeanBackground
       # TODO: ABEI depends on MeanBackground too, need to move outside of Forecast
       attr = {
-        'seconds': {'def': 300},
+        'seconds': {'def': 900},
         'nodes': {'def': 1, 'typ': int},
-        'PEPerNode': {'def': 36, 'typ': int},
+        'PEPerNode': {'def': 128, 'typ': int},
         'queue': {'def': self.hpc['NonCriticalQueue']},
         'account': {'def': self.hpc['NonCriticalAccount']},
       }

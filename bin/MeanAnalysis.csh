@@ -33,7 +33,7 @@ source ./bin/getCycleVars.csh
 set self_WorkDir = $MeanAnalysisDirs[1]
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
-cd ${self_WorkDir}
+cd ${self_WorkDir} && rm *
 
 # build, executable, yaml
 set myBuildDir = ${meanStateBuildDir}
@@ -128,8 +128,22 @@ rm $NamelistFile
 cp -v $ModelConfigDir/rtpp/${NamelistFile} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFile
 sed -i 's@blockDecompPrefix@'${self_WorkDir}'/x1.'${nCellsEnsemble}'@' ${NamelistFile}
-sed -i 's@modelDT@'${TimeStep}'@' $NamelistFile
-sed -i 's@diffusionLengthScale@'${DiffusionLengthScale}'@' $NamelistFile
+sed -i 's@modelDT@'${TimeStepEnsemble}'@' $NamelistFile
+sed -i 's@diffusionLengthScale@'${DiffusionLengthScaleEnsemble}'@' $NamelistFile
+
+## modify namelist physics
+sed -i 's@radtlwInterval@'${RadiationLWIntervalEnsemble}'@' $NamelistFile
+sed -i 's@radtswInterval@'${RadiationSWIntervalEnsemble}'@' $NamelistFile
+sed -i 's@physicsSuite@'${PhysicsSuiteEnsemble}'@' $NamelistFile
+sed -i 's@micropScheme@'${MicrophysicsEnsemble}'@' $NamelistFile
+sed -i 's@convectionScheme@'${ConvectionEnsemble}'@' $NamelistFile
+sed -i 's@pblScheme@'${PBLEnsemble}'@' $NamelistFile
+sed -i 's@gwdoScheme@'${GwdoEnsemble}'@' $NamelistFile
+sed -i 's@radtCldScheme@'${RadiationCloudEnsemble}'@' $NamelistFile
+sed -i 's@radtLWScheme@'${RadiationLWEnsemble}'@' $NamelistFile
+sed -i 's@radtSWScheme@'${RadiationSWEnsemble}'@' $NamelistFile
+sed -i 's@sfcLayerScheme@'${SfcLayerEnsemble}'@' $NamelistFile
+sed -i 's@lsmScheme@'${LSMEnsemble}'@' $NamelistFile
 
 ## MPASJEDI variable configs
 foreach file ($MPASJEDIVariablesFiles)
@@ -153,7 +167,7 @@ sed -i 's@{{EnsembleNamelistFile}}@'${self_WorkDir}'/'${NamelistFile}'@' $thisYA
 sed -i 's@{{thisISO8601Date}}@'${thisISO8601Date}'@g' $thisYAML
 
 # use one of the analyses as the TemplateFieldsFileOuter
-set meshFile = ${meanName}
+set meshFile = ${meanName} 
 ln -sfv $meshFile ${TemplateFieldsFileOuter}
 
 # Set necessary variables (integer variables should not be included.)

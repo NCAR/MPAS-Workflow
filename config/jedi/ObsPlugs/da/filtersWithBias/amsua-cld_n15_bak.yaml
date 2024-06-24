@@ -1,0 +1,138 @@
+  obs filters:
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_n15.nc4
+  - filter: Domain Check
+    where:
+    - variable:
+        name: MetaData/sensorZenithAngle
+      maxvalue: 45.0
+
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-4,15
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    <<: *multiIterationFilter
+
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-4,15
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelRamp
+        channels: 1-4,15
+        options:
+          channels: 1-4,15
+          xvar:
+            name: ObsFunction/CLWRetSymmetricMW
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [ObsValue, HofX]
+              bias_application: ObsValue
+          x0:    [ 0.030, 0.030, 0.030, 0.030, 0.030 ]
+          x1:    [ 0.59,  0.59,  0.43,  0.52,  0.25 ]
+          err0:  [ 3.76,  3.14,  2.11,  0.49,  5.21]
+          err1:  [ 37.14, 46.32, 13.87,  3.05, 14.97]
+    <<: *multiIterationFilter
+
+  - filter: MWCLW Check
+# check is specific to AMSU-A requires ch1 and ch2 over sea
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 0.00
+# apply check to these channels
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-2
+    clw_thresholds: [1.0, 1.0 ]
+# clw_option controls how the clw is calculated:
+#     1) Use observed BTs
+#     2) Use calculated BTs
+#     3) Symmetric calculation
+    clw_option: 3
+    clw variables: [brightnessTemperature]
+    channels: 1-2
+
+#  Gross check
+  - filter: Background Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua-cld_n15_channels
+    function absolute threshold:
+    - name: ObsFunction/ObsErrorBoundMW
+      channels: *amsua-cld_n15_channels
+      options:
+        sensor: amsua_n15
+        channels: *amsua-cld_n15_channels
+        obserr_bound_latitude:
+          name: ObsFunction/ObsErrorFactorLatRad
+          options:
+            latitude_parameters: [25.0, 0.25, 0.04, 3.0]
+        obserr_bound_transmittop:
+          name: ObsFunction/ObsErrorFactorTransmitTopRad
+          channels: *amsua-cld_n15_channels
+          options:
+            channels: *amsua-cld_n15_channels
+        obserr_bound_topo:
+          name: ObsFunction/ObsErrorFactorTopoRad
+          channels: *amsua-cld_n15_channels
+          options:
+            channels: *amsua-cld_n15_channels
+            sensor: amsua_n15
+        obserr_function:
+          name: ObsFunction/ObsErrorModelRamp
+          channels: *amsua-cld_n15_channels
+          options:
+            channels: *amsua-cld_n15_channels
+            xvar:
+              name: ObsFunction/CLWRetSymmetricMW
+              options:
+                clwret_ch238: 1
+                clwret_ch314: 2
+                clwret_types: [ObsValue, HofX]
+                bias_application: HofX
+            x0:    [ 0.030, 0.030, 0.030, 0.030,  0.000,
+                     0.000,  0.000,  0.000,  0.000,  0.000,
+                     0.000,  0.000,  0.000,  0.000,  0.030]
+            x1:    [ 0.59,  0.59,  0.43,  0.52,  0.000,
+                     0.000,  0.000,  0.000,  0.000,  0.000,
+                     0.000,  0.000,  0.000,  0.000,  0.250]
+            err0:  [ 3.76,  3.14,  2.11,  0.49,  0.000,
+                     0.230,  0.250,  0.275,  0.340,  0.400,
+                     0.600,  1.000,  1.500,  2.000,   5.21]
+            err1:  [  37.14, 46.32, 13.87,  3.05,  0.300,
+                     0.230,  0.250,  0.275,  0.340,  0.400,
+                     0.600,  1.000,  1.500,  2.000, 14.97]
+        obserr_bound_max: [4.5, 4.5, 4.5, 2.5, 2.0,
+                           2.0, 2.0, 2.0, 2.0, 2.0,
+                           2.5, 3.5, 4.5, 4.5, 4.5]
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua-cld_n15_channels
+    test variables:
+    - name: ObsFunction/ChannelUseflagCheckRad
+      channels: *amsua-cld_n15_channels
+      options:
+        channels: *amsua-cld_n15_channels
+        use_flag: [ 1, 1, 1, 1,  -1,
+                     -1,  -1,  -1,  -1, -1,
+                    -1, -1, -1, -1, 1 ]
+    minvalue: 1.0e-12
+    action:
+      name: reject
+
+  - filter: Gaussian_Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}
+

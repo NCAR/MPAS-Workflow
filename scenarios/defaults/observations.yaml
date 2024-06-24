@@ -534,11 +534,26 @@ observations:
         abi_g16: 15X15
         ahi_himawari8: 15X15
 
-
-    SacaObs:
+    PANDAC2023CASE:
       PrepareObservationsTasks: [ObsReady__]
 
-      instrumentsAllowingBiasCorrection: [None]
+      instrumentsAllowingBiasCorrection:
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
+      - amsua-cld_metop-b
+      - amsua-cld_metop-c
+      - amsua-cld_n15
+      - amsua-cld_n18
+      - amsua-cld_n19
+      - mhs_metop-b
+      - mhs_metop-c
+      - mhs_n19
+      - iasi_metop-b
+      - iasi_metop-c
+      - cris-fsr_n20
 
       IODAPrefix:
         gnssrobndropp1d: gnssro
@@ -547,71 +562,87 @@ observations:
         gnssrobndmo-nopseudo: gnssro
         gnssrorefncep: gnssro
         gnssrorefncep_tunedErrors: gnssro
-        amsua-cld_aqua: amsua_aqua
-        amsua-cld_metop-a: amsua_metop-a
         amsua-cld_metop-b: amsua_metop-b
+        amsua-cld_metop-c: amsua_metop-c
         amsua-cld_n15: amsua_n15
         amsua-cld_n18: amsua_n18
         amsua-cld_n19: amsua_n19
-        abi-clr_g16: abi_g16
-        ahi-clr_himawari8: ahi_himawari8
-        saca: saca
 
       IODADirectory:
-        saca:
-          common: /glade/campaign/mmm/parc/ivette/pandac/saca/obs
-          #/glade/derecho/scratch/bjung/saca_new_mesh/obs_processing/convert.mpas_moreL2/output
-
         da:
-          common: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018
-
-        hofx:
-          ## anchor
-          aircraft: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
-          gnssrobndropp1d: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
-          gnssrobndnbam: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
-          gnssrobndmo: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
-          gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
-          gnssrorefncep: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
-          gnssrorefncep_tunedErrors: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
-          satwind: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
-          satwnd: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
-          sfc: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
-          sondes: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/conv_obs
+          ##anchor
+          aircraft: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrobndropp1d: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrobndnbam: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrobndmo: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrorefncep: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrorefncep_tunedErrors: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          satwind: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations 
+          satwnd: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          sfc: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          sondes: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
 
           ## amsua
-          amsua_aqua: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          amsua_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          amsua_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          amsua_n15: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          amsua_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          amsua_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          amsua-cld_aqua: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          amsua-cld_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          amsua-cld_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          amsua-cld_n15: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          amsua-cld_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          amsua-cld_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
+          amsua_metop-b: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua_metop-c: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua_n15: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua_n18: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua_n19: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua-cld_metop-b: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua-cld_metop-c: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua-cld_n15: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua-cld_n18: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua-cld_n19: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
 
           ## mhs
-          mhs_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          mhs_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          mhs_n18: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-          mhs_n19: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/bias_corr
-
-          ## abi
-          abi_g16: /glade/campaign/mmm/parc/ivette/pandac/saca/obs/ioda_v3_60-3km
-          #/glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-          abi-clr_g16: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
-
-          ## ahi
-          ahi_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
-          ahi-clr_himawari8: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          mhs_metop-b: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          mhs_metop-c: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          mhs_n19: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
 
           ## iasi
-          iasi_metop-a: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi_thin145km
-          iasi_metop-b: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi_thin145km
-          iasi_metop-c: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/iasi_thin145km
+          iasi_metop-b: /glade/campaign/mmm/parc/zhuming/pandac_common/obs/ioda_v3/2023/iasi_thin145km
+          iasi_metop-c: /glade/campaign/mmm/parc/zhuming/pandac_common/obs/ioda_v3/2023/iasi_thin145km
+
+          ## cris
+          cris-fsr_n20: /glade/campaign/mmm/parc/zhuming/pandac_common/obs/ioda_v3/2023/cris_thin145km
+
+        hofx:
+          aircraft: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrobndropp1d: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrobndnbam: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrobndmo: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrorefncep: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          gnssrorefncep_tunedErrors: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          satwind: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          satwnd: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          sfc: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          sondes: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+
+          ## amsua
+          amsua_metop-b: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua_metop-c: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua_n15: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua_n18: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua_n19: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua-cld_metop-b: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua-cld_metop-c: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua-cld_n15: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua-cld_n18: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          amsua-cld_n19: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+
+          ## mhs
+          mhs_metop-b: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          mhs_metop-c: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+          mhs_n19: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+
+          ## iasi
+          iasi_metop-b: /glade/campaign/mmm/parc/zhuming/pandac_common/obs/ioda_v3/2023/iasi_thin145km
+          iasi_metop-c: /glade/campaign/mmm/parc/zhuming/pandac_common/obs/ioda_v3/2023/iasi_thin145km
+
+          ## cris
+          cris-fsr_n20: /glade/campaign/mmm/parc/zhuming/pandac_common/obs/ioda_v3/2023/cris_thin145km
 
       IODASuperObGrid:
         abi_g16: 15X15

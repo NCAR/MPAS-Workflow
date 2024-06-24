@@ -1,0 +1,19 @@
+  obs bias:
+    input file: {{biasCorrectionDir}}/satbias_mhs_metop-a.h5
+    output file: {{OutDBDir}}{{MemberDir}}/satbias_mhs_metop-a.h5
+    variational bc:
+      predictors: &predictors1
+      - name: constant
+      - name: lapseRate
+        order: 2
+        tlapse: &mhsmetopatlap {{fixedTlapmeanCov}}/mhs_metop-a_tlapmean.txt
+      - name: lapseRate
+        tlapse: *mhsmetopatlap
+      - name: emissivityJacobian
+      - name: sensorScanAngle
+        order: 4
+      - name: sensorScanAngle
+        order: 3
+      - name: sensorScanAngle
+        order: 2
+      - name: sensorScanAngle

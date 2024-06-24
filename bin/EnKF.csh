@@ -24,9 +24,8 @@ source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/enkf.csh
 source config/auto/workflow.csh
-source config/auto/members.csh
-source config/auto/model.csh
 source config/auto/observations.csh
+source config/tools.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -45,11 +44,20 @@ set myYAML = ${self_WorkDir}/${appyaml}
 
 setenv OMP_NUM_THREADS ${solverThreads}
 
-# ================================================================================================
-
-## change to run directory
+# come to the brunning directory
 set runDir = run
-cd ${runDir}
+cd ${self_WorkDir}/${runDir}
+
+## link MPAS-Atmosphere lookup tables
+foreach fileGlob ($MPASLookupFileGlobs)
+  ln -sfv ${MPASLookupDir}/*${fileGlob} .
+end
+## link stream_list.atmosphere.* files
+ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
+## MPASJEDI variable configs
+foreach file ($MPASJEDIVariablesFiles)
+  ln -sfv $ModelConfigDir/$file . 
+end
 
 # Link+Run the executable
 # =======================
@@ -62,12 +70,23 @@ sed -i 's@{{ObsDataIn}}@ObsDataOut@' solver.yaml
 sed -i 's@\ \+{{ObsDataOut}}@@' solver.yaml
 sed -i 's@{{ObsOutSuffix}}@@' solver.yaml
 sed -i 's@{{ObsSpaceDistribution}}@HaloDistribution@' solver.yaml
-mpiexec ./${myEXE} solver.yaml ./solver.log >& solver.log.all
+sed -i "s@{{SaveSingleMember}}@false@" solver.yaml
+sed -i "s@{{SingleMemberNumber}}@0@" solver.yaml
 
-#WITH DEBUGGER
-#module load arm-forge/19.1
-#setenv MPI_SHEPHERD true
-#ddt --connect ./${myEXE} $myYAML ./jedi.log
+mpiexec ./${myEXE} solver.yaml ./solver.log >& solver.log.all
+rm solver.log.0*
+
+# Update ensemble analyses
+# =======================
+#set member = 1
+#while ( $member <= ${nMembers} )
+#  set an = $CyclingDAOutDirs[$member]
+#  set anFile = ${an}/${ANFilePrefix}.$thisMPASFileDate.nc
+#  mv ${anFile} ${anFile}.new
+#  mv ${anFile}.bak ${anFile}
+#  $update_analysis_states -i ${anFile}.new -o ${anFile}
+#  @ member++
+#end
 
 # Check status
 # ============
@@ -76,24 +95,6 @@ if ( $status != 0 ) then
   echo "ERROR in $0 : enkf solver failed" > ./FAIL
   exit 1
 endif
-
-# ================================================================================================
-
-# Remove obs-database output files
-# ================================
-if ("$retainObsFeedback" != True) then
-  echo " ls ${self_WorkDir}/${OutDBDir}/"
-  ls ${self_WorkDir}/${OutDBDir}/
-  echo "rm ${self_WorkDir}/${OutDBDir}/${obsPrefix}*.h5"
-  rm ${self_WorkDir}/${OutDBDir}/${obsPrefix}*.h5
-  echo "rm ${self_WorkDir}/${OutDBDir}/${geoPrefix}*.nc4"
-  rm ${self_WorkDir}/${OutDBDir}/${geoPrefix}*.nc4
-  echo "rm ${self_WorkDir}/${OutDBDir}/${diagPrefix}*.nc4"
-  rm ${self_WorkDir}/${OutDBDir}/${diagPrefix}*.nc4
-endif
-
-# Remove netcdf lock files
-rm *.nc*.lock
 
 date
 
