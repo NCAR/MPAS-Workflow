@@ -1,0 +1,74 @@
+experiment:
+  name: 'hybrid_3denvar_O30kmIE60km_WarmStart_allsky_TEST'
+externalanalyses:
+  resource: "GFS.PANDAC"
+forecast:
+  post: []
+firstbackground:
+  resource: "PANDAC.GFS"
+members:
+  n: 1
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+observations:
+  resource: PANDAC2023CASE
+staticstream:
+  resource: "PANDAC.GFS"
+variational:
+  DAType: 3dhybrid-allsky
+  nInnerIterations: [60, 60]
+  post: []
+  observers: [
+    aircraft,
+    gnssrobndropp1d,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    amsua_metop-b,
+    amsua_metop-c,
+    amsua-cld_n15,
+    amsua-cld_n18,
+    amsua-cld_n19,
+    amsua-cld_metop-b,
+    amsua-cld_metop-c,
+  ]
+  IRVISlandCoeff: IGBP
+  biasCorrection: True
+  # BEC setting
+  ensembleCovarianceWeight: 0.75
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
+  staticCovarianceWeight: 0.25
+  localization:
+    60km:
+      bumpLocPrefix: bumploc_1200.0km_6.0km_hydro600.0km_6.0km
+      bumpLocDir: /glade/derecho/scratch/bjung/pandac/20231211_release_v2.1_derecho/60km.bumploc.crossed
+  covariance:
+    bumpCovControlVariables:
+    - stream_function
+    - velocity_potential
+    - temperature
+    - spechum
+    - surface_pressure
+    - qc
+    - qi
+    - qg
+    - qr
+    - qs
+workflow:
+  first cycle point: 20230703T18
+  #restart cycle point: 20230710T06
+  final cycle point: 20230704T06
+hpc:
+  CriticalAccount: NMMM0035
+  NonCriticalAccount: NMMM0035
+  SingleProcAccount: NMMM0035
+  CriticalQueue: economy
+  NonCriticalQueue: economy

@@ -48,9 +48,7 @@ cost function:
     covariance model: hybrid
     components:
     - weight:
-        date: *analysisDate
-        stream name: control
-        filename: {{hybridCoefficientsDir}}/mpas.hyb_coef_sta2.2018-04-15_00.00.00.nc
+        value: {{staticCovarianceWeight}}
       covariance:
         covariance model: SABER
         saber central block:
@@ -63,6 +61,21 @@ cost function:
             drivers:
               multivariate strategy: univariate
               read local nicas: true
+            grids:
+            - model:
+                variables:
+                - stream_function
+                - velocity_potential
+                - temperature
+                - spechum
+                - qc
+                - qi
+                - qg
+                - qr
+                - qs
+            - model:
+                variables:
+                - surface_pressure
         saber outer blocks:
         - saber block name: StdDev
           read:
@@ -92,9 +105,7 @@ cost function:
           input variables: *ctlvars
           output variables: *incvars
     - weight:
-        date: *analysisDate
-        stream name: control
-        filename: {{hybridCoefficientsDir}}/mpas.hyb_coef_ens2.2018-04-15_00.00.00.nc
+        value: {{ensembleCovarianceWeight}}
       covariance:
         covariance model: ensemble
         localization:
@@ -107,10 +118,25 @@ cost function:
                 data directory: {{bumpLocDir}}
                 files prefix: {{bumpLocPrefix}}
               drivers:
-                multivariate strategy: duplicated
+                multivariate strategy: crossed
                 read local nicas: true
               model:
                 level for 2d variables: last
+                groups:
+                - group name: "large_scale"
+                  variables:
+                  - temperature
+                  - spechum
+                  - uReconstructZonal
+                  - uReconstructMeridional
+                  - surface_pressure
+                - group name: "small_scale"
+                  variables:
+                  - qc
+                  - qi
+                  - qg
+                  - qr
+                  - qs
 {{EnsemblePbMembers}}
 {{EnsemblePbInflation}}
   observations:

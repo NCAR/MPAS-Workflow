@@ -690,7 +690,7 @@ EOF
 
   # Hybrid Jb weights
   # =================
-  if ( "$DAType" == "3dhybrid" || "$DAType" == "4dhybrid" ) then
+  if ( "$DAType" == "3dhybrid" || "$DAType" == "4dhybrid" || "$DAType" == "3dhybrid-allsky") then
     sed -i 's@{{staticCovarianceWeight}}@'${staticCovarianceWeight}'@' $prevYAML
     sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
   endif
