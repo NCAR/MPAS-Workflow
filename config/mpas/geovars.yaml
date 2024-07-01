@@ -233,3 +233,51 @@ fields:
   - field name: qg
     mpas template field: theta
     mpas identity field: qg
+
+  - field name: cloud_liquid_water
+    mpas template field: theta
+    mpas identity field: qc
+
+  - field name: cloud_liquid_ice
+    mpas template field: theta
+    mpas identity field: qi
+
+  - field name: rain_water
+    mpas template field: theta
+    mpas identity field: qr
+
+  - field name: snow_water
+    mpas template field: theta
+    mpas identity field: qs
+
+  - field name: graupel
+    mpas template field: theta
+    mpas identity field: qg
+
+  - field name: hail
+    mpas template field: theta
+    mpas identity field: qh
+
+  - field name: cloud_droplet_number_concentration
+    mpas template field: theta
+    mpas identity field: nc
+
+  - field name: cloud_ice_number_concentration
+    mpas template field: theta
+    mpas identity field: ni
+
+  - field name: rain_number_concentration
+    mpas template field: theta
+    mpas identity field: nr
+
+  - field name: snow_number_concentration
+    mpas template field: theta
+    mpas identity field: ns
+
+  - field name: graupel_number_concentration
+    mpas template field: theta
+    mpas identity field: ng
+
+  - field name: hail_number_concentration
+    mpas template field: theta
+    mpas identity field: nh
