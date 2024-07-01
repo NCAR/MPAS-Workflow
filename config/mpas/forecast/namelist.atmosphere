@@ -44,6 +44,9 @@
     config_do_restart = false
     config_do_DAcycling = configDODACycling
 /
+&limited_area
+    config_apply_lbcs = configApplyLbcs
+/
 &printout
     config_print_global_minmax_vel = true
     config_print_detailed_minmax_vel = true
