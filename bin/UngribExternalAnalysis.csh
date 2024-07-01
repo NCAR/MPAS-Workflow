@@ -64,6 +64,13 @@ ln -sfv ${externalanalyses__Vtable} Vtable
 rm ${NamelistFileWPS}
 cp -v $ModelConfigDir/initic/${NamelistFileWPS} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
+if ( ${Regional} == "True" ) then
+  sed -i 's@endTime@'${endMPASNamelistDate}'@' $NamelistFileWPS
+  sed -i 's@LbcIntervalSeconds@'${LbcIntervalSeconds}'@' $NamelistFileWPS
+else
+  sed -i 's@endTime@'${thisMPASNamelistDate}'@' $NamelistFileWPS
+  sed -i 's@LbcIntervalSeconds@0@' $NamelistFileWPS
+end if
 sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileWPS
 
 # Run the executable
