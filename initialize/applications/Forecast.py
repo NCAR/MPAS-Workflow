@@ -49,6 +49,10 @@ class Forecast(Component):
     # whether to use 4D forecast outputs
     'FourD': [False, bool],
 
+    ## Regional or Global
+    # whether to do regional Forecast
+    'Regional': [False, bool],
+
     ## post
     # list of tasks for Post
     'post': [['verifyobs', 'verifymodel'], list]
