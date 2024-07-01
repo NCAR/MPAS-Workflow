@@ -30,6 +30,12 @@
                   io_type="netcdf4"
                   input_interval="initial_only" />
 
+<immutable_stream name="lbc_in"
+                  type="input"
+                  filename_template="lbc.$Y-$M-$D_$h.nc"
+                  filename_interval="input_interval"
+                  input_interval="{{lbcInputInterval}}" />
+
 <stream name="output"
         type="none"
         filename_template="history.$Y-$M-$D_$h.$m.$s.nc"
