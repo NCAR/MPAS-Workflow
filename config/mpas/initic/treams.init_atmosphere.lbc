@@ -1,0 +1,15 @@
+<streams>
+<immutable_stream name="input"
+                  type="input"
+                  precision="{{PRECISION}}"
+                  filename_template="x{{meshRatio}}.{{nCells}}.init.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
+                  input_interval="initial_only" />
+
+<immutable_stream name="lbc"
+                  type="output"
+                  filename_template="lbc.$Y-$M-$D_$h.nc"
+                  filename_interval="{{LbcFileInterval}}"
+                  packages="lbcs"
+                  output_interval="3:00:00" />
+</streams>
