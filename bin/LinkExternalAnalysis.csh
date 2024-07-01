@@ -38,6 +38,7 @@ source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/externalanalyses.csh
 source config/auto/model.csh
+source config/auto/forecast.csh
 source config/tools.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -56,8 +57,13 @@ mkdir -p ${WorkDir}
 cd ${WorkDir}
 
 # ================================================================================================
+# Initial conditions
+ln -sfv $directory/${thisValidDate}/*.$thisMPASFileDate.nc ./
 
-ln -sfv $directory/*.$thisMPASFileDate.nc ./
+# Boundary layer conditions
+if ( $Regional == "True" ) then
+   ln -sfv $directory/${thisValidDate}/${LbcPrefix}.*.nc ./
+endif
 
 date
 
