@@ -1,0 +1,27 @@
+- obs space:
+    <<: *ObsSpace
+    name: Radar_dBZ
+    _obsdatain: &ObsDataIn
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/radar_dbz_obs_{{thisValidDate}}.h5
+    _obsdataout: &ObsDataOut
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_radar_dbz{{ObsOutSuffix}}.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
+    simulated variables: [equivalentReflectivityFactor]
+  obs error: *ObsErrorDiagonal
+  <<: *heightAndHorizObsLoc
+  obs operator:
+    name: DirectZDA
+    microphysics option: {{dBZ_operator}}
+    use variational method: {{VarDA}}
+    var_rain_mixing_ratio: mixing_ratio_of_rain
+    var_snow_mixing_ratio: mixing_ratio_of_snow
+    var_graupel_mixing_ratio: mixing_ratio_of_graupel
+    var_rain_number_concentration: rain_number_concentration
+    observation alias file: obsop_name_map.yaml
+  get values:
+    <<: *GetValues
