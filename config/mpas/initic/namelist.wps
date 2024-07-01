@@ -2,8 +2,8 @@
  wrf_core = 'ARW',
  max_dom = 2,
  start_date = 'startTime',
- end_date   = 'startTime',
- interval_seconds = 21600
+ end_date   = 'endTime',
+ interval_seconds = 'LbcIntervalSeconds'
  io_form_geogrid = 2,
 /
 
