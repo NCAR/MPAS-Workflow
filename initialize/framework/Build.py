@@ -44,8 +44,7 @@ class Build(Component):
         self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
       else:
         self.variablesWithDefaults['mpas bundle'] = \
-          ['/glade/campaign/mmm/parc/jban/pandac/bundle/20240605/build_SP', str]
-
+          ['/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_saca_dev_10Jun2024/build_SP', str]
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
       self.variablesWithDefaults['forecast directory'] = ['bundle', str]
@@ -105,7 +104,11 @@ class Build(Component):
     ## RTPS
     self._set('RTPSEXE', 'mpasjedi_rtps.x')
     self._set('RTPSBuildDir', self['mpas bundle']+'/bin')
-  
+
+    ## SACA
+    self._set('SACAEXE', 'mpasjedi_addincrement.x')
+    self._set('SACABuildDir', self['mpas bundle']+'/bin')
+
     if model is not None:
 
       # MPAS-Model

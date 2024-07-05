@@ -261,7 +261,7 @@ class HofX(Component):
     script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
         self._dependencies += ['''
-        '''+execute+''' => '''+concat]
+        '''+execute+''' => '''+concat+''' => '''+self.tf.finished]
 
     #########
     # outputs
