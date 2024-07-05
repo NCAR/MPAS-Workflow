@@ -53,120 +53,122 @@ set run_mem = $ArgStartMember
 
 while ( $imem <= $ArgNumSingle && $run_mem <= `expr ${nMembers} + 1` ) 
 
-cd ${self_WorkDir}
+  cd ${self_WorkDir}
 
-if ( $ArgSaveSingleMember == "True" ) then
-  set memDir = `${memberDir} 2 ${run_mem} "${flowMemFmt}"`
-  if ( $run_mem > ${nMembers} ) then
-    set memDir = `${memberDir} 2 0 "${flowMemFmt}"` ### For mean 
-  endif
-  set runDir = run${memDir}
-  rm -r ${runDir}
-  mkdir -p ${runDir}
-  mkdir -p dbOut${memDir}
-else
-  set runDir = run
-  rm -r ${runDir}
-  mkdir -p ${runDir}
-endif
-
-cd ${runDir}
-
-## link MPAS-Atmosphere lookup tables
-foreach fileGlob ($MPASLookupFileGlobs)
-  ln -sfv ${MPASLookupDir}/*${fileGlob} .
-end
-
-## link stream_list.atmosphere.* files
-ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
-
-## MPASJEDI variable configs
-foreach file ($MPASJEDIVariablesFiles)
-  ln -sfv $ModelConfigDir/$file .
-end
-
-# Link+Run the executable
-# =======================
-ln -sfv ${myBuildDir}/${myEXE} ./
-
-# asObserver
-cp $myYAML observer.yaml
-sed -i 's@{{driver}}@asObserver@' observer.yaml
-sed -i 's@{{ObsSpaceDistribution}}@RoundRobinDistribution@' observer.yaml
-sed -i 's@{{ObsDataIn}}@ObsDataIn@' observer.yaml
-sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' observer.yaml
-sed -i 's@{{ObsOutSuffix}}@@' observer.yaml
-sed -i "s@{{SaveSingleMember}}@${ArgSaveSingleMember}@" observer.yaml
-if ( $run_mem > ${nMembers} ) then
-  sed -i "s@{{SingleMemberNumber}}@0@" observer.yaml
-else
-  sed -i "s@{{SingleMemberNumber}}@${run_mem}@" observer.yaml
-endif
-if ( $ArgSaveSingleMember == "True" )then
-  sed -i "s@dbOut@dbOut${memDir}@" observer.yaml
-endif
-
-if ( $thinningHofx == "True" && $ArgSaveSingleMember == "True" && $run_mem != 0 ) then
-   mv observer.yaml observer.yaml.bak
-   sed '/Gaussian_Thinning/{N;d;}' observer.yaml.bak > observer.yaml
-endif
-
-if ( $thinningHofx == "True" && $ArgSaveSingleMember == "True" && $run_mem == 0 ) then
-   sed -i 's@*asGETKF@*asLETKF@' observer.yaml  
-endif
-
-mpiexec ./${myEXE} observer.yaml ./observer.log >& observer.log.all
-rm observer.log.0*
-
-# Check status
-# ============
-grep 'Run: Finishing oops.* with status = 0' observer.log
-if ( $status != 0 ) then
-  echo "ERROR in $0 : enkf observer failed" > ./FAIL
-  exit 1
-endif
-
-if ( $run_mem == 0 && $ArgSaveSingleMember == "True" && $thinningHofx == "True" ) then
-  source /etc/profile.d/z00_modules.csh
-  module purge
-  module load conda/latest
-  conda activate npl
-
-  # Thinning observations
-  cd $self_WorkDir/${OutDBDir}/mem000
-  set h5_files = `ls *.h5`
-  foreach instrument ($observers)
-    if ( ! -e ${instrument}_obs_${thisValidDate}.h5 ) then
-       mv obsout_da_${instrument}.h5 obsout_da_${instrument}.h5_old
-       $thinning_hofx --thinning 1 --rundir $self_WorkDir/${OutDBDir}/mem000 --hofxfile obsout_da_${instrument}.h5_old --outfile ${instrument}_obs_${thisValidDate}.h5 &
+  if ( $ArgSaveSingleMember == "True" ) then
+    set memDir = `${memberDir} 2 ${run_mem} "${flowMemFmt}"`
+    if ( $run_mem > ${nMembers} ) then
+      set memDir = `${memberDir} 2 0 "${flowMemFmt}"` ### For mean 
     endif
-  end
-  wait
-  # rename mem000 as mean for saving
-  if ( -e $self_WorkDir/${OutDBDir}/mean ) then
-     rm -rf $self_WorkDir/${OutDBDir}/mean
+    set runDir = run${memDir}
+    rm -r ${runDir}
+    mkdir -p ${runDir}
+    mkdir -p dbOut${memDir}
+  else
+    set runDir = run
+    rm -r ${runDir}
+    mkdir -p ${runDir}
   endif
-  cd $self_WorkDir/${OutDBDir} && mv mem000 mean
-  if ( -e $self_WorkDir/run/mean ) then
-     rm -rf $self_WorkDir/run/mean
-  endif
-  cd $self_WorkDir/run && mv mem000 mean
 
-  # Re-link new-generated IODA files for Observer
-  cd $self_WorkDir/${InDBDir}
-  foreach instrument ($observers)
-     mv ${instrument}_obs_${thisValidDate}.h5 ${instrument}_obs_${thisValidDate}.h5_old
-     mv $self_WorkDir/${OutDBDir}/mean/${instrument}_obs_${thisValidDate}.h5 ${instrument}_obs_${thisValidDate}.h5
+  cd ${runDir}
+
+  ## link MPAS-Atmosphere lookup tables
+  foreach fileGlob ($MPASLookupFileGlobs)
+    ln -sfv ${MPASLookupDir}/*${fileGlob} .
   end
-  break
-endif
 
-set run_mem = `expr $imem + $ArgStartMember`
-@ imem++
+  ## link stream_list.atmosphere.* files
+  ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
 
-if ( $ArgSaveSingleMember == "false" ) then
-  break
-endif
+  ## MPASJEDI variable configs
+  foreach file ($MPASJEDIVariablesFiles)
+    ln -sfv $ModelConfigDir/$file .
+  end
+
+  # Link+Run the executable
+  # =======================
+  ln -sfv ${myBuildDir}/${myEXE} ./
+
+  # asObserver
+  cp $myYAML observer.yaml
+  sed -i 's@{{driver}}@asObserver@' observer.yaml
+  sed -i 's@{{ObsSpaceDistribution}}@RoundRobinDistribution@' observer.yaml
+  sed -i 's@{{ObsDataIn}}@ObsDataIn@' observer.yaml
+  sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' observer.yaml
+  sed -i 's@{{ObsOutSuffix}}@@' observer.yaml
+  sed -i "s@{{SaveSingleMember}}@${ArgSaveSingleMember}@" observer.yaml
+  if ( $run_mem > ${nMembers} ) then
+    sed -i "s@{{SingleMemberNumber}}@0@" observer.yaml
+  else
+    sed -i "s@{{SingleMemberNumber}}@${run_mem}@" observer.yaml
+  endif
+  if ( $ArgSaveSingleMember == "True" )then
+    sed -i "s@dbOut@dbOut${memDir}@" observer.yaml
+  endif
+
+  if ( $thinningHofx == "True" && $ArgSaveSingleMember == "True" && $run_mem != 0 ) then
+     mv observer.yaml observer.yaml.bak
+     sed '/Gaussian_Thinning/{N;d;}' observer.yaml.bak > observer.yaml
+  endif
+
+  if ( $thinningHofx == "True" && $ArgSaveSingleMember == "True" && $run_mem == 0 ) then
+     sed -i 's@*asGETKF@*asLETKF@' observer.yaml  
+  endif
+
+  mpiexec ./${myEXE} observer.yaml ./observer.log >& observer.log.all
+
+  # Check status
+  # ============
+  grep 'Run: Finishing oops.* with status = 0' observer.log
+  if ( $status != 0 ) then
+    echo "ERROR in $0 : enkf observer failed" > ./FAIL
+    exit 1
+  else
+    rm observer.log.0*
+  endif
+
+  if ( $run_mem == 0 && $ArgSaveSingleMember == "True" && $thinningHofx == "True" ) then
+    source /etc/profile.d/z00_modules.csh
+    module purge
+    module load conda/latest
+    conda activate npl
+
+    # Thinning observations
+    cd $self_WorkDir/${OutDBDir}/mem000
+    foreach instrument ($observers)
+      if ( -e obsout_da_${instrument}.h5 ) then
+         mv obsout_da_${instrument}.h5 obsout_da_${instrument}.h5_old
+         $thinning_hofx --thinning 1 --rundir $self_WorkDir/${OutDBDir}/mem000 --hofxfile obsout_da_${instrument}.h5_old --outfile ${instrument}_obs_${thisValidDate}.h5 &
+      endif
+    end
+    wait
+    # rename mem000 as mean for saving
+    if ( -e $self_WorkDir/${OutDBDir}/mean ) then
+       rm -rf $self_WorkDir/${OutDBDir}/mean
+    endif
+    cd $self_WorkDir/${OutDBDir} && mv mem000 mean
+    if ( -e $self_WorkDir/run/mean ) then
+       rm -rf $self_WorkDir/run/mean
+    endif
+    cd $self_WorkDir/run && mv mem000 mean
+
+    # Re-link new-generated IODA files for Observer
+    cd $self_WorkDir/${InDBDir}
+    foreach instrument ($observers)
+      if ( -e ${instrument}_obs_${thisValidDate}.h5 ) then
+         mv ${instrument}_obs_${thisValidDate}.h5 ${instrument}_obs_${thisValidDate}.h5_old
+         mv $self_WorkDir/${OutDBDir}/mean/${instrument}_obs_${thisValidDate}.h5 ${instrument}_obs_${thisValidDate}.h5
+      endif
+    end
+    break
+  endif
+
+  set run_mem = `expr $imem + $ArgStartMember`
+  @ imem++
+
+  if ( $ArgSaveSingleMember == "false" ) then
+    break
+  endif
 
 end
 

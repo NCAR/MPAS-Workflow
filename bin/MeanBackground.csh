@@ -212,6 +212,8 @@ grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
   echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
+else
+  rm jedi.log.0*
 endif
 
 ## change static fields to a link, keeping for transparency

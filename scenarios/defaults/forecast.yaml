@@ -37,7 +37,7 @@ forecast:
       PEPerNode: 128
       baseSeconds: 60
       #secondsPerForecastHR: 120
-      secondsPerForecastHR: 240
+      secondsPerForecastHR: 180
     60km:
       # faster turnaround
       #nodes: 4

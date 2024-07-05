@@ -5,11 +5,11 @@ externalanalyses:
 enkf:
   solver: GETKF
   horizontal localization lengthscale: 1.2e6
-  horizontal localization lengthscale cloud: 1.2e6
+  horizontal localization lengthscale cloud: 3.0e5
   vertical localization lengthscale: 6000.0
   vertical localization scaleunit: height
   biasCorrection: True
-  varbcOutput: /glade/derecho/scratch/taosun/pandac/taosun_hybrid_3denvar_O30kmIE60km_WarmStart_allsky/CyclingDA
+  varbcOutput: /glade/derecho/scratch/taosun/pandac/taosun_hybrid_3denvar_O30kmIE60km_WarmStart_allsky_new/CyclingDA
   retainObsFeedback: False
   save single hofx: True
   observer hofx number: 3
@@ -39,7 +39,7 @@ enkf:
 firstbackground:
   resource: "PANDAC.EnsPertB"
 forecast:
-  MultiMemNum: 8
+  MultiMemNum: 4
   job:
     meanbackground:
       nodes: 4
@@ -61,5 +61,11 @@ observations:
   resource: PANDAC2023CASE
 workflow:
   first cycle point: 20230703T18
-  restart cycle point: 20230704T06
-  final cycle point: 20230704T06
+  restart cycle point: 20230713T12
+  final cycle point: 20230720T00
+hpc:
+  CriticalAccount: NMMM0035
+  NonCriticalAccount: NMMM0035
+  SingleProcAccount: NMMM0035
+  CriticalQueue: economy
+  NonCriticalQueue: economy

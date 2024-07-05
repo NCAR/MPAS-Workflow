@@ -327,6 +327,8 @@ class PyMPIConcatenateObserver():
     self.IFILE.close()
     self.OFILE.close()
 
+    self.LOGFILE.write('Finished generation of new IODA file!\n')
+
 #=========================================================================================
 if __name__== '__main__':
   debug = 0

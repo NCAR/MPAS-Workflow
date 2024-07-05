@@ -44,7 +44,7 @@ class HPC(Component):
     # SingleProc*: used for single-processor jobs, both critical and non-critical paths
     # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
     'SingleProcAccount': ['NMMM0015', str],
-    'SingleProcQueue': ['casper@casper-pbs', str, ['casper@casper-pbs', 'share']],
+    'SingleProcQueue': ['casper@casper-pbs', str, ['casper@casper-pbs', 'preempt']],
   }
   def __init__(self, config:Config):
     self.logPrefix = self.__class__.__name__+': '
