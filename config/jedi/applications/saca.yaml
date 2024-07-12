@@ -7,6 +7,8 @@ state geometry: &geom
   l_saturate_qv: {{saturateQv}}
   l_conserve_thetaV: {{conserveThetaV}}
   cldfra_def: {{cldfraDef}}
+  cldfra_thresh: {{cldfraThresh}}
+  cldmask_thresh: {{cldmaskThresh}}
   cld_bld_hgt: {{cldBluidHeigt}}
 
 increment geometry: *geom

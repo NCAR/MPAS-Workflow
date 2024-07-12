@@ -3,6 +3,9 @@ suite: CloudDirectInsertion
 experiment:
   name: 'CloudDirectInsertion_TEST'
 
+build:
+  mpas bundle: /glade/derecho/scratch/bjung/panda-c/code_DI_cleanup/mpas-bundle/build_single
+
 externalanalyses:
   resource: "GFS.PANDAC"
 

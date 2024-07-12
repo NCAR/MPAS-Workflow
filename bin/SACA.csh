@@ -264,6 +264,8 @@ sed -i 's@{{buildGSDCloud}}@'${buildGSDCloud_lower}'@g' $thisYAML
 sed -i 's@{{saturateQv}}@'${saturateQv_lower}'@g' $thisYAML
 sed -i 's@{{conserveThetaV}}@'${conserveThetaV_lower}'@g' $thisYAML
 sed -i 's@{{cldfraDef}}@'${cldfraDef}'@g' $thisYAML
+sed -i 's@{{cldfraThresh}}@'${cldfraThresh}'@g' $thisYAML
+sed -i 's@{{cldmaskThresh}}@'${cldmaskThresh}'@g' $thisYAML
 sed -i 's@{{cldBluidHeigt}}@'${cldBluidHeigt}'@g' $thisYAML
 
 ## current date
