@@ -51,11 +51,13 @@ class Run():
     ap = argparse.ArgumentParser()
     ap.add_argument('config', type=str,
                     help='configuration file; e.g., runs/test.yaml, scenarios/{{scenarioName}}.yaml')
+    ap.add_argument('-b', '--bundle_dir', help='mpas bundle directory')
+    ap.add_argument('-x', '--suffix', help='experiment name suffix')
     args = ap.parse_args()
     assert Path(args.config).is_file(), (self.logPrefix+'config ('+args.config+') does not exist')
 
     self.__configFile = args.config
-    self.__config = Config(args.config)
+    self.__config = Config(args.config, args.bundle_dir, args.suffix)
 
   def execute(self):
     '''
@@ -78,7 +80,7 @@ class Run():
 
       self.clean()
 
-      scenario = Scenario(scenarioFile)
+      scenario = Scenario(scenarioFile, self.__config._bundle_dir, self.__config._suffix)
       scenario.initialize()
 
       # suite name (defaults to Cycle)
