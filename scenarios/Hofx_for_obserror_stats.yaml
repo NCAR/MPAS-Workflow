@@ -1,6 +1,6 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  name: 'Hofx_MPAS-init_127L_gnssro'
+  name: 'Hofx_MPAS-init_127L_gnssro_60km'
 
 firstbackground:
   resource: "PANDAC.GFS"
