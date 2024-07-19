@@ -411,3 +411,9 @@ extendedforecast:
   DACycling: False
   updateSea: True
   post: [] #verifymodel,verifyobs
+  job:
+    30km:
+      nodes: 2
+      PEPerNode: 128
+      baseSeconds: 60
+      secondsPerForecastHR: 240
