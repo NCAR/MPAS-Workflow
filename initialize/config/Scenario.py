@@ -10,8 +10,8 @@
 from initialize.config.Config import Config
 
 class Scenario():
-  def __init__(self, file):
-    self.__conf = Config(file)
+  def __init__(self, file, bundle, suffix):
+    self.__conf = Config(file, bundle, suffix)
     self.__script = [
 '''#!/bin/csh -f
 
