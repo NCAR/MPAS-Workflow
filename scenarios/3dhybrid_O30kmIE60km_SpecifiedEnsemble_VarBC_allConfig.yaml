@@ -2,7 +2,7 @@ suite: Cycle
 
 experiment:
   user directory child: pandac
-  suffix: '_ensB-SE80+RTPP70_VarBC'
+  suffix: '_ensB-SE80+RTPP70_VarBC_allConfig_TEST'
   #prefix: ''
   #name: ''
 
@@ -78,12 +78,12 @@ model:
 
 staticstream:
   resource: "PANDAC"
-  #resources:
-  #  PANDAC:
-  #    60km: # only available 20180414T18, 20200723T18
-  #      directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}"
-  #      maxMembers: 80
-  #      #memberFormat: "/{:02d}"
+  resources:
+  PANDAC:
+      60km: # only available 20180414T18, 20200723T18
+        directory: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}
+        maxMembers: 80
+        memberFormat: /{:02d}
 
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -91,9 +91,9 @@ externalanalyses:
     GFS:
       PANDAC: # only available 20180418T00-20180524T00
         30km:
-          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/30km/GFSAnaAndDiagnostics"
+          directory: /glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_GFSANA
         60km:
-          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_GFSANA"
+          directory: /glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_GFSANA
 
 initic:
   job:
@@ -104,10 +104,10 @@ initic:
 
 firstbackground:
   resource: "PANDAC.GFS"
-    PANDAC:
+  PANDAC:
       GFS:
         30km: # only available 20180414T18
-          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_1stCycle_background_single/{{FirstCycleDate}}"
+          directory: /glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_1stCycle_background_single/{{FirstCycleDate}}
 
 forecast:
   #execute: False # the default is True
@@ -161,13 +161,13 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
-        PANDAC:
-          EDA:
-            60km:
-              maxMembers: 80
-              directory0: /glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_EnsFC_80EDA/{{prevDateTime}}
-              memberPrefix: mem
-              memberNDigits: 3
+      PANDAC:
+        EDA:
+          60km:
+            maxMembers: 80
+            directory0: /glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_EnsFC_80EDA/{{prevDateTime}}
+            memberPrefix: mem
+            memberNDigits: 3
     localization:
       60km:
           bumpLocPrefix: bumploc_1200.0km_6.0km
@@ -390,13 +390,13 @@ observations:
   initialVARBCcoeff: /glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2018
 
 verifyobs:
-  script directory: /glade/campaign/mmm/parc/ivette/pandac/graphics
+  script directory: /glade/u/home/taosun/work/Derecho/MPAS/Graphics_Python
   job:
     seconds: 1100
     secondsPerMember: 120
 
 verifymodel:
-  script directory: /glade/campaign/mmm/parc/ivette/pandac/graphics
+  script directory: /glade/u/home/taosun/work/Derecho/MPAS/Graphics_Python
   job:
     defaults:
       seconds: 2000
@@ -410,4 +410,4 @@ extendedforecast:
   outIntervalHR: 12
   DACycling: False
   updateSea: True
-  post: [verifymodel,verifyobs]
+  post: [] #verifymodel,verifyobs
