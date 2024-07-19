@@ -10,14 +10,16 @@
 import os
 import subprocess
 
+from initialize.config.Logger import Logger
 from initialize.config.Config import Config
 from initialize.config.TaskFamily import placeholdertask
 
 from initialize.framework.HPC import HPC
 from initialize.framework.Workflow import Workflow
 
-class SuiteBase():
+class SuiteBase(Logger):
   def __init__(self, conf:Config):
+    super().__init__()
     self.c = {}
     self.c['hpc'] = HPC(conf)
     self.c['workflow'] = Workflow(conf)
@@ -38,18 +40,18 @@ class SuiteBase():
     elif host == "cheyenne":
       self.suiteFileName = 'suite.rc'
 
-  def __msg(self, text):
-    print(self.logPrefix+text)
+  def __msg(self, text, *args, **kwargs):
+    self.log(text, *args, **kwargs)
     return
 
   def submit(self):
     scriptDir = self.c['experiment']['mainScriptDir']
     cmd = ['rm', '-rf', scriptDir]
-    self.__msg(' '.join(cmd))
+    self.__msg(' '.join(cmd), level=self.MSG_DEBUG)
     sub = subprocess.run(cmd)
 
     cmd = ['mkdir', '-p', scriptDir]
-    self.__msg(' '.join(cmd))
+    self.__msg(' '.join(cmd), level=self.MSG_DEBUG)
     sub = subprocess.run(cmd)
 
     host = os.getenv('NCAR_HOST')
@@ -133,11 +135,11 @@ conda activate """ + conda + """
     ]
     for spec in suiteSpec:
       cmd = ['cp', '-rP', spec, scriptDir+'/']
-      self.__msg(' '.join(cmd))
+      self.__msg(' '.join(cmd), level=self.MSG_DEBUG)
       sub = subprocess.run(cmd)
 
     cmd = ['./submit.csh']
-    self.__msg(' '.join(cmd))
+    self.__msg(' '.join(cmd), level=self.MSG_DEBUG)
     sub = subprocess.run(cmd)
 
   def __export(self):
