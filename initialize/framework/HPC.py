@@ -72,16 +72,15 @@ class HPC(Component):
 
     self.variablesWithDefaults['top directory'] = [topdir, str]
     self.variablesWithDefaults['TMPDIR'] = [topdir + '/{{USER}}/temp', str]
-    self._msg('vars'+ str(self.variablesWithDefaults))
-    self._msg('init######################################################################')
-    #print('config:', dir(config))
-    #self._msg('table:'+ str(config._table))
     super().__init__(config)
+    self._msg('vars'+ str(self.variablesWithDefaults), level=self.MSG_DEBUG)
+    self._msg('config:', dir(config), level=self.MSG_NOISY)
+    self._msg('table:'+ str(config._table), level=self.MSG_NOISY)
 
     user = os.getenv('USER')
     TMPDIR = self['TMPDIR'].replace('{{USER}}', user)
     cmd = ['mkdir', '-p', TMPDIR]
-    print(' '.join(cmd))
+    self._msg(' '.join(cmd), level=self.MSG_DEBUG)
     sub = subprocess.run(cmd)
 
     # default multi-processor task
@@ -101,6 +100,7 @@ class HPC(Component):
     }
     singlejob = Resource(self._conf, attr, ('job', 'single proc'))
     self.singletask = TaskLookup[self.system](singlejob)
+    self._msg('init ######################################################################', level=self.MSG_DEBUG)
 
   def maxMemPerNode(self):
     return self.multitask.maxMemPerNode
