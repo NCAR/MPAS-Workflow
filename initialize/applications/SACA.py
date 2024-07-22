@@ -51,6 +51,13 @@ class SACA(Component):
     # cloud fraction value for cloud insertion
     'cldfraDef': [0.98, float],
 
+    # cloud fraction threshold to determine presence of model cloud
+    # only applicable to l_build_madwrf=true
+    'cldfraThresh': [0.0, float],
+
+    # threshold to distinguish clear/cloudy for "observed" cldmask (or cloud fraction)
+    'cldmaskThresh': [0.0, float],
+
     # limit the cloud building within 1200 [meters] above ground level
     'cldBluidHeigt': [1200.0, float],
 
