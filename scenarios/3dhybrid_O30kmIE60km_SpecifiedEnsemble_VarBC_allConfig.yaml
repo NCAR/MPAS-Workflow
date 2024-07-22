@@ -104,6 +104,7 @@ initic:
 
 firstbackground:
   resource: "PANDAC.GFS"
+  resources:
   PANDAC:
       GFS:
         30km: # only available 20180414T18
@@ -161,6 +162,8 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
+      defaults:
+        filePrefix: mpasout
       PANDAC:
         EDA:
           60km:
