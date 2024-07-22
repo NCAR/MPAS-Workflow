@@ -93,10 +93,10 @@ ln -sfv ${ExternalAnalysesDir}/${externalanalyses__UngribPrefix}* ./
 
 set meshRatio = $meshRatioOuter
 
-## link MPAS mesh graph info and static field
+## link MPAS mesh graph info and invariant field
 rm ./x${meshRatio}.${ArgNCells}.graph.info*
 ln -sfv $GraphInfoDir/x${meshRatio}.${ArgNCells}.graph.info* .
-ln -sfv $GraphInfoDir/x${meshRatio}.${ArgNCells}.static.nc .
+ln -sfv $GraphInfoDir/x${meshRatio}.${ArgNCells}.invariant.nc .
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)

@@ -137,7 +137,7 @@ class EnKF(Component):
     self._set('meshRatioList', [meshes['Outer'].meshRatio])
     self._set('StreamsFileList', [model['outerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile']])
-    self._set('localStaticFieldsFileList', [model['localStaticFieldsFileOuter']])
+    self._set('localInvariantFieldsFileList', [model['localInvariantFieldsFileOuter']])
 
     self._set('TimeStepList', [model['TimeStepOuter'], model['TimeStepInner']])
     self._set('DiffusionLengthScaleList', [model['DiffusionLengthScaleOuter'], model['DiffusionLengthScaleInner']])

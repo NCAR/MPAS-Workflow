@@ -34,18 +34,18 @@ set self_AppType = hofx
 set memDir = /mean
 set VerifyEnsMeanBGDirs = (${VerifyObsWorkDir}/${backgroundSubDir}${memDir}/${thisCycleDate})
 
-set localStaticFieldsFile = ${localStaticFieldsFileOuter}
+set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
 
-## copy static fields
-rm static.nc
+## copy invariant fields
+rm invariant.nc
 
-set StaticMemDir = `${memberDir} 2 1 "${staticMemFmt}"`
-set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
-rm ${localStaticFieldsFile}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}
+set InvariantMemDir = `${memberDir} 2 1 "${invariantMemFmt}"`
+set memberInvariantFieldsFile = ${InvariantFieldsDirOuter}${InvariantMemDir}/${InvariantFieldsFileOuter}
+rm ${localInvariantFieldsFile}
+ln -sfv ${memberInvariantFieldsFile} ${localInvariantFieldsFile}
 
 # gridTemplateFile must include latCell, lonCell, theta, and surface_pressure
-set gridTemplateFile = ${self_WorkDir}/${localStaticFieldsFile}
+set gridTemplateFile = ${self_WorkDir}/${localInvariantFieldsFile}
 
 # could use mean state, but not guaranteed to have all required fields
 #set meanStatePrefix = ${FCFilePrefix}

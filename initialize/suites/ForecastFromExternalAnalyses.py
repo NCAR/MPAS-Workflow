@@ -17,7 +17,7 @@ from initialize.config.Config import Config
 from initialize.data.ExternalAnalyses import ExternalAnalyses
 from initialize.data.Model import Model
 from initialize.data.Observations import Observations
-from initialize.data.StaticStream import StaticStream
+from initialize.data.InvariantStream import InvariantStream
 
 from initialize.framework.Build import Build
 from initialize.framework.Experiment import Experiment
@@ -50,7 +50,7 @@ class ForecastFromExternalAnalyses(SuiteBase):
                 self.c['externalanalyses'].outputs['state']['Outer'], 'external')
 
     self.c['experiment'] = Experiment(conf, self.c['hpc'])
-    self.c['ss'] = StaticStream(conf, meshes, self.c['members'], self.c['workflow']['FirstCycleDate'], self.c['externalanalyses'], self.c['experiment'])
+    self.c['ss'] = InvariantStream(conf, meshes, self.c['members'], self.c['workflow']['FirstCycleDate'], self.c['externalanalyses'], self.c['experiment'])
 
     self.c['naming'] = Naming(conf, self.c['experiment'])
 

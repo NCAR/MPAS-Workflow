@@ -80,8 +80,8 @@ class Model(Component):
     TemplateFieldsPrefix = 'templateFields'
     self._set('TemplateFieldsPrefix', TemplateFieldsPrefix)
 
-    localStaticFieldsPrefix = 'static'
-    self._set('localStaticFieldsPrefix', localStaticFieldsPrefix)
+    localInvariantFieldsPrefix = 'invariant'
+    self._set('localInvariantFieldsPrefix', localInvariantFieldsPrefix)
 
     MPASCore = 'atmosphere'
     self._set('MPASCore', MPASCore)
@@ -114,7 +114,7 @@ class Model(Component):
         self._set(meshTyp+'StreamsFile', StreamsFile+'_'+name)
         self._set(meshTyp+'NamelistFile', NamelistFile+'_'+name)
         self._set('TemplateFieldsFile'+Typ, TemplateFieldsPrefix+'.'+str(nCells)+'.nc')
-        self._set('localStaticFieldsFile'+Typ, localStaticFieldsPrefix+'.'+str(nCells)+'.nc')
+        self._set('localInvariantFieldsFile'+Typ, localInvariantFieldsPrefix+'.'+str(nCells)+'.nc')
 
         self._set('TimeStep'+Typ, self._conf.getOrDie('resources.'+name+'.TimeStep'))
         self._set('DiffusionLengthScale'+Typ, self._conf.getOrDie('resources.'+name+'.DiffusionLengthScale'))

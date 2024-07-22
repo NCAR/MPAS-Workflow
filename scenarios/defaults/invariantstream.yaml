@@ -1,16 +1,16 @@
-staticstream:
+invariantstream:
   resources:
     ## defaults:
     # default resource values
     # can be overridden in either a `common` or `{{mesh}}``-specific block
     defaults:
-      ## directory (required): location of static stream file
+      ## directory (required): location of invariant stream file
       directory: "{{ExternalAnalysesDir}}/{{FirstCycleDate}}"
 
-      ## filePrefix: prefix of static stream file
+      ## filePrefix: prefix of invariant stream file
       filePrefix: "x{{meshRatio}}.{{nCells}}.init"
 
-      ## maxMembers: maximum number of static stream members available for this resource
+      ## maxMembers: maximum number of invariant stream members available for this resource
       maxMembers: None
 
       ## memberFormat:

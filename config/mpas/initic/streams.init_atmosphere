@@ -2,7 +2,7 @@
 <immutable_stream name="input"
                   type="input"
                   precision="{{PRECISION}}"
-                  filename_template="x{{meshRatio}}.{{nCells}}.static.nc"
+                  filename_template="x{{meshRatio}}.{{nCells}}.invariant.nc"
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 

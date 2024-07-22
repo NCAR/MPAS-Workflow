@@ -19,8 +19,8 @@ from initialize.data.ExternalAnalyses import ExternalAnalyses
 
 from initialize.framework.Experiment import Experiment
 
-class StaticStream(Component):
-  defaults = 'scenarios/defaults/staticstream.yaml'
+class InvariantStream(Component):
+  defaults = 'scenarios/defaults/invariantstream.yaml'
 
   optionalVariables = {
     ## resource:
@@ -66,9 +66,9 @@ class StaticStream(Component):
         self._set(variable, value)
 
       #############################
-      # static stream file settings
+      # invariant stream file settings
       #############################
-      dirName = 'StaticFieldsDir'+meshTyp
+      dirName = 'InvariantFieldsDir'+meshTyp
       self._set(dirName, self['directory'+meshTyp].replace(
           '{{ExternalAnalysesDir}}',
           exp['directory']+'/'+ea['ExternalAnalysesDir'+meshTyp].replace(
@@ -77,15 +77,15 @@ class StaticStream(Component):
       )
       self._cshVars.append(dirName)
 
-      n = 'StaticFieldsFile'+meshTyp
+      n = 'InvariantFieldsFile'+meshTyp
       self._set(n, self['filePrefix'+meshTyp]+'.'+FirstFileDate+'.nc')
       self._cshVars.append(n)
 
-    staticMemFmt = self.extractResource(('resources', resource, meshes['Outer'].name), 'memberFormat', str)
-    self._set('staticMemFmt', staticMemFmt)
-    self._cshVars.append('staticMemFmt')
+    invariantMemFmt = self.extractResource(('resources', resource, meshes['Outer'].name), 'memberFormat', str)
+    self._set('invariantMemFmt', invariantMemFmt)
+    self._cshVars.append('invariantMemFmt')
 
-    # check for uniform static stream used across members (maxMembers is None) or valid members.n
+    # check for uniform invariant stream used across members (maxMembers is None) or valid members.n
     maxMembers = self.extractResource(('resources', resource, meshes['Outer'].name), 'maxMembers', int)
     if maxMembers is not None:
       assert (members.n <= int(maxMembers)), (

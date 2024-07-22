@@ -62,7 +62,7 @@ source config/auto/experiment.csh
 source config/auto/externalanalyses.csh
 source config/auto/members.csh
 source config/auto/model.csh
-source config/auto/staticstream.csh
+source config/auto/invariantstream.csh
 source config/auto/workflow.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -110,9 +110,9 @@ endif
 set icFileExt = ${thisMPASFileDate}.nc
 set initialState = ${self_icStateDir}/${ArgICStatePrefix}.${icFileExt}
 
-# use previously generated init file for static stream
-set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
-set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
+# use previously generated init file for invariant stream
+set InvariantMemDir = `${memberDir} 2 $ArgMember "${invariantMemFmt}"`
+set memberInvariantFieldsFile = ${InvariantFieldsDirOuter}${InvariantMemDir}/${InvariantFieldsFileOuter}
 
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
@@ -131,13 +131,13 @@ set icFile = ${ICFilePrefix}.${icFileExt}
 if( -e ${icFile} ) rm ./${icFile}
 ln -sfv ${initialState} ./${icFile}
 
-## static fields file
-rm ${localStaticFieldsPrefix}*.nc
-rm ${localStaticFieldsPrefix}*.nc-lock
-set localStaticFieldsFile = ${localStaticFieldsFileOuter}
-rm ${localStaticFieldsFile}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+## invariant fields file
+rm ${localInvariantFieldsPrefix}*.nc
+rm ${localInvariantFieldsPrefix}*.nc-lock
+set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
+rm ${localInvariantFieldsFile}
+ln -sfv ${memberInvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
+cp -v ${memberInvariantFieldsFile} ${localInvariantFieldsFile}
 
 # We can start IAU only from the second DA cycle (otherwise, 3hrly background forecast is not available yet.)
 set self_IAU = False
@@ -207,7 +207,7 @@ if( -e ${StreamsFile}) rm ${StreamsFile}
 cp -v $ModelConfigDir/forecast/${StreamsFile} .
 sed -i 's@{{nCells}}@'${nCells}'@' ${StreamsFile}
 sed -i 's@{{outputInterval}}@'${self_FCIntervalHR}':00:00@' ${StreamsFile}
-sed -i 's@{{StaticFieldsPrefix}}@'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@{{InvariantFieldsPrefix}}@'${localInvariantFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@{{ICFilePrefix}}@'${ICFilePrefix}'@' ${StreamsFile}
 sed -i 's@{{FCFilePrefix}}@'${FCFilePrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
@@ -375,9 +375,9 @@ else
     exit 1
   endif
 
-  ## change static fields to a link, keeping for transparency
-  rm ${localStaticFieldsFile}
-  mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
+  ## change invariant fields to a link, keeping for transparency
+  rm ${localInvariantFieldsFile}
+  mv ${localInvariantFieldsFile}${OrigFileSuffix} ${localInvariantFieldsFile}
 endif
 
 if ( "$ArgDeleteZerothForecast" == "True" ) then

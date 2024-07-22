@@ -22,7 +22,7 @@ source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/members.csh
 source config/auto/model.csh
-source config/auto/staticstream.csh
+source config/auto/invariantstream.csh
 source config/auto/workflow.csh
 source config/auto/rtpp.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
@@ -65,15 +65,15 @@ rm jedi.log*
 
 # ================================================================================================
 
-## copy static fields
-rm ${localStaticFieldsPrefix}*.nc
-rm ${localStaticFieldsPrefix}*.nc-lock
-set localStaticFieldsFile = ${localStaticFieldsFileEnsemble}
-rm ${localStaticFieldsFile}
-set StaticMemDir = `${memberDir} 2 1 "${staticMemFmt}"`
-set memberStaticFieldsFile = ${StaticFieldsDirEnsemble}${StaticMemDir}/${StaticFieldsFileEnsemble}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+## copy invariant fields
+rm ${localInvariantFieldsPrefix}*.nc
+rm ${localInvariantFieldsPrefix}*.nc-lock
+set localInvariantFieldsFile = ${localInvariantFieldsFileEnsemble}
+rm ${localInvariantFieldsFile}
+set InvariantMemDir = `${memberDir} 2 1 "${invariantMemFmt}"`
+set memberInvariantFieldsFile = ${InvariantFieldsDirEnsemble}${InvariantMemDir}/${InvariantFieldsFileEnsemble}
+ln -sfv ${memberInvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
+cp -v ${memberInvariantFieldsFile} ${localInvariantFieldsFile}
 
 ## create RTPP mean output file to be overwritten by MPAS-JEDI RTPPEXE application
 set memDir = `${memberDir} 2 0 "${flowMemFmt}"`
@@ -111,7 +111,7 @@ rm ${StreamsFile}
 cp -v $ModelConfigDir/rtpp/${StreamsFile} .
 sed -i 's@{{nCells}}@'${nCellsEnsemble}'@' ${StreamsFile}
 sed -i 's@{{TemplateFieldsPrefix}}@'${self_WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
-sed -i 's@{{StaticFieldsPrefix}}@'${self_WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@{{InvariantFieldsPrefix}}@'${self_WorkDir}'/'${localInvariantFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 # determine analysis output precision
@@ -296,9 +296,9 @@ endif
 
 # ================================================================================================
 
-## change static fields to a link, keeping for transparency
-rm ${localStaticFieldsFile}
-mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
+## change invariant fields to a link, keeping for transparency
+rm ${localInvariantFieldsFile}
+mv ${localInvariantFieldsFile}${OrigFileSuffix} ${localInvariantFieldsFile}
 
 # Remove original analyses before RTPP
 # ====================================

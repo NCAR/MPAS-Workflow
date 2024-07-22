@@ -124,7 +124,7 @@ including online vs. offline and deterministic vs. ensemble
 
 `scenarios/defaults/observations.yaml`: observation source data
 
-`scenarios/defaults/staticstream.yaml`: controls how the static stream file is supplied.  Defaults to
+`scenarios/defaults/invariantstream.yaml`: controls how the invariant stream file is supplied.  Defaults to
 using the externalanalyses from the first cycle
 
 #### application-specific `resource` options
@@ -264,7 +264,7 @@ corresponding python class in the `initialize/` directory, or else serve as one 
 `PrepJEDI.csh`: substitutes commonly repeated sections in the `yaml` file for multiple MPAS-JEDI
 applications. The primary purpose is to fill in the `observers` section of `hofx` and `variational`
 `yaml` files.  Prepares `namelist.atmosphere`, `streams.atmosphere`, and `stream_list.atmosphere.*`.
-Links required static files and graph info files that describe MPI  partitioning.
+Links required invariant files and graph info files that describe MPI  partitioning.
 
 `VerifyObs.csh`: used to verify observation-database output from `HofX` and `Variational` tasks.
 
