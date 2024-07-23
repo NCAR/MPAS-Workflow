@@ -1,6 +1,7 @@
   obs filters:
   - filter: PreQC
     maxvalue: 3
+  <<: *{{DomainCheck}}
   - filter: Background Check
     threshold: 5.0
     <<: *multiIterationFilter
