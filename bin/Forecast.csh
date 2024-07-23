@@ -18,29 +18,41 @@ set ArgFCLengthHR = "$2"
 # ArgFCIntervalHR: int, forecast output interval (hr)
 set ArgFCIntervalHR = "$3"
 
+# ArgLBCIntervalHR: int, lbc interval (hr)
+set ArgLBCIntervalHR = "$4"
+
+# ArgRegional: bool, whether to do regional forecasts
+set ArgRegional = "$5"
+
 # ArgIAU: bool, whether to engage IAU (True/False)
-set ArgIAU = "$4"
+set ArgIAU = "$6"
 
 # ArgMesh: str, mesh name, one of model.meshes, not currently used
-set ArgMesh = "$5"
+set ArgMesh = "$7"
 
 # ArgDACycling: whether the initial forecast state is a DA analysis (True/False)
-set ArgDACycling = "$6"
+set ArgDACycling = "$8"
 
 # ArgDeleteZerothForecast: whether to delete zeroth-hour forecast (True/False)
-set ArgDeleteZerothForecast = "$7"
+set ArgDeleteZerothForecast = "$9"
 
 # ArgUpdateSea: whether to update the sea surface fields with values from an external analysis (True/False)
-set ArgUpdateSea = "$8"
+set ArgUpdateSea = "$10"
 
 # ArgWorkDir: where the forecast will be executed
-set ArgWorkDir = "$9"
+set ArgWorkDir = "$11"
 
 # ArgICStateDir: where the initial condition state is located
-set ArgICStateDir = "$10"
+set ArgICStateDir = "$12"
 
 # ArgICStatePrefix: prefix of the initial condition state
-set ArgICStatePrefix = "$11"
+set ArgICStatePrefix = "$13"
+
+# ArgLBCStateDir: where the initial condition state is located
+set ArgLBCStateDir = "$14"
+
+# ArgLBCStatePrefix: prefix of the initial condition state
+set ArgLBCStatePrefix = "$15"
 
 ## arg checks
 set test = `echo $ArgMember | grep '^[0-9]*$'`
@@ -110,6 +122,9 @@ endif
 set icFileExt = ${thisMPASFileDate}.nc
 set initialState = ${self_icStateDir}/${ArgICStatePrefix}.${icFileExt}
 
+# lateral boundary conditions
+set lbcFileExt = ${}
+
 # use previously generated init file for static stream
 set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
 set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
@@ -122,7 +137,6 @@ cd ${self_WorkDir}
 set self_FCIntervalHR = ${ArgFCIntervalHR}
 set self_FCLengthHR   = ${ArgFCLengthHR}
 set StartDate = ${thisMPASNamelistDate}
-
 
 # ================================================================================================
 
