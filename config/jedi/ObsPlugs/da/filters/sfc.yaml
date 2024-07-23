@@ -5,6 +5,7 @@
     reference: MetaData/stationElevation
     value: GeoVaLs/surface_altitude
     threshold: 200.0
+  <<: *{{DomainCheck}}
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter
