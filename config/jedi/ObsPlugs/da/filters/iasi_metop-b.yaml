@@ -17,6 +17,7 @@
     minvalue: 1.0e-12
     action:
       name: reject
+  <<: *{{DomainCheck}}    
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter
