@@ -17,6 +17,7 @@
     variable: refractivity
     errmodel: NCEP
     <<: *multiIterationFilter
+  <<: *{{DomainCheck}}
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter
