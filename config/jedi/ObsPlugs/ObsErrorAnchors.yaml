@@ -1,3 +1,16 @@
+# Domain check for regional DA
+_regional domain check: &regionalDomainCheck
+  filter: Bounds Check
+    filter variables:
+    - name: radialVelocity
+    test variables:
+    - name: GeoVaLs/observable_domain_mask
+    flag all filter variables if any test variable is out of bounds: true
+    minvalue: 0.0
+    maxvalue: 0.1
+
+_global domain check: &globalDomainCheck
+  _blank: null
 
 # application-agnostic anchors that specify observation errors
 # applicable to Variational, HofX3D
