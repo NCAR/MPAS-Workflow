@@ -1,6 +1,6 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  name: '3dhybrid_O60-3kmIE60km_TEST_Modelv8.2.1'
+  name: '3dhybrid_O60-3kmIE60km_TEST_Modelv8.2.1_samePP'
 
 build:
   mpas bundle: /glade/work/jwittig/repos1/mpas-bundle-model-8.1/build-gnu-1p
@@ -34,7 +34,21 @@ model:
   outerMesh: 60-3km
   innerMesh: 60km
   ensembleMesh: 60km
-  GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model_v8.1_files/init_files/60-3km
+  #GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model_v8.1_files/init_files/60-3km
+  resources:
+    60-3km:
+      RadiationLWInterval: 00:30:00
+      RadiationSWInterval: 00:30:00
+      PhysicsSuite: mesoscale_reference
+      Microphysics: mp_wsm6
+      Convection: cu_ntiedtke
+      PBL: bl_ysu
+      Gwdo: bl_ysu_gwdo
+      RadiationCloud: cld_fraction
+      RadiationLW: rrtmg_lw
+      RadiationSW: rrtmg_sw
+      SfcLayer: sf_monin_obukhov
+      LSM: sf_noah
 
 observations:
   resource: PANDACArchiveForVarBC

@@ -26,6 +26,7 @@ externalanalyses:
     GFS:
       PANDAC: # only available 20180418T00-20180524T00
         30km:
+  #        directory: /glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_GFSANA
           directory: /glade/derecho/scratch/ivette/pandac/GenerateGFSAnalyses_new/ExternalAnalyses/30km
 
 members:
