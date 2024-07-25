@@ -5,6 +5,10 @@
       engine:
         type: H5File
         obsfile: {{InDBDir}}/gnssrorefncep_obs_{{thisValidDate}}.h5
+      obsgrouping:
+        group variables: [ sequenceNumber ]
+        sort variable: height
+        sort order: ascending
     obsdataout:
       engine:
         type: H5File

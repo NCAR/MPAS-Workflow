@@ -1,6 +1,6 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  name: 'Hofx_MPAS-init_127L_gnssro_60km'
+  name: 'Hofx_MPAS-init_gfstop60km_smooth2'
 
 firstbackground:
   resource: "PANDAC.GFS"
@@ -27,24 +27,31 @@ externalanalyses:
   resources:
     GFS:
       PANDAC: # only available 20180418T00-20180524T00
-        60km:
-          directory: "/glade/derecho/scratch/taosun/pandac/60kmMeshGFS/MPAS_IC"
+        30km:
+          directory: /glade/derecho/scratch/nghido/sio-mmm/GenerateGFSAnalyses_gfstop_smooth2/ExternalAnalyses/30km
+          #/glade/derecho/scratch/nghido/sio-mmm/GenerateGFSAnalyses_mpastop/ExternalAnalyses/30km
+          #/glade/derecho/scratch/nghido/sio-mmm/GenerateGFSAnalyses_gfstop_smooth2/ExternalAnalyses/30km
+          #/glade/derecho/scratch/nghido/sio-mmm/GenerateGFSAnalyses_gfstop_smooth5/ExternalAnalyses/30km
+
 members:
   n: 1
 
 model:
-  outerMesh: 60km
+  outerMesh: 30km
   innerMesh: 60km
   ensembleMesh: 60km
 
 observations:
   resource: PANDACArchiveForVarBC
-  resources:
-    PANDACArchiveForVarBC:
-      IODADirectory:
-        hofx:
-          gnssrobndropp1d: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
-          gnssrorefncep: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+  #resources:
+  #  PANDACArchiveForVarBC:
+  #    IODADirectory:
+  #      hofx:
+  #        gnssrobndropp1d: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+  #        gnssrorefncep: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+  #        gnssrobndmo: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+  #        gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
+  #        gnssrobndnbam: /glade/campaign/mmm/parc/jban/pandac/GenerateObs2023/Observations
 
 variational:
   execute: False
@@ -60,12 +67,15 @@ hofx:
   observers: [
     gnssrobndropp1d,
     gnssrorefncep,
+    gnssrobndmo,
+    gnssrobndmo-nopseudo,
+    gnssrobndnbam,
   ]
 workflow:
-  first cycle point: 20230703T18
-  #restart cycle point: 20230704T06
+  first cycle point: 20180414T18
+  #restart cycle point: 20180415T00
   #final cycle point: 20180420T00
-  final cycle point: 20230803T18
+  final cycle point: 20180514T18
   CyclingWindowHR: 6 # default is 6 for cycling DA
   max active cycle points: 20 # used for independent 'extendedforecast'
 hpc:

@@ -22,5 +22,6 @@
       #sr_steps: 2 # same as default, super-refraction steps
       vertlayer: mass # or full, type of vertical layers for pressure and geopotential height
       #super_ref_qc: NBAM # same as default, or ECMWF
+      modeltop: 30
   get values:
     <<: *GetValues
