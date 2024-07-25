@@ -26,6 +26,7 @@ import subprocess
 
 # local modules
 from initialize.config.Config import Config
+from initialize.config.Logger import Logger
 from initialize.config.Scenario import Scenario
 from initialize.suites.SuiteBase import SuiteLookup
 
@@ -43,19 +44,21 @@ def main():
   run.execute()
 
 
-class Run():
+class Run(Logger):
   def __init__(self):
-    self.logPrefix = self.__class__.__name__+': '
+    super().__init__()
 
     # Parse command line
     ap = argparse.ArgumentParser()
     ap.add_argument('config', type=str,
                     help='configuration file; e.g., runs/test.yaml, scenarios/{{scenarioName}}.yaml')
+    ap.add_argument('-b', '--bundle_dir', help='mpas bundle directory')
+    ap.add_argument('-x', '--suffix', help='experiment name suffix')
     args = ap.parse_args()
     assert Path(args.config).is_file(), (self.logPrefix+'config ('+args.config+') does not exist')
 
     self.__configFile = args.config
-    self.__config = Config(args.config)
+    self.__config = Config(args.config, args.bundle_dir, args.suffix)
 
   def execute(self):
     '''
@@ -76,9 +79,9 @@ class Run():
       print("Running the scenario: "+scenarioFile)
       print("#########################################################################")
 
-      self.clean()
+      self.clean(self)
 
-      scenario = Scenario(scenarioFile)
+      scenario = Scenario(scenarioFile, self.__config._bundle_dir, self.__config._suffix)
       scenario.initialize()
 
       # suite name (defaults to Cycle)
@@ -87,11 +90,11 @@ class Run():
       suite = SuiteLookup(suiteName, scenario.getConfig())
       suite.submit()
 
-    self.clean()
+    self.clean(self)
 
   @staticmethod
-  def clean():
-    print('cleaning up auto-generated files...')
+  def clean(self):
+    self.log('cleaning up auto-generated files...', level=self.MSG_DEBUG)
 
     for g in [
       "config/auto/*.csh",

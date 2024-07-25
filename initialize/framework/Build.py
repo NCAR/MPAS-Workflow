@@ -40,8 +40,11 @@ class Build(Component):
     # set system dependent defaults before invoking Component ctor
     system = os.getenv('NCAR_HOST')
     if system == 'derecho':
-      self.variablesWithDefaults['mpas bundle'] = \
-        ['/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_saca_dev_10Jun2024/build_SP', str]
+      if config._bundle_dir != None:
+        self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
+      else:
+        self.variablesWithDefaults['mpas bundle'] = \
+          ['/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_dev_18Jul2024_SP/build', str]
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
       self.variablesWithDefaults['forecast directory'] = ['bundle', str]
@@ -103,7 +106,7 @@ class Build(Component):
     self._set('RTPSBuildDir', self['mpas bundle']+'/bin')
 
     ## SACA
-    self._set('SACAEXE', 'mpasjedi_addincrement.x')
+    self._set('SACAEXE', 'mpasjedi_saca.x')
     self._set('SACABuildDir', self['mpas bundle']+'/bin')
 
     if model is not None:

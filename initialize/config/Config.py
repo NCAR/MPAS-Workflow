@@ -12,21 +12,32 @@ from copy import deepcopy
 import yaml
 import sys
 import traceback
+from initialize.config.Logger import Logger
 
-class Config():
+class Config(Logger):
   def __init__(self,
       filename: str,
+      bundle_dir: str,
+      suffix: str,
       defaultsFile:str = None,
     ):
 
+   super().__init__()
    with open(filename) as file:
      self._table = yaml.load(file, Loader=yaml.FullLoader)
 
+   self._bundle_dir = bundle_dir
+   self._suffix = suffix
    if defaultsFile is not None:
      with open(defaultsFile) as file:
        self._defaults = yaml.load(file, Loader=yaml.FullLoader)
    else:
      self._defaults = {}
+
+  def __str__(self):
+    bd =  (self._bundle_dir if self._bundle_dir != None else 'None')
+    suffix =  (self._suffix if self._suffix != None else 'None')
+    return 'bundle_dir:' + bd + ' suffix:' + suffix
 
   def extract(self, subKey: str, defaultsFile:str = None):
     tab = deepcopy(self._table.get(subKey, {}))
@@ -124,7 +135,7 @@ class Config():
         # do we ever want to use the preempt queue? this could lead to starvation.
         #if queue == 'share':
           #newqueue = 'preempt'
-        print('Config converting queue:', queue, ' to:', newqueue)
+        self.log('Config converting queue:', queue, ' to:', newqueue, level=self.MSG_DEBUG)
         if subtable != None:
           self.__setitem2__(subtable, attrName, newqueue)
         else:
@@ -135,7 +146,7 @@ class Config():
         #print('job_priority:', self['job_priority'], ' ', self.has('hpc.job_priority'))
         if subtable == None and self.has('hpc.job_priority') == False and queue in ['economy', 'premium']:
           self.__setitem__('job_priority', queue)
-          print('Adding job_priority ', queue)
+          self.log('Adding job_priority ', queue, level=self.MSG_DEBUG)
 
         '''
         print('################################################################################')

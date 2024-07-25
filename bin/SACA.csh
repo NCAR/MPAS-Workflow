@@ -65,7 +65,7 @@ set myYAML = ${WorkDir}/$appyaml
 set AppName = "saca"
 
 # Remove old logs
-rm addincrement.log*
+rm saca.log*
 
 # ================================================================================================
 # Previous time info for yaml entries
@@ -264,6 +264,8 @@ sed -i 's@{{buildGSDCloud}}@'${buildGSDCloud_lower}'@g' $thisYAML
 sed -i 's@{{saturateQv}}@'${saturateQv_lower}'@g' $thisYAML
 sed -i 's@{{conserveThetaV}}@'${conserveThetaV_lower}'@g' $thisYAML
 sed -i 's@{{cldfraDef}}@'${cldfraDef}'@g' $thisYAML
+sed -i 's@{{cldfraThresh}}@'${cldfraThresh}'@g' $thisYAML
+sed -i 's@{{cldmaskThresh}}@'${cldmaskThresh}'@g' $thisYAML
 sed -i 's@{{cldBluidHeigt}}@'${cldBluidHeigt}'@g' $thisYAML
 
 ## current date
@@ -324,14 +326,14 @@ setenv OOPS_INFO 1
 # Run the executable
 # ==================
 ln -sfv ${myBuildDir}/${myEXE} ./
-mpiexec ./${myEXE} $myYAML ./addincrement.log >& addincrement.log.all
+mpiexec ./${myEXE} $myYAML ./saca.log >& saca.log.all
 
 
 # Check status
 # ============
-grep 'Run: Finishing oops.* with status = 0' addincrement.log
+grep 'Run: Finishing oops.* with status = 0' saca.log
 if ( $status != 0 ) then
-  echo "ERROR in $0 : addincrement application failed" > ./FAIL
+  echo "ERROR in $0 : saca application failed" > ./FAIL
   exit 1
 endif
 

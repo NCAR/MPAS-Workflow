@@ -109,7 +109,7 @@ foreach gdasfile ( *"gdas."* )
      mkdir -p sfc
      cd sfc
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXE} ./
-     ./${obs2iodaEXE} ${noGSIQCFilters} ../${gdasfile} >&! logs/log-converter_sfc
+     ./${obs2iodaEXE} ${noGSIQCFilters} ../${gdasfile} >&! ../logs/log-converter_sfc
      # replace surface obs file with file created without additional QC
      mv -f sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
      cd ..

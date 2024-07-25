@@ -9,17 +9,22 @@
 
 from collections.abc import Iterable
 
+from initialize.config.Logger import Logger
 from initialize.config.Config import Config
 from initialize.config.TaskFamily import CylcTaskFamily
 from initialize.config.SubConfig import SubConfig
 
-class Component():
+class Component(Logger):
+
   defaults = None
   workDir = None
   requiredVariables = {}
   optionalVariables = {}
   variablesWithDefaults = {}
   def __init__(self, config:Config):
+
+    super().__init__()
+
     self.base = self.__class__.__name__
     self.lower = self.__class__.__name__.lower()
     self.logPrefix = self.__class__.__name__+': '
@@ -83,9 +88,8 @@ class Component():
     self._exportVarsToCsh()
     return
 
-  def _msg(self, text):
-    print(self.logPrefix+text)
-    return
+  def _msg(self, text, *args, **kwargs):
+    self.log(text, *args, **kwargs)
 
   def __getitem__(self, key):
     '''
