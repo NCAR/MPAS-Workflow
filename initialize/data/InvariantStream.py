@@ -33,7 +33,6 @@ class InvariantStream(Component):
   def __init__(self,
     config:Config,
     meshes:dict,
-    members:Members,
     FirstCycleDate:str,
     ea:ExternalAnalyses,
     exp:Experiment,
@@ -52,12 +51,13 @@ class InvariantStream(Component):
       nCells = str(m.nCells)
       meshRatio = str(m.meshRatio)
 
-      for key in ['directory', 'filePrefix']:
+      for key in ['InvariantDirectory', 'InvariantFilePrefix', 'InitDirectory', 'InitFilePrefix']:
         value = self.extractResource(('resources', resource, mesh), key, str)
-        if key == 'directory':
+
+        if key == 'InitDirectory':
           value = value.replace('{{FirstCycleDate}}', FirstCycleDate)
 
-        if key == 'filePrefix':
+        if key == 'InvariantFilePrefix' or key == 'InitFilePrefix':
           value = value.replace('{{nCells}}', nCells)
           value = value.replace('{{meshRatio}}', meshRatio)
 
@@ -69,24 +69,21 @@ class InvariantStream(Component):
       # invariant stream file settings
       #############################
       dirName = 'InvariantFieldsDir'+meshTyp
-      self._set(dirName, self['directory'+meshTyp].replace(
-          '{{ExternalAnalysesDir}}',
-          exp['directory']+'/'+ea['ExternalAnalysesDir'+meshTyp].replace(
-            '/{{thisValidDate}}', '')
-        )
-      )
+      self._set(dirName, self['InvariantDirectory'+meshTyp])
       self._cshVars.append(dirName)
 
-      n = 'InvariantFieldsFile'+meshTyp
-      self._set(n, self['filePrefix'+meshTyp]+'.'+FirstFileDate+'.nc')
-      self._cshVars.append(n)
+      fileName = 'InvariantFieldsFile'+meshTyp
+      self._set(fileName, self['InvariantFilePrefix'+meshTyp]+'.nc')
+      self._cshVars.append(fileName)
 
-    invariantMemFmt = self.extractResource(('resources', resource, meshes['Outer'].name), 'memberFormat', str)
-    self._set('invariantMemFmt', invariantMemFmt)
-    self._cshVars.append('invariantMemFmt')
+      initDirName = 'InitFieldsDir'+meshTyp
+      self._set(initDirName, self['InitDirectory'+meshTyp].replace(
+          '{{ExternalAnalysesDir}}',exp['directory']+'/'+ea['ExternalAnalysesDir'+meshTyp].replace(
+            '/{{thisValidDate}}', '')
+          )
+      )
+      self._cshVars.append(initDirName)
 
-    # check for uniform invariant stream used across members (maxMembers is None) or valid members.n
-    maxMembers = self.extractResource(('resources', resource, meshes['Outer'].name), 'maxMembers', int)
-    if maxMembers is not None:
-      assert (members.n <= int(maxMembers)), (
-        self._msg('invalid members.n => '+str(members.n)))
+      initFileName = 'InitFieldsFile'+meshTyp
+      self._set(initFileName, self['InitFilePrefix'+meshTyp]+'.'+FirstFileDate+'.nc')
+      self._cshVars.append(initFileName)

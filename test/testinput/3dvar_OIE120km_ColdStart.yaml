@@ -3,7 +3,7 @@ experiment:
 externalanalyses:
   resource: "GFS.RDA"
 forecast:
-  post: [verifyobs, verifymodel]
+  post: []
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
@@ -19,7 +19,7 @@ variational:
   DAType: 3dvar
   nInnerIterations: [15,]
   biasCorrection: True
-  post: [verifyobs]
+  post: []
 workflow:
   # test a recent date
   first cycle point: 20220201T00

@@ -1,12 +1,12 @@
 enkf:
   job:
     defaults:
-      nodes: 2
-      PEPerNode: 32
+      nodes: 1
+      PEPerNode: 128
       threads: 1
       baseSeconds: 1000
       secondsPerMember: 60
-      memory: 109GB
+      memory: 235GB
 
       # cylc retry string
       retry: '2*PT30S'
@@ -42,8 +42,8 @@ enkf:
           # cost for record (20 members, PBS JOB email)
           # 2 x 32 PE : 3.3 min., 50.0 GB (single precision)
           nodes: 2
-          PEPerNode: 32
-          memory: 45GB
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 100
           secondsPerMember: 7
         solver:
@@ -51,19 +51,19 @@ enkf:
           # 16 x 32 PE, 3d iterator : 83.6 min., 275 GB
           # 16 x 32 PE, 3d iterator (no vert loc.) : 108 min., 314 GB
           # 16 x 32 PE, 2d iterator (no vert loc.) : 7.5 min., 274 GB
-          nodes: 16
-          PEPerNode: 32
+          nodes: 8
+          PEPerNode: 128
           threads: 1
-          memory: 45GB
+          memory: 235GB
           baseSeconds: 200
           secondsPerMember: 290
       GETKF:
         observer:
           # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
           # 8 x 32 PE : 13.5 min., 151 GB (single precision)
-          nodes: 8
-          PEPerNode: 32
-          memory: 45GB
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 200
           secondsPerMember: 45
         solver:
@@ -72,10 +72,9 @@ enkf:
           # 16 x 8 PE x 2 omp : 90.5 min., 480 GB, 45GB/node
           # 16 x 8 PE x 4 omp : 92.5 min., 480 GB, 45GB/node
           # 16 x 16 PE : 77.0 min., 878 GB, 109GB/node
-          nodes: 16
-          PEPerNode: 8
-          threads: 2
-          memory: 45GB
+          nodes: 12
+          PEPerNode: 64
+          memory: 235GB
           baseSeconds: 200
           secondsPerMember: 500
     120km:
@@ -86,10 +85,10 @@ enkf:
           # 2 x 32 PE : 3.5 min., 31 GB (double precision)
           # cost for record (20 members, PBS JOB email)
           # 2 x 32 PE : 3.0 min., 31.7 GB (single precision)
-          nodes: 3
-          PEPerNode: 32
-          memory: 45GB
-          baseSeconds: 100
+          nodes: 1
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 300
           secondsPerMember: 3
         solver:
           # cost for record (5 members, PBS JOB email, 3d iterator)
@@ -98,28 +97,27 @@ enkf:
           # 8 x 32 PE : 22.5 min., 99 GB (double precision)
           # cost for record (20 members, PBS JOB email, 3d iterator)
           # 8 x 32 PE : 41.5 min., 131 GB (single precision)
-          nodes: 8
-          PEPerNode: 32
+          nodes: 2
+          PEPerNode: 128
           threads: 1
-          memory: 45GB
-          baseSeconds: 200
+          memory: 235GB
+          baseSeconds: 300
           secondsPerMember: 150
       GETKF:
         observer:
           # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
           # 8 x 32 PE : 12.2 min., 118 GB (single precision)
-          nodes: 8
-          PEPerNode: 32
-          memory: 45GB
+          nodes: 1
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 100
           secondsPerMember: 45
         solver:
           # cost for record (5 members, PBS JOB email)
           # 4 x 32 PE : ?.? min., ?? GB (single precision)
           # 8 x 32 PE : ?.? min., ?? GB (single precision)
-          nodes: 8
-          PEPerNode: 16
-          threads: 2
-          memory: 45GB
+          nodes: 4
+          PEPerNode: 128
+          memory: 235GB
           baseSeconds: 200
           secondsPerMember: 300

@@ -64,16 +64,19 @@ class InitIC(Component):
       meshTypes = []
       meshNames = []
       meshNCells = []
+      meshRatios = []
       for typ, mesh in self.meshes.items():
         if mesh.name not in meshNames:
           meshTypes.append(typ)
           meshNames.append(mesh.name)
           meshNCells.append(mesh.nCells)
+          meshRatios.append(mesh.meshRatio)
 
       zeroHR = '-0hr'
       queue = 'ConvertExternalAnalyses'
       subqueues.append(queue)
-      for (typ, meshName, nCells) in zip(meshTypes, meshNames, meshNCells):
+      for (typ, meshName, nCells, meshRatio) in zip(meshTypes, meshNames, meshNCells, meshRatios):
+        print(typ)
         prevTaskName = None
         for dt in dtOffsets:
           dtStr = str(dt)
@@ -81,7 +84,9 @@ class InitIC(Component):
             dt,
             self.ea['ExternalAnalysesDir'+typ],
             self.ea['externalanalyses__filePrefix'+typ],
+            typ,
             nCells,
+            meshRatio,
             self.ea.WorkDir,
           ]
           initArgs = ' '.join(['"'+str(a)+'"' for a in args])

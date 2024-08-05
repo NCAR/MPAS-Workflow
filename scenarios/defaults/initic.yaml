@@ -8,25 +8,25 @@ initic:
     #  PEPerNode: int
     defaults:
       seconds: 600
-      nodes: 4
-      PEPerNode: 36
+      nodes: 1
+      PEPerNode: 128
 
       # cylc retry string
       retry: '0*PT30S'
 
     60-3km:
       seconds: 320
-      nodes: 4
-      PEPerNode: 36
+      nodes: 2
+      PEPerNode: 128
     30km:
       seconds: 320
-      nodes: 4
-      PEPerNode: 36
+      nodes: 2
+      PEPerNode: 128
     60km:
       seconds: 160
-      nodes: 2
-      PEPerNode: 36
+      nodes: 1
+      PEPerNode: 128
     120km:
       seconds: 80
       nodes: 1
-      PEPerNode: 36
+      PEPerNode: 128

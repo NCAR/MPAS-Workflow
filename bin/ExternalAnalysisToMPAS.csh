@@ -17,11 +17,17 @@ set ArgWorkDir = "$2"
 # ArgFilePrefix: prefix for output file
 set ArgFilePrefix = "$3"
 
+# ArgType: type of horizontal mesh 
+set ArgType = "$4"
+
 # ArgNCells: number of horizontal mesh cells
-set ArgNCells = "$4"
+set ArgNCells = "$5"
+
+# ArgRatio: Ratio of horizontal mesh cells
+set ArgRatio = "$6"
 
 # ArgExternalAnalysesDir: location of external analyses
-set ArgExternalAnalysesDir = "$5"
+set ArgExternalAnalysesDir = "$7"
 
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isNotInt = ($status)
@@ -39,6 +45,7 @@ source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/externalanalyses.csh
 source config/auto/model.csh
+source config/auto/invariantstream.csh
 source config/tools.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -55,8 +62,6 @@ set ExternalAnalysesDir = ${ExperimentDirectory}/`echo "$ArgExternalAnalysesDir"
 echo "WorkDir = ${WorkDir}"
 mkdir -p ${WorkDir}
 cd ${WorkDir}
-
-
 
 # ================================================================================================
 
@@ -87,16 +92,19 @@ if ( -e $outputFile ) then
 endif
 
 # ================================================================================================
-
 ## link ungribbed files
 ln -sfv ${ExternalAnalysesDir}/${externalanalyses__UngribPrefix}* ./
 
-set meshRatio = $meshRatioOuter
+## link MPAS mesh graph info
+rm ./x${ArgRatio}.${ArgNCells}.graph.info*
+ln -sfv $GraphInfoDir/x${ArgRatio}.${ArgNCells}.graph.info* .
 
-## link MPAS mesh graph info and invariant field
-rm ./x${meshRatio}.${ArgNCells}.graph.info*
-ln -sfv $GraphInfoDir/x${meshRatio}.${ArgNCells}.graph.info* .
-ln -sfv $GraphInfoDir/x${meshRatio}.${ArgNCells}.invariant.nc .
+## Link MPAS invariant field
+if ( $ArgType == "Outer" ) then
+   ln -sfv $InvariantFieldsDirOuter/$InvariantFieldsFileOuter .
+else
+   ln -sfv $InvariantFieldsDirInner/$InvariantFieldsFileInner .
+endif
 
 ## link lookup tables
 foreach fileGlob ($MPASLookupFileGlobs)
@@ -109,14 +117,14 @@ rm ${StreamsFileInit}
 cp -v $ModelConfigDir/initic/${StreamsFileInit} .
 sed -i 's@{{nCells}}@'${ArgNCells}'@' ${StreamsFileInit}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFileInit}
-sed -i 's@{{meshRatio}}@'${meshRatio}'@' ${StreamsFileInit}
+sed -i 's@{{meshRatio}}@'${ArgRatio}'@' ${StreamsFileInit}
 
 ## copy/modify dynamic namelist
 rm ${NamelistFileInit}
 cp -v $ModelConfigDir/initic/${NamelistFileInit} .
 sed -i 's@startTime@'${thisMPASNamelistDate}'@' $NamelistFileInit
 sed -i 's@nCells@'${ArgNCells}'@' $NamelistFileInit
-sed -i 's@{{meshRatio}}@'${meshRatio}'@' $NamelistFileInit
+sed -i 's@{{meshRatio}}@'${ArgRatio}'@' $NamelistFileInit
 sed -i 's@{{UngribPrefix}}@'${externalanalyses__UngribPrefix}'@' $NamelistFileInit
 
 # Run the executable

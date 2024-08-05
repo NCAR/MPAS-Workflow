@@ -32,16 +32,16 @@ externalanalyses:
     GFS:
       PANDAC: # only available 20180415T00-20180525T00
         120km:
-          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_GFSANA"
-          #directory: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model_v8.1_files/init_files/120km
+          #directory: "/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_GFSANA"
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/120kmMeshGFS/MPAS_IC"
         60km:
-          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_GFSANA"
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/60kmMeshGFS/MPAS_IC"
         30km:
           #directory: "/glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_GFSANA"
-          directory: "/glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model_v8.1_files/init_files"
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/MPAS_IC"
         60-3km:
           #directory: "/glade/campaign/mmm/parc/ivette/pandac/saca/60-3km/60-3km_GFSANA"
-          directory: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model_v8.1_files/init_files/60-3km
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/60km3kmVMeshGFS/MPAS_IC"
       RDA:
         common:
           PrepareExternalAnalysisTasks:

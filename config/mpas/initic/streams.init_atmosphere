@@ -10,10 +10,24 @@
                   type="output"
                   precision="{{PRECISION}}"
                   clobber_mode="truncate"
-                  filename_template="x{{meshRatio}}.{{nCells}}.init.$Y-$M-$D_$h.$m.$s.nc"
+                  filename_template="x{{meshRatio}}.{{nCells}}.init.nc"
                   io_type="pnetcdf,cdf5"
                   packages="initial_conds"
-                  output_interval="initial_only" />
+                  output_interval="none" />
+
+<stream name="jedi_ics"
+                  type="output"
+                  precision="single"
+                  clobber_mode="truncate"
+                  filename_template="x{{meshRatio}}.{{nCells}}.init.$Y-$M-$D_$h.$m.$s.nc"
+                  io_type="pnetcdf,cdf5"
+                  output_interval="initial_only" >
+
+        <stream name="output" />
+        <var name="pressure" />
+        <var name="uReconstructZonal" />
+        <var name="uReconstructMeridional" />
+</stream>
 
 <immutable_stream name="surface"
                   type="output"

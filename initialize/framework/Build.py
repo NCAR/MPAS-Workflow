@@ -44,7 +44,7 @@ class Build(Component):
         self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
       else:
         self.variablesWithDefaults['mpas bundle'] = \
-          ['/glade/work/jwittig/repos1/mpas-bundle-model-8.1/build-gnu-1p', str] #actually this is Modelv8.2.1
+          ['/glade/work/taosun/Derecho/JEDI/mpas-bundle-v8.2/build', str] #actually this is Modelv8.2.1
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
       self.variablesWithDefaults['forecast directory'] = ['bundle', str]

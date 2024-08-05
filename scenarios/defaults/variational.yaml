@@ -163,7 +163,7 @@ variational:
     defaults:
       baseSeconds: 1500
       secondsPerEnVarMember: 10
-      nodes: 2
+      nodes: 1
       PEPerNode: 128
       memory: 235GB
 

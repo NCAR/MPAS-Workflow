@@ -3,7 +3,7 @@ experiment:
   name: '3dhybrid_O60-3kmIE60km_TEST_Modelv8.2.1_samePP'
 
 build:
-  mpas bundle: /glade/work/jwittig/repos1/mpas-bundle-model-8.1/build-gnu-1p
+  mpas bundle: /glade/work/taosun/Derecho/JEDI/mpas-bundle-v8.2/build_sp
 
 firstbackground:
   resource: "PANDAC.GFS"
@@ -34,7 +34,6 @@ model:
   outerMesh: 60-3km
   innerMesh: 60km
   ensembleMesh: 60km
-  #GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model_v8.1_files/init_files/60-3km
   resources:
     60-3km:
       RadiationLWInterval: 00:30:00
@@ -82,6 +81,6 @@ variational:
 workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180419T12
-  final cycle point: 20180415T00
+  final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'
