@@ -55,7 +55,7 @@ class CloudDirectInsertionCycle(SuiteBase):
     self.c['firstbackground'] = FirstBackground(conf, self.c['hpc'], meshes, self.c['members'], self.c['workflow'],
                 self.c['externalanalyses'],
                 self.c['externalanalyses'].outputs['state']['Outer'], self.c['forecast'])
- 
+
     self.c['extendedforecast'] = ExtendedForecast(conf, self.c['hpc'], self.c['members'], self.c['forecast'],
                 self.c['externalanalyses'], self.c['observations'],
                 self.c['da'].outputs['state']['members'], 'internal')
