@@ -17,6 +17,9 @@ set ArgStateDir = "$2"
 # ArgRunSaca: whether to run saca or not, but copy the 6hr forecast from previous cycle
 set ArgRunSaca = "$3"
 
+# ArgRunDASaca: indicate to run saca before or after DA
+set ArgRunDASaca = "$4"
+
 date
 
 # Setup environment
@@ -104,7 +107,12 @@ mkdir -p ${bg}
 
 # Link bg from StateDir
 # ======================
-set bgFileOther = ${StateDir}/${FCFilePrefix}.${thisMPASFileDate}.nc
+if ( "${ArgRunDASaca}" == "afterDA" ) then
+  set bgFileOther = ${StateDir}/${ICFilePrefix}.${thisMPASFileDate}.nc
+else
+  set bgFileOther = ${StateDir}/${FCFilePrefix}.${thisMPASFileDate}.nc
+endif
+
 set bgFile = ${bg}/${FCFilePrefix}.$thisMPASFileDate.nc
 
 rm ${bgFile}${OrigFileSuffix} ${bgFile}
@@ -347,6 +355,10 @@ rm */*.nc*.lock
 
 # Remove core file
 rm core
+
+if ( "${ArgRunDASaca}" != "afterDA" ) then
+  cp ${anFile} ${bgFileOther}
+endif
 
 date
 

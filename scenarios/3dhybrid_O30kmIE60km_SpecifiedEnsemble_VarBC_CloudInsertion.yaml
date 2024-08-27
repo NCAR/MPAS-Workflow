@@ -1,0 +1,83 @@
+suite: CloudDirectInsertionCycle
+
+# settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
+experiment:
+  name: 'CloudDirectInsertion_Cycling_TEST'
+
+firstbackground:
+  resource: "PANDAC.GFS"
+
+forecast:
+  job:
+    30km:
+      nodes: 2
+      PEPerNode: 128
+      baseSeconds: 60
+      secondsPerForecastHR: 240
+
+  #execute: False # the default is True
+  post: [] # use this when doing extended forecast
+  #post: [verifymodel] # this turns off verifyobs
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+
+members:
+  n: 1
+
+model:
+  outerMesh: 60-3km
+  innerMesh: 60km
+  ensembleMesh:  60km
+  GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/all_graph
+
+saca:
+  runDASaca: beforeDA
+  job:
+    60-3km:
+      seconds: 600
+
+extendedforecast:
+  meanTimes: T00
+  lengthHR: 1
+  outIntervalHR: 1
+  DACycling: True
+  updateSea: True
+  execute: False # uncomment if forecasts are already completed
+  post: [] #verifyobs
+
+observations:
+  resource: SacaObs
+
+variational:
+  DAType: 3dhybrid
+  biasCorrection: True
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  nInnerIterations: [60,60,]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.EDA"
+
+  # resource requirements
+  job:
+    60-3km:
+      60km:
+        3dhybrid:
+          nodes: 4
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 1200
+          secondsPerEnVarMember: 9
+
+  #execute: False # the default is True
+  #post: [] # this turns off verifyobs
+
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180415T00
+  final cycle point: 20180415T00
+  #final cycle point: 20180514T18
+  #CyclingWindowHR: 24 # default is 6 for cycling DA
+  #max active cycle points: 4 # used for independent 'extendedforecast'
+  prevBgHR: 6 #if beforeDA, else prevBgHR == 0 (default)

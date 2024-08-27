@@ -189,6 +189,7 @@ from initialize.suites.GenerateExternalAnalyses import GenerateExternalAnalyses
 from initialize.suites.GenerateObs import GenerateObs
 from initialize.suites.ForecastFromExternalAnalyses import ForecastFromExternalAnalyses
 from initialize.suites.CloudDirectInsertion import CloudDirectInsertion
+from initialize.suites.CloudDirectInsertionCycle import CloudDirectInsertionCycle
 
 suiteDict = {
   'Cycle': Cycle,
@@ -196,6 +197,7 @@ suiteDict = {
   'GenerateExternalAnalyses': GenerateExternalAnalyses,
   'GenerateObs': GenerateObs,
   'CloudDirectInsertion': CloudDirectInsertion,
+  'CloudDirectInsertionCycle': CloudDirectInsertionCycle,
 }
 
 def SuiteLookup(suiteName:str, conf:Config):

@@ -30,7 +30,6 @@ from initialize.post.Benchmark import Benchmark
 
 from initialize.suites.SuiteBase import SuiteBase
 
-from initialize.framework.Workflow import Workflow
 
 class CloudDirectInsertion(SuiteBase):
   def __init__(self, conf:Config):
@@ -38,7 +37,6 @@ class CloudDirectInsertion(SuiteBase):
 
     self.c['model'] = Model(conf)
     meshes = self.c['model'].getMeshes()
-    self.c['worklow'] = Workflow(conf)
 
     self.c['build'] = Build(conf, self.c['model'])
     self.c['observations'] = Observations(conf, self.c['hpc'])
@@ -47,7 +45,7 @@ class CloudDirectInsertion(SuiteBase):
     self.c['externalanalyses'] = ExternalAnalyses(conf, self.c['hpc'], meshes)
     self.c['initic'] = InitIC(conf, self.c['hpc'], meshes, self.c['externalanalyses'])
 
-    self.c['saca'] = SACA(conf, self.c['hpc'], meshes['Outer'], self.c['worklow'])
+    self.c['saca'] = SACA(conf, self.c['hpc'], meshes['Outer'], self.c['workflow'])
 
     # Forecast object is only used to initialize parts of ExtendedForecast and ForecastSACA
     self.c['forecast'] = Forecast(conf, self.c['hpc'], meshes['Outer'], self.c['members'], self.c['model'], self.c['observations'],
