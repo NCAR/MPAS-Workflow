@@ -36,6 +36,10 @@ class SACA(Component):
     # whether to run saca or not, but copy the 6hr forecast from previous cycle
     'runSaca': [True, bool],
 
+    # indicate to run saca before or after DA
+    # OPTIONS: beforeDA, afterDA
+    'runDASaca': ['afterDA', str, ['beforeDA', 'afterDA']],
+
     # whether to use MADWRF's cloud building algorithm
     'buildMADWRF': [True, bool],
 
@@ -108,7 +112,13 @@ class SACA(Component):
     self.workDir = self.workDir+'/{{thisCycleDate}}'
 
     self.ICFilePrefix = 'mpasin'
-    bgdirectory = 'ColdStartFC'
+    if self.doMean:
+      bgdirectory = 'ColdStartFC'
+    else:
+      if self['runDASaca'] == 'beforeDA':
+        bgdirectory = 'CyclingFC'
+      elif['runDASaca'] == 'afterDA':
+        bgdirectory = 'CyclingDA'
 
     #########
     # outputs
@@ -124,12 +134,15 @@ class SACA(Component):
     self.outputs['doMean'] = self.doMean
     self.outputs['meanTimes'] = {}
     self.outputs['meanTimes'] = self['meanTimes']
+    self.outputs['runDASaca'] = {}
+    self.outputs['runDASaca'] = self['runDASaca']
 
     # execute
     args = [
       self.workDir,
       bgdirectory,
       self['runSaca'],
+      self['runDASaca'],
     ]
     self.executeArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
