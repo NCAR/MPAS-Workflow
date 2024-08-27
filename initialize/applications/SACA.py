@@ -117,7 +117,7 @@ class SACA(Component):
     else:
       if self['runDASaca'] == 'beforeDA':
         bgdirectory = 'CyclingFC'
-      elif['runDASaca'] == 'afterDA':
+      elif self['runDASaca']  == 'afterDA':
         bgdirectory = 'CyclingDA'
 
     #########
