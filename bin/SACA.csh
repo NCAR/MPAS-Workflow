@@ -24,7 +24,7 @@ date
 
 # Setup environment
 # =================
-source config/environmentJEDI.csh
+source config/environmentJEDIsaca.csh
 source config/mpas/variables.csh
 source config/tools.csh
 source config/auto/build.csh
@@ -108,7 +108,7 @@ mkdir -p ${bg}
 # Link bg from StateDir
 # ======================
 if ( "${ArgRunDASaca}" == "afterDA" ) then
-  set bgFileOther = ${StateDir}/${ICFilePrefix}.${thisMPASFileDate}.nc
+  set bgFileOther = ${StateDir}/${analysisSubDir}/${ANFilePrefix}.${thisMPASFileDate}.nc
 else
   set bgFileOther = ${StateDir}/${FCFilePrefix}.${thisMPASFileDate}.nc
 endif
@@ -357,7 +357,8 @@ rm */*.nc*.lock
 rm core
 
 if ( "${ArgRunDASaca}" != "afterDA" ) then
-  cp ${anFile} ${bgFileOther}
+  mv ${bgFileOther} ${bgFileOther}${OrigFileSuffix}
+  ln -sfv ${anFile} ${bgFileOther}
 endif
 
 date

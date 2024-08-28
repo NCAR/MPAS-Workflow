@@ -2,11 +2,13 @@ suite: CloudDirectInsertionCycle
 
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  name: 'CloudDirectInsertion_Cycling_TEST4_afterDA'
+  name: 'CloudDirectInsertion_Cycling_TEST4_beforeDA_2.1_3'
+
+#build:
+#  mpas bundle: /glade/derecho/scratch/bjung/saca/mpas-bundle.modif2_bugfix.traj_fix/build_single
 
 firstbackground:
   resource: "PANDAC.SACA"
-  #"PANDAC.SACA"
 
 forecast:
   job:
@@ -33,7 +35,7 @@ model:
   GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/all_graph
 
 saca:
-  runDASaca: afterDA
+  runDASaca: beforeDA
   job:
     60-3km:
       seconds: 600
@@ -74,19 +76,20 @@ variational:
           secondsPerEnVarMember: 9
 
   #execute: False # the default is True
-  #post: [] # this turns off verifyobs
+  #post: [verifyobs] # this turns off verifyobs
+
 hofx:
-  observers: [
-    abi_g16,
-  ]
+#  observers: [
+#    abi_g16,
+#  ]
   concatenateObsFeedback: True
   IRVISlandCoeff: IGBP
 
 workflow:
   first cycle point: 20180414T18
-  #restart cycle point: 20180415T00
-  final cycle point: 20180415T00
+  restart cycle point: 20180415T12
+  final cycle point: 20180430T18
   #final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'
-  prevBgHR: 0 #if beforeDA, else prevBgHR == 0 (default)
+  prevBgHR: 6 #if beforeDA prevBgHR == 6, else prevBgHR == 0 (default)

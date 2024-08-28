@@ -104,7 +104,8 @@ class Build(Component):
 
     ## SACA
     self._set('SACAEXE', 'mpasjedi_addincrement.x')
-    self._set('SACABuildDir', self['mpas bundle']+'/bin')
+    #self._set('SACABuildDir', self['mpas bundle']+'/bin')
+    self._set('SACABuildDir', '/glade/derecho/scratch/bjung/saca/mpas-bundle.modif2_bugfix.traj_fix/build_single/bin')
 
     if model is not None:
 
