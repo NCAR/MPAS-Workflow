@@ -1,0 +1,422 @@
+suite: Cycle
+
+experiment:
+  user directory child: pandac
+  suffix: '_ensB-SE80+RTPP70_VarBC_allConfig_TEST'
+  #prefix: ''
+  #name: ''
+
+build:
+  mpas bundle: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_saca_dev_10Jun2024/build_SP
+  #forecast directory: ''
+  bundle compiler used: gnu-openmpi
+
+hpc:
+  CriticalAccount: NMMM0015
+  CriticalQueue: main
+  NonCriticalAccount: NMMM0015
+  NonCriticalQueue: economy
+  SingleProcAccount: NMMM0015
+  SingleProcQueue: casper@casper-pbs
+
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180415T00
+  final cycle point: 20180415T00
+  CyclingWindowHR: 6 # default is 6 for cycling DA
+  max active cycle points: 4 # used for independent 'extendedforecast'
+  max concurrent placeholder tasks: 20
+  submission timeout: PT90M
+  subwindow: 1
+  prevBgHR: 0
+
+members:
+  n: 1
+
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+  resources:
+    30km:
+      meshRatio: 1
+      nCells: 655362
+      TimeStep: 180.0
+      DiffusionLengthScale: 30000.0
+      RadiationLWInterval: 00:30:00
+      RadiationSWInterval: 00:30:00
+      PhysicsSuite: mesoscale_reference
+      Microphysics: mp_wsm6
+      Convection: cu_ntiedtke
+      PBL: bl_ysu
+      Gwdo: bl_ysu_gwdo
+      RadiationCloud: cld_fraction
+      RadiationLW: rrtmg_lw
+      RadiationSW: rrtmg_sw
+      SfcLayer: sf_monin_obukhov
+      LSM: noah
+    60km:
+      meshRatio: 1
+      nCells: 163842
+      TimeStep: 360.0
+      DiffusionLengthScale: 60000.0
+      RadiationLWInterval: 00:30:00
+      RadiationSWInterval: 00:30:00
+      PhysicsSuite: mesoscale_reference
+      Microphysics: mp_wsm6
+      Convection: cu_ntiedtke
+      PBL: bl_ysu
+      Gwdo: bl_ysu_gwdo
+      RadiationCloud: cld_fraction
+      RadiationLW: rrtmg_lw
+      RadiationSW: rrtmg_sw
+      SfcLayer: sf_monin_obukhov
+      LSM: noah
+  GraphInfoDir: /glade/campaign/mmm/parc/liuz/pandac_common/static_from_duda
+  precision: single
+  MPThompsonTablesDir: /glade/campaign/mmm/parc/ivette/pandac/saca/thompson_tables
+
+staticstream:
+  resource: "PANDAC"
+  resources:
+  PANDAC:
+      60km: # only available 20180414T18, 20200723T18
+        directory: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/GEFS/init/000hr/{{FirstCycleDate}}
+        maxMembers: 80
+        memberFormat: /{:02d}
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+  resources:
+    GFS:
+      PANDAC: # only available 20180418T00-20180524T00
+        30km:
+          directory: /glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_GFSANA
+        60km:
+          directory: /glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_GFSANA
+
+initic:
+  job:
+    30km:
+      seconds: 320
+      nodes: 4
+      PEPerNode: 36
+
+firstbackground:
+  resource: "PANDAC.GFS"
+  resources:
+  PANDAC:
+      GFS:
+        30km: # only available 20180414T18
+          directory: /glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_1stCycle_background_single/{{FirstCycleDate}}
+
+forecast:
+  #execute: False # the default is True
+  updateSea: True
+  IAU: False
+  FourD: False
+  post: [verifyobs,verifymodel]
+  job:
+    30km:
+      nodes: 2
+      PEPerNode: 128
+      baseSeconds: 60
+      secondsPerForecastHR: 240
+
+variational:
+  #execute: False # the default is True
+  DAType: 3dhybrid
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  nInnerIterations: [60,60,]
+  MinimizerAlgorithm: DRPCG
+  SelfExclusion: True
+  EDASize: 1
+  observers: [
+    aircraft,
+    gnssrobndropp1d,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    mhs_metop-a,
+    mhs_metop-b,
+    mhs_n18,
+    mhs_n19,
+]
+  biasCorrection: True
+  tropprsMethod: thompson
+  maxIODAPoolSize: 1
+  radianceThinningDistance: 145.0
+  retainObsFeedback: True
+  post: [verifyobs]
+  subwindow: 1
+  concatenateObsFeedback: True
+  IRVISlandCoeff: USGS
+  ensemble:
+    forecasts:
+      resource: "PANDAC.EDA"
+      defaults:
+        filePrefix: mpasout
+      PANDAC:
+        EDA:
+          60km:
+            maxMembers: 80
+            directory0: /glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_EnsFC_80EDA/{{prevDateTime}}
+            memberPrefix: mem
+            memberNDigits: 3
+    localization:
+      60km:
+          bumpLocPrefix: bumploc_1200.0km_6.0km
+          bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.bumploc.duplicated.limited.1200km6km
+  covariance:
+    bumpCovControlVariables:
+    - stream_function
+    - velocity_potential
+    - temperature
+    - spechum
+    - surface_pressure
+    bumpCovPrefix: mpas_parametersbump_cov
+    bumpCovVBalPrefix: mpas_vbal
+    60km:
+      hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
+      bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.NICAS_00global
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.VBAL_00       
+  job:
+    30km:
+      60km:
+        3dhybrid:
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 800
+          secondsPerEnVarMember: 9
+
+hofx:
+  #execute: False # the default is True
+  observers: [
+    aircraft,
+    gnssrobndropp1d,
+    gnssrorefncep,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    amsua-cld_aqua,
+    amsua-cld_metop-a,
+    amsua-cld_metop-b,
+    amsua-cld_n15,
+    amsua-cld_n18,
+    amsua-cld_n19,
+    mhs_metop-a,
+    mhs_metop-b,
+    mhs_n18,
+    mhs_n19,
+    abi_g16,
+    ahi_himawari8,
+]
+  biasCorrection: False
+  tropprsMethod: thompson
+  maxIODAPoolSize: 1
+  radianceThinningDistance: 145.0
+  retainObsFeedback: True
+  post: [verifyobs]
+  subwindow: 1
+  concatenateObsFeedback: True
+  IRVISlandCoeff: USGS
+  job:
+    30km:
+      seconds: 600
+      nodes: 1
+      PEPerNode: 128
+      memory: 235GB
+
+observations:
+  resource: PANDACArchiveForVarBC
+  resources:
+    PANDACArchiveForVarBC:
+      PrepareObservationsTasks: [ObsReady__]
+      instrumentsAllowingBiasCorrection:
+      - amsua_aqua
+      - amsua_metop-a
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
+      - amsua-cld_aqua
+      - amsua-cld_metop-a
+      - amsua-cld_metop-b
+      - amsua-cld_metop-c
+      - amsua-cld_n15
+      - amsua-cld_n18
+      - amsua-cld_n19
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+      - mhs_metop-a
+      - mhs_metop-b
+      - mhs_n18
+      - mhs_n19
+
+      IODAPrefix:
+        gnssrobndropp1d: gnssro
+        gnssrobndnbam: gnssro
+        gnssrobndmo: gnssro
+        gnssrobndmo-nopseudo: gnssro
+        gnssrorefncep: gnssro
+        gnssrorefncep_tunedErrors: gnssro
+        amsua-cld_aqua: amsua_aqua
+        amsua-cld_metop-a: amsua_metop-a
+        amsua-cld_metop-b: amsua_metop-b
+        amsua-cld_n15: amsua_n15
+        amsua-cld_n18: amsua_n18
+        amsua-cld_n19: amsua_n19
+        abi-clr_g16: abi_g16
+        ahi-clr_himawari8: ahi_himawari8
+
+      IODADirectory:
+        da:
+          ##anchor
+          aircraft: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrobndropp1d: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrobndnbam: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrobndmo: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrorefncep: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          gnssrorefncep_tunedErrors: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          satwind: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          satwnd: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          sfc: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          sondes: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+
+          ## amsua
+          amsua_aqua: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_n15: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_aqua: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_n15: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-cld_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+
+          ## mhs
+          mhs_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
+          mhs_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
+          mhs_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
+          mhs_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
+
+          ## abi
+          abi_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+
+          ## ahi
+          ahi_himawari8: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+
+          ## iasi
+          iasi_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+          iasi_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+          iasi_metop-c: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+
+        hofx:
+          ## anchor
+          aircraft: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrobndropp1d: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrobndnbam: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrobndmo: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrobndmo-nopseudo: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrorefncep: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          gnssrorefncep_tunedErrors: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          satwind: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          satwnd: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          sfc: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+          sondes: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/conv_obs
+
+          ## amsua
+          amsua_aqua: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua_n15: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_aqua: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_n15: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          amsua-cld_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+
+          ## mhs
+          mhs_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          mhs_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          mhs_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+          mhs_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+
+          ## abi
+          abi_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+          abi-clr_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
+
+          ## ahi
+          ahi_himawari8: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+          ahi-clr_himawari8: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/AHIASR/IODANC_SUPEROB15X15_no-bias-correct
+
+          ## iasi
+          iasi_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+          iasi_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+          iasi_metop-c: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+
+      IODASuperObGrid:
+        abi_g16: 15X15
+        ahi_himawari8: 15X15
+
+  CRTMTABLES: /glade/work/nystrom/Code/JEDI/jcsda_internal/CRTM_V3_coeffs/
+  fixedCoeff: /glade/campaign/mmm/parc/jban/pandac_common/obs/satbias
+  fixedTlapmeanCov: /glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2018
+  initialVARBCcoeff: /glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2018
+
+verifyobs:
+  script directory: /glade/u/home/taosun/work/Derecho/MPAS/Graphics_Python
+  job:
+    seconds: 1100
+    secondsPerMember: 120
+
+verifymodel:
+  script directory: /glade/u/home/taosun/work/Derecho/MPAS/Graphics_Python
+  job:
+    defaults:
+      seconds: 2000
+      secondsPerMember: 500
+
+extendedforecast:
+  execute: False # uncomment if forecasts are already completed
+  meanTimes: T00
+  ensTimes: None
+  lengthHR: 240
+  outIntervalHR: 12
+  DACycling: False
+  updateSea: True
+  post: [] #verifymodel,verifyobs
+  job:
+    30km:
+      nodes: 2
+      PEPerNode: 128
+      baseSeconds: 60
+      secondsPerForecastHR: 240
