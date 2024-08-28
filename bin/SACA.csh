@@ -359,7 +359,7 @@ rm core
 
 if ( "${ArgRunDASaca}" != "afterDA" ) then
   mv ${bgFileOther} ${bgFileOther}${OrigFileSuffix}
-  ln -sfv ${anFile} ${bgFileOther}
+  ln -sfv ${WorkDir}/${anFile} ${bgFileOther}
 endif
 
 date
