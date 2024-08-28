@@ -4,7 +4,7 @@
     obsdatain:
       engine:
         type: H5File
-        obsfile: {{InDBDir}}/amsua_metop-b_obs_{{thisValidDate}}.h5
+        obsfile: {{InDBDir}}/amsua-cld_metop-b_obs_{{thisValidDate}}.h5
     obsdataout:
       engine:
         type: H5File
