@@ -102,7 +102,7 @@ class Build(Component):
     self._set('RTPSBuildDir', self['mpas bundle']+'/bin')
 
     ## SACA
-    self._set('SACAEXE', 'mpasjedi_addincrement.x')
+    self._set('SACAEXE', 'mpasjedi_saca.x')
     self._set('SACABuildDir', self['mpas bundle']+'/bin')
 
     if model is not None:
