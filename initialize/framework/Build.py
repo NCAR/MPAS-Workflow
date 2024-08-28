@@ -40,7 +40,10 @@ class Build(Component):
     # set system dependent defaults before invoking Component ctor
     system = os.getenv('NCAR_HOST')
     if system == 'derecho':
-      self.variablesWithDefaults['mpas bundle'] = \
+      if config._bundle_dir != None:
+        self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
+      else:
+        self.variablesWithDefaults['mpas bundle'] = \
         ['/glade/u/home/taosun/work/Derecho/JEDI/mpas-bundle/build', str]
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
