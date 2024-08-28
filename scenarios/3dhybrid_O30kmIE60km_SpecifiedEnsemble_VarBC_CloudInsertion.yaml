@@ -33,9 +33,6 @@ model:
 
 saca:
   runDASaca: afterDA #default
-  job:
-    60-3km:
-      seconds: 600
 
 extendedforecast:
   meanTimes: T00
