@@ -39,9 +39,9 @@ set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
 ## copy invariant fields
 rm invariant.nc
 
-set memberInvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
+set InvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
 rm ${localInvariantFieldsFile}
-ln -sfv ${memberInvariantFieldsFile} ${localInvariantFieldsFile}
+ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 # gridTemplateFile must include latCell, lonCell, theta, and surface_pressure
 set gridTemplateFile = ${self_WorkDir}/${localInvariantFieldsFile}
