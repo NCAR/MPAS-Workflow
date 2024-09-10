@@ -111,7 +111,7 @@ set icFileExt = ${thisMPASFileDate}.nc
 set initialState = ${self_icStateDir}/${ArgICStatePrefix}.${icFileExt}
 
 # use previously generated init file for invariant stream
-set memberInvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
+set InvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
 
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
@@ -135,8 +135,8 @@ rm ${localInvariantFieldsPrefix}*.nc
 rm ${localInvariantFieldsPrefix}*.nc-lock
 set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
 rm ${localInvariantFieldsFile}
-ln -sfv ${memberInvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
-cp -v ${memberInvariantFieldsFile} ${localInvariantFieldsFile}
+ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
+cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 # We can start IAU only from the second DA cycle (otherwise, 3hrly background forecast is not available yet.)
 set self_IAU = False
