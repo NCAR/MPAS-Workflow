@@ -1,5 +1,5 @@
 experiment:
-  name: '3denvar_O30kmIE60km_WarmStart_TEST_Modelv8.2.1_NEWINIT-1stBKG_files_verifyFixed'
+  name: '3denvar_O30kmIE60km_WarmStart_TEST'
 externalanalyses:
   resource: "GFS.PANDAC"
 forecast:
@@ -55,6 +55,3 @@ workflow:
   # Also required with only 15 inner iterations to avoid NaN in forecast
   # Can cycle for a full month when nInnerIterations==[60,60]
   final cycle point: 20180415T00
-
-verifymodel:
-  script directory: /glade/work/ivette/pandac/graphics/Graphics_Python_noPressure-noTemperature
