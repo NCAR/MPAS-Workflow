@@ -98,9 +98,9 @@ rm ${localInvariantFieldsPrefix}*.nc*
 ## copy invariant fields
 set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
 rm ${localInvariantFieldsFile}
-set memberInvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
-ln -sfv ${memberInvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
-cp -v ${memberInvariantFieldsFile} ${localInvariantFieldsFile}
+set InvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
+ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
+cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 # Link/copy bg from other directory
 # =================================
