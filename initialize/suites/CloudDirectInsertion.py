@@ -68,7 +68,7 @@ class CloudDirectInsertion(SuiteBase):
                 self.c['saca'].outputs['state']['members'], 'external')
 
     self.c['experiment'] = Experiment(conf, self.c['hpc'])
-    self.c['ss'] = InvariantStream(conf, meshes, self.c['members'], self.c['workflow']['FirstCycleDate'], self.c['externalanalyses'], self.c['experiment'])
+    self.c['ss'] = InvariantStream(conf, meshes, self.c['workflow']['FirstCycleDate'], self.c['externalanalyses'], self.c['experiment'])
 
     self.c['naming'] = Naming(conf, self.c['experiment'])
 
