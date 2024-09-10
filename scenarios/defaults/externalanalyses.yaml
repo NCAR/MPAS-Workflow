@@ -33,12 +33,12 @@ externalanalyses:
       PANDAC: # only available 20180415T00-20180525T00
         120km:
           #directory: "/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_GFSANA"
-          directory: "/glade/campaign/mmm/parc/taosun/pandac/120kmMeshGFS/MPAS_IC"
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/120kmMeshGFS/MPAS_IC_NEW"
         60km:
-          directory: "/glade/campaign/mmm/parc/taosun/pandac/60kmMeshGFS/MPAS_IC"
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/60kmMeshGFS/MPAS_IC_NEW"
         30km:
           #directory: "/glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_GFSANA"
-          directory: "/glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/MPAS_IC"
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/MPAS_IC_NEW"
         60-3km:
           #directory: "/glade/campaign/mmm/parc/ivette/pandac/saca/60-3km/60-3km_GFSANA"
           directory: "/glade/campaign/mmm/parc/taosun/pandac/60km3kmVMeshGFS/MPAS_IC"
