@@ -98,8 +98,7 @@ rm ${localInvariantFieldsPrefix}*.nc*
 ## copy invariant fields
 set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
 rm ${localInvariantFieldsFile}
-set InvariantMemDir = `${memberDir} 2 $ArgMember "${invariantMemFmt}"`
-set memberInvariantFieldsFile = ${InvariantFieldsDirOuter}${InvariantMemDir}/${InvariantFieldsFileOuter}
+set memberInvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
 ln -sfv ${memberInvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
 cp -v ${memberInvariantFieldsFile} ${localInvariantFieldsFile}
 
