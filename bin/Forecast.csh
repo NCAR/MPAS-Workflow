@@ -111,8 +111,7 @@ set icFileExt = ${thisMPASFileDate}.nc
 set initialState = ${self_icStateDir}/${ArgICStatePrefix}.${icFileExt}
 
 # use previously generated init file for invariant stream
-set InvariantMemDir = `${memberDir} 2 $ArgMember "${invariantMemFmt}"`
-set memberInvariantFieldsFile = ${InvariantFieldsDirOuter}${InvariantMemDir}/${InvariantFieldsFileOuter}
+set memberInvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
 
 echo "WorkDir = ${self_WorkDir}"
 mkdir -p ${self_WorkDir}
