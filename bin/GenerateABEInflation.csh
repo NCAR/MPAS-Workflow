@@ -39,8 +39,7 @@ set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
 ## copy invariant fields
 rm invariant.nc
 
-set InvariantMemDir = `${memberDir} 2 1 "${invariantMemFmt}"`
-set memberInvariantFieldsFile = ${InvariantFieldsDirOuter}${InvariantMemDir}/${InvariantFieldsFileOuter}
+set memberInvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
 rm ${localInvariantFieldsFile}
 ln -sfv ${memberInvariantFieldsFile} ${localInvariantFieldsFile}
 
