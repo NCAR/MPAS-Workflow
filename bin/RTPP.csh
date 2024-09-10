@@ -70,10 +70,9 @@ rm ${localInvariantFieldsPrefix}*.nc
 rm ${localInvariantFieldsPrefix}*.nc-lock
 set localInvariantFieldsFile = ${localInvariantFieldsFileEnsemble}
 rm ${localInvariantFieldsFile}
-set InvariantMemDir = `${memberDir} 2 1 "${invariantMemFmt}"`
-set memberInvariantFieldsFile = ${InvariantFieldsDirEnsemble}${InvariantMemDir}/${InvariantFieldsFileEnsemble}
-ln -sfv ${memberInvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
-cp -v ${memberInvariantFieldsFile} ${localInvariantFieldsFile}
+set InvariantFieldsFile = ${InvariantFieldsDirEnsemble}/${InvariantFieldsFileEnsemble}
+ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
+cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 ## create RTPP mean output file to be overwritten by MPAS-JEDI RTPPEXE application
 set memDir = `${memberDir} 2 0 "${flowMemFmt}"`
