@@ -37,8 +37,8 @@ class SACA(Component):
     'runSaca': [True, bool],
 
     # indicate to run saca before or after DA
-    # OPTIONS: beforeDA, afterDA
-    'runDASaca': ['afterDA', str, ['beforeDA', 'afterDA']],
+    # OPTIONS: beforeDA, afterDA, None
+    'runDASaca': ['None', str, ['None', 'beforeDA', 'afterDA']],
 
     # whether to use MADWRF's cloud building algorithm
     'buildMADWRF': [True, bool],
@@ -105,7 +105,7 @@ class SACA(Component):
     self.workDir = self.workDir+'/{{thisCycleDate}}'
 
     self.ICFilePrefix = 'mpasin'
-    if self.doMean:
+    if self.doMean and self['runDASaca'] == 'None':
       bgdirectory = 'ColdStartFC'
     else:
       if self['runDASaca'] == 'beforeDA':

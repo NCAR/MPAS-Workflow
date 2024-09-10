@@ -113,6 +113,8 @@ class CloudDirectInsertionCycle(SuiteBase):
           c_.export(self.c['da'].tf.finished, activateEnsemble=False)
         else:
           c_.export()
+      else:
+        print('Use the CloudDirectInsertion suite for no SACA and DA cycling')
 
     self.queueComponents += [
       'externalanalyses',
