@@ -44,7 +44,7 @@ class Build(Component):
         self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
       else:
         self.variablesWithDefaults['mpas bundle'] = \
-          ['/glade/work/taosun/Derecho/JEDI/mpas-bundle-develop/build', str] #actually this is Modelv8.2.1
+          ['/glade/campaign/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_v3_internal_gnuSP/build', str] ## MPAS-JEDI 3.0.0 release with MPAS-A V8.2.1
 
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
