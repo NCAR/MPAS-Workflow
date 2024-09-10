@@ -153,7 +153,7 @@ class Variational(Component):
 
     ## IR/VIS land surface coefficients classification
     # OPTIONS: USGS, IGBP, NPOESS
-    'IRVISlandCoeff': ['USGS', str],
+    'IRVISlandCoeff': ['IGBP', str],
   }
 
   def __init__(self,
