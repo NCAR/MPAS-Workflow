@@ -356,10 +356,9 @@ rm */*.nc*.lock
 # Remove core file
 rm core
 
-if ( "${ArgRunDASaca}" != "afterDA" ) then
-  mv ${bgFileOther} ${bgFileOther}${OrigFileSuffix}
-  ln -sfv ${anFile} ${bgFileOther}
-endif
+# Link SACA analysis to background used
+mv ${bgFileOther} ${bgFileOther}${OrigFileSuffix}
+ln -sfv ${WorkDir}/${anFile} ${bgFileOther}
 
 date
 

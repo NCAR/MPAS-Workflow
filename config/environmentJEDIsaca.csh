@@ -7,7 +7,8 @@ echo "Loading Spack-Stack $spack_version"
 setenv config_environmentJEDI 1
 
 source config/auto/build.csh
-setenv mpasBundle "/glade/derecho/scratch/bjung/saca/mpas-bundle.modif2_bugfix.traj_fix/build_single"
+#setenv mpasBundle "/glade/derecho/scratch/bjung/saca/mpas-bundle.modif2_bugfix.traj_fix/build_single"
+setenv mpasBundle "/glade/derecho/scratch/bjung/saca/mpas-bundle.modif2_bugfix.traj_fix.NoCloudBuilding/build_single"
 
 if ( "$NCAR_HOST" == "derecho" ) then
   source /etc/profile.d/z00_modules.csh
