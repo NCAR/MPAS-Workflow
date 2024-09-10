@@ -44,7 +44,8 @@ class Build(Component):
         self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
       else:
         self.variablesWithDefaults['mpas bundle'] = \
-          ['/glade/work/taosun/Derecho/JEDI/mpas-bundle-v8.2/build', str] #actually this is Modelv8.2.1
+          ['/glade/work/taosun/Derecho/JEDI/mpas-bundle-develop/build', str] #actually this is Modelv8.2.1
+
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
       self.variablesWithDefaults['forecast directory'] = ['bundle', str]
@@ -106,7 +107,7 @@ class Build(Component):
     self._set('RTPSBuildDir', self['mpas bundle']+'/bin')
 
     ## SACA
-    self._set('SACAEXE', 'mpasjedi_addincrement.x')
+    self._set('SACAEXE', 'mpasjedi_saca.x')
     self._set('SACABuildDir', self['mpas bundle']+'/bin')
 
     if model is not None:

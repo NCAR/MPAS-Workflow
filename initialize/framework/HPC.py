@@ -18,7 +18,7 @@ from initialize.config.Task import TaskLookup
 class HPC(Component):
   system = 'cheyenne'
   variablesWithDefaults = {
-      # override these below based on host
+    # override these below based on host
     'top directory': ['/glade/scratch', str],
     'TMPDIR': ['/glade/scratch/{{USER}}/temp', str],
 
