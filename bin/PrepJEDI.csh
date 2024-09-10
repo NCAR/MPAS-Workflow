@@ -1031,9 +1031,8 @@ if ("$ArgAppType" == variational) then
       set localInvariant = ${localInvariantFieldsFile}${memSuffix}
       rm ${localInvariant}
 
-      set invariantMemDir = `${memberDir} 2 $member "${invariantMemFmt}"`
-      set memberInvariantFieldsFile = $InvariantFieldsDirList[$iMesh]${invariantMemDir}/$InvariantFieldsFileList[$iMesh]
-      ln -sfv ${memberInvariantFieldsFile} ${localInvariant}
+      set InvariantFieldsFile = $InvariantFieldsDirList[$iMesh]/$InvariantFieldsFileList[$iMesh]
+      ln -sfv ${InvariantFieldsFile} ${localInvariant}
     end
 
     # TODO(JJG): centralize this directory name construction (cycle.csh?)
@@ -1248,9 +1247,8 @@ else if ("$ArgAppType" == enkf) then
       set localInvariant = ${localInvariantFieldsFile}${memSuffix}
       rm ${localInvariant}
 
-      set invariantMemDir = `${memberDir} 1 $member "${invariantMemFmt}"`
-      set memberInvariantFieldsFile = $InvariantFieldsDirList[$iMesh]${invariantMemDir}/$InvariantFieldsFileList[$iMesh]
-      ln -sfv ${memberInvariantFieldsFile} ${localInvariant}
+      set InvariantFieldsFile = $InvariantFieldsDirList[$iMesh]/$InvariantFieldsFileList[$iMesh]
+      ln -sfv ${InvariantFieldsFile} ${localInvariant}
     end
 
     # use the 1st member background as the TemplateFieldsFileOuter
