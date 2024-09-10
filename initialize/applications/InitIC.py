@@ -76,7 +76,6 @@ class InitIC(Component):
       queue = 'ConvertExternalAnalyses'
       subqueues.append(queue)
       for (typ, meshName, nCells, meshRatio) in zip(meshTypes, meshNames, meshNCells, meshRatios):
-        print(typ)
         prevTaskName = None
         for dt in dtOffsets:
           dtStr = str(dt)
