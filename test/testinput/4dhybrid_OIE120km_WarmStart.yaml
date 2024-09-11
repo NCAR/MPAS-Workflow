@@ -3,7 +3,7 @@ experiment:
 externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
-  resource: "PANDAC.GFS_4DEnVAR"
+  resource: "PANDAC.GFS"
 forecast:
   FourD: True
   post: [verifyobs, verifymodel]
