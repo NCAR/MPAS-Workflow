@@ -107,11 +107,11 @@ enkf:
         observer:
           # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
           # 8 x 32 PE : 12.2 min., 118 GB (single precision)
-          nodes: 1
+          nodes: 2
           PEPerNode: 128
           memory: 235GB
-          baseSeconds: 300
-          secondsPerMember: 45
+          baseSeconds: 360
+          secondsPerMember: 60
         solver:
           # cost for record (5 members, PBS JOB email)
           # 4 x 32 PE : ?.? min., ?? GB (single precision)
