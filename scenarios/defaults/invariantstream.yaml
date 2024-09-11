@@ -5,7 +5,7 @@ invariantstream:
     # can be overridden in either a `common` or `{{mesh}}``-specific block
     defaults:
       ## directory (required): location of invariant stream file
-      InvariantDirectory: /glade/derecho/scratch/taosun/pandac/Invariant
+      InvariantDirectory: /glade/campaign/mmm/parc/taosun/pandac/Invariant
 
       ## filePrefix: prefix of invariant stream file
       InvariantFilePrefix: "x{{meshRatio}}.{{nCells}}.invariant"
