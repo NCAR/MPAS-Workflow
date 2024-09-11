@@ -22,7 +22,7 @@ observations:
 rtpp:
   relaxationFactor: 0.8
 invariantstream:
-  resource: "PANDAC.LaggedGEFS"
+  resource: "PANDAC.EnsPerB"
 variational:
   DAType: 3denvar
   nInnerIterations: [15,]
