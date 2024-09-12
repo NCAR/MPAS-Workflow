@@ -163,7 +163,7 @@ variational:
     defaults:
       baseSeconds: 1500
       secondsPerEnVarMember: 10
-      nodes: 2
+      nodes: 1
       PEPerNode: 128
       memory: 235GB
 
@@ -205,6 +205,12 @@ variational:
           PEPerNode: 64
           memory: 235GB
           baseSeconds: 1500
+        3dhybrid:
+          nodes: 4
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 500
+          secondsPerEnVarMember: 9
         ensemble: # i.e., EDASize > 1, multiple background members treated per executable
           3denvar:
             nodesPerMember: 4

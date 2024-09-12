@@ -9,7 +9,7 @@ enkf:
   retainObsFeedback: False
   post: []
 firstbackground:
-  resource: "PANDAC.LaggedGEFS"
+  resource: "PANDAC.EnsPertB"
 forecast:
   post: [verifyobs, verifymodel]
 hofx:

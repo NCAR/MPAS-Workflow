@@ -8,25 +8,25 @@ rtpp:
     #  PEPerNode: int
     #  memory: int
     defaults:
-      baseSeconds: 10
-      secondsPerMember: 10
-      nodes: 4
-      PEPerNode: 24
-      memory: 109GB
+      baseSeconds: 30
+      secondsPerMember: 15
+      nodes: 1
+      PEPerNode: 128
+      memory: 235GB
 
       # cylc retry string
       retry: '2*PT30S'
 
     ## mesh-specific settings
     60km:
-      baseSeconds: 10
-      secondsPerMember: 10
-      nodes: 4
-      PEPerNode: 24
-      memory: 109GB
+      baseSeconds: 30
+      secondsPerMember: 30
+      nodes: 1
+      PEPerNode: 128
+      memory: 235GB
     120km:
-      baseSeconds: 10
+      baseSeconds: 30
       secondsPerMember: 15
       nodes: 1
-      PEPerNode: 36
-      memory: 45GB
+      PEPerNode: 128
+      memory: 235GB

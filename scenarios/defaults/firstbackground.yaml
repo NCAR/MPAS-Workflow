@@ -30,27 +30,38 @@ firstbackground:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
         120km: # only available 20180414T18, 20200723T18
-          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/120km/120km_1stCycle_background_single/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/120kmMeshGFS/FirstBackground_NEW/{{FirstCycleDate}}"
         60km: # only available 20180414T18, 20200723T18
-          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_1stCycle_background_single/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/60kmMeshGFS/FirstBackground_NEW/{{FirstCycleDate}}"
         30km: # only available 20180414T18
-          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_1stCycle_background_single/{{FirstCycleDate}}"
+          #directory: "/glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_1stCycle_background_single/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/FirstBackground_NEW/{{FirstCycleDate}}"
         60-3km:
-          directory: "/glade/campaign/mmm/parc/ivette/pandac/saca/60-3km/60-3km_1stCycle_background_single/{{FirstCycleDate}}"
+          #directory: "/glade/campaign/mmm/parc/ivette/pandac/saca/60-3km/60-3km_1stCycle_background_single/{{FirstCycleDate}}"
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/60km3kmVMeshGFS/FirstBackground/{{FirstCycleDate}}"
       LaggedGEFS:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
         120km: # only available 20180414T18, 20200723T18
-          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/120km/EnsFCFirstCycle/{{FirstCycleDate}}"
-          maxMembers: 80
-          memberFormat: "/{:02d}"
+          directory: "/glade/u/home/taosun/scratch/pandac/120kmEnsFCFirstCycle/{{FirstCycleDate}}"
+          maxMembers: 20
+          memberFormat: "/mem{:03d}"
         60km: # only available 20180414T18, 20200723T18
           directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/60km/EnsFCFirstCycle/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/{:02d}"
-
-      GFS_4DEnVAR:
+      EnsPertB:
         common:
           PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
-        120km:
-          directory: "/glade/campaign/mmm/parc/nystrom/pandac/120km_1stCycle_background_single/{{FirstCycleDate}}"
+        120km: # only available 20180414T18, 20200723T18
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/120kmMeshGFS/ENS_FCST/{{FirstCycleDate}}"
+          maxMembers: 80
+          memberFormat: "/mem{:03d}"
+        60km: # only available 20180414T18, 20200723T18
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/60kmMeshGFS/ENS_FCST/{{FirstCycleDate}}"
+          maxMembers: 80
+          memberFormat: "/mem{:03d}"
+        30km: 
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/ENS_FCST/{{FirstCycleDate}}"
+          maxMembers: 80
+          memberFormat: "/mem{:03d}"

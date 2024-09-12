@@ -75,7 +75,7 @@ source config/auto/naming.csh
 source config/auto/observations.csh
 source config/auto/workflow.csh
 source config/auto/build.csh
-source config/auto/staticstream.csh
+source config/auto/invariantstream.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -169,7 +169,7 @@ foreach StreamsFile_ ($StreamsFileList)
   cp -v $ModelConfigDir/$ArgAppType/${StreamsFile} ./${StreamsFile_}
   sed -i 's@{{nCells}}@'$nCellsList[$iMesh]'@' ${StreamsFile_}
   sed -i 's@{{TemplateFieldsPrefix}}@'${WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile_}
-  sed -i 's@{{StaticFieldsPrefix}}@'${WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile_}
+  sed -i 's@{{InvariantFieldsPrefix}}@'${WorkDir}'/'${localInvariantFieldsPrefix}'@' ${StreamsFile_}
   sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile_}
 end
 
@@ -1001,8 +1001,8 @@ set self_StatePrefix = ${FCFilePrefix}
 # Remove old netcdf lock files
 rm *.nc*.lock
 
-# Remove old static fields in case this directory was used previously
-rm ${localStaticFieldsPrefix}*.nc*
+# Remove old invariant fields in case this directory was used previously
+rm ${localInvariantFieldsPrefix}*.nc*
 
 if ("$ArgAppType" == variational) then
 
@@ -1012,28 +1012,27 @@ if ("$ArgAppType" == variational) then
   # Input/Output model state preparation
   # ====================================
 
-  # get source static fields
-  set StaticFieldsDirList = ($StaticFieldsDirOuter $StaticFieldsDirInner)
-  set StaticFieldsFileList = ($StaticFieldsFileOuter $StaticFieldsFileInner)
+  # get source invariant fields
+  set InvariantFieldsDirList = ($InvariantFieldsDirOuter $InvariantFieldsDirInner)
+  set InvariantFieldsFileList = ($InvariantFieldsFileOuter $InvariantFieldsFileInner)
 
   set member = 1
   while ( $member <= ${nMembers} )
     set memSuffix = `${memberDir} $nMembers $member "${flowMemFileFmt}"`
 
-    ## copy static fields
-    # unique StaticFieldsDir and StaticFieldsFile for each ensemble member
+    ## copy invariant fields
+    # unique InvariantFieldsDir and InvariantFieldsFile for each ensemble member
     # + ensures independent ivgtyp, isltyp, etc...
-    # + avoids concurrent reading of StaticFieldsFile by all members
+    # + avoids concurrent reading of InvariantFieldsFile by all members
     set iMesh = 0
-    foreach localStaticFieldsFile ($localStaticFieldsFileList)
+    foreach localInvariantFieldsFile ($localInvariantFieldsFileList)
       @ iMesh++
 
-      set localStatic = ${localStaticFieldsFile}${memSuffix}
-      rm ${localStatic}
+      set localInvariant = ${localInvariantFieldsFile}${memSuffix}
+      rm ${localInvariant}
 
-      set staticMemDir = `${memberDir} 2 $member "${staticMemFmt}"`
-      set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${staticMemDir}/$StaticFieldsFileList[$iMesh]
-      ln -sfv ${memberStaticFieldsFile} ${localStatic}
+      set InvariantFieldsFile = $InvariantFieldsDirList[$iMesh]/$InvariantFieldsFileList[$iMesh]
+      ln -sfv ${InvariantFieldsFile} ${localInvariant}
     end
 
     # TODO(JJG): centralize this directory name construction (cycle.csh?)
@@ -1093,17 +1092,17 @@ if ("$ArgAppType" == variational) then
       set tFile = templateFields.${nCellsInner}.${thisMPASFileDate}.nc${memSuffix}
       rm $tFile
 
-      # use localStaticFieldsFileInner as the TemplateFieldsFileInner
-      # NOTE: not perfect for EDA if static fields differ between members,
+      # use localInvariantFieldsFileInner as the TemplateFieldsFileInner
+      # NOTE: not perfect for EDA if invariant fields differ between members,
       #       but dual-res EDA not working yet anyway
-      cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
+      cp -v ${InitFieldsDirInner}/${InitFieldsFileInner} $tFile
 
       if ( "$DAType" == "4denvar" || "$DAType" == "4dhybrid" ) then
         # Loop over times and set as the TemplateFieldsFileInner for this member for each time
         foreach bgFile (`ls -d ${bg}/*.nc`)
           set temp_file = `echo $bgFile | sed 's:.*/::'`
           set bgFileDate = `echo ${temp_file} | cut -c 4-22`
-          cp -v ${localStaticFieldsFileInner} templateFields.${nCellsInner}.${bgFileDate}.nc${memSuffix}
+          cp -v ${InitFieldsDirInner}/${InitFieldsFileInner} templateFields.${nCellsInner}.${bgFileDate}.nc${memSuffix}
         end
         set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
       endif
@@ -1135,8 +1134,8 @@ if ("$ArgAppType" == variational) then
       set tFile = ${TemplateFieldsFileEnsemble}${memSuffix}
       rm $tFile
 
-      # use localStaticFieldsFileInner as the TemplateFieldsFileInner
-      cp -v ${localStaticFieldsFileInner}${memSuffix} $tFile
+      # use localInvariantFieldsFileInner as the TemplateFieldsFileInner
+      cp -v ${InitFieldsDirInner}/${InitFieldsFileInner} $tFile
 
       # modify xtime
       # TODO: handle errors from python executions, e.g.:
@@ -1229,28 +1228,27 @@ else if ("$ArgAppType" == enkf) then
     @ member++
   end
 
-  # get source static fields
-  set StaticFieldsDirList = ($StaticFieldsDirOuter)
-  set StaticFieldsFileList = ($StaticFieldsFileOuter)
+  # get source invariant fields
+  set InvariantFieldsDirList = ($InvariantFieldsDirOuter)
+  set InvariantFieldsFileList = ($InvariantFieldsFileOuter)
 
   set member = 1
   while ( $member <= 1 )
     set memSuffix = ""
 
-    ## copy static fields
-    # unique StaticFieldsDir and StaticFieldsFile for each ensemble member
+    ## copy invariant fields
+    # unique InvariantFieldsDir and InvariantFieldsFile for each ensemble member
     # + ensures independent ivgtyp, isltyp, etc...
-    # + avoids concurrent reading of StaticFieldsFile by all members
+    # + avoids concurrent reading of InvariantFieldsFile by all members
     set iMesh = 0
-    foreach localStaticFieldsFile ($localStaticFieldsFileList)
+    foreach localInvariantFieldsFile ($localInvariantFieldsFileList)
       @ iMesh++
 
-      set localStatic = ${localStaticFieldsFile}${memSuffix}
-      rm ${localStatic}
+      set localInvariant = ${localInvariantFieldsFile}${memSuffix}
+      rm ${localInvariant}
 
-      set staticMemDir = `${memberDir} 1 $member "${staticMemFmt}"`
-      set memberStaticFieldsFile = $StaticFieldsDirList[$iMesh]${staticMemDir}/$StaticFieldsFileList[$iMesh]
-      ln -sfv ${memberStaticFieldsFile} ${localStatic}
+      set InvariantFieldsFile = $InvariantFieldsDirList[$iMesh]/$InvariantFieldsFileList[$iMesh]
+      ln -sfv ${InvariantFieldsFile} ${localInvariant}
     end
 
     # use the 1st member background as the TemplateFieldsFileOuter

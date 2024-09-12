@@ -153,7 +153,7 @@ class Variational(Component):
 
     ## IR/VIS land surface coefficients classification
     # OPTIONS: USGS, IGBP, NPOESS
-    'IRVISlandCoeff': ['USGS', str],
+    'IRVISlandCoeff': ['IGBP', str],
   }
 
   def __init__(self,
@@ -188,7 +188,7 @@ class Variational(Component):
     self._set('meshRatioList', [meshes['Outer'].meshRatio, meshes['Inner'].meshRatio])
     self._set('StreamsFileList', [model['outerStreamsFile'], model['innerStreamsFile']])
     self._set('NamelistFileList', [model['outerNamelistFile'], model['innerNamelistFile']])
-    self._set('localStaticFieldsFileList', [model['localStaticFieldsFileOuter'], model['localStaticFieldsFileInner']])
+    self._set('localInvariantFieldsFileList', [model['localInvariantFieldsFileOuter'], model['localInvariantFieldsFileInner']])
 
     self._set('TimeStepList', [model['TimeStepOuter'], model['TimeStepInner']])
     self._set('DiffusionLengthScaleList', [model['DiffusionLengthScaleOuter'], model['DiffusionLengthScaleInner']])

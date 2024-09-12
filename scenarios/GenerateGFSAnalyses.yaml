@@ -3,14 +3,15 @@ suite: GenerateExternalAnalyses
 externalanalyses:
   resource: "GFS.RDA"
 experiment:
-  name: 'GenerateGFSAnalyses'
+  name: 'GenerateGFSAnalyses_new2'
   prefix: ''
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 model:
-  outerMesh: 60km
+  outerMesh: 30km
+  GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model_v8.1_files/init_files/30km
 workflow:
-  first cycle point: 20220606T00
-  final cycle point: 20220608T00
-  max active cycle points: 60
+  first cycle point: 20180414T12 #20180414T18
+  final cycle point: 20180414T18
+  max active cycle points: 20

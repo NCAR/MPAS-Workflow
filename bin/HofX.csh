@@ -52,7 +52,7 @@ source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/hofx.csh
 source config/auto/model.csh
-source config/auto/staticstream.csh
+source config/auto/invariantstream.csh
 source config/auto/observations.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
@@ -90,18 +90,17 @@ rm jedi.log*
 # Remove old netcdf lock files
 rm *.nc*.lock
 
-# Remove old static fields in case this directory was used previously
-rm ${localStaticFieldsPrefix}*.nc*
+# Remove old invariant fields in case this directory was used previously
+rm ${localInvariantFieldsPrefix}*.nc*
 
 # ==================================================================================================
 
-## copy static fields
-set localStaticFieldsFile = ${localStaticFieldsFileOuter}
-rm ${localStaticFieldsFile}
-set StaticMemDir = `${memberDir} 2 $ArgMember "${staticMemFmt}"`
-set memberStaticFieldsFile = ${StaticFieldsDirOuter}${StaticMemDir}/${StaticFieldsFileOuter}
-ln -sfv ${memberStaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${memberStaticFieldsFile} ${localStaticFieldsFile}
+## copy invariant fields
+set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
+rm ${localInvariantFieldsFile}
+set InvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
+ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
+cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 # Link/copy bg from other directory
 # =================================
@@ -134,9 +133,9 @@ endif
 
 # ================================================================================================
 
-## change static fields to a link, keeping for transparency
-rm ${localStaticFieldsFile}
-mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
+## change invariant fields to a link, keeping for transparency
+rm ${localInvariantFieldsFile}
+mv ${localInvariantFieldsFile}${OrigFileSuffix} ${localInvariantFieldsFile}
 
 # Remove netcdf lock files
 rm *.nc*.lock

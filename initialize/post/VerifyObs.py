@@ -37,7 +37,7 @@ class VerifyObs(Component):
     hname = os.getenv('NCAR_HOST')
     if  hname == "derecho":
       self.variablesWithDefaults['script directory'] = \
-          ['/glade/u/home/taosun/work/Derecho/MPAS/Graphics_Python', str]
+          ['/glade/campaign/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_v3_internal_gnuSP/code/mpas-jedi/graphics', str]
     super().__init__(config)
 
     hpc = localConf['hpc']; assert isinstance(hpc, HPC), self.base+': incorrect type for hpc'

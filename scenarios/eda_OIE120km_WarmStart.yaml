@@ -6,7 +6,7 @@ workflow:
 externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
-  resource: "PANDAC.LaggedGEFS"
+  resource: "PANDAC.EnsPertB"
 hofx:
   maxIODAPoolSize: 3
 members:
@@ -19,8 +19,6 @@ observations:
   resource: PANDACArchive
 rtpp:
   relaxationFactor: 0.8
-staticstream:
-  resource: "PANDAC.LaggedGEFS"
 variational:
   DAType: 3denvar
   SelfExclusion: True

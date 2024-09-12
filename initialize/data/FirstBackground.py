@@ -146,7 +146,7 @@ class FirstBackground(Component):
         '''+ea['PrepareExternalAnalysisOuter']+''' => '''+self['PrepareFirstBackgroundOuter']+'''
 
         # prepare analyses (init) files (for dual-mesh Variational) for reading to
-        # static and input stream in all cycles for inner and ensemble geometries
+        # invariant and input stream in all cycles for inner and ensemble geometries
         '''+ea['PrepareExternalAnalysisInner']+'''
         '''+ea['PrepareExternalAnalysisEnsemble']]
 
