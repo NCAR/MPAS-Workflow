@@ -31,7 +31,7 @@ source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/externalanalyses.csh
 source config/auto/model.csh
-source config/auto/staticstream.csh
+source config/auto/invariantstream.csh
 source config/auto/workflow.csh
 source config/auto/saca.csh
 source config/auto/naming.csh
@@ -132,14 +132,14 @@ if ( "${ArgRunSaca}" == "False" ) then
   exit 0
 endif
 
-# Link static and template fields files
-rm ${localStaticFieldsPrefix}*.nc
-rm ${localStaticFieldsPrefix}*.nc-lock
-set StaticFieldsFile = ${StaticFieldsDirOuter}/${StaticFieldsFileOuter}
-set localStaticFieldsFile = ${localStaticFieldsFileOuter}
-rm ./${localStaticFieldsFile}
-ln -sfv ${StaticFieldsFile} ${localStaticFieldsFile}${OrigFileSuffix}
-cp -v ${StaticFieldsFile} ${localStaticFieldsFile}
+# Link invariant and template fields files
+rm ${localInvariantFieldsPrefix}*.nc
+rm ${localInvariantFieldsPrefix}*.nc-lock
+set InvariantFieldsFile = ${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}
+set localInvariantFieldsFile = ${localInvariantFieldsFileOuter}
+rm ./${localInvariantFieldsFile}
+ln -sfv ${InvariantFieldsFile} ${localInvariantFieldsFile}${OrigFileSuffix}
+cp -v ${InvariantFieldsFile} ${localInvariantFieldsFile}
 
 set TemplateFieldsFile = ${TemplateFieldsFileOuter}
 rm ./${TemplateFieldsFile}
@@ -170,7 +170,7 @@ rm ${StreamsFile}
 cp -v $ModelConfigDir/${AppName}/${StreamsFile} .
 sed -i 's@{{nCells}}@'${nCells}'@' ${StreamsFile}
 sed -i 's@{{TemplateFieldsPrefix}}@'${WorkDir}'/'${TemplateFieldsPrefix}'@' ${StreamsFile}
-sed -i 's@{{StaticFieldsPrefix}}@'${WorkDir}'/'${localStaticFieldsPrefix}'@' ${StreamsFile}
+sed -i 's@{{InvariantFieldsPrefix}}@'${WorkDir}'/'${localInvariantFieldsPrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
 
 ## copy/modify dynamic namelist
@@ -346,9 +346,9 @@ if ( $status != 0 ) then
 endif
 
 # ================================================================================================
-## change static fields to a link, keeping for transparency
-rm ${localStaticFieldsFile}
-mv ${localStaticFieldsFile}${OrigFileSuffix} ${localStaticFieldsFile}
+## change invariant fields to a link, keeping for transparency
+rm ${localInvariantFieldsFile}
+mv ${localInvariantFieldsFile}${OrigFileSuffix} ${localInvariantFieldsFile}
 
 # Remove netcdf lock files
 rm *.nc*.lock

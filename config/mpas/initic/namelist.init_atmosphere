@@ -12,12 +12,12 @@
     config_nfgsoillevels = 4
 /
 &data_sources
-    config_geog_data_path = '/glade/work/wrfhelp/WPS_GEOG/'
+    config_geog_data_path = '/glade/campaign/mmm/wmr/mpas_static/'
     config_met_prefix = '{{UngribPrefix}}'
     config_sfc_prefix = 'SST'
     config_fg_interval = 86400
-    config_landuse_data = 'USGS'
-    config_topo_data = 'GTOPO30'
+    config_landuse_data = 'MODIFIED_IGBP_MODIS_NOAH'
+    config_topo_data = 'GMTED2010'
     config_use_spechumd = false
 /
 &vertical_grid
@@ -34,7 +34,7 @@
 &preproc_stages
     config_static_interp = false
     config_native_gwd_static = false
-    config_vertical_grid = true
+    config_vertical_grid = false
     config_met_interp = true
     config_input_sst = false
     config_frac_seaice = true

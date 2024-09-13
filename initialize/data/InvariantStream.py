@@ -19,8 +19,8 @@ from initialize.data.ExternalAnalyses import ExternalAnalyses
 
 from initialize.framework.Experiment import Experiment
 
-class StaticStream(Component):
-  defaults = 'scenarios/defaults/staticstream.yaml'
+class InvariantStream(Component):
+  defaults = 'scenarios/defaults/invariantstream.yaml'
 
   optionalVariables = {
     ## resource:
@@ -33,7 +33,6 @@ class StaticStream(Component):
   def __init__(self,
     config:Config,
     meshes:dict,
-    members:Members,
     FirstCycleDate:str,
     ea:ExternalAnalyses,
     exp:Experiment,
@@ -52,12 +51,13 @@ class StaticStream(Component):
       nCells = str(m.nCells)
       meshRatio = str(m.meshRatio)
 
-      for key in ['directory', 'filePrefix']:
+      for key in ['InvariantDirectory', 'InvariantFilePrefix', 'InitDirectory', 'InitFilePrefix']:
         value = self.extractResource(('resources', resource, mesh), key, str)
-        if key == 'directory':
+
+        if key == 'InitDirectory':
           value = value.replace('{{FirstCycleDate}}', FirstCycleDate)
 
-        if key == 'filePrefix':
+        if key == 'InvariantFilePrefix' or key == 'InitFilePrefix':
           value = value.replace('{{nCells}}', nCells)
           value = value.replace('{{meshRatio}}', meshRatio)
 
@@ -66,27 +66,24 @@ class StaticStream(Component):
         self._set(variable, value)
 
       #############################
-      # static stream file settings
+      # invariant stream file settings
       #############################
-      dirName = 'StaticFieldsDir'+meshTyp
-      self._set(dirName, self['directory'+meshTyp].replace(
-          '{{ExternalAnalysesDir}}',
-          exp['directory']+'/'+ea['ExternalAnalysesDir'+meshTyp].replace(
-            '/{{thisValidDate}}', '')
-        )
-      )
+      dirName = 'InvariantFieldsDir'+meshTyp
+      self._set(dirName, self['InvariantDirectory'+meshTyp])
       self._cshVars.append(dirName)
 
-      n = 'StaticFieldsFile'+meshTyp
-      self._set(n, self['filePrefix'+meshTyp]+'.'+FirstFileDate+'.nc')
-      self._cshVars.append(n)
+      fileName = 'InvariantFieldsFile'+meshTyp
+      self._set(fileName, self['InvariantFilePrefix'+meshTyp]+'.nc')
+      self._cshVars.append(fileName)
 
-    staticMemFmt = self.extractResource(('resources', resource, meshes['Outer'].name), 'memberFormat', str)
-    self._set('staticMemFmt', staticMemFmt)
-    self._cshVars.append('staticMemFmt')
+      initDirName = 'InitFieldsDir'+meshTyp
+      self._set(initDirName, self['InitDirectory'+meshTyp].replace(
+          '{{ExternalAnalysesDir}}',exp['directory']+'/'+ea['ExternalAnalysesDir'+meshTyp].replace(
+            '/{{thisValidDate}}', '')
+          )
+      )
+      self._cshVars.append(initDirName)
 
-    # check for uniform static stream used across members (maxMembers is None) or valid members.n
-    maxMembers = self.extractResource(('resources', resource, meshes['Outer'].name), 'maxMembers', int)
-    if maxMembers is not None:
-      assert (members.n <= int(maxMembers)), (
-        self._msg('invalid members.n => '+str(members.n)))
+      initFileName = 'InitFieldsFile'+meshTyp
+      self._set(initFileName, self['InitFilePrefix'+meshTyp]+'.'+FirstFileDate+'.nc')
+      self._cshVars.append(initFileName)

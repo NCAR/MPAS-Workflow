@@ -46,6 +46,9 @@ variational:
         3denvar:
           memory: 235GB
   post: [verifyobs]
+  IRVISlandCoeff: IGBP
+hofx:
+  IRVISlandCoeff: IGBP
 workflow:
   first cycle point: 20180414T18
   # Note: only run for 1 cycle to reduce cost

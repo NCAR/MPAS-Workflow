@@ -57,7 +57,7 @@ cd ${WorkDir}
 
 # ================================================================================================
 
-ln -sfv $directory/*.$thisMPASFileDate.nc ./
+ln -sfv $directory/${thisValidDate}/*.$thisMPASFileDate.nc ./
 
 date
 

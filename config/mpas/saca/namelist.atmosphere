@@ -33,6 +33,9 @@
     config_zd = 22000.0
     config_xnutr = 0.2
 /
+&limited_area
+    config_apply_lbcs = false
+/
 &io
     config_pio_num_iotasks = 0
     config_pio_stride = 1
@@ -51,6 +54,9 @@
 &IAU
     config_IAU_option = 'off'
     config_IAU_window_length_s = 21600.
+/
+&assimilation
+    config_jedi_da = true
 /
 &physics
     config_sst_update          = false
@@ -76,6 +82,28 @@
 &soundings
     config_sounding_interval = 'none'
 /
-&assimilation
-    config_jedi_da = true
+&physics_lsm_noahmp
+    config_noahmp_iopt_dveg = 4
+    config_noahmp_iopt_crs = 1
+    config_noahmp_iopt_btr = 1
+    config_noahmp_iopt_runsrf = 3
+    config_noahmp_iopt_runsub = 3
+    config_noahmp_iopt_sfc = 1
+    config_noahmp_iopt_frz = 1
+    config_noahmp_iopt_inf = 1
+    config_noahmp_iopt_rad = 3
+    config_noahmp_iopt_alb = 1
+    config_noahmp_iopt_snf = 1
+    config_noahmp_iopt_tksno = 1
+    config_noahmp_iopt_tbot = 2
+    config_noahmp_iopt_stc = 1
+    config_noahmp_iopt_gla = 1
+    config_noahmp_iopt_rsf = 4
+    config_noahmp_iopt_soil = 1
+    config_noahmp_iopt_pedo = 1
+    config_noahmp_iopt_crop = 0
+    config_noahmp_iopt_irr = 0
+    config_noahmp_iopt_irrm = 0
+    config_noahmp_iopt_infdv = 1
+    config_noahmp_iopt_tdrn = 0
 /

@@ -32,9 +32,9 @@ class HPC(Component):
     # Derecho options: main
 
     # Critical*: used for all critical path jobs, single or multi-node, multi-processor only
-    'CriticalAccount': ['NMMM0015', str],
+    'CriticalAccount': ['NMMM0043', str],
     # override this below based on host
-    'CriticalQueue': ['regular', str, ['economy', 'regular', 'premium']],
+    'CriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
 
     # NonCritical*: used non-critical path jobs, single or multi-node, multi-processor only
     'NonCriticalAccount': ['NMMM0015', str],
