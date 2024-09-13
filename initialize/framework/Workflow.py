@@ -37,6 +37,8 @@ class Workflow(Component):
     'subwindow': [1, int],
 
     # interval between `saca` analyses and forecast background
+    # note: 0hr is for the current analysis time, 6hr is for the previous 6hr forecast.
+    #       For cycling SACA and DA, 0hr is for SACA after DA and 6hr is for SACA before DA.
     'prevBgHR': [0, int, [0]],
   }
   optionalVariables = {

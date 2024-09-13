@@ -17,8 +17,8 @@ set ArgStateDir = "$2"
 # ArgRunSaca: whether to run saca or not, but copy the 6hr forecast from previous cycle
 set ArgRunSaca = "$3"
 
-# ArgRunDASaca: indicate to run saca before or after DA
-set ArgRunDASaca = "$4"
+# ArgRunCyclingSaca: whether to run cycling with saca and data assimilation
+set ArgRunCyclingSaca = "$4"
 
 date
 
@@ -107,7 +107,7 @@ mkdir -p ${bg}
 
 # Link bg from StateDir
 # ======================
-if ( "${ArgRunDASaca}" == "afterDA" ) then
+if ( "${ArgRunCyclingSaca}" == "True" && ${prevBgHR} == 0 ) then
   set bgFileOther = ${StateDir}/${analysisSubDir}/${ANFilePrefix}.${thisMPASFileDate}.nc
 else
   set bgFileOther = ${StateDir}/${FCFilePrefix}.${thisMPASFileDate}.nc

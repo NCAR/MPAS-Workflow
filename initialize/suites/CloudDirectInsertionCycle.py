@@ -20,7 +20,7 @@ from initialize.data.ExternalAnalyses import ExternalAnalyses
 from initialize.data.FirstBackground import FirstBackground
 from initialize.data.Model import Model
 from initialize.data.Observations import Observations
-from initialize.data.StaticStream import StaticStream
+from initialize.data.InvariantStream import InvariantStream
 
 from initialize.framework.Build import Build
 from initialize.framework.Experiment import Experiment
@@ -42,7 +42,8 @@ class CloudDirectInsertionCycle(SuiteBase):
     self.c['members'] = Members(conf)
 
     self.c['saca'] = SACA(conf, self.c['hpc'], meshes['Outer'], self.c['workflow'])
-    runDASaca = self.c['saca'].outputs['runDASaca']
+    assert self.c['saca'].outputs['runCyclingSaca'], 'runCyclingSaca option must be True. For non-SACA/DA cycling, use the suite: CloudDirectInsertion'
+    prevBgHR = self.c['workflow']['prevBgHR']
 
     self.c['externalanalyses'] = ExternalAnalyses(conf, self.c['hpc'], meshes)
     self.c['initic'] = InitIC(conf, self.c['hpc'], meshes, self.c['externalanalyses'])
@@ -79,13 +80,12 @@ class CloudDirectInsertionCycle(SuiteBase):
 
     self.c['experiment'] = Experiment(conf, self.c['hpc'], defaultTitle)
 
-    self.c['ss'] = StaticStream(conf, meshes, self.c['members'], self.c['workflow']['FirstCycleDate'],
-                self.c['externalanalyses'], self.c['experiment'])
+    self.c['ss'] = InvariantStream(conf, meshes, self.c['workflow']['FirstCycleDate'], self.c['externalanalyses'], self.c['experiment'])
 
     self.c['naming'] = Naming(conf, self.c['experiment'], self.c['benchmark'])
 
     for k, c_ in self.c.items():
-      if runDASaca == 'afterDA':
+      if prevBgHR == 0:
         if k in ['observations', 'initic', 'externalanalyses']:
           c_.export(self.c['extendedforecast']['extLengths'])
         elif k in ['saca']:
@@ -99,7 +99,7 @@ class CloudDirectInsertionCycle(SuiteBase):
           c_.export(self.c['saca'].tf.finished, activateEnsemble=False)
         else:
           c_.export()
-      elif runDASaca == 'beforeDA':
+      else:
         if k in ['observations', 'initic', 'externalanalyses']:
           c_.export(self.c['extendedforecast']['extLengths'])
         elif k in ['saca']:
