@@ -1,9 +1,6 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  name: '3dhybrid_O60-3kmIE60km_TEST_Modelv8.2.1_samePP'
-
-build:
-  mpas bundle: /glade/work/taosun/Derecho/JEDI/mpas-bundle-v8.2/build_sp
+  suffix: '_ensB-SE80+RTPP70_VarBC'
 
 firstbackground:
   resource: "PANDAC.GFS"
@@ -22,11 +19,7 @@ forecast:
 
 externalanalyses:
   resource: "GFS.PANDAC"
-  #resources:
-  #  GFS:
-  #    PANDAC: # only available 20180418T00-20180524T00
-  #      30km:
-  #        directory: /glade/derecho/scratch/ivette/pandac/GenerateGFSAnalyses_new/ExternalAnalyses/30km
+
 members:
   n: 1
 
@@ -34,20 +27,6 @@ model:
   outerMesh: 60-3km
   innerMesh: 60km
   ensembleMesh: 60km
-  resources:
-    60-3km:
-      RadiationLWInterval: 00:30:00
-      RadiationSWInterval: 00:30:00
-      PhysicsSuite: mesoscale_reference
-      Microphysics: mp_wsm6
-      Convection: cu_ntiedtke
-      PBL: bl_ysu
-      Gwdo: bl_ysu_gwdo
-      RadiationCloud: cld_fraction
-      RadiationLW: rrtmg_lw
-      RadiationSW: rrtmg_sw
-      SfcLayer: sf_monin_obukhov
-      LSM: sf_noah
 
 observations:
   resource: PANDACArchiveForVarBC
@@ -81,6 +60,6 @@ variational:
 workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180419T12
-  final cycle point: 20180514T18
+  final cycle point: 20180415T06
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'
