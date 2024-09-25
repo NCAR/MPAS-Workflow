@@ -8,9 +8,6 @@ experiment:
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
-model:
-  outerMesh: 30km
-  GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model_v8.1_files/init_files/30km
 workflow:
   first cycle point: 20220606T00
   final cycle point: 20220608T00
