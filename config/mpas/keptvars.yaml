@@ -6,8 +6,8 @@
 
 
 # This yaml will be exercised when "geometry.deallocate non-da fields" is true.
-# The variables included in "fields" will be kept in memory (mpas_domain) 
-# for a given mpas-jedi application, while other fields will be deallocated 
+# The variables included in "fields" will be kept in memory (mpas_domain)
+# for a given mpas-jedi application, while other fields will be deallocated
 # from mpas_domain to save the memory.
 
 fields:
@@ -37,6 +37,8 @@ fields:
   - landmask
   - xice
   - snowc
+  - znt
+  - t2m
   - skintemp
   - ivgtyp
   - isltyp
