@@ -27,6 +27,7 @@ date
 
 # Setup environment
 # =================
+source config/environmentJEDI.csh
 source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/observations.csh
@@ -130,11 +131,6 @@ foreach gdasfile ( *"gdas."* )
   rm -rf $gdasfile
 
 end # gdasfile loop
-
-# need to change to mainScriptDir in order for environmentJEDI.csh to be sourced
-cd ${mainScriptDir}
-source config/environmentJEDI.csh
-cd -
 
 # upgrade from IODA v1 to v2 (convert char to string for /MetaData/stationIdentification & /MetaData/variable_names)
 
