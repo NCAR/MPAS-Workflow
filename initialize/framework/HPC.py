@@ -37,7 +37,7 @@ class HPC(Component):
     'CriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
 
     # NonCritical*: used non-critical path jobs, single or multi-node, multi-processor only
-    'NonCriticalAccount': ['NMMM0015', str],
+    'NonCriticalAccount': ['NMMM0043', str],
     # override this below based on host
     'NonCriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
 
