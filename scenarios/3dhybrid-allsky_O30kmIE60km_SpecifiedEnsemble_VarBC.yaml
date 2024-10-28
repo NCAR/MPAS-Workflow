@@ -16,7 +16,7 @@ externalanalyses:
     GFS:
       PANDAC: # only available 20180418T00-20180524T00
         30km:
-          directory: "/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/30km/GFSAnaAndDiagnostics"
+          directory: "/glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/MPAS_IC_NEW"
 members:
   n: 1
 
