@@ -25,10 +25,6 @@ firstbackground:
       common:
         PrepareFirstBackground: "ColdForecast:succeed-all => ForecastFinished__"
 
-    SACA:
-      common:
-        PrepareFirstBackground: "LinkWarmStartBackgrounds => ColdForecast:succeed-all => ForecastFinished__"
-
     PANDAC:
       GFS:
         common:

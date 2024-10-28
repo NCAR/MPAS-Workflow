@@ -1,6 +1,5 @@
 suite: CloudDirectInsertionCycle
 
-# settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
   name: 'CloudDirectInsertion_3dhybrid_O60-3kmIE60km_TEST'
 
@@ -40,8 +39,8 @@ extendedforecast:
   outIntervalHR: 1
   DACycling: True
   updateSea: True
-  execute: False # uncomment if forecasts are already completed
-  post: [] #verifyobs
+  execute: True # uncomment if forecasts are already completed
+  post: [verifyobs] #verifyobs
 
 observations:
   resource: SacaObs
@@ -80,7 +79,5 @@ workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180415T00
   final cycle point: 20180415T00
-  #final cycle point: 20180514T18
-  #CyclingWindowHR: 24 # default is 6 for cycling DA
-  #max active cycle points: 4 # used for independent 'extendedforecast'
   prevBgHR: 0 #prevBgHR == 6 (before DA), prevBgHR == 0 (after Da -default)
+  #max active cycle points: 4 # used for independent 'extendedforecast'

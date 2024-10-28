@@ -37,7 +37,7 @@ class SACA(Component):
     'runSaca': [True, bool],
 
     # whether to run cycling with saca and data assimilation
-    'runCyclingSaca': [False, bool],
+    'runCyclingSaca': [True, bool],
 
     # whether to use MADWRF's cloud building algorithm
     'buildMADWRF': [True, bool],
@@ -111,14 +111,15 @@ class SACA(Component):
     self.workDir = self.workDir+'/{{thisCycleDate}}'
 
     self.ICFilePrefix = 'mpasin'
-    if self.doMean:
-      bgdirectory = 'ColdStartFC'
+
+    # bgdirectory is where the background for SACA is
+    bgdirectory = 'CyclingDA' # default
+    if self['runCyclingSaca']:
+      if self.workflow['prevBgHR'] != 0:
+        bgdirectory = 'CyclingFC'
     else:
-      if self['runCyclingSaca']:
-        if self.workflow['prevBgHR'] == 0:
-          bgdirectory = 'CyclingDA'
-        else:
-          bgdirectory = 'CyclingFC'
+      if self.doMean:
+        bgdirectory = 'ColdStartFC'
 
     #########
     # outputs
