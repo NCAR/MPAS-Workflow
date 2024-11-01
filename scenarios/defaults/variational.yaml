@@ -371,13 +371,13 @@ variational:
           nodes: 7 #7 subwindow slots
           PEPerNode: 128
           memory: 235GB
-          baseSeconds: 600
+          baseSeconds: 700
           secondsPerEnVarMember: 10
         4dhybrid:
           nodes: 7 #7 subwindow slots
           PEPerNode: 128
           memory: 235GB
-          baseSeconds: 600
+          baseSeconds: 700
           secondsPerEnVarMember: 10
         ensemble:
           3denvar:

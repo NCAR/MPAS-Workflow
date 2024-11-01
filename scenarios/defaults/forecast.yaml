@@ -53,4 +53,4 @@ forecast:
       nodes: 1
       PEPerNode: 128
       baseSeconds: 60
-      secondsPerForecastHR: 20
+      secondsPerForecastHR: 30
