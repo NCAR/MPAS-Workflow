@@ -110,8 +110,8 @@ enkf:
           nodes: 2
           PEPerNode: 128
           memory: 235GB
-          baseSeconds: 750
-          secondsPerMember: 45
+          baseSeconds: 800
+          secondsPerMember: 50
         solver:
           # cost for record (5 members, PBS JOB email)
           # 4 x 32 PE : ?.? min., ?? GB (single precision)
