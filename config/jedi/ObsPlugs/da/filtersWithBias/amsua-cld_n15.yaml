@@ -102,7 +102,7 @@
           obserr_clearsky: [ 3.000, 2.200, 2.000, 0.600, 0.300,
                             0.230, 0.250, 0.275, 0.340, 0.400,
                             0.600, 1.000, 1.500, 2.000, 3.500]
-
+    <<: *multiIterationFilter
 #  Gross check
   - filter: Background Check
     filter variables:
