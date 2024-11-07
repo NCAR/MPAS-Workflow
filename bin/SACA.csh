@@ -17,6 +17,9 @@ set ArgStateDir = "$2"
 # ArgRunSaca: whether to run saca or not, but copy the 6hr forecast from previous cycle
 set ArgRunSaca = "$3"
 
+# ArgRunCyclingSaca: whether to run cycling with saca and data assimilation
+set ArgRunCyclingSaca = "$4"
+
 date
 
 # Setup environment
@@ -104,7 +107,12 @@ mkdir -p ${bg}
 
 # Link bg from StateDir
 # ======================
-set bgFileOther = ${StateDir}/${FCFilePrefix}.${thisMPASFileDate}.nc
+if ( "${ArgRunCyclingSaca}" == "True" && ${prevBgHR} == 0 ) then
+  set bgFileOther = ${StateDir}/${analysisSubDir}/${ANFilePrefix}.${thisMPASFileDate}.nc
+else
+  set bgFileOther = ${StateDir}/${FCFilePrefix}.${thisMPASFileDate}.nc
+endif
+
 set bgFile = ${bg}/${FCFilePrefix}.$thisMPASFileDate.nc
 
 rm ${bgFile}${OrigFileSuffix} ${bgFile}
@@ -348,6 +356,10 @@ rm */*.nc*.lock
 
 # Remove core file
 rm core
+
+# Link SACA analysis to background used
+mv ${bgFileOther} ${bgFileOther}${OrigFileSuffix}
+ln -sfv ${WorkDir}/${anFile} ${bgFileOther}
 
 date
 

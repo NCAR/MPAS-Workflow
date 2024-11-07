@@ -10,6 +10,7 @@ firstbackground:
   resource: "PANDAC.GFS"
 
 saca:
+  runCyclingSaca: False
   meanTimes: T00
   #runSaca: False #this does not run saca but copies the 6hr fcst for exp starting from 6hr
   #execute: False

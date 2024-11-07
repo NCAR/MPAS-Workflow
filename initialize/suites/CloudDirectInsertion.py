@@ -30,13 +30,13 @@ from initialize.post.Benchmark import Benchmark
 
 from initialize.suites.SuiteBase import SuiteBase
 
+
 class CloudDirectInsertion(SuiteBase):
   def __init__(self, conf:Config):
     super().__init__(conf)
 
     self.c['model'] = Model(conf)
     meshes = self.c['model'].getMeshes()
-    self.c['worklow'] = Workflow(conf)
 
     self.c['build'] = Build(conf, self.c['model'])
     self.c['observations'] = Observations(conf, self.c['hpc'])
