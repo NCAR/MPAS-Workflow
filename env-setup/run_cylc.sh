@@ -1,7 +1,7 @@
 #!/bin/bash -l
 
 # script to run a cylc scenario or post process the scenario's data after it completes.
-#   If a scenario doesn't need post processing (it hasn't been run, or it is still running,
+#   If no scenarios need post processing (haven't finished successfully
 #   or its data has already been processed) the script will do nothing.
 # This script must be run on derecho or casper (not the cron server).
 #
@@ -14,11 +14,11 @@
 # A subsequent call to create graphs from the workflow will check the jobs in the "running" files.
 # The "running" jobs are checked to see if they are still running, have failed, or succeeded,
 # jobs which have finished are moved to either the "succeeded" directory of the "failed" directory.
-# See check_cylc for that logic.
+# See check_running_jobs for that logic.
 #
-# To generate graphs, the jobs in the "succeeded" and "processed" directories are examined to see if the same workflow
-# has run at least twice.
-# If so, the most recent two runs are graphed; the older run is the baseline.
+# To generate graphs, the jobs in the "succeeded" and "processed" directories are examined to see
+# if the same workflow has run at least twice and at least one run hasn't been graphed.
+# If so, comparison graphs are made for each pair of successive runs; the older run is the baseline.
 # After jobs have been graphed they are moved to the "processed" directory.
 # See make_graphs for details.
 
@@ -130,10 +130,8 @@ run_cylc()
 }
 
 # check to see if any cylc jobs started with this script have completed successfully.
-# if a job which had been started by this script finished OK return 0.
-# if no cylc job had been started but not post processed return -1.
-# else return a code from the last job to be looked at, see check_cylc_job for specific codes.
-check_cylc()
+# completed jobs will be moved to the "success" or "failed" directories.
+check_running_jobs()
 {
   local files_dir=$1
   local run_dir=$files_dir/$RUN_DIR
@@ -141,13 +139,13 @@ check_cylc()
 
   if [ ! -d "${run_dir}" ]; then
     log "no $run_dir directory, nothing running"
-    return -1
+    return
   fi
 
   running_jobs=$(ls $run_dir)
   if [ "$running_jobs" == "" ]; then
     log "no files in $run_dir, nothing running"
-    return -1
+    return
   fi
 
   # check all the workflows which were started
@@ -158,12 +156,8 @@ check_cylc()
     retcode=$?
     if [ $retcode -eq 0 ]; then
       echo "$job_name completed successfully"
-      eval "$2=$job"
-      return 0
     fi
   done
-
-  return $retcode # status of the last processed job
 }
 
 # check to see if a cylc job started with this script has been started and not post processed.
@@ -225,79 +219,92 @@ check_cylc_job()
   return 0
 }
 
-# create comparison graphs between this cylc experiment and the previous run
+# create comparison graphs between the provided cylc experiment and the previous run
 make_graphs()
 {
-  local graphics_dir=$1 # where the mpas-bundle graphing code is
-  local output_dir=$2   # where to put the graphs
-  local files_dir=$3
-  local success_file=$4 # the workflow to process. assume a name of <workflow>.<date>_cron
+  local readonly graphics_dir=$1 # where the mpas-bundle graphing code is
+  local readonly output_dir=$2   # where to put the graphs
+  local readonly files_dir=$3  # root directory where job files are
+  local readonly success_file=$4 # the workflow file to process.
 
-  local success_job=${success_file%.*}
-  local pass_dir=$files_dir/$PASS_DIR  # where the passed workflow names are
-  local graph_dir=$files_dir/$GRAPHED_DIR # where the graphed workflows are
-  local date="$(date +%F)"
-  local queue="develop"
-  local account="nmmm0043"
-  echo "success_job: $success_job"
+  # assume a name of <workflow>.<yy-mm-dd>*, use the <workflow> part to find all runs of the same workflow.
+  local readonly file_base=${success_file%.*}
+  local readonly file_suffix=${success_file#*.} # used to create run specific graph directories
+  local readonly pass_dir=$files_dir/$PASS_DIR  # where the passed workflows are
+  local readonly graph_dir=$files_dir/$GRAPHED_DIR # where the graphed workflows are
+  local readonly date="$(date +%F)"
+  local readonly model_graph_dir=$output_dir/$date/$file_suffix/model
+  local readonly obs_graph_dir=$output_dir/$date/$file_suffix/obs
+  local base_run="" # the job to be used as the baseline for the graph
+  local new_run="" # the job to be compared against the base
+  # PBS directives
+  local readonly queue="-q develop"
+  local readonly account="-a nmmm0043"
+  local readonly memory="-m 12"
+  # SpawnAnalyzeStats arguments
+  local readonly an_model_spaces=" -d mpas -p model -t forecast"
+  local readonly an_obs_spaces=" -d amsua_,sonde,airc,sfc,gnssrobndropp1d,satwind,mhs_as  -p obs -t omb/oma"
 
-  # find the two most recent passed workflows
-  local passed_files=$(ls -r ${pass_dir}/${success_job}*)
-  passed_files_array=($passed_files)
-  local npassed_files=${#passed_files_array[@]} 
-  log "passed nfiles: ${npassed_files}"
+  if [ "$success_file" == "" ]; then
+    log "no job file passed to make_graphs(), no graphs made"
+    return
+  fi
+
+  # find the passed workflows, oldest first
+  local readonly passed_files=($(ls ${pass_dir}/${file_base}*))
+  local readonly npassed_files=${#passed_files[@]} 
+
+  # find the most recent graphed workflow
+  local readonly graphed_files=($(ls -r ${graph_dir}/${file_base}*))
+  local readonly ngraphed_files=${#graphed_files[@]}
+  log "passed nfiles: ${npassed_files} graphed nfiles: $ngraphed_files"
+
   if [ "${npassed_files}" -eq 0 ]; then
     log "there aren't any new jobs to graph"
     return
   fi
-
-  # find the most recent graphed workflow
-  local graphed_files=$(ls -r ${graph_dir}/${success_job}*)
-  graphed_files_array=($graphed_files)
-  log "graphed nfiles: ${#graphed_files_array[@]}"
-
-  if [ "${npassed_files}" -lt 2 ] && [ "${#graphed_files_array[@]}" -eq 0 ]; then
+  if [ "${npassed_files}" -lt 2 ] && [ "${ngraphed_files}" -eq 0 ]; then
     log "there aren't two successful cylc runs to compare"
     return
   fi
 
-  # the contents of the workflow files are the names of the workflows
-  # compare the newest run against the previous run
-  local new_run=$(cat ${passed_files_array[0]} | sed 's/MPAS-Workflow//' | sed 's/\///g')
-  if [ "${#passed_files_array[@]}" -gt 1 ]; then
-    local base_run=$(cat ${passed_files_array[1]} | sed 's/MPAS-Workflow//' | sed 's/\///g')
+  if [ "${#graphed_files[@]}" -gt 0 ]; then
+    base_run=$(cat ${graphed_files[0]} | sed 's/MPAS-Workflow//' | sed 's/\///g')
+    new_run=$(cat ${passed_files[0]} | sed 's/MPAS-Workflow//' | sed 's/\///g')
   else
-    local base_run=$(cat ${graphed_files_array[1]} | sed 's/MPAS-Workflow//' | sed 's/\///g')
+    base_run=$(cat ${passed_files[0]} | sed 's/MPAS-Workflow//' | sed 's/\///g')
+    new_run=$(cat ${passed_files[1]} | sed 's/MPAS-Workflow//' | sed 's/\///g')
   fi
+
   log "newest run: $new_run"
   log "previous run: $base_run"
-  local exp_names="previous:$base_run,current:$new_run"
+  local readonly exp_names="previous:$base_run,current:$new_run"
+  local readonly an_base_args=" -s $graphics_dir $queue $account -n 1 $memory -c previous -e $exp_names "
+  log "an_base_args=$an_base_args"
+  local readonly an_model_args=" $an_base_args $an_model_spaces"
+  local readonly an_obs_args=" $an_base_args $an_obs_spaces"
 
   # make forecast comparison graphs
-  local target_dir=$output_dir/$date/model
-  mkdir -p $target_dir || (log "failed to create $target_dir" && exit 1)
-  cd $target_dir
-  log "making graphs in $target_dir"
-  local an_stats_args=" -s $graphics_dir -q $queue -a $account -n 1 -c previous -e $exp_names -d mpas -p model -t forecast"
-  log "$graphics_dir/SpawnAnalyzeStats.py -s $an_stats_args"
-  #$graphics_dir/SpawnAnalyzeStats.py $an_stats_args
+  mkdir -p $model_graph_dir || (log "failed to create $model_graph_dir" && exit 1)
+  cd $model_graph_dir
+  log "making graphs in $model_graph_dir"
+  log "$graphics_dir/SpawnAnalyzeStats.py $an_model_args"
+  $graphics_dir/SpawnAnalyzeStats.py $an_model_args
 
   # make omb/oma comparison graphs
-  local target_dir=$output_dir/$date/obs
-  mkdir -p $target_dir || (log "failed to create $target_dir" && exit 1)
-  cd $target_dir
-  log "making graphs in $target_dir"
-  local an_stats_args=" -s $graphics_dir -q $queue -a $account -n 1 -c previous -e $exp_names -d amsua_,sonde,airc,sfc,gnssrobndropp1d,satwind,mhs_as  -p obs -t omb/oma"
-  log "$graphics_dir/SpawnAnalyzeStats.py $an_stats_args"
-  #$graphics_dir/SpawnAnalyzeStats.py $an_stats_args
+  mkdir -p $obs_graph_dir || (log "failed to create $obs_graph_dir" && exit 1)
+  cd $obs_graph_dir
+  log "making graphs in $obs_graph_dir"
+  log "$graphics_dir/SpawnAnalyzeStats.py $an_obs_args"
+  $graphics_dir/SpawnAnalyzeStats.py $an_obs_args
 
-  # make sure the graphed files get moved to the "graphed" directory
+  # move the graphed files to the "graphed" directory
   mkdir -p $graph_dir || (log "failed to create $graph_dir" && exit 1)
-  log "mv ${passed_files_array[0]} $graph_dir"
-  mv ${passed_files_array[0]} $graph_dir
-  if [ "${#passed_files_array[@]}" -gt 1 ]; then
-    log "mv ${passed_files_array[1]} $graph_dir"
-    mv ${passed_files_array[1]} $graph_dir
+  log "mv ${passed_files[0]} $graph_dir"
+  mv ${passed_files[0]} $graph_dir
+  if [ "$ngraphed_files" -eq 0 ]; then
+    log "mv ${passed_files[1]} $graph_dir"
+    mv ${passed_files[1]} $graph_dir
   fi
 }
 
@@ -330,6 +337,8 @@ main()
   done
 
   init_logs $LOGDIR "cron"
+  log ""
+  log "`date`"
   log "commandline: $0 $*"
 
   if [ "$help" != "" ]; then
@@ -340,8 +349,6 @@ main()
     log "suffix (-x <suffix>) is required."
     usage
   fi
-  # FIXME is this needed?
-  #suffix=${suffix}
 
   check_exists "$workflow_dir" "workflow dir" "dir"
   # make sure Run.py is in the workflow directory
@@ -368,14 +375,12 @@ main()
 
     run_cylc $workflow_dir $scenario $suffix $LOGDIR $bundle_dir 
   else
-    local success_file=""
-
     check_exists "$output_dir" "output dir" "dir"
-    check_exists "$graphics_dir" "bundle dir" "dir"
+    check_exists "$graphics_dir" "graphics dir" "dir"
     check_exists "$graphics_dir/SpawnAnalyzeStats.py" "SpawnAnalyzeStats.py" "file"
 
-    # see if a cron cylc workflow needs post processing, success_file is returned if one does
-    check_cylc $LOGDIR success_file
+    # see if any cron cylc workflowS have finished
+    check_running_jobs $LOGDIR
     if [ "$?" -ne 0 ]; then
       log "there were no running jobs"
       #return 0
@@ -386,9 +391,13 @@ main()
     module load conda/latest
     conda activate npl-2023a
 
-    # make a graph comparing the 2 most recent workflows which passed
-    echo "make_graphs $graphics_dir $output_dir $LOGDIR $success_file"
-    make_graphs $graphics_dir $output_dir $LOGDIR $success_file
+    # process the files in the "succeeded" directory, from oldest to newest
+    local passed_jobs=$(ls $LOGDIR/$PASS_DIR)
+    for job in $passed_jobs ; do
+      # make a graph comparing the 2 oldest workflows which passed
+      log "make_graphs $graphics_dir $output_dir $LOGDIR $job"
+      make_graphs $graphics_dir $output_dir $LOGDIR $job
+    done
   fi
 }
 
