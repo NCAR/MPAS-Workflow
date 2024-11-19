@@ -132,6 +132,7 @@ run_cylc()
 check_running_jobs()
 {
   local files_dir=$1
+  local output_dir=$2 # where results go, to be sent to web server
   local run_dir=$files_dir/$RUN_DIR
   local retcode=0
 
@@ -150,7 +151,7 @@ check_running_jobs()
   log "running_jobs=$running_jobs"
   for job in $running_jobs ; do
     job_name=$(cat $run_dir/$job)
-    check_cylc_job $job_name $run_dir/$job $files_dir
+    check_cylc_job $job_name $run_dir/$job $files_dir $output_dir
     retcode=$?
     if [ $retcode -eq 0 ]; then
       echo "$job_name completed successfully"
@@ -169,6 +170,7 @@ check_cylc_job()
   local job_name=$1
   local job_file=$2 # file with the name of the running job (including absolute path)
   local files_dir=$3  # base directory for the running/passed/failed jobs directories
+  local output_dir=$4 # directory to put results in, contents will get sent to the webserver
   local pass_dir=$files_dir/$PASS_DIR
   local fail_dir=$files_dir/$FAIL_DIR
   local retcode=0
@@ -198,12 +200,14 @@ check_cylc_job()
   local failed="${job_file}.failed"
   cylc workflow-state $job_name | grep -v succeeded > $failed
   retcode=$?
-  # FIXME put the failures from the failed file on the results website
   if [ $retcode -eq 0 ]; then
     log "$job_name failed"
-    mkdir -p $fail_dir || (log "failed to create $fail_dir" && exit 1)
+    local today=$(date +%F)
+    mkdir -p $fail_dir || (log "failed to create $fail_dir" && return -3)
     mv $job_file $fail_dir
-    mv $failed $fail_dir
+    cp $failed $fail_dir
+    mkdir -p $output_dir/$today || (log "failed to create $output_dir/$today" && return -3)
+    mv $failed $output_dir/$today
     # if we got here a cycl workflow has finished with failures
     return -3
   fi
@@ -369,7 +373,7 @@ main()
     check_exists "$graphics_dir/SpawnAnalyzeStats.py" "SpawnAnalyzeStats.py" "file"
 
     # see if any cron cylc workflowS have finished
-    check_running_jobs $LOGDIR
+    check_running_jobs $LOGDIR $output_dir
     if [ "$?" -ne 0 ]; then
       log "there were no running jobs"
       #return 0
