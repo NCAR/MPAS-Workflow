@@ -37,7 +37,7 @@ class VerifyObs(Component):
     hname = os.getenv('NCAR_HOST')
     if  hname == "derecho":
       self.variablesWithDefaults['script directory'] = \
-          ['/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_29Oct2024/mpas-jedi/graphics', str]
+          ['/glade/work/bjung/panda-c/build/mpas-bundle-release-v3.0.2/mpas-jedi/graphics', str]
     super().__init__(config)
 
     hpc = localConf['hpc']; assert isinstance(hpc, HPC), self.base+': incorrect type for hpc'
