@@ -16,7 +16,9 @@
 # jobs which have finished are moved to either the "succeeded" directory of the "failed" directory.
 # See check_running_jobs for that logic.
 #
-# To generate graphs, the provided workflow is graphed against the baseline run.
+# To generate graphs, the provided workflow is graphed against
+#  1. the baseline run.
+#  2. the previous run
 # After the provided job has been graphed its run file is moved to the "processed" directory.
 # See make_graphs for details.
 
@@ -221,7 +223,9 @@ check_cylc_job()
   return 0
 }
 
-# create comparison graphs between the provided cylc experiment and the baseline run
+# create comparison graphs between the provided cylc experiment and
+#   1. the baseline run
+#   2. the previous run (if there is one)
 make_graphs()
 {
   local readonly graphics_dir=$1 # where the mpas-bundle graphing code is
@@ -236,12 +240,18 @@ make_graphs()
   local readonly file_suffix=${success_file#*.} # used to create run specific graph directories
   local readonly pass_dir=$files_dir/$PASS_DIR  # where the passed workflows are
   local readonly graph_dir=$files_dir/$GRAPHED_DIR # where the graphed workflows are
-  local readonly date="$(date +%F)"
+  local date="$(date +%F)"
   # outut dirs for the graphs
+  # extract yyyy-mm-dd from the current file name
+  local readonly pattern='([0-9]{4}-[0-9]{2}-[0-9]{2})'
+  if [[ $success_file =~ $pattern ]]; then
+    date=${BASH_REMATCH[0]}
+  fi
   local readonly model_out_dir=$output_dir/$date/$file_suffix/model
   local readonly obs_out_dir=$output_dir/$date/$file_suffix/obs
   local base_run="" # the job to be used as the baseline for the graph
-  local new_run="" # the job to be compared against the base
+  local new_run="" # the current job
+  local prev_run="" # the job run prior to the current run
   # PBS directives
   local readonly queue="-q develop"
   local readonly account="-a nmmm0043"
@@ -264,41 +274,64 @@ make_graphs()
   fi
 
   # find the baseline job
-  local readonly graphed_files=($(ls -r ${graph_dir}/${file_base}.baseline*))
-  if [ "${#graphed_files[@]}" -eq 0 ]; then 
+  local readonly baseline_files=($(ls -r ${graph_dir}/${file_base}.baseline*))
+  if [ "${#baseline_files[@]}" -eq 0 ]; then 
     log "the baseline run ${file_base}.baseline* isn't in $graph_dir, no graphs made"
     return
   fi
 
-  base_run=$(cat ${graphed_files[0]} | sed 's/MPAS-Workflow//' | sed 's/\///g')
+  # find the run prior to the current run,
+  # find the most recent graphed workflow (omitting the baseline run)
+  local readonly graphed_files=($(ls -r ${graph_dir}/${file_base}.2*))
+  if [ "${#graphed_files[@]}" -gt 0 ]; then
+    prev_run=$(cat ${graphed_files[0]} | sed 's/MPAS-Workflow//' | sed 's/\///g')
+  else
+    log "there is no previous run, only graphing against the baseline"
+  fi
+
+  base_run=$(cat ${baseline_files[0]} | sed 's/MPAS-Workflow//' | sed 's/\///g')
   new_run=$(cat ${pass_dir}/${success_file} | sed 's/MPAS-Workflow//' | sed 's/\///g')
-  log "newest run: $new_run"
-  log "previous run: $base_run"
+  log "newest run: $new_run in file:${pass_dir}/${success_file}"
+  log "previous run: $prev_run in file ${graphed_files[0]} "
+  log "base run: $base_run in file ${baseline_files[0]}"
 
-  local readonly exp_names="previous:$base_run,current:$new_run"
-  local readonly base_args=" -s $graphics_dir $last_cycle $queue $account -n 1 $memory -c previous -e $exp_names "
-  log "base_args=$base_args"
-  local readonly an_model_args=" $base_args $model_spaces"
-  local readonly an_obs_args=" $base_args $obs_spaces"
+  local readonly base_args=" -s $graphics_dir $last_cycle $queue $account -n 1 $memory"
 
-  # make forecast comparison graphs
-  mkdir -p $model_out_dir || (log "failed to create $model_out_dir" && exit 1)
-  cd $model_out_dir
-  log "making graphs in $model_out_dir"
-  log "$graphics_dir/SpawnAnalyzeStats.py $an_model_args"
-  $graphics_dir/SpawnAnalyzeStats.py $an_model_args
+  # make forecast comparison graphs against the baseline
+  gen_graphs "baseline" $base_run $new_run $model_out_dir $graphics_dir "$base_args $model_spaces"
 
-  # make omb/oma comparison graphs
-  mkdir -p $obs_out_dir || (log "failed to create $obs_out_dir" && exit 1)
-  cd $obs_out_dir
-  log "making graphs in $obs_out_dir"
-  log "$graphics_dir/SpawnAnalyzeStats.py $an_obs_args"
-  $graphics_dir/SpawnAnalyzeStats.py $an_obs_args
+  # make omb/oma comparison graphs against the baseline
+  gen_graphs "baseline" $base_run $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces"
+
+  if [ "$prev_run" != "" ]; then
+    # make forecast comparison graphs against the previous run
+    gen_graphs "previous" $prev_run $new_run $model_out_dir $graphics_dir "$base_args $model_spaces"
+
+    # make omb/oma comparison graphs against the previous run
+    gen_graphs "previous" $prev_run $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces"
+  fi
 
   # move the graphed file to the "graphed" directory
   mkdir -p $graph_dir || (log "failed to create $graph_dir" && exit 1)
   log "mv ${pass_dir}/${success_file} $graph_dir"
   mv ${pass_dir}/${success_file} $graph_dir
+}
+
+gen_graphs()
+{
+  local base_name=$1
+  local base_run=$2
+  local new_run=$3
+  local out_dir=$4
+  local script_dir=$5
+  local script_args=$6
+
+  script_args="$script_args -c $base_name -e $base_name:$base_run,current:$new_run"
+  mkdir -p $out_dir/$base_name || (log "failed to create $out_dir/$base_name" && exit 1)
+  cd $out_dir/$base_name
+  log "making graphs in $out_dir/$base_name"
+  log "$script_dir/SpawnAnalyzeStats.py $script_args"
+  $script_dir/SpawnAnalyzeStats.py $script_args
 }
 
 main()
