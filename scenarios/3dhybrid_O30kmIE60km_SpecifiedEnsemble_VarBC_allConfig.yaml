@@ -91,9 +91,9 @@ externalanalyses:
     GFS:
       PANDAC: # only available 20180418T00-20180524T00
         30km:
-          directory: /glade/campaign/mmm/parc/liuz/pandac_common/30km/30km_GFSANA
+          directory: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/MPAS_IC_NEW
         60km:
-          directory: /glade/campaign/mmm/parc/liuz/pandac_common/60km/60km_GFSANA
+          directory: /glade/campaign/mmm/parc/taosun/pandac/60kmMeshGFS/MPAS_IC_NEW
 
 initic:
   job:
