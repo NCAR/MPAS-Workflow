@@ -10,7 +10,7 @@
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_amsua-cld_n18.h5
     simulated variables: [brightnessTemperature]
-    channels: &amsua-cld_n18_channels 1-4,15
+    channels: &amsua-cld_n18_channels 1-6,15
   obs error: *ObsErrorDiagonal
   obs operator:
     <<: *cloudyCRTMObsOperator
