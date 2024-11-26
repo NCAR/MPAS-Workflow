@@ -37,13 +37,22 @@ variational:
       resource: "PANDAC.EDA"
   #execute: False # the default is True
   #post: [] # this turns off verifyobs
+  job:
+    30km:
+      60km:
+        3dhybrid-allsky:
+          nodes: 4
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 800
+          secondsPerEnVarMember: 12
+
 hofx:
   concatenateObsFeedback: True
 
 workflow:
   first cycle point: 20180414T18
-  #restart cycle point: 20180415T00
-  final cycle point: 20180415T00
-  #final cycle point: 20180514T18
+  restart cycle point: 20180415T06
+  final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   max active cycle points: 20 # used for independent 'extendedforecast'
