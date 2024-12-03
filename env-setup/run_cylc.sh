@@ -58,10 +58,14 @@ usage()
   log "    -l <log_dir> where logs and data should be written, default $LOGDIR"
   log "    -h prints help and exits"
   log "to generate graphs"
-  log "  run_cylc.sh -w <workflow_dir> -g <graphics_dir> -o <output_dir> [-l log_dir] [-h] "
+  log "  run_cylc.sh -w <workflow_dir> -g <graphics_dir> -o <output_dir> [-m <mmm_webserver>] [-c <cylc_graph_dir>] [-l log_dir] [-h] "
   log "    -w <workflow_dir> the MPAS-Workflow location"
   log "    -g <graphics_dir> where the mpas-jedi graphics directory is"
   log "    -o <output_dir> where the comparison graphs should go"
+  log "    -m <mmm_webserver> the mmm web server content machine, e.g. whitedwarf.mmm.ucar.edu"
+  log "       if not provided the graphs won't get copied to the webserver"
+  log "    -c <cylc_graph_dir> where the cylc output graphs go on the mmm webserver, e.g. /web/htdocs/<graph-dir-path>"
+  log "       if not provided the graphs won't get copied to the webserver"
   log "    -l <log_dir> where logs and data should be written, default $LOGDIR"
   log "    -h prints help and exits"
   exit 1
@@ -341,6 +345,28 @@ gen_graphs()
   $script_dir/SpawnAnalyzeStats.py $script_args
 }
 
+copy_graphs()
+{
+  local readonly source_dir=$1
+  local readonly webserver=$2
+  local readonly web_graphs_dir=$3
+
+  log "copy_graphs: derecho graphs dir: $source_dir web server:$webserver web graph dir:$web_graphs_dir"
+
+  log "checking $source_dir" 
+  for dir in $(/bin/ls $source_dir); do
+    log "   dir to copy:$dir" 
+    log "   cd $source_dir && tar --remove-files -czf $dir.tgz $dir" 
+    cd $source_dir && tar --remove-files -czf $dir.tgz $dir
+    log "   scp $source_dir/$dir.tgz $webserver:$web_graphs_dir/" 
+    scp $source_dir/$dir.tgz $webserver:$web_graphs_dir/
+    log "   ssh $webserver cd $web_graphs_dir/ && tar -xzf $dir.tgz" 
+    ssh $webserver "cd $web_graphs_dir/ && tar -xzf $dir.tgz"
+    mv $source_dir/$dir.tgz $source_dir/../copied
+    log "   finished $dir" 
+  done
+}
+
 main()
 {
   local workflow_dir=""
@@ -350,11 +376,13 @@ main()
   local output_dir=""
   local scenario=""
   local suffix=""
+  local webserver=""
+  local web_graphs_dir=""
   local help=""
   local CYLC_ENV_SCRIPT="env-setup/machine.sh"
 
 # get comamnd line args
-  while getopts w:d:k:g:o:s:x:l:h flag
+  while getopts w:d:k:g:o:s:x:l:m:c:h flag
   do
     case "${flag}" in
       w) workflow_dir="${OPTARG}";;
@@ -365,6 +393,8 @@ main()
       s) scenario="${OPTARG}";;
       x) suffix="${OPTARG}";;
       l) LOGDIR=${OPTARG};;
+      m) webserver=${OPTARG};;
+      c) web_graphs_dir=${OPTARG};;
       h) help="help";;
     esac
   done
@@ -429,8 +459,11 @@ main()
     for job in $passed_jobs ; do
       # make a graph comparing the 2 oldest workflows which passed
       log "make_graphs $graphics_dir $output_dir $LOGDIR $job"
-      make_graphs $graphics_dir $output_dir $LOGDIR $job
+      #make_graphs $graphics_dir $output_dir $LOGDIR $job
     done
+    if [ "$webserver" != "" ] && [ "$web_graphs_dir" != "" ]; then
+      copy_graphs $output_dir $webserver $web_graphs_dir
+    fi
   fi
 }
 
