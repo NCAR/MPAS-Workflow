@@ -1,6 +1,6 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  suffix: '_ensB-SE80+RTPP70_VarBC_v3.0.2_newBenchmark'
+  suffix: '_ensB-SE80+RTPP70_VarBC'
 
 firstbackground:
   resource: "PANDAC.GFS"
@@ -15,7 +15,7 @@ forecast:
 
   #execute: False # the default is True
   #post: [] # use this when doing extended forecast
-  post: [verifymodel, verifyobs] # this turns off verifyobs
+  post: [verifymodel] # this turns off verifyobs
 
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -58,7 +58,7 @@ variational:
 workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180415T00
-  #final cycle point: 20180415T06
-  final cycle point: 20180514T18
+  final cycle point: 20180415T06
+  #final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
-  max active cycle points: 20 # used for independent 'extendedforecast'
+  #max active cycle points: 4 # used for independent 'extendedforecast'

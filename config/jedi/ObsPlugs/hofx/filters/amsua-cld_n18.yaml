@@ -2,7 +2,7 @@
   - filter: Domain Check
     filter variables:
     - name: brightnessTemperature
-      channels: 1-4,15 
+      channels: 1-4,15
 #      channels: *amsua-cld_n18_channels
     where:
     - variable:
