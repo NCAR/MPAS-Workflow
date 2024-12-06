@@ -274,7 +274,7 @@ make_graphs()
   fi
 
   # find the baseline job
-  local readonly baseline_files=($(ls -r ${graph_dir}/${file_base}.baseline*))
+  local readonly baseline_files=($(ls ${graph_dir}/${file_base}.base*))
   if [ "${#baseline_files[@]}" -eq 0 ]; then 
     log "the baseline run ${file_base}.baseline* isn't in $graph_dir, no graphs made"
     return
@@ -290,25 +290,31 @@ make_graphs()
   fi
 
   base_run=$(cat ${baseline_files[0]} | sed 's/MPAS-Workflow//' | sed 's/\///g')
+  local base_label=${base_run#*.}
+  base_label=${base_label//"_cron"/}
   new_run=$(cat ${pass_dir}/${success_file} | sed 's/MPAS-Workflow//' | sed 's/\///g')
-  log "newest run: $new_run in file:${pass_dir}/${success_file}"
-  log "previous run: $prev_run in file ${graphed_files[0]} "
-  log "base run: $base_run in file ${baseline_files[0]}"
+  local new_label=${new_run#*.}
+  new_label=${new_label//"_cron"/}
+  local prev_label=${prev_run#*.}
+  prev_label=${prev_label//"_cron"/}
+  log "newest run: $new_run label ${new_label} in file:${pass_dir}/${success_file}"
+  log "previous run: $prev_run label ${prev_label} in file ${graphed_files[0]} "
+  log "base run: $base_run label ${base_label} in file ${baseline_files[0]}"
 
   local readonly base_args=" -s $graphics_dir $last_cycle $queue $account -n 1 $memory"
 
   # make forecast comparison graphs against the baseline
-  gen_graphs "baseline" $base_run $new_run $model_out_dir $graphics_dir "$base_args $model_spaces"
+  gen_graphs $base_label $base_run $new_label $new_run $model_out_dir $graphics_dir "$base_args $model_spaces"
 
   # make omb/oma comparison graphs against the baseline
-  gen_graphs "baseline" $base_run $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces"
+  gen_graphs $base_label $base_run $new_label $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces"
 
   if [ "$prev_run" != "" ]; then
     # make forecast comparison graphs against the previous run
-    gen_graphs "previous" $prev_run $new_run $model_out_dir $graphics_dir "$base_args $model_spaces"
+    gen_graphs $prev_label $prev_run $new_label $new_run $model_out_dir $graphics_dir "$base_args $model_spaces"
 
     # make omb/oma comparison graphs against the previous run
-    gen_graphs "previous" $prev_run $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces"
+    gen_graphs $prev_label $prev_run $new_label $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces"
   fi
 
   # move the graphed file to the "graphed" directory
@@ -319,14 +325,15 @@ make_graphs()
 
 gen_graphs()
 {
-  local base_name=$1
-  local base_run=$2
-  local new_run=$3
-  local out_dir=$4
-  local script_dir=$5
-  local script_args=$6
+  local readonly base_name=$1
+  local readonly base_run=$2
+  local readonly new_name=$3
+  local readonly new_run=$4
+  local readonly out_dir=$5
+  local readonly script_dir=$6
+  local readonly script_args=$7
 
-  script_args="$script_args -c $base_name -e $base_name:$base_run,current:$new_run"
+  script_args="$script_args -c $base_name -e $base_name:$base_run,$new_name:$new_run"
   mkdir -p $out_dir/$base_name || (log "failed to create $out_dir/$base_name" && exit 1)
   cd $out_dir/$base_name
   log "making graphs in $out_dir/$base_name"
