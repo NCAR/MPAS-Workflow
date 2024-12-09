@@ -380,7 +380,8 @@ gen_graphs()
   cd $out_dir/$base_name
   log "making graphs in $out_dir/$base_name"
   log "$script_dir/SpawnAnalyzeStats.py $script_args -w"
-  local jobno=$($script_dir/SpawnAnalyzeStats.py $script_args -w 2>&1 > /dev/tty)
+  { jobno=$($script_dir/SpawnAnalyzeStats.py $script_args -w 2>&1 >&3 3>&-); } 3>&1
+
   log "gen_graphs sync job is $jobno"
   eval $8=$jobno
 }
