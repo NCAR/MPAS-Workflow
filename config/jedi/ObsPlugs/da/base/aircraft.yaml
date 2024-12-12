@@ -17,5 +17,3 @@
   <<: *heightAndHorizObsLoc
   obs operator:
     name: VertInterp
-  get values:
-    <<: *GetValues

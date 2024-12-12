@@ -4,7 +4,6 @@ _iteration: &iterationConfig
     nml_file: {{InnerNamelistFile}}
     streams_file: {{InnerStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
-    interpolation type: unstructured
   gradient norm reduction: 1e-3
 output:
   filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
@@ -26,7 +25,6 @@ cost function:
     nml_file: {{OuterNamelistFile}}
     streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
-    interpolation type: unstructured
   analysis variables: &incvars [{{AnalysisVariables}}]
   background:
     state variables: [{{StateVariables}}]

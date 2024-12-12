@@ -23,7 +23,5 @@ _cloudy crtm: &cloudyCRTMObsOperator
   Cloud_Seeding: true
   obs options:
     <<: *CRTMObsOptions
-_get values: &GetValues
-  nnearest: 3
 _multi iteration filter: &multiIterationFilter
   _blank: null

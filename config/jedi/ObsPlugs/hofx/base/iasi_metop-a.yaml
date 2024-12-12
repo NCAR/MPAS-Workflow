@@ -21,5 +21,3 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: iasi_metop-a
-  get values:
-    <<: *GetValues
