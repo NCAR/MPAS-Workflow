@@ -266,6 +266,9 @@ foreach instrument ($observers)
   date
 end
 
+# Need to go back to the working directory if the last instrument is missing
+cd ${WorkDir}
+
 # =========================
 # Satellite bias correction
 # =========================
