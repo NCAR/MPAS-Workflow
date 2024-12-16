@@ -18,5 +18,3 @@
     vert_interp_ops: false
     pseudo_ops: false
     min_temp_grad: 1.0e-6
-  get values:
-    <<: *GetValues

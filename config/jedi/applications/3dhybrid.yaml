@@ -4,7 +4,6 @@ _iteration: &iterationConfig
     nml_file: {{InnerNamelistFile}}
     streams_file: {{InnerStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
-    interpolation type: unstructured
   gradient norm reduction: 1e-3
   #Several 'online diagnostics' are useful for checking the H correctness and Hessian symmetry
 #  online diagnostics:
@@ -38,7 +37,6 @@ cost function:
     nml_file: {{OuterNamelistFile}}
     streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
-    interpolation type: unstructured
   analysis variables: *incvars
   background:
     state variables: [{{StateVariables}}]
