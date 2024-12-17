@@ -261,7 +261,7 @@ class EnKF(Component):
     script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
       self._dependencies += ['''
-        EnKF => ConcatEnKF => '''+self.tf.finished]
+        EnKF => ConcatEnKF => '''+self.tf.post]
 
     self._dependencies += ['''
 
