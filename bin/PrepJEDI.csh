@@ -205,7 +205,6 @@ foreach file ($MPASJEDIVariablesFiles)
   ln -sfv $ModelConfigDir/$file .
 end
 
-
 # ======================
 # Link observations data
 # ======================
@@ -216,7 +215,7 @@ mkdir -p ${InDBDir}
 rm -r ${OutDBDir}
 mkdir -p ${OutDBDir}
 
-if ( "$ArgAppType" == enkf && "$diagEnKFOMA" == True ) then
+if ( "$ArgAppType" == enkf ) then
   rm -r ${AnaDBDir}
   mkdir -p ${AnaDBDir}
 endif
@@ -283,6 +282,10 @@ if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
 else
   set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/$OutDBDir
 endif
+# For EnKF, offline bias correction can be applied for bias correction
+if ( "$ArgAppType" == enkf ) then
+  set biasCorrectionDir = ${staticVarBcDir}/${thisValidDate}/${OutDBDir}
+endif
 
 # =============
 # Generate yaml
@@ -343,13 +346,24 @@ foreach instrument ($observers)
         ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
         ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
       endif
+      if ( $ArgAppType == 'enkf' ) then # offline bias correction
+         if ( ! -f ${biasCorrectionDir}/satbias_${i}.h5 ) then
+            ln -sf ${initialVARBCcoeff}/satbias_${i}.h5 ${CyclingDADir}/${InDBDir}
+         else
+            ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${CyclingDADir}/${InDBDir}
+         endif
+      endif
     endif
   end
 
   # declare subdirectories for YAML stubs, which depends on whether bias correction is applied
   set AppYamlDirs = (base filters)
   if ($biasCorrection == True && $allowsBiasCorrection == True) then
-    set AppYamlDirs = (base bias filtersWithBias)
+    if ( "$ArgAppType" == enkf ) then
+      set AppYamlDirs = (base biasStatic filtersWithBias)
+    else
+      set AppYamlDirs = (base bias filtersWithBias)
+    endif
   endif
 
   foreach subdir (${AppYamlDirs})
@@ -375,6 +389,11 @@ end
 if ($found == 0) then
   echo "ERROR in $0 : no observation data is available for this date" > ./FAIL
   exit 1
+endif
+
+# Redifine the bias correction dir for EnKF
+if ( $ArgAppType == 'enkf' ) then
+   set biasCorrectionDir = ${CyclingDADir}/${InDBDir}
 endif
 
 # (ii) insert Observations
