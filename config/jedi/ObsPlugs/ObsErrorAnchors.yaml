@@ -223,3 +223,4 @@ _gnssro:
       SPol:
         min: &gnssrobndropp1dSPolExcludeMin 28000.
         max: &gnssrobndropp1dSPolExcludeMax 30000.
+

@@ -12,6 +12,7 @@ date
 # Process arguments
 # =================
 ## args
+set ArgObserverMode = "$1"
 
 # None
 
@@ -44,46 +45,68 @@ set myYAML = ${self_WorkDir}/${appyaml}
 
 ## create then change to run directory
 set runDir = run
-rm -r ${runDir}
-mkdir -p ${runDir}
-cd ${runDir}
-
-## link MPAS-Atmosphere lookup tables
-foreach fileGlob ($MPASLookupFileGlobs)
-  ln -sfv ${MPASLookupDir}/*${fileGlob} .
-end
-
-if (${MicrophysicsOuter} == 'mp_thompson' ) then
-  ln -svf $MPThompsonTablesDir/* .
+if ( "$ArgObserverMode" == OMB ) then
+  rm -r ${runDir}
+  mkdir -p ${runDir}
 endif
 
-## link stream_list.atmosphere.* files
-ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
+# direct to the run directory
+cd ${runDir}
 
-## MPASJEDI variable configs
-foreach file ($MPASJEDIVariablesFiles)
-  ln -sfv $ModelConfigDir/$file .
-end
+if ( "$ArgObserverMode" == OMB ) then
 
-# Link+Run the executable
-# =======================
-ln -sfv ${myBuildDir}/${myEXE} ./
+  ## link MPAS-Atmosphere lookup tables
+  foreach fileGlob ($MPASLookupFileGlobs)
+    ln -sfv ${MPASLookupDir}/*${fileGlob} .
+  end
 
-# asObserver
-cp $myYAML observer.yaml
-sed -i 's@{{driver}}@asObserver@' observer.yaml
-sed -i 's@{{ObsSpaceDistribution}}@RoundRobinDistribution@' observer.yaml
-sed -i 's@{{ObsDataIn}}@ObsDataIn@' observer.yaml
-sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' observer.yaml
-sed -i 's@{{ObsOutSuffix}}@@' observer.yaml
-mpiexec ./${myEXE} observer.yaml ./observer.log >& observer.log.all
+  if (${MicrophysicsOuter} == 'mp_thompson' ) then
+    ln -svf $MPThompsonTablesDir/* .
+  endif
+
+  ## link stream_list.atmosphere.* files
+  ln -sfv ${self_WorkDir}/stream_list.atmosphere.* ./
+
+  ## MPASJEDI variable configs
+  foreach file ($MPASJEDIVariablesFiles)
+    ln -sfv $ModelConfigDir/$file .
+  end
+
+  # Link+Run the executable
+  # =======================
+  ln -sfv ${myBuildDir}/${myEXE} ./
+
+endif
+
+# asObserver or asDiagOMA
+if ( "$ArgObserverMode" == OMA ) then
+   set appName = "diagoma"
+else
+   set appName = "observer"
+endif
+
+cp $myYAML ${appName}.yaml
+sed -i 's@{{driver}}@asObserver@' ${appName}.yaml
+sed -i 's@{{ObsSpaceDistribution}}@RoundRobinDistribution@' ${appName}.yaml
+sed -i 's@{{ObsDataIn}}@ObsDataIn@' ${appName}.yaml
+sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' ${appName}.yaml
+sed -i 's@{{ObsOutSuffix}}@@' ${appName}.yaml
+## For OMA, only calculating HofXs of original memebrs and saving to dbAna
+if ( "$ArgObserverMode" == OMA ) then
+   sed -i 's@dbOut@dbAna@g' ${appName}.yaml
+   sed -i 's@*asGETKF@*asLETKF@' ${appName}.yaml
+endif
+
+mpiexec ./${myEXE} ${appName}.yaml ./${appName}.log >& ${appName}.log.all
 
 # Check status
 # ============
-grep 'Run: Finishing oops.* with status = 0' observer.log
+grep 'Run: Finishing oops.* with status = 0' ${appName}.log
 if ( $status != 0 ) then
-  echo "ERROR in $0 : enkf observer failed" > ./FAIL
+  echo "ERROR in $0 : enkf ${appName} failed" > ./FAIL
   exit 1
+else
+  rm ${appName}.log.0*
 endif
 
 date

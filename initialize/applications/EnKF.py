@@ -28,15 +28,26 @@ class EnKF(Component):
   }
 
   variablesWithDefaults = {
-    ## observation localization parameters
+    # horizontal observation localization
     'localization dimension': ['3D', str, ['2D', '3D']],
     'horizontal localization method': ['Horizontal Gaspari-Cohn', str],
     'horizontal localization lengthscale': [1.2e6, float],
-    # LETKF
+    # vertical localization (GETKF: model spcace; LETKF: obs space)
     'vertical localization function': ['Gaspari Cohn', str],
     'vertical localization lengthscale': [6.e3, float],
-    # GETKF
-    #'vertical localization lengthscale': [5.0, float],
+    'vertical localization lengthscale units': ['height', str],
+    'fraction of retained variance': [0.95, float],
+
+    # Inflation
+    'rtpp value': [0.5, float],
+    'rtps value': [0.9, float],
+    'mult value': [1.0, float],
+
+    # Use Linear Operator
+    'useLinearOperator': ['true', str, ['true', 'false']],
+
+    # Calculate ensemble OMA
+    'diagEnKFOMA': ['True', bool, ['True', 'False']],
 
     ## observers
     # observation types assimilated in the enkf application
@@ -196,6 +207,15 @@ class EnKF(Component):
     observerjob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
     observertask = TaskLookup[hpc.system](observerjob)
 
+    # EnKFDiagOMA
+    if self['diagEnKFOMA']:
+      # r2observer = {{outerMesh}}.observer
+      r2diagoma = meshes['Outer'].name
+      r2diagoma += '.'+solver+'.diagoma'
+      diagomajob = Resource(self._conf, attr, ('job', r2observer))
+      diagomajob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
+      diagomatask = TaskLookup[hpc.system](diagomajob)
+
     # EnKF solver
     # r2solver = {{outerMesh}}.{{solver}}
     r2solver = meshes['Outer'].name
@@ -230,13 +250,22 @@ class EnKF(Component):
 
   [[EnKFObserver]]
     inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/bin/EnKFObserver.csh
+    script = $origin/bin/EnKFObserver.csh OMB
 '''+observertask.job()+observertask.directives()+'''
 
-  [[EnKF]]
+  [[EnKFSolver]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh
 '''+solvertask.job()+solvertask.directives()]
+
+    if self['diagEnKFOMA']:
+       self._tasks += ['''
+  [[EnKFDiagOMA]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnKFObserver.csh OMA
+'''+diagomatask.job()+diagomatask.directives()]
+       self._dependencies += ['''
+        EnKFSolver => EnKFDiagOMA => '''+self.tf.post]
 
     if self['concatenateObsFeedback']:
       concatattr = {
@@ -261,9 +290,9 @@ class EnKF(Component):
     script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
       self._dependencies += ['''
-        EnKF => ConcatEnKF => '''+self.tf.post]
+        EnKFSolver => ConcatEnKF => '''+self.tf.post]
 
     self._dependencies += ['''
 
         # EnKF
-        EnKFObserver => EnKF''']
+        EnKFObserver => EnKFSolver''']

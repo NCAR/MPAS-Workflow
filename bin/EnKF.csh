@@ -75,6 +75,8 @@ grep 'Run: Finishing oops.* with status = 0' solver.log
 if ( $status != 0 ) then
   echo "ERROR in $0 : enkf solver failed" > ./FAIL
   exit 1
+else
+  rm solver.log.0*
 endif
 
 # ================================================================================================

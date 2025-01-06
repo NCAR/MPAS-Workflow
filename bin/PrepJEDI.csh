@@ -216,6 +216,11 @@ mkdir -p ${InDBDir}
 rm -r ${OutDBDir}
 mkdir -p ${OutDBDir}
 
+if ( "$ArgAppType" == enkf && "$diagEnKFOMA" == True ) then
+  rm -r ${AnaDBDir}
+  mkdir -p ${AnaDBDir}
+endif
+
 date
 
 foreach instrument ($observers)
@@ -276,7 +281,7 @@ cd ${WorkDir}
 if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
   set biasCorrectionDir = $initialVARBCcoeff
 else
-  set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/dbOut
+  set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/$OutDBDir
 endif
 
 # =============
@@ -335,8 +340,8 @@ foreach instrument ($observers)
       set allowsBiasCorrection = True
       # if no obs file exists, link satbias file from the previous cycle
       if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
-        ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
-        ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
+        ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
+        ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
       endif
     endif
   end
@@ -917,7 +922,7 @@ else if ("$ArgAppType" == enkf) then
   cp $appyaml prevPrep.yaml
   set prevYAML = $appyaml
 
-  # Analysis directory
+  # Analysis diuseLinearOperatorrectory
   # ==================
   sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $prevYAML
   sed -i 's@{{anStateDir}}@'${WorkDir}'/'${analysisSubDir}'@g' $prevYAML
@@ -925,6 +930,11 @@ else if ("$ArgAppType" == enkf) then
   # Solver
   # ==================
   sed -i 's@{{localEnsembleDASolver}}@'${solver}'@g' $prevYAML
+  if ( $solver == 'GETKF' ) then
+     sed -i 's@{{LocalEnKFSolver}}@asGETKF@g' $prevYAML
+  else
+     sed -i 's@{{LocalEnKFSolver}}@asLETKF@g' $prevYAML
+  endif
 
   # TODO:
   # Ensemble background members
@@ -970,13 +980,27 @@ else if ("$ArgAppType" == enkf) then
     exit 1
   endif
 
-  # ObsLocalization
+  # Localization
   # ===============
+  # horizontal obs localization
   sed -i 's@{{localizationDimension}}@'"${localizationDimension}"'@' $prevYAML
   sed -i 's@{{horizontalLocalizationMethod}}@'"${horizontalLocalizationMethod}"'@' $prevYAML
   sed -i 's@{{horizontalLocalizationLengthscale}}@'${horizontalLocalizationLengthscale}'@' $prevYAML
+  # vertical localization (GETKF: model space; LETKF: obs space)
   sed -i 's@{{verticalLocalizationFunction}}@'"${verticalLocalizationFunction}"'@' $prevYAML
   sed -i 's@{{verticalLocalizationLengthscale}}@'${verticalLocalizationLengthscale}'@' $prevYAML
+  sed -i 's@{{verticalLocalizationLengthscaleUnits}}@'${verticalLocalizationLengthscaleUnits}'@' $prevYAML
+  sed -i 's@{{fractionOfRetainedVariance}}@'${fractionOfRetainedVariance}'@' $prevYAML
+
+  # Inlfation
+  # ===============
+  sed -i 's@{{rtpsValue}}@'"${rtpsValue}"'@' $prevYAML
+  sed -i 's@{{rtppValue}}@'"${rtppValue}"'@' $prevYAML
+  sed -i 's@{{multValue}}@'"${multValue}"'@' $prevYAML
+
+  # Use linear operator
+  # ===============
+  sed -i 's@{{useLinearOperator}}@'"${useLinearOperator}"'@' $prevYAML
 
   # Jo term (member dependence)
   # ===========================
