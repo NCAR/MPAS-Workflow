@@ -12,7 +12,7 @@ enkf:
 externalanalyses:
   resource: "GFS.PANDAC"
 firstbackground:
-  resource: "PANDAC.LaggedGEFS"
+  resource: "PANDAC.EnsPertB"
 forecast:
   post: []
 hofx:

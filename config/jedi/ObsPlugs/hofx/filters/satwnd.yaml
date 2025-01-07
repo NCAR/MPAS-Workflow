@@ -27,3 +27,5 @@
       name: reject
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space

@@ -12,6 +12,8 @@
 #      minvalue: 1.0
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter
