@@ -9,7 +9,6 @@ _conventional vertical localization: &HeightVertObsLoc
   ioda vertical coordinate: height
   ioda vertical coordinate group: MetaData
   localization function: {{verticalLocalizationFunction}}
-  max nobs: 1000
 
 _3d letkf localizations: &3DLETKFheightAndHorizObsLoc
   obs localizations:
