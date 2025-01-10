@@ -10,11 +10,15 @@ set StandardAnalysisVariables = ( \
   spechum \
   surface_pressure \
   temperature \
-  uReconstructMeridional \
-  uReconstructZonal \
+  eastward_wind \
+  northward_wind \
 )
 set StandardStateVariables = ( \
-  $StandardAnalysisVariables \
+  spechum \
+  surface_pressure \
+  temperature \
+  uReconstructMeridional \
+  uReconstructZonal \
   theta \
   rho \
   u \

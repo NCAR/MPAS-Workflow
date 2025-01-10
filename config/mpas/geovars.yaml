@@ -44,11 +44,11 @@ fields:
 
   - field name: eastward_wind
     mpas template field: theta
-    mpas identity field: uReconstructZonal
+    mpas identity field: eastward_wind
 
   - field name: northward_wind
     mpas template field: theta
-    mpas identity field: uReconstructMeridional
+    mpas identity field: northward_wind
 
   - field name: water_vapor_mixing_ratio_wrt_dry_air
     mpas template field: theta
