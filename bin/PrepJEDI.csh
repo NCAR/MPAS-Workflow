@@ -941,7 +941,7 @@ else if ("$ArgAppType" == enkf) then
   cp $appyaml prevPrep.yaml
   set prevYAML = $appyaml
 
-  # Analysis diuseLinearOperatorrectory
+  # Analysis directory
   # ==================
   sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $prevYAML
   sed -i 's@{{anStateDir}}@'${WorkDir}'/'${analysisSubDir}'@g' $prevYAML
