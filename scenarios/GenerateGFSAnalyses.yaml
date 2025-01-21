@@ -2,12 +2,15 @@ suite: GenerateExternalAnalyses
 
 externalanalyses:
   resource: "GFS.RDA"
+  #resource: "GFS.NCEPFTP"
 experiment:
   name: 'GenerateGFSAnalyses'
   prefix: ''
+model:
+  outerMesh: 120km
 hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalQueue: main
+  NonCriticalQueue: main
 workflow:
   first cycle point: 20220606T00
   final cycle point: 20220608T00
