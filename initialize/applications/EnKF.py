@@ -211,7 +211,7 @@ class EnKF(Component):
     observertask = TaskLookup[hpc.system](observerjob)
 
     # EnKFDiagOMA
-    if self['diagEnKFOMA']:
+    if self['diagEnKFOMA'] and self['retainObsFeedback']:
       # r2observer = {{outerMesh}}.observer
       r2diagoma = meshes['Outer'].name
       r2diagoma += '.'+solver+'.diagoma'
@@ -261,7 +261,7 @@ class EnKF(Component):
     script = $origin/bin/EnKF.csh
 '''+solvertask.job()+solvertask.directives()]
 
-    if self['diagEnKFOMA']:
+    if self['diagEnKFOMA'] and self['retainObsFeedback']:
        self._tasks += ['''
   [[EnKFDiagOMA]]
     inherit = '''+self.tf.execute+''', BATCH
