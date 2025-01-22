@@ -342,16 +342,16 @@ foreach instrument ($observers)
     if ("$instrument" == "$i") then
       set allowsBiasCorrection = True
       # if no obs file exists, link satbias file from the previous cycle
-      if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
-        ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
-        ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
-      endif
-      if ( $ArgAppType == 'enkf' ) then # offline bias correction
-         if ( ! -f ${biasCorrectionDir}/satbias_${i}.h5 ) then
-            ln -sf ${initialVARBCcoeff}/satbias_${i}.h5 ${CyclingDADir}/${InDBDir}
-         else
-            ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${CyclingDADir}/${InDBDir}
-         endif
+      if ( $ArgAppType == 'enkf' ) then
+        if ( ! -f ${biasCorrectionDir}/satbias_${i}.h5 ) then
+          ! Just use the initial satbias files
+          set biasCorrectionDir = ${initialVARBCcoeff}
+        endif
+      else
+        if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
+          ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
+          ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
+        endif         
       endif
     endif
   end
@@ -389,11 +389,6 @@ end
 if ($found == 0) then
   echo "ERROR in $0 : no observation data is available for this date" > ./FAIL
   exit 1
-endif
-
-# Redifine the bias correction dir for EnKF
-if ( $ArgAppType == 'enkf' ) then
-   set biasCorrectionDir = ${CyclingDADir}/${InDBDir}
 endif
 
 # (ii) insert Observations
