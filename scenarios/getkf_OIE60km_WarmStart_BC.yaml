@@ -43,8 +43,6 @@ observations:
       IODASuperObGrid:
         abi_g16: 15X15
         ahi_himawari8: 15X15
-rtpp:
-  relaxationFactor: 0.0
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T00
