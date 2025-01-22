@@ -85,10 +85,13 @@ cost function:
                 unbalanced variable: stream_function
               - balanced variable: surface_pressure
                 unbalanced variable: stream_function
-        linear variable change:
-          linear variable change name: Control2Analysis
-          input variables: *ctlvars
-          output variables: *incvars
+        model specific variable change:
+          inner variables: *ctlvars
+          outer variables: *incvars
+          linear variable change:
+            linear variable change name: Control2Analysis
+          variable change:
+            add vars and return: True
     - weight:
         date: *analysisDate
         stream name: control
