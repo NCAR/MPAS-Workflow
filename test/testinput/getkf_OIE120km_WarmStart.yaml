@@ -7,7 +7,8 @@ enkf:
   horizontal localization lengthscale: 1.2e6
   vertical localization lengthscale: 10.0 # modellevel
   vertical localization lengthscale units: modellevel
-  retainObsFeedback: False
+  retainObsFeedback: True
+  diagEnKFOMA: True
   post: []
 firstbackground:
   resource: "PANDAC.EnsPertB"
