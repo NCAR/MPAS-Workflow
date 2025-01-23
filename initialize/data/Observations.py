@@ -47,7 +47,6 @@ class Observations(Component):
   workDir = 'Observations'
   InDBDir = 'dbIn'
   OutDBDir = 'dbOut'
-  AnaDBDir = 'dbAna'
   VarBCAnalysis = OutDBDir+'/satbias_crtm_ana'
   obsPrefix = 'obsout'
   geoPrefix = 'geoval'
