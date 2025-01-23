@@ -27,6 +27,7 @@ source config/auto/workflow.csh
 source config/auto/members.csh
 source config/auto/model.csh
 source config/auto/observations.csh
+source config/auto/naming.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -57,6 +58,8 @@ ln -sfv ${myBuildDir}/${myEXE} ./
 
 # asSolver
 cp $myYAML solver.yaml
+sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${backgroundSubDir}'@' solver.yaml
+sed -i 's@{{ensembleStatePrefix}}@'${BGFilePrefix}'@' solver.yaml
 sed -i 's@{{driver}}@asSolver@' solver.yaml
 sed -i 's@{{ObsDataIn}}@ObsDataOut@' solver.yaml
 sed -i 's@\ \+{{ObsDataOut}}@@' solver.yaml

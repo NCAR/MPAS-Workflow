@@ -45,7 +45,13 @@ time window:
   length: {{windowLength}}
 
 background:
-{{EnsembleMembers}}
+  members from template:
+    template:
+      <<: *memberConfig
+      filename: {{ensembleStateDir}}/mem%iMember%/{{ensembleStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+    pattern: %iMember%
+    zero padding: {{MemNDigits}}
+    nmembers: {{NumEnsMember}}
 
 increment variables: [{{AnalysisVariables}}]
 

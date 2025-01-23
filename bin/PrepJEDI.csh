@@ -681,12 +681,10 @@ EOF
   rm ${thisSEDF}
   set prevYAML = $thisYAML
 
-
   # Analysis directory
   # ==================
   sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $prevYAML
   sed -i 's@{{anStateDir}}@'${WorkDir}'/'${analysisSubDir}'@g' $prevYAML
-
 
   # Hybrid Jb weights
   # =================
@@ -950,49 +948,13 @@ else if ("$ArgAppType" == enkf) then
      sed -i 's@{{LocalEnKFSolver}}@asLETKF@g' $prevYAML
   endif
 
-  # TODO:
   # Ensemble background members
   # ===========================
-  set yamlFiles = enkfs.txt
-  echo $appyaml > $yamlFiles
-  ## yaml indentation
-  set nEnsIndent = 2
-
-  ## members: 'background.members from template'
-
-  # performs sed substitution for EnsembleMembers
-  set enspbmemsed = EnsembleMembers
-
-  @ dateOffset = ${ArgWindowHR} + ${ensPbOffsetHR}
-  set prevDateTime = `$advanceCYMDH ${thisValidDate} -${dateOffset}`
-
-  # substitutions
-  # + previous forecast initilization date-time
-  # + ExperimentDirectory for EDA applications that use their own ensemble
-  set dir0 = `echo "${ensPbDir0}" \
-              | sed 's@{{prevDateTime}}@'${prevDateTime}'@' \
-              | sed 's@{{ExperimentDirectory}}@'${ExperimentDirectory}'@' \
-             `
-  set dir1 = `echo "${ensPbDir1}" \
-              | sed 's@{{prevDateTime}}@'${prevDateTime}'@'\
-             `
-
-  #set dir0 = "`echo "${dir0}" | sed 's@{{ExperimentDirectory}}@'${ExperimentDirectory}'@'`"
-
-  # substitute Jb members
-  setenv myCommand "${substituteEnsembleBTemplate} ${dir0} ${dir1} ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsIndent} False"
-
-  echo "$myCommand"
-  #${substituteEnsembleBTemplate} "${ensPbDir0}" "${ensPbDir1}" ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsIndent} $SelfExclusion
-
-  ${myCommand}
-
-  rm $yamlFiles
-
-  if ($status != 0) then
-    echo "$0 (ERROR): failed to substitute ${enspbmemsed}" > ./FAIL
-    exit 1
-  endif
+  #sed -i 's@{{bgStateDir}}@'${WorkDir}'/'${backgroundSubDir}'@' $prevYAML
+  sed -i 's@{{ensPbMemPrefix}}@'${ensPbMemPrefix}'@' $prevYAML 
+  #sed -i 's@{{bgStatePrefix}}@'${BGFilePrefix}'@' $prevYAML
+  sed -i 's@{{MemNDigits}}@'${ensPbMemNDigits}'@' $prevYAML
+  sed -i 's@{{NumEnsMember}}@'${ensPbNMembers}'@' $prevYAML
 
   # Localization
   # ===============

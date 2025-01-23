@@ -25,6 +25,7 @@ source config/auto/experiment.csh
 source config/auto/enkf.csh
 source config/auto/workflow.csh
 source config/auto/model.csh
+source config/auto/naming.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
 set thisCycleDate = ${yymmdd}${hh}
@@ -90,11 +91,15 @@ sed -i 's@{{driver}}@asObserver@' ${appName}.yaml
 sed -i 's@{{ObsSpaceDistribution}}@RoundRobinDistribution@' ${appName}.yaml
 sed -i 's@{{ObsDataIn}}@ObsDataIn@' ${appName}.yaml
 sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' ${appName}.yaml
-sed -i 's@{{ObsOutSuffix}}@@' ${appName}.yaml
-## For OMA, only calculating HofXs of original memebrs and saving to dbAna
 if ( "$ArgObserverMode" == OMA ) then
-   sed -i 's@dbOut@dbAna@g' ${appName}.yaml
+   sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${analysisSubDir}'@' ${appName}.yaml
+   sed -i 's@{{ensembleStatePrefix}}@'${ANFilePrefix}'@' ${appName}.yaml
+   sed -i 's@{{ObsOutSuffix}}@_an@' ${appName}.yaml
    sed -i 's@*asGETKF@*asLETKF@' ${appName}.yaml
+else
+   sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${backgroundSubDir}'@' ${appName}.yaml
+   sed -i 's@{{ensembleStatePrefix}}@'${BGFilePrefix}'@' ${appName}.yaml
+   sed -i 's@{{ObsOutSuffix}}@@' ${appName}.yaml
 endif
 
 mpiexec ./${myEXE} ${appName}.yaml ./${appName}.log >& ${appName}.log.all
