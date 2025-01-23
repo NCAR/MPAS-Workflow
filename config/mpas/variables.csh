@@ -10,8 +10,8 @@ set StandardAnalysisVariables = ( \
   spechum \
   surface_pressure \
   temperature \
-  eastward_wind \
   northward_wind \
+  eastward_wind \
 )
 set StandardStateVariables = ( \
   spechum \
