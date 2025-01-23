@@ -94,7 +94,7 @@ sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' ${appName}.yaml
 if ( "$ArgObserverMode" == OMA ) then
    sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${analysisSubDir}'@' ${appName}.yaml
    sed -i 's@{{ensembleStatePrefix}}@'${ANFilePrefix}'@' ${appName}.yaml
-   sed -i 's@{{ObsOutSuffix}}@_an@' ${appName}.yaml
+   sed -i 's@{{ObsOutSuffix}}@_ana@' ${appName}.yaml
    sed -i 's@*asGETKF@*asLETKF@' ${appName}.yaml
 else
    sed -i 's@{{ensembleStateDir}}@'${CyclingDADir}'/'${backgroundSubDir}'@' ${appName}.yaml
