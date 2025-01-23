@@ -945,9 +945,7 @@ else if ("$ArgAppType" == enkf) then
 
   # Ensemble background members
   # ===========================
-  #sed -i 's@{{bgStateDir}}@'${WorkDir}'/'${backgroundSubDir}'@' $prevYAML
   sed -i 's@{{ensPbMemPrefix}}@'${ensPbMemPrefix}'@' $prevYAML 
-  #sed -i 's@{{bgStatePrefix}}@'${BGFilePrefix}'@' $prevYAML
   sed -i 's@{{MemNDigits}}@'${ensPbMemNDigits}'@' $prevYAML
   sed -i 's@{{NumEnsMember}}@'${ensPbNMembers}'@' $prevYAML
 
