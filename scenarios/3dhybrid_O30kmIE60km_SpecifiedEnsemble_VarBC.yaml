@@ -49,7 +49,7 @@ variational:
           nodes: 2
           PEPerNode: 128
           memory: 235GB
-          baseSeconds: 800
+          baseSeconds: 2000
           secondsPerEnVarMember: 9
 
   #execute: False # the default is True
