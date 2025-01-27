@@ -58,8 +58,8 @@
     test variables:
     - name: ObsFunction/BennartzScatIndex
       options:
-        channel_89ghz: 1    # MHS 89.00 GHz channel
-        channel_150ghz: 2   # MHS 157.00 GHz channel
+        channel_89ghz: 1
+        channel_150ghz: 2
         bennartz_coeff_1: -39.2010
         bennartz_coeff_2: 0.1104
         apply_bias: ObsBiasData
