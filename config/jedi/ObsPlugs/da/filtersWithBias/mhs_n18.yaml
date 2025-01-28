@@ -81,6 +81,7 @@
         options:
           sensor: mhs_n18
           channels: *mhs_n18_channels
+    <<: *multiIterationFilter
 
 # Transmittnace Top Check
   - filter: BlackList
@@ -94,6 +95,7 @@
         channels: *mhs_n18_channels
         options:
           channels: *mhs_n18_channels
+    <<: *multiIterationFilter
 
 # Background Check
   - filter: Background Check

@@ -81,6 +81,7 @@
         options:
           sensor: mhs_metop-a
           channels: *mhs_metop-a_channels
+    <<: *multiIterationFilter
 # Transmittnace Top Check
   - filter: BlackList
     filter variables:
@@ -93,6 +94,7 @@
         channels: *mhs_metop-a_channels
         options:
           channels: *mhs_metop-a_channels
+    <<: *multiIterationFilter
 
 # Background Check
   - filter: Background Check

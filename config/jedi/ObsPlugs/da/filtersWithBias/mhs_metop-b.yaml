@@ -81,6 +81,7 @@
         options:
           sensor: mhs_metop-b
           channels: *mhs_metop-b_channels
+    <<: *multiIterationFilter
 
 # Transmittnace Top Check
   - filter: BlackList
@@ -94,6 +95,7 @@
         channels: *mhs_metop-b_channels
         options:
           channels: *mhs_metop-b_channels
+    <<: *multiIterationFilter
 
 # Background Check
   - filter: Background Check
