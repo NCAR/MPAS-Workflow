@@ -267,10 +267,10 @@ observations:
           amsua-cld_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
 
           ## mhs
-          mhs_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
-          mhs_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
-          mhs_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
-          mhs_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/no_bias
+          mhs_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          mhs_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          mhs_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          mhs_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
 
           ## abi
           abi_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
