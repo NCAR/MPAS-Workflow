@@ -376,7 +376,7 @@ class Variational(Component):
     script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
             self._dependencies += ['''
-        '''+self.base+str(mm)+''' => '''+concat]
+        '''+self.base+str(mm)+''' => '''+concat+''' => '''+self.tf.post]
 
       else:
         # single instance or ensemble of EnsembleOfVariational(s)
@@ -400,7 +400,7 @@ class Variational(Component):
     script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
             self._dependencies += ['''
-        EDA'''+str(instance)+''' => '''+concat]
+        EDA'''+str(instance)+''' => '''+concat+''' => '''+self.tf.post]
 
     # TODO: make ABEI consistent with external class design
     # GenerateABEInflation
