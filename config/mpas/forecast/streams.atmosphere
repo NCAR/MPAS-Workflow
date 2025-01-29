@@ -28,7 +28,7 @@
                   filename_template="AmB.$Y-$M-$D_$h.$m.$s.nc"
                   filename_interval="none"
                   packages="iau"
-                  io_type="netcdf4"
+                  io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
 <stream name="output"
