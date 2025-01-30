@@ -232,8 +232,8 @@ variational:
           baseSeconds: 800
           secondsPerEnVarMember: 24
         3dhybrid:
-          nodes: 2
-          PEPerNode: 128
+          nodes: 4
+          PEPerNode: 64
           memory: 235GB
           baseSeconds: 500
           secondsPerEnVarMember: 9

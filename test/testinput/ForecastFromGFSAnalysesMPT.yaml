@@ -18,23 +18,9 @@ extendedforecast:
   # optionally turn on extended forecast post
   post: []
 
-forecast:
-  job:
-    30km:
-      # use 128 PE to match partition file in GraphInfoDir
-      nodes: 4
-      PEPerNode: 32
-
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
-
-initic:
-  job:
-    30km:
-      # use 128 PE to match partition file in GraphInfoDir
-      nodes: 4
-      PEPerNode: 32
 
 members:
   n: 1

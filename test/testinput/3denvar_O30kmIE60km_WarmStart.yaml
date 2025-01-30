@@ -1,5 +1,5 @@
 experiment:
-  name: '3denvar_O30kmIE60km_WarmStart_TEST'
+  name: '3denvar_O30kmIE60km_WarmStart_TEST2'
 externalanalyses:
   resource: "GFS.PANDAC"
 forecast:
@@ -40,11 +40,6 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
-  job:
-    30km:
-      60km:
-        3denvar:
-          memory: 235GB
   post: [verifyobs]
   IRVISlandCoeff: IGBP
 hofx:
