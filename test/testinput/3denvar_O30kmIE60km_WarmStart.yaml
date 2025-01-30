@@ -1,5 +1,5 @@
 experiment:
-  name: '3denvar_O30kmIE60km_WarmStart_TEST2'
+  name: '3denvar_O30kmIE60km_WarmStart_TEST'
 externalanalyses:
   resource: "GFS.PANDAC"
 forecast:
