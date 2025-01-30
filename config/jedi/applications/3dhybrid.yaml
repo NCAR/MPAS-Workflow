@@ -83,12 +83,12 @@ cost function:
                 unbalanced variable: stream_function
               - balanced variable: surface_pressure
                 unbalanced variable: stream_function
-        model specific variable change:
+        variable change:
           inner variables: *ctlvars
           outer variables: *incvars
           linear variable change:
             linear variable change name: Control2Analysis
-          variable change:
+          nonlinear variable change:
             add vars and return: True
     - weight:
         value: {{ensembleCovarianceWeight}}
