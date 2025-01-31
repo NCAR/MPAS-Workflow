@@ -30,14 +30,6 @@ variational:
 experiment:
   suffix: '_B-SE80+RTPP70'
 
-forecast:
-  job:
-    30km:
-      # more efficient
-      nodes: 4
-      PEPerNode: 36
-      baseSeconds: 60
-      secondsPerForecastHR: 150
 observations:
   resource: PANDACArchive
   resources:

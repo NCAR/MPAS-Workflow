@@ -15,24 +15,9 @@ extendedforecast:
   # optionally turn on extended forecast verification
   post: []
 
-forecast:
-  job:
-    30km:
-      nodes: 4
-      PEPerNode: 32
-      baseSeconds: 60
-      secondsPerForecastHR: 150
-
 hpc:
   CriticalQueue: regular
   NonCriticalQueue: regular
-
-initic:
-  job:
-    30km:
-      seconds: 60
-      nodes: 4
-      PEPerNode: 32
 
 members:
   n: 1

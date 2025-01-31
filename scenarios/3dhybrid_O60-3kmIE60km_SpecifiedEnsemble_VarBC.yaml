@@ -6,13 +6,6 @@ firstbackground:
   resource: "PANDAC.GFS"
 
 forecast:
-  job:
-    30km:
-      nodes: 2
-      PEPerNode: 128
-      baseSeconds: 60
-      secondsPerForecastHR: 240
-
   #execute: False # the default is True
   post: [] # use this when doing extended forecast
   #post: [verifymodel] # this turns off verifyobs
@@ -45,15 +38,6 @@ variational:
   job:
     defaults:
       retry: '3*PT30S'
-    60-3km:
-      60km:
-        3dhybrid:
-          nodes: 4
-          PEPerNode: 64
-          memory: 235GB
-          baseSeconds: 900
-          secondsPerEnVarMember: 10
-
   #execute: False # the default is True
   post: [] # this turns off verifyobs
 
