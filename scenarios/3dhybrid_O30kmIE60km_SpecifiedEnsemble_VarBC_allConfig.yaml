@@ -177,11 +177,11 @@ variational:
           bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.bumploc.duplicated.limited.1200km6km
   covariance:
     bumpCovControlVariables:
-    - stream_function
-    - velocity_potential
-    - temperature
-    - spechum
-    - surface_pressure
+    - air_horizontal_streamfunction
+    - air_horizontal_velocity_potential
+    - air_temperature
+    - water_vapor_mixing_ratio_wrt_moist_air
+    - air_pressure_at_surface
     bumpCovPrefix: mpas_parametersbump_cov
     bumpCovVBalPrefix: mpas_vbal
     60km:

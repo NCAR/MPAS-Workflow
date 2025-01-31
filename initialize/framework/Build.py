@@ -44,7 +44,7 @@ class Build(Component):
         self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
       else:
         self.variablesWithDefaults['mpas bundle'] = \
-          ['/glade/derecho/scratch/bjung/panda-c/code_spectralWindNaming/mpas-bundle/build_single', str] ## develop
+          ['/glade/derecho/scratch/bjung/panda-c/code_generic_names/mpas-bundle/build_single', str] ## develop
 
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]

@@ -130,11 +130,11 @@ variational:
   # externally-produced background covariance files (var or hybrid)
   covariance:
     bumpCovControlVariables:
-    - stream_function
-    - velocity_potential
-    - temperature
-    - spechum
-    - surface_pressure
+    - air_horizontal_streamfunction
+    - air_horizontal_velocity_potential
+    - air_temperature
+    - water_vapor_mixing_ratio_wrt_moist_air
+    - air_pressure_at_surface
     bumpCovPrefix: mpas_parametersbump_cov
     bumpCovVBalPrefix: mpas_vbal
     #{{innerMesh}}:

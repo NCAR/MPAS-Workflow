@@ -205,10 +205,11 @@ echo "  - xland"   >> keptvars.yaml
 echo "  - cldmask" >> keptvars.yaml
 echo "  - brtemp"  >> keptvars.yaml
 
-echo ""                               >> geovars.yaml
-echo "  - field name: ni"             >> geovars.yaml
-echo "    mpas template field: theta" >> geovars.yaml
-echo "    mpas identity field: ni"    >> geovars.yaml
+#-BJJ-TMP We may not need this anymore. This is already included in geovars.yaml
+#echo ""                               >> geovars.yaml
+#echo "  - field name: ni"             >> geovars.yaml
+#echo "    mpas template field: theta" >> geovars.yaml
+#echo "    mpas identity field: ni"    >> geovars.yaml
 
 # ======================
 # Link observations data
@@ -302,7 +303,7 @@ end
 set VarSub = `echo "$VarSub" | sed 's/.$//'`
 # optional for diag and diag_cldfra
 if (${runSacaDiag} == True) then
-  set VarSub = $VarSub",uReconstructZonal,uReconstructMeridional"
+  set VarSub = $VarSub",eastward_wind,northward_wind"
   echo "uReconstructZonal"      >> stream_list.${MPASCore}.${AppName}_background
   echo "uReconstructMeridional" >> stream_list.${MPASCore}.${AppName}_background
   echo "uReconstructZonal"      >> stream_list.${MPASCore}.${AppName}_analysis
