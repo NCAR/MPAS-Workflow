@@ -4,9 +4,11 @@
     - variable:
         name: MetaData/sensorZenithAngle
       maxvalue: 60.0
-
+     
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space
 
   - filter: Domain Check
     filter variables:
