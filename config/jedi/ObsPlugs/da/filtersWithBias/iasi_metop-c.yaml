@@ -161,5 +161,7 @@
       name: reject
 #  - filter: Gaussian_Thinning # assimilate already thinned iasi data
 #    horizontal_mesh: {{RADTHINDISTANCE}}
+#    action:
+#      name: reduce obs space
 #  - filter: GOMsaver
 #    filename: {{OutDBDir}}/{{geoPrefix}}_iasi_metop-c.nc4
