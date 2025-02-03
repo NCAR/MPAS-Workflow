@@ -147,3 +147,5 @@
 
   - filter: Gaussian_Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space
