@@ -1,6 +1,6 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  suffix: '_ensB-SE80+RTPP70_VarBC_const_Harnish_Window_newErrors2_clrPred'
+  suffix: '_ensB-SE80+RTPP70_VarBC_WV_CSR_crossCorr'
   #_varBC-BT-SCI-RZA-BTclr 
 build:
   mpas bundle: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_11Dec2024_IRvarbc_obsErrors/build_SP_SymmCldImpactIRPred_BTlimObsError_ZenithAnglePred_BTlimPredictor
@@ -64,10 +64,10 @@ observations:
       - mhs_metop-b
       - mhs_n18
       - mhs_n19
-      - ahi_himawari8
-      - abi_g16
-      #- abi-clr_g16
-      #- ahi-clr_himawari8
+      #- ahi_himawari8
+      #- abi_g16
+      - abi-clr_g16
+      - ahi-clr_himawari8
       IODADirectory:
         da:
           abi_g16: /glade/campaign/mmm/parc/ivette/pandac/Observations/abi/bj_so_abi/v3_nc_renamed
@@ -110,10 +110,10 @@ variational:
     mhs_metop-b,
     mhs_n18,
     mhs_n19,
-    abi_g16,
-    ahi_himawari8,
-    #abi-clr_g16,
-    #ahi-clr_himawari8,
+    #abi_g16,
+    #ahi_himawari8,
+    abi-clr_g16,
+    ahi-clr_himawari8,
   ]
   job:
     defaults:
@@ -133,8 +133,8 @@ hofx:
 
 workflow:
   first cycle point: 20180414T18
-  restart cycle point: 20180504T18
+  restart cycle point: 20180415T06
   #final cycle point: 20180415T00
-  final cycle point: 20180514T18
+  final cycle point: 20180430T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   max active cycle points: 60 # used for independent 'extendedforecast'

@@ -7,34 +7,34 @@ externalanalyses:
 #  forecast directory: path-for-mpas-model-build
 
 experiment:
-  name: 'ForecastFromGFSAnalysesMPT_TEST'
+  name: 'ForecastFromGFSAnalysesMPT_TEST_costTest'
 
 extendedforecast:
   meanTimes: T00
   lengthHR: 12
-  outIntervalHR: 6
+  outIntervalHR: 12
   #execute: False # uncomment if forecasts are already completed
 
   # optionally turn on extended forecast post
   post: []
 
-forecast:
-  job:
-    30km:
-      # use 128 PE to match partition file in GraphInfoDir
-      nodes: 4
-      PEPerNode: 32
+#forecast:
+#  job:
+#    30km:
+#      # use 128 PE to match partition file in GraphInfoDir
+#      nodes: 4
+#      PEPerNode: 32
 
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 
-initic:
-  job:
-    30km:
-      # use 128 PE to match partition file in GraphInfoDir
-      nodes: 4
-      PEPerNode: 32
+#initic:
+#  job:
+#    30km:
+#      # use 128 PE to match partition file in GraphInfoDir
+#      nodes: 4
+#      PEPerNode: 32
 
 members:
   n: 1

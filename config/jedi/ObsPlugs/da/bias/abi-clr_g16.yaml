@@ -1,14 +1,14 @@
   obs bias:
-    input file: {{biasCorrectionDir}}/satbias_ahi_himawari8.h5
-    output file: {{OutDBDir}}{{MemberDir}}/satbias_ahi_himawari8.h5
+    input file: {{biasCorrectionDir}}/satbias_abi_g16.h5
+    output file: {{OutDBDir}}{{MemberDir}}/satbias_abi_g16.h5
     variational bc:
       predictors:
       - name: constant
       - name: lapseRate
         order: 2
-        tlapse: &ahihimawari8tlap {{fixedTlapmeanCov}}/ahi_himawari8_tlapmean.txt
+        tlapse: &abig16tlap {{fixedTlapmeanCov}}/abi_g16_tlapmean.txt
       - name: lapseRate
-        tlapse: *ahihimawari8tlap
+        tlapse: *abig16tlap
       - name: emissivityJacobian
       - name: sensorScanAngle
         order: 4
@@ -23,8 +23,8 @@
       step size: 1.0e-4
       largest analysis variance: 10000.0
       prior:
-        input file: {{biasCorrectionDir}}/satbias_cov_ahi_himawari8.h5
+        input file: {{biasCorrectionDir}}/satbias_cov_abi_g16.h5
         inflation:
           ratio: 1.1
           ratio for small dataset: 2.0
-      output file: {{OutDBDir}}{{MemberDir}}/satbias_cov_ahi_himawari8.h5
+      output file: {{OutDBDir}}{{MemberDir}}/satbias_cov_abi_g16.h5

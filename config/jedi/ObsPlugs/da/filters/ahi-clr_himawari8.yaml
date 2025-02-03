@@ -3,12 +3,32 @@
     where:
     - variable:
         name: MetaData/sensorZenithAngle
-      maxvalue: 65.0
+      maxvalue: 60.0
     - variable:
         name: MetaData/cloudAmount
       maxvalue: 0.05
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+# Assign obsError
+#std: [1.76, 1.79, 1.58]
+  - filter: Perform Action
+    filter variables:
+    - name: [brightnessTemperature_8]
+    action:
+      name: assign error
+      error parameter: 1.76
+  - filter: Perform Action
+    filter variables:
+    - name: [brightnessTemperature_9]
+    action:
+      name: assign error
+      error parameter: 1.79
+  - filter: Perform Action
+    filter variables:
+    - name: [brightnessTemperature_10]
+    action:
+      name: assign error
+      error parameter: 1.58
   - filter: Background Check
     threshold: 3.0
     <<: *multiIterationFilter
