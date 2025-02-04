@@ -41,17 +41,6 @@ variational:
     forecasts:
       resource: "PANDAC.EDA"
 
-  # resource requirements
-  job:
-    30km:
-      60km:
-        3dhybrid:
-          nodes: 4
-          PEPerNode: 64
-          memory: 235GB
-          baseSeconds: 800
-          secondsPerEnVarMember: 9
-
   #execute: False # the default is True
   #post: [] # this turns off verifyobs
 
