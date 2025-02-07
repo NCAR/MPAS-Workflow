@@ -14,11 +14,7 @@ set StandardAnalysisVariables = ( \
   eastward_wind \
 )
 set StandardStateVariables = ( \
-  water_vapor_mixing_ratio_wrt_moist_air \
-  air_pressure_at_surface \
-  air_temperature \
-  northward_wind \
-  eastward_wind \
+  $StandardAnalysisVariables \
   air_potential_temperature \
   dry_air_density \
   u \
