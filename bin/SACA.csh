@@ -205,12 +205,6 @@ echo "  - xland"   >> keptvars.yaml
 echo "  - cldmask" >> keptvars.yaml
 echo "  - brtemp"  >> keptvars.yaml
 
-#-BJJ-TMP We may not need this anymore. This is already included in geovars.yaml
-#echo ""                               >> geovars.yaml
-#echo "  - field name: ni"             >> geovars.yaml
-#echo "    mpas template field: theta" >> geovars.yaml
-#echo "    mpas identity field: ni"    >> geovars.yaml
-
 # ======================
 # Link observations data
 # ======================
