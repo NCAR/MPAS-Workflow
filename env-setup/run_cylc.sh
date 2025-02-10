@@ -281,7 +281,7 @@ make_graphs()
   local prev_run="" # the job run prior to the current run
   # PBS directives
   local readonly queue="-q develop"
-  local readonly account="-a nmmm0043"
+  local readonly account="-a nmmm0015"
   local readonly memory="-m 12"
   # SpawnAnalyzeStats arguments
   local readonly last_cycle="-l 20180421T18"
