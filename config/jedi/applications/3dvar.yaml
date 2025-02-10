@@ -22,6 +22,7 @@ cost function:
   time window:
     begin: {{windowBegin}}
     length: {{windowLength}}
+  jb evaluation: false
   geometry:
     nml_file: {{OuterNamelistFile}}
     streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
@@ -44,6 +45,21 @@ cost function:
         drivers:
           multivariate strategy: univariate
           read local nicas: true
+        grids:
+          - model:
+              variables:
+              - stream_function
+              - velocity_potential
+              - temperature
+              - spechum
+              - qc
+              - qi
+              - qg
+              - qr
+              - qs
+          - model:
+              variables:
+              - surface_pressure
     saber outer blocks:
     - saber block name: StdDev
       read:

@@ -80,3 +80,30 @@ externalanalyses:
           - "GetGDASAnalysisFromFTP"
           #Vtable: /glade/campaign/mmm/parc/liuz/pandac_common/vtables/Vtable.GFS.O3MR
           retry: '40*PT10M'
+
+    GEFS:
+      AWS:
+        common:
+          PrepareExternalAnalysisTasks:
+          - "GetGEFSAnalysisFromAWS"
+          - "UngribExternalGEFSAnalysis"
+          - "ExternalGEFSAnalysisToMPAS-{{mesh}}"
+          #- "ExternalAnalysisReady__"
+          Vtable: /glade/campaign/mmm/parc/liuz/pandac_common/vtables/Vtable.GEFS
+          job:
+            GetAnalysisFrom:
+              retry: '40*PT10M'
+
+    GEFS6HF:
+      AWS:
+        common:
+          PrepareExternalAnalysisTasks:
+          - "GetGEFS6hFcstFromAWS"
+          - "UngribExternalGEFSAnalysis"
+          - "ExternalGEFSAnalysisToMPAS-{{mesh}}"
+          #- "ExternalAnalysisReady__"
+          Vtable: /glade/campaign/mmm/parc/liuz/pandac_common/vtables/Vtable.GEFS
+          job:
+            GetAnalysisFrom:
+              retry: '40*PT10M'
+

@@ -1,0 +1,27 @@
+suite: GenerateExternalAnalyses
+
+externalanalyses:
+  #resource: "GEFS0.AWS"
+  resource: "GEFS6HF.AWS"
+experiment:
+  name: 'GenerateGEFS'
+  prefix: ''
+
+invariantstream:
+  resources:
+    defaults:
+      InvariantDirectory: /glade/derecho/scratch/zhuming/pandac/Invariant_L66
+
+model:
+  outerMesh: 30km
+hpc:
+  CriticalAccount: NMMM0015
+  #CriticalAccount: NMMM0043
+  CriticalQueue: main
+  NonCriticalAccount: NMMM0015
+  #NonCriticalAccount: NMMM0043
+  NonCriticalQueue: main
+workflow:
+  first cycle point: 20250204T12
+  final cycle point: 20250205T00
+  max active cycle points: 60

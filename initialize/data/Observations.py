@@ -33,9 +33,16 @@ benchmarkObservations = [
   'amsua_aqua',
   'amsua_metop-a',
   'amsua_metop-b',
+  'amsua_metop-c',
   'amsua_n15',
   'amsua_n18',
   'amsua_n19',
+  #'amsua-cld_metop-a',
+  #'amsua-cld_metop-b',
+  #'amsua-cld_metop-c',
+  #'amsua-cld_n15',
+  #'amsua-cld_n18',
+  #'amsua-cld_n19',
   'mhs_metop-a',
   'mhs_metop-b',
   'mhs_n18',
@@ -86,8 +93,10 @@ class Observations(Component):
 
     # static directories for bias correction files
     'fixedCoeff': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias', str],
-    'fixedTlapmeanCov': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2018', str],
-    'initialVARBCcoeff': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2018', str],
+    #'fixedTlapmeanCov': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2018', str],
+    #'initialVARBCcoeff': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2018', str],
+    'fixedTlapmeanCov': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2023', str],
+    'initialVARBCcoeff': ['/glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2023', str],
   }
 
   def __init__(self,

@@ -64,7 +64,8 @@ variational:
 
           60km:
             maxMembers: 20
-            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/60km/EnsForCov/{{prevDateTime}}'
+            #directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/60km/EnsForCov/{{prevDateTime}}'
+            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/GEFS/60km_GEFS_EnsFC/{{prevDateTime}}'
             filePrefix: EnsForCov
             memberNDigits: 2
 
@@ -119,7 +120,8 @@ variational:
       #  bumpLocDir: str
       30km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
+        #bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
+        bumpLocDir: /glade/derecho/scratch/bjung/testdata_prepare.2023gefs/Bflow.20241025/global30km_Bloc
       60km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.bumploc.duplicated.limited.1200km6km
@@ -135,23 +137,40 @@ variational:
     - temperature
     - spechum
     - surface_pressure
-    bumpCovPrefix: mpas_parametersbump_cov
-    bumpCovVBalPrefix: mpas_vbal
+    - qc
+    - qi
+    - qg
+    - qr
+    - qs
+    #bumpCovPrefix: mpas_parametersbump_cov
+    #bumpCovVBalPrefix: mpas_vbal
+    bumpCovPrefix: mpas
+    bumpCovVBalPrefix: mpas
     #{{innerMesh}}:
     #  bumpCovDir: str
     #  bumpCovStdDevFile: str
     #  bumpCovVBalDir: str
     #  hybridCoefficientsDir: str
     30km:
-      bumpCovDir: None
-      bumpCovStdDevFile: None
-      bumpCovVBalDir: None
-      hybridCoefficientsDir: None
+      bumpCovDir: /glade/derecho/scratch/bjung/testdata_prepare.2023gefs/Bflow.20241025/global30km_ENS/NICAS.split/merge_w_hydro
+      bumpCovStdDevFile: /glade/derecho/scratch/bjung/testdata_prepare.2023gefs/Bflow.20241025/global30km_ENS/HDIAG_VAR/merge_w_hydro/mpas.stddev.nc
+      bumpCovVBalDir: /glade/derecho/scratch/bjung/testdata_prepare.2023gefs/Bflow.20241025/global30km_ENS/VBAL_iterative/2023070106-2023071100
+      hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/30km.allsky_hybrid
     60km:
       hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
-      bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.NICAS_00global
-      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.VBAL_00
+
+      #bumpCovDir: /glade/derecho/scratch/bjung/Bflow/2023_ENS_global60km/NICAS.split/merge
+      #bumpCovStdDevFile: /glade/derecho/scratch/bjung/Bflow/2023_ENS_global60km/HDIAG_VAR/merge/mpas.stddev.nc
+      #bumpCovDir: /glade/derecho/scratch/zhuming/2023_ENS_global60km/NICAS.split1_tune/merge
+      #bumpCovStdDevFile: /glade/derecho/scratch/zhuming/2023_ENS_global60km/HDIAG_VAR/merge1_tune/mpas.stddev.nc
+      #bumpCovDir: /glade/derecho/scratch/zhuming/2023_ENS_global60km/NICAS.split11/merge
+      #bumpCovStdDevFile: /glade/derecho/scratch/zhuming/2023_ENS_global60km/HDIAG_VAR/merge11/mpas.stddev.nc
+      #bumpCovDir: /glade/derecho/scratch/zhuming/2023_ENS_global60km/NICAS.split11_tune/merge
+      #bumpCovStdDevFile: /glade/derecho/scratch/zhuming/2023_ENS_global60km/HDIAG_VAR/merge11_tune/mpas.stddev.nc
+      bumpCovDir: /glade/campaign/mmm/parc/zhuming/pandac_common/2023_ENS_global60km/NICAS.split11_tune/merge
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/zhuming/pandac_common/2023_ENS_global60km/HDIAG_VAR/merge11_tune/mpas.stddev.nc
+
+      bumpCovVBalDir: /glade/derecho/scratch/bjung/Bflow/2023_ENS_global60km/VBAL_iterative/2023070406-2023071100
     120km:
       bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.NICAS_00
       bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
@@ -163,7 +182,7 @@ variational:
     defaults:
       baseSeconds: 1500
       secondsPerEnVarMember: 10
-      nodes: 1
+      nodes: 2
       PEPerNode: 128
       memory: 235GB
 
@@ -205,12 +224,6 @@ variational:
           PEPerNode: 64
           memory: 235GB
           baseSeconds: 1500
-        3dhybrid:
-          nodes: 4
-          PEPerNode: 64
-          memory: 235GB
-          baseSeconds: 500
-          secondsPerEnVarMember: 9
         ensemble: # i.e., EDASize > 1, multiple background members treated per executable
           3denvar:
             nodesPerMember: 4
@@ -232,8 +245,8 @@ variational:
           baseSeconds: 800
           secondsPerEnVarMember: 24
         3dhybrid:
-          nodes: 4
-          PEPerNode: 64
+          nodes: 2
+          PEPerNode: 128
           memory: 235GB
           baseSeconds: 500
           secondsPerEnVarMember: 9

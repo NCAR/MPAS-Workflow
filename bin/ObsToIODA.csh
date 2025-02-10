@@ -79,7 +79,7 @@ foreach gdasfile ( *"gdas."* )
    if ( ${gdasfile} =~ *"cris"* && ${ccyy} >= '2021' ) then
      ln -sf ${CRTMTABLES}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
      ln -sf ${CRTMTABLES}/cris-fsr431_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
-     #ln -sf ${CRTMTABLES}/cris-fsr431_n21.SpcCoeff.bin  ./cris_n21.SpcCoeff.bin
+     ln -sf ${CRTMTABLES}/cris-fsr431_n21.SpcCoeff.bin  ./cris_n21.SpcCoeff.bin
    else if ( ${gdasfile} =~ *"cris"* && ${ccyy} < '2021' ) then
      ln -sf ${CRTMTABLES}/cris399_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
      ln -sf ${CRTMTABLES}/cris399_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
@@ -205,7 +205,7 @@ set V2toV3 = ( $V1toV2 \
     iasi_metop-c \
     cris_npp \
     cris_n20 \
-    #cris_n21 \
+    cris_n21 \
 )
 
 set iodaUpgradeV3Config = ${ConfigDir}/jedi/obsProc/ObsSpaceV2-to-V3.yaml
@@ -257,7 +257,7 @@ set ScanPositionUpdate = ( \
     iasi_metop-c \
     cris_npp \
     cris_n20 \
-    #cris_n21 \
+    cris_n21 \
 )
 
 ln -fs ${pyDir}/update_sensorScanPosition.py .
@@ -279,7 +279,7 @@ foreach ty ( ${ScanPositionUpdate} )
     if ( ${ty} =~ *"cris"* && ${ccyy} >= 2021 ) then
        if ( ${ty} == "cris_npp" ) set tyy = "cris-fsr_npp"
        if ( ${ty} == "cris_n20" ) set tyy = "cris-fsr_n20"
-       #if ( ${ty} == "cris_n21" ) set tyy = "cris-fsr_n21"
+       if ( ${ty} == "cris_n21" ) set tyy = "cris-fsr_n21"
        mv -f ${ty_obs}.modified ${tyy}_obs_${thisValidDate}.h5
     else
        mv -f ${ty_obs}.modified ${ty_obs}

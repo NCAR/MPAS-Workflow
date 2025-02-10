@@ -1,0 +1,29 @@
+suite: GenerateObs
+
+observations:
+  #resource: GladeRDAOnline
+  resource: NCEPFTPOnline
+  convertToIODAObservations:
+  - 1bamua
+  - 1bmhs
+  - airsev
+  - gpsro
+  - prepbufr
+  - satwnd
+  #- mtiasi
+  #- cris
+experiment:
+  name: 'GenerateObs'
+  prefix: ''
+workflow:
+  first cycle point: 20241122T12
+  final cycle point: 20241122T18
+
+  max active cycle points: 60
+hpc:
+  CriticalAccount: NMMM0043
+  CriticalQueue: main
+  NonCriticalAccount: NMMM0043
+  NonCriticalQueue: main
+#build:
+#  mpas bundle: /glade/work/zhuming/pandac/mpas-bundle_3.0.1/build
