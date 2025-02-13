@@ -9,10 +9,7 @@ firstbackground:
 forecast:
   job:
     30km:
-      nodes: 2
-      PEPerNode: 128
-      baseSeconds: 60
-      secondsPerForecastHR: 240
+      secondsPerForecastHR: 20
 
   #execute: False # the default is True
   #post: [] # use this when doing extended forecast

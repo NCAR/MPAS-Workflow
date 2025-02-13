@@ -7,13 +7,6 @@ firstbackground:
   resource: "PANDAC.GFS"
 
 forecast:
-  job:
-    60-3km:
-      nodes: 4
-      PEPerNode: 128
-      baseSeconds: 60
-      secondsPerForecastHR: 300
-
   #execute: False # the default is True
   post: [] # use this when doing extended forecast
   #post: [verifymodel] # this turns off verifyobs

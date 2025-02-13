@@ -66,16 +66,7 @@ variational:
     amsua_n19,
     iasi_metop-b,
   ]
-  job:
-    30km:
-      60km:
-        3denvar:
-          baseSeconds: 4500
-          nodes: 8
-          PEPerNode: 16
-          memory: 109GB
-hpc:
-  CriticalQueue: premium
-  NonCriticalQueue: premium
+  # check job specification for Derecho
+
 verifyobs:
   script directory: /glade/campaign/mmm/parc/ivette/pandac/graphics

@@ -9,7 +9,7 @@ externalanalyses:
 firstbackground:
   resource: "PANDAC.LaggedGEFS"
 forecast:
-  post: [verifyobs, verifymodel]
+  post: [verifymodel] #verifyobs
 members:
   n: 20
 model:

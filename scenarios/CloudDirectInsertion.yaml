@@ -22,7 +22,7 @@ extendedforecast:
   DACycling: True
   updateSea: True
   #execute: False # uncomment if forecasts are already completed
-  post: [verifyobs] #verifyobs
+  post: [] #verifyobs
 
 forecastsaca:
   #execute: False
