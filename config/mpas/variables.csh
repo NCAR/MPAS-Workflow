@@ -4,10 +4,10 @@
 ## workflow-relevant state variables
 ####################################
 set MPASHydroIncrementVariables = ( \
-  cloud_liquid_water
-  cloud_liquid_ice
-  graupel
-  rain_water
+  cloud_liquid_water \
+  cloud_liquid_ice \
+  graupel \
+  rain_water \
   snow_water \
 )
 set MPASHydroStateVariables = (${MPASHydroIncrementVariables} cldfrac)
