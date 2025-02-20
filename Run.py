@@ -52,13 +52,16 @@ class Run(Logger):
     ap = argparse.ArgumentParser()
     ap.add_argument('config', type=str,
                     help='configuration file; e.g., runs/test.yaml, scenarios/{{scenarioName}}.yaml')
-    ap.add_argument('-b', '--bundle_dir', help='mpas bundle directory')
+    ap.add_argument('-b', '--bundle_dir', help='mpas bundle build directory')
     ap.add_argument('-x', '--suffix', help='experiment name suffix')
+    ap.add_argument('-f', '--forecast_dir', help='alternative build directory mpas_atmosphere e.g. a gpu build')
+    ap.add_argument('-g', '--gpu', help='use gpu devices', action="store_true")
     args = ap.parse_args()
     assert Path(args.config).is_file(), (self.logPrefix+'config ('+args.config+') does not exist')
 
     self.__configFile = args.config
-    self.__config = Config(args.config, args.bundle_dir, args.suffix)
+    self.__config = Config(args.config, args.bundle_dir, args.suffix, args.forecast_dir, args.gpu)
+    self.log('config:' + str(self.__config), level=self.MSG_DEBUG)
 
   def execute(self):
     '''
@@ -81,7 +84,7 @@ class Run(Logger):
 
       self.clean(self)
 
-      scenario = Scenario(scenarioFile, self.__config._bundle_dir, self.__config._suffix)
+      scenario = Scenario(scenarioFile, self.__config._bundle_dir, self.__config._suffix, self.__config._forecast_dir, self.__config._use_gpus)
       scenario.initialize()
 
       # suite name (defaults to Cycle)

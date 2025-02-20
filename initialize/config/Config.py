@@ -15,19 +15,25 @@ import traceback
 from initialize.config.Logger import Logger
 
 class Config(Logger):
+
   def __init__(self,
       filename: str,
       bundle_dir: str,
       suffix: str,
+      forecast_dir: str,
+      use_gpus: bool,
       defaultsFile:str = None,
     ):
 
    super().__init__()
-   with open(filename) as file:
-     self._table = yaml.load(file, Loader=yaml.FullLoader)
+   if filename is not None:
+     with open(filename) as file:
+       self._table = yaml.load(file, Loader=yaml.FullLoader)
 
    self._bundle_dir = bundle_dir
    self._suffix = suffix
+   self._forecast_dir = forecast_dir
+   self._use_gpus = use_gpus
    if defaultsFile is not None:
      with open(defaultsFile) as file:
        self._defaults = yaml.load(file, Loader=yaml.FullLoader)
@@ -37,7 +43,8 @@ class Config(Logger):
   def __str__(self):
     bd =  (self._bundle_dir if self._bundle_dir != None else 'None')
     suffix =  (self._suffix if self._suffix != None else 'None')
-    return 'bundle_dir:' + bd + ' suffix:' + suffix
+    fd =  (self._forecast_dir if self._forecast_dir != None else 'None')
+    return 'bundle_dir:' + bd + ' suffix:' + suffix + ' forecast_dir:' + fd + ' use_gpus:' + str(self._use_gpus)
 
   def extract(self, subKey: str, defaultsFile:str = None):
     tab = deepcopy(self._table.get(subKey, {}))

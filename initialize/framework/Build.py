@@ -7,6 +7,7 @@
  which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 '''
 import os
+from pathlib import Path
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
@@ -42,13 +43,17 @@ class Build(Component):
     if system == 'derecho':
       if config._bundle_dir != None:
         self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
+        assert Path(config._bundle_dir).is_dir(), (self.logPrefix+'bundle dir ('+args.bundle_dir+') is not a directory')
       else:
         self.variablesWithDefaults['mpas bundle'] = \
           ['/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_16Dec2024/build_SP', str] ## develop
 
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
-      self.variablesWithDefaults['forecast directory'] = ['bundle', str]
+      if config._forecast_dir != None:
+        self.variablesWithDefaults['forecast directory'] = [config._forecast_dir, str]
+      else:
+        self.variablesWithDefaults['forecast directory'] = ['bundle', str]
 
       # Ungrib
       wpsBuildDir = '/glade/work/jwittig/repos1/WPS/'
@@ -75,6 +80,7 @@ class Build(Component):
       meanStateBuildDir = ''
 
     super().__init__(config)
+    self.log("config:" + str(config), level=self.MSG_DEBUG)
 
     ###################
     # derived variables
@@ -121,6 +127,12 @@ class Build(Component):
       if self['forecast directory'] == 'bundle':
         self._set('ForecastBuildDir', self['mpas bundle']+'/bin')
         self._set('ForecastEXE', 'mpas_'+model['MPASCore'])
+      elif config._forecast_dir != None:
+        self._set('ForecastBuildDir', config._forecast_dir+'/bin')
+        self._set('ForecastEXE', 'mpas_'+model['MPASCore'])
+        forecast=self.__getitem__('ForecastBuildDir') + '/' + self.__getitem__('ForecastEXE')
+        self.log('forecast:' + forecast, level=self.MSG_DEBUG)
+        assert Path(forecast).is_file(), (self.logPrefix+forecast+' is not a file')
       else:
         self._set('ForecastBuildDir', self['forecast directory'])
         self._set('ForecastEXE', model['MPASCore']+'_model')

@@ -19,6 +19,7 @@ from initialize.framework.Workflow import Workflow
 
 class SuiteBase(Logger):
   def __init__(self, conf:Config):
+    conf.log('SuiteBase:init:' + str(conf), level=conf.MSG_DEBUG)
     super().__init__()
     self.c = {}
     self.c['hpc'] = HPC(conf)

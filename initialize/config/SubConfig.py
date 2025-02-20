@@ -11,9 +11,13 @@ from initialize.config.Config import Config
 
 class SubConfig(Config):
   def __init__(self,
+      use_gpus:bool,
       table:dict = {},
       defaults:dict = {},
     ):
+
+    # must save whether to use gpu's or not.
+    super().__init__(None, None, None, None, use_gpus)
     self._table = table
     self._defaults = defaults
 
@@ -24,4 +28,4 @@ class SubConfig(Config):
       defaultsFile:str = None,
     ):
     table, defaults = parent.extract(subKey, defaultsFile)
-    return cls(table, defaults)
+    return cls(parent._use_gpus, table, defaults)

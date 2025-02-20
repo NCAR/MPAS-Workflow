@@ -112,6 +112,7 @@ class Forecast(Component):
       'secondsPerForecastHR': {'typ': int},
       'nodes': {'typ': int},
       'PEPerNode': {'typ': int},
+      'GPUPerNode': {'typ': int, 'req':False},
       'memory': {'def': '235GB', 'typ': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},

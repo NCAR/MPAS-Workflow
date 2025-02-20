@@ -6,6 +6,7 @@ forecast:
       PEPerNode: 128
       baseSeconds: 60
       secondsPerForecastHR: 500
+      GPUPerNode: 4
 
       # cylc retry string
       retry: '0*PT30S'

@@ -60,7 +60,8 @@ When setting up symlinks, ensure the run/cylc-run/MPAS-Workflow directory is emp
 
  Execute the workflow:
  ```
- ./Run.py {{scenarioConfig}}
+ ./Run.py [-b BUNDLE_DIR] [-x SUFFIX] [-f FORECAST_DIR] [-g] {{scenarioConfig}}
+    To see Run.py options: ./Run.py -h
  #OR
  ./test.csh
 ```

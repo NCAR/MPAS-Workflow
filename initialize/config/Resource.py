@@ -19,6 +19,8 @@ class Resource(Config):
   useful for extracting resource-dependent or mesh-dependent subconfigurations
   '''
   def __init__(self, config:Config, keys:dict, resource:tuple):
+    super().__init__(None,  config._bundle_dir, config._suffix, config._forecast_dir, config._use_gpus)
+
     '''
     keys: {key1[str]: {
               'def': default value, # optional
