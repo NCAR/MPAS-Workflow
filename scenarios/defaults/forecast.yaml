@@ -6,6 +6,13 @@ forecast:
       PEPerNode: 128
       baseSeconds: 60
       secondsPerForecastHR: 500
+      # uncomment the following to run the forecast on a gpu node on derecho
+      #GPUPerNode: 4
+      # you must also specify the following in your top level scenario
+      # build:
+      #   forecast directory: <path to gpu build of MPAS-Model> 
+      # The forecast directory can either contain 'atmosphere_model'
+      # or be a cmake build of mpas-bundle 
 
       # cylc retry string
       retry: '0*PT30S'

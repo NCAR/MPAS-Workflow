@@ -26,3 +26,5 @@ variational:
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T06
+build:
+    #forecast directory: /glade/derecho/scratch/jwittig/repos-s/mpas-bundle-io/build-nvhpc

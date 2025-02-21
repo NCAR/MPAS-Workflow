@@ -32,19 +32,37 @@ else
       source /etc/profile.d/z00_modules.csh
       module purge
 
-      module load intel-oneapi/2023.0.0
-      module load cray-mpich/8.1.25
-      module load parallel-netcdf/1.12.3
-      module load parallelio/2.5.10
-      module load ncl/6.6.2
-      module load hdf5/1.12.2
-      module load netcdf/4.9.2
-      module load ncarcompilers/1.0.0
-      module load nco/5.1.4
-      setenv mpiCommand mpiexec
+      if ("$NGPUS" == "0") then
+        module load intel-oneapi/2023.0.0
+        module load cray-mpich/8.1.25
+        module load parallel-netcdf/1.12.3
+        module load parallelio/2.5.10
+        module load ncl/6.6.2
+        module load hdf5/1.12.2
+        module load netcdf/4.9.2
+        module load ncarcompilers/1.0.0
+        module load nco/5.1.4
+        setenv mpiCommand mpiexec
+      else if("$NGPUS" == "4") then
+        module load cuda
+        module load nvhpc/24.7
+        module load cray-mpich
+        module load cray-libsci
+        module load hdf5-mpi
+        module load netcdf-mpi
+        module load parallel-netcdf
+        module load ncarcompilers
+        setenv mpiCommand mpiexec
+      else
+        echo "unknown node type"
+      endif
     else
       echo "unknown NCAR_HOST: $NCAR_HOST"
     endif
+
+    echo setenv LD_LIBRARY_PATH ${forecastDirectory}/lib:$LD_LIBRARY_PATH
+    setenv LD_LIBRARY_PATH ${forecastDirectory}/lib:$LD_LIBRARY_PATH
+
     setenv F_UFMTENDIAN 'big:101-200'
     setenv FI_CXI_RX_MATCH_MODE 'hybrid'
     limit stacksize unlimited
