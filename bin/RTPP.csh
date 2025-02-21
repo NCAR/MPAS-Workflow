@@ -190,11 +190,11 @@ set prevYAML = $thisYAML
 set AnalysisVariables = ( \
   $StandardAnalysisVariables \
   pressure_p \
-  pressure \
-  rho \
-  theta \
+  air_pressure \
+  dry_air_density \
+  air_potential_temperature \
   u \
-  qv \
+  water_vapor_mixing_ratio_wrt_dry_air \
 )
 foreach hydro ($MPASHydroIncrementVariables)
   set AnalysisVariables = ($AnalysisVariables $hydro)
