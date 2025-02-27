@@ -422,7 +422,7 @@ main()
   local help=""
   local CYLC_ENV_SCRIPT="env-setup/machine.sh"
 
-# get comamnd line args
+# get command line args
   while getopts w:d:k:g:o:s:x:l:m:c:h flag
   do
     case "${flag}" in
