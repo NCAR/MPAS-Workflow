@@ -31,6 +31,8 @@ else
     else if ("$NCAR_HOST" == "derecho") then
       source /etc/profile.d/z00_modules.csh
       module purge
+      module load ncarenv/23.09
+      module reset
 
       if ("$NGPUS" == "0") then
         module load intel-oneapi/2023.0.0
@@ -52,7 +54,7 @@ else
         module load netcdf-mpi
         module load parallel-netcdf
         module load ncarcompilers
-        setenv mpiCommand mpiexec
+        setenv mpiCommand "mpiexec set_gpu_rank"
       else
         echo "unknown node type"
       endif

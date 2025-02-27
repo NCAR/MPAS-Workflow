@@ -6,8 +6,8 @@ forecast:
       PEPerNode: 128
       baseSeconds: 60
       secondsPerForecastHR: 500
-      # uncomment the following to run the forecast on a gpu node on derecho
-      #GPUPerNode: 4
+      # set GPUPerNode to > 0 to run the forecast on a gpu node on derecho
+      GPUPerNode: 0
       # you must also specify the following in your top level scenario
       # build:
       #   forecast directory: <path to gpu build of MPAS-Model> 

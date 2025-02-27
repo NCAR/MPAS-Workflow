@@ -73,7 +73,7 @@ class PBSPro(Task):
       # to route the PBS job to the gpu queue.
       gpu_str = ''
       self.r.log('Task.directives: GPUPerNode:' + str(self.r['GPUPerNode']), level=self.r.MSG_DEBUG)
-      if self.r['GPUPerNode'] is not None:
+      if self.r['GPUPerNode'] is not None and self.r['GPUPerNode'] > 0:
         # specifying ngpus in the select statement will send the job to the gpu queue.
         gpu_str = ':ngpus='+str(self.r['GPUPerNode'])
         memory = None # don't specify memory, use whatever is available on the GPU node

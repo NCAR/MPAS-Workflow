@@ -3,8 +3,8 @@ suite: ForecastFromExternalAnalyses
 externalanalyses:
   resource: "GFS.RDA"
 
-#build:
-#  forecast directory: path-for-mpas-model-build
+build:
+  #forecast directory: /glade/derecho/scratch/jwittig/repos-s/mpas-bundle-io/build-nvhpc
 
 experiment:
   name: 'ForecastFromGFSAnalysesMPT_TEST'
