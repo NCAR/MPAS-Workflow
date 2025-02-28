@@ -7,6 +7,7 @@
  which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 '''
 import os
+from pathlib import Path
 
 from initialize.config.Component import Component
 from initialize.config.Config import Config
@@ -118,12 +119,38 @@ class Build(Component):
       self._set('InitEXE', 'mpas_init_'+model['MPASCore'])
 
       # either use forecast executable from the bundle or a separate MPAS-Atmosphere build
+      self.log('self[mpas bundle] ' + self['mpas bundle'], level=self.MSG_DEBUG)
+      self.log('self[forecast directory] ' + self['forecast directory'], level=self.MSG_DEBUG)
       if self['forecast directory'] == 'bundle':
         self._set('ForecastBuildDir', self['mpas bundle']+'/bin')
         self._set('ForecastEXE', 'mpas_'+model['MPASCore'])
       else:
-        self._set('ForecastBuildDir', self['forecast directory'])
-        self._set('ForecastEXE', model['MPASCore']+'_model')
+        # look for atmosphere_model in the provided directory (original behavior)
+        forecastDir = self['forecast directory']
+        forecastExe = model['MPASCore']+'_model'
+        self.log('looking for ' + forecastDir + '/' + forecastExe, level = self.MSG_DEBUG)
+        if Path(forecastDir + '/' + forecastExe).is_file():
+          self._set('ForecastBuildDir', forecastDir)
+          self._set('ForecastEXE', forecastExe)
+          self.log('Setting ForecastBuildDir to ' + forecastDir + ' , ForecastEXE to ' + forecastExe, level=self.MSG_QUIET)
+        else:
+          # if atmosphere_model wasn't found look for mpas_atmosphere
+          forecastExe = 'mpas_'+model['MPASCore']
+          self.log('looking for ' + forecastDir + '/' + forecastExe, level = self.MSG_DEBUG)
+          if Path(forecastDir + '/' + forecastExe).is_file():
+            self._set('ForecastBuildDir', forecastDir)
+            self._set('ForecastEXE', forecastExe)
+            self.log('Setting ForecastBuildDir to ' + forecastDir + ' , ForecastEXE to ' + forecastExe, level=self.MSG_QUIET)
+          else:
+            # if mpas_atmosphere wasn't found in the provided directory, look in bin
+            forecastDir = forecastDir + '/bin'
+            self.log('looking for ' + forecastDir + '/' + forecastExe, level = self.MSG_DEBUG)
+            if Path(forecastDir + '/' + forecastExe).is_file():
+              self._set('ForecastBuildDir', forecastDir)
+              self._set('ForecastEXE', forecastExe)
+              self.log('Setting ForecastBuildDir to ' + forecastDir + ' , ForecastEXE to ' + forecastExe, level=self.MSG_QUIET)
+            else:
+              self.log('could not find forecast executable in ' + self['forecast directory'], level=self.MSG_QUIET)
 
       if system == 'derecho':
         self._set('MPASLookupDir', self['mpas bundle']+'/MPAS/core_atmosphere')
