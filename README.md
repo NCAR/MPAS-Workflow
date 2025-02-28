@@ -1,3 +1,20 @@
+-   [MPAS-Workflow](#mpas-workflow)
+    -   [Starting a cycling experiment on the Derecho
+        HPC](#starting-a-cycling-experiment-on-the-derecho-hpc)
+    -   [Build](#build)
+    -   [Configuration files](#configuration-files)
+        - [Developer-modifiable configuration](#developer-modifiable-configuration)
+    -   [Main driver](#main-driver)
+    -   [Workflow task scripts](#workflow-task-scripts)
+    -   [Non-task shell
+        scripts](#non-task-shell-scripts)
+    -   [Python tools](#python-tools)
+    -   [Notes on `Cylc`](#notes-on-cylc)
+    -   [A note about disk
+        management](#a-note-about-disk-management)
+    -   [References](#references)
+    -   [Contributions](#contributions)
+
 
 MPAS-Workflow
 =============
@@ -69,7 +86,7 @@ When setting up symlinks, ensure the run/cylc-run/MPAS-Workflow directory is emp
 `scenarios/*.yaml` and `test/testinput/*.yaml`
 
 Build
------
+------
 At this time the workflow does not build MPAS-Model or JEDI-MPAS.  Users must acquire source
 code from either [JCSDA/mpas-bundle](https://github.com/JCSDA/mpas-bundle/) or
 [JCSDA-internal/mpas-bundle](https://github.com/JCSDA-internal/mpas-bundle/).  Then they must
@@ -214,8 +231,8 @@ substitution is carried out by `bin/PrepJEDI.csh`.
 
 
 
-Main driver: Run.py
--------------------
+Main driver
+------------------
 
 `Run.py` initiates a single scenario or a list of scenarios, each of which is associated with one
 of the pre-defined suites (`initialize/suites/*.py`). Each scenario must be described in
@@ -319,9 +336,9 @@ and date-resolved directories
 3. Submit the suite
 
 
-Python tools (`tools/*.py`)
+Python tools
 ---------------------------
-Each of these tools perform a useful part of the workflow that is otherwise cumbersome to achieve
+Each of these tools (tools/*.py) perform a useful part of the workflow that is otherwise cumbersome to achieve
 via shell scripts. The argument definitions for each script can be retrieved by executing
 `python {{ScriptName}}.py --help`
 
