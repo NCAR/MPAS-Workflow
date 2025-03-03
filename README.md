@@ -9,6 +9,7 @@
     -   [Non-task shell
         scripts](#non-task-shell-scripts)
     -   [Python tools](#python-tools)
+    -   [Using GPU's](#using-gpus)
     -   [Notes on `Cylc`](#notes-on-cylc)
     -   [A note about disk
         management](#a-note-about-disk-management)
@@ -372,6 +373,29 @@ Single-node multi-processor tasks may also be carried out in python scripts, whi
 practice in `MPAS-Workflow` verification. However, scalable multi-processor operations, especially
 those dealing with complex operations on model state data are often better-handled by compiled
 executables.
+
+Using GPUs
+-----------
+
+The workflow steps which run the MPAS Model can be configured to run on compute nodes which have GPU's.
+In order to do this you must have a GPU enabled build of the MPAS-Model available.
+Once a GPU build of MPAS-Model is available there are two changes which must be made to
+the main scenario yaml of the workflow
+1. Set an attribute in your main scenario yaml file to point to the GPU enabled mpas_atmosphere executable:
+Add the following to the yaml file
+```
+build:
+  forecast directory: <path to the folder containing the gpu build of mpas_atmosphere>
+```
+2. Add the GPUPerNode attribute to the forecast section of the main scenario yaml
+```
+    forecast:
+      job:
+        GPUPerNode: 4
+
+```
+If the value of `GPUPerNode` is zero GPU nodes will not be used.
+
 
 
 Notes on `Cylc`
