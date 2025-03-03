@@ -376,7 +376,7 @@ executables.
 
 Notes on `Cylc`
 ---------------
-Full documentation on `Cylc` can be found [here](https://cylc.github.io/documentation/). Below are
+Full documentation on `Cylc` can be found [here](https://cylc.github.io/cylc-doc/stable/html/). Below are
 some useful `Cylc` commands to get new users started.
 
 1. Print a list of active suites
