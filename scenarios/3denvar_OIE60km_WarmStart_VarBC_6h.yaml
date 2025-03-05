@@ -1,0 +1,50 @@
+observations:
+  resource: "SimonsArchive_6h"
+
+experiment:
+  suffix: "_6h_test_1"
+
+members:
+  n: 1
+
+model:
+  outerMesh: 60km
+  innerMesh: 60km
+  ensembleMesh: 60km
+
+firstbackground:
+  resource: "PANDAC.GFS"
+  resources:
+    PANDAC:
+      GFS:
+        60km:
+          directory: "/glade/u/home/stoedtli/scratch/6h_cycling/first_background/60km/{{FirstCycleDate}}"
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+  resources:
+    GFS:
+      PANDAC:
+        60km:
+          directory: "/glade/u/home/stoedtli/scratch/6h_cycling/external_analyses/60km"
+
+variational:
+  DAType: 3denvar
+  biasCorrection: True
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS_4DEnVar_80mem"
+  #execute: False # the default is True
+  post: [] # this turns off verifyobs
+
+forecast:
+  #execute: False # the default is True
+  post: [verifymodel] # use this when doing extended forecast
+  #post: [verifymodel] # this turns off verifyobs
+
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180415T02
+  final cycle point: 20180415T12
+  CyclingWindowHR: 6 # default is 6 for cycling DA
+  #max active cycle points: 4 # used for independent 'extendedforecast'
