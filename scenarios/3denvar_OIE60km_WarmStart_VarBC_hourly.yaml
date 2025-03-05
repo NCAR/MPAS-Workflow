@@ -1,57 +1,8 @@
 observations:
-  resource: PANDACArchiveForVarBC
-  resources:
-    PANDACArchiveForVarBC:
-      IODADirectory:
-        da:
-          ## anchor
-          aircraft: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          gnssrobndropp1d: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          gnssrobndnbam: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          gnssrobndmo: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          gnssrobndmo-nopseudo: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          gnssrorefncep: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          gnssrorefncep_tunedErrors: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          satwind: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          satwnd: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          sfc: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          sondes: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-
-          ## amsua
-          amsua_aqua: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          amsua_metop-a: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          amsua_metop-b: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          amsua_n15: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          amsua_n18: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          amsua_n19: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          amsua-cld_aqua: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          amsua-cld_metop-a: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          amsua-cld_metop-b: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          amsua-cld_n15: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          amsua-cld_n18: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          amsua-cld_n19: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-
-          ## mhs
-          mhs_metop-a: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          mhs_metop-b: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          mhs_n18: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          mhs_n19: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-
-          ## abi
-          abi_g16: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          abi-clr_g16: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-
-          ## ahi
-          ahi_himawari8: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          ahi-clr_himawari8: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-
-          ## iasi
-          iasi_metop-a: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          iasi_metop-b: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
-          iasi_metop-c: /glade/u/home/stoedtli/scratch/hourly_cycling/observations
+  resource: "SimonsArchive_1h"
 
 experiment:
-  suffix: '_test_1week_1'
+  suffix: '_1h_test_extended_fc_1'
 
 members:
   n: 1
@@ -67,7 +18,7 @@ firstbackground:
     PANDAC:
       GFS:
         60km:
-          directory: "/glade/u/home/stoedtli/scratch/hourly_cycling/first_background/60km/{{FirstCycleDate}}"
+          directory: "/glade/u/home/stoedtli/scratch/1h_cycling/first_background/60km/{{FirstCycleDate}}"
 
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -75,7 +26,7 @@ externalanalyses:
     GFS:
       PANDAC:
         60km:
-          directory: "/glade/u/home/stoedtli/scratch/hourly_cycling/external_analyses/60km"
+          directory: "/glade/u/home/stoedtli/scratch/1h_cycling/external_analyses/60km"
 
 variational:
   DAType: 3denvar
@@ -83,24 +34,28 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS_4DEnVar_80mem"
+      PANDAC:
+        GEFS_4DEnVar_80mem:
+          60km:
+            directory0: "/glade/u/home/stoedtli/scratch/1h_cycling/ensemble/60km/{{prevDateTime}}"
   #execute: False # the default is True
-  #post: [] # this turns off verifyobs
+  post: [] # this turns off verifyobs
 
 forecast:
   #execute: False # the default is True
-  #post: [] # use this when doing extended forecast
-  post: [verifymodel] # this turns off verifyobs
+  post: [] # use this when doing extended forecast
+  #post: [verifymodel] # this turns off verifyobs
 
-#extendedforecast:
-#  meanTimes: T00 # T00, T12
-#  lengthHR: 120
-#  outIntervalHR: 24
-#  execute: True # this is the default setting
-#  post: [verifymodel,verifyobs] # can be replaced by [verifyobs,verifymodel]
+extendedforecast:
+  meanTimes: T03, T09, T15, T21 # T00, T12
+  lengthHR: 3
+  outIntervalHR: 3
+  #execute: True # this is the default setting
+  post: [verifymodel] # can be replaced by [verifyobs,verifymodel]
+
 workflow:
-  first cycle point: 20180416T23
-  #restart cycle point: 20180418T00
-  final cycle point: 20180421T23
-  #final cycle point: 20180514T18
+  first cycle point: 20180414T20
+  #restart cycle point: 20180415T02
+  final cycle point: 20180415T12
   CyclingWindowHR: 1 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'
