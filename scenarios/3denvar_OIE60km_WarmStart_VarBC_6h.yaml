@@ -1,5 +1,6 @@
 observations:
-  resource: "SimonsArchive_6h"
+  resource: "SimonsArchive_6h"  # for cycling
+  #resource: "SimonsArchive_1h"  # for validation
 
 experiment:
   suffix: "_6h_test_1"
@@ -34,13 +35,20 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GEFS_4DEnVar_80mem"
-  #execute: False # the default is True
+  execute: False # the default is True
   post: [] # this turns off verifyobs
 
 forecast:
-  #execute: False # the default is True
+  execute: False # the default is True
   post: [verifymodel] # use this when doing extended forecast
   #post: [verifymodel] # this turns off verifyobs
+
+extendedforecast:
+  meanTimes: T00, T06, T12, T18 # T00, T12
+  lengthHR: 6
+  outIntervalHR: 6
+  execute: False # this is the default setting
+  post: [verifyobs,verifymodel] # can be replaced by [verifyobs,verifymodel]
 
 workflow:
   first cycle point: 20180414T18
