@@ -465,7 +465,18 @@ main()
 
   if [ "$graphics_dir" == "" ]; then
     if [ "$bundle_dir" != "" ]; then
-      check_exists "$bundle_dir" "bundle dir" "dir"
+      # if the bundle_dir doesn't exist, look for the newest dir w/
+      # the same root name, e.g. bundle_dir_<something>
+      if [ ! -d "${bundle_dir}" ]; then
+        local readonly b_dirs=($(ls -rd ${bundle_dir}*))
+        if [ "${#b_dirs[@]}" -gt 0 ]; then
+          log "setting bundle_dir=${b_dirs[0]}"
+          bundle_dir=${b_dirs[0]}
+        else
+          log "cannot find any build dirs at ${bundle_dir}"
+          usage
+        fi
+      fi
     fi
     check_exists "$workflow_dir/$scenario" "scenario" "file"
 
