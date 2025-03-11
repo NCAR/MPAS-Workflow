@@ -1,0 +1,67 @@
+
+observations:
+  resource: "SimonsArchive_1h"
+
+experiment:
+  suffix: '_1h_test_1'
+
+members:
+  n: 1
+
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+
+firstbackground:
+  resource: "PANDAC.GFS"
+  resources:
+    PANDAC:
+      GFS:
+        60km:
+          directory: "/glade/u/home/stoedtli/scratch/1h_cycling/first_background/60km/{{FirstCycleDate}}"
+        30km:
+          directory: "/glade/u/home/stoedtli/scratch/1h_cycling/first_background/30km/{{FirstCycleDate}}"
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+  resources:
+    GFS:
+      PANDAC:
+        60km:
+          directory: "/glade/u/home/stoedtli/scratch/1h_cycling/external_analyses/60km"
+        30km:
+          directory: "/glade/u/home/stoedtli/scratch/1h_cycling/external_analyses/30km"
+
+variational:
+  DAType: 3denvar
+  biasCorrection: True
+  # nInnerIterations: [60,60,]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS_4DEnVar_80mem"
+      PANDAC:
+        GEFS_4DEnVar_80mem:
+          60km:
+            directory0: "/glade/u/home/stoedtli/scratch/1h_cycling/ensemble/60km/{{prevDateTime}}"
+  #execute: False # the default is True
+  post: [] # this turns off verifyobs
+
+forecast:
+  #execute: False # the default is True
+  post: [] # use this when doing extended forecast
+  #post: [verifymodel] # this turns off verifyobs
+
+# extendedforecast:
+#   meanTimes: T03, T09, T15, T21 # T00, T12
+#   lengthHR: 3
+#   outIntervalHR: 3
+#   #execute: True # this is the default setting
+#   post: [verifymodel] # can be replaced by [verifyobs,verifymodel]
+
+workflow:
+  first cycle point: 20180414T20
+  #restart cycle point: 20180415T02
+  final cycle point: 20180415T01
+  CyclingWindowHR: 1 # default is 6 for cycling DA
+  #max active cycle points: 4 # used for independent 'extendedforecast'
