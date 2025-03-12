@@ -67,12 +67,23 @@ class PBSPro(Task):
     nodes = self.r.getOrDefault('nodes', None, int)
     if nodes is not None:
       PEPerNode = self.r['PEPerNode']
+      memory = self.r.getOrDefault('memory', None)
+
+      # if the task specifies to use GPU's modify the select statement
+      # to route the PBS job to the gpu queue.
+      gpu_str = ''
+      self.r.log('Task.directives: GPUPerNode:' + str(self.r['GPUPerNode']), level=self.r.MSG_DEBUG)
+      if self.r['GPUPerNode'] is not None and self.r['GPUPerNode'] > 0:
+        # specifying ngpus in the select statement will send the job to the gpu queue.
+        gpu_str = ':ngpus='+str(self.r['GPUPerNode'])
+        memory = None # don't specify memory, use whatever is available on the GPU node
+        if PEPerNode > self.maxProcPerGpuNode:
+          PEPerNode = self.maxProcPerGpuNode
       threads = self.r.getOrDefault('threads', 1, int)
       assert threads*PEPerNode <= self.maxProcPerNode, (
         'PBSPro: too many processors requested -->'+str(threads*PEPerNode))
 
-      memory = self.r.getOrDefault('memory', None)
-      select = str(nodes)+':ncpus='+str(PEPerNode)+':mpiprocs='+str(PEPerNode)
+      select = str(nodes)+':ncpus='+str(PEPerNode)+gpu_str+':mpiprocs='+str(PEPerNode)
       if threads > 1:
         select = str(nodes)+':ncpus='+str(self.maxProcPerNode)+':mpiprocs='+str(PEPerNode)+':ompthreads='+str(threads)
       if memory is not None:
@@ -92,6 +103,7 @@ class CheyenneTask(PBSPro):
 class DerechoTask(PBSPro):
   name = 'derecho'
   maxProcPerNode = 128
+  maxProcPerGpuNode = 64
   maxMemPerNode = "235GB"
 
   def __init__(self, r:Resource):

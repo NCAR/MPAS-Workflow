@@ -363,6 +363,7 @@ else
     if ( -e $f ) rm -v $f
   end
   ln -sfv ${ForecastBuildDir}/${ForecastEXE} ./
+  echo "{mpiCommand} ${mpiCommand} ./${ForecastEXE}"
   ${mpiCommand} ./${ForecastEXE}
 
 
