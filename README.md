@@ -1,3 +1,21 @@
+-   [MPAS-Workflow](#mpas-workflow)
+    -   [Starting a cycling experiment on the Derecho
+        HPC](#starting-a-cycling-experiment-on-the-derecho-hpc)
+    -   [Build](#build)
+    -   [Configuration files](#configuration-files)
+        - [Developer-modifiable configuration](#developer-modifiable-configuration)
+    -   [Main driver](#main-driver)
+    -   [Workflow task scripts](#workflow-task-scripts)
+    -   [Non-task shell
+        scripts](#non-task-shell-scripts)
+    -   [Python tools](#python-tools)
+    -   [Using GPU's](#using-gpus)
+    -   [Notes on `Cylc`](#notes-on-cylc)
+    -   [A note about disk
+        management](#a-note-about-disk-management)
+    -   [References](#references)
+    -   [Contributions](#contributions)
+
 
 MPAS-Workflow
 =============
@@ -69,7 +87,7 @@ When setting up symlinks, ensure the run/cylc-run/MPAS-Workflow directory is emp
 `scenarios/*.yaml` and `test/testinput/*.yaml`
 
 Build
------
+------
 At this time the workflow does not build MPAS-Model or JEDI-MPAS.  Users must acquire source
 code from either [JCSDA/mpas-bundle](https://github.com/JCSDA/mpas-bundle/) or
 [JCSDA-internal/mpas-bundle](https://github.com/JCSDA-internal/mpas-bundle/).  Then they must
@@ -214,8 +232,8 @@ substitution is carried out by `bin/PrepJEDI.csh`.
 
 
 
-Main driver: Run.py
--------------------
+Main driver
+------------------
 
 `Run.py` initiates a single scenario or a list of scenarios, each of which is associated with one
 of the pre-defined suites (`initialize/suites/*.py`). Each scenario must be described in
@@ -319,9 +337,9 @@ and date-resolved directories
 3. Submit the suite
 
 
-Python tools (`tools/*.py`)
+Python tools
 ---------------------------
-Each of these tools perform a useful part of the workflow that is otherwise cumbersome to achieve
+Each of these tools (tools/*.py) perform a useful part of the workflow that is otherwise cumbersome to achieve
 via shell scripts. The argument definitions for each script can be retrieved by executing
 `python {{ScriptName}}.py --help`
 
@@ -356,10 +374,35 @@ practice in `MPAS-Workflow` verification. However, scalable multi-processor oper
 those dealing with complex operations on model state data are often better-handled by compiled
 executables.
 
+Using GPUs
+-----------
+
+The workflow steps which run the MPAS Model can be configured to run on compute nodes which have GPU's.
+In order to do this you must have a GPU enabled build of the MPAS-Model available.
+Once a GPU build of MPAS-Model is available there are two changes which must be made to
+the main scenario yaml of the workflow
+1. Set an attribute in your main scenario yaml file to point to the GPU enabled MPAS-Model executable:
+Add the following to the yaml file
+```
+build:
+  forecast directory: <path to the folder containing the gpu build of mpas_atmosphere>
+```
+The name of the mpas forecast program must be either `mpas_atmosphere` or `atmosphere_model`
+
+2. Add the GPUPerNode attribute to the forecast section of the main scenario yaml
+```
+    forecast:
+      job:
+        GPUPerNode: 4
+
+```
+If the value of `GPUPerNode` is zero GPU nodes will not be used.
+
+
 
 Notes on `Cylc`
 ---------------
-Full documentation on `Cylc` can be found [here](https://cylc.github.io/documentation/). Below are
+Full documentation on `Cylc` can be found [here](https://cylc.github.io/cylc-doc/stable/html/). Below are
 some useful `Cylc` commands to get new users started.
 
 1. Print a list of active suites
