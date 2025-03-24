@@ -2,8 +2,9 @@
 obsout_dir=YOUR_PATH
 tlaps_dir=YOUR_PATH
 instruments=""
+da_or_hofx=hofx
 # get all sat sensors
-for fname in `ls $obsout_dir/2018041500/dbOut/obsout_da_*_*.h5` ;do 
+for fname in `ls $obsout_dir/2018041500/dbOut/obsout_${da_or_hofx}_*_*.h5` ;do 
   basename=`basename $fname`
   basename=`echo $basename | cut -d '.' -f1`
   sensor=`echo $basename |cut -d '_' -f3`
@@ -21,7 +22,7 @@ for instrument in $instruments ;do
     echo $datetime
     mkdir -p $datetime
     tlapmean_output=$datetime/${instrument}_tlapmean.txt
-    obsout_fnames=`ls $obsout_dir/${datetime}/dbOut/obsout_da_${instrument}.h5`
+    obsout_fnames=`ls $obsout_dir/${datetime}/dbOut/obsout_${da_or_hofx}_${instrument}.h5`
     idate=${datetime:0:8}
     cyc=${datetime:8:10}
     idate_pre=`date -d "$idate $cyc -6 hour" +%Y%m%d`
