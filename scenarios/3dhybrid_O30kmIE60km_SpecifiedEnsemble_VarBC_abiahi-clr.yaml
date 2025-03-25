@@ -1,10 +1,9 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  suffix: '_ensB-SE80+RTPP70_VarBC_WV_ASR' #13bt230 #_AbsNormalizedOMB_Rcov
-  #_varBC-BT-SCI-RZA-BTclr 
+  suffix: '_ensB-SE80+RTPP70_VarBC_WV_CSR_crossCorr_cldamount0.05_solarZA'
+
 build:
   mpas bundle: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_11Dec2024_IRvarbc_obsErrors/build_SP_SymmCldImpactIRPred_BTlimObsError_ZenithAnglePred_BTlimPredictor
-  #/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_11Dec2024_IRvarbc_obsErrors/build_SP_SymmCldImpactIRPred_BTlimObsError_ZenithAnglePred_BTlimPredictor_obsFuntion-absNormOmB
   #/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_11Dec2024_IRvarbc_obsErrors/build_SP_SymmCldImpactIRPred_BTlimObsError_ZenithAnglePred_BTlimPredictor
   #/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_11Dec2024_IRvarbc_obsErrors/build_SP_varbc
   #/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_11Dec2024_IRvarbc_obsErrors/build_SP
@@ -44,11 +43,13 @@ model:
   ensembleMesh: 60km
 
 observations:
-  fixedTlapmeanCov: /glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_VarBC_7Jan2025_CA-harnish_newCoeff_updated/all
+  fixedTlapmeanCov: /glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_VarBC_7Jan2025_CA-harnish_newCoeff_updated_solarZA/all
+  #/glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_VarBC_7Jan2025_CA-harnish_newCoeff_updated/all
   #/glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_VarBC_7Jan2025_CA-harnish_newCoeff/all
   #/glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_VarBC_7Jan2025/all
   #/glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_constantBC_19Dec2024/all
-  initialVARBCcoeff: /glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_VarBC_7Jan2025_CA-harnish_newCoeff_updated/all
+  initialVARBCcoeff: /glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_VarBC_7Jan2025_CA-harnish_newCoeff_updated_solarZA
+  #/glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_VarBC_7Jan2025_CA-harnish_newCoeff_updated/all
   #/glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_VarBC_7Jan2025_CA-harnish_newCoeff/all
   #/glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_VarBC_7Jan2025/all
   #/glade/campaign/mmm/parc/ivette/pandac/SATBIAS_fixed/abiahi_constantBC_19Dec2024/all
@@ -67,10 +68,10 @@ observations:
       - mhs_metop-b
       - mhs_n18
       - mhs_n19
-      - ahi_himawari8
-      - abi_g16
-      #- abi-clr_g16
-      #- ahi-clr_himawari8
+      #- ahi_himawari8
+      #- abi_g16
+      - abi-clr_g16
+      - ahi-clr_himawari8
       IODADirectory:
         da:
           abi_g16: /glade/campaign/mmm/parc/ivette/pandac/Observations/abi/bj_so_abi/v3_nc_renamed
@@ -87,9 +88,12 @@ observations:
         ahi_himawari8: 15X15
 
 variational:
-  DAType: 3dhybrid-allsky
+  DAType: 3dhybrid
   biasCorrection: True
-  nInnerIterations: [50,60,90,]
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  nInnerIterations: [60,60,]
+  #radianceThinningDistance: 90.0
   ensemble:
     forecasts:
       resource: "PANDAC.EDA"
@@ -112,20 +116,26 @@ variational:
     mhs_metop-b,
     mhs_n18,
     mhs_n19,
-    abi_g16,
-    ahi_himawari8,
+    #abi_g16,
+    #ahi_himawari8,
+    abi-clr_g16,
+    ahi-clr_himawari8,
   ]
   job:
     defaults:
       retry: '3*PT30S'
     30km:
       60km:
-        3dhybrid-allsky:
-          nodes: 4
-          PEPerNode: 64
-          memory: 235GB
-          baseSeconds: 2000
-          secondsPerEnVarMember: 8
+        3dhybrid:
+          baseSeconds: 900
+    #30km:
+    #  60km:
+    #    3dhybrid-allsky:
+    #      nodes: 4
+    #      PEPerNode: 64
+    #      memory: 235GB
+    #      baseSeconds: 1800
+    #      secondsPerEnVarMember: 8
   concatenateObsFeedback: True
 
 hofx:
@@ -133,8 +143,8 @@ hofx:
 
 workflow:
   first cycle point: 20180414T18
-  restart cycle point: 20180419T18
-  #final cycle point: 20180415T00
-  final cycle point: 20180420T18
+  #restart cycle point: 20180426T06
+  final cycle point: 20180415T00
+  #final cycle point: 20180430T00
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   max active cycle points: 60 # used for independent 'extendedforecast'

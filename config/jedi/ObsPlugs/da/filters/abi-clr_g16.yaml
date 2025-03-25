@@ -6,12 +6,12 @@
       maxvalue: 60.0
     - variable:
         name: MetaData/cloudAmount
-      maxvalue: 0.05
+      maxvalue: 0.05 #0.0
 #    - variable:
 #        name: GeoVaLs/water_area_fraction
 #      minvalue: 1.0
   - filter: Gaussian Thinning
-    horizontal_mesh: {{RADTHINDISTANCE}}
+    horizontal_mesh: 90.0
 # Assign obsError
 #std: [1.68, 1.61, 1.24]
   - filter: Perform Action

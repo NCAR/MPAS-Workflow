@@ -13,44 +13,59 @@
     <<: *multiIterationFilter
     filter variables:
     - name: brightnessTemperature
-      channels: *abi_g16_channels
+      channels: *ahi_himawari8_channels
     action:
       name: assign error
       _symmetric cld: &abi_g16_SymmCld
         x0: [0.5, 0.5, 0.5]
-        x1: [17.0, 20.5, 24.5]
-        err0: [3.21, 3.11, 2.47]
-        err1: [12.57, 14.57, 17.09]
+        x1: [45.0, 29.0, 32.0]
+        err0: [1.57, 3.01, 2.30]
+        err1: [12.74, 14.72, 15.07]
       error function:
         name: ObsFunction/ObsErrorModelRamp
-        channels: *abi_g16_channels
+        channels: *ahi_himawari8_channels
         options:
           <<: *abi_g16_SymmCld
-          channels: *abi_g16_channels
+          channels: *ahi_himawari8_channels
           xvar:
             name: ObsFunction/SymmCldImpactBTlim
-            channels: *abi_g16_channels
+            channels: *ahi_himawari8_channels
             options:
-              channels: *abi_g16_channels
-              btlim: [235.2, 245.7, 258.3]
+              channels: *ahi_himawari8_channels
+              btlim: [261.9, 247.9, 259.6]
+
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *ahi_himawari8_channels
+    test variables:
+      - name: ObsFunction/AbsNormalizedOMB
+        channels: *ahi_himawari8_channels
+        options:
+          channels: *ahi_himawari8_channels
+          btlim: [261.9, 247.9, 259.6]
+    maxvalue: 5.0
+    action:
+      name: reject
+
   - filter: Background Check
     threshold: 3.0
   - filter: GOMsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_abi_g16.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_ahi_himawari8.nc4
   - filter: YDIAGsaver
-    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_abi_g16.nc4
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_ahi_himawari8.nc4
     filter variables:
     - name: brightness_temperature_assuming_clear_sky
-      channels: *abi_g16_channels
+      channels: *ahi_himawari8_channels
     - name: weightingfunction_of_atmosphere_layer
-      channels: *abi_g16_channels
+      channels: *ahi_himawari8_channels
     - name: pressure_level_at_peak_of_weightingfunction
-      channels: *abi_g16_channels
+      channels: *ahi_himawari8_channels
     - name: brightness_temperature_jacobian_air_temperature
-      channels: *abi_g16_channels
+      channels: *ahi_himawari8_channels
     - name: brightness_temperature_jacobian_humidity_mixing_ratio
-      channels: *abi_g16_channels
+      channels: *ahi_himawari8_channels
     - name: brightness_temperature_jacobian_surface_emissivity
-      channels: *abi_g16_channels
+      channels: *ahi_himawari8_channels
     - name: brightness_temperature_jacobian_surface_temperature
-      channels: *abi_g16_channels
+      channels: *ahi_himawari8_channels

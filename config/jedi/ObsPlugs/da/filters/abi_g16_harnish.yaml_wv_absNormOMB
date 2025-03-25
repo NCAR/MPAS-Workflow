@@ -33,6 +33,21 @@
             options:
               channels: *abi_g16_channels
               btlim: [235.2, 245.7, 258.3]
+
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *abi_g16_channels
+    test variables:
+      - name: ObsFunction/AbsNormalizedOMB
+        channels: *abi_g16_channels
+        options:
+          channels: *abi_g16_channels
+          btlim: [235.2, 245.7, 258.3]
+    maxvalue: 5.0
+    action:
+      name: reject
+
   - filter: Background Check
     threshold: 3.0
   - filter: GOMsaver

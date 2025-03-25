@@ -4,6 +4,7 @@
     variational bc:
       predictors:
       - name: constant
+      #- name: sensorZenithAngle
       - name: lapseRate
         order: 2
         tlapse: &abig16tlap {{fixedTlapmeanCov}}/abi_g16_tlapmean.txt
@@ -17,6 +18,8 @@
       - name: sensorScanAngle
         order: 2
       - name: sensorScanAngle
+      #- name: obsMetadataPredictor
+      #  variable: solarZenithAngle
     covariance:
       minimal required obs number: 200
       variance range: [1.0e-6, 10.]

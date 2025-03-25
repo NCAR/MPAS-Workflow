@@ -6,7 +6,7 @@
       maxvalue: 60.0
 
   - filter: Gaussian Thinning
-    horizontal_mesh: {{RADTHINDISTANCE}}
+    horizontal_mesh: 90.0 #{{RADTHINDISTANCE}}
 
 # Assign obsError.
   - filter: Perform Action
