@@ -352,8 +352,8 @@ variational:
       # Assuming 60 total inner iterations
       120km:
         3denvar:
-          nodes: 1
-          PEPerNode: 128
+          nodes: 2
+          PEPerNode: 64
           memory: 235GB
           baseSeconds: 200
           secondsPerEnVarMember: 15
