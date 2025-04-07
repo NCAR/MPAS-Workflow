@@ -280,7 +280,14 @@ make_graphs()
   local new_run="" # the current job
   local prev_run="" # the job run prior to the current run
   # PBS directives
-  local readonly queue="-q develop"
+  if [[ "$NCAR_HOST" == "derecho" ]]; then
+    local readonly queue="-q develop"
+  elif [[ "$NCAR_HOST" == "casper" ]]; then
+    local readonly queue="-q casper"
+  else
+    log "unknown host: $NCAR_HOST, not making graphs"
+    return
+  fi
   local readonly account="-a nmmm0015"
   local readonly memory="-m 12"
   # SpawnAnalyzeStats arguments
