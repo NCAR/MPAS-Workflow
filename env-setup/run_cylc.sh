@@ -227,29 +227,6 @@ check_cylc_job()
   return 0
 }
 
-# wait for the provided job to either show in the queue ($2 is 1)
-# or for the job to leave the queue ($2 is 0)
-queue_wait()
-{
-  local job=$1
-  local pcode=$2
-  local secs=$3
-  local dir="enter"
-  if [ "$pcode" == 0 ]; then
-    dir="leave"
-  fi
-
-  log "waiting for $job to $dir queue, checking every $secs seconds"
-
-  qstat ${job} &> /dev/null
-  local rc=$?
-  while [ ${rc} == "${pcode}" ]; do
-    sleep ${secs}
-    qstat ${job} &> /dev/null
-    rc=$?
-  done
-}
-
 # create comparison graphs between the provided cylc experiment and
 #   1. the baseline run
 #   2. the previous run (if there is one)
@@ -344,27 +321,27 @@ make_graphs()
   # make model comparison graphs against the baseline
   gen_graphs $base_label $base_run $new_label $new_run $model_out_dir $graphics_dir "$base_args $model_spaces" model_base_sync_job
   log "make_graphs sync job:$model_base_sync_job"
-  queue_wait ${model_base_sync_job} 1 5 # wait for the sync jobs to show up in the queue, check every 5 seconds
 
   # make omb/oma comparison graphs against the baseline
   gen_graphs $base_label $base_run $new_label $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces" obs_base_sync_job
-  queue_wait ${obs_base_sync_job} 1 5 # wait for the sync jobs to show up in the queue, check every 5 seconds
 
   if [ "$prev_run" != "" ]; then
     # make forecast comparison graphs against the previous run
     gen_graphs $prev_label $prev_run $new_label $new_run $model_out_dir $graphics_dir "$base_args $model_spaces" model_prev_sync_job
-    queue_wait ${model_prev_sync_job} 1 5 # wait for the sync jobs to show up in the queue, check every 5 seconds
 
     # make omb/oma comparison graphs against the previous run
     gen_graphs $prev_label $prev_run $new_label $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces" obs_prev_sync_job
-    queue_wait ${obs_prev_sync_job} 1 5 # wait for the sync jobs to show up in the queue, check every 5 seconds
   fi
 
-  # wait for the sync jobs to finish, check every 60 seconds
-  queue_wait ${model_base_sync_job} 0 60
-  queue_wait ${model_prev_sync_job} 0 60
-  queue_wait ${obs_base_sync_job} 0 60
-  queue_wait ${obs_prev_sync_job} 0 60
+  # wait for the graphing jobs to finish
+  log "wait $model_base_sync_job"
+  wait ${model_base_sync_job}
+  log "wait ${model_prev_sync_job}"
+  wait ${model_prev_sync_job}
+  log "wait ${obs_base_sync_job}"
+  wait ${obs_base_sync_job}
+  log "wait ${obs_prev_sync_job}"
+  wait ${obs_prev_sync_job}
 
   # move the graphed file to the "graphed" directory
   mkdir -p $graph_dir || (log "failed to create $graph_dir" && exit 1)
@@ -386,9 +363,9 @@ gen_graphs()
   mkdir -p $out_dir/$base_name || (log "failed to create $out_dir/$base_name" && exit 1)
   cd $out_dir/$base_name
   log "making graphs in $out_dir/$base_name"
-  log "$script_dir/SpawnAnalyzeStats.py $script_args -w"
-  { jobno=$($script_dir/SpawnAnalyzeStats.py $script_args -w 2>&1 >&3 3>&-); } 3>&1
-
+  log "$script_dir/SpawnAnalyzeStats.py $script_args -w &"
+  $script_dir/SpawnAnalyzeStats.py $script_args -w &
+  jobno=$!
   log "gen_graphs sync job is $jobno"
   eval $8=$jobno
 }
