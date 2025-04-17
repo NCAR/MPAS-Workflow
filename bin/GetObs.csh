@@ -68,13 +68,6 @@ foreach inst ( ${convertToIODAObservations} )
           echo "Source file: ${satwndBUFRDirectory}/bufr/${ccyy}/${THIS_FILE}"
           cp -p ${satwndBUFRDirectory}/bufr/${ccyy}/${THIS_FILE} .
        endif
-       # link the GDAS observation error table
-       if ( -e ${GDASObsErrtable} ) then
-          ln -sf ${GDASObsErrtable} obs_errtable
-       else
-          echo "ERROR: ${GDASObsErrtable} does NOT exist" > ./FAIL
-          exit 1
-       endif
     # for prepbufr observations
     else if ( ${inst} == prepbufr ) then
        setenv THIS_FILE prepbufr.gdas.${ccyymmdd}.t${hh}z.nr.48h
@@ -88,14 +81,6 @@ foreach inst ( ${convertToIODAObservations} )
              cp -p ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE} .
           endif
        endif
-       # use obs errors embedded in prepbufr file
-       if ( -e obs_errtable ) then
-          rm -f obs_errtable
-       endif
-       # use external obs error table
-       #if ( -e ${GDASObsErrtable} ) then
-       #   ln -sf ${GDASObsErrtable} obs_errtable
-       #endif
     # for all other observations
     else
        # set the specific file to be extracted from the tar file
