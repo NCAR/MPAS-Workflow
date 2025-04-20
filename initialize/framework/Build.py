@@ -57,7 +57,6 @@ class Build(Component):
       # FIXME the source for the app in this directory was copied from
       # /glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1
       # meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-r2.0/build-gnu-derecho-single/bin'
-      meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-dev-new/build-gnu-1p-ss1.6.0/bin'
     elif system == 'cheyenne':
       self.variablesWithDefaults['mpas bundle'] = \
         ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build', str]
@@ -68,12 +67,9 @@ class Build(Component):
 
       # Ungrib
       wpsBuildDir = '/glade/work/guerrett/pandac/data/GEFS'
-      # Mean state calculator
-      meanStateBuildDir = '/glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1'
     else:
       self._msg('unknown host:' + system)
       wpsBuildDir = ''
-      meanStateBuildDir = ''
 
     super().__init__(config)
 
@@ -110,6 +106,10 @@ class Build(Component):
     ## SACA
     self._set('SACAEXE', 'mpasjedi_saca.x')
     self._set('SACABuildDir', self['mpas bundle']+'/bin')
+
+    ## EnsMeanVariance
+    self._set('meanStateExe', 'mpasjedi_ens_mean_variance.x')
+    self._set('meanStateBuildDir', self['mpas bundle']+'/bin')
 
     if model is not None:
 
@@ -187,12 +187,5 @@ class Build(Component):
     self._set('iodaUpgradeEXE1', 'ioda-upgrade-v1-to-v2.x')
     self._set('iodaUpgradeEXE2', 'ioda-upgrade-v2-to-v3.x')
     self._set('iodaUpgradeBuildDir', self['mpas bundle']+'/bin')
-
-    # Mean state calculator
-    # ---------------------
-    #self._set('meanStateExe', 'mpasjedi_ens_mean_variance.x')
-    #self._set('meanStateBuildDir', '/glade/work/taosun/Derecho/MPAS/JEDI_MPAS/build_intel'+'/bin')
-    self._set('meanStateExe', 'average_netcdf_files_parallel_mpas.x')
-    self._set('meanStateBuildDir', meanStateBuildDir)
 
     self._cshVars = list(self._vtable.keys())
