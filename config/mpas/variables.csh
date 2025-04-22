@@ -12,11 +12,11 @@ set MPASHydroIncrementVariables = ( \
 )
 
 set MPASHydroStateVariables = ( \
-  ${MPASHydroIncrementVariables} \
-  cloud_area_fraction_in_atmosphere_layer \
-  effective_radius_of_cloud_liquid_water_particle \
-  effective_radius_of_cloud_ice_particle \
-  effective_radius_of_snow_particle \
+  $MPASHydroIncrementVariables \
+  cldfrac \
+  re_cloud \
+  re_snow \
+  re_ice \
 )
 
 set StandardAnalysisVariables = ( \
