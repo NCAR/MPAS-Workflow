@@ -253,19 +253,19 @@ class EnKF(Component):
 
   [[EnKFObserver]]
     inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/bin/EnKFObserver.csh OMB
+    script = $origin/bin/EnKF.csh OMB
 '''+observertask.job()+observertask.directives()+'''
 
   [[EnKFSolver]]
     inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/bin/EnKF.csh
+    script = $origin/bin/EnKF.csh Solver
 '''+solvertask.job()+solvertask.directives()]
 
     if self['diagEnKFOMA'] and self['retainObsFeedback']:
        self._tasks += ['''
   [[EnKFDiagOMA]]
     inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/bin/EnKFObserver.csh OMA
+    script = $origin/bin/EnKF.csh OMA
 '''+diagomatask.job()+diagomatask.directives()]
        self._dependencies += ['''
         EnKFSolver => EnKFDiagOMA => '''+self.tf.post]
