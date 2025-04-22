@@ -49,21 +49,7 @@ variational:
     amsua_n19,
     iasi_metop-b,
   ]
-  # for a 6h obs file
-  job:
-    120km:
-      120km:
-        3denvar:
-          baseSeconds: 900
-          nodes: 8
-          PEPerNode: 16
-          memory: 109GB
-hpc:
-  CriticalQueue: premium
-  NonCriticalQueue: premium
+  # check job specification for Derecho
+
 verifyobs:
   script directory: /glade/campaign/mmm/parc/ivette/pandac/graphics
-hofx:
-  job:
-    120km:
-      seconds: 500

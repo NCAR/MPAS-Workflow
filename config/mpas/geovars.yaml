@@ -8,10 +8,34 @@
 # Field definitions for the UFO observation operators
 # *** Do not add different FieldIONames or LongName, ufo only uses one name ***
 
+# ------------------------------------------------------------------------------
+# "field name" :
+#      JEDI's generic model variable name.
+# "mpas templated field" :
+#      MPAS variable name that has the same type & shape (dimension).
+#      This is used for templating the initial "subFields" pool from MPAS domain.
+#      See the "subroutine da_template_pool".
+# "mpas identity field" :
+#      JEDI's generic model variable name that is identical to a given "field name".
+#      This is used in "Model2GeoVars" NL, TL, AD routines.
+#      If "mpas identity field" is defined, xg is just copied from xm.
+#      If not, xg should go though the variable changes (NL, TL, AD) from xm.
+# "mpas io name" :
+#      MPAS variable name that is matching a given "field name" (If exist).
+#      This is used when interacting with MPAS I/O from mpas-jedi.
+#      See the "subroutine da_copy_all2sub_fields" (read) & "da_copy_sub2all_fields" (write).
+# "mpas io scaling factor" :
+#      This is used to scale the MPAS variable to JEDI's generic model variable.
+#      This factor is multipled to MPAS-io-name fields to match the unit of generic-name fields.
+#      This is only applicable for simple scaling.
+#      See the "subroutine da_copy_all2sub_fields" (scale) & "da_copy_sub2all_fields" (un-scale).
+# ------------------------------------------------------------------------------
+
 fields:
   - field name: air_pressure
     mpas template field: theta
-    mpas identity field: pressure
+    mpas identity field: air_pressure
+    mpas io name: pressure
 
   - field name: air_pressure_levels
     mpas template field: w
@@ -36,57 +60,60 @@ fields:
 
   - field name: air_temperature
     mpas template field: theta
-    mpas identity field: temperature
-
-  - field name: temperature
-    mpas template field: theta
-    mpas identity field: temperature
+    mpas identity field: air_temperature
+    mpas io name: temperature
 
   - field name: eastward_wind
     mpas template field: theta
-    mpas identity field: uReconstructZonal
+    mpas identity field: eastward_wind
+    mpas io name: uReconstructZonal
 
   - field name: northward_wind
     mpas template field: theta
-    mpas identity field: uReconstructMeridional
+    mpas identity field: northward_wind
+    mpas io name: uReconstructMeridional
 
   - field name: water_vapor_mixing_ratio_wrt_dry_air
     mpas template field: theta
+    mpas io name: qv
 
   - field name: water_vapor_mixing_ratio_wrt_moist_air
     mpas template field: theta
-    mpas identity field: spechum
+    mpas identity field: water_vapor_mixing_ratio_wrt_moist_air
+    mpas io name: spechum
 
   - field name: height_above_mean_sea_level_at_surface
     mpas template field: u10
 
-  - field name: surface_pressure
-    mpas template field: u10
-    mpas identity field: surface_pressure
-
   - field name: air_pressure_at_surface
     mpas template field: u10
-    mpas identity field: surface_pressure
+    mpas identity field: air_pressure_at_surface
+    mpas io name: surface_pressure
 
   - field name: air_temperature_at_2m
     mpas template field: u10
-    mpas identity field: t2m
+    mpas identity field: air_temperature_at_2m
+    mpas io name: t2m
 
   - field name: water_vapor_mixing_ratio_wrt_moist_air_at_2m
     mpas template field: u10
-    mpas identity field: q2
+    mpas identity field: water_vapor_mixing_ratio_wrt_moist_air_at_2m
+    mpas io name: q2
 
   - field name: eastward_wind_at_10m
     mpas template field: u10
-    mpas identity field: u10
+    mpas identity field: eastward_wind_at_10m
+    mpas io name: u10
 
   - field name: northward_wind_at_10m
     mpas template field: u10
-    mpas identity field: v10
+    mpas identity field: northward_wind_at_10m
+    mpas io name: v10
 
   - field name: skin_temperature_at_surface
     mpas template field: u10
-    mpas identity field: skintemp
+    mpas identity field: skin_temperature_at_surface
+    mpas io name: skintemp
 
   - field name: landmask
     mpas template field: ivgtyp
@@ -94,7 +121,8 @@ fields:
 
   - field name: seaice_fraction
     mpas template field: u10
-    mpas identity field: xice
+    mpas identity field: seaice_fraction
+    mpas io name: xice
 
   - field name: mole_fraction_of_ozone_in_air
     mpas template field: theta
@@ -102,77 +130,97 @@ fields:
   - field name: mole_fraction_of_carbon_dioxide_in_air
     mpas template field: theta
 
+#--- ???
   - field name: mixing_ratio_of_cloud_liquid_water
     mpas template field: theta
-    mpas identity field: qc
+    mpas identity field: mixing_ratio_of_cloud_liquid_water
+    mpas io name: qc
 
   - field name: mixing_ratio_of_cloud_ice
     mpas template field: theta
-    mpas identity field: qi
+    mpas identity field: mixing_ratio_of_cloud_ice
+    mpas io name: qi
 
   - field name: mixing_ratio_of_rain
     mpas template field: theta
-    mpas identity field: qr
+    mpas identity field: mixing_ratio_of_rain
+    mpas io name: qr
 
   - field name: mixing_ratio_of_snow
     mpas template field: theta
-    mpas identity field: qs
+    mpas identity field: mixing_ratio_of_snow
+    mpas io name: qs
 
   - field name: mixing_ratio_of_graupel
     mpas template field: theta
-    mpas identity field: qg
+    mpas identity field: mixing_ratio_of_graupel
+    mpas io name: qg
 
   - field name: mixing_ratio_of_hail
     mpas template field: theta
-    mpas identity field: qh
+    mpas identity field: mixing_ratio_of_hail
+    mpas io name: qh
+#--- ???
 
   - field name: cloud_liquid_water
     mpas template field: theta
-    mpas identity field: qc
+    mpas identity field: cloud_liquid_water
+    mpas io name: qc
 
   - field name: cloud_liquid_ice
     mpas template field: theta
-    mpas identity field: qi
+    mpas identity field: cloud_liquid_ice
+    mpas io name: qi
 
   - field name: rain_water
     mpas template field: theta
-    mpas identity field: qr
+    mpas identity field: rain_water
+    mpas io name: qr
 
   - field name: snow_water
     mpas template field: theta
-    mpas identity field: qs
+    mpas identity field: snow_water
+    mpas io name: qs
 
   - field name: graupel
     mpas template field: theta
-    mpas identity field: qg
-
+    mpas identity field: graupel
+    mpas io name: qg
+  
   - field name: hail
     mpas template field: theta
-    mpas identity field: qh
+    mpas identity field: hail
+    mpas io name: qh
 
   - field name: cloud_droplet_number_concentration
     mpas template field: theta
-    mpas identity field: nc
+    mpas identity field: cloud_droplet_number_concentration
+    mpas io name: nc
 
   - field name: cloud_ice_number_concentration
     mpas template field: theta
-    mpas identity field: ni
+    mpas identity field: cloud_ice_number_concentration
+    mpas io name: ni
 
   - field name: rain_number_concentration
     mpas template field: theta
-    mpas identity field: nr
+    mpas identity field: rain_number_concentration
+    mpas io name: nr
 
   - field name: snow_number_concentration
     mpas template field: theta
-    mpas identity field: ns
+    mpas identity field: snow_number_concentration
+    mpas io name: ns
 
   - field name: graupel_number_concentration
     mpas template field: theta
-    mpas identity field: ng
+    mpas identity field: graupel_number_concentration
+    mpas io name: ng
 
   - field name: hail_number_concentration
     mpas template field: theta
-    mpas identity field: nh
+    mpas identity field: hail_number_concentration
+    mpas io name: nh
 
   - field name: moist_air_density
     mpas template field: theta
@@ -218,23 +266,28 @@ fields:
 
   - field name: average_surface_temperature_within_field_of_view
     mpas template field: u10
-    mpas identity field: skintemp
+    mpas identity field: skin_temperature_at_surface #average_surface_temperature_within_field_of_view   # how to handle duplicated variable?? or just procedure ??
+    mpas io name: skintemp
 
   - field name: skin_temperature_at_surface_where_sea
     mpas template field: u10
-    mpas identity field: skintemp
+    mpas identity field: skin_temperature_at_surface #skin_temperature_at_surface_where_sea
+    mpas io name: skintemp
 
   - field name: skin_temperature_at_surface_where_land
     mpas template field: u10
-    mpas identity field: skintemp
+    mpas identity field: skin_temperature_at_surface #skin_temperature_at_surface_where_land
+    mpas io name: skintemp
 
   - field name: skin_temperature_at_surface_where_ice
     mpas template field: u10
-    mpas identity field: skintemp
+    mpas identity field: skin_temperature_at_surface #skin_temperature_at_surface_where_ice
+    mpas io name: skintemp
 
   - field name: skin_temperature_at_surface_where_snow
     mpas template field: u10
-    mpas identity field: skintemp
+    mpas identity field: skin_temperature_at_surface #skin_temperature_at_surface_where_snow
+    mpas io name: skintemp
 
   - field name: surface_snow_thickness
     mpas template field: u10
@@ -243,8 +296,13 @@ fields:
     mpas template field: u10
     mpas identity field: znt
 
+#NOTE: If users comment-out "mpas identity field" and "mpas io scaling factor" below,
+#      this will go through (NL) Variable Change.
   - field name: vegetation_area_fraction
     mpas template field: u10
+#    mpas identity field: vegetation_area_fraction
+    mpas io name: vegfra # need scaling or Variable Change
+#    mpas io scaling factor: 0.01 # from MPAS unit [percent] to generic unit [unitless]
 
   - field name: leaf_area_index
     mpas template field: u10
@@ -270,11 +328,13 @@ fields:
 
   - field name: eastward_wind_at_surface
     mpas template field: u10
-    mpas identity field: u10
+    mpas identity field: eastward_wind_at_10m #we are doing this... for CRTM #eastward_wind_at_surface
+    mpas io name: u10
 
   - field name: northward_wind_at_surface
     mpas template field: u10
-    mpas identity field: v10
+    mpas identity field: northward_wind_at_10m #we are doing this... for CRTM #northward_wind_at_surface
+    mpas io name: v10
 
   - field name: wind_speed_at_surface
     mpas template field: u10
@@ -284,7 +344,7 @@ fields:
 
   - field name: wind_reduction_factor_at_10m
     mpas template field: u10
-
+    
   - field name: land_type_index_USGS
     mpas template field: ivgtyp
 
@@ -300,26 +360,51 @@ fields:
   - field name: tropopause_pressure
     mpas template field: u10
 
-  - field name: qv
-    mpas template field: theta
-    mpas identity field: qv
+#  - field name: qv
+#    mpas template field: theta
+#    mpas identity field: qv
+#
+#  - field name: qc
+#    mpas template field: theta
+#    mpas identity field: qc
+#
+#  - field name: qi
+#    mpas template field: theta
+#    mpas identity field: qi
+#
+#  - field name: qr
+#    mpas template field: theta
+#    mpas identity field: qr
+#
+#  - field name: qs
+#    mpas template field: theta
+#    mpas identity field: qs
+#
+#  - field name: qg
+#    mpas template field: theta
+#    mpas identity field: qg
 
-  - field name: qc
+  - field name: dry_air_density   # for increment.yaml ?
     mpas template field: theta
-    mpas identity field: qc
+    mpas identity field: dry_air_density
+    mpas io name: rho
 
-  - field name: qi
+  - field name: air_potential_temperature   # for increment.yaml ?
     mpas template field: theta
-    mpas identity field: qi
+    mpas identity field: air_potential_temperature
+    mpas io name: theta
 
-  - field name: qr
+  - field name: air_horizontal_streamfunction
     mpas template field: theta
-    mpas identity field: qr
+    mpas identity field: air_horizontal_streamfunction
+    mpas io name: stream_function
 
-  - field name: qs
+  - field name: air_horizontal_velocity_potential
     mpas template field: theta
-    mpas identity field: qs
+    mpas identity field: air_horizontal_velocity_potential
+    mpas io name: velocity_potential
 
-  - field name: qg
+  - field name: relative_humidity
     mpas template field: theta
-    mpas identity field: qg
+    mpas identity field: relative_humidity
+    mpas io name: relhum

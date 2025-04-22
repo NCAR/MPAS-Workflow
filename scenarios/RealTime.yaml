@@ -21,12 +21,3 @@ variational:
   DAType: 3dvar
   nInnerIterations: [60,]
   biasCorrection: True
-  job:
-    120km:
-      # Assuming 60 total inner iterations
-      120km:
-        3dvar:
-          baseSeconds: 400
-hpc:
-  CriticalQueue: premium
-  NonCriticalQueue: economy

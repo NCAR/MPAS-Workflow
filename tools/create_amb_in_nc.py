@@ -43,7 +43,9 @@ def create_anal_incr_to_nc():
     file_a = 'an.%s.nc'%(tanl.strftime('%Y-%m-%d_%H.%M.%S'))	# Input analysis
     file_b = 'bg.%s.nc'%(tanl.strftime('%Y-%m-%d_%H.%M.%S'))	# Input background
     famb =  'AmB.%s.nc'%(tiau.strftime('%Y-%m-%d_%H.%M.%S')) 	# Output analysis increments
-    fout  = Dataset(famb, 'w')
+    fout  = Dataset(famb, 'w', format="NETCDF3_64BIT_DATA")
+    print('fout.data_model:', fout.data_model)
+    print('====================================')
 
     # Read input files - chunks can be adjusted to fit into the memory, if files are too large.
     #------------------------------------------
@@ -58,7 +60,7 @@ def create_anal_incr_to_nc():
     fout.input_xtime = tanl.strftime('%Y-%m-%d_%H:%M:%S') + ' UTC'
     fout.IAU_window_length_s = args.IAU_window_length_s
     fout.input_interval = "initial_only"
-    fout.io_type = "netcdf4"
+    fout.io_type = "NETCDF3_64BIT_DATA" #cdf5
 
     for name, dimension in fa.dimensions.items():
      if name == 'Time':

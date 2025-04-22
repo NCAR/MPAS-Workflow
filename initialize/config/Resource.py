@@ -30,9 +30,14 @@ class Resource(Config):
               'typ': type}, # e.g., int, float, str, list, optional, None when missing
            }
     '''
+    # init the logging facility
+    super().__init__()
+
     self._table = {}
     self._defaults = {}
 
+    self.log('keys:' + str(keys), level=self.MSG_NOISY)
+    self.log('resource:' + str(resource), level=self.MSG_NOISY)
     for key, att in keys.items():
       default = att.get('def', None)
       required = att.get('req', True)
@@ -44,6 +49,7 @@ class Resource(Config):
         self._table[key] = self.extractNodeOrDie(config, resource, key, typ)
       else:
         self._table[key] = self.extractNode(config, resource, key, typ)
+
 
   @staticmethod
   def extractNode(config, resource:tuple, key:str, typ=None):
