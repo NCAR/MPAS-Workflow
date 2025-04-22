@@ -5,7 +5,7 @@ enkf:
   horizontal localization lengthscale: 1.2e6
   vertical localization lengthscale: 10.0 # modellevel
   vertical localization lengthscale units: modellevel
-  staticVarBcDir: /glade/campaign/mmm/parc/ivette/pandac/year7Exp/ivette_3dhybrid-allsky-60-60-iter_O30kmI60km_ensB-SE80+RTPP70_VarBC_v3.0.2_newBenchmark_allsky-amsua/CyclingDA
+  staticVarBcDir: /glade/campaign/mmm/parc/jban/pandac/year7Exp/jban_3dhybrid-60-60-iter_O30kmI60km_mhsRaw_clrsky/CyclingDA
   biasCorrection: True
   retainObsFeedback: True
   post: []
