@@ -57,4 +57,13 @@
 	<file name="stream_list.atmosphere.surface"/>
 </stream>
 
+<stream name="p_sfc"
+        type="output"
+        precision="{{PRECISION}}"
+        filename_template="p_sfc.$Y-$M-$D_$h.$m.$s.nc"
+        filename_interval="{{pressureFilenameInterval}}"
+        output_interval="{{pressureOutputInterval}}" >
+        <file name="stream_list.atmosphere.psfc"/>
+</stream>
+
 </streams>

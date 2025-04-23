@@ -196,6 +196,7 @@ endif
 foreach staticfile ( \
 stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
+stream_list.${MPASCore}.psfc \
 )
   if( -e $staticfile ) rm ./$staticfile
   ln -sfv $ModelConfigDir/forecast/$staticfile .
@@ -210,6 +211,8 @@ sed -i 's@{{InvariantFieldsPrefix}}@'${localInvariantFieldsPrefix}'@' ${StreamsF
 sed -i 's@{{ICFilePrefix}}@'${ICFilePrefix}'@' ${StreamsFile}
 sed -i 's@{{FCFilePrefix}}@'${FCFilePrefix}'@' ${StreamsFile}
 sed -i 's@{{PRECISION}}@'${model__precision}'@' ${StreamsFile}
+sed -i 's@{{pressureFilenameInterval}}@'${self_FCIntervalHR}':00:00@' ${StreamsFile}
+sed -i 's@{{pressureOutputInterval}}@'${TimeStepOuter}'@' ${StreamsFile}
 
 ## Update sea-surface variables from GFS/GEFS analyses
 set localSeaUpdateFile = x${meshRatio}.${nCells}.sfc_update.nc
