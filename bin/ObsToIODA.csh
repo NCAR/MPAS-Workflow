@@ -102,6 +102,10 @@ foreach gdasfile ( *"gdas."* )
      #./${obs2iodaEXE} ${SPLIThourly} ${gdasfile} >&! $log
      ./${obs2iodaEXE} ${gdasfile} >&! $log
    else if ( ${gdasfile} =~ *"prepbufr"* ) then
+     # use obs errors embedded in prepbufr file
+     if ( -e obs_errtable ) then
+       rm -f obs_errtable
+     endif
      set inst = `echo "$gdasfile" | cut -d'.' -f1`
      # run obs2ioda for preburf with additional QC as in GSI
      ./${obs2iodaEXE} ${gdasfile} >&! $log
@@ -114,6 +118,15 @@ foreach gdasfile ( *"gdas."* )
      mv -f sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
      cd ..
      rm -rf sfc
+   else if ( ${gdasfile} =~ *"satwnd"* ) then
+     # link the GDAS observation error table
+     if ( -e ${GDASObsErrtable} ) then
+       ln -sf ${GDASObsErrtable} obs_errtable
+     else
+       echo "ERROR: ${GDASObsErrtable} does NOT exist" > ./FAIL
+       exit 1
+     endif
+     ./${obs2iodaEXE} ${gdasfile} >&! $log
    else
      ./${obs2iodaEXE} ${gdasfile} >&! $log
    endif
