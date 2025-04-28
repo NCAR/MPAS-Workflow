@@ -44,8 +44,6 @@ set StandardStateVariables = ( \
   vegetation_area_fraction \
   eastward_wind_at_10m \
   northward_wind_at_10m \
-  air_temperature_at_2m \
-  water_vapor_mixing_ratio_wrt_moist_air_at_2m \
   lai \
   smois \
   tslb \
