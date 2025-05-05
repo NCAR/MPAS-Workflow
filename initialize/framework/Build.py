@@ -180,7 +180,7 @@ class Build(Component):
     self._set('ungribEXE', 'ungrib.exe')
     self._set('WPSBuildDir', wpsBuildDir)
 
-    # Obs2IODA-v2
+    # Obs2IODA-v3
     # -----------
     self._set('obs2iodaEXE', 'obs2ioda_v3')
     self._set('obs2iodaBuildDir', '/glade/campaign/mmm/parc/ivette/pandac/codeBuild/obs2iodaV3/build/bin')
