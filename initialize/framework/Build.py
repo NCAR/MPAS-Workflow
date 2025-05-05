@@ -182,11 +182,8 @@ class Build(Component):
 
     # Obs2IODA-v2
     # -----------
-    self._set('obs2iodaEXE', 'obs2ioda_v2')
-    self._set('obs2iodaBuildDir', '/glade/campaign/mmm/parc/ivette/pandac/codeBuild/obs2ioda_cmake/build/bin')
-    self._set('iodaUpgradeEXE1', 'ioda-upgrade-v1-to-v2.x')
-    self._set('iodaUpgradeEXE2', 'ioda-upgrade-v2-to-v3.x')
-    self._set('iodaUpgradeBuildDir', self['mpas bundle']+'/bin')
+    self._set('obs2iodaEXE', 'obs2ioda_v3')
+    self._set('obs2iodaBuildDir', '/glade/campaign/mmm/parc/ivette/pandac/codeBuild/obs2iodaV3/build/bin')
 
     # Mean state calculator
     # ---------------------
