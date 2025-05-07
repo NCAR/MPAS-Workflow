@@ -10,7 +10,14 @@ set MPASHydroIncrementVariables = ( \
   rain_water \
   snow_water \
 )
-set MPASHydroStateVariables = (${MPASHydroIncrementVariables} cldfrac)
+
+set MPASHydroStateVariables = ( \
+  $MPASHydroIncrementVariables \
+  cldfrac \
+  re_cloud \
+  re_snow \
+  re_ice \
+)
 
 set StandardAnalysisVariables = ( \
   water_vapor_mixing_ratio_wrt_moist_air \
@@ -24,6 +31,7 @@ set StandardStateVariables = ( \
   air_potential_temperature \
   dry_air_density \
   u \
+  w \
   water_vapor_mixing_ratio_wrt_dry_air \
   air_pressure \
   landmask \
