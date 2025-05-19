@@ -36,5 +36,8 @@ for instrument in $instruments ;do
     satbias_input=$datetime/satbias_${instrument}_input.h5
     satbias_output=$datetime/satbias_${instrument}_output.h5
     python -u mpas_jedi_satbias_estimator.py  "$obsout_fnames" $tlapmean_input $tlapmean_output $satbias_input $satbias_output
+    if [ $? -ne 0 ] ;then
+      exit 9
+    fi
   done
 done

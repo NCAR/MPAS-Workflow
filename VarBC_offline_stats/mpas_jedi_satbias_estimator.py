@@ -12,6 +12,8 @@ obsGroupName = 'ObsValue'
 hofxGroupName= 'hofx'
 biasGroupName= 'ObsBias'
 errGroupName = 'EffectiveError'
+# user defined predictors. Please comment out user_defined_predictorNames if you wish to use all available predictors from the obsout file.
+user_defined_predictorNames = ['constant', 'lapseRate','sensorScanAnglea']
 
 class ObsoutReader():
     def __init__(self,fname):
@@ -26,6 +28,19 @@ class ObsoutReader():
                 if key.endswith('Predictor'):
                     self.predictorNames.append(key.replace("Predictor",""))
             self.channels = list(f['Channel'][:])
+        try:
+            user_defined_predictorNames
+        except NameError:
+            print("Use all predictors in obsout files")
+        else:
+            for predName in user_defined_predictorNames:
+                if predName not in self.predictorNames:
+                    print("ERROR: user defined predicor %s not in obsout file.")
+                    print("  valid predictor names includes:",self.predictorNames)
+                    sys.exit(9)
+            self.predictorNames = user_defined_predictorNames
+            print("Use user-defined predictors")
+        print("Predictors used for trainning: ",self.predictorNames)
     
     def _readGroupbyName(self,hdf5,groupname):
         # private function
