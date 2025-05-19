@@ -244,7 +244,7 @@ class MPAS_JEDI_BiasCorrection():
         Binv     = np.linalg.pinv(B)
         #self.print_residual("BEFORE:",channel,pred_8xn,beta,Yd_nx1)        
         # solve beta
-        P_Rinv    = pred_8xn * Rinv[None, :]  #pred_8xn @ Rinv
+        P_Rinv    = pred_8xn * Rinv[None, :]  #pred_8xn @ np.diag(Rinv)
         P_Rinv_Pt = P_Rinv @ pred_8xn.T        
         hessian   = Binv + P_Rinv_Pt
         A         = np.linalg.pinv(hessian)
