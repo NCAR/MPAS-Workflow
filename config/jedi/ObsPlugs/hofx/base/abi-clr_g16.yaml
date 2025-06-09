@@ -6,6 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/abi_g16_obs_{{thisValidDate}}.h5
     obsdataout:
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_abi-clr_g16.h5

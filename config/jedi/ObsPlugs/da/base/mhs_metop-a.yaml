@@ -6,6 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/mhs_metop-a_obs_{{thisValidDate}}.h5
     _obsdataout: &ObsDataOut
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_mhs_metop-a{{ObsOutSuffix}}.h5

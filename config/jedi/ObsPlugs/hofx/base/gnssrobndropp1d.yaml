@@ -10,6 +10,7 @@
         sort variable: impactHeightRO
         sort order: ascending
     obsdataout:
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_gnssrobndropp1d.h5

@@ -6,6 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/gnssrorefncep_tunedErrors_obs_{{thisValidDate}}.h5
     obsdataout:
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_gnssrorefncep_tunedErrors.h5

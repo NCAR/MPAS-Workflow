@@ -6,6 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/sondes_obs_{{thisValidDate}}.h5
     obsdataout:
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_sondes.h5

@@ -6,6 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/amsua_n15_obs_{{thisValidDate}}.h5
     _obsdataout: &ObsDataOut
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua-cld_n15{{ObsOutSuffix}}.h5

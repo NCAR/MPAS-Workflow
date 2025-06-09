@@ -8,6 +8,7 @@
       obsgrouping:
         group variables: [ sequenceNumber ]
     obsdataout:
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_gnssrobndmo.h5

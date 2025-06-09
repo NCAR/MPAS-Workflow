@@ -6,6 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/sfc_obs_{{thisValidDate}}.h5
     obsdataout:
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_sfc.h5

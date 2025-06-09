@@ -6,6 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/gnssrobndnbam_obs_{{thisValidDate}}.h5
     _obsdataout: &ObsDataOut
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_gnssrobndnbam{{ObsOutSuffix}}.h5

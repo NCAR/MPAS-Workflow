@@ -6,6 +6,7 @@
         type: H5File
         obsfile: {{InDBDir}}/iasi_metop-c_obs_{{thisValidDate}}.h5
     obsdataout:
+      write multiple files: true
       engine:
         type: H5File
         obsfile: {{OutDBDir}}/{{obsPrefix}}_iasi_metop-c.h5
