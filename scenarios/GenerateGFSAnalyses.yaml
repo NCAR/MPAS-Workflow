@@ -1,14 +1,19 @@
 suite: GenerateExternalAnalyses
+invariantstream:
+  resources:
+    InvariantDirectory: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model_v8.1_files/init_files/240km
 
 externalanalyses:
   resource: "GFS.RDA"
 experiment:
-  name: 'GenerateGFSAnalyses'
-  prefix: ''
+  name: 'GenerateGFSAnalyses_240km2'
+model:
+  outerMesh: 240km
+  GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/codeBuild/MPAS-Model_v8.1_files/init_files/240km
 hpc:
   CriticalQueue: economy
   NonCriticalQueue: economy
 workflow:
-  first cycle point: 20220606T00
-  final cycle point: 20220608T00
+  first cycle point: 20180414T12
+  final cycle point: 20180415T06
   max active cycle points: 60

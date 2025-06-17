@@ -107,7 +107,7 @@ class ExternalAnalyses(Component):
     attr = {
       'seconds': {'def': 300},
       'nodes': {'def': 1},
-      'PEPerNode': {'def': 128},
+      'PEPerNode': {'def': 64},
       'retry': {'def': '2*PT30S'},
       # currently UngribExternalAnalysis has to be on Derecho, because ungrib.exe is built there
       # TODO: build ungrib.exe on casper, remove Critical directives below, deferring to

@@ -88,3 +88,20 @@ model:
       RadiationSW: rrtmg_sw
       SfcLayer: sf_monin_obukhov
       LSM: sf_noah
+    240km:
+      meshRatio: 1
+      nCells: 10242
+      TimeStep: 1200.0
+      DiffusionLengthScale: 240000.0
+      RadiationLWInterval: 00:30:00
+      RadiationSWInterval: 00:30:00
+      PhysicsSuite: mesoscale_reference
+      Microphysics: mp_wsm6
+      Convection: cu_ntiedtke
+      PBL: bl_ysu
+      Gwdo: bl_ysu_gwdo
+      RadiationCloud: cld_fraction
+      RadiationLW: rrtmg_lw
+      RadiationSW: rrtmg_sw
+      SfcLayer: sf_monin_obukhov
+      LSM: sf_noah

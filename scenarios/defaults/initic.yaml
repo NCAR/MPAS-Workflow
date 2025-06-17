@@ -30,3 +30,7 @@ initic:
       seconds: 80
       nodes: 1
       PEPerNode: 128
+    240km:
+      seconds: 120
+      nodes: 1
+      PEPerNode: 64
