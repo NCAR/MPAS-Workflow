@@ -117,6 +117,10 @@ ln -sfv ${bgFileOther} ${bgFile}
 # use the background as the TemplateFieldsFileOuter
 ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
 
+# add the 'use mutltipe files' in obsdataout spec
+# (used to be in 'io pool' section of config/jedi/ObsPlugs/hofx/ObsAnchors.yaml)
+sed -i '/obsdataout/a\        write multiple files: true' $myYAML
+
 # Run the executable
 # ==================
 ln -sfv ${myBuildDir}/${myEXE} ./
