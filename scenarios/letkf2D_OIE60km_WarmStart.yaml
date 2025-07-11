@@ -1,5 +1,6 @@
 enkf:
   solver: LETKF
+  solver_type: Deterministic
   # resource needs are much smaller for 2D than 3D
   localization dimension: 2D
   horizontal localization lengthscale: 1.2e6

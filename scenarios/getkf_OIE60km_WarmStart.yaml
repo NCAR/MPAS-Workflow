@@ -1,5 +1,6 @@
 enkf:
   solver: GETKF
+  solver_type: Deterministic
   horizontal localization lengthscale: 1.2e6
   vertical localization lengthscale: 10.0 # modellevel
   retainObsFeedback: False

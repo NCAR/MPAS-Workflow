@@ -25,6 +25,10 @@ class EnKF(Component):
     'solver': [str,
       ['LETKF', 'GETKF'],
     ],
+    ## solver_type [Required Parameter]
+    'solver_type': [str,
+      ['Deterministic', ],
+    ],
   }
 
   variablesWithDefaults = {

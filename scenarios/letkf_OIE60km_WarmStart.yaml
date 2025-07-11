@@ -1,5 +1,6 @@
 enkf:
   solver: LETKF
+  solver_type: Deterministic
   horizontal localization lengthscale: 1.2e6
   vertical localization lengthscale: 6.e3
   retainObsFeedback: False

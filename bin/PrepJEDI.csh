@@ -924,6 +924,10 @@ else if ("$ArgAppType" == enkf) then
 
   # Solver
   # ==================
+  #  change the 'solver:' spec to include the solver type followed by the solver method,
+  #  e.g. 'Deterministic GETKF',
+  #  then replace all of the remaining instances of localEnsembleDASolver.
+  sed -i 's@solver: {{localEnsembleDASolver}}@solver: '${solver_type}' '${solver}'@g' $prevYAML
   sed -i 's@{{localEnsembleDASolver}}@'${solver}'@g' $prevYAML
 
   # TODO:
