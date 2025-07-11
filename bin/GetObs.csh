@@ -54,9 +54,9 @@ cd ${self_WorkDir}
 # ================================================================================================
 
 set dataRoot = /glade/campaign/collections
-set defaultBUFRDirectory = $dataRoot//rda/data/ds735.0
-set satwndBUFRDirectory = $dataRoot/rda/data/ds351.0
-set PrepBUFRDirectory = $dataRoot/rda/data/ds337.0
+set defaultBUFRDirectory = $dataRoot//rda/data/d735000
+set satwndBUFRDirectory = $dataRoot/rda/data/d351000
+set PrepBUFRDirectory = $dataRoot/rda/data/d337000
 
 foreach inst ( ${convertToIODAObservations} )
   if ( "${observations__resource}" == "GladeRDAOnline" ) then
