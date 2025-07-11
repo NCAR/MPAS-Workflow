@@ -99,7 +99,7 @@ ln -sfv ${myBuildDir}/${myEXE} ./
 sed -i 's@{{ObsDataIn}}@ObsDataIn@' $myYAML
 sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' $myYAML
 sed -i 's@{{ObsOutSuffix}}@@' $myYAML
-# add the 'use mutltipe files' in obsdataout spec
+# add the 'write multiple files' in obsdataout spec
 # (used to be in 'io pool' section of config/jedi/ObsPlugs/variational/ObsAnchors.yaml)
 sed -i '/_obsdataout/a\          write multiple files: true' $myYAML
 
