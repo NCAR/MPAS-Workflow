@@ -100,7 +100,11 @@ sed -i 's@{{ObsDataIn}}@ObsDataIn@' $myYAML
 sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' $myYAML
 sed -i 's@{{ObsOutSuffix}}@@' $myYAML
 
-mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
+if ( $?numProcessors && "$numProcessors" != "None" ) then
+  mpiexec -np ${numProcessors} ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
+else
+  mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
+endif
 
 #WITH DEBUGGER
 #module load arm-forge/19.1
@@ -113,6 +117,8 @@ grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
   echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
+else:
+  rn jedi.log.0*
 endif
 
 # ================================================================================================
