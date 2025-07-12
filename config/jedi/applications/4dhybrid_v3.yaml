@@ -13,10 +13,28 @@ _iteration: &iterationConfig
 #    adj tlm test: true
 #    adj obs test: true
 #    online adj test: true
-_member: &memberConfig
-  date: &analysisDate {{thisISO8601Date}}
+_member config1: &memberConfig1
+  date: &date1 {{thisISO8601Date1}}
   state variables: &incvars [{{AnalysisVariables}}]
   stream name: ensemble
+_member config2: &memberConfig2
+  <<: *memberConfig1
+  date: &date2 {{thisISO8601Date2}}
+_member config3: &memberConfig3
+  <<: *memberConfig1
+  date: &date3 {{thisISO8601Date3}}
+_member config4: &memberConfig4
+  <<: *memberConfig1
+  date: &date4 {{thisISO8601Date}}
+_member config5: &memberConfig5
+  <<: *memberConfig1
+  date: &date5 {{thisISO8601Date5}}
+_member config6: &memberConfig6
+  <<: *memberConfig1
+  date: &date6 {{thisISO8601Date6}}
+_member config7: &memberConfig7
+  <<: *memberConfig1
+  date: &date7 {{thisISO8601Date7}}
 output:
   filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
   stream name: analysis
@@ -29,10 +47,11 @@ final:
   diagnostics:
     departures: oman
 cost function:
-  cost type: 3D-Var
+  cost type: 4D-Ens-Var
   time window:
     begin: {{windowBegin}}
     length: {{windowLength}}
+  subwindow: {{subwindowLength}}
   jb evaluation: false
   geometry:
     nml_file: {{OuterNamelistFile}}
@@ -41,16 +60,33 @@ cost function:
     interpolation type: unstructured
   analysis variables: *incvars
   background:
-    state variables: [{{StateVariables}}]
-    filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
-    date: *analysisDate
+    states:
+    - state variables: &stvars [{{StateVariables}}]
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate1}}.nc
+      date: *date1
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate2}}.nc
+      date: *date2
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate3}}.nc
+      date: *date3
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate}}.nc
+      date: *date4
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate5}}.nc
+      date: *date5
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate6}}.nc
+      date: *date6
+    - state variables: *stvars
+      filename: {{bgStateDir}}{{MemberDir}}/{{bgStatePrefix}}.{{thisMPASFileDate7}}.nc
+      date: *date7
   background error:
     covariance model: hybrid
     components:
     - weight:
-        date: *analysisDate
-        stream name: control
-        filename: {{hybridCoefficientsStatic}}
+        value: {{staticCovarianceWeight}}
       covariance:
         covariance model: SABER
         saber central block:
@@ -63,12 +99,16 @@ cost function:
             drivers:
               multivariate strategy: univariate
               read local nicas: true
+            grids:
+              - model:
+                  variables: [{{bump3dControlVariables}}]
+              - model:
+                  variables: [{{bump2dControlVariables}}]
         saber outer blocks:
         - saber block name: StdDev
           read:
             model file:
               filename: {{bumpCovStdDevFile}}
-              date: *analysisDate
               stream name: control
         - saber block name: BUMP_VerticalBalance
           read:
@@ -76,7 +116,7 @@ cost function:
               data directory: {{bumpCovVBalDir}}
               files prefix: {{bumpCovVBalPrefix}}
             drivers:
-              read local sampling: true
+              read global sampling: true
               read vertical balance: true
             vertical balance:
               vbal:
@@ -92,12 +132,11 @@ cost function:
           input variables: *ctlvars
           output variables: *incvars
     - weight:
-        date: *analysisDate
-        stream name: control
-        filename: {{hybridCoefficientsEnsemble}}
+        value: {{ensembleCovarianceWeight}}
       covariance:
         covariance model: ensemble
         localization:
+          #time decay: PT3H
           localization method: SABER
           saber central block:
             saber block name: BUMP_NICAS

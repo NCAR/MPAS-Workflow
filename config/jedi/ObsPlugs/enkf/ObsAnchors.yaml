@@ -37,9 +37,9 @@ _halo dist: &HaloDistribution
   halo size: *HorizObsLocLengthScale
 
 _obs space: &ObsSpace
-  #io pool:
-  #  max pool size: {{maxIODAPoolSize}}
-  #  write multiple files: true
+  io pool:
+    max pool size: {{maxIODAPoolSize}}
+    write multiple files: false
   distribution: *{{ObsSpaceDistribution}}
 
 _obs error diagonal: &ObsErrorDiagonal

@@ -48,9 +48,12 @@ cost function:
     covariance model: hybrid
     components:
     - weight:
-        date: *analysisDate
-        stream name: control
-        filename: {{hybridCoefficientsStatic}}
+        _staticWeightFromFile: &staticWeightFromFile
+          stream name: control
+          filename: {{hybridStaticWeightFile}}
+        _staticWeightFromValue: &staticWeightFromValue
+          value: {{staticCovarianceWeight}}
+        <<: {{staticBECWeight}}
       covariance:
         covariance model: SABER
         saber central block:
@@ -63,6 +66,11 @@ cost function:
             drivers:
               multivariate strategy: univariate
               read local nicas: true
+            grids:
+              - model:
+                  variables: [{{bump3dControlVariables}}]
+              - model:
+                  variables: [{{bump2dControlVariables}}]
         saber outer blocks:
         - saber block name: StdDev
           read:
@@ -76,7 +84,7 @@ cost function:
               data directory: {{bumpCovVBalDir}}
               files prefix: {{bumpCovVBalPrefix}}
             drivers:
-              read local sampling: true
+              read global sampling: true
               read vertical balance: true
             vertical balance:
               vbal:
@@ -92,9 +100,12 @@ cost function:
           input variables: *ctlvars
           output variables: *incvars
     - weight:
-        date: *analysisDate
-        stream name: control
-        filename: {{hybridCoefficientsEnsemble}}
+        _ensembleWeightFromFile: &ensembleWeightFromFile
+          stream name: control
+          filename: {{hybridEnsembleWeightFile}}
+        _ensembleWeightFromValue: &ensembleWeightFromValue
+          value: {{ensembleCovarianceWeight}}
+        <<: {{ensembleBECWeight}}
       covariance:
         covariance model: ensemble
         localization:
