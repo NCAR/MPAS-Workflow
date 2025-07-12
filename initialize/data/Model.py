@@ -57,7 +57,7 @@ class Model(Component):
   variablesWithDefaults = {
     ## GraphInfoDir
     # directory containing x{{meshRatio}}.{{nCells}}.graph.info* files
-    'GraphInfoDir': ['/glade/derecho/scratch/taosun/pandac/MPAS_GRAPH', str],
+    'GraphInfoDir': ['/glade/campaign/mmm/parc/taosun/pandac/MPAS_GRAPH', str],
 
     ## precision
     # floating-point precision of all application output
