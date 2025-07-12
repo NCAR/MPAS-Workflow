@@ -82,6 +82,21 @@ variational:
             memberPrefix: mem
             memberNDigits: 3
 
+        LGETKF:
+          60km:
+            maxMembers: 80
+            directory0: '/glade/campaign/mmm/parc/taosun/LGETKF/taosun_GETKF_NMEM80_O60km_BC_AllSky/CyclingFC/{{prevDateTime}}'
+            filePrefix: mpasout
+            memberPrefix: mem
+            memberNDigits: 3
+
+          30km:
+            maxMembers: 80
+            directory0: '/glade/campaign/mmm/parc/taosun/LGETKF/taosun_LGETKF_30km_WarmStart_80Mem_AllSky/CyclingFC/{{prevDateTime}}' 
+            filePrefix: EnsForCov
+            memberPrefix: mem
+            memberNDigits: 3
+
         GEFS_4DEnVar_80mem:
           60km:
             maxMembers: 80
@@ -118,8 +133,8 @@ variational:
       #  bumpLocPrefix: str
       #  bumpLocDir: str
       30km:
-        bumpLocPrefix: bumploc_1200.0km_6.0km
-        bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/30km/bumploc/h=1200.0km_v=6.0km_06JAN2023code
+        bumpLocPrefix: bumploc
+        bumpLocDir: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/BUMP/EnsLoc
       60km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.bumploc.duplicated.limited.1200km6km
@@ -143,20 +158,23 @@ variational:
     #  bumpCovVBalDir: str
     #  hybridCoefficientsDir: str
     30km:
-      bumpCovDir: None
-      bumpCovStdDevFile: None
-      bumpCovVBalDir: None
-      hybridCoefficientsDir: None
+      bumpCovDir: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/BUMP/NICAS
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/BUMP/HDIAG/mpas.stddev.nc
+      bumpCovVBalDir: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/BUMP/VBAL
+      hybridEnsembleWeightFile: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/BUMP/HybWeight/mpas.hyb_coef_ens_vert.nc
+      hybridStaticWeightFile: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/BUMP/HybWeight/mpas.hyb_coef_static_vert.nc
     60km:
-      hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
       bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.NICAS_00global
       bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
       bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.VBAL_00
+      hybridEnsembleWeightFile: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid/mpas.hyb_coef_ens2.2018-04-15_00.00.00.nc
+      hybridStaticWeightFile: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid/mpas.hyb_coef_sta2.2018-04-15_00.00.00.nc
     120km:
       bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.NICAS_00
       bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
       bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.VBAL_00
-      hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/120km.allsky_hybrid
+      hybridEnsembleWeightFile: NotAvailable
+      hybridStaticWeightFile: NotAvailable
 
   # resource requirements
   job:
@@ -248,10 +266,91 @@ variational:
           PEPerNode: 128
           memory: 235GB
           baseSeconds: 500
+    15-3km:
+      30km:
+        3denvar:
+          nodes: 16
+          PEPerNode: 32
+          memory: 235GB
+          secondsPerEnVarMember: 8
+        3dhybrid:
+          nodes: 16
+          PEPerNode: 32
+          memory: 235GB
+          secondsPerEnVarMember: 12
+        3dhybrid_v3:
+          nodes: 16
+          PEPerNode: 32
+          memory: 235GB
+          secondsPerEnVarMember: 12
+        3dvar:
+          nodes: 16
+          PEPerNode: 32
+          memory: 235GB
+        4denvar:
+          nodes: 28
+          PEPerNode: 128
+          memory: 235GB
+          secondsPerEnVarMember: 6
+    15km:
+      30km:
+        3denvar:
+          nodes: 8
+          PEPerNode: 64
+          memory: 235GB
+          secondsPerEnVarMember: 5
+        3dhybrid:
+          nodes: 8
+          PEPerNode: 64
+          memory: 235GB
+          secondsPerEnVarMember: 5
+        3dvar:
+          nodes: 8
+          PEPerNode: 64
+          memory: 235GB
+        4denvar:
+          nodes: 28
+          PEPerNode: 128
+          memory: 235GB
+          secondsPerEnVarMember: 8
+        4dhybrid:
+          nodes: 56
+          PEPerNode: 64
+          memory: 235GB
+          secondsPerEnVarMember: 8
+      60km:
+        3denvar:
+          nodes: 4
+          PEPerNode: 64
+          memory: 235GB
+          secondsPerEnVarMember: 5
+        3dhybrid:
+          nodes: 4
+          PEPerNode: 64
+          memory: 235GB
+          secondsPerEnVarMember: 5
+        3dvar:
+          nodes: 4
+          PEPerNode: 64
+          memory: 235GB
+        4denvar:
+          nodes: 14
+          PEPerNode: 128
+          memory: 235GB
+          secondsPerEnVarMember: 8
+        4dhybrid:
+          nodes: 28
+          PEPerNode: 64
+          memory: 235GB
+          secondsPerEnVarMember: 8
     30km:
       # Assuming 120 total inner iterations
       30km:
         3denvar:
+          nodes: 4
+          PEPerNode: 64
+          memory: 235GB
+        3dhybrid:
           nodes: 4
           PEPerNode: 64
           memory: 235GB

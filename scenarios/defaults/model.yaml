@@ -37,6 +37,40 @@ model:
       RadiationSW: rrtmg_sw
       SfcLayer: sf_mynn
       LSM: sf_noah
+    15-3km:
+      meshRatio: 5
+      nCells: 6488066
+      TimeStep: 20.0
+      DiffusionLengthScale: 3000.0
+      RadiationLWInterval: 00:15:00
+      RadiationSWInterval: 00:15:00
+      PhysicsSuite: convection_permitting
+      Microphysics: mp_thompson
+      Convection: cu_ntiedtke
+      PBL: bl_mynn
+      Gwdo: bl_ysu_gwdo
+      RadiationCloud: cld_fraction_thompson
+      RadiationLW: rrtmg_lw
+      RadiationSW: rrtmg_sw
+      SfcLayer: sf_mynn
+      LSM: sf_noah
+    15km:
+      meshRatio: 1
+      nCells: 2621442
+      TimeStep: 90.0
+      DiffusionLengthScale: 15000.0
+      RadiationLWInterval: 00:15:00
+      RadiationSWInterval: 00:15:00
+      PhysicsSuite: mesoscale_reference
+      Microphysics: mp_wsm6
+      Convection: cu_ntiedtke
+      PBL: bl_ysu
+      Gwdo: bl_ysu_gwdo
+      RadiationCloud: cld_fraction
+      RadiationLW: rrtmg_lw
+      RadiationSW: rrtmg_sw
+      SfcLayer: sf_monin_obukhov
+      LSM: sf_noah
     30km:
       meshRatio: 1
       nCells: 655362

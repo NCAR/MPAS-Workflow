@@ -18,6 +18,14 @@ initic:
       seconds: 320
       nodes: 2
       PEPerNode: 128
+    15-3km:
+      seconds: 600
+      nodes: 4
+      PEPerNode: 64
+    15km:
+      seconds: 600
+      nodes: 4
+      PEPerNode: 64
     30km:
       seconds: 320
       nodes: 2
