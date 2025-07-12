@@ -1,0 +1,16 @@
+suite: GenerateExternalAnalyses
+externalanalyses:
+  resource: "GFS.GFS_ungrib"
+experiment:
+  name: 'GenerateGFSAnalyses'
+  prefix: ''
+model:
+  outerMesh: 15km
+  innerMesh: 15km
+hpc:
+  CriticalQueue: economy
+  NonCriticalQueue: economy
+workflow:
+  first cycle point: 20180430T18
+  final cycle point: 20180514T18
+  max active cycle points: 8
