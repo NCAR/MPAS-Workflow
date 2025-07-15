@@ -208,5 +208,7 @@
       name: reject
   - filter: Gaussian_Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space
 #  - filter: GOMsaver
 #    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_metop-b.nc4

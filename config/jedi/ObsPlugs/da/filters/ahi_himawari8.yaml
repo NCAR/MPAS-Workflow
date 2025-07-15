@@ -6,6 +6,8 @@
       maxvalue: 65.0
   - filter: Gaussian Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space
   - filter: Perform Action
     <<: *multiIterationFilter
     filter variables:

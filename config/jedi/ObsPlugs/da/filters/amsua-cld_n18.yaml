@@ -6,5 +6,7 @@
     <<: *multiIterationFilter
 #  - filter: Gaussian Thinning
 #    horizontal_mesh: {{RADTHINDISTANCE}}
+#    action:
+#      name: reduce obs space
 #  - filter: GOMsaver
 #    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_n18.nc4
