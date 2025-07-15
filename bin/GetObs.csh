@@ -54,9 +54,9 @@ cd ${self_WorkDir}
 # ================================================================================================
 
 set dataRoot = /glade/campaign/collections
-set defaultBUFRDirectory = $dataRoot//rda/data/ds735.0
-set satwndBUFRDirectory = $dataRoot/rda/data/ds351.0
-set PrepBUFRDirectory = $dataRoot/rda/data/ds337.0
+set defaultBUFRDirectory = $dataRoot//rda/data/d735000
+set satwndBUFRDirectory = $dataRoot/rda/data/d351000
+set PrepBUFRDirectory = $dataRoot/rda/data/d337000
 
 foreach inst ( ${convertToIODAObservations} )
   if ( "${observations__resource}" == "GladeRDAOnline" ) then
@@ -67,13 +67,6 @@ foreach inst ( ${convertToIODAObservations} )
        if ( ! -e ${THIS_FILE}) then
           echo "Source file: ${satwndBUFRDirectory}/bufr/${ccyy}/${THIS_FILE}"
           cp -p ${satwndBUFRDirectory}/bufr/${ccyy}/${THIS_FILE} .
-       endif
-       # link the GDAS observation error table
-       if ( -e ${GDASObsErrtable} ) then
-          ln -sf ${GDASObsErrtable} obs_errtable
-       else
-          echo "ERROR: ${GDASObsErrtable} does NOT exist" > ./FAIL
-          exit 1
        endif
     # for prepbufr observations
     else if ( ${inst} == prepbufr ) then
@@ -88,14 +81,6 @@ foreach inst ( ${convertToIODAObservations} )
              cp -p ${PrepBUFRDirectory}/prepnr/${ccyy}/${THIS_FILE} .
           endif
        endif
-       # use obs errors embedded in prepbufr file
-       if ( -e obs_errtable ) then
-          rm -f obs_errtable
-       endif
-       # use external obs error table
-       #if ( -e ${GDASObsErrtable} ) then
-       #   ln -sf ${GDASObsErrtable} obs_errtable
-       #endif
     # for all other observations
     else
        # set the specific file to be extracted from the tar file

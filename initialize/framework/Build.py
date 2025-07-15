@@ -45,7 +45,7 @@ class Build(Component):
         self.variablesWithDefaults['mpas bundle'] = [config._bundle_dir, str]
       else:
         self.variablesWithDefaults['mpas bundle'] = \
-          ['/glade/work/bjung/panda-c/build/mpas-bundle_20250218/build_single', str] ## develop
+          ['/glade/derecho/scratch/jwittig/repos-s/mpas-bundle-cron/build-gnu-1p_latest', str] ## develop
 
       self.variablesWithDefaults['bundle compiler used'] = ['gnu-cray', str,
         ['gnu-cray', 'intel-cray']]
@@ -56,8 +56,7 @@ class Build(Component):
       # Mean state calculator
       # FIXME the source for the app in this directory was copied from
       # /glade/work/guerrett/pandac/work/meanState/spack-stack_gcc-10.1.0_openmpi-4.1.1
-      # meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-r2.0/build-gnu-derecho-single/bin'
-      meanStateBuildDir = '/glade/work/jwittig/repos1/mpas-bundle-dev-new/build-gnu-1p-ss1.6.0/bin'
+      meanStateBuildDir = '/glade/campaign/mmm/parc/jwittig/meanState/bin'
     elif system == 'cheyenne':
       self.variablesWithDefaults['mpas bundle'] = \
         ['/glade/p/mmm/parc/liuz/pandac_common/mpas-bundle-code-build/mpas_bundle_2.0_gnuSP/build', str]
@@ -180,13 +179,10 @@ class Build(Component):
     self._set('ungribEXE', 'ungrib.exe')
     self._set('WPSBuildDir', wpsBuildDir)
 
-    # Obs2IODA-v2
+    # Obs2IODA-v3
     # -----------
-    self._set('obs2iodaEXE', 'obs2ioda_v2')
-    self._set('obs2iodaBuildDir', '/glade/campaign/mmm/parc/ivette/pandac/codeBuild/obs2ioda_cmake/build/bin')
-    self._set('iodaUpgradeEXE1', 'ioda-upgrade-v1-to-v2.x')
-    self._set('iodaUpgradeEXE2', 'ioda-upgrade-v2-to-v3.x')
-    self._set('iodaUpgradeBuildDir', self['mpas bundle']+'/bin')
+    self._set('obs2iodaEXE', 'obs2ioda_v3')
+    self._set('obs2iodaBuildDir', '/glade/campaign/mmm/parc/ivette/pandac/codeBuild/obs2iodaV3/build/bin')
 
     # Mean state calculator
     # ---------------------
@@ -194,5 +190,7 @@ class Build(Component):
     #self._set('meanStateBuildDir', '/glade/work/taosun/Derecho/MPAS/JEDI_MPAS/build_intel'+'/bin')
     self._set('meanStateExe', 'average_netcdf_files_parallel_mpas.x')
     self._set('meanStateBuildDir', meanStateBuildDir)
+    self.log('self meanStateBuildDir ' + self['meanStateBuildDir'], level=self.MSG_DEBUG)
 
     self._cshVars = list(self._vtable.keys())
+    self.log('self._cshVars ' + str(self._cshVars), level=self.MSG_NOISY)
