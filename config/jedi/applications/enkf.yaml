@@ -15,6 +15,16 @@ _as solver: &asSolver
   save posterior ensemble: true
   save posterior mean: true
 
+_as solver LETKF: &asLETKF
+  solver: LETKF
+
+_as solver GETKF: &asGETKF
+  solver: GETKF
+  vertical localization: # only used by GETKF solver
+    fraction of retained variance: {{fractionOfRetainedVariance}}
+    lengthscale: {{verticalLocalizationLengthscale}}
+    lengthscale units: {{verticalLocalizationLengthscaleUnits}}
+
 _letkf geometry: &3DLETKFGeometry
   iterator dimension: 3
 
@@ -29,14 +39,19 @@ geometry:
   nml_file: {{EnKFNamelistFile}}
   streams_file: {{EnKFStreamsFile}}
   deallocate non-da fields: true
-  #interpolation type: unstructured # no Increment/State interp in enkf
 
 time window:
   begin: {{windowBegin}}
   length: {{windowLength}}
 
 background:
-{{EnsembleMembers}}
+  members from template:
+    template:
+      <<: *memberConfig
+      filename: {{ensembleStateDir}}/mem%iMember%/{{ensembleStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+    pattern: %iMember%
+    zero padding: {{MemNDigits}}
+    nmembers: {{NumEnsMember}}
 
 increment variables: [{{AnalysisVariables}}]
 
@@ -47,17 +62,12 @@ observations:
 driver: *{{driver}}
 
 local ensemble DA:
-  solver: {{localEnsembleDASolver}}
-  vertical localization: # only used by GETKF solver
-    fraction of retained variance: 0.95
-    lengthscale: {{verticalLocalizationLengthscale}}
-    lengthscale units: modellevel
-
-# TODO: how do inflation settings impact result?
-#  inflation:
-#    rtps: 0.5
-#    rtpp: 0.6
-#    mult: 1.1
+  <<: *{{LocalEnKFSolver}}
+  use linear observer: {{useLinearOperator}}
+  inflation:
+    rtps: {{rtpsValue}}
+    rtpp: {{rtppValue}}
+    mult: {{multValue}}
 
 output:
   filename: {{anStateDir}}/mem%{member}%/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
