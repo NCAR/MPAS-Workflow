@@ -536,7 +536,6 @@ if ( $status == 0 ) then
   end
   foreach hydro ($MPASHydroIncrementVariables)
     set AnalysisVariables = ($AnalysisVariables $hydro)
-    set bumpCovControlVariables = ($bumpCovControlVariables $hydro)
   end
 endif
 
