@@ -213,6 +213,12 @@ observations:
       - amsua-cld_n15
       - amsua-cld_n18
       - amsua-cld_n19
+      - amsua-all_metop-a
+      - amsua-all_metop-b
+      - amsua-all_metop-c
+      - amsua-all_n15
+      - amsua-all_n18
+      - amsua-all_n19
       - iasi_metop-a
       - iasi_metop-b
       - iasi_metop-c
@@ -221,7 +227,7 @@ observations:
       - mhs_n18
       - mhs_n19
 
-      IODAPrefix:
+      IODAPrefix: # define obs-space correspendance to ioda file name
         gnssrobndropp1d: gnssro
         gnssrobndnbam: gnssro
         gnssrobndmo: gnssro
@@ -234,6 +240,12 @@ observations:
         amsua-cld_n15: amsua_n15
         amsua-cld_n18: amsua_n18
         amsua-cld_n19: amsua_n19
+        amsua-all_metop-a: amsua_metop-a
+        amsua-all_metop-b: amsua_metop-b
+        amsua-all_metop-c: amsua_metop-c
+        amsua-all_n15: amsua_n15
+        amsua-all_n18: amsua_n18
+        amsua-all_n19: amsua_n19
         abi-clr_g16: abi_g16
         ahi-clr_himawari8: ahi_himawari8
 
@@ -265,6 +277,11 @@ observations:
           amsua-cld_n15: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
           amsua-cld_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
           amsua-cld_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-all_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-all_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-all_n15: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-all_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua-all_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
 
           ## mhs
           mhs_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs

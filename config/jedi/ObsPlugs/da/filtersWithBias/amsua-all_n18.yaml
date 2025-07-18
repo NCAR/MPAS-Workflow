@@ -1,0 +1,304 @@
+  obs filters:
+  - filter: Gaussian_Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space
+
+  - filter: Domain Check
+    where:
+    - variable:
+        name: MetaData/sensorZenithAngle
+      maxvalue: 45.0
+
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelRamp
+        channels: 1-15
+        options:
+          channels: 1-15
+          xvar:
+            name: ObsFunction/CLWRetSymmetricMW
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [ObsValue, HofX]
+              #bias_application: ObsValue
+          x0: &id1n18amsua
+            [0.04,  0.04,  0.04,  0.04,  0.0,
+             0.1,   0.0,   0.0,   0.0,   0.0,
+             0.0,   0.0,   0.0,   0.0,   0.04]
+          x1: &id2n18amsua
+            [0.55,  0.57,  0.36,  0.41,  1.0,
+             1.50,  0.0,   0.0,   0.0,   0.0,
+             0.0,   0.0,   0.0,   0.0,   0.24]
+          err0: &id3n18amsua
+            [4.51, 3.45, 2.59,  0.67,  0.3,
+             0.23, 0.23, 0.25,  0.25,  0.35,
+             0.4,  0.55, 0.8,   4.0,   6.05]
+          err1: &id4n18amsua
+            [33.25, 44.55, 13.92, 2.88,  0.5,
+              0.3,  0.23, 0.25,  0.25,  0.35,
+              0.4,  0.55, 0.8,   4.0,  15.32]
+    <<: *multiIterationFilter
+
+# partly address cold-air outbreak issues
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-4,15
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    - variable:
+        name: MetaData/latitude
+      minvalue: -60.0
+      maxvalue: 60.0
+    <<: *multiIterationFilter
+
+#  Obs CLW Retrieval Check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-6, 15
+    test variables:
+    - name: ObsFunction/CLWRetMW
+      options:
+        clwret_ch238: 1
+        clwret_ch314: 2
+        clwret_types: [ObsValue]
+    maxvalue: 999.0
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+#  Background CLW Retrieval Check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-6, 15
+    test variables:
+    - name: ObsFunction/CLWRetMW
+      options:
+        clwret_ch238: 1
+        clwret_ch314: 2
+        clwret_types: [HofX]
+    maxvalue: 999.0
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+#  Topography check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTopoRad
+        channels: 1-15
+        options:
+          sensor: amsua_n18
+          channels: 1-15
+    <<: *multiIterationFilter
+
+#  Transmittance Top Check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
+        channels: 1-15
+        options:
+          channels: 1-15
+    <<: *multiIterationFilter
+
+#  Surface Jacobian check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorSurfJacobianRad
+        channels: 1-15
+        options:
+          channels: 1-15
+          sensor: amsua_n18
+          obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
+          obserr_dtempf: [0.500, 2.000, 1.000, 2.000, 4.500]
+    <<: *multiIterationFilter
+
+#  Situation dependent Check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorSituDependMW
+        channels: 1-15
+        options:
+          sensor: amsua_n18
+          channels: 1-15
+          clwobs_function:
+            name: ObsFunction/CLWRetMW
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [ObsValue]
+          clwbkg_function:
+            name: ObsFunction/CLWRetMW
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [HofX]
+              #bias_application: HofX
+          scatobs_function:
+            name: ObsFunction/SCATRetMW
+            options:
+              scatret_ch238: 1
+              scatret_ch314: 2
+              scatret_ch890: 15
+              scatret_types: [ObsValue]
+              #bias_application: HofX
+          clwmatchidx_function:
+            name: ObsFunction/CLWMatchIndexMW
+            channels: 1-15
+            options:
+              channels: 1-15
+              clwobs_function:
+                name: ObsFunction/CLWRetMW
+                options:
+                  clwret_ch238: 1
+                  clwret_ch314: 2
+                  clwret_types: [ObsValue]
+              clwbkg_function:
+                name: ObsFunction/CLWRetMW
+                options:
+                  clwret_ch238: 1
+                  clwret_ch314: 2
+                  clwret_types: [HofX]
+                  #bias_application: HofX
+              clwret_clearsky: *id1n18amsua
+          obserr_function:
+            name: ObsFunction/ObsErrorModelRamp
+            channels: 1-15
+            options:
+              channels: 1-15
+              xvar:
+                name: ObsFunction/CLWRetSymmetricMW
+                options:
+                  clwret_ch238: 1
+                  clwret_ch314: 2
+                  clwret_types:
+                  - ObsValue
+                  - HofX
+              x0: *id1n18amsua
+              x1: *id2n18amsua
+              err0: *id3n18amsua
+              err1: *id4n18amsua
+          obserr_clearsky: *id3n18amsua
+    <<: *multiIterationFilter
+
+#  Gross check
+  - filter: Background Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    function absolute threshold:
+    - name: ObsFunction/ObsErrorBoundMW
+      channels: 1-15
+      options:
+        sensor: amsua_n18
+        channels: 1-15
+        #thresholdfactor: 1
+        obserr_bound_latitude:
+          name: ObsFunction/ObsErrorFactorLatRad
+          options:
+            latitude_parameters: [25.0, 0.25, 0.04, 3.0]
+        obserr_bound_transmittop:
+          name: ObsFunction/ObsErrorFactorTransmitTopRad
+          channels: 1-15
+          options:
+            channels: 1-15
+        obserr_bound_topo:
+          name: ObsFunction/ObsErrorFactorTopoRad
+          channels: 1-15
+          options:
+            channels: 1-15
+            sensor: amsua_n18
+        obserr_function:
+          name: ObsFunction/ObsErrorModelRamp
+          channels: 1-15
+          options:
+            channels: 1-15
+            xvar:
+              name: ObsFunction/CLWRetSymmetricMW
+              options:
+                clwret_ch238: 1
+                clwret_ch314: 2
+                clwret_types: [ObsValue, HofX]
+                #bias_application: HofX
+            x0:  *id1n18amsua
+            x1:  *id2n18amsua
+            err0: *id3n18amsua
+            err1: *id4n18amsua
+        threshold: 3
+        threshold_precip: 2.5
+        obserr_bound_max: [4.5, 4.5, 4.5, 2.5, 2.0,
+                           2.0, 2.0, 2.0, 2.0, 2.0,
+                           2.5, 3.5, 4.5, 4.5, 4.5]
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+#  Inter-channel check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    test variables:
+    - name: ObsFunction/InterChannelConsistencyCheck
+      channels: 1-15
+      options:
+        channels: 1-15
+        sensor: amsua_n18
+        use_flag: &id5n18amsua
+          [1,  1,  1,  1,  1,
+           1,  1,  1,  1, -1,
+          -1, -1, -1, -1,  1 ]
+    maxvalue: 1.0e-12
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+#  Useflag check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    test variables:
+    - name: ObsFunction/ChannelUseflagCheckRad
+      channels: 1-15
+      options:
+        channels: 1-15
+        use_flag: *id5n18amsua
+    minvalue: 1.0e-12
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_n18.nc4
