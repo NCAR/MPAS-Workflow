@@ -1,6 +1,10 @@
   obs filters:
 #  - filter: GOMsaver
 #    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_mhs_metop-b.nc4
+  - filter: Gaussian_Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space
 
   - filter: Domain Check
     filter variables:
@@ -145,7 +149,3 @@
     action:
       name: reject
 
-  - filter: Gaussian_Thinning
-    horizontal_mesh: {{RADTHINDISTANCE}}
-    action:
-      name: reduce obs space
