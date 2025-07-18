@@ -230,6 +230,8 @@ observations:
       - mhs-cld_metop-b
       - mhs-cld_n18
       - mhs-cld_n19
+      - atms_n20
+      - atms_npp
 
       IODAPrefix: # define obs-space correspendance to ioda file name
         gnssrobndropp1d: gnssro
@@ -301,6 +303,10 @@ observations:
           mhs-cld_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
           mhs-cld_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
 
+          ## atms
+          atms_n20: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
+          atms_npp: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
+
           ## abi
           abi_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
           abi-clr_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
@@ -347,6 +353,10 @@ observations:
           mhs_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
           mhs_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
           mhs_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
+
+          ## atms
+          atms_n20: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
+          atms_npp: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
 
           ## abi
           abi_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
