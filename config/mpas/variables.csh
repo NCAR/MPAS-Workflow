@@ -28,6 +28,8 @@ set StandardStateVariables = ( \
   isltyp \
   snowh \
   vegfra \
+  t2m \
+  q2 \
   u10 \
   v10 \
   lai \

@@ -232,6 +232,9 @@ observations:
       - mhs-cld_n19
       - atms_n20
       - atms_npp
+      - amsua_n18_rttov
+      - mhs_n18_rttov
+      - mhs_n18_rttov12
 
       IODAPrefix: # define obs-space correspendance to ioda file name
         gnssrobndropp1d: gnssro
@@ -252,12 +255,17 @@ observations:
         amsua-all_n15: amsua_n15
         amsua-all_n18: amsua_n18
         amsua-all_n19: amsua_n19
+        amsua_n18_rttov: amsua_n18
+        amsua_n18_rttov12: amsua_n18
         mhs-cld_metop-a: mhs_metop-a
         mhs-cld_metop-b: mhs_metop-b
         mhs-cld_n18: mhs_n18
         mhs-cld_n19: mhs_n19
+        mhs_n18_rttov: mhs_n18
+        mhs_n18_rttov12: mhs_n18
         abi-clr_g16: abi_g16
         ahi-clr_himawari8: ahi_himawari8
+
 
       IODADirectory:
         da:
@@ -292,6 +300,8 @@ observations:
           amsua-all_n15: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
           amsua-all_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
           amsua-all_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_n18_rttov: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          amsua_n18_rttov12: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
 
           ## mhs
           mhs_metop-a: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
@@ -302,6 +312,8 @@ observations:
           mhs-cld_metop-b: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
           mhs-cld_n18: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
           mhs-cld_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          mhs_n18_rttov: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          mhs_n18_rttov12: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
 
           ## atms
           atms_n20: /glade/campaign/mmm/parc/liuz/pandac_common/obs/ioda_v3/2018/raw_obs
