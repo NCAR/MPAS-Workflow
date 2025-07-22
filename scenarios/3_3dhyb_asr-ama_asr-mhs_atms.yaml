@@ -1,5 +1,5 @@
 experiment:
-  name: '3_3dhyb_asr-ama_asr-mhs_asr-atms'
+  name: '3_3dhyb_asr-ama_asr-mhs_atms'
 build:
   mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''
