@@ -49,10 +49,6 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.LGETKF"
-    localization:
-      30km:
-        bumpLocPrefix: bumploc
-        bumpLocDir: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/BUMP/EnsLoc
   covariance:
     bumpCovControlVariables:
     - stream_function
