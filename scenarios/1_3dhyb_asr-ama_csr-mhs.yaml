@@ -89,4 +89,5 @@ variational:
           secondsPerEnVarMember: 10
 workflow:
   first cycle point: 20180414T18
+  #  restart cycle point: 20180415T06
   final cycle point: 20180415T00
