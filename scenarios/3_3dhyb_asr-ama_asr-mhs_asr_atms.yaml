@@ -8,7 +8,8 @@ hpc:
   CriticalAccount: UMMM0012
   CriticalQueue: main
   NonCriticalAccount: UMMM0012
-  NonCriticalQueue: economy
+  NonCriticalQueue: main
+  priority: premium
   SingleProcAccount: UMMM0012
   SingleProcQueue: casper@casper-pbs
 firstbackground:

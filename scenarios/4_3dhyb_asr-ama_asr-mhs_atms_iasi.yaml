@@ -1,5 +1,5 @@
 experiment:
-  name: '4_3dhyb_asr-ama_asr-mhs_iasi'
+  name: '4_3dhyb_asr-ama_asr-mhs_atms_iasi'
 build:
   mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''
@@ -8,7 +8,8 @@ hpc:
   CriticalAccount: UMMM0012
   CriticalQueue: main
   NonCriticalAccount: UMMM0012
-  NonCriticalQueue: economy
+  NonCriticalQueue: main
+  priority: premium
   SingleProcAccount: UMMM0012
   SingleProcQueue: casper@casper-pbs
 firstbackground:
@@ -76,8 +77,8 @@ variational:
     mhs-cld_metop-b,
     mhs-cld_n18,
     mhs-cld_n19,
-    #atms_n20,
-    #atms_npp,
+    atms_n20,
+    atms_npp,
     iasi_metop-a,
     iasi_metop-b,
   ]
