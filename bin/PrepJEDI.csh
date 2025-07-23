@@ -1110,14 +1110,16 @@ if ("$ArgAppType" == variational) then
       # use localInvariantFieldsFileInner as the TemplateFieldsFileInner
       # NOTE: not perfect for EDA if invariant fields differ between members,
       #       but dual-res EDA not working yet anyway
-      ln -sfv ${InitFieldsDirInner}/${InitFieldsFileInner} $tFile
+      #ln -sfv ${InitFieldsDirInner}/${InitFieldsFileInner} $tFile
+      cp -v ${InitFieldsDirInner}/${InitFieldsFileInner} $tFile
 
       if ( "$DAType" == "4denvar" || "$DAType" == "4dhybrid" ) then
         # Loop over times and set as the TemplateFieldsFileInner for this member for each time
         foreach bgFile (`ls -d ${bg}/*.nc`)
           set temp_file = `echo $bgFile | sed 's:.*/::'`
           set bgFileDate = `echo ${temp_file} | cut -c 4-22`
-          ln -sfv ${InitFieldsDirInner}/${InitFieldsFileInner} templateFields.${nCellsInner}.${bgFileDate}.nc${memSuffix}
+          #ln -sfv ${InitFieldsDirInner}/${InitFieldsFileInner} templateFields.${nCellsInner}.${bgFileDate}.nc${memSuffix}
+          cp -v ${InitFieldsDirInner}/${InitFieldsFileInner} templateFields.${nCellsInner}.${bgFileDate}.nc${memSuffix}
         end
         set bgFile = ${bg}/${BGFilePrefix}.$thisMPASFileDate.nc
       endif
@@ -1150,7 +1152,8 @@ if ("$ArgAppType" == variational) then
       rm $tFile
 
       # use localInvariantFieldsFileInner as the TemplateFieldsFileInner
-      ln -sfv ${InitFieldsDirInner}/${InitFieldsFileInner} $tFile
+      #ln -sfv ${InitFieldsDirInner}/${InitFieldsFileInner} $tFile
+      cp -v ${InitFieldsDirInner}/${InitFieldsFileInner} $tFile
 
       # modify xtime
       # TODO: handle errors from python executions, e.g.:

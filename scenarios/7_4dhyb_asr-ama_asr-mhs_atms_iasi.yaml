@@ -1,16 +1,16 @@
 experiment:
-  name: '7_4dhyb_asr-ama_asr-mhs_atms_iasi56x64'
+  name: '7_4dhyb_asr-ama_asr-mhs_atms_iasi60x60'
 build:
   mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''
   #bundle compiler used: gnu-openmpi
 hpc:
-  CriticalAccount: NMMM0043
+  CriticalAccount: UMMM0012
   CriticalQueue: main
-  NonCriticalAccount: NMMM0043
+  NonCriticalAccount: UMMM0012
   NonCriticalQueue: main
   priority: premium
-  SingleProcAccount: NMMM0043
+  SingleProcAccount: UMMM0012
   SingleProcQueue: casper@casper-pbs
 firstbackground:
   resource: "PANDAC.GFS"
@@ -71,11 +71,11 @@ variational:
     sfc,
     sondes,
     #amsua_aqua,
-    amsua_metop-a,
-    amsua_metop-b,
-    amsua_n15,
-    amsua_n18,
-    amsua_n19,
+    amsua-all_metop-a,
+    amsua-all_metop-b,
+    amsua-all_n15,
+    amsua-all_n18,
+    amsua-all_n19,
     mhs-cld_metop-a,
     mhs-cld_metop-b,
     mhs-cld_n18,
@@ -89,8 +89,8 @@ variational:
     15km:
       30km:
         4dhybrid:
-          nodes: 56
-          PEPerNode: 64
+          nodes: 60
+          PEPerNode: 60
           memory: 235GB
           baseSeconds: 6400
           secondsPerEnVarMember: 10
