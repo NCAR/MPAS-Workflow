@@ -62,19 +62,6 @@ variational:
             # is added as with `except: [{{backgroundMember}}]`, where {{backgroundMember}} is equal
             # to the member iterator (i.e., 1 for member 1, 2 for member 2, etc.)
 
-          60km:
-            maxMembers: 20
-            directory0: '/glade/campaign/mmm/parc/liuz/pandac_common/fixed_input/60km/EnsForCov/{{prevDateTime}}'
-            filePrefix: EnsForCov
-            memberNDigits: 2
-
-        DART:
-          60km:
-            maxMembers: 80
-            directory0: '/glade/scratch/guerrett/pandac/schwartz_dart_NMEM80_60km/CyclingFC/{{prevDateTime}}'
-            memberPrefix: mem
-            memberNDigits: 3
-
         EDA:
           60km:
             maxMembers: 80
