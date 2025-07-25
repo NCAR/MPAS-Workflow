@@ -84,6 +84,7 @@ cost function:
       date: *date7
   background error:
     covariance model: hybrid
+    no outer loop update: true
     components:
     - weight:
         _staticWeightFromFile: &staticWeightFromFile

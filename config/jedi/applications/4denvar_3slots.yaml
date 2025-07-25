@@ -60,6 +60,7 @@ cost function:
       date: *date3
   background error:
     covariance model: ensemble
+    no outer loop update: true
     localization:
       localization method: SABER
       saber central block:

@@ -34,6 +34,7 @@ cost function:
     date: &analysisDate {{thisISO8601Date}}
   background error:
     covariance model: SABER
+    no outer loop update: true
     saber central block:
       saber block name: BUMP_NICAS
       active variables: &ctlvars [{{bumpCovControlVariables}}]

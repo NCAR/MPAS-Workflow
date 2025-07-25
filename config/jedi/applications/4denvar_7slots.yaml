@@ -84,6 +84,7 @@ cost function:
       date: *date7
   background error:
     covariance model: ensemble
+    no outer loop update: true
     localization:
       #communication mode: fast
       time decay: PT3H

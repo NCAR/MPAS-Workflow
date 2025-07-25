@@ -46,6 +46,7 @@ cost function:
     date: *analysisDate
   background error:
     covariance model: hybrid
+    no outer loop update: true
     components:
     - weight:
         date: *analysisDate
