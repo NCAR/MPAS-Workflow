@@ -17,6 +17,28 @@
       maxvalue: 60.0
     <<: *multiIterationFilter
 
+# BennartzScatIndex check: remove excessive SI over water
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 4-5
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    test variables:
+    - name: ObsFunction/BennartzScatIndex
+      options:
+        channel_89ghz: 1
+        channel_150ghz: 2
+        bennartz_coeff_1: -39.2010
+        bennartz_coeff_2: 0.1104
+        apply_bias: ObsBiasData
+    maxvalue: 20.0
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
 # obs prior filters:
 # over non-water:
   - filter: BlackList
