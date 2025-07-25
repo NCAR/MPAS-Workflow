@@ -1,15 +1,16 @@
 experiment:
-  name: '3dhybrid_O15kmI30km_clrsky_amsua_mhs_new_crtm241_8nodes'
+  name: '0_3dhyb_csr_ama_asr_mhs'
 build:
   mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''
   #bundle compiler used: gnu-openmpi
 hpc:
-  CriticalAccount: UMMM0012
+  CriticalAccount: NMMM0043
   CriticalQueue: main
-  NonCriticalAccount: UMMM0012
-  NonCriticalQueue: economy
-  SingleProcAccount: UMMM0012
+  NonCriticalAccount: NMMM0043
+  NonCriticalQueue: main
+  priority: premium
+  SingleProcAccount: NMMM0043
   SingleProcQueue: casper@casper-pbs
 firstbackground:
   resource: "PANDAC.GFS"
