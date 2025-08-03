@@ -1,5 +1,5 @@
 experiment:
-  name: '5_3dhyb_csr-ama_csr-mhs_rttov14'
+  name: '0_3dhyb_csrama_csrmhs'
 build:
   mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''
@@ -9,7 +9,7 @@ hpc:
   CriticalQueue: main
   NonCriticalAccount: NMMM0043
   NonCriticalQueue: main
-  priority: premium
+  priority: regular
   SingleProcAccount: NMMM0043
   SingleProcQueue: casper@casper-pbs
 firstbackground:
@@ -33,14 +33,14 @@ model:
   ensembleMesh: 30km
 observations:
   resource: PANDACArchiveForVarBC
-  CRTMTABLES: /glade/campaign/mmm/parc/liuz/pandac_common/crtm_coeffs_v2.4.1/  
-  fixedCoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias
-  fixedTlapmeanCov: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
-  initialVARBCcoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
+  CRTMTABLES: /glade/derecho/scratch/liuz/pandac_common/crtm_coeffs_v2.4.1/
+  fixedCoeff: /glade/derecho/scratch/liuz/pandac_common/satbias
+  fixedTlapmeanCov: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
+  initialVARBCcoeff: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
 variational:
   DAType: 3dhybrid_v3
   biasCorrection: True
-  hybridBECWeightFromFile: true 
+  hybridBECWeightFromFile: false
   nInnerIterations: [60,60,]
   numProcessors: 512
   ensemble:
@@ -55,10 +55,6 @@ variational:
     - surface_pressure
     bumpCovPrefix: mpas
     bumpCovVBalPrefix: mpas
-    30km:
-      bumpCovDir: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_NICAS_NEW
-      bumpCovStdDevFile: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_HDIAG_NEW/mpas.stddev.nc
-      bumpCovVBalDir: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_VBAL_NEW
   post: []
   observers: [
     aircraft,
@@ -67,16 +63,16 @@ variational:
     satwnd,
     sfc,
     sondes,
-    #amsua_aqua,
-    #amsua-all_metop-a,
-    #amsua-all_metop-b,
-    #amsua-all_n15,
-    amsua_n18_rttov,
-    #amsua-all_n19,
-    #mhs_metop-a,
-    #mhs_metop-b,
-    mhs_n18_rttov,
-    #mhs_n19,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    mhs_metop-a,
+    mhs_metop-b,
+    mhs_n18,
+    mhs_n19,
   ]
   job:
     15km:
@@ -85,9 +81,9 @@ variational:
           nodes: 8
           PEPerNode: 64
           memory: 235GB
-          baseSeconds: 4200
-          secondsPerEnVarMember: 10
+          baseSeconds: 1500
+          secondsPerEnVarMember: 10 
 workflow:
   first cycle point: 20180414T18
-  #  restart cycle point: 20180415T06
+  #restart cycle point: 20180404T18
   final cycle point: 20180415T00

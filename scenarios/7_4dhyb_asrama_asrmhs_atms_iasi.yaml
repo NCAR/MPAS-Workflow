@@ -1,5 +1,5 @@
 experiment:
-  name: '3_3dhyb_asr-ama_asr-mhs_atms'
+  name: '7_4dhyb_asrama_asrmhs_atms_iasi56x64'
 build:
   mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''
@@ -9,7 +9,7 @@ hpc:
   CriticalQueue: main
   NonCriticalAccount: NMMM0043
   NonCriticalQueue: main
-  priority: premium
+  priority: economy
   SingleProcAccount: NMMM0043
   SingleProcQueue: casper@casper-pbs
 firstbackground:
@@ -17,12 +17,13 @@ firstbackground:
 externalanalyses:
   resource: "GFS.PANDAC"
 forecast:
+  FourD: True
   post: [] # use this when doing extended forecast
   job:
     15km:
       nodes: 8
       PEPerNode: 128
-      baseSeconds: 600
+      baseSeconds: 800
       secondsPerForecastHR: 240
 
 members:
@@ -33,16 +34,18 @@ model:
   ensembleMesh: 30km
 observations:
   resource: PANDACArchiveForVarBC
-  CRTMTABLES: /glade/campaign/mmm/parc/liuz/pandac_common/crtm_coeffs_v2.4.1/  
-  fixedCoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias
-  fixedTlapmeanCov: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
-  initialVARBCcoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
+  CRTMTABLES: /glade/derecho/scratch/liuz/pandac_common/crtm_coeffs_v2.4.1/
+  fixedCoeff: /glade/derecho/scratch/liuz/pandac_common/satbias
+  fixedTlapmeanCov: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
+  initialVARBCcoeff: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
 variational:
-  DAType: 3dhybrid_v3
+  DAType: 4dhybrid
   biasCorrection: True
-  hybridBECWeightFromFile: true 
+  #ensembleCovarianceWeight: 0.75
+  #staticCovarianceWeight: 0.25
+  hybridBECWeightFromFile: true
   nInnerIterations: [60,60,]
-  numProcessors: 512
+  numProcessors: 3584
   ensemble:
     forecasts:
       resource: "PANDAC.LGETKF"
@@ -55,10 +58,6 @@ variational:
     - surface_pressure
     bumpCovPrefix: mpas
     bumpCovVBalPrefix: mpas
-    30km:
-      bumpCovDir: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_NICAS_NEW
-      bumpCovStdDevFile: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_HDIAG_NEW/mpas.stddev.nc
-      bumpCovVBalDir: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_VBAL_NEW
   post: []
   observers: [
     aircraft,
@@ -84,15 +83,17 @@ variational:
     mhs-cld_n19,
     atms_n20,
     atms_npp,
-  ]
+    iasi_metop-a,
+    iasi_metop-b,
+  ] 
   job:
     15km:
       30km:
-        3dhybrid_v3:
-          nodes: 8
+        4dhybrid:
+          nodes: 56
           PEPerNode: 64
           memory: 235GB
-          baseSeconds: 4200
+          baseSeconds: 6400
           secondsPerEnVarMember: 10
 workflow:
   first cycle point: 20180414T18

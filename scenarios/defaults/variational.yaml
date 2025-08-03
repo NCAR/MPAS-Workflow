@@ -79,7 +79,7 @@ variational:
 
           30km:
             maxMembers: 80
-            directory0: '/glade/campaign/mmm/parc/taosun/LGETKF/taosun_LGETKF_30km_WarmStart_80Mem_AllSky/CyclingFC/{{prevDateTime}}' 
+            directory0: '/glade/derecho/scratch/liuz/pandac_common/LGETKF/taosun_LGETKF_30km_WarmStart_80Mem_AllSky/CyclingFC/{{prevDateTime}}'
             filePrefix: EnsForCov
             memberPrefix: mem
             memberNDigits: 3
@@ -121,7 +121,7 @@ variational:
       #  bumpLocDir: str
       30km:
         bumpLocPrefix: bumploc
-        bumpLocDir: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/BUMP/EnsLoc
+        bumpLocDir: /glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/BUMP/EnsLoc
       60km:
         bumpLocPrefix: bumploc_1200.0km_6.0km
         bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.bumploc.duplicated.limited.1200km6km
@@ -145,11 +145,11 @@ variational:
     #  bumpCovVBalDir: str
     #  hybridCoefficientsDir: str
     30km:
-      bumpCovDir: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/BUMP/NICAS
-      bumpCovStdDevFile: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/BUMP/HDIAG/mpas.stddev.nc
-      bumpCovVBalDir: /glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/BUMP/VBAL
-      hybridEnsembleWeightFile: /glade/campaign/mmm/parc/liuz/fromTao/HybWeight/mpas30km.hyb_weight_ens.nc
-      hybridStaticWeightFile: /glade/campaign/mmm/parc/liuz/fromTao/HybWeight/mpas30km.hyb_weight_static.nc
+      bumpCovDir: /glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/BUMP_STATIC/BUMP_NICAS_NEW
+      bumpCovStdDevFile: /glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/BUMP_STATIC/BUMP_HDIAG_NEW/mpas.stddev.nc
+      bumpCovVBalDir: /glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/BUMP_STATIC/BUMP_VBAL_NEW
+      hybridEnsembleWeightFile: /glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/BUMP/HybWeight/mpas30km.hyb_weight_ens.nc
+      hybridStaticWeightFile: /glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/BUMP/HybWeight/mpas30km.hyb_weight_static.nc
     60km:
       bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.NICAS_00global
       bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc

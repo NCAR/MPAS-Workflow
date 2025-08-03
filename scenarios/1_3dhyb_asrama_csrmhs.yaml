@@ -1,5 +1,5 @@
 experiment:
-  name: '1_3dhyb_asr-ama_csr-mhs'
+  name: '1_3dhyb_asrama_csrmhs'
 build:
   mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''
@@ -9,7 +9,7 @@ hpc:
   CriticalQueue: main
   NonCriticalAccount: NMMM0043
   NonCriticalQueue: main
-  priority: premium
+  priority: regular
   SingleProcAccount: NMMM0043
   SingleProcQueue: casper@casper-pbs
 firstbackground:
@@ -33,10 +33,10 @@ model:
   ensembleMesh: 30km
 observations:
   resource: PANDACArchiveForVarBC
-  CRTMTABLES: /glade/campaign/mmm/parc/liuz/pandac_common/crtm_coeffs_v2.4.1/  
-  fixedCoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias
-  fixedTlapmeanCov: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
-  initialVARBCcoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
+  CRTMTABLES: /glade/derecho/scratch/liuz/pandac_common/crtm_coeffs_v2.4.1/
+  fixedCoeff: /glade/derecho/scratch/liuz/pandac_common/satbias
+  fixedTlapmeanCov: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
+  initialVARBCcoeff: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
 variational:
   DAType: 3dhybrid_v3
   biasCorrection: True
@@ -55,10 +55,6 @@ variational:
     - surface_pressure
     bumpCovPrefix: mpas
     bumpCovVBalPrefix: mpas
-    30km:
-      bumpCovDir: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_NICAS_NEW
-      bumpCovStdDevFile: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_HDIAG_NEW/mpas.stddev.nc
-      bumpCovVBalDir: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_VBAL_NEW
   post: []
   observers: [
     aircraft,

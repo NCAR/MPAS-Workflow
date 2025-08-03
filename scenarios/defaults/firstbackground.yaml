@@ -34,7 +34,7 @@ firstbackground:
         60km: # only available 20180414T18, 20200723T18
           directory: "/glade/campaign/mmm/parc/taosun/pandac/60kmMeshGFS/FirstBackground_NEW/{{FirstCycleDate}}"
         30km: # only available 20180414T18
-          directory: "/glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/FirstBackground_NEW/{{FirstCycleDate}}"
+          directory: "/glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/FirstBackground_NEW/{{FirstCycleDate}}"
         15km:
           directory: "/glade/campaign/mmm/parc/taosun/pandac/15kmMeshGFS/FirstBackground/{{FirstCycleDate}}"
         15-3km:

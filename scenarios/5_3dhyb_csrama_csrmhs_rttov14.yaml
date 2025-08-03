@@ -1,5 +1,5 @@
 experiment:
-  name: '5_3denvar120km_csr-ama_csr-mhs_rttov14'
+  name: '5_3dhyb_csrama_csrmhs_rttov14'
 build:
   mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''
@@ -9,7 +9,7 @@ hpc:
   CriticalQueue: main
   NonCriticalAccount: NMMM0043
   NonCriticalQueue: main
-  priority: premium
+  priority: regular
   SingleProcAccount: NMMM0043
   SingleProcQueue: casper@casper-pbs
 firstbackground:
@@ -18,33 +18,43 @@ externalanalyses:
   resource: "GFS.PANDAC"
 forecast:
   post: [] # use this when doing extended forecast
-  #  job:
-  #  120km:
-  #    nodes: 1
-  #    PEPerNode: 128
-  #    baseSeconds: 600
-  #    secondsPerForecastHR: 20
+  job:
+    15km:
+      nodes: 8
+      PEPerNode: 128
+      baseSeconds: 600
+      secondsPerForecastHR: 240
 
 members:
   n: 1
 model:
-  outerMesh: 120km
-  innerMesh: 120km
-  ensembleMesh: 120km
+  outerMesh: 15km
+  innerMesh: 30km
+  ensembleMesh: 30km
 observations:
   resource: PANDACArchiveForVarBC
-  CRTMTABLES: /glade/campaign/mmm/parc/liuz/pandac_common/crtm_coeffs_v2.4.1/  
-  fixedCoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias
-  fixedTlapmeanCov: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
-  initialVARBCcoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
+  CRTMTABLES: /glade/derecho/scratch/liuz/pandac_common/crtm_coeffs_v2.4.1/
+  fixedCoeff: /glade/derecho/scratch/liuz/pandac_common/satbias
+  fixedTlapmeanCov: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
+  initialVARBCcoeff: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
 variational:
-  DAType: 3denvar
+  DAType: 3dhybrid_v3
   biasCorrection: True
-  nInnerIterations: [10,10,]
-  #  numProcessors: 512
+  hybridBECWeightFromFile: true 
+  nInnerIterations: [60,60,]
+  numProcessors: 512
   ensemble:
     forecasts:
-      resource: "PANDAC.GEFS"
+      resource: "PANDAC.LGETKF"
+  covariance:
+    bumpCovControlVariables:
+    - stream_function
+    - velocity_potential
+    - temperature
+    - spechum
+    - surface_pressure
+    bumpCovPrefix: mpas
+    bumpCovVBalPrefix: mpas
   post: []
   observers: [
     aircraft,
@@ -64,15 +74,15 @@ variational:
     mhs_n18_rttov,
     #mhs_n19,
   ]
-  #  job:
-  #  15km:
-  #    30km:
-  #      3dhybrid_v3:
-  #        nodes: 8
-  #        PEPerNode: 64
-  #        memory: 235GB
-  #        baseSeconds: 4200
-  #        secondsPerEnVarMember: 10
+  job:
+    15km:
+      30km:
+        3dhybrid_v3:
+          nodes: 8
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 4200
+          secondsPerEnVarMember: 10
 workflow:
   first cycle point: 20180414T18
   #  restart cycle point: 20180415T06
