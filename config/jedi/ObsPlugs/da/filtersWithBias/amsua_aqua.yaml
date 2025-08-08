@@ -103,20 +103,20 @@
         options:
           channels: *amsua_aqua_channels
 #  Surface Jacobian check
-#  - filter: Perform Action
-#    filter variables:
-#    - name: brightnessTemperature
-#      channels: *amsua_aqua_channels
-#    action:
-#      name: inflate error
-#      inflation variable:
-#        name: ObsFunction/ObsErrorFactorSurfJacobianRad
-#        channels: *amsua_aqua_channels
-#        options:
-#          channels: *amsua_aqua_channels
-#          sensor: amsua_aqua
-#          obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
-#          obserr_dtempf: [0.500, 2.000, 1.000, 2.000, 4.500]
+  - filter: Perform Action
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua_aqua_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorSurfJacobianRad
+        channels: *amsua_aqua_channels
+        options:
+          channels: *amsua_aqua_channels
+          sensor: amsua_aqua
+          obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
+          obserr_dtempf: [0.500, 2.000, 1.000, 2.000, 4.500]
 #  Gross check
   - filter: Background Check
     filter variables:
