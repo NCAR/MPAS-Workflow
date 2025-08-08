@@ -27,6 +27,7 @@ date
 
 # Setup environment
 # =================
+source config/environmentJEDI.csh
 source config/auto/build.csh
 source config/auto/experiment.csh
 source config/auto/observations.csh
