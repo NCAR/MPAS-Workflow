@@ -25,6 +25,7 @@ source config/auto/experiment.csh
 source config/auto/enkf.csh
 source config/auto/workflow.csh
 source config/auto/model.csh
+source config/auto/observations.csh
 source config/auto/naming.csh
 set yymmdd = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 1-8`
 set hh = `echo ${CYLC_TASK_CYCLE_POINT} | cut -c 10-11`
