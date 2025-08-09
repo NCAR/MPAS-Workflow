@@ -41,6 +41,9 @@ class HPC(Component):
     # override this below based on host
     'NonCriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
 
+    # Shared: used for small jobs which can run on the shared development queue using < 128 cpus
+    'SharedQueue': ['develop', str, ['develop', 'regular', 'premium']],
+
     # SingleProc*: used for single-processor jobs, both critical and non-critical paths
     # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
     'SingleProcAccount': ['NMMM0015', str],

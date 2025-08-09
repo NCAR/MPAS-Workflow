@@ -122,7 +122,7 @@ class Config(Logger):
 
 
   def __convertQueue(self, attrName:str, subtable:str=None):
-    derecho_queues = ['main', 'preempt', 'casper@casper-pbs']
+    derecho_queues = ['main', 'preempt', 'develop', 'casper@casper-pbs']
 
     if subtable != None:
       qAttrName = subtable + '.' + attrName
