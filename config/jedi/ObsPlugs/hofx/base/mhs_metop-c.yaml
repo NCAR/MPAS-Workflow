@@ -1,0 +1,21 @@
+- obs space:
+    <<: *ObsSpace
+    name: mhs_metop-c
+    obsdatain:
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/mhs_metop-c_obs_{{thisValidDate}}.h5
+    obsdataout:
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}/{{obsPrefix}}_mhs_metop-c.h5
+    simulated variables: [brightnessTemperature]
+    channels: &mhs_metop-c_channels 1-5
+  obs error: *ObsErrorDiagonal
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: mhs_metop-c
+  get values:
+    <<: *GetValues
