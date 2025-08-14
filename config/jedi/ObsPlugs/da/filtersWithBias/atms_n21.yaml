@@ -1,0 +1,392 @@
+  obs filters:
+  - filter: Gaussian_Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space
+
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-5,16,17
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: -60.0
+      maxvalue: 60.0
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    <<: *multiIterationFilter
+
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_n21_channels
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelRamp
+        channels: *atms_n21_channels
+        options:
+          channels: *atms_n21_channels
+          xvar:
+            name: ObsFunction/CLWRetSymmetricMW
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [ObsValue, HofX]
+              bias_application: ObsValue
+          x0:   [0.03,   0.03,   0.03,   0.03,   0.03,
+                 0.04,   0.04,   0.04,  0.000,  0.000,
+                 0.000,  0.000,  0.000,  0.000,  0.000,
+                 0.03,   0.03,   0.04,   0.04,   0.04, 0.04, 0.04 ]
+          x1:   [0.53,   0.47,   0.41,   0.41,   0.43,
+                 0.92,   0.92,   0.150,  0.000,  0.000,
+                 0.000,  0.000,  0.000,  0.000,  0.000,
+                 0.31,   0.53,   0.70,    0.70,   0.70,  0.70,  0.70]
+          err0: [4.40,   3.37,   2.56,   1.44,   0.53,
+                 0.32,   0.28,   0.260,  0.400,  0.480,
+                 0.450,  0.450,  0.550,  0.800,  3.000,
+                 5.96,   2.88,   2.31,   2.21,   2.31, 2.53, 2.81]
+          err1: [35.23,  42.77,  17.89,   9.71,  4.33,
+                 2.60,   0.77,   0.340,  0.400,  0.480,
+                 0.450,  0.450,  0.550,  0.800,  3.000,
+                 20.35,  35.56,  27.01,  20.55,  17.50, 13.15, 9.92 ]
+
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_n21_channels
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      maxvalue: 0.98
+    action:
+      name: assign error
+      error function:
+        #name: ObsFunction/ObsErrorModelRamp
+        name: ObsFunction/ObsErrorModelQuad
+        channels: *atms_n21_channels
+        options:
+          channels: *atms_n21_channels
+          xvar:
+            name: ObsFunction/SIRetSymmetricMW
+            options:
+              siret_ch90: 16 
+              siret_ch150: 17
+              siret_types: [ObsValue, HofX]
+              bias_application: ObsValue
+
+          a:    [ 0.030,  0.030,  0.030,  0.020,  0.030,
+                   0.005,  0.002,  0.001,  0.000,  0.000,
+                   0.000,  0.000,  0.000,  0.000,  0.000,
+                   9.00,  0.030,  0.042,  0.033,  0.032,
+                   0.020,  0.018]
+          b:    [ 0.350,  0.380,  0.400,  0.450,  0.500,
+                   0.119,  0.119,  0.119,  0.000,  0.000,
+                   0.000,  0.000,  0.000,  0.000,  0.000,
+                   15.0,  0.500,  0.119,  0.119,  0.119,
+                   0.119,  0.119]
+          err0:  [ 500.0, 500.0, 500.0, 500.0, 500.0,
+                   1.32,   0.38,  0.29,  0.33,  0.48,
+                   500.0, 500.0, 500.0, 500.0, 500.0,
+                   500.0, 500.0,  5.39,   4.23,   3.64,
+                   3.32,   3.17]
+          err1:  [ 500.0, 500.0, 500.0, 500.0, 500.0, 
+                   4.20,  2.00,   1.00,  0.33,  0.48,
+                   500.0, 500.0, 500.0, 500.0, 500.0,
+                   500.00, 500.00,  28.79,  26.32,  23.27,
+                   20.66,  16.80]
+
+#  Topography check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_n21_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTopoRad
+        channels: *atms_n21_channels
+        options:
+          sensor: atms_n21
+          channels: *atms_n21_channels
+    <<: *multiIterationFilter
+#  Transmittnace Top Check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_n21_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
+        channels: *atms_n21_channels
+        options:
+          channels: *atms_n21_channels
+    <<: *multiIterationFilter
+#  Surface Jacobian check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_n21_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorSurfJacobianRad
+        channels: *atms_n21_channels
+        options:
+          channels: *atms_n21_channels
+          sensor: atms_n21
+          obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
+          obserr_dtempf: [0.500, 2.000, 1.000, 2.000, 4.500]
+    <<: *multiIterationFilter
+#  Situation dependent Check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_n21_channels
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorSituDependMW
+        channels: *atms_n21_channels
+        options:
+          sensor: atms_n21
+          channels: *atms_n21_channels
+          clwobs_function:
+            name: ObsFunction/CLWRetMW
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [ObsValue]
+          clwbkg_function:
+            name: ObsFunction/CLWRetMW
+            options:
+              clwret_ch238: 1
+              clwret_ch314: 2
+              clwret_types: [HofX]
+          scatobs_function:
+            name: ObsFunction/SCATRetMW
+            options:
+              scatret_ch238: 1
+              scatret_ch314: 2
+              scatret_ch890: 16
+              scatret_types: [ObsValue]
+          clwmatchidx_function:
+            name: ObsFunction/CLWMatchIndexMW
+            channels: *atms_n21_channels
+            options:
+              channels: *atms_n21_channels
+              clwobs_function:
+                name: ObsFunction/CLWRetMW
+                options:
+                  clwret_ch238: 1
+                  clwret_ch314: 2
+                  clwret_types: [ObsValue]
+              clwbkg_function:
+                name: ObsFunction/CLWRetMW
+                options:
+                  clwret_ch238: 1
+                  clwret_ch314: 2
+                  clwret_types: [HofX]
+              clwret_clearsky: [ 0.03,   0.03,   0.03,   0.03,   0.03,
+                                 0.04,   0.04,   0.04,  0.000,  0.000,
+                                 0.000,  0.000,  0.000,  0.000,  0.000,
+                                 0.03,   0.03,   0.04,   0.04,   0.04,
+                                 0.04, 0.04 ]
+          obserr_clearsky: [ 4.40,   3.37,   2.56,   1.44,   0.53,
+                             0.32,   0.28,   0.260,  0.400,  0.480,
+                             0.450,  0.450,  0.550,  0.800,  3.000,
+                             5.96,   2.88,   2.31,   2.21,   2.31,
+                             2.53, 2.81]
+
+    <<: *multiIterationFilter
+#  Gross check
+  - filter: Background Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_n21_channels
+
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+
+    function absolute threshold:
+    - name: ObsFunction/ObsErrorBoundMW
+      channels: *atms_n21_channels
+      options:
+        sensor: atms_n21
+        channels: *atms_n21_channels
+        obserr_bound_latitude:
+          name: ObsFunction/ObsErrorFactorLatRad
+          options:
+            latitude_parameters: [25.0, 0.25, 0.04, 3.0]
+        obserr_bound_transmittop:
+          name: ObsFunction/ObsErrorFactorTransmitTopRad
+          channels: *atms_n21_channels
+          options:
+            channels: *atms_n21_channels
+        obserr_bound_topo:
+          name: ObsFunction/ObsErrorFactorTopoRad
+          channels: *atms_n21_channels
+          options:
+            channels: *atms_n21_channels
+            sensor: atms_n21
+        obserr_function:
+          name: ObsFunction/ObsErrorModelRamp
+          channels: *atms_n21_channels
+          options:
+            channels: *atms_n21_channels
+            xvar:
+              name: ObsFunction/CLWRetSymmetricMW
+              options:
+                clwret_ch238: 1
+                clwret_ch314: 2
+                clwret_types: [ObsValue, HofX]
+            x0:   [0.03,   0.03,   0.03,   0.03,   0.03,
+                 0.04,   0.04,   0.04,  0.000,  0.000,
+                 0.000,  0.000,  0.000,  0.000,  0.000,
+                 0.03,   0.03,   0.04,   0.04,   0.04, 0.04, 0.04 ]
+            x1:   [0.53,   0.47,   0.41,   0.41,   0.43,
+                 0.92,   0.92,   0.150,  0.000,  0.000,
+                 0.000,  0.000,  0.000,  0.000,  0.000,
+                 0.31,   0.53,   0.70,    0.70,   0.70,  0.70,  0.70]
+            err0: [4.40,   3.37,   2.56,   1.44,   0.53,
+                 0.32,   0.28,   0.260,  0.400,  0.480,
+                 0.450,  0.450,  0.550,  0.800,  3.000,
+                 5.96,   2.88,   2.31,   2.21,   2.31, 2.53, 2.81]
+            err1: [35.23,  42.77,  17.89,   9.71,  4.33,
+                 2.60,   0.77,   0.340,  0.400,  0.480,
+                 0.450,  0.450,  0.550,  0.800,  3.000,
+                 20.35,  35.56,  27.01,  20.55,  17.50, 13.15, 9.92 ]
+        obserr_bound_max: [4.5, 4.5, 3.0, 3.0, 1.0,
+                           1.0, 1.0, 1.0, 1.0, 1.0,
+                           1.0, 1.0, 1.0, 2.0, 4.5,
+                           4.5, 2.0, 2.0, 2.0, 2.0,
+                           2.0, 2.0]
+    action:
+      name: reject
+    <<: *multiIterationFilter
+#  Gross check
+  - filter: Background Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_n21_channels
+
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      maxvalue: 0.98
+
+    function absolute threshold:
+    - name: ObsFunction/ObsErrorBoundMW
+      channels: *atms_n21_channels
+      options:
+        sensor: atms_n21
+        channels: *atms_n21_channels
+        obserr_bound_latitude:
+          name: ObsFunction/ObsErrorFactorLatRad
+          options:
+            latitude_parameters: [25.0, 0.25, 0.04, 3.0]
+        obserr_bound_transmittop:
+          name: ObsFunction/ObsErrorFactorTransmitTopRad
+          channels: *atms_n21_channels
+          options:
+            channels: *atms_n21_channels
+        obserr_bound_topo:
+          name: ObsFunction/ObsErrorFactorTopoRad
+          channels: *atms_n21_channels
+          options:
+            channels: *atms_n21_channels
+            sensor: atms_n21
+        obserr_function:
+          name: ObsFunction/ObsErrorModelQuad
+          channels: *atms_n21_channels
+          options:
+            channels: *atms_n21_channels
+            xvar:
+              name: ObsFunction/SIRetSymmetricMW
+              options:
+                siret_ch90: 16
+                siret_ch150: 17
+                siret_types: [ObsValue, HofX]
+                bias_application: ObsValue
+            a:    [ 0.030,  0.030,  0.030,  0.020,  0.030,
+                   0.005,  0.002,  0.001,  0.000,  0.000,
+                   0.000,  0.000,  0.000,  0.000,  0.000,
+                   9.00,  0.030,  0.042,  0.033,  0.032,
+                   0.020,  0.018]
+            b:    [ 0.350,  0.380,  0.400,  0.450,  0.500,
+                   0.119,  0.119,  0.119,  0.000,  0.000,
+                   0.000,  0.000,  0.000,  0.000,  0.000,
+                   15.0,  0.500,  0.119,  0.119,  0.119,
+                   0.119,  0.119]
+            err0:  [ 500.0, 500.0, 500.0, 500.0, 500.0,
+                   1.32,   0.38,  0.29,  0.33,  0.48,
+                   500.0, 500.0, 500.0, 500.0, 500.0,
+                   500.0, 500.0,  5.39,   4.23,   3.64,
+                   3.32,   3.17]
+            err1:  [ 500.0, 500.0, 500.0, 500.0, 500.0,
+                   4.20,  2.00,   1.00,  0.33,  0.48,
+                   500.0, 500.0, 500.0, 500.0, 500.0,
+                   500.00, 500.00,  28.79,  26.32,  23.27,
+                   20.66,  16.80]
+        obserr_bound_max: [4.5, 4.5, 3.0, 3.0, 1.0,
+                           3.0, 1.2, 1.2, 1.2, 1.5,
+                           1.0, 1.0, 1.0, 2.0, 4.5,
+                           4.5, 2.0, 6.0, 5.0, 5.0,
+                           5.0, 5.0]
+
+    action:
+      name: reject
+    <<: *multiIterationFilter
+#  Inter-channel check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_n21_channels
+    test variables:
+    - name: ObsFunction/InterChannelConsistencyCheck
+      channels: *atms_n21_channels
+      options:
+        channels: *atms_n21_channels
+        sensor: atms_n21
+        use_flag: [ 1,  1,  1,  1, 1,
+                    1,  1,  1,  1, 1,
+                   -1,  -1,  -1,  -1, -1,
+                     1,  1,  1, 1, 1,
+                    1, 1]
+    maxvalue: 1.0e-12
+    action:
+      name: reject
+#  Useflag check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_n21_channels
+    test variables:
+    - name: ObsFunction/ChannelUseflagCheckRad
+      channels: *atms_n21_channels
+      options:
+        channels: *atms_n21_channels
+        use_flag: [ 1,  1,  1,  1, 1,
+                    1,  1,  1,  1, 1,
+                   -1, -1, -1, -1, -1,
+                    1,  1,  1,  1, 1,
+                   1, 1]
+    minvalue: 1.0e-12
+    action:
+      name: reject
+
+#  - filter: GOMsaver
+#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_atms_n21.nc4
