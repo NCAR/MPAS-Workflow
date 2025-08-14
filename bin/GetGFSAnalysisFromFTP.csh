@@ -43,7 +43,8 @@ set hh = `echo ${thisValidDate} | cut -c 9-10`
 set res = 0p25
 set fhour = 000
 # url for GFS data
-set gfs_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gfs.${ccyymmdd}/${hh}/atmos
+#set gfs_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gfs.${ccyymmdd}/${hh}/atmos
+set gfs_ftp = https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.${ccyymmdd}/${hh}/atmos
 set gribFile = gfs.t${hh}z.pgrb2.${res}.f${fhour}
 
 set WorkDir = ${ExperimentDirectory}/`echo "$ArgWorkDir" \

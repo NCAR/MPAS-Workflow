@@ -54,7 +54,7 @@ cd ${self_WorkDir}
 # ================================================================================================
 
 set dataRoot = /glade/campaign/collections
-set defaultBUFRDirectory = $dataRoot//rda/data/d735000
+set defaultBUFRDirectory = $dataRoot/rda/data/d735000
 set satwndBUFRDirectory = $dataRoot/rda/data/d351000
 set PrepBUFRDirectory = $dataRoot/rda/data/d337000
 
@@ -140,7 +140,8 @@ foreach inst ( ${convertToIODAObservations} )
   else if ( "${observations__resource}" == "NCEPFTPOnline" ) then
     echo "Getting ${inst} from the NCEP FTP"
     # url for GDAS data
-    set gdas_ftp = https://ftpprd.ncep.noaa.gov/data/nccf/com/obsproc/prod/gdas.${ccyymmdd}
+    #set gdas_ftp = https://ftpprd.ncep.noaa.gov/data/nccf/com/obsproc/prod/gdas.${ccyymmdd}
+    set gdas_ftp = https://nomads.ncep.noaa.gov/pub/data/nccf/com/obsproc/prod/gdas.${ccyymmdd}
     # set name for the observation type
     if ( ${inst} == prepbufr ) then
       set THIS_FILE = gdas.t${hh}z.${inst}.nr
