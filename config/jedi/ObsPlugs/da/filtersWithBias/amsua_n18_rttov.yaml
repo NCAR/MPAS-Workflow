@@ -78,30 +78,30 @@
 #    action:
 #      name: reject
 #  Topography check
-#  - filter: Perform Action
-#    filter variables:
-#    - name: brightnessTemperature
-#      channels: *amsua_n18_channels
-#    action:
-#      name: inflate error
-#      inflation variable:
-#        name: ObsFunction/ObsErrorFactorTopoRad
-#        channels: *amsua_n18_channels
-#        options:
-#          sensor: amsua_n18
-#          channels: *amsua_n18_channels
+  - filter: Perform Action
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua_n18_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTopoRad
+        channels: *amsua_n18_channels
+        options:
+          sensor: amsua_n18
+          channels: *amsua_n18_channels
 #  Transmittance Top Check
-#  - filter: Perform Action
-#    filter variables:
-#    - name: brightnessTemperature
-#      channels: *amsua_n18_channels
-#    action:
-#      name: inflate error
-#      inflation variable:
-#        name: ObsFunction/ObsErrorFactorTransmitTopRad
-#        channels: *amsua_n18_channels
-#        options:
-#          channels: *amsua_n18_channels
+  - filter: Perform Action
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua_n18_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
+        channels: *amsua_n18_channels
+        options:
+          channels: *amsua_n18_channels
 #  Surface Jacobian check
 #  - filter: Perform Action
 #    filter variables:
@@ -174,41 +174,54 @@
 #      name: reject
 #    <<: *multiIterationFilter
 #  Inter-channel check #amsua-n18
-#  - filter: Bounds Check
-#    filter variables:
-#    - name: brightnessTemperature
-#      channels: *amsua_n18_channels
-#    test variables:
-#    - name: ObsFunction/InterChannelConsistencyCheck
-#      channels: *amsua_n18_channels
-#      options:
-#        channels: *amsua_n18_channels
-#        sensor: amsua_n18
-#        use_flag: [ -1, -1, -1, -1,  1,
-#                     1,  1,  1,  1, -1,
-#                    -1, -1, -1, -1, -1 ]
-#    maxvalue: 1.0e-12
-#    action:
-#      name: reject
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua_n18_channels
+    test variables:
+    - name: ObsFunction/InterChannelConsistencyCheck
+      channels: *amsua_n18_channels
+      options:
+        channels: *amsua_n18_channels
+        sensor: amsua_n18
+        use_flag: [ -1, -1, -1, -1,  1,
+                     1,  1,  1,  1, -1,
+                    -1, -1, -1, -1, -1 ]
+    maxvalue: 1.0e-12
+    action:
+      name: reject
 #  Useflag check  #amsua-n18
-#  - filter: Bounds Check
-#    filter variables:
-#    - name: brightnessTemperature
-#      channels: *amsua_n18_channels
-#    test variables:
-#    - name: ObsFunction/ChannelUseflagCheckRad
-#      channels: *amsua_n18_channels
-#      options:
-#        channels: *amsua_n18_channels
-#        use_flag: [ -1, -1, -1, -1,  1,
-#                     1,  1,  1,  1, -1,
-#                    -1, -1, -1, -1, -1 ]
-#    minvalue: 1.0e-12
-#    action:
-#      name: reject
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua_n18_channels
+    test variables:
+    - name: ObsFunction/ChannelUseflagCheckRad
+      channels: *amsua_n18_channels
+      options:
+        channels: *amsua_n18_channels
+        use_flag: [ -1, -1, -1, -1,  1,
+                     1,  1,  1,  1, -1,
+                    -1, -1, -1, -1, -1 ]
+    minvalue: 1.0e-12
+    action:
+      name: reject
   - filter: Gaussian_Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
     action:
       name: reduce obs space
-#  - filter: GOMsaver
-#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n18.nc4
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua_n18.nc4
+  - filter: YDIAGsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_amsua_n18.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *amsua_n18_channels
+    - name: transmittances_of_atmosphere_layer
+      channels: *amsua_n18_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *amsua_n18_channels
+    - name: brightness_temperature_jacobian_surface_temperature
+      channels: *amsua_n18_channels
+    - name: surface_emissivity
+      channels: *amsua_n18_channels

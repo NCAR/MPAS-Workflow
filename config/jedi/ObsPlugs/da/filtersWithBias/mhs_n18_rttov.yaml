@@ -1,6 +1,20 @@
   obs filters:
-#  - filter: GOMsaver
-#    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_mhs_n18.nc4
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_mhs_n18.nc4
+  - filter: YDIAGsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_mhs_n18.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *mhs_n18_channels
+    - name: transmittances_of_atmosphere_layer
+      channels: *mhs_n18_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *mhs_n18_channels
+    - name: brightness_temperature_jacobian_surface_temperature
+      channels: *mhs_n18_channels
+    - name: surface_emissivity
+      channels: *mhs_n18_channels
+
   - filter: Gaussian_Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
     action:
@@ -73,33 +87,33 @@
 #    <<: *multiIterationFilter
 
 # Topography check
-#  - filter: BlackList
-#    filter variables:
-#    - name: brightnessTemperature
-#      channels: *mhs_n18_channels
-#    action:
-#      name: inflate error
-#      inflation variable:
-#        name: ObsFunction/ObsErrorFactorTopoRad
-#        channels: *mhs_n18_channels
-#        options:
-#          sensor: mhs_n18
-#          channels: *mhs_n18_channels
-#    <<: *multiIterationFilter
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_n18_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTopoRad
+        channels: *mhs_n18_channels
+        options:
+          sensor: mhs_n18
+          channels: *mhs_n18_channels
+    <<: *multiIterationFilter
 
 # Transmittnace Top Check
-#  - filter: BlackList
-#    filter variables:
-#    - name: brightnessTemperature
-#      channels: *mhs_n18_channels
-#    action:
-#      name: inflate error
-#      inflation variable:
-#        name: ObsFunction/ObsErrorFactorTransmitTopRad
-#        channels: *mhs_n18_channels
-#        options:
-#          channels: *mhs_n18_channels
-#    <<: *multiIterationFilter
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_n18_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
+        channels: *mhs_n18_channels
+        options:
+          channels: *mhs_n18_channels
+    <<: *multiIterationFilter
 
 # Background Check
 #  - filter: Background Check
@@ -136,17 +150,17 @@
 #    <<: *multiIterationFilter
 
 #  Useflag check
-#  - filter: Bounds Check
-#    filter variables:
-#    - name: brightnessTemperature
-#      channels: *mhs_n18_channels
-#    test variables:
-#    - name: ObsFunction/ChannelUseflagCheckRad
-#      channels: *mhs_n18_channels
-#      options:
-#        channels: *mhs_n18_channels
-#        use_flag: [ -1, -1, 1, 1,  1]
-#    minvalue: 1.0e-12
-#    action:
-#      name: reject
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_n18_channels
+    test variables:
+    - name: ObsFunction/ChannelUseflagCheckRad
+      channels: *mhs_n18_channels
+      options:
+        channels: *mhs_n18_channels
+        use_flag: [ -1, -1, 1, 1,  1]
+    minvalue: 1.0e-12
+    action:
+      name: reject
 
