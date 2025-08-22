@@ -9,7 +9,7 @@
         tlapse: &amsuacld18tlap {{fixedTlapmeanCov}}/amsua_n18_tlapmean.txt
       - name: lapseRate
         tlapse: *amsuacld18tlap
-      - name: emissivityJacobian
+#      - name: emissivityJacobian
       - name: sensorScanAngle
         order: 4
       - name: sensorScanAngle
