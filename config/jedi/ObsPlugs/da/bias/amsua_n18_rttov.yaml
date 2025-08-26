@@ -4,12 +4,12 @@
     variational bc:
       predictors: &predictors3
       - name: constant
-#      - name: lapseRate
-#        order: 2
-#        tlapse: &amsua18tlap {{fixedTlapmeanCov}}/amsua_n18_tlapmean.txt
-#      - name: lapseRate
-#        tlapse: *amsua18tlap
-#      - name: emissivityJacobian
+      - name: lapseRate
+        order: 2
+        tlapse: &amsua18tlap {{fixedTlapmeanCov}}/amsua_n18_tlapmean.txt
+      - name: lapseRate
+        tlapse: *amsua18tlap
+      - name: emissivityJacobian
       - name: sensorScanAngle
         order: 4
       - name: sensorScanAngle
