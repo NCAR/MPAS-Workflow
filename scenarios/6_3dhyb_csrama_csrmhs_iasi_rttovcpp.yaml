@@ -1,0 +1,91 @@
+experiment:
+  name: '6_3dhyb_csrama_csrmhs_iasi_rttovcpp'
+build:
+  mpas bundle: /glade/work/jianglp/code/mpas_bundle_v3.0.3_internal_patch/build
+  #mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
+  #forecast directory: ''
+  #bundle compiler used: gnu-openmpi
+hpc:
+  CriticalAccount: NMMM0015
+  CriticalQueue: main
+  NonCriticalAccount: NMMM0015
+  NonCriticalQueue: main
+  priority: premium
+  SingleProcAccount: NMMM0015
+  SingleProcQueue: casper@casper-pbs
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+forecast:
+  post: [] # use this when doing extended forecast
+  job:
+    15km:
+      nodes: 8
+      PEPerNode: 128
+      baseSeconds: 600
+      secondsPerForecastHR: 100
+
+members:
+  n: 1
+model:
+  outerMesh: 15km
+  innerMesh: 30km
+  ensembleMesh: 30km
+observations:
+  resource: PANDACArchiveForVarBC
+  CRTMTABLES: /glade/derecho/scratch/liuz/pandac_common/crtm_coeffs_v2.4.1/
+  fixedCoeff: /glade/derecho/scratch/liuz/pandac_common/satbias
+  fixedTlapmeanCov: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
+  initialVARBCcoeff: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
+variational:
+  DAType: 3dhybrid_v3
+  biasCorrection: True
+  hybridBECWeightFromFile: false
+  nInnerIterations: [60,60,]
+  numProcessors: 512
+  ensemble:
+    forecasts:
+      resource: "PANDAC.LGETKF"
+  covariance:
+    bumpCovControlVariables:
+    - stream_function
+    - velocity_potential
+    - temperature
+    - spechum
+    - surface_pressure
+    bumpCovPrefix: mpas
+    bumpCovVBalPrefix: mpas
+  post: []
+  observers: [
+    aircraft,
+    gnssrobndropp1d,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua_rttov,
+    amsua_metop-a_rttov,
+    amsua_metop-b_rttov,
+    amsua_n15_rttov,
+    amsua_n18_rttov,
+    amsua_n19_rttov,
+    mhs_metop-a_rttov,
+    mhs_metop-b_rttov,
+    mhs_n18_rttov,
+    mhs_n19_rttov,
+    iasi_metop-a_rttov,
+  ]
+  job:
+    15km:
+      30km:
+        3dhybrid_v3:
+          nodes: 8
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 3000
+          secondsPerEnVarMember: 10 
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180404T18
+  final cycle point: 20180514T18

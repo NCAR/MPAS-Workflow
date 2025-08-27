@@ -242,6 +242,8 @@ observations:
       - mhs_metop-b_rttov
       - mhs_n18_rttov
       - mhs_n19_rttov
+      - iasi_metop-a_rttov
+      - iasi_metop-b_rttov
       - mhs_n18_rttov12
 
       IODAPrefix: # define obs-space correspendance to ioda file name
@@ -278,6 +280,8 @@ observations:
         mhs_metop-b_rttov: mhs_metop-b
         mhs_n18_rttov: mhs_n18
         mhs_n19_rttov: mhs_n19
+        iasi_metop-a_rttov: iasi_metop-a
+        iasi_metop-b_rttov: iasi_metop-b
         mhs_n18_rttov12: mhs_n18
         abi-clr_g16: abi_g16
         ahi-clr_himawari8: ahi_himawari8
@@ -354,6 +358,8 @@ observations:
           ## iasi
           iasi_metop-a: /glade/derecho/scratch/liuz/pandac_common/obsiodav3_intScanP_20230927/2018/iasi_thin145km
           iasi_metop-b: /glade/derecho/scratch/liuz/pandac_common/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+          iasi_metop-a_rttov: /glade/derecho/scratch/liuz/pandac_common/obsiodav3_intScanP_20230927/2018/iasi_thin145km
+          iasi_metop-b_rttov: /glade/derecho/scratch/liuz/pandac_common/obsiodav3_intScanP_20230927/2018/iasi_thin145km
 
         hofx:
           ## anchor
