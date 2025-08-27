@@ -1,16 +1,17 @@
 experiment:
-  name: '5_3dhyb_csrama_csrmhs_rttov14'
+  name: '0_3dhyb_csrama_csrmhs_rttovcpp'
 build:
-  mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
+  mpas bundle: /glade/work/jianglp/code/mpas_bundle_v3.0.3_internal_patch/build
+  #mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''
   #bundle compiler used: gnu-openmpi
 hpc:
-  CriticalAccount: NMMM0043
+  CriticalAccount: NMMM0015
   CriticalQueue: main
-  NonCriticalAccount: NMMM0043
+  NonCriticalAccount: NMMM0015
   NonCriticalQueue: main
-  priority: regular
-  SingleProcAccount: NMMM0043
+  priority: premium
+  SingleProcAccount: NMMM0015
   SingleProcQueue: casper@casper-pbs
 firstbackground:
   resource: "PANDAC.GFS"
@@ -23,7 +24,7 @@ forecast:
       nodes: 8
       PEPerNode: 128
       baseSeconds: 600
-      secondsPerForecastHR: 240
+      secondsPerForecastHR: 100
 
 members:
   n: 1
@@ -40,7 +41,7 @@ observations:
 variational:
   DAType: 3dhybrid_v3
   biasCorrection: True
-  hybridBECWeightFromFile: true 
+  hybridBECWeightFromFile: false
   nInnerIterations: [60,60,]
   numProcessors: 512
   ensemble:
@@ -63,16 +64,16 @@ variational:
     satwnd,
     sfc,
     sondes,
-    #amsua_aqua,
-    #amsua-all_metop-a,
-    #amsua-all_metop-b,
-    #amsua-all_n15,
+    amsua_aqua_rttov,
+    amsua_metop-a_rttov,
+    amsua_metop-b_rttov,
+    amsua_n15_rttov,
     amsua_n18_rttov,
-    #amsua-all_n19,
-    #mhs_metop-a,
-    #mhs_metop-b,
+    amsua_n19_rttov,
+    mhs_metop-a_rttov,
+    mhs_metop-b_rttov,
     mhs_n18_rttov,
-    #mhs_n19,
+    mhs_n19_rttov,
   ]
   job:
     15km:
@@ -81,9 +82,9 @@ variational:
           nodes: 8
           PEPerNode: 64
           memory: 235GB
-          baseSeconds: 4200
-          secondsPerEnVarMember: 10
+          baseSeconds: 3000
+          secondsPerEnVarMember: 10 
 workflow:
   first cycle point: 20180414T18
-  #  restart cycle point: 20180415T06
-  final cycle point: 20180415T00
+  #restart cycle point: 20180404T18
+  final cycle point: 20180x415T00

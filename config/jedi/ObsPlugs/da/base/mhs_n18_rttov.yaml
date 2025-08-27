@@ -1,6 +1,6 @@
 - obs space:
     <<: *ObsSpace
-    name: mhs_n18_rttov
+    name: mhs_n18
     _obsdatain: &ObsDataIn
       engine:
         type: H5File
@@ -8,7 +8,7 @@
     _obsdataout: &ObsDataOut
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_mhs_n18_rttov{{ObsOutSuffix}}.h5
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_mhs_n18{{ObsOutSuffix}}.h5
     obsdatain: *{{ObsDataIn}}
     {{ObsDataOut}}
     simulated variables: [brightnessTemperature]

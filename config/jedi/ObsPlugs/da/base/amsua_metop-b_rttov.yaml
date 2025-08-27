@@ -1,23 +1,23 @@
 - obs space:
     <<: *ObsSpace
-    name: amsua_n18
+    name: amsua_metop-b
     _obsdatain: &ObsDataIn
       engine:
         type: H5File
-        obsfile: {{InDBDir}}/amsua_n18_rttov_obs_{{thisValidDate}}.h5
+        obsfile: {{InDBDir}}/amsua_metop-b_rttov_obs_{{thisValidDate}}.h5
     _obsdataout: &ObsDataOut
       engine:
         type: H5File
-        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua_n18{{ObsOutSuffix}}.h5
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua_metop-b{{ObsOutSuffix}}.h5
     obsdatain: *{{ObsDataIn}}
     {{ObsDataOut}}
     simulated variables: [brightnessTemperature]
-    channels: &amsua_n18_channels 1-15
+    channels: &amsua_metop-b_channels 1-15
   obs error: *ObsErrorDiagonal
   <<: *horizObsLoc
   obs operator:
     name: RTTOVCPP
     CoefPath: /glade/work/liuz/rttov14/rtcoef_rttov14/rttov13pred54L/
-    SensorID: noaa_18_amsua_o3
+    SensorID: metop_1_amsua_o3
   get values:
     <<: *GetValues
