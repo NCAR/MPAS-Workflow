@@ -9,7 +9,7 @@
         tlapse: &mhsmetopbtlap {{fixedTlapmeanCov}}/mhs_metop-b_tlapmean.txt
       - name: lapseRate
         tlapse: *mhsmetopbtlap
-      - name: emissivityJacobian
+#      - name: emissivityJacobian
       - name: sensorScanAngle
         order: 4
       - name: sensorScanAngle
