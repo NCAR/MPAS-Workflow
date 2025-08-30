@@ -34,9 +34,9 @@ model:
 observations:
   resource: PANDACArchiveForVarBC
   CRTMTABLES: /glade/derecho/scratch/liuz/pandac_common/crtm_coeffs_v2.4.1/
-  fixedCoeff: /glade/derecho/scratch/liuz/pandac_common/satbias
-  fixedTlapmeanCov: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
-  initialVARBCcoeff: /glade/derecho/scratch/liuz/pandac_common/satbias/2018
+  fixedCoeff: /glade/derecho/scratch/liuz/pandac_common/satbias_2018042412
+  fixedTlapmeanCov: /glade/derecho/scratch/liuz/pandac_common/satbias_2018042412/2018
+  initialVARBCcoeff: /glade/derecho/scratch/liuz/pandac_common/satbias_2018042412/2018
 variational:
   DAType: 3dhybrid_v3
   biasCorrection: True
