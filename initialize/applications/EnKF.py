@@ -243,7 +243,8 @@ class EnKF(Component):
     ]
     initArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-    self._tasks += ['''
+    if self['execute']:
+      self._tasks += ['''
   ## enkf tasks
   [[InitEnKF]]
     inherit = '''+self.tf.init+''', SingleBatch
@@ -261,41 +262,41 @@ class EnKF(Component):
     script = $origin/bin/EnKF.csh Solver
 '''+solvertask.job()+solvertask.directives()]
 
-    if self['diagEnKFOMA'] and self['retainObsFeedback']:
-       self._tasks += ['''
+      if self['diagEnKFOMA'] and self['retainObsFeedback']:
+         self._tasks += ['''
   [[EnKFDiagOMA]]
     inherit = '''+self.tf.execute+''', BATCH
     script = $origin/bin/EnKF.csh OMA
 '''+diagomatask.job()+diagomatask.directives()]
-       self._dependencies += ['''
+         self._dependencies += ['''
         EnKFSolver => EnKFDiagOMA => '''+self.tf.post]
 
-    if self['concatenateObsFeedback']:
-      concatattr = {
-        'seconds': {'def': 300},
-        'nodes': {'def': 1},
-        'PEPerNode': {'def': 128},
-        'memory': {'def': '235GB', 'typ': str},
-        'queue': {'def': hpc['CriticalQueue']},
-        'account': {'def': hpc['CriticalAccount']},
-      }
-      concatjob = Resource(self._conf, concatattr, ('concat.job'))
-      concattask = TaskLookup[hpc.system](concatjob)
-      args = [
-      self.lower,
-      self.workDir+'/{{thisCycleDate}}',
-      "",
-      ]
-      concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
-      self._tasks += ['''
+      if self['concatenateObsFeedback']:
+        concatattr = {
+          'seconds': {'def': 300},
+          'nodes': {'def': 1},
+          'PEPerNode': {'def': 128},
+          'memory': {'def': '235GB', 'typ': str},
+          'queue': {'def': hpc['CriticalQueue']},
+          'account': {'def': hpc['CriticalAccount']},
+        }
+        concatjob = Resource(self._conf, concatattr, ('concat.job'))
+        concattask = TaskLookup[hpc.system](concatjob)
+        args = [
+        self.lower,
+        self.workDir+'/{{thisCycleDate}}',
+        "",
+        ]
+        concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
+        self._tasks += ['''
   [[ConcatEnKF]]
     inherit = BATCH
     script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
-      self._dependencies += ['''
+        self._dependencies += ['''
         EnKFSolver => ConcatEnKF => '''+self.tf.post]
 
-    self._dependencies += ['''
+      self._dependencies += ['''
 
         # EnKF
         EnKFObserver => EnKFSolver''']
