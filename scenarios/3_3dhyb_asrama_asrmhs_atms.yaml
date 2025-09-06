@@ -5,12 +5,12 @@ build:
   #forecast directory: ''
   #bundle compiler used: gnu-openmpi
 hpc:
-  CriticalAccount: NMMM0043
+  CriticalAccount: NMMM0015
   CriticalQueue: main
-  NonCriticalAccount: NMMM0043
+  NonCriticalAccount: NMMM0015
   NonCriticalQueue: main
-  priority: regular
-  SingleProcAccount: NMMM0043
+  priority: premium
+  SingleProcAccount: NMMM0015
   SingleProcQueue: casper@casper-pbs
 firstbackground:
   resource: "PANDAC.GFS"
@@ -23,7 +23,7 @@ forecast:
       nodes: 8
       PEPerNode: 128
       baseSeconds: 600
-      secondsPerForecastHR: 240
+      secondsPerForecastHR: 100
 
 members:
   n: 1
@@ -88,9 +88,9 @@ variational:
           nodes: 8
           PEPerNode: 64
           memory: 235GB
-          baseSeconds: 4200
+          baseSeconds: 2000
           secondsPerEnVarMember: 10
 workflow:
   first cycle point: 20180414T18
   #  restart cycle point: 20180415T06
-  final cycle point: 20180415T00
+  final cycle point: 20180514T18
