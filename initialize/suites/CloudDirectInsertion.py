@@ -78,7 +78,7 @@ class CloudDirectInsertion(SuiteBase):
       elif k in ['saca']:
         c_.export(self.c['forecastSACA'].previousForecast)
       elif k in ['extendedforecast']:
-        c_.export(self.c['saca'].tf.finished, activateEnsemble=False)
+        c_.export(self.c['saca'].tf.finished)
       elif k in ['forecast']:
         continue
       else:
