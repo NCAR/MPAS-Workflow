@@ -1,15 +1,4 @@
   obs filters:
-  - filter: Domain Check
-    filter variables:
-    - name: brightnessTemperature
-      channels: *iasi_metop-b_channels
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: -50.0
-      maxvalue: 50.0
-    <<: *multiIterationFilter
-
 #  Cloud Detection Check
   - filter: Bounds Check
     filter variables:
@@ -25,7 +14,7 @@
            1,1,1,1,1,1,1,1,1,1,
            1,1,1,1,1,1,1,1,1,1,
            1,1,1,1,1,1,1,1,1,1,
-           1,1,1,1,1,
+           1,1,1,1,1,1,1,1,1,1,
            1,1,1,1,1,1,1,1,
            1,1,1,1,1,1,1,1]
 # using a subset of 66 from these 616 channels, only those where use_flag = 1
@@ -33,7 +22,7 @@
                           1,1,1,1,1,1,1,1,1,1,
                           1,1,1,1,1,1,1,1,1,1,
                           1,1,1,1,1,1,1,1,1,1,
-                          1,1,1,1,1,
+                          1,1,1,1,1,1,1,1,1,1,
                           1,1,1,1,1,1,-1,-1,
                          -1,-1,-1,-1,-1,-1,-1,-1]
         obserr_dtempf: [0.50,2.00,4.00,2.00,4.00]
@@ -139,7 +128,9 @@
                            4.0,2.5,3.0,2.5,3.0,2.5,2.0,2.5,3.0,3.0,
                            2.5,3.0,3.0,3.0,2.5,2.5,4.0,4.5,4.5,4.0,
                            5.0,5.0,5.0,4.0,5.0,4.0,5.5,5.5,4.5,4.0,
-                           6.0,6.0,6.0,6.0,6.0,
+                           6.0,6.0,6.0,6.0,6.0,6.0,
+                           6.0,
+                           6.0,6.0,6.0,
                            6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0,
                            6.0,6.0,6.0,6.0,6.0,6.0,6.0,6.0]
     action:
