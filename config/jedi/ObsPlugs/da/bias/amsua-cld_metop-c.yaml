@@ -6,9 +6,9 @@
       - name: constant
       - name: lapseRate
         order: 2
-        tlapse: &amsuacldmetopbtlap {{fixedTlapmeanCov}}/amsua_metop-c_tlapmean.txt
+        tlapse: &amsuacldmetopctlap {{fixedTlapmeanCov}}/amsua_metop-c_tlapmean.txt
       - name: lapseRate
-        tlapse: *amsuacldmetopbtlap
+        tlapse: *amsuacldmetopctlap
 #      - name: emissivityJacobian
       - name: sensorScanAngle
         order: 4

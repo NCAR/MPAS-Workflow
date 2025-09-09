@@ -7,7 +7,7 @@
   - filter: Domain Check
     filter variables:
     - name: brightnessTemperature
-      channels: 1-4
+      channels: 1-4,15
     where:
     - variable:
         name: GeoVaLs/water_area_fraction
@@ -21,14 +21,14 @@
   - filter: BlackList
     filter variables:
     - name: brightnessTemperature
-      channels: 1-4
+      channels: 1-4,15
     action:
       name: assign error
       error function:
         name: ObsFunction/ObsErrorModelRamp
-        channels: 1-4
+        channels: 1-4,15
         options:
-          channels: 1-4
+          channels: 1-4,15
           xvar:
             name: ObsFunction/CLWRetSymmetricMW
             options:
@@ -36,12 +36,11 @@
               clwret_ch314: 2
               clwret_types: [ObsValue, HofX]
               bias_application: ObsValue
-          x0:    [  0.03,   0.03,   0.03,   0.03]
-          x1:    [  0.57,   0.57,   0.37,   0.42]
-          err0:  [  4.47,   3.24,   2.35,   0.58]
-          err1:  [ 30.85,  43.02,  14.17,   2.89]
+          x0:    [  0.03,   0.03,   0.03,   0.03,  0.03]
+          x1:    [  0.55,   0.58,   0.37,   0.44,  0.23]
+          err0:  [  4.41,   3.22,   2.51,   0.59,  5.60]
+          err1:  [ 31.20,  43.60,  14.12,   2.94,  15.36]
     <<: *multiIterationFilter
-
 
 #  Situation dependent Check
   - filter: Perform Action
@@ -141,10 +140,10 @@
                 clwret_ch314: 2
                 clwret_types: [ObsValue, HofX]
                 bias_application: HofX
-            x0:    [  0.03,   0.03,   0.03,   0.03]
-            x1:    [  0.57,   0.57,   0.37,   0.42]
-            err0:  [  4.47,   3.24,   2.35,   0.58]
-            err1:  [ 30.85,  43.02,  14.17,   2.89]
+            x0:    [  0.03,   0.03,   0.03,   0.03,  0.03]
+            x1:    [  0.55,   0.58,   0.37,   0.44,  0.23]
+            err0:  [  4.41,   3.22,   2.51,   0.59,  5.60]
+            err1:  [ 31.20,  43.60,  14.12,   2.94,  15.36]
         obserr_bound_max: [4.5, 4.5, 4.5, 2.5, 2.0,
                            2.0, 2.0, 2.0, 2.0, 2.0,
                            2.5, 3.5, 4.5, 4.5, 4.5]
@@ -161,7 +160,8 @@
       channels: *amsua-cld_metop-c_channels
       options:
         channels: *amsua-cld_metop-c_channels
-        use_flag: [  1, -1,  1,  1, 1]
+        #use_flag: [  1, -1,  1,  1, 1]
+        use_flag: [  1,  1,  1,  1,  1]
     minvalue: 1.0e-12
     action:
       name: reject
