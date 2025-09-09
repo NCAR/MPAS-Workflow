@@ -17,6 +17,15 @@
         name: GeoVaLs/water_area_fraction
       minvalue: 1.0
     <<: *multiIterationFilter
+#  Observation Range Sanity Check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_npp_channels
+    minvalue: 50.00001
+    maxvalue: 449.99999
+    action:
+      name: reject    
   - filter: BlackList
     filter variables:
     - name: brightnessTemperature
