@@ -53,8 +53,8 @@ model:
       RadiationCloud: cld_fraction
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
-      SfcLayer: sf_monin_obukhov
-      LSM: noah
+      SfcLayer: sf_monin_obukhov_rev
+      LSM: sf_noah
     60km:
       meshRatio: 1
       nCells: 163842
@@ -70,8 +70,8 @@ model:
       RadiationCloud: cld_fraction
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
-      SfcLayer: sf_monin_obukhov
-      LSM: noah
+      SfcLayer: sf_monin_obukhov_rev
+      LSM: sf_noah
   GraphInfoDir: /glade/campaign/mmm/parc/liuz/pandac_common/static_from_duda
   precision: single
   MPThompsonTablesDir: /glade/campaign/mmm/parc/ivette/pandac/saca/thompson_tables
