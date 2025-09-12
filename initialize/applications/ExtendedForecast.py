@@ -208,14 +208,12 @@ class ExtendedForecast(Component):
 
   def export(self,
     dependency:str,
-    activateEnsemble:bool=False,
   ):
     '''
     dependency: single task on which extended forecast tasks depend
-    activateEnsemble: whether to activate ensemble extended forecasts (False by default)
     '''
 
-    doEnsemble = (self['ensTimes'] is not None and self.NN > 1 and activateEnsemble)
+    doEnsemble = (self['ensTimes'] is not None and self.NN > 1 )
 
     ##################
     # outputs and post
