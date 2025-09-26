@@ -7,6 +7,7 @@
  which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 '''
 
+import sys
 from initialize.config.Resource import Resource
 
 class Task():
@@ -107,9 +108,27 @@ class DerechoTask(PBSPro):
   maxMemPerNode = "235GB"
 
   def __init__(self, r:Resource):
-    # convert any cheyenne queue's to derecho
-    #print('resource table', r._table)
+    # verify queue and priority settings
     #print('resource defaults', r._defaults)
+    if r['queue'] is not None:
+      queue = r['queue']
+      priority = r['job_priority']
+      if priority is not None:
+        r.log('calling log via resource, queue is '+queue + ' priority is '+priority, level=r.MSG_DEBUG)
+      else:
+        r.log('calling log via resource, queue is '+queue, level=r.MSG_DEBUG)
+      r.log('resource table: ' + str(r._table), level=r.MSG_NOISY)
+      derecho_queues = ['main', 'preempt', 'develop', 'casper@casper-pbs']
+      if priority is not None:
+        if queue == 'develop':
+          r.log('Warning: develop queue does not support priority, priority '+ priority + ' ignored', level=r.MSG_QUIET)
+      if queue not in derecho_queues:
+        r.log('queue ('+queue+') must be one of ' +', '.join(derecho_queues), level=r.MSG_QUIET)
+        if queue == 'economy' or queue == 'premium':
+          r.log('use either CriticalPriority or NonCriticalPriority to set priority', level=r.MSG_QUIET)
+          r.log(' e.g. CriticalPriority : '+queue, level=r.MSG_QUIET)
+        r.log('cylc task not run', level=r.MSG_QUIET)
+        sys.exit(1)
     r.convertToDerecho()
     super().__init__(r)
 

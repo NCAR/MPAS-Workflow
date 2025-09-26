@@ -121,6 +121,7 @@ class ForecastSACA(Component):
     job._set('seconds', job['baseSeconds'] + job['secondsPerForecastHR'] * lengthHR)
     job._set('queue', hpc['NonCriticalQueue'])
     job._set('account', hpc['NonCriticalAccount'])
+    job._set('job_priority', hpc['NonCriticalPriority'])
     task = TaskLookup[hpc.system](job)
 
     #######
@@ -247,6 +248,7 @@ class ForecastSACA(Component):
         'PEPerNode': {'def': 128, 'typ': int},
         'queue': {'def': self.hpc['NonCriticalQueue']},
         'account': {'def': self.hpc['NonCriticalAccount']},
+        'job_priority': {'def': self.hpc['NonCriticalPriority']},
       }
       meanjob = Resource(self._conf, attr, ('job', 'meanbackground'))
       meantask = TaskLookup[self.hpc.system](meanjob)

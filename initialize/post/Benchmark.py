@@ -50,6 +50,7 @@ class Benchmark(Component):
       'seconds': {'def': 300},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
+      'job_priority': {'def': hpc['NonCriticalPriority']},
     }
     job = Resource(self._conf, attr, ('job', 'compare'))
     task = TaskLookup[hpc.system](job)

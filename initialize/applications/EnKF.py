@@ -199,6 +199,7 @@ class EnKF(Component):
       'memory': {'def': '45GB', 't': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
+      'job_priority': {'def': hpc['CriticalPriority']},
       'email': {'def': True, 't': bool},
     }
 
@@ -279,6 +280,7 @@ class EnKF(Component):
           'memory': {'def': '235GB', 'typ': str},
           'queue': {'def': hpc['CriticalQueue']},
           'account': {'def': hpc['CriticalAccount']},
+          'job_priority': {'def': hpc['CriticalPriority']},
         }
         concatjob = Resource(self._conf, concatattr, ('concat.job'))
         concattask = TaskLookup[hpc.system](concatjob)

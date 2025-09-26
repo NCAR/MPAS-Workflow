@@ -189,6 +189,7 @@ class HofX(Component):
       'memory': {'def': '235GB', 'typ': str},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
+      'job_priority': {'def': hpc['NonCriticalPriority']},
     }
     job = Resource(self._conf, attr, ('job', mesh.name))
     task = TaskLookup[hpc.system](job)
@@ -245,6 +246,7 @@ class HofX(Component):
         'memory': {'def': '235GB', 'typ': str},
         'queue': {'def': hpc['CriticalQueue']},
         'account': {'def': hpc['CriticalAccount']},
+        'job_priority': {'def': hpc['CriticalPriority']},
         }
         concatjob = Resource(self._conf, concatattr, ('concat.job'))
         concattask = TaskLookup[hpc.system](concatjob)
