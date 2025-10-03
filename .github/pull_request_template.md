@@ -14,6 +14,8 @@ Closes #(if applicable)
  - [ ] eda_OIE120km_WarmStart
  - [ ] getkf_OIE120km_WarmStart
  - [ ] ForecastFromGFSAnalysesMPT
+ - [ ] 4denvar_OIE120km_WarmStart
+ - [ ] 4dhybrid_OIE120km_WarmStart
 
 #### Tier 2 (optional):
  - [ ] GenerateGFSAnalyses
