@@ -12,8 +12,8 @@ forecast:
     # uncomment forecast directory below
     GPUPerNode: 0
 hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalPriority: economy
+  NonCriticalPriority: economy
 members:
   n: 1
 model:

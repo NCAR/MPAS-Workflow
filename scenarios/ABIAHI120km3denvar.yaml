@@ -52,7 +52,7 @@ variational:
     ahi_himawari8,
   ]
 hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalPriority: economy
+  NonCriticalPriority: economy
 verifyobs:
   script directory: /glade/work/ivette/pandac/mpas-jedi/graphics
