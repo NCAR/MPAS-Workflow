@@ -100,6 +100,7 @@ class VerifyObs(Component):
       'memory': {'def': '235GB', 'typ': str},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
+      'job_priority': {'def': hpc['NonCriticalPriority']},
     }
     job = Resource(self._conf, attr, ('job',))
     job['seconds'] += job['secondsPerMember'] * memberMultiplier

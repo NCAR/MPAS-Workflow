@@ -19,8 +19,8 @@ extendedforecast:
   post: []
 
 hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalPriority: economy
+  NonCriticalPriority: economy
 
 members:
   n: 1

@@ -9,8 +9,8 @@ forecast:
 hofx:
   retainObsFeedback: False
 hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalPriority: economy
+  NonCriticalPriority: economy
 members:
   n: 5
 model:

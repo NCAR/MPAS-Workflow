@@ -116,6 +116,7 @@ class Forecast(Component):
       'memory': {'def': '235GB', 'typ': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
+      'job_priority': {'def': hpc['CriticalPriority']},
       'email': {'def': True, 'typ': bool},
     }
     # store job for ExtendedForecast to re-use
@@ -240,6 +241,7 @@ class Forecast(Component):
         'PEPerNode': {'def': 128, 'typ': int},
         'queue': {'def': self.hpc['NonCriticalQueue']},
         'account': {'def': self.hpc['NonCriticalAccount']},
+        'job_priority': {'def': self.hpc['NonCriticalPriority']},
       }
       meanjob = Resource(self._conf, attr, ('job', 'meanbackground'))
       meantask = TaskLookup[self.hpc.system](meanjob)

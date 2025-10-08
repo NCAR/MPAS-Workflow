@@ -87,6 +87,7 @@ class RTPP(Component):
         'memory': {'def': '45GB', 'typ': str},
         'queue': {'def': hpc['CriticalQueue']},
         'account': {'def': hpc['CriticalAccount']},
+        'job_priority': {'def': hpc['CriticalPriority']},
         'email': {'def': True, 'typ': bool},
       }
       job = Resource(self._conf, attr, ('job', mesh.name))

@@ -40,5 +40,5 @@ workflow:
 hpc:
   #CriticalAccount: nmmm0043
   #NonCriticalAccount: nmmm0043
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalPriority: economy
+  NonCriticalPriority: economy

@@ -15,8 +15,8 @@ forecast:
   execute: False
   post: [verifyobs, verifymodel]
 hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalPriority: economy
+  NonCriticalPriority: economy
 members:
   n: 1
 model:

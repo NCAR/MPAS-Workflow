@@ -91,6 +91,7 @@ class VerifyModel(Component):
       'memory': {'def': '235GB', 'typ': str},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
+      'job_priority': {'def': hpc['NonCriticalPriority']},
     }
     job = Resource(self._conf, attr, ('job', mesh.name))
     job['seconds'] += job['secondsPerMember'] * memberMultiplier

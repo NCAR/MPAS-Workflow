@@ -9,8 +9,8 @@ experiment:
 model:
   outerMesh: 120km
 hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalPriority: economy
+  NonCriticalPriority: economy
   #CriticalQueue: main
   #NonCriticalQueue: main
 workflow:

@@ -15,7 +15,8 @@ hpc:
   CriticalAccount: NMMM0015
   CriticalQueue: main
   NonCriticalAccount: NMMM0015
-  NonCriticalQueue: economy
+  NonCriticalQueue: main
+  NonCriticalPriority: economy
   SingleProcAccount: NMMM0015
   SingleProcQueue: casper@casper-pbs
 

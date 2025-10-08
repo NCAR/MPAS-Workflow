@@ -6,8 +6,8 @@ experiment:
   name: 'DownloadGDASAnalysis'
   prefix: ''
 hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalPriority: economy
+  NonCriticalPriority: economy
 workflow:
   # test a recent date
   first cycle point: 20220819T00

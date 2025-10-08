@@ -33,13 +33,15 @@ class HPC(Component):
 
     # Critical*: used for all critical path jobs, single or multi-node, multi-processor only
     'CriticalAccount': ['NMMM0015', str],
-    # override this below based on host
+    # override these below based on host
     'CriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
+    'CriticalPriority' : ['regular', str, ['premium', 'regular', 'economy', 'preempt']],
 
     # NonCritical*: used non-critical path jobs, single or multi-node, multi-processor only
     'NonCriticalAccount': ['NMMM0015', str],
-    # override this below based on host
+    # override these below based on host
     'NonCriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
+    'NonCriticalPriority' : ['economy', str, ['premium', 'regular', 'economy', 'preempt']],
 
     # Shared: used for small jobs which can run on the shared development queue using < 128 cpus
     'SharedQueue': ['develop', str, ['develop', 'regular', 'premium']],
@@ -59,7 +61,8 @@ class HPC(Component):
       self.variablesWithDefaults['CriticalQueue'] = ['main', str, ['main', 'preempt']]
       self.variablesWithDefaults['NonCriticalQueue'] =  ['main', str, ['main', 'preempt']]
 #      self.variablesWithDefaults['SingleProcQueue'] = ['casper@casper-pbs', str, ['casper@casper-pbs', 'main']]
-      self.variablesWithDefaults['priority'] = ['regular', str, ['premium', 'regular', 'economy', 'preempt']]
+      self.variablesWithDefaults['CriticalPriority'] = ['regular', str, ['premium', 'regular', 'economy', 'preempt']]
+      self.variablesWithDefaults['NonCriticalPriority'] = ['regular', str, ['premium', 'regular', 'economy', 'preempt']]
       self.system = system
       #config.convertToDerecho()
     elif system == 'cheyenne':
