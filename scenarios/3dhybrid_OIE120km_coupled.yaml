@@ -1,0 +1,46 @@
+experiment:
+  prefix: "stoedtli_"
+  name: "3dhybrid_coupled_test_"
+  suffix: "2"
+
+firstbackground:
+  resource: "PANDAC.GFS"
+
+forecast:
+  #execute: False # the default is True
+  post: [] # use this when doing extended forecast
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+
+members:
+  n: 1
+
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+
+observations:
+  resource: PANDACArchiveForVarBC
+
+variational:
+  DAType: 3dhybrid
+  biasCorrection: True
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  nInnerIterations: [60,60,]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GETKF_coupled"
+  #execute: False # the default is True
+  post: [] # this turns off verifyobs
+  coupledToEnKF: True
+  workflowNameEnKF: "stoedtli_getkf_coupled_test_2"
+
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180415T00
+  final cycle point: 20180415T00
+  #CyclingWindowHR: 24 # default is 6 for cycling DA
+  #max active cycle points: 4 # used for independent 'extendedforecast'

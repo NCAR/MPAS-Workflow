@@ -8,6 +8,8 @@
 '''
 
 from collections import OrderedDict
+from getpass import getuser
+import os.path
 
 from initialize.applications.Members import Members
 
@@ -40,6 +42,20 @@ class Variational(Component):
     'ensembleCovarianceWeight': float,
     'staticCovarianceWeight': float,
 
+    ## Coupling to an external EnKF run
+    # Must be specified if coupledToEnKF == True, not used otherwise
+    # Specify the full name of the workflow, constructed as:
+    # Experiment['prefix'] + Experiment['name'] + Experiment['suffix'] + Experiment['suite identifier']
+    # The default values are:
+    # Experiment['prefix'] = "${USER}_"
+    # Experiment['name']: see Cycle.py
+    # Experiment['suffix'] = ""
+    # Experiment['suite identifier'] = ""
+    # It is best practice to specify the experiment prefix, name, and suffix in the coupled yaml files
+    # to make sure the coupled workflow can be identified correctly.
+    # Note: the workflow automatically prepends 'MPAS-Workflow' to workflowNameEnKF where needed
+    # to make the identifier consistent with submit.csh
+    'workflowNameEnKF': str,
   }
 
   variablesWithDefaults = {
@@ -154,6 +170,11 @@ class Variational(Component):
     ## IR/VIS land surface coefficients classification
     # OPTIONS: USGS, IGBP, NPOESS
     'IRVISlandCoeff': ['IGBP', str],
+
+    ## Coupling to an external EnKF run
+    # When coupledToEnKF is true, this variational run uses the forecast ensemble of a
+    # concurrently running external EnKF run to construct the ensemble B matrix.
+    'coupledToEnKF': [False, bool],
   }
 
   def __init__(self,
@@ -286,6 +307,22 @@ class Variational(Component):
       self._setOrDie('.'.join(['covariance', r, 'bumpCovVBalDir']), str, None, 'bumpCovVBalDir')
       self._setOrDie('.'.join(['covariance', r, 'hybridCoefficientsDir']), str, None, 'hybridCoefficientsDir')
 
+    # coupling to EnKF
+    if self['coupledToEnKF']:
+        # The coupling to EnKF is meaningful if we run a single variational DA, but undefined
+        # if we run an EDA
+        if self.NN > 1:
+          raise NotImplementedError("Behavior of EDA coupled to EnKF is undefined. Set members.n == 1.")
+        # A coupled variational run requires the name of the EnKF workflow to
+        # set the external dependency
+        if self['workflowNameEnKF'] is None:
+          raise ValueError("workflowNameEnKF has to be specified for a coupled Var DA")
+        # Overwrite the ensemble directory to make sure we are reading the forecasts from the
+        # coupled EnKF run
+        workDirEnKF = os.path.join('/glade', 'derecho', 'scratch', getuser(),
+                           'pandac', self['workflowNameEnKF'])
+        self._set('ensPbDir0', f'{os.path.join(workDirEnKF, "CyclingFC", "{{prevDateTime}}")}')
+
     self._cshVars = list(self._vtable.keys())
 
     ########################
@@ -355,7 +392,26 @@ class Variational(Component):
   [[Variationals]]
     inherit = '''+self.tf.execute+'''
 '''+vartask.job()+vartask.directives()]
- 
+      
+      if self['coupledToEnKF']:
+        # The coupled variational run uses the forecast ensemble from the EnKF to generate
+        # the ensemble B. This introduces a dependency between the variational DA at the current
+        # cycle point and the EnKF forecast from the previous cycle point. The following external
+        # trigger defines this dependency.
+        # Note: submit.csh prepends 'MPAS-Workflow/' to the workflow name to generate the workflow ID
+        workflowIdEnKF = os.path.join('MPAS-Workflow', self['workflowNameEnKF'])
+        callIntervalInS = 30  # call interval for external trigger (default is 10)
+        self._xtriggers +=[('\n'
+                            '    enkf_forecast = workflow_state('
+                            f'workflow="{workflowIdEnKF}", '
+                            'task="ForecastFinished__", point="%(point)s", '
+                            f'offset="-PT{workflow["CyclingWindowHR"]}H")'
+                            f':PT{callIntervalInS}S')]
+      
+        # Add the external dependency to the graph
+        self._dependencies += [('\n'
+                                '        @enkf_forecast => ' + self.tf.pre)]
+
       if EDASize == 1:
         # single instance or ensemble of Variational(s)
         for mm in range(1, self.NN+1, 1):
