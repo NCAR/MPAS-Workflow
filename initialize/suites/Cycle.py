@@ -115,3 +115,7 @@ class Cycle(SuiteBase):
       'initic',
       'observations',
     ]
+
+    self.xtriggerComponents += [
+      'da'
+    ]

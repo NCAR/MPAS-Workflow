@@ -28,10 +28,12 @@ class SuiteBase(Logger):
     self.queueComponents = []
     self.dependencyComponents = []
     self.taskComponents = []
+    self.xtriggerComponents = []
 
     self._queues = []
     self._dependencies = []
     self._tasks = []
+    self._xtriggers = []
 
     self.logPrefix = self.__class__.__name__+': '
     host = os.getenv('NCAR_HOST')
@@ -122,6 +124,11 @@ conda activate """ + conda + """
       self._tasks += ['''
   # '''+ k]
       self._tasks += self.c[k]._tasks
+    
+    for k in self.xtriggerComponents:
+      self._xtriggers += ['''
+    # ''' + k]
+      self._xtriggers += self.c[k]._xtriggers
 
     self.__export()
 
@@ -169,6 +176,9 @@ conda activate """ + conda + """
   # hint: execute 'ps aux | grep $USER' to check your login node overhead
   # default: 3
   runahead limit = P'''+str(self.c['workflow']['max active cycle points']-1)+'''
+
+  [[xtriggers]]
+'''+''.join(self._xtriggers)+'''
 
   [[queues]]
 '''+''.join(self._queues)+'''
