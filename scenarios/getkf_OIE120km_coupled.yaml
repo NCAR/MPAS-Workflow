@@ -1,0 +1,54 @@
+experiment:
+  prefix: 'stoedtli_'
+  name: 'getkf_coupled_test_'
+  suffix: '3'
+
+enkf:
+  solver: GETKF
+  # localization
+  horizontal localization lengthscale: 1.2e6
+  vertical localization lengthscale: 6000.0
+  vertical localization lengthscale units: height
+  fraction of retained variance: 0.95
+  # inflation
+  rtpp value: 0.5
+  rtps value: 0.9
+  # ensemble OMA calculation
+  retainObsFeedback: True
+  concatenateObsFeedback: True
+  # coupling to var DA (bias correction, recentering)
+  coupledToVarDA: True
+  workflowNameVarDA: 'stoedtli_3dhybrid_coupled_test_3'
+  recenterAnalyses: False  # not implemented yet
+  biasCorrection: True
+  #staticVarBcDir: /glade/campaign/mmm/parc/jban/pandac/year7Exp/jban_3dhybrid-60-60-iter_O30kmI60km_mhsRaw_clrsky/CyclingDA
+  post: []
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+
+firstbackground:
+  resource: "PANDAC.EnsPertB"
+
+forecast:
+  post: []
+
+hofx:
+  retainObsFeedback: False
+
+members:
+  n: 20
+
+model:
+  outerMesh: 120km
+  # TODO: make inner and ensemble meshes unnecessary
+  # related to {{PrepareExternalAnalysisInner}} and {{PrepareExternalAnalysisEnsemble}}
+  innerMesh: 120km
+  ensembleMesh: 120km
+
+observations:
+  resource: PANDACArchiveForVarBC
+
+workflow:
+  first cycle point: 20180414T18
+  final cycle point: 20180415T00
