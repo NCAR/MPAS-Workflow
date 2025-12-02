@@ -127,30 +127,20 @@ enkf:
           secondsPerMember: 3
       GETKF:
         observer:
-          # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
-          # 8 x 32 PE : 12.2 min., 118 GB (single precision)
-          nodes: 2
-          PEPerNode: 128
+          nodes: 1
+          PEPerNode: 64
           memory: 235GB
-          baseSeconds: 800
-          secondsPerMember: 50
+          baseSeconds: 200
+          secondsPerMember: 20
         solver:
-          # cost for record (5 members, PBS JOB email)
-          # 4 x 32 PE : ?.? min., ?? GB (single precision)
-          # 8 x 32 PE : ?.? min., ?? GB (single precision)
-          nodes: 2
+          nodes: 1
           PEPerNode: 128
           memory: 235GB
           baseSeconds: 200
-          secondsPerMember: 300
+          secondsPerMember: 20
         diagoma:
-          # cost for record (5 members, PBS JOB email)
-          # 2 x 32 PE : 1.7 min., 14.6 GB (single precision)
-          # 2 x 32 PE : 3.5 min., 31 GB (double precision)
-          # cost for record (20 members, PBS JOB email)
-          # 2 x 32 PE : 3.0 min., 31.7 GB (single precision)
-          nodes: 2
-          PEPerNode: 128
+          nodes: 1
+          PEPerNode: 64
           memory: 235GB
-          baseSeconds: 300
-          secondsPerMember: 3
+          baseSeconds: 200
+          secondsPerMember: 10
