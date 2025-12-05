@@ -110,6 +110,10 @@ class Build(Component):
     self._set('SACAEXE', 'mpasjedi_saca.x')
     self._set('SACABuildDir', self['mpas bundle']+'/bin')
 
+    ## Ensemble recentering
+    self._set('RecenterEXE', 'mpasjedi_ens_recenter.x')
+    self._set('RecenterBuildDir', '/glade/derecho/scratch/stoedtli/recenter_multires/mpas-bundle/build/bin')
+
     if model is not None:
 
       # MPAS-Model
