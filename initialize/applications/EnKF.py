@@ -226,10 +226,13 @@ class EnKF(Component):
       # set the external dependency
       if self['workflowNameVarDA'] is None:
         raise ValueError("workflowNameVarDA has to be specified for a coupled EnKF")
-      # Overwrite the static var BC directory to make sure we are reading the satbias files from
-      # the coupled var DA run
+      # Export the var DA run information to the csh file
+      self._set('workflowNameVarDA', self['workflowNameVarDA'])
       workDirVarDA = os.path.join('/glade', 'derecho', 'scratch', getuser(),
                            'pandac', self['workflowNameVarDA'])
+      self._set('workDirVarDA', workDirVarDA)
+      # Overwrite the static var BC directory to make sure we are reading the satbias files from
+      # the coupled var DA run
       self._set('staticVarBcDir', f'{os.path.join(workDirVarDA, "CyclingDA")}')
     else:
       # Recentering the analysis ensemble is not defined if the EnKF run is not coupled.
@@ -329,9 +332,25 @@ class EnKF(Component):
                             'task="DAFinished__", point="%(point)s")'
                             f':PT{callIntervalInS}S')]
         
-        # Add the dependency to the graph
+        # Add the dependency on the var DA run to the graph
         self._dependencies += [('\n'
                                 '        @var_da => ' + self.tf.pre)]
+        if self['recenterAnalyses']:
+          # Add the dependency: the EnKFDiagOMA task is optional. If the task is enabled, the recentering
+          # task should run after it. If it is not enabled, the recentering task should run after the solver task.
+          if self['diagEnKFOMA'] and self['retainObsFeedback']:
+            self._dependencies += [('\n'
+                                    '        EnKFDiagOMA => RecenterEnKF')]
+          else:
+            self._dependencies += [('\n'
+                                    '        EnKFSolver => RecenterEnKF')]
+          # Add the task
+          self._tasks += [('\n'
+                           '  [[RecenterEnKF]]'
+                           '\n'
+                           f'    inherit = {self.tf.execute}'
+                           '\n'
+                           '    script = $origin/bin/RecenterAnalysisEnsemble.csh')]
 
       if self['diagEnKFOMA'] and self['retainObsFeedback']:
          self._tasks += ['''
