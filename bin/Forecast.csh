@@ -196,6 +196,7 @@ endif
 foreach staticfile ( \
 stream_list.${MPASCore}.surface \
 stream_list.${MPASCore}.diagnostics \
+stream_list.${MPASCore}.dastate \
 )
   if( -e $staticfile ) rm ./$staticfile
   ln -sfv $ModelConfigDir/forecast/$staticfile .
