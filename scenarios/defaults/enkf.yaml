@@ -144,3 +144,9 @@ enkf:
           memory: 235GB
           baseSeconds: 200
           secondsPerMember: 10
+        recenter:
+          nodes: 1
+          PEPerNode: 1
+          memory: 45GB
+          baseSeconds: 100
+          secondsPerMember: 5

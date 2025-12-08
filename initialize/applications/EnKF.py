@@ -345,12 +345,33 @@ class EnKF(Component):
             self._dependencies += [('\n'
                                     '        EnKFSolver => RecenterEnKF')]
           # Add the task
+          keyListRecenter = {
+            # Notes:
+            # - the recenter application is currently small enough to run on develop
+            # - the develop queue does not support a job_priority flag, so removed this for now
+            'retry': {'t': str},
+            'baseSeconds': {'t': int},
+            'secondsPerMember': {'t': int},
+            'nodes': {'t': int},
+            'PEPerNode': {'t': int},
+            'memory': {'t': str},
+            'queue': {'def': hpc['SharedQueue']},
+            'account': {'def': hpc['CriticalAccount']},
+            'email': {'def': True, 't': bool},
+          }
+          resourceRecenter = meshes['Outer'].name + '.' + solver + '.recenter'
+          recenterJob = Resource(self._conf, keyListRecenter, ('job', resourceRecenter))
+          recenterJob._set('seconds', recenterJob['baseSeconds'] + recenterJob['secondsPerMember'] * NN)
+          recenterTask = TaskLookup[hpc.system](recenterJob)
           self._tasks += [('\n'
                            '  [[RecenterEnKF]]'
                            '\n'
-                           f'    inherit = {self.tf.execute}'
+                           f'    inherit = {self.tf.execute}, BATCH'
                            '\n'
-                           '    script = $origin/bin/RecenterAnalysisEnsemble.csh')]
+                           '    script = $origin/bin/RecenterAnalysisEnsemble.csh'
+                           '\n'
+                           f'{recenterTask.job() + recenterTask.directives()}'
+                           '\n')]
 
       if self['diagEnKFOMA'] and self['retainObsFeedback']:
          self._tasks += ['''
