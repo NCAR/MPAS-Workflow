@@ -1,7 +1,7 @@
 experiment:
   prefix: 'stoedtli_'
   name: 'getkf_coupled_test_'
-  suffix: '3'
+  suffix: '5'
 
 enkf:
   solver: GETKF
@@ -13,13 +13,13 @@ enkf:
   # inflation
   rtpp value: 0.5
   rtps value: 0.9
-  # ensemble OMA calculation
+  # ensemble observation equivalent (background, analysis)
   retainObsFeedback: True
-  concatenateObsFeedback: True
+  concatenateObsFeedback: False
   # coupling to var DA (bias correction, recentering)
   coupledToVarDA: True
   workflowNameVarDA: 'stoedtli_3dhybrid_coupled_test_3'
-  recenterAnalyses: False  # not implemented yet
+  recenterAnalyses: True
   biasCorrection: True
   #staticVarBcDir: /glade/campaign/mmm/parc/jban/pandac/year7Exp/jban_3dhybrid-60-60-iter_O30kmI60km_mhsRaw_clrsky/CyclingDA
   post: []
@@ -32,9 +32,6 @@ firstbackground:
 
 forecast:
   post: []
-
-hofx:
-  retainObsFeedback: False
 
 members:
   n: 20
@@ -52,3 +49,6 @@ observations:
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T00
+
+build:
+  mpas bundle: /glade/derecho/scratch/stoedtli/recenter_multires/mpas-bundle/build

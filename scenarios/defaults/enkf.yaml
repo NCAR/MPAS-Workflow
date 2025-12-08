@@ -149,4 +149,4 @@ enkf:
           PEPerNode: 1
           memory: 45GB
           baseSeconds: 100
-          secondsPerMember: 5
+          secondsPerMember: 10
