@@ -1,3 +1,31 @@
+# Variables to recenter: _state variables
+# ---------------------------------------
+# All variables from the da_stream I/O stream are recentered, except for the following:
+# 1) static variables (terrain, hydrostatic balances):
+# - ter
+# - xland
+# - dzs
+# - zs
+# - pressure_base
+# - rho_base
+# - theta_base
+#
+# 2) real-valued variables that are identical across ensemble members:
+# - sfc_albbck
+# - sfc_emibck
+#
+# 3) scalar integer variables identical across ensemble members
+#    (a real-valued mean would not be meaningful)
+# - isice_lu
+# - iswater_lu
+#
+# 4) variables containing information about past states
+# - xicem
+# - h_oml_initial
+#
+# 5) redundant variables
+# - air_pressure  (note: we do recenter pressure_p)
+
 _state variables: &daStateVars
 - water_vapor_mixing_ratio_wrt_dry_air
 - cloud_liquid_water
@@ -51,56 +79,25 @@ _state variables: &daStateVars
 - smois
 - tslb
 
-# The following variables from the da_stream are not recentered:
-# 1) static variables (terrain, hydrostatic balances):
-#- ter
-#- xland
-#- dzs
-#- zs
-#- pressure_base
-#- rho_base
-#- theta_base
-#
-# 2) real-valued variables that are identical across ensemble members:
-#- sfc_albbck
-#- sfc_emibck
-#
-# 3) scalar integer variables identical across ensemble members
-#    (a real-valued mean would not be meaningful)
-#- isice_lu
-#- iswater_lu
-#
-# 4) variables containing information about past states
-#- xicem
-#- h_oml_initial
-#
-# 5) redundant variables
-#- air_pressure  (note: wa already recentered pressure_p)
-
-_current date: &currentDate {{cycleDateISO8601}}  #2018-04-15T06:00:00Z
+_current date: &currentDate {{cycleDateISO8601}}
 
 recenter variables: *daStateVars
 
 center geometry:
-  nml_file: {{namelistFileCenter}}  # ./data/120km/namelist.atmosphere_120km
-  streams_file: {{streamsFileCenter}}  # ./data/120km/streams.atmosphere_120km
+  nml_file: {{namelistFileCenter}}
+  streams_file: {{streamsFileCenter}}
   deallocate non-da fields: false
 
 center:
-  #filename: /glade/u/home/stoedtli/scratch/pandac/stoedtli_3denvar_120km_uncoupled_1/CyclingDA/2018041506/an/an.$Y-$M-$D_$h.$m.$s.nc
-  filename: {{analysisFileCenter}}  # ./data/c5/ens_mean.$Y-$M-$D_$h.$m.$s.nc
+  filename: {{analysisFileCenter}}
   date: *currentDate
   state variables: *daStateVars
   stream name: da_state
   transform model to analysis: false
 
-#center output:
-  #filename: ./data/c5/center.$Y-$M-$D_$h.$m.$s.nc
-  #stream name: da_state
-
 ensemble geometry:
-  nml_file: {{namelistFileEnsemble}}  # ./data/120km/namelist.atmosphere_120km
-  streams_file: {{streamsFileEnsemble}}  # ./data/120km/streams.atmosphere_120km
+  nml_file: {{namelistFileEnsemble}}
+  streams_file: {{streamsFileEnsemble}}
   deallocate non-da fields: false
 
 ensemble:
@@ -108,8 +105,7 @@ ensemble:
     template:
       date: *currentDate
       state variables: *daStateVars
-      #filename: /glade/u/home/stoedtli/scratch/pandac/stoedtli_getkf_120km_20mem_uncoupled_1/CyclingDA/2018041506/an/mem%iMember%/an.$Y-$M-$D_$h.$m.$s.nc
-      filename: {{analysisFileEnsemble}} # /glade/u/home/stoedtli/scratch/pandac/stoedtli_getkf_120km_20mem_uncoupled_1/CyclingDA/2018041506/an/mem%iMember%/an.$Y-$M-$D_$h.$m.$s.nc
+      filename: {{analysisFileEnsemble}}
       stream name: da_state
       transform model to analysis: false
     pattern: %iMember%
@@ -117,11 +113,6 @@ ensemble:
     zero padding: {{paddingEnsembleMembers}}
     nmembers: {{numberEnsembleMembers}}
 
-#ensemble meanoutput:
-  #filename: ./data/c5/mean.$Y-$M-$D_$h.$m.$s.nc
-  #stream name: da_state
-
 recentered output:
-  filename: {{analysisFileRecenter}}  #./data/c5/mem%{member}%_recentered.$Y-$M-$D_$h.$m.$s.nc
+  filename: {{analysisFileRecenter}}
   stream name: da_state
-
