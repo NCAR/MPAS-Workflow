@@ -125,6 +125,13 @@ variational:
             memberNDigits: 3
             maxMembers: 20
 
+        GETKF_uncoupled:
+          120km:
+            directory0: '/glade/derecho/scratch/stoedtli/pandac/stoedtli_getkf_120km_20mem_uncoupled_1/CyclingFC/{{prevDateTime}}'
+            memberPrefix: mem
+            memberNDigits: 3
+            maxMembers: 20
+
     # externally-produced localization files
     localization:
       #{{ensembleMesh}}:
