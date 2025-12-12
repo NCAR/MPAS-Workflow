@@ -112,7 +112,7 @@ class Build(Component):
 
     ## Ensemble recentering
     self._set('RecenterEXE', 'mpasjedi_ens_recenter.x')
-    self._set('RecenterBuildDir', '/glade/derecho/scratch/stoedtli/recenter_multires/mpas-bundle/build/bin')
+    self._set('RecenterBuildDir', self['mpas bundle']+'/bin')
 
     if model is not None:
 
