@@ -1,7 +1,7 @@
 experiment:
   prefix: 'stoedtli_'
-  name: 'getkf_coupled_test_'
-  suffix: '5'
+  name: 'getkf_120km_20mem_coupled_'
+  suffix: '1'
 
 enkf:
   solver: GETKF
@@ -18,7 +18,7 @@ enkf:
   concatenateObsFeedback: False
   # coupling to var DA (bias correction, recentering)
   coupledToVarDA: True
-  workflowNameVarDA: 'stoedtli_3dhybrid_coupled_test_3'
+  workflowNameVarDA: 'stoedtli_3denvar_120km_coupled_1'
   recenterAnalyses: True
   biasCorrection: True
   #staticVarBcDir: /glade/campaign/mmm/parc/jban/pandac/year7Exp/jban_3dhybrid-60-60-iter_O30kmI60km_mhsRaw_clrsky/CyclingDA
@@ -48,7 +48,7 @@ observations:
 
 workflow:
   first cycle point: 20180414T18
-  final cycle point: 20180415T00
+  final cycle point: 20180422T00
 
 build:
   mpas bundle: /glade/derecho/scratch/stoedtli/recenter_multires/mpas-bundle/build
