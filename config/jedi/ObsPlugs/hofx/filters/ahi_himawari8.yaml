@@ -68,9 +68,9 @@
       channels: *ahi_channels
     - name: brightness_temperature_jacobian_air_temperature
       channels: *ahi_channels
-    - name: brightness_temperature_jacobian_humidity_mixing_ratio
+    - name: brightness_temperature_jacobian_water_vapor_mixing_ratio_wrt_dry_air
       channels: *ahi_channels
     - name: brightness_temperature_jacobian_surface_emissivity
       channels: *ahi_channels
-    - name: brightness_temperature_jacobian_surface_temperature
+    - name: brightness_temperature_jacobian_skin_temperature_at_surface
       channels: *ahi_channels

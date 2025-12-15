@@ -28,15 +28,26 @@ class EnKF(Component):
   }
 
   variablesWithDefaults = {
-    ## observation localization parameters
+    # horizontal observation localization
     'localization dimension': ['3D', str, ['2D', '3D']],
     'horizontal localization method': ['Horizontal Gaspari-Cohn', str],
     'horizontal localization lengthscale': [1.2e6, float],
-    # LETKF
+    # vertical localization (GETKF: model spcace; LETKF: obs space)
     'vertical localization function': ['Gaspari Cohn', str],
     'vertical localization lengthscale': [6.e3, float],
-    # GETKF
-    #'vertical localization lengthscale': [5.0, float],
+    'vertical localization lengthscale units': ['height', str],
+    'fraction of retained variance': [0.95, float],
+
+    # Inflation
+    'rtpp value': [0.5, float],
+    'rtps value': [0.9, float],
+    'mult value': [1.0, float],
+
+    # Use Linear Operator
+    'useLinearOperator': ['true', str, ['true', 'false']],
+
+    # Calculate ensemble OMA
+    'diagEnKFOMA': ['True', bool, ['True', 'False']],
 
     ## observers
     # observation types assimilated in the enkf application
@@ -73,6 +84,9 @@ class EnKF(Component):
     # whether to use bias correction coefficients from VarBC
     # OPTIONS: False (not enabled yet)
     'biasCorrection': [False, bool],
+
+    # directories that stores varBC coefficients that are updated with variational DA
+    'staticVarBcDir': ['/glade/campaign/mmm/parc/ivette/pandac/year7Exp/ivette_3dhybrid-allsky-60-60-iter_O30kmI60km_ensB-SE80+RTPP70_VarBC_v3.0.2_newBenchmark_allsky-amsua/CyclingDA', str],
 
     ## tropprsMethod
     # method for the tropopause pressure determination used in the
@@ -185,6 +199,7 @@ class EnKF(Component):
       'memory': {'def': '45GB', 't': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
+      'job_priority': {'def': hpc['CriticalPriority']},
       'email': {'def': True, 't': bool},
     }
 
@@ -195,6 +210,15 @@ class EnKF(Component):
     observerjob = Resource(self._conf, attr, ('job', r2observer))
     observerjob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
     observertask = TaskLookup[hpc.system](observerjob)
+
+    # EnKFDiagOMA
+    if self['diagEnKFOMA'] and self['retainObsFeedback']:
+      # r2observer = {{outerMesh}}.observer
+      r2diagoma = meshes['Outer'].name
+      r2diagoma += '.'+solver+'.diagoma'
+      diagomajob = Resource(self._conf, attr, ('job', r2observer))
+      diagomajob._set('seconds', observerjob['baseSeconds'] + observerjob['secondsPerMember'] * NN)
+      diagomatask = TaskLookup[hpc.system](diagomajob)
 
     # EnKF solver
     # r2solver = {{outerMesh}}.{{solver}}
@@ -220,7 +244,8 @@ class EnKF(Component):
     ]
     initArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-    self._tasks += ['''
+    if self['execute']:
+      self._tasks += ['''
   ## enkf tasks
   [[InitEnKF]]
     inherit = '''+self.tf.init+''', SingleBatch
@@ -230,40 +255,50 @@ class EnKF(Component):
 
   [[EnKFObserver]]
     inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/bin/EnKFObserver.csh
+    script = $origin/bin/EnKF.csh OMB
 '''+observertask.job()+observertask.directives()+'''
 
-  [[EnKF]]
+  [[EnKFSolver]]
     inherit = '''+self.tf.execute+''', BATCH
-    script = $origin/bin/EnKF.csh
+    script = $origin/bin/EnKF.csh Solver
 '''+solvertask.job()+solvertask.directives()]
 
-    if self['concatenateObsFeedback']:
-      concatattr = {
-        'seconds': {'def': 300},
-        'nodes': {'def': 1},
-        'PEPerNode': {'def': 128},
-        'memory': {'def': '235GB', 'typ': str},
-        'queue': {'def': hpc['CriticalQueue']},
-        'account': {'def': hpc['CriticalAccount']},
-      }
-      concatjob = Resource(self._conf, concatattr, ('concat.job'))
-      concattask = TaskLookup[hpc.system](concatjob)
-      args = [
-      self.lower,
-      self.workDir+'/{{thisCycleDate}}',
-      "",
-      ]
-      concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
-      self._tasks += ['''
+      if self['diagEnKFOMA'] and self['retainObsFeedback']:
+         self._tasks += ['''
+  [[EnKFDiagOMA]]
+    inherit = '''+self.tf.execute+''', BATCH
+    script = $origin/bin/EnKF.csh OMA
+'''+diagomatask.job()+diagomatask.directives()]
+         self._dependencies += ['''
+        EnKFSolver => EnKFDiagOMA => '''+self.tf.post]
+
+      if self['concatenateObsFeedback']:
+        concatattr = {
+          'seconds': {'def': 300},
+          'nodes': {'def': 1},
+          'PEPerNode': {'def': 128},
+          'memory': {'def': '235GB', 'typ': str},
+          'queue': {'def': hpc['CriticalQueue']},
+          'account': {'def': hpc['CriticalAccount']},
+          'job_priority': {'def': hpc['CriticalPriority']},
+        }
+        concatjob = Resource(self._conf, concatattr, ('concat.job'))
+        concattask = TaskLookup[hpc.system](concatjob)
+        args = [
+        self.lower,
+        self.workDir+'/{{thisCycleDate}}',
+        "",
+        ]
+        concatArgs = ' '.join(['"'+str(a)+'"' for a in args])
+        self._tasks += ['''
   [[ConcatEnKF]]
     inherit = BATCH
     script = $origin/bin/ConcatenateObsFeedback.csh '''+concatArgs+'''
 '''+concattask.job()+concattask.directives()]
-      self._dependencies += ['''
-        EnKF => ConcatEnKF => '''+self.tf.post]
+        self._dependencies += ['''
+        EnKFSolver => ConcatEnKF => '''+self.tf.post]
 
-    self._dependencies += ['''
+      self._dependencies += ['''
 
         # EnKF
-        EnKFObserver => EnKF''']
+        EnKFObserver => EnKFSolver''']

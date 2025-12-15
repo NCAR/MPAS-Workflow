@@ -26,7 +26,7 @@ rtpp:
       memory: 235GB
     120km:
       baseSeconds: 30
-      secondsPerMember: 15
+      secondsPerMember: 20
       nodes: 1
       PEPerNode: 128
       memory: 235GB

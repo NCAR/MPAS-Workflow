@@ -1,0 +1,76 @@
+suite: CloudDirectInsertionCycle
+
+experiment:
+  name: 'CloudDirectInsertion_3dhybrid_O60-3kmIE60km_TEST'
+
+firstbackground:
+  resource: "PANDAC.GFS"
+
+forecast:
+  #execute: False # the default is True
+  post: [] # use this when doing extended forecast
+  #post: [verifymodel] # this turns off verifyobs
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+
+members:
+  n: 1
+
+model:
+  outerMesh: 60-3km
+  innerMesh: 60km
+  ensembleMesh:  60km
+  GraphInfoDir: /glade/campaign/mmm/parc/ivette/pandac/all_graph
+
+saca:
+  runCyclingSaca: True
+
+extendedforecast:
+  meanTimes: T00
+  lengthHR: 1
+  outIntervalHR: 1
+  DACycling: True
+  updateSea: True
+  execute: True # uncomment if forecasts are already completed
+  post: [verifyobs] #verifyobs
+
+observations:
+  resource: SacaObs
+
+variational:
+  DAType: 3dhybrid
+  biasCorrection: True
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  nInnerIterations: [60,60,]
+  ensemble:
+    forecasts:
+      resource: "PANDAC.EDA"
+  concatenateObsFeedback: True
+  IRVISlandCoeff: IGBP
+
+  # resource requirements
+  job:
+    60-3km:
+      60km:
+        3dhybrid:
+          nodes: 4
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 1200
+          secondsPerEnVarMember: 9
+
+  #execute: False # the default is True
+  post: [] # this turns off verifyobs
+
+hofx:
+  concatenateObsFeedback: True
+  IRVISlandCoeff: IGBP
+
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180415T00
+  final cycle point: 20180415T00
+  prevBgHR: 0 #prevBgHR == 6 (before DA), prevBgHR == 0 (after Da -default)
+  #max active cycle points: 4 # used for independent 'extendedforecast'

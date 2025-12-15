@@ -1,6 +1,6 @@
 - obs space:
     <<: *ObsSpace
-    name: SfcPCorrected
+    name: SfcCorrected
     obsdatain:
       engine:
         type: H5File
@@ -12,7 +12,5 @@
     simulated variables: [stationPressure]
   obs error: *ObsErrorDiagonal
   obs operator:
-    name: SfcPCorrected
-    da_psfc_scheme: UKMO   # or WRFDA
-  get values:
-    <<: *GetValues
+    name: SfcCorrected
+    correction scheme to use: UKMO   # or WRFDA

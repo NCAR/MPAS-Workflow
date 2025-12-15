@@ -4,7 +4,6 @@ _iteration: &iterationConfig
     nml_file: {{InnerNamelistFile}}
     streams_file: {{InnerStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
-    interpolation type: unstructured
   gradient norm reduction: 1e-3
   #Several 'online diagnostics' are useful for checking the H correctness and Hessian symmetry
 #  online diagnostics:
@@ -38,7 +37,6 @@ cost function:
     nml_file: {{OuterNamelistFile}}
     streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
     deallocate non-da fields: true
-    interpolation type: unstructured
   analysis variables: *incvars
   background:
     state variables: [{{StateVariables}}]
@@ -84,13 +82,13 @@ cost function:
               read vertical balance: true
             vertical balance:
               vbal:
-              - balanced variable: velocity_potential
-                unbalanced variable: stream_function
+              - balanced variable: air_horizontal_velocity_potential
+                unbalanced variable: air_horizontal_streamfunction
                 diagonal regression: true
-              - balanced variable: temperature
-                unbalanced variable: stream_function
-              - balanced variable: surface_pressure
-                unbalanced variable: stream_function
+              - balanced variable: air_temperature
+                unbalanced variable: air_horizontal_streamfunction
+              - balanced variable: air_pressure_at_surface
+                unbalanced variable: air_horizontal_streamfunction
         linear variable change:
           linear variable change name: Control2Analysis
           input variables: *ctlvars

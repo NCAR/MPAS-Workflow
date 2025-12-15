@@ -86,7 +86,7 @@ model:
       RadiationCloud: cld_fraction
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
-      SfcLayer: sf_monin_obukhov
+      SfcLayer: sf_monin_obukhov_rev
       LSM: sf_noah
     60km:
       meshRatio: 1
@@ -103,7 +103,7 @@ model:
       RadiationCloud: cld_fraction
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
-      SfcLayer: sf_monin_obukhov
+      SfcLayer: sf_monin_obukhov_rev
       LSM: sf_noah
     120km:
       meshRatio: 1
@@ -120,5 +120,5 @@ model:
       RadiationCloud: cld_fraction
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
-      SfcLayer: sf_monin_obukhov
+      SfcLayer: sf_monin_obukhov_rev
       LSM: sf_noah

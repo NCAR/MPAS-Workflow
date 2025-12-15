@@ -317,6 +317,7 @@ class Variational(Component):
       'memory': {'def': '235GB', 'typ': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
+      'job_priority': {'def': hpc['CriticalPriority']},
       'email': {'def': True, 'typ': bool},
     }
     varjob = Resource(self._conf, attr, ('job', r2))
@@ -332,6 +333,7 @@ class Variational(Component):
       'memory': {'def': '235GB', 'typ': str},
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
+      'job_priority': {'def': hpc['CriticalPriority']},
     }
     concatjob = Resource(self._conf, concatattr, ('concat.job'))
     concattask = TaskLookup[hpc.system](concatjob)
@@ -417,6 +419,7 @@ class Variational(Component):
         'PEPerNode': {'def': 36},
         'queue': {'def': hpc['CriticalQueue']},
         'account': {'def': hpc['CriticalAccount']},
+        'job_priority': {'def': hpc['CriticalPriority']},
       }
       abeijob = Resource(self._conf, attr, ('abei.job', meshes['Outer'].name))
       abeitask = TaskLookup[hpc.system](abeijob)

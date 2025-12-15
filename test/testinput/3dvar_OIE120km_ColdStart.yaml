@@ -5,8 +5,8 @@ externalanalyses:
 forecast:
   post: []
 hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalPriority: economy
+  NonCriticalPriority: economy
 members:
   n: 1
 model:

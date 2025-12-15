@@ -6,7 +6,7 @@ if ($? == 0) then
   conda deactivate
 endif
 
-if ( "$NCAR_HOST" == "derecho" ) then
+if ( "$NCAR_HOST" == "derecho" || "$NCAR_HOST" == "casper" ) then
   if ( ! $?CYLC_ENV ) then
     echo 'CYLC_ENV environment variable is not set, setting it to /glade/work/jwittig/conda-envs/my-cylc8.2'
     setenv CYLC_ENV /glade/work/jwittig/conda-envs/my-cylc8.2

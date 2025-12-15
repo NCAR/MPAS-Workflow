@@ -132,11 +132,11 @@ variational:
   # externally-produced background covariance files (var or hybrid)
   covariance:
     bumpCovControlVariables:
-    - stream_function
-    - velocity_potential
-    - temperature
-    - spechum
-    - surface_pressure
+    - air_horizontal_streamfunction
+    - air_horizontal_velocity_potential
+    - air_temperature
+    - water_vapor_mixing_ratio_wrt_moist_air
+    - air_pressure_at_surface
     bumpCovPrefix: mpas_parametersbump_cov
     bumpCovVBalPrefix: mpas_vbal
     #{{innerMesh}}:
@@ -145,23 +145,23 @@ variational:
     #  bumpCovVBalDir: str
     #  hybridCoefficientsDir: str
     30km:
-      bumpCovDir: /glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/BUMP_STATIC/BUMP_NICAS_NEW
-      bumpCovStdDevFile: /glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/BUMP_STATIC/BUMP_HDIAG_NEW/mpas.stddev.nc
-      bumpCovVBalDir: /glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/BUMP_STATIC/BUMP_VBAL_NEW
-      hybridEnsembleWeightFile: /glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/BUMP/HybWeight/mpas30km.hyb_weight_ens.nc
-      hybridStaticWeightFile: /glade/derecho/scratch/liuz/pandac_common/30kmMeshGFS/BUMP/HybWeight/mpas30km.hyb_weight_static.nc
+      bumpCovDir: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/30km/NICAS
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/30km/mpas.stddev.nc
+      bumpCovVBalDir: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/30km/VBAL
+      hybridEnsembleWeightFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/30km/mpas30km.hyb_weight_ens.nc
+      hybridStaticWeightFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/30km/mpas30km.hyb_weight_static.nc
     60km:
-      bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.NICAS_00global
-      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.VBAL_00
-      hybridEnsembleWeightFile: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid/mpas.hyb_coef_ens2.2018-04-15_00.00.00.nc
-      hybridStaticWeightFile: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid/mpas.hyb_coef_sta2.2018-04-15_00.00.00.nc
+      bumpCovDir: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/60km/NICAS
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/60km/mpas.stddev.nc
+      bumpCovVBalDir: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/60km/VBAL
+      hybridEnsembleWeightFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/60km/mpas.hyb_coef_ens.nc
+      hybridStaticWeightFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/60km/mpas.hyb_coef_sta.nc
     120km:
-      bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.NICAS_00
-      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/20230522_yr5/120km.VBAL_00
-      hybridEnsembleWeightFile: NotAvailable
-      hybridStaticWeightFile: NotAvailable
+      bumpCovDir: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/120km/NICAS
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/120km/mpas.stddev.nc
+      bumpCovVBalDir: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/120km/VBAL
+      hybridEnsembleWeightFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/120km/mpas.hyb_coef_ens.nc
+      hybridStaticWeightFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/120km/mpas.hyb_coef_sta.nc
 
   # resource requirements
   job:
@@ -457,13 +457,13 @@ variational:
           nodes: 7 #7 subwindow slots
           PEPerNode: 128
           memory: 235GB
-          baseSeconds: 600
+          baseSeconds: 700
           secondsPerEnVarMember: 10
         4dhybrid:
           nodes: 7 #7 subwindow slots
           PEPerNode: 128
           memory: 235GB
-          baseSeconds: 600
+          baseSeconds: 700
           secondsPerEnVarMember: 10
         ensemble:
           3denvar:

@@ -21,5 +21,3 @@
   <<: *heightAndHorizObsLoc
   obs operator:
     name: GnssroBndROPP1D
-  get values:
-    <<: *GetValues

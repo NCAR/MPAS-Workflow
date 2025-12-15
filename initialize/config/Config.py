@@ -16,15 +16,16 @@ from initialize.config.Logger import Logger
 
 class Config(Logger):
   def __init__(self,
-      filename: str,
-      bundle_dir: str,
-      suffix: str,
-      defaultsFile:str = None,
+      filename: str=None,
+      bundle_dir: str=None,
+      suffix: str=None,
+      defaultsFile: str = None,
     ):
 
    super().__init__()
-   with open(filename) as file:
-     self._table = yaml.load(file, Loader=yaml.FullLoader)
+   if filename is not None:
+     with open(filename) as file:
+       self._table = yaml.load(file, Loader=yaml.FullLoader)
 
    self._bundle_dir = bundle_dir
    self._suffix = suffix
@@ -115,13 +116,13 @@ class Config(Logger):
     '''
     convert cheyenne specific items to derecho specific ites, e.g. queues, priorities
     '''
-    #print('Config resource table', self._table)
-    #print('resource defaults', self._defaults)
+    self.log('Config resource table'+ str(self._table), level=self.MSG_NOISY)
+    self.log('resource defaults'+ str(self._defaults), level=self.MSG_NOISY)
     self.__convertQueue('queue')
 
 
   def __convertQueue(self, attrName:str, subtable:str=None):
-    derecho_queues = ['main', 'preempt', 'casper@casper-pbs']
+    derecho_queues = ['main', 'preempt', 'develop', 'casper@casper-pbs']
 
     if subtable != None:
       qAttrName = subtable + '.' + attrName
@@ -135,7 +136,7 @@ class Config(Logger):
         # do we ever want to use the preempt queue? this could lead to starvation.
         #if queue == 'share':
           #newqueue = 'preempt'
-        self.log('Config converting queue:', queue, ' to:', newqueue, level=self.MSG_DEBUG)
+        self.log('Config converting queue:'+ str(queue)+ ' to:'+ str(newqueue), level=self.MSG_DEBUG)
         if subtable != None:
           self.__setitem2__(subtable, attrName, newqueue)
         else:
@@ -145,8 +146,11 @@ class Config(Logger):
         #print('Config table', self._table)
         #print('job_priority:', self['job_priority'], ' ', self.has('hpc.job_priority'))
         if subtable == None and self.has('hpc.job_priority') == False and queue in ['economy', 'premium']:
-          self.__setitem__('job_priority', queue)
-          self.log('Adding job_priority ', queue, level=self.MSG_DEBUG)
+          # only add economy priority if not running on a gpu node
+          self.log('GPUPerNode:' + str(self.get('GPUPerNode')), level=self.MSG_DEBUG)
+          if queue == 'premium' or not self.has('GPUPerNode') or self.get('GPUPerNode') == 0:
+            self.__setitem__('job_priority', queue)
+            self.log('Adding job_priority '+ queue, level=self.MSG_DEBUG)
 
         '''
         print('################################################################################')

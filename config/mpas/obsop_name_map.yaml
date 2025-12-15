@@ -6,7 +6,7 @@ variable maps:
   - name: windNorthward
     alias: northward_wind
   - name: specificHumidity
-    alias: specific_humidity
+    alias: water_vapor_mixing_ratio_wrt_moist_air
   - name: relativeHumidity
     alias: relative_humidity
   - name: pressure
@@ -14,13 +14,13 @@ variable maps:
   - name: virtualTemperature
     alias: virtual_temperature
   - name: stationPressure
-    alias: surface_pressure
+    alias: air_pressure_at_surface
   - name: depthBelowWaterSurface
     alias: ocean_depth
   - name: waterTemperature
     alias: ocean_temperature
   - name: surfacePressure
-    alias: surface_pressure
+    alias: air_pressure_at_surface
   - name: seaSurfaceTemperature
     alias: sea_surface_temperature
   - name: equivalentReflectivityFactor

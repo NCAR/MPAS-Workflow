@@ -104,6 +104,7 @@ class ExtendedForecast(Component):
     job._set('seconds', job['baseSeconds'] + job['secondsPerForecastHR'] * lengthHR)
     job._set('queue', hpc['NonCriticalQueue'])
     job._set('account', hpc['NonCriticalAccount'])
+    job._set('job_priority', hpc['NonCriticalPriority'])
     fctask = TaskLookup[hpc.system](job)
 
     self._tasks += ['''
@@ -150,6 +151,7 @@ class ExtendedForecast(Component):
       'PEPerNode': {'def': 36, 'typ': int},
       'queue': {'def': self.hpc['NonCriticalQueue']},
       'account': {'def': self.hpc['NonCriticalAccount']},
+      'job_priority': {'def': self.hpc['NonCriticalPriority']},
     }
     meanjob = Resource(self._conf, attr, ('job', 'meananalysis'))
     meantask = TaskLookup[self.hpc.system](meanjob)
@@ -208,14 +210,12 @@ class ExtendedForecast(Component):
 
   def export(self,
     dependency:str,
-    activateEnsemble:bool=False,
   ):
     '''
     dependency: single task on which extended forecast tasks depend
-    activateEnsemble: whether to activate ensemble extended forecasts (False by default)
     '''
 
-    doEnsemble = (self['ensTimes'] is not None and self.NN > 1 and activateEnsemble)
+    doEnsemble = (self['ensTimes'] is not None and self.NN > 1 )
 
     ##################
     # outputs and post

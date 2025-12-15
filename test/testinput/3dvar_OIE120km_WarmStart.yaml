@@ -7,9 +7,13 @@ firstbackground:
 forecast:
   # turn off post to reduce overhead
   post: []
+  job:
+    # to run forecast on gpu's, set GPUPerNode to 4 and
+    # uncomment forecast directory below
+    GPUPerNode: 0
 hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalPriority: economy
+  NonCriticalPriority: economy
 members:
   n: 1
 model:
@@ -26,3 +30,5 @@ variational:
 workflow:
   first cycle point: 20180414T18
   final cycle point: 20180415T06
+build:
+  #forecast directory: /glade/derecho/scratch/jwittig/repos-s/mpas-bundle-io/build-nvhpc

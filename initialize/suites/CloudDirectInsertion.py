@@ -30,13 +30,13 @@ from initialize.post.Benchmark import Benchmark
 
 from initialize.suites.SuiteBase import SuiteBase
 
+
 class CloudDirectInsertion(SuiteBase):
   def __init__(self, conf:Config):
     super().__init__(conf)
 
     self.c['model'] = Model(conf)
     meshes = self.c['model'].getMeshes()
-    self.c['worklow'] = Workflow(conf)
 
     self.c['build'] = Build(conf, self.c['model'])
     self.c['observations'] = Observations(conf, self.c['hpc'])
@@ -78,7 +78,7 @@ class CloudDirectInsertion(SuiteBase):
       elif k in ['saca']:
         c_.export(self.c['forecastSACA'].previousForecast)
       elif k in ['extendedforecast']:
-        c_.export(self.c['saca'].tf.finished, activateEnsemble=False)
+        c_.export(self.c['saca'].tf.finished)
       elif k in ['forecast']:
         continue
       else:

@@ -37,7 +37,8 @@ class VerifyModel(Component):
     hname = os.getenv('NCAR_HOST')
     if  hname == "derecho":
       self.variablesWithDefaults['script directory'] = \
-          ['/glade/work/bjung/panda-c/build/mpas-bundle-release-v3.0.2/mpas-jedi/graphics', str]
+          ['/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_25Nov2024/code/mpas-jedi/graphics', str]
+
     super().__init__(config)
 
     hpc = localConf['hpc']; assert isinstance(hpc, HPC), self.base+': incorrect type for hpc'
@@ -90,6 +91,7 @@ class VerifyModel(Component):
       'memory': {'def': '235GB', 'typ': str},
       'queue': {'def': hpc['NonCriticalQueue']},
       'account': {'def': hpc['NonCriticalAccount']},
+      'job_priority': {'def': hpc['NonCriticalPriority']},
     }
     job = Resource(self._conf, attr, ('job', mesh.name))
     job['seconds'] += job['secondsPerMember'] * memberMultiplier

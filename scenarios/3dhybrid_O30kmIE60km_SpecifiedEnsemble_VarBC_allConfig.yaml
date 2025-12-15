@@ -15,7 +15,8 @@ hpc:
   CriticalAccount: NMMM0015
   CriticalQueue: main
   NonCriticalAccount: NMMM0015
-  NonCriticalQueue: economy
+  NonCriticalQueue: main
+  NonCriticalPriority: economy
   SingleProcAccount: NMMM0015
   SingleProcQueue: casper@casper-pbs
 
@@ -53,8 +54,8 @@ model:
       RadiationCloud: cld_fraction
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
-      SfcLayer: sf_monin_obukhov
-      LSM: noah
+      SfcLayer: sf_monin_obukhov_rev
+      LSM: sf_noah
     60km:
       meshRatio: 1
       nCells: 163842
@@ -70,8 +71,8 @@ model:
       RadiationCloud: cld_fraction
       RadiationLW: rrtmg_lw
       RadiationSW: rrtmg_sw
-      SfcLayer: sf_monin_obukhov
-      LSM: noah
+      SfcLayer: sf_monin_obukhov_rev
+      LSM: sf_noah
   GraphInfoDir: /glade/campaign/mmm/parc/liuz/pandac_common/static_from_duda
   precision: single
   MPThompsonTablesDir: /glade/campaign/mmm/parc/ivette/pandac/saca/thompson_tables
@@ -177,18 +178,18 @@ variational:
           bumpLocDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.bumploc.duplicated.limited.1200km6km
   covariance:
     bumpCovControlVariables:
-    - stream_function
-    - velocity_potential
-    - temperature
-    - spechum
-    - surface_pressure
+    - air_horizontal_streamfunction
+    - air_horizontal_velocity_potential
+    - air_temperature
+    - water_vapor_mixing_ratio_wrt_moist_air
+    - air_pressure_at_surface
     bumpCovPrefix: mpas_parametersbump_cov
     bumpCovVBalPrefix: mpas_vbal
     60km:
       hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
-      bumpCovDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.NICAS_00global
-      bumpCovStdDevFile: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/campaign/mmm/parc/liuz/pandac_common/BUMP_files/derecho_2.1/60km.VBAL_00       
+      bumpCovDir: /glade/campaign/mmm/parc/bjung/pandac_common/BUMP_files.generic_names/60km.NICAS_00global
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/bjung/pandac_common/BUMP_files.generic_names/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
+      bumpCovVBalDir: /glade/campaign/mmm/parc/bjung/pandac_common/BUMP_files.generic_names/60km.VBAL_00
   job:
     30km:
       60km:

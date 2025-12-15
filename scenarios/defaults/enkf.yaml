@@ -11,7 +11,6 @@ enkf:
       # cylc retry string
       retry: '2*PT30S'
 
-
     ## FORMAT
     #{{outerMesh}}:
     #  {{solver}}: # i.e., LETKF, GETKF
@@ -98,6 +97,12 @@ enkf:
           memory: 235GB
           baseSeconds: 200
           secondsPerMember: 290
+        diagoma:
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 100
+          secondsPerMember: 7
       GETKF:
         observer:
           # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
@@ -118,6 +123,12 @@ enkf:
           memory: 235GB
           baseSeconds: 200
           secondsPerMember: 500
+        diagoma:
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 100
+          secondsPerMember: 7
     120km:
       LETKF:
         observer:
@@ -144,6 +155,17 @@ enkf:
           memory: 235GB
           baseSeconds: 300
           secondsPerMember: 150
+        diagoma:
+          # cost for record (5 members, PBS JOB email)
+          # 2 x 32 PE : 1.7 min., 14.6 GB (single precision)
+          # 2 x 32 PE : 3.5 min., 31 GB (double precision)
+          # cost for record (20 members, PBS JOB email)
+          # 2 x 32 PE : 3.0 min., 31.7 GB (single precision)
+          nodes: 1
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 300
+          secondsPerMember: 3
       GETKF:
         observer:
           # cost for record (20 members, 95% variance retained [13 eig], PBS JOB email)
@@ -151,8 +173,8 @@ enkf:
           nodes: 2
           PEPerNode: 128
           memory: 235GB
-          baseSeconds: 750
-          secondsPerMember: 45
+          baseSeconds: 800
+          secondsPerMember: 50
         solver:
           # cost for record (5 members, PBS JOB email)
           # 4 x 32 PE : ?.? min., ?? GB (single precision)
@@ -162,3 +184,14 @@ enkf:
           memory: 235GB
           baseSeconds: 200
           secondsPerMember: 300
+        diagoma:
+          # cost for record (5 members, PBS JOB email)
+          # 2 x 32 PE : 1.7 min., 14.6 GB (single precision)
+          # 2 x 32 PE : 3.5 min., 31 GB (double precision)
+          # cost for record (20 members, PBS JOB email)
+          # 2 x 32 PE : 3.0 min., 31.7 GB (single precision)
+          nodes: 2
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 300
+          secondsPerMember: 3

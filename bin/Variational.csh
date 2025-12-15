@@ -99,6 +99,9 @@ ln -sfv ${myBuildDir}/${myEXE} ./
 sed -i 's@{{ObsDataIn}}@ObsDataIn@' $myYAML
 sed -i 's@{{ObsDataOut}}@obsdataout: *ObsDataOut@' $myYAML
 sed -i 's@{{ObsOutSuffix}}@@' $myYAML
+# add the 'write multiple files' in obsdataout spec
+# (used to be in 'io pool' section of config/jedi/ObsPlugs/variational/ObsAnchors.yaml)
+sed -i '/_obsdataout/a\          write multiple files: true' $myYAML
 
 if ( $?numProcessors && "$numProcessors" != "None" ) then
   mpiexec -np ${numProcessors} ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
@@ -117,8 +120,8 @@ grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
   echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
-else:
-  rn jedi.log.0*
+else
+  rm jedi.log.0*
 endif
 
 # ================================================================================================

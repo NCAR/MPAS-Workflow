@@ -205,7 +205,6 @@ foreach file ($MPASJEDIVariablesFiles)
   ln -sfv $ModelConfigDir/$file .
 end
 
-
 # ======================
 # Link observations data
 # ======================
@@ -266,6 +265,9 @@ foreach instrument ($observers)
   date
 end
 
+# Need to go back to the working directory if the last instrument is missing
+cd ${WorkDir}
+
 # =========================
 # Satellite bias correction
 # =========================
@@ -273,7 +275,11 @@ end
 if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
   set biasCorrectionDir = $initialVARBCcoeff
 else
-  set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/dbOut
+  set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/$OutDBDir
+endif
+# For EnKF, offline bias correction can be applied for bias correction
+if ( "$ArgAppType" == enkf ) then
+  set biasCorrectionDir = ${staticVarBcDir}/${thisValidDate}/${OutDBDir}
 endif
 
 # =============
@@ -331,9 +337,16 @@ foreach instrument ($observers)
     if ("$instrument" == "$i") then
       set allowsBiasCorrection = True
       # if no obs file exists, link satbias file from the previous cycle
-      if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
-        ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
-        ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/dbOut
+      if ( $ArgAppType == 'enkf' ) then
+        if ( ! -f ${biasCorrectionDir}/satbias_${i}.h5 ) then
+          ! Just use the initial satbias files
+          set biasCorrectionDir = ${initialVARBCcoeff}
+        endif
+      else
+        if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
+          ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
+          ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
+        endif         
       endif
     endif
   end
@@ -341,7 +354,11 @@ foreach instrument ($observers)
   # declare subdirectories for YAML stubs, which depends on whether bias correction is applied
   set AppYamlDirs = (base filters)
   if ($biasCorrection == True && $allowsBiasCorrection == True) then
-    set AppYamlDirs = (base bias filtersWithBias)
+    if ( "$ArgAppType" == enkf ) then
+      set AppYamlDirs = (base biasStatic filtersWithBias)
+    else
+      set AppYamlDirs = (base bias filtersWithBias)
+    endif
   endif
 
   foreach subdir (${AppYamlDirs})
@@ -937,58 +954,39 @@ else if ("$ArgAppType" == enkf) then
   # Solver
   # ==================
   sed -i 's@{{localEnsembleDASolver}}@'${solver}'@g' $prevYAML
-
-  # TODO:
-  # Ensemble background members
-  # ===========================
-  set yamlFiles = enkfs.txt
-  echo $appyaml > $yamlFiles
-  ## yaml indentation
-  set nEnsIndent = 2
-
-  ## members: 'background.members from template'
-
-  # performs sed substitution for EnsembleMembers
-  set enspbmemsed = EnsembleMembers
-
-  @ dateOffset = ${ArgWindowHR} + ${ensPbOffsetHR}
-  set prevDateTime = `$advanceCYMDH ${thisValidDate} -${dateOffset}`
-
-  # substitutions
-  # + previous forecast initilization date-time
-  # + ExperimentDirectory for EDA applications that use their own ensemble
-  set dir0 = `echo "${ensPbDir0}" \
-              | sed 's@{{prevDateTime}}@'${prevDateTime}'@' \
-              | sed 's@{{ExperimentDirectory}}@'${ExperimentDirectory}'@' \
-             `
-  set dir1 = `echo "${ensPbDir1}" \
-              | sed 's@{{prevDateTime}}@'${prevDateTime}'@'\
-             `
-
-  #set dir0 = "`echo "${dir0}" | sed 's@{{ExperimentDirectory}}@'${ExperimentDirectory}'@'`"
-
-  # substitute Jb members
-  setenv myCommand "${substituteEnsembleBTemplate} ${dir0} ${dir1} ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsIndent} False"
-
-  echo "$myCommand"
-  #${substituteEnsembleBTemplate} "${ensPbDir0}" "${ensPbDir1}" ${ensPbMemPrefix} ${ensPbFilePrefix}.${thisMPASFileDate}.nc ${ensPbMemNDigits} ${ensPbNMembers} $yamlFiles ${enspbmemsed} ${nEnsIndent} $SelfExclusion
-
-  ${myCommand}
-
-  rm $yamlFiles
-
-  if ($status != 0) then
-    echo "$0 (ERROR): failed to substitute ${enspbmemsed}" > ./FAIL
-    exit 1
+  if ( $solver == 'GETKF' ) then
+     sed -i 's@{{LocalEnKFSolver}}@asGETKF@g' $prevYAML
+  else
+     sed -i 's@{{LocalEnKFSolver}}@asLETKF@g' $prevYAML
   endif
 
-  # ObsLocalization
+  # Ensemble background members
+  # ===========================
+  sed -i 's@{{ensPbMemPrefix}}@'${ensPbMemPrefix}'@' $prevYAML 
+  sed -i 's@{{MemNDigits}}@'${ensPbMemNDigits}'@' $prevYAML
+  sed -i 's@{{NumEnsMember}}@'${ensPbNMembers}'@' $prevYAML
+
+  # Localization
   # ===============
+  # horizontal obs localization
   sed -i 's@{{localizationDimension}}@'"${localizationDimension}"'@' $prevYAML
   sed -i 's@{{horizontalLocalizationMethod}}@'"${horizontalLocalizationMethod}"'@' $prevYAML
   sed -i 's@{{horizontalLocalizationLengthscale}}@'${horizontalLocalizationLengthscale}'@' $prevYAML
+  # vertical localization (GETKF: model space; LETKF: obs space)
   sed -i 's@{{verticalLocalizationFunction}}@'"${verticalLocalizationFunction}"'@' $prevYAML
   sed -i 's@{{verticalLocalizationLengthscale}}@'${verticalLocalizationLengthscale}'@' $prevYAML
+  sed -i 's@{{verticalLocalizationLengthscaleUnits}}@'${verticalLocalizationLengthscaleUnits}'@' $prevYAML
+  sed -i 's@{{fractionOfRetainedVariance}}@'${fractionOfRetainedVariance}'@' $prevYAML
+
+  # Inlfation
+  # ===============
+  sed -i 's@{{rtpsValue}}@'"${rtpsValue}"'@' $prevYAML
+  sed -i 's@{{rtppValue}}@'"${rtppValue}"'@' $prevYAML
+  sed -i 's@{{multValue}}@'"${multValue}"'@' $prevYAML
+
+  # Use linear operator
+  # ===============
+  sed -i 's@{{useLinearOperator}}@'"${useLinearOperator}"'@' $prevYAML
 
   # Jo term (member dependence)
   # ===========================

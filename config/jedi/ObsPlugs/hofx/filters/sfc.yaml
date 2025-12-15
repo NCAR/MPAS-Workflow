@@ -3,5 +3,5 @@
     maxvalue: 3
   - filter: Difference Check
     reference: MetaData/stationElevation
-    value: GeoVaLs/surface_altitude
+    value: GeoVaLs/height_above_mean_sea_level_at_surface
     threshold: 200.0

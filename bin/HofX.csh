@@ -117,6 +117,10 @@ ln -sfv ${bgFileOther} ${bgFile}
 # use the background as the TemplateFieldsFileOuter
 ln -sfv ${bgFile} ${TemplateFieldsFileOuter}
 
+# add the 'write multiple files' in obsdataout spec
+# (used to be in 'io pool' section of config/jedi/ObsPlugs/hofx/ObsAnchors.yaml)
+sed -i '/obsdataout/a\        write multiple files: true' $myYAML
+
 # Run the executable
 # ==================
 ln -sfv ${myBuildDir}/${myEXE} ./
@@ -129,6 +133,8 @@ grep 'Run: Finishing oops.* with status = 0' jedi.log
 if ( $status != 0 ) then
   echo "ERROR in $0 : jedi application failed" > ./FAIL
   exit 1
+else
+  rm jedi.log.0*
 endif
 
 # ================================================================================================

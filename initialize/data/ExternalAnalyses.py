@@ -107,12 +107,13 @@ class ExternalAnalyses(Component):
     attr = {
       'seconds': {'def': 300},
       'nodes': {'def': 1},
-      'PEPerNode': {'def': 128},
+      'PEPerNode': {'def': 8},
+      'memory': {'def': '8GB', 'typ': str},
       'retry': {'def': '2*PT30S'},
       # currently UngribExternalAnalysis has to be on Derecho, because ungrib.exe is built there
       # TODO: build ungrib.exe on casper, remove Critical directives below, deferring to
       #       SingleBatch inheritance
-      'queue': {'def': hpc['CriticalQueue']},
+      'queue': {'def': hpc['SharedQueue']},
       'account': {'def': hpc['CriticalAccount']},
     }
     ungribjob = Resource(self._conf, attr, ('job', 'ungrib'))

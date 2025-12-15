@@ -15,8 +15,8 @@ experiment:
   name: 'GenerateObs'
   prefix: ''
 hpc:
-  CriticalQueue: economy
-  NonCriticalQueue: economy
+  CriticalPriority: economy
+  NonCriticalPriority: economy
 workflow:
   first cycle point: 20220606T00
   final cycle point: 20220608T00
