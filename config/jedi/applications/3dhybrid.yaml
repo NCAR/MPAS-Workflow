@@ -65,6 +65,11 @@ cost function:
             drivers:
               multivariate strategy: univariate
               read local nicas: true
+            grids:
+              - model:
+                  variables: [{{bump3dControlVariables}}]
+              - model:
+                  variables: [{{bump2dControlVariables}}]
         saber outer blocks:
         - saber block name: StdDev
           read:

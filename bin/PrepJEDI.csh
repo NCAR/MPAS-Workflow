@@ -718,7 +718,7 @@ EOF
     set VarSub2D = ""
     foreach var ($Variables)
       set VarSub = "$VarSub$var,"
-      if ( $var == "surface_pressure" ) then
+      if ( $var == "air_pressure_at_surface" ) then
          set VarSub2D = "$VarSub2D$var,"
       else
          set VarSub3D = "$VarSub3D$var,"
