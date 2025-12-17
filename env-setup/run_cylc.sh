@@ -124,11 +124,27 @@ run_cylc()
     $work_dir/Run.py $scenario -x $suffix  2>&1 | tee -a ${LOGFILE}
   fi
 
-  # save the names of the running workflows to check for success later
+  # save the name of the workflow just started above in order to check for success later.
+  # assume there may be multiple jobs with the same suffix.
+  # assume the workflow name is uniquely identified by the first part
+  # of the scenario yaml e.g. 3denvar_<something> or 3dhybrid_<something>
+  # coupled with the suffix added to the workflow name when started via Run.py
   mkdir -p $running_dir || (log "failed to create $running_dir" && exit 1)
-  workflow_name=$(cylc scan -t name | grep  "${suffix}$" )
+  local readonly workflow_names=$(cylc scan -t name )
+  local workflow_name=""
+  log "workflow_names=$workflow_names"
+  local readonly scenario_name=$(echo $scenario | awk -F/ '{print $2}')
+  # get the substring up to the first '_'
+  local readonly scenario_root=${scenario_name%%_*}
+  log "scenario_name=$scenario_name scenario_root=$scenario_root"
+  for name in $workflow_names; do
+    workflow_name=$(echo $name | grep "${scenario_root}.*$suffix")
+    if [ -n "$workflow_name" ]; then
+      break
+    fi
+  done
   workflow_file_name=$(echo $workflow_name | awk -F/ '{print $NF}')
-  log "workflow_name=$workflow_name"
+  log "workflow_name=$workflow_name workflow_file_name=$workflow_file_name"
   log "echo $workflow_name > $running_dir/$workflow_file_name"
   echo $workflow_name > $running_dir/$workflow_file_name
 }
@@ -251,8 +267,6 @@ make_graphs()
   if [[ $success_file =~ $pattern ]]; then
     date=${BASH_REMATCH[0]}
   fi
-  local readonly model_out_dir=$output_dir/$date/$file_suffix/model
-  local readonly obs_out_dir=$output_dir/$date/$file_suffix/obs
   local base_run="" # the job to be used as the baseline for the graph
   local new_run="" # the current job
   local prev_run="" # the job run prior to the current run
@@ -304,12 +318,19 @@ make_graphs()
   local base_label=${base_run#*.}
   base_label=${base_label//"_cron"/}
   new_run=$(cat ${pass_dir}/${success_file} | sed 's/MPAS-Workflow//' | sed 's/\///g')
+  suffix=$(echo $new_run |sed 's/jwittig_//')
+  suffix=${suffix%%[_-]*}
+  log "suffix=$suffix"
+  local readonly model_out_dir=$output_dir/${date}-${suffix}/$file_suffix/model
+  local readonly obs_out_dir=$output_dir/${date}-${suffix}/$file_suffix/obs
   local new_label=${new_run#*.}
   new_label=${new_label//"_cron"/}
   local prev_label=${prev_run#*.}
   prev_label=${prev_label//"_cron"/}
   log "newest run: $new_run label ${new_label} in file:${pass_dir}/${success_file}"
-  log "previous run: $prev_run label ${prev_label} in file ${graphed_files[0]} "
+  if [ ! -z "$prev_run" ]; then
+    log "previous run: $prev_run label ${prev_label} in file ${graphed_files[0]} "
+  fi
   log "base run: $base_run label ${base_label} in file ${baseline_files[0]}"
 
   local readonly base_args=" -s $graphics_dir $last_cycle $queue $account -n 1 $memory"
@@ -462,6 +483,10 @@ main()
         fi
       fi
     fi
+    check_exists "$bundle_dir/bin" "bundle binaries" "dir"
+    check_exists "$bundle_dir/bin/mpas_atmosphere" "MPAS-Model-A binary" "file"
+    check_exists "$bundle_dir/bin/mpasjedi_forecast.x" "forecast binary" "file"
+    check_exists "$bundle_dir/bin/mpasjedi_variational.x" "variational binary" "file"
     check_exists "$workflow_dir/$scenario" "scenario" "file"
 
     # see if the mpas-bundle build lockfile exists, if so mpas-bundle is still compiling
