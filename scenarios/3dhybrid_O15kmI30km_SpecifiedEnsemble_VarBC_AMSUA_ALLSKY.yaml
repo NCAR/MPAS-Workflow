@@ -33,7 +33,7 @@ model:
 observations:
   resource: PANDACArchiveForVarBC
 variational:
-  DAType: 3dhybrid_v3
+  DAType: 3dhybrid
   biasCorrection: True
   hybridBECWeightFromFile: true 
   nInnerIterations: [60,60,]
@@ -81,7 +81,7 @@ variational:
   job:
     15km:
       30km:
-        3dhybrid_v3:
+        3dhybrid:
           nodes: 8
           PEPerNode: 64
           memory: 235GB

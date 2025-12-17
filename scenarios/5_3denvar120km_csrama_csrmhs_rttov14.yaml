@@ -65,15 +65,6 @@ variational:
     mhs_n18_rttov,
     #mhs_n19,
   ]
-  #  job:
-  #  15km:
-  #    30km:
-  #      3dhybrid_v3:
-  #        nodes: 8
-  #        PEPerNode: 64
-  #        memory: 235GB
-  #        baseSeconds: 4200
-  #        secondsPerEnVarMember: 10
 workflow:
   first cycle point: 20180414T18
   #  restart cycle point: 20180415T06

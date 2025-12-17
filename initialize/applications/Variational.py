@@ -30,7 +30,7 @@ class Variational(Component):
 
   requiredVariables = {
     ## DAType [Required Parameter]
-    'DAType': [str, ['3dvar', '3denvar', '3dhybrid', '3dhybrid-allsky', '4denvar', '4dhybrid']],
+    'DAType': [str, ['3dvar', '3denvar', '3dhybrid', '4denvar', '4dhybrid']],
   }
 
   optionalVariables = {

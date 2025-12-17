@@ -15,7 +15,7 @@ model:
 observations:
   resource: PANDACArchiveForVarBC
 variational:
-  DAType: 3dhybrid_v3
+  DAType: 3dhybrid
   biasCorrection: True
   hybridBECWeightFromFile: false
   nInnerIterations: [60,60,]

@@ -240,13 +240,7 @@ variational:
           nodes: 4
           PEPerNode: 64
           memory: 235GB
-          baseSeconds: 500
-          secondsPerEnVarMember: 9
-        3dhybrid-allsky:
-          nodes: 4
-          PEPerNode: 64
-          memory: 235GB
-          baseSeconds: 800
+          baseSeconds: 500  #800 from allsky
           secondsPerEnVarMember: 9
         3dvar:
           nodes: 2
@@ -261,11 +255,6 @@ variational:
           memory: 235GB
           secondsPerEnVarMember: 8
         3dhybrid:
-          nodes: 16
-          PEPerNode: 32
-          memory: 235GB
-          secondsPerEnVarMember: 12
-        3dhybrid_v3:
           nodes: 16
           PEPerNode: 32
           memory: 235GB
@@ -373,16 +362,10 @@ variational:
           baseSeconds: 800
           secondsPerEnVarMember: 24
         3dhybrid:
-          nodes: 2
-          PEPerNode: 128
-          memory: 235GB
-          baseSeconds: 500
-          secondsPerEnVarMember: 9
-        3dhybrid-allsky:
-          nodes: 4
-          PEPerNode: 64
-          memory: 235GB
-          baseSeconds: 800
+          nodes: 2          #4
+          PEPerNode: 128    #64
+          memory: 235GB     #235GB
+          baseSeconds: 500  #800   from allsky 
           secondsPerEnVarMember: 9
         3dvar:
           nodes: 2
@@ -405,12 +388,6 @@ variational:
           baseSeconds: 600
           secondsPerEnVarMember: 10
         3dhybrid:
-          nodes: 2
-          PEPerNode: 128
-          memory: 235GB
-          baseSeconds: 250
-          secondsPerEnVarMember: 6
-        3dhybrid-allsky:
           nodes: 2
           PEPerNode: 128
           memory: 235GB

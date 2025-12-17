@@ -1,6 +1,7 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  suffix: '_ensB-SE80+RTPP70_VarBC'
+  #suffix: '_ensB-SE80+RTPP70_VarBC'
+  name: '3dhybrid_60-60-iter_O30kmI60km_ensB-SE80+RTPP70_VarBC_AMSUA_ALLSKY'
 
 firstbackground:
   resource: "PANDAC.GFS"
@@ -25,7 +26,7 @@ observations:
   resource: PANDACArchiveForVarBC
 
 variational:
-  DAType: 3dhybrid-allsky
+  DAType: 3dhybrid
   biasCorrection: True
   nInnerIterations: [60,60,]
   ensemble:
@@ -33,6 +34,29 @@ variational:
       resource: "PANDAC.EDA"
   #execute: False # the default is True
   #post: [] # this turns off verifyobs
+  observers: [
+    aircraft,
+    gnssrobndropp1d,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    amsua-cld_metop-a,
+    amsua-cld_metop-b,
+    amsua-cld_n15,
+    amsua-cld_n18,
+    amsua-cld_n19,
+    mhs_metop-a,
+    mhs_metop-b,
+    mhs_n18,
+    mhs_n19,
+]
 hofx:
   concatenateObsFeedback: True
 
