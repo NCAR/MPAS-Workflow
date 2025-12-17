@@ -45,7 +45,6 @@ set fhour = 000
 
 echo "Getting GDAS atm and sfc analyses from the NCEP FTP"
 # url for GDAS data
-#set gdas_ftp = https://www.ftp.ncep.noaa.gov/data/nccf/com/gfs/prod/gdas.${ccyymmdd}/${hh}/atmos
 set gdas_ftp = https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gdas.${ccyymmdd}/${hh}/atmos
 set gdasAnaInfix = (atm sfc sfluxgrb)
 
