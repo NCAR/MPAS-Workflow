@@ -22,19 +22,6 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.LGETKF"
-  covariance:
-    bumpCovControlVariables:
-    - stream_function
-    - velocity_potential
-    - temperature
-    - spechum
-    - surface_pressure
-    bumpCovPrefix: mpas
-    bumpCovVBalPrefix: mpas
-    30km:
-      bumpCovDir: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_NICAS_NEW
-      bumpCovStdDevFile: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_HDIAG_NEW/mpas.stddev.nc
-      bumpCovVBalDir: /glade/u/home/taosun/scratch/pandac/BUMP_STATIC/30km/BUMP_VBAL_NEW
   post: []
   observers: [
     aircraft,

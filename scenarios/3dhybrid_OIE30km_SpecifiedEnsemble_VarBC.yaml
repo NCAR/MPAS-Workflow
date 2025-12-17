@@ -39,9 +39,6 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.LGETKF"
-  covariance:
-    bumpCovPrefix: mpas
-    bumpCovVBalPrefix: mpas
   post: [] 
   job:
     30km:

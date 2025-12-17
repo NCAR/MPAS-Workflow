@@ -46,15 +46,6 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.LGETKF"
-  covariance:
-    bumpCovControlVariables:
-    - stream_function
-    - velocity_potential
-    - temperature
-    - spechum
-    - surface_pressure
-    bumpCovPrefix: mpas
-    bumpCovVBalPrefix: mpas
   post: []
   observers: [
     aircraft,
