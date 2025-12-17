@@ -33,7 +33,6 @@ model:
   ensembleMesh: 30km
 observations:
   resource: PANDACArchiveForVarBC
-  CRTMTABLES: /glade/derecho/scratch/liuz/pandac_common/crtm_coeffs_v2.4.1/
   fixedCoeff: /glade/derecho/scratch/liuz/pandac_common/satbias_2018051418
   fixedTlapmeanCov: /glade/derecho/scratch/liuz/pandac_common/satbias_2018051418/2018
   initialVARBCcoeff: /glade/derecho/scratch/liuz/pandac_common/satbias_2018051418/2018

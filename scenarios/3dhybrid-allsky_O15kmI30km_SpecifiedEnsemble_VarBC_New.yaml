@@ -1,5 +1,5 @@
 experiment:
-  name: '3dhybrid_O15kmI30km_amsuaAllsky_mhsClrsky_new_crtm241_8nodes'
+  name: '3dhybrid_O15kmI30km_amsuaAllsky_mhsClrsky_new_crtm3_8nodes'
 build:
   mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''
@@ -32,7 +32,6 @@ model:
   ensembleMesh: 30km
 observations:
   resource: PANDACArchiveForVarBC
-  CRTMTABLES: /glade/campaign/mmm/parc/liuz/pandac_common/crtm_coeffs_v2.4.1/  
 variational:
   DAType: 3dhybrid_v3
   biasCorrection: True

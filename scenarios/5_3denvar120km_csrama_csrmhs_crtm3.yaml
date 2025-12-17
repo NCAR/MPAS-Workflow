@@ -1,5 +1,5 @@
 experiment:
-  name: '5_3denvar120km_csrama_csrmhs_crtm241'
+  name: '5_3denvar120km_csrama_csrmhs_crtm3'
 build:
   mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''
@@ -33,7 +33,6 @@ model:
   ensembleMesh: 120km
 observations:
   resource: PANDACArchiveForVarBC
-  CRTMTABLES: /glade/campaign/mmm/parc/liuz/pandac_common/crtm_coeffs_v2.4.1/  
   fixedCoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias
   fixedTlapmeanCov: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
   initialVARBCcoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
