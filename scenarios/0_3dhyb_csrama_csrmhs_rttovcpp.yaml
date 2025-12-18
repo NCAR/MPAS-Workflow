@@ -1,8 +1,7 @@
 experiment:
   name: '0_3dhyb_csrama_csrmhs_rttovcpp'
 build:
-  mpas bundle: /glade/work/jianglp/code/mpas_bundle_v3.0.3_internal_patch/build
-  #mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
+  mpas bundle: /glade/derecho/scratch/bjung/panda-c/code_develop/mpas-bundle.20251217_afternoon/build_single/
   #forecast directory: ''
   #bundle compiler used: gnu-openmpi
 hpc:
@@ -18,6 +17,7 @@ firstbackground:
 externalanalyses:
   resource: "GFS.PANDAC"
 forecast:
+  execute: False  # For single, DA-Only test
   post: [] # use this when doing extended forecast
   job:
     15km:
@@ -77,4 +77,4 @@ variational:
 workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180404T18
-  final cycle point: 20180419T06
+  final cycle point: 20180415T00

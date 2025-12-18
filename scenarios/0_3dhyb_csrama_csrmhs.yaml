@@ -1,16 +1,16 @@
 experiment:
   name: '0_3dhyb_csrama_csrmhs'
 build:
-  mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
+  mpas bundle: /glade/derecho/scratch/bjung/panda-c/code_develop/mpas-bundle.20251217_afternoon/build_single/
   #forecast directory: ''
   #bundle compiler used: gnu-openmpi
 hpc:
-  CriticalAccount: NMMM0043
+  CriticalAccount: NMMM0015 #43
   CriticalQueue: main
-  NonCriticalAccount: NMMM0043
+  NonCriticalAccount: NMMM0015 #43
   NonCriticalQueue: main
   priority: regular
-  SingleProcAccount: NMMM0043
+  SingleProcAccount: NMMM0015 #43
   SingleProcQueue: casper@casper-pbs
 firstbackground:
   resource: "PANDAC.GFS"
