@@ -1,0 +1,34 @@
+externalanalyses:
+  resource: "GFS.PANDAC"
+firstbackground:
+  resource: "PANDAC.GFS"
+members:
+  n: 1
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+observations:
+  resource: PANDACArchive
+variational:
+  DAType: 3dhybrid
+  ensembleCovarianceWeight: 0.5
+  staticCovarianceWeight: 0.5
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
+  job:
+    120km:
+      120km:
+        3dhybrid:
+          nodes: 1
+          PEPerNode: 128
+          memory: 235GB
+          baseSeconds: 800
+workflow:
+  first cycle point: 20180414T18
+  #restart cycle point: 20180418T00
+  final cycle point: 20180421T18
+hpc:
+  CriticalPriority: economy
+  NonCriticalPriority: economy
