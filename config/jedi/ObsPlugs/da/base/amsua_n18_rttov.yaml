@@ -19,5 +19,3 @@
     name: RTTOVCPP
     CoefPath: /glade/work/liuz/rttov14/rtcoef_rttov14/rttov13pred54L/
     SensorID: noaa_18_amsua_o3
-  get values:
-    <<: *GetValues
