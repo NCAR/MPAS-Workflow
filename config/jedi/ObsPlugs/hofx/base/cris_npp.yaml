@@ -23,5 +23,3 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: cris_npp
-  get values:
-    <<: *GetValues

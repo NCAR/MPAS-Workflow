@@ -19,5 +19,3 @@
     name: RTTOVCPP
     CoefPath: /glade/campaign/mmm/parc/liuz/rttov123/rtcoef_rttov12/rttov7pred54L/
     SensorID: noaa_18_mhs
-  get values:
-    <<: *GetValues

@@ -30,5 +30,4 @@
       <<: *CRTMObsOptions
       Sensor_ID: iasi_metop-b
   get values:
-    <<: *GetValues
     tropopause pressure method: {{tropprsMethod}}

@@ -20,5 +20,3 @@
     obs options:
       <<: *CRTMObsOptions
       Sensor_ID: atms_n21
-  get values:
-    <<: *GetValues

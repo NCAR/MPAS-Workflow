@@ -26,5 +26,4 @@
       <<: *CRTMObsOptions
       Sensor_ID: cris_n20
   get values:
-    <<: *GetValues
     tropopause pressure method: {{tropprsMethod}}

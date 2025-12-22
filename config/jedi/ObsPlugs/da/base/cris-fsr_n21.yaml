@@ -35,5 +35,4 @@
       <<: *CRTMObsOptions
       Sensor_ID: cris-fsr_n21
   get values:
-    <<: *GetValues
     tropopause pressure method: {{tropprsMethod}}
