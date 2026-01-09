@@ -300,9 +300,9 @@ fields:
 #      this will go through (NL) Variable Change.
   - field name: vegetation_area_fraction
     mpas template field: u10
-#    mpas identity field: vegetation_area_fraction
+    mpas identity field: vegetation_area_fraction
     mpas io name: vegfra # need scaling or Variable Change
-#    mpas io scaling factor: 0.01 # from MPAS unit [percent] to generic unit [unitless]
+    mpas io scaling factor: 0.01 # from MPAS unit [percent] to generic unit [unitless]
 
   - field name: leaf_area_index
     mpas template field: u10
