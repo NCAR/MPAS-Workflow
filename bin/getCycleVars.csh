@@ -27,6 +27,13 @@ set thisMPASFileDate = ${yy}-${mm}-${dd}_${hh}.00.00
 set thisMPASNamelistDate = ${yy}-${mm}-${dd}_${hh}:00:00
 set thisISO8601Date = ${yy}-${mm}-${dd}T${hh}:00:00Z
 
+# get the previous cycle date info, IAU looks back in time
+set yyp = `echo ${prevCycleDate} | cut -c 1-4`
+set mmp = `echo ${prevCycleDate} | cut -c 5-6`
+set ddp = `echo ${prevCycleDate} | cut -c 7-8`
+set hhp = `echo ${prevCycleDate} | cut -c 9-10`
+set prevMPASFileDate = ${yyp}-${mmp}-${ddp}_${hhp}.00.00
+
 # Set time info for subwindow
 if ("$subwindow" == "3") then
   set window_dt = `echo ${subwindow}`

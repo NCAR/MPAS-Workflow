@@ -2,7 +2,7 @@
 
 if ( $?config_environmentJEDI ) exit 0
 
-set spack_version="1.8.0"
+set spack_version="1.9.3"
 echo "Loading Spack-Stack $spack_version"
 setenv config_environmentJEDI 1
 
@@ -13,13 +13,13 @@ if ( "$NCAR_HOST" == "derecho" ) then
   module purge
   setenv LMOD_TMOD_FIND_FIRST yes
   if ( "$bundleCompilerUsed" =~  *"intel"* ) then
-     module use /lustre/desc1/scratch/epicufsrt/contrib/modulefiles_extra
-     module use /lustre/desc1/scratch/epicufsrt/contrib/modulefiles
+     module load ncarenv/23.09
+     module use /glade/work/epicufsrt/contrib/spack-stack/derecho/modulefiles
      module load ecflow/5.8.4
      module load mysql/8.0.33
-     module use /glade/work/epicufsrt/contrib/spack-stack/derecho/spack-stack-${spack_version}/envs/ue-intel-2021.10.0/install/modulefiles/Core
-     module load stack-intel/2021.10.0
-     module load stack-cray-mpich/8.1.25
+     module use /glade/work/epicufsrt/contrib/spack-stack/derecho/spack-stack-${spack_version}/envs/ue-oneapi-2024.2.1/install/modulefiles/Core
+     module load stack-oneapi/2024.2.1
+     module load stack-cray-mpich/8.1.29
      module load stack-python/3.11.7
      module load jedi-mpas-env
   else if ( "$bundleCompilerUsed" =~  *"gnu"* ) then
@@ -27,9 +27,10 @@ if ( "$NCAR_HOST" == "derecho" ) then
      module use /glade/work/epicufsrt/contrib/spack-stack/derecho/modulefiles
      module load ecflow/5.8.4
      module load mysql/8.0.33
-     module use /glade/work/epicufsrt/contrib/spack-stack/derecho/spack-stack-${spack_version}/envs/ue-gcc-12.2.0/install/modulefiles/Core
-     module load stack-gcc/12.2.0
-     module load stack-cray-mpich/8.1.25
+     module use /glade/work/epicufsrt/contrib/spack-stack/derecho/spack-stack-${spack_version}/envs/ue-gcc-12.4.0/install/modulefiles/Core
+
+     module load stack-gcc/12.4.0
+     module load stack-cray-mpich/8.1.29
      module load stack-python/3.11.7
      module load jedi-mpas-env soca-env
      #module load jedi-mpas-env

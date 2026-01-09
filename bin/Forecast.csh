@@ -242,14 +242,31 @@ if ("${ArgUpdateSea}" == True) then
   else
     # otherwise use deterministic analysis for all members
     # 60km and 120km
-    setenv SeaAnaDir ${deterministicSeaAnaDir}
+
+    # IAU starts the model before the 'current' analysis time, so we need to get
+    # the previous analysis for sea surface fields
+    if ( ${self_IAU} == True ) then
+      set lastEADir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \
+        | sed 's@{{thisValidDate}}@'${prevCycleDate}'@' \
+        `
+      setenv SeaAnaDir ${lastEADir}
+      setenv SeaFilePrefix ${deterministicSeaFilePrefix}.${prevMPASFileDate}
+    else
+      setenv SeaAnaDir ${deterministicSeaAnaDir}
+      setenv SeaFilePrefix ${deterministicSeaFilePrefix}
+    endif
     setenv seaMemFmt "${deterministicSeaMemFmt}"
-    setenv SeaFilePrefix ${deterministicSeaFilePrefix}
   endif
 
   # first try member-specific state file (central GFS state when ArgMember==0)
   set seaMemDir = `${memberDir} 2 $ArgMember "${seaMemFmt}" -m ${seaMaxMembers}`
-  set SeaFile = ${SeaAnaDir}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
+  # surface update file
+  if ( ${self_IAU} == True ) then
+    set SeaFile = ${SeaAnaDir}${seaMemDir}/${SeaFilePrefix}.nc
+  else
+    set SeaFile = ${SeaAnaDir}${seaMemDir}/${SeaFilePrefix}.${icFileExt}
+  endif
+
   ln -sfv ${SeaFile} ./${localSeaUpdateFile}
   set brokenLinks=( `find ${localSeaUpdateFile} -mindepth 0 -maxdepth 0 -type l -exec test ! -e {} \; -print` )
   set broken=0
