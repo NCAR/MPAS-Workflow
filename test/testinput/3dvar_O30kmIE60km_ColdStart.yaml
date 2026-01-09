@@ -1,7 +1,7 @@
 externalanalyses:
   resource: "GFS.RDA"
 experiment:
-  name: '3dvar_O30kmIE60km_ColdStart_TEST_modif'
+  name: '3dvar_O30kmIE60km_ColdStart_TEST'
 forecast:
   post: [verifyobs, verifymodel]
 hpc:
