@@ -1,7 +1,7 @@
 experiment:
   prefix: 'stoedtli_'
   name: 'getkf_120km_20mem_uncoupled_'
-  suffix: '1'
+  suffix: '3'
 
 enkf:
   solver: GETKF
@@ -18,10 +18,9 @@ enkf:
   concatenateObsFeedback: False
   # coupling to var DA (bias correction, recentering)
   coupledToVarDA: False
-  #workflowNameVarDA: 'stoedtli_3dhybrid_coupled_test_3'
-  #recenterAnalyses: False  # not implemented yet
   biasCorrection: True
-  staticVarBcDir: /glade/campaign/mmm/parc/jban/pandac/year7Exp/jban_3dhybrid-60-60-iter_O30kmI60km_mhsRaw_clrsky/CyclingDA
+  #staticVarBcDir: /glade/campaign/mmm/parc/jban/pandac/year7Exp/jban_3dhybrid-60-60-iter_O30kmI60km_mhsRaw_clrsky/CyclingDA
+  staticVarBcDir: /glade/derecho/scratch/stoedtli/pandac/stoedtli_3denvar_120km_coupled_1/CyclingDA
   post: []
 
 externalanalyses:
@@ -53,3 +52,4 @@ workflow:
 
 build:
   mpas bundle: /glade/derecho/scratch/stoedtli/recenter_multires/mpas-bundle/build
+
