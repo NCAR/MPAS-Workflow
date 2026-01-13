@@ -127,7 +127,7 @@ variational:
 
         GETKF_uncoupled:
           120km:
-            directory0: '/glade/derecho/scratch/stoedtli/pandac/stoedtli_getkf_120km_20mem_uncoupled_1/CyclingFC/{{prevDateTime}}'
+            directory0: '/glade/derecho/scratch/stoedtli/pandac/stoedtli_getkf_120km_20mem_uncoupled_3/CyclingFC/{{prevDateTime}}'
             memberPrefix: mem
             memberNDigits: 3
             maxMembers: 20
