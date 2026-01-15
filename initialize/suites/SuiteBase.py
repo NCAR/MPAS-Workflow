@@ -202,6 +202,7 @@ from initialize.suites.GenerateObs import GenerateObs
 from initialize.suites.ForecastFromExternalAnalyses import ForecastFromExternalAnalyses
 from initialize.suites.CloudDirectInsertion import CloudDirectInsertion
 from initialize.suites.CloudDirectInsertionCycle import CloudDirectInsertionCycle
+from initialize.suites.GraphcastCycle import GraphcastCycle
 
 suiteDict = {
   'Cycle': Cycle,
@@ -210,6 +211,7 @@ suiteDict = {
   'GenerateObs': GenerateObs,
   'CloudDirectInsertion': CloudDirectInsertion,
   'CloudDirectInsertionCycle': CloudDirectInsertionCycle,
+  'GraphcastCycle': GraphcastCycle,
 }
 
 def SuiteLookup(suiteName:str, conf:Config):
