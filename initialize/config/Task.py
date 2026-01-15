@@ -77,9 +77,12 @@ class PBSPro(Task):
       if self.r['GPUPerNode'] is not None and self.r['GPUPerNode'] > 0:
         # specifying ngpus in the select statement will send the job to the gpu queue.
         gpu_str = ':ngpus='+str(self.r['GPUPerNode'])
-        memory = None # don't specify memory, use whatever is available on the GPU node
+        # Casper nodes are shared and we need to specify the memory. Therefore comment this out for now.
+        # memory = None # don't specify memory, use whatever is available on the GPU node
         if PEPerNode > self.maxProcPerGpuNode:
           PEPerNode = self.maxProcPerGpuNode
+      if self.r['GPUType'] is not None:
+        gpu_str += (':gpu_type=' + self.r['GPUType'])
       threads = self.r.getOrDefault('threads', 1, int)
       assert threads*PEPerNode <= self.maxProcPerNode, (
         'PBSPro: too many processors requested -->'+str(threads*PEPerNode))

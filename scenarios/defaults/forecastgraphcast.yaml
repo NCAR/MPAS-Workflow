@@ -1,0 +1,25 @@
+forecast:
+  # resource requirements used for ForecastGraphcast
+  job:
+    defaults:
+      nodes: 1 
+      PEPerNode: 1
+      baseSeconds: 400
+      secondsPerForecastHR: 30
+
+      # cylc retry string
+      retry: '2*PT30S'
+
+    #{{outerMesh}}:
+    #  baseSeconds: int
+    #  secondsPerForecastHR: int
+    #  nodes: int
+    #  PEPerNode: int
+    120km:
+      nodes: 1
+      PEPerNode: 1
+      GPUPerNode: 1
+      GPUType: 'a100_80gb'
+      memory: '20GB'
+      baseSeconds: 1000
+      secondsPerForecastHR: 30

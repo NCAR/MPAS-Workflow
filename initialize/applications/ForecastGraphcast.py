@@ -27,7 +27,7 @@ from initialize.framework.Workflow import Workflow
 from initialize.post.Post import Post
 
 class Forecast(Component):
-  defaults = 'scenarios/defaults/forecast.yaml'
+  defaults = 'scenarios/defaults/forecastgraphcast.yaml'
   workDir = 'CyclingFC'
 #  RSTFilePrefix = 'restart'
 #  ICFilePrefix = 'mpasin'
@@ -106,17 +106,19 @@ class Forecast(Component):
     # job settings
     updateSea = self['updateSea']
 
+    # Notes:
+    # - removed job_priority flag for now (not sure if it is supported on Casper)
     attr = {
       'retry': {'typ': str},
       'baseSeconds': {'typ': int},
       'secondsPerForecastHR': {'typ': int},
-      'nodes': {'typ': int},
-      'PEPerNode': {'typ': int},
-      'GPUPerNode': {'typ': int, 'req':False},
-      'memory': {'def': '235GB', 'typ': str},
-      'queue': {'def': hpc['CriticalQueue']},
+      'nodes': {'def': 1, 'typ': int},
+      'PEPerNode': {'def': 1, 'typ': int},
+      'GPUPerNode': {'def': 1, 'typ': int},
+      'GPUType': {'def': 'a100_80gb', 'typ': str},
+      'memory': {'def': '20GB', 'typ': str},
+      'queue': {'def': hpc['SingleProcQueue']},  # submit to Casper
       'account': {'def': hpc['CriticalAccount']},
-      'job_priority': {'def': hpc['CriticalPriority']},
       'email': {'def': True, 'typ': bool},
     }
     # store job for ExtendedForecast to re-use
