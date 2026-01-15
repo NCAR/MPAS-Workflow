@@ -13,15 +13,6 @@
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
-<immutable_stream name="da_state"
-                  type="none"
-                  precision="{{PRECISION}}"
-                  clobber_mode="truncate"
-                  filename_template="da_state.$Y-$M-$D_$h.$m.$s.nc"
-                  packages="jedi_da"
-                  io_type="pnetcdf,cdf5"
-                  output_interval="none" />
-
 <immutable_stream name="iau"
                   type="input"
                   precision="{{PRECISION}}"
