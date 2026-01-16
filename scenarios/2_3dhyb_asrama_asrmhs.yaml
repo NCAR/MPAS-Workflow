@@ -76,7 +76,7 @@ variational:
           nodes: 8
           PEPerNode: 64
           memory: 235GB
-          baseSeconds: 4200
+          baseSeconds: 1500
           secondsPerEnVarMember: 10
 workflow:
   first cycle point: 20180414T18
