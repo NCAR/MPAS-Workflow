@@ -140,6 +140,10 @@ class Forecast(Component):
     self._tasks += [('\n'
                      '  [[ForecastGC]]'
                      '\n'
+                     f'    inherit = {self.tf.base}, BATCH'
+                     '\n'
+                     f'    script = $origin/bin/ForecastGraphcast.csh'
+                     '\n'
     )]
 
     # Interpolation to MPAS mesh
@@ -148,29 +152,29 @@ class Forecast(Component):
                      '\n'
     )]
 
-    for mm in range(1, self.NN+1, 1):
-      # fcArgs explanation
-      # DACycling (True), IC ~is~ a DA analysis for which re-coupling is required
-      # DeleteZerothForecast (False), not used anywhere else in the workflow
-      args = [
-        mm,
-        lengthHR,
-        outIntervalHR,
-        IAU,
-        mesh.name,
-        True,
-        False,
-        updateSea,
-        self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
-        warmIC[mm-1].directory(),
-        warmIC[mm-1].prefix(),
-      ]
-      fcArgs = ' '.join(['"'+str(a)+'"' for a in args])
+  #   for mm in range(1, self.NN+1, 1):
+  #     # fcArgs explanation
+  #     # DACycling (True), IC ~is~ a DA analysis for which re-coupling is required
+  #     # DeleteZerothForecast (False), not used anywhere else in the workflow
+  #     args = [
+  #       mm,
+  #       lengthHR,
+  #       outIntervalHR,
+  #       IAU,
+  #       mesh.name,
+  #       True,
+  #       False,
+  #       updateSea,
+  #       self.workDir+'/{{thisCycleDate}}'+self.memFmt.format(mm),
+  #       warmIC[mm-1].directory(),
+  #       warmIC[mm-1].prefix(),
+  #     ]
+  #     fcArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
-      self._tasks += ['''
-  [['''+self.base+str(mm)+''']]
-    inherit = '''+self.base+''', BATCH
-    script = $origin/bin/'''+self.base+'''.csh '''+fcArgs]
+  #     self._tasks += ['''
+  # [['''+self.base+str(mm)+''']]
+  #   inherit = '''+self.base+''', BATCH
+  #   script = $origin/bin/'''+self.base+'''.csh '''+fcArgs]
 
     self.previousForecast = self.tf.finished+'[-PT'+str(self.workflow['FC2DAOffsetHR'])+'H]'
 
@@ -232,7 +236,7 @@ class Forecast(Component):
     
     # Use graphcast to generate forecast and interpolate to native MPAS mesh
     self._dependencies += [('\n'
-                            '        ForecastGC => InterpolateGCToMPAS')]
+                            f'        ForecastGC => InterpolateGCToMPAS => {self.tf.post}')]
 
     # depends on previous DA
     previousDA = daFinished+'[-PT'+str(self.workflow['DA2FCOffsetHR'])+'H]'

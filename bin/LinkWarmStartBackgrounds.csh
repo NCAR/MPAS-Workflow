@@ -8,6 +8,7 @@
 source config/auto/firstbackground.csh
 source config/auto/members.csh
 source config/auto/model.csh
+source config/auto/naming.csh  # ICFilePrefix
 source config/auto/workflow.csh
 
 set thisCycleDate = $FirstCycleDate
@@ -30,6 +31,13 @@ while ( $member <= $nMembers )
       ln -sfv ${InitialMemberFC}/${firstbackground__filePrefixOuter}.*.nc $CyclingFCDirs[$member]/.
       # rm ${fcFile}
       #cp ${fcFile}${OrigFileSuffix} ${fcFile}
+      # make sure an initial condition file for Graphcast is linked as well
+      set icFile = "$CyclingFCDirs[$member]/${ICFilePrefix}.${thisMPASFileDate}.nc"
+      if ( ! -e "$icFile" ) then
+        cp -Pv \
+          "$CyclingFCDirs[$member]/${firstbackground__filePrefixOuter}.${thisMPASFileDate}.nc" \
+          "$icFile"
+      endif
 
       # Inner loop mesh
       if ($nCellsOuter != $nCellsInner) then
