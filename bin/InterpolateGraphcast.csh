@@ -14,7 +14,7 @@ source config/auto/build.csh  # InitBuildDir, InitEXE
 source config/auto/experiment.csh  # ModelConfigDir, NamelistFileInit
 source config/auto/invariantstream.csh  # InvariantFieldsDirOuter, InvariantFieldsFileOuter
 source config/auto/members.csh  # nMembers
-source config/auto/model.csh  # GraphInfoDir, meshRatioOuter, model__precision, MPASCore, nCellsOuter, StreamsFileInit
+source config/auto/model.csh  # GraphInfoDir, localInvariantFieldsFileOuter, meshRatioOuter, model__precision, MPASCore, nCellsOuter, StreamsFileInit
 source config/auto/naming.csh  # ForecastWorkDir, ICFilePrefix
 source config/auto/workflow.csh  # CyclingWindowHR
 
@@ -59,8 +59,10 @@ foreach idxMem (`seq 1 $nMembers`)
     mv -v "${fileBaseWPS}:${thisCycleDateWPS}" "${fileBaseWPS}:${nextCycleDateWPS}"
     # link MPAS mesh graph info (can't quote this, csh would not expand wildcard)
     ln -sfv ${GraphInfoDir}/x${meshRatioOuter}.${nCellsOuter}.graph.info* .
-    # link invariant file
-    ln -sfv "${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}" .
+    # link invariant file if it does not exist yet (typically linked by ForecastGraphcast)
+    if ( ! -e "$localInvariantFieldsFileOuter" ) then
+        ln -sfv "${InvariantFieldsDirOuter}/${InvariantFieldsFileOuter}" "$localInvariantFieldsFileOuter"
+    endif
     # copy and modify namelist
     cp -v "${ModelConfigDir}/graphcast_interp/${NamelistFileInit}" .
     sed -i "s@{{validTime}}@${nextCycleDateNamelist}@" $NamelistFileInit
@@ -70,7 +72,7 @@ foreach idxMem (`seq 1 $nMembers`)
     # copy and modify streams list
     cp -v "${ModelConfigDir}/graphcast_interp/${StreamsFileInit}" .
     sed -i "s@{{PRECISION}}@${model__precision}@" $StreamsFileInit
-    sed -i "s@{{invariantFile}}@${InvariantFieldsFileOuter}@" $StreamsFileInit
+    sed -i "s@{{invariantFile}}@${localInvariantFieldsFileOuter}@" $StreamsFileInit
     sed -i "s@{{meshRatio}}@${meshRatioOuter}@" $StreamsFileInit
     sed -i "s@{{nCells}}@${nCellsOuter}@" $StreamsFileInit
     sed -i "s@{{ICFilePrefix}}@${ICFilePrefix}@" $StreamsFileInit
@@ -85,6 +87,8 @@ foreach idxMem (`seq 1 $nMembers`)
         echo "ERROR in $0 : MPAS-init failed" > ./FAIL
         exit 1
     endif
+    # EnKF: copy soil fields from center
+    # Do one forecast step and write file
 end
 
 
