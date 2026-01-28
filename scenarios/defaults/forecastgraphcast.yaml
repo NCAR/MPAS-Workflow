@@ -16,10 +16,18 @@ forecast:
     #  nodes: int
     #  PEPerNode: int
     120km:
-      nodes: 1
-      PEPerNode: 1
-      GPUPerNode: 1
-      GPUType: 'a100_80gb'
-      memory: '20GB'
-      baseSeconds: 1000
-      secondsPerForecastHR: 30
+      graphcast:
+        nodes: 1
+        PEPerNode: 1
+        GPUPerNode: 1
+        GPUType: 'a100_80gb'
+        memory: '20GB'
+        baseSeconds: 1000
+        secondsPerForecastHR: 30
+      # these need to be updated
+      interpolation:
+        nodes: 1
+        PEPerNode: 2
+        memory: '20GB'
+        baseSeconds: 300
+        secondsPerMember: 30

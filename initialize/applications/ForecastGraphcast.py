@@ -122,7 +122,8 @@ class Forecast(Component):
       'email': {'def': True, 'typ': bool},
     }
     # store job for ExtendedForecast to re-use
-    self.job = Resource(self._conf, attr, ('job', mesh.name))
+    resourceForecast = mesh.name + '.graphcast'
+    self.job = Resource(self._conf, attr, ('job', resourceForecast))
     self.job._set('seconds', self.job['baseSeconds'] + self.job['secondsPerForecastHR'] * lengthHR)
     task = TaskLookup[hpc.system](self.job)
 
@@ -147,10 +148,33 @@ class Forecast(Component):
     )]
 
     # Interpolation to MPAS mesh
+    keyListInterpolation = {
+      # Notes:
+      # - the interpolation application is currently small enough to run on develop
+      'retry': {'typ': str},
+      'baseSeconds': {'typ': int},
+      'secondsPerMember': {'typ': int},
+      'nodes': {'def': 1, 'typ': int},
+      'PEPerNode': {'def': 1, 'typ': int},
+      'memory': {'def': '20GB', 'typ': str},
+      'queue': {'def': hpc['SharedQueue']},
+      'account': {'def': hpc['CriticalAccount']},
+      'email': {'def': True, 'typ': bool},
+    }
+    resourceInterpolation = mesh.name + '.interpolation'
+    interpolationJob = Resource(self._conf, keyListInterpolation, ('job', resourceInterpolation))
+    interpolationJob._set('seconds', interpolationJob['baseSeconds'] + interpolationJob['secondsPerMember'] * self.NN)
+    interpolationTask = TaskLookup[hpc.system](interpolationJob)
+
     self._tasks += [('\n'
                      '  [[InterpolateGCToMPAS]]'
                      '\n'
-    )]
+                     f'    inherit = {self.tf.execute}, BATCH'
+                     '\n'
+                     f'    script = $origin/bin/InterpolateGraphcast.csh'
+                     '\n'
+                     f'{interpolationTask.job() + interpolationTask.directives()}'
+                     '\n')]
 
   #   for mm in range(1, self.NN+1, 1):
   #     # fcArgs explanation
