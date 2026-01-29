@@ -13,15 +13,6 @@
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
-<immutable_stream name="da_state"
-                  type="output"
-                  precision="{{PRECISION}}"
-                  clobber_mode="truncate"
-                  filename_template="{{FCFilePrefix}}.$Y-$M-$D_$h.$m.$s.nc"
-                  packages="jedi_da"
-                  io_type="pnetcdf,cdf5"
-                  output_interval="{{outputInterval}}" />
-
 <immutable_stream name="iau"
                   type="input"
                   precision="{{PRECISION}}"
@@ -35,6 +26,18 @@
         type="none"
         filename_template="history.$Y-$M-$D_$h.$m.$s.nc"
         output_interval="none" >
+</stream>
+
+<stream name="dastate"
+        type="output"
+        precision="{{PRECISION}}"
+        clobber_mode="truncate"
+        filename_template="{{FCFilePrefix}}.$Y-$M-$D_$h.$m.$s.nc"
+        io_type="pnetcdf,cdf5"
+        clobber_mode="overwrite"
+        io_type="pnetcdf,cdf5"
+        output_interval="{{outputInterval}}" >
+        <file name="stream_list.atmosphere.dastate"/>
 </stream>
 
 <stream name="diagnostics"
