@@ -176,6 +176,7 @@ class DA(Component):
     for st in self.__subtasks:
       self._tasks += st._tasks
       self._dependencies += st._dependencies
+      self._xtriggers += st._xtriggers
 
     # depends on previous Forecast
     self.tf.addDependencies([previousForecast])

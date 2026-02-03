@@ -112,6 +112,26 @@ variational:
             #  zero padding: 3
             #  nmembers: 80
 
+        GETKF_coupled:
+          120km:
+            directory0: 'setByCoupledWorkflow'
+            memberPrefix: mem
+            memberNDigits: 3
+            maxMembers: 20
+
+          60km:
+            directory0: 'setByCoupledWorkflow'
+            memberPrefix: mem
+            memberNDigits: 3
+            maxMembers: 20
+
+        GETKF_uncoupled:
+          120km:
+            directory0: '/glade/derecho/scratch/stoedtli/pandac/stoedtli_getkf_120km_20mem_uncoupled_3/CyclingFC/{{prevDateTime}}'
+            memberPrefix: mem
+            memberNDigits: 3
+            maxMembers: 20
+
     # externally-produced localization files
     localization:
       #{{ensembleMesh}}:

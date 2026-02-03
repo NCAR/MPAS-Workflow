@@ -1,0 +1,118 @@
+# Variables to recenter: _state variables
+# ---------------------------------------
+# All variables from the da_stream I/O stream are recentered, except for the following:
+# 1) static variables (terrain, hydrostatic balances):
+# - ter
+# - xland
+# - dzs
+# - zs
+# - pressure_base
+# - rho_base
+# - theta_base
+#
+# 2) real-valued variables that are identical across ensemble members:
+# - sfc_albbck
+# - sfc_emibck
+#
+# 3) scalar integer variables identical across ensemble members
+#    (a real-valued mean would not be meaningful)
+# - isice_lu
+# - iswater_lu
+#
+# 4) variables containing information about past states
+# - xicem
+# - h_oml_initial
+#
+# 5) redundant variables
+# - air_pressure  (note: we do recenter pressure_p)
+
+_state variables: &daStateVars
+- water_vapor_mixing_ratio_wrt_dry_air
+- cloud_liquid_water
+- rain_water
+- cloud_liquid_ice
+- snow_water
+- graupel
+- cloud_ice_number_concentration
+- rain_number_concentration
+- cloud_droplet_number_concentration
+- u
+- w
+- dry_air_density
+- pressure_p
+- air_potential_temperature
+- relative_humidity
+- eastward_wind
+- northward_wind
+- air_pressure_at_surface
+- cldfrac
+- re_cloud
+- re_ice
+- re_snow
+- refl10cm
+- refl10cm_max
+- rainc
+- rainnc
+- lai
+- sfc_albedo
+- mavail
+- sfc_emiss
+- thc
+- ust
+- z0
+- znt
+- skin_temperature_at_surface
+- snow
+- snowc
+- snowh
+- sst
+- tmn
+- vegetation_area_fraction
+- seaice
+- seaice_fraction
+- eastward_wind_at_10m
+- northward_wind_at_10m
+- water_vapor_mixing_ratio_wrt_moist_air_at_2m
+- air_temperature_at_2m
+- precipw
+- sh2o
+- smois
+- tslb
+
+_current date: &currentDate {{cycleDateISO8601}}
+
+recenter variables: *daStateVars
+
+center geometry:
+  nml_file: {{namelistFileCenter}}
+  streams_file: {{streamsFileCenter}}
+  deallocate non-da fields: false
+
+center:
+  filename: {{analysisFileCenter}}
+  date: *currentDate
+  state variables: *daStateVars
+  stream name: da_state
+  transform model to analysis: false
+
+ensemble geometry:
+  nml_file: {{namelistFileEnsemble}}
+  streams_file: {{streamsFileEnsemble}}
+  deallocate non-da fields: false
+
+ensemble:
+  members from template:
+    template:
+      date: *currentDate
+      state variables: *daStateVars
+      filename: {{analysisFileEnsemble}}
+      stream name: da_state
+      transform model to analysis: false
+    pattern: %iMember%
+    start: 1
+    zero padding: {{paddingEnsembleMembers}}
+    nmembers: {{numberEnsembleMembers}}
+
+recentered output:
+  filename: {{analysisFileRecenter}}
+  stream name: da_state

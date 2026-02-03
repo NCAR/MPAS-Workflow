@@ -37,6 +37,7 @@ class Component(Logger):
     self._queues = []
     self._tasks = []
     self._dependencies = []
+    self._xtriggers = []
 
     ###################
     # extract SubConfig
