@@ -1,7 +1,7 @@
 experiment:
   name: '5_3denvar120km_csrama_csrmhs_rttov14'
 build:
-  mpas bundle: /glade/work/jianglp/code/mpas_bundle_v3.0.3_internal_patch/build
+  #mpas bundle: /glade/work/jianglp/code/mpas_bundle_v3.0.3_internal_patch/build
   #/glade/work/jianglp/code/mpas_bundle_v3.0.3_internal_patch/build
   ##/glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
   #forecast directory: ''

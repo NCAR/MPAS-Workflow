@@ -344,8 +344,8 @@ observations:
           mhs_n18_rttov12: /glade/derecho/scratch/liuz/pandac_common/obsiodav3_intScanP_20230927/2018/raw_obs
 
           ## atms
-          atms_n20: /glade/derecho/scratch/liuz/pandac_common/obsiodav3_intScanP_20230927/2018/raw_obs
-          atms_npp: /glade/derecho/scratch/liuz/pandac_common/obsiodav3_intScanP_20230927/2018/raw_obs
+          atms_n20: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          atms_npp: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
 
           ## abi
           abi_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct
@@ -396,8 +396,8 @@ observations:
           mhs_n19: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/bias_corr
 
           ## atms
-          atms_n20: /glade/derecho/scratch/liuz/pandac_common/obsiodav3_intScanP_20230927/2018/raw_obs
-          atms_npp: /glade/derecho/scratch/liuz/pandac_common/obsiodav3_intScanP_20230927/2018/raw_obs
+          atms_n20: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
+          atms_npp: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/raw_obs
 
           ## abi
           abi_g16: /glade/campaign/mmm/parc/jban/pandac/obsiodav3_intScanP_20230927/2018/ABIASR/IODANC_THIN15KM_SUPEROB15X15_no-bias-correct

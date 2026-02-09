@@ -17,6 +17,7 @@
         name: GeoVaLs/water_area_fraction
       minvalue: 1.0
     <<: *multiIterationFilter
+
 #  Observation Range Sanity Check
   - filter: Bounds Check
     filter variables:
@@ -25,7 +26,8 @@
     minvalue: 50.00001
     maxvalue: 449.99999
     action:
-      name: reject    
+      name: reject
+
   - filter: BlackList
     filter variables:
     - name: brightnessTemperature
@@ -76,6 +78,7 @@
     action:
       name: assign error
       error function:
+        #name: ObsFunction/ObsErrorModelRamp
         name: ObsFunction/ObsErrorModelQuad
         channels: *atms_npp_channels
         options:
@@ -87,9 +90,10 @@
               siret_ch150: 17
               siret_types: [ObsValue, HofX]
               bias_application: ObsValue
+
           a:    [ 0.030,  0.030,  0.030,  0.020,  0.030,
-                  0.005,  0.001,  0.001,  0.000,  0.000,
-                  0.000,  0.000,  0.000,  0.000,  0.000,
+                  0.005,  0.001,  0.001,  0.001,  0.001,
+                  0.001,  0.001,  0.001,  0.001,  0.001,
                   9.00,   0.030,  0.042,  0.030,  0.027,
                   0.023,  0.015]
           b:    [ 0.350,  0.380,  0.400,  0.450,  0.500,
@@ -221,10 +225,12 @@
     filter variables:
     - name: brightnessTemperature
       channels: *atms_npp_channels
+
     where:
     - variable:
         name: GeoVaLs/water_area_fraction
       minvalue: 1.0
+
     function absolute threshold:
     - name: ObsFunction/ObsErrorBoundMW
       channels: *atms_npp_channels
@@ -286,10 +292,12 @@
     filter variables:
     - name: brightnessTemperature
       channels: *atms_npp_channels
+
     where:
     - variable:
         name: GeoVaLs/water_area_fraction
       maxvalue: 0.98
+
     function absolute threshold:
     - name: ObsFunction/ObsErrorBoundMW
       channels: *atms_npp_channels
@@ -324,8 +332,8 @@
                 siret_types: [ObsValue, HofX]
                 bias_application: ObsValue
             a:    [ 0.030,  0.030,  0.030,  0.020,  0.030,
-                  0.005,  0.001,  0.001,  0.000,  0.000,
-                  0.000,  0.000,  0.000,  0.000,  0.000,
+                  0.005,  0.001,  0.001,  0.001,  0.001,
+                  0.001,  0.001,  0.001,  0.001,  0.001,
                   9.00,   0.030,  0.042,  0.030,  0.027,
                   0.023,  0.015]
             b:    [ 0.350,  0.380,  0.400,  0.450,  0.500,
@@ -348,6 +356,7 @@
                            1.0, 1.0, 1.0, 2.0, 4.5,
                            4.5, 2.0, 6.0, 5.0, 5.0,
                            5.0, 5.0]
+
     action:
       name: reject
     <<: *multiIterationFilter
