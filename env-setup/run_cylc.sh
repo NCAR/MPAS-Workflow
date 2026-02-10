@@ -58,7 +58,7 @@ usage()
   log "    -l <log_dir> where logs and data should be written, default $LOGDIR"
   log "    -h prints help and exits"
   log "to generate graphs"
-  log "  run_cylc.sh -w <workflow_dir> -g <graphics_dir> -o <output_dir> [-m <mmm_webserver>] [-c <cylc_graph_dir>] [-l log_dir] [-h] "
+  log "  run_cylc.sh -w <workflow_dir> -g <graphics_dir> -o <output_dir> [-m <mmm_webserver>] [-c <cylc_graph_dir>] [-l log_dir] [-e <email_addrs>] [-h] "
   log "    -w <workflow_dir> the MPAS-Workflow location"
   log "    -g <graphics_dir> where the mpas-jedi graphics directory is"
   log "    -o <output_dir> where the comparison graphs should go"
@@ -67,6 +67,7 @@ usage()
   log "    -c <cylc_graph_dir> where the cylc output graphs go on the mmm webserver, e.g. /web/htdocs/<graph-dir-path>"
   log "       if not provided the graphs won't get copied to the webserver"
   log "    -l <log_dir> where logs and data should be written, default $LOGDIR"
+  log "    -e <email_addrs> comma separated list of email addrs to receive large variance alerts"
   log "    -h prints help and exits"
   exit 1
 }
@@ -252,6 +253,7 @@ make_graphs()
   local readonly output_dir=$2   # where to put the graphs
   local readonly files_dir=$3  # root directory where job files are
   local readonly success_file=$4 # the workflow file to process.
+  local readonly email_addrs=$5 # email addrs to send alert emails for large variances
 
   # assume a name of <workflow>.<yy-mm-dd>* for current runs, 
   # assume a name of <workflow>.baseline* for the baseline run,
@@ -320,7 +322,7 @@ make_graphs()
   new_run=$(cat ${pass_dir}/${success_file} | sed 's/MPAS-Workflow//' | sed 's/\///g')
   suffix=$(echo $new_run |sed 's/jwittig_//')
   suffix=${suffix%%[_-]*}
-  log "suffix=$suffix"
+  log "suffix=$suffix email_addrs:$email_addrs"
   local readonly model_out_dir=$output_dir/${date}-${suffix}/$file_suffix/model
   local readonly obs_out_dir=$output_dir/${date}-${suffix}/$file_suffix/obs
   local new_label=${new_run#*.}
@@ -340,18 +342,18 @@ make_graphs()
   local obs_prev_sync_job=""
 
   # make model comparison graphs against the baseline
-  gen_graphs $base_label $base_run $new_label $new_run $model_out_dir $graphics_dir "$base_args $model_spaces" model_base_sync_job
+  gen_graphs $base_label $base_run $new_label $new_run $model_out_dir $graphics_dir "$base_args $model_spaces" "no-email" model_base_sync_job
   log "make_graphs sync job:$model_base_sync_job"
 
   # make omb/oma comparison graphs against the baseline
-  gen_graphs $base_label $base_run $new_label $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces" obs_base_sync_job
+  gen_graphs $base_label $base_run $new_label $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces" "no-email" obs_base_sync_job
 
   if [ "$prev_run" != "" ]; then
     # make forecast comparison graphs against the previous run
-    gen_graphs $prev_label $prev_run $new_label $new_run $model_out_dir $graphics_dir "$base_args $model_spaces" model_prev_sync_job
+    gen_graphs $prev_label $prev_run $new_label $new_run $model_out_dir $graphics_dir "$base_args $model_spaces" $email_addrs model_prev_sync_job
 
     # make omb/oma comparison graphs against the previous run
-    gen_graphs $prev_label $prev_run $new_label $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces" obs_prev_sync_job
+    gen_graphs $prev_label $prev_run $new_label $new_run $obs_out_dir $graphics_dir "$base_args $obs_spaces" "no-email" obs_prev_sync_job
   fi
 
   # wait for the graphing jobs to finish
@@ -379,8 +381,12 @@ gen_graphs()
   local readonly out_dir=$5
   local readonly script_dir=$6
   local readonly script_args=$7
+  local readonly email_to_notify=$8
 
   script_args="$script_args -c $base_name -e $base_name:$base_run,$new_name:$new_run"
+  if [ "$email_to_notify" != "no-email" ]; then
+      script_args="$script_args -M $email_to_notify"
+  fi
   mkdir -p $out_dir/$base_name || (log "failed to create $out_dir/$base_name" && exit 1)
   cd $out_dir/$base_name
   log "making graphs in $out_dir/$base_name"
@@ -388,7 +394,7 @@ gen_graphs()
   $script_dir/SpawnAnalyzeStats.py $script_args -w &
   jobno=$!
   log "gen_graphs sync job is $jobno"
-  eval $8=$jobno
+  eval $9=$jobno
 }
 
 copy_graphs()
@@ -426,9 +432,10 @@ main()
   local web_graphs_dir=""
   local help=""
   local CYLC_ENV_SCRIPT="env-setup/machine.sh"
+  local email_addrs="no-email"
 
 # get command line args
-  while getopts w:d:k:g:o:s:x:l:m:c:h flag
+  while getopts w:d:k:g:o:s:x:l:m:c:e:h flag
   do
     case "${flag}" in
       w) workflow_dir="${OPTARG}";;
@@ -441,6 +448,7 @@ main()
       l) LOGDIR=${OPTARG};;
       m) webserver=${OPTARG};;
       c) web_graphs_dir=${OPTARG};;
+      e) email_addrs=${OPTARG};;
       h) help="help";;
     esac
   done
@@ -519,8 +527,8 @@ main()
     local passed_jobs=$(ls $LOGDIR/$PASS_DIR)
     for job in $passed_jobs ; do
       # make a graph comparing the 2 oldest workflows which passed
-      log "make_graphs $graphics_dir $output_dir $LOGDIR $job"
-      make_graphs $graphics_dir $output_dir $LOGDIR $job
+      log "make_graphs $graphics_dir $output_dir $LOGDIR $job $email_addrs"
+      make_graphs $graphics_dir $output_dir $LOGDIR $job $email_addrs
     done
     if [ "$webserver" != "" ] && [ "$web_graphs_dir" != "" ]; then
       copy_graphs $output_dir $webserver $web_graphs_dir
