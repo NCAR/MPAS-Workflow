@@ -15,18 +15,18 @@ initic:
       retry: '0*PT30S'
 
     60-3km:
-      seconds: 320
+      seconds: 350
       nodes: 2
       PEPerNode: 128
     30km:
-      seconds: 320
+      seconds: 350
       nodes: 2
       PEPerNode: 128
     60km:
-      seconds: 160
+      seconds: 190
       nodes: 1
       PEPerNode: 128
     120km:
-      seconds: 120
+      seconds: 150
       nodes: 1
       PEPerNode: 128
