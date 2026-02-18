@@ -66,7 +66,6 @@ endif
 
 echo "Getting ERA5 analysis from GDEX"
 
-
 # Link ECMWF coefficients
 ln -sf ${ModelConfigDir}/initic/ecmwf_coeffs ./ecmwf_coeffs
 
