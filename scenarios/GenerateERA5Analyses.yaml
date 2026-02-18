@@ -1,0 +1,18 @@
+suite: GenerateExternalAnalyses
+
+externalanalyses:
+  resource: "ERA5.GDEX"
+experiment:
+  name: 'GenerateERA5Analyses'
+  prefix: ''
+model:
+  outerMesh: 120km
+hpc:
+  CriticalPriority: economy
+  NonCriticalPriority: economy
+  #CriticalQueue: main
+  #NonCriticalQueue: main
+workflow:
+  first cycle point: 20220606T00
+  final cycle point: 20220606T06
+  max active cycle points: 60

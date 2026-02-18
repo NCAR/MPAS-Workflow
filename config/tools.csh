@@ -22,6 +22,7 @@ set pyTools = ( \
   update_sensorScanPosition \
   updateXTIME \
   concatenate \
+  era5_to_int \
 )
 foreach tool ($pyTools)
   setenv ${tool} "python ${pyDir}/${tool}.py"
