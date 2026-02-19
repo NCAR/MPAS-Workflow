@@ -1,0 +1,21 @@
+- obs space:
+    <<: *ObsSpace
+    name: amsua_n18_rttov12
+    _obsdatain: &ObsDataIn
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/amsua_n18_rttov12_obs_{{thisValidDate}}.h5
+    _obsdataout: &ObsDataOut
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_amsua_n18_rttov12{{ObsOutSuffix}}.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
+    simulated variables: [brightnessTemperature]
+    channels: &amsua_n18_channels 5-9
+  obs error: *ObsErrorDiagonal
+  <<: *horizObsLoc
+  obs operator:
+    name: RTTOVCPP
+    CoefPath: /glade/campaign/mmm/parc/liuz/rttov123/rtcoef_rttov12/rttov7pred54L/
+    SensorID: noaa_18_amsua

@@ -1,0 +1,86 @@
+experiment:
+  name: '3_3dhyb_asrama_asrmhs_atms_UpdateVarBC'
+build:
+  #mpas bundle: /glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
+  #forecast directory: ''
+  #bundle compiler used: gnu-openmpi
+hpc:
+  CriticalAccount: NMMM0015
+  CriticalQueue: main
+  NonCriticalAccount: NMMM0015
+  NonCriticalQueue: main
+  priority: premium
+  SingleProcAccount: NMMM0015
+  SingleProcQueue: casper@casper-pbs
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+forecast:
+  post: [] # use this when doing extended forecast
+  job:
+    15km:
+      nodes: 8
+      PEPerNode: 128
+      baseSeconds: 600
+      secondsPerForecastHR: 100
+
+members:
+  n: 1
+model:
+  outerMesh: 15km
+  innerMesh: 30km
+  ensembleMesh: 30km
+observations:
+  resource: PANDACArchiveForVarBC
+  fixedCoeff: /glade/derecho/scratch/liuz/pandac_common/satbias_2018051418
+  fixedTlapmeanCov: /glade/derecho/scratch/liuz/pandac_common/satbias_2018051418/2018
+  initialVARBCcoeff: /glade/derecho/scratch/liuz/pandac_common/satbias_2018051418/2018
+variational:
+  DAType: 3dhybrid
+  biasCorrection: True
+  hybridBECWeightFromFile: true 
+  nInnerIterations: [60,60,]
+  numProcessors: 512
+  ensemble:
+    forecasts:
+      resource: "PANDAC.LGETKF"
+  post: []
+  observers: [
+    aircraft,
+    gnssrobndropp1d,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    amsua-cld_metop-a,
+    amsua-cld_metop-b,
+    amsua-cld_n15,
+    amsua-cld_n18,
+    amsua-cld_n19,
+    mhs-cld_metop-a,
+    mhs-cld_metop-b,
+    mhs-cld_n18,
+    mhs-cld_n19,
+    atms_n20,
+    atms_npp,
+  ]
+  job:
+    15km:
+      30km:
+        3dhybrid:
+          nodes: 8
+          PEPerNode: 64
+          memory: 235GB
+          baseSeconds: 2000
+          secondsPerEnVarMember: 10
+workflow:
+  first cycle point: 20180414T18
+  #  restart cycle point: 20180415T06
+  final cycle point: 20180514T18

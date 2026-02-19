@@ -98,6 +98,7 @@ ln -sfv ${ExternalAnalysesDir}/${externalanalyses__UngribPrefix}* ./
 ## link MPAS mesh graph info
 rm ./x${ArgRatio}.${ArgNCells}.graph.info*
 ln -sfv $GraphInfoDir/x${ArgRatio}.${ArgNCells}.graph.info* .
+echo $GraphInfoDir/x${ArgRatio}.${ArgNCells}.graph.info
 
 ## Link MPAS invariant field
 if ( $ArgType == "Outer" ) then

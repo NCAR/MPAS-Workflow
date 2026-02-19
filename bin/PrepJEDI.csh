@@ -683,13 +683,18 @@ EOF
 
   # Hybrid Jb weights
   # =================
-  if ( "$DAType" == "3dhybrid" || "$DAType" == "4dhybrid" ) then
+  if ( "$DAType" =~ *"hybrid"* ) then
     sed -i 's@{{staticCovarianceWeight}}@'${staticCovarianceWeight}'@' $prevYAML
     sed -i 's@{{ensembleCovarianceWeight}}@'${ensembleCovarianceWeight}'@' $prevYAML
-  endif
-
-  if ( "$DAType" == "3dhybrid-allsky" ) then
-    sed -i 's@{{hybridCoefficientsDir}}@'${hybridCoefficientsDir}'@' $prevYAML
+    sed -i 's@{{hybridEnsembleWeightFile}}@'${hybridEnsembleWeightFile}'@' $prevYAML
+    sed -i 's@{{hybridStaticWeightFile}}@'${hybridStaticWeightFile}'@' $prevYAML
+    if ( ${hybridBECWeightFromFile} == "True" ) then
+       sed -i 's@{{staticBECWeight}}@*staticWeightFromFile@' $prevYAML
+       sed -i 's@{{ensembleBECWeight}}@*ensembleWeightFromFile@' $prevYAML
+    else
+       sed -i 's@{{staticBECWeight}}@*staticWeightFromValue@' $prevYAML
+       sed -i 's@{{ensembleBECWeight}}@*ensembleWeightFromValue@' $prevYAML
+    endif
   endif
 
   # Static Jb term
@@ -708,12 +713,23 @@ EOF
   #    end
   #  endif
     set VarSub = ""
+    set VarSub3D = ""
+    set VarSub2D = ""
     foreach var ($Variables)
       set VarSub = "$VarSub$var,"
+      if ( $var == "air_pressure_at_surface" ) then
+         set VarSub2D = "$VarSub2D$var,"
+      else
+         set VarSub3D = "$VarSub3D$var,"
+      endif
     end
     # remove trailing comma
     set VarSub = `echo "$VarSub" | sed 's/.$//'`
+    set VarSub2D = `echo "$VarSub2D" | sed 's/.$//'`
+    set VarSub3D = `echo "$VarSub3D" | sed 's/.$//'`
     sed -i 's@{{bumpCovControlVariables}}@'$VarSub'@' $prevYAML
+    sed -i 's@{{bump3dControlVariables}}@'${VarSub3D}'@' $prevYAML
+    sed -i 's@{{bump2dControlVariables}}@'${VarSub2D}'@' $prevYAML
 
     # substitute bumpCov* file descriptors
     sed -i 's@{{bumpCovPrefix}}@'${bumpCovPrefix}'@' $prevYAML

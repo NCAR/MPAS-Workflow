@@ -103,7 +103,11 @@ sed -i 's@{{ObsOutSuffix}}@@' $myYAML
 # (used to be in 'io pool' section of config/jedi/ObsPlugs/variational/ObsAnchors.yaml)
 sed -i '/_obsdataout/a\          write multiple files: true' $myYAML
 
-mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
+if ( $?numProcessors && "$numProcessors" != "None" ) then
+  mpiexec -np ${numProcessors} ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
+else
+  mpiexec ./${myEXE} $myYAML ./jedi.log >& jedi.log.all
+endif
 
 #WITH DEBUGGER
 #module load arm-forge/19.1

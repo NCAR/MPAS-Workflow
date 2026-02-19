@@ -1,0 +1,71 @@
+experiment:
+  name: '5_3denvar120km_csrama_csrmhs_rttov14'
+build:
+  #mpas bundle: /glade/work/jianglp/code/mpas_bundle_v3.0.3_internal_patch/build
+  #/glade/work/jianglp/code/mpas_bundle_v3.0.3_internal_patch/build
+  ##/glade/work/liuz/mpas-bundle-build/mpas_bundle_v3.0.3_internal_patch/build_gnuSP
+  #forecast directory: ''
+  #bundle compiler used: gnu-openmpi
+hpc:
+  CriticalAccount: NMMM0043
+  CriticalQueue: main
+  NonCriticalAccount: NMMM0043
+  NonCriticalQueue: main
+  priority: regular
+  SingleProcAccount: NMMM0043
+  SingleProcQueue: casper@casper-pbs
+firstbackground:
+  resource: "PANDAC.GFS"
+externalanalyses:
+  resource: "GFS.PANDAC"
+forecast:
+  post: [] # use this when doing extended forecast
+  #  job:
+  #  120km:
+  #    nodes: 1
+  #    PEPerNode: 128
+  #    baseSeconds: 600
+  #    secondsPerForecastHR: 20
+
+members:
+  n: 1
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+  ensembleMesh: 120km
+observations:
+  resource: PANDACArchiveForVarBC
+  fixedCoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias
+  fixedTlapmeanCov: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
+  initialVARBCcoeff: /glade/campaign/mmm/parc/liuz/pandac_common/satbias/2018
+variational:
+  DAType: 3denvar
+  biasCorrection: True
+  nInnerIterations: [10,10,]
+  #  numProcessors: 512
+  ensemble:
+    forecasts:
+      resource: "PANDAC.GEFS"
+  post: []
+  observers: [
+    aircraft,
+    gnssrobndropp1d,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    #amsua_aqua,
+    #amsua-all_metop-a,
+    #amsua-all_metop-b,
+    #amsua-all_n15,
+    amsua_n18_rttov,
+    #amsua-all_n19,
+    #mhs_metop-a,
+    #mhs_metop-b,
+    mhs_n18_rttov,
+    #mhs_n19,
+  ]
+workflow:
+  first cycle point: 20180414T18
+  #  restart cycle point: 20180415T06
+  final cycle point: 20180415T00

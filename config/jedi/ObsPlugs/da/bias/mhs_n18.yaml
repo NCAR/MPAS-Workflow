@@ -2,7 +2,7 @@
     input file: {{biasCorrectionDir}}/satbias_mhs_n18.h5
     output file: {{OutDBDir}}{{MemberDir}}/satbias_mhs_n18.h5
     variational bc:
-      predictors: &predictors1
+      predictors:
       - name: constant
       - name: lapseRate
         order: 2

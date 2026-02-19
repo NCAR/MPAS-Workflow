@@ -1,0 +1,164 @@
+  obs filters:
+  - filter: GOMsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_mhs_n19.nc4
+  - filter: YDIAGsaver
+    filename: {{OutDBDir}}{{MemberDir}}/{{diagPrefix}}_mhs_n19.nc4
+    filter variables:
+    - name: brightness_temperature_assuming_clear_sky
+      channels: *mhs_n19_channels
+    - name: transmittances_of_atmosphere_layer
+      channels: *mhs_n19_channels
+    - name: brightness_temperature_jacobian_surface_emissivity
+      channels: *mhs_n19_channels
+    - name: brightness_temperature_jacobian_skin_temperature_at_surface
+      channels: *mhs_n19_channels
+    - name: surface_emissivity
+      channels: *mhs_n19_channels
+
+  - filter: Gaussian_Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space
+
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 5
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: -60.0
+      maxvalue: 60.0
+    <<: *multiIterationFilter
+
+# Assign obs error for each channel
+  - filter: Perform Action
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_n19_channels
+    action:
+      name: assign error
+      error parameter vector: [2.50, 2.50, 3.00, 2.50, 2.50]
+    <<: *multiIterationFilter
+# BennartzScatIndex check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_n19_channels
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      maxvalue: 0.99
+    test variables:
+    - name: ObsFunction/BennartzScatIndex
+      options:
+        channel_89ghz: 1
+        channel_150ghz: 2
+        bennartz_coeff_1: 0.158
+        bennartz_coeff_2: 0.0163
+        apply_bias: ObsBiasData
+    maxvalue: -1.0
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+# BennartzScatIndex check over water
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_n19_channels
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    test variables:
+    - name: ObsFunction/BennartzScatIndex
+      options:
+        channel_89ghz: 1
+        channel_150ghz: 2
+        bennartz_coeff_1: -39.2010
+        bennartz_coeff_2: 0.1104
+        apply_bias: ObsBiasData
+    maxvalue: 10.0
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+# Topography check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_n19_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTopoRad
+        channels: *mhs_n19_channels
+        options:
+          sensor: mhs_n19
+          channels: *mhs_n19_channels
+    <<: *multiIterationFilter
+
+# Transmittnace Top Check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_n19_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
+        channels: *mhs_n19_channels
+        options:
+          channels: *mhs_n19_channels
+    <<: *multiIterationFilter
+
+# Background Check
+  - filter: Background Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_n19_channels
+    function absolute threshold:
+    - name: ObsFunction/ObsErrorBoundMW
+      channels: *mhs_n19_channels
+      options:
+        sensor: mhs_n19
+        channels: *mhs_n19_channels
+        threshold: 3.0
+        obserr_bound_latitude:
+          name: ObsFunction/ObsErrorFactorLatRad
+          options:
+            latitude_parameters: [0.0, 1.0, 0.0, 1.0]
+        obserr_bound_transmittop:
+          name: ObsFunction/ObsErrorFactorTransmitTopRad
+          channels: *mhs_n19_channels
+          options:
+            channels: *mhs_n19_channels
+        obserr_bound_topo:
+          name: ObsFunction/ObsErrorFactorTopoRad
+          channels: *mhs_n19_channels
+          options:
+            channels: *mhs_n19_channels
+            sensor: mhs_n19
+        error parameter vector:
+                  [ 2.5, 2.5, 3.0, 2.5, 2.5]
+        obserr_bound_max: [5.0, 5.0, 3.0, 5.0, 5.0]
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+#  Useflag check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_n19_channels
+    test variables:
+    - name: ObsFunction/ChannelUseflagCheckRad
+      channels: *mhs_n19_channels
+      options:
+        channels: *mhs_n19_channels
+        use_flag: [ -1, -1, -1, 1,  1]
+    minvalue: 1.0e-12
+    action:
+      name: reject
+

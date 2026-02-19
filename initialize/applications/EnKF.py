@@ -97,7 +97,7 @@ class EnKF(Component):
     ## maxIODAPoolSize
     # maximum number of IO pool members in IODA writer class
     # OPTIONS: 1 to NPE, default: 10
-    'maxIODAPoolSize': [1, int],
+    'maxIODAPoolSize': [16, int],
 
     ## radianceThinningDistance
     # distance (km) used for the Gaussian Thinning filter for all radiance-based observations

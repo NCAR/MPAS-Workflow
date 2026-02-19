@@ -34,6 +34,8 @@ set StandardStateVariables = ( \
   isltyp \
   snowh \
   vegetation_area_fraction \
+  air_temperature_at_2m \
+  water_vapor_mixing_ratio_wrt_moist_air_at_2m \
   eastward_wind_at_10m \
   northward_wind_at_10m \
   lai \

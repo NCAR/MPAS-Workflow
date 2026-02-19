@@ -14,7 +14,7 @@
       minvalue: 1.0
     - variable:
         name: MetaData/latitude
-      minvalue: -60.0
+      minvalue: -40.0
       maxvalue: 60.0
     <<: *multiIterationFilter
 
@@ -150,7 +150,23 @@
     action:
       name: reject
     <<: *multiIterationFilter
+#  Useflag check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua-cld_n15_channels
+    test variables:
+    - name: ObsFunction/ChannelUseflagCheckRad
+      channels: *amsua-cld_n15_channels
+      options:
+        channels: *amsua-cld_n15_channels
+        use_flag: [  1, -1,  1,  1, 1]
+    minvalue: 1.0e-12
+    action:
+      name: reject
   - filter: Gaussian_Thinning
     horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space
   #- filter: GOMsaver
   #  filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_amsua-cld_n15.nc4
