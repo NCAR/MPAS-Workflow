@@ -91,4 +91,4 @@ externalanalyses:
           - "ExternalAnalysisReady__"
           job:
             GetAnalysisFrom:
-              retry: '40*PT10M'
+              retry: '3*PT5S'

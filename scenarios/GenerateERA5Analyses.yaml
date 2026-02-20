@@ -15,4 +15,3 @@ hpc:
 workflow:
   first cycle point: 20220606T00
   final cycle point: 20220606T06
-  max active cycle points: 60
