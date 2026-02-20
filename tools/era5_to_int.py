@@ -410,19 +410,12 @@ def find_era5_file(var, validtime, localpaths=None):
     import os.path
 
     glade_paths = [
-        # New Glade paths as of March 2025
+        # Glade paths as of March 2025
         '/glade/campaign/collections/rda/data/d633006/e5.oper.an.ml/',
         '/glade/campaign/collections/rda/data/d633000/e5.oper.an.pl/',
         '/glade/campaign/collections/rda/data/d633000/e5.oper.an.sfc/',
         '/glade/campaign/collections/rda/data/d633000/e5.oper.invariant/197901/',
         '/glade/campaign/collections/rda/data/d633006/e5.oper.invariant/',
-
-        # Old Glade paths prior to March 2025
-        '/glade/campaign/collections/rda/data/ds633.6/e5.oper.an.ml/',
-        '/glade/campaign/collections/rda/data/ds633.0/e5.oper.an.pl/',
-        '/glade/campaign/collections/rda/data/ds633.0/e5.oper.an.sfc/',
-        '/glade/campaign/collections/rda/data/ds633.0/e5.oper.invariant/197901/',
-        '/gpfs/csfs1/collections/rda/decsdata/ds630.0/P/e5.oper.invariant/201601/'
         ]
 
     if localpaths != None:
