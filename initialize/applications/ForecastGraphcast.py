@@ -137,44 +137,46 @@ class Forecast(Component):
     inherit = '''+self.tf.execute+'''
 '''+task.job()+task.directives()]
     
-    # Graphcast forecast
-    self._tasks += [('\n'
-                     '  [[ForecastGC]]'
-                     '\n'
-                     f'    inherit = {self.tf.base}, BATCH'
-                     '\n'
-                     f'    script = $origin/bin/ForecastGraphcast.csh'
-                     '\n'
-    )]
+    # only add these tasks if the forecast is to be executed
+    if self['execute']:
+      # Graphcast forecast
+      self._tasks += [('\n'
+                      '  [[ForecastGC]]'
+                      '\n'
+                      f'    inherit = {self.tf.base}, BATCH'
+                      '\n'
+                      f'    script = $origin/bin/ForecastGraphcast.csh'
+                      '\n'
+      )]
 
-    # Interpolation to MPAS mesh
-    keyListInterpolation = {
-      # Notes:
-      # - the interpolation application is currently small enough to run on develop
-      'retry': {'typ': str},
-      'baseSeconds': {'typ': int},
-      'secondsPerMember': {'typ': int},
-      'nodes': {'def': 1, 'typ': int},
-      'PEPerNode': {'def': 1, 'typ': int},
-      'memory': {'def': '20GB', 'typ': str},
-      'queue': {'def': hpc['SharedQueue']},
-      'account': {'def': hpc['CriticalAccount']},
-      'email': {'def': True, 'typ': bool},
-    }
-    resourceInterpolation = mesh.name + '.interpolation'
-    interpolationJob = Resource(self._conf, keyListInterpolation, ('job', resourceInterpolation))
-    interpolationJob._set('seconds', interpolationJob['baseSeconds'] + interpolationJob['secondsPerMember'] * self.NN)
-    interpolationTask = TaskLookup[hpc.system](interpolationJob)
+      # Interpolation to MPAS mesh
+      keyListInterpolation = {
+        # Notes:
+        # - the interpolation application is currently small enough to run on develop
+        'retry': {'typ': str},
+        'baseSeconds': {'typ': int},
+        'secondsPerMember': {'typ': int},
+        'nodes': {'def': 1, 'typ': int},
+        'PEPerNode': {'def': 1, 'typ': int},
+        'memory': {'def': '20GB', 'typ': str},
+        'queue': {'def': hpc['SharedQueue']},
+        'account': {'def': hpc['CriticalAccount']},
+        'email': {'def': True, 'typ': bool},
+      }
+      resourceInterpolation = mesh.name + '.interpolation'
+      interpolationJob = Resource(self._conf, keyListInterpolation, ('job', resourceInterpolation))
+      interpolationJob._set('seconds', interpolationJob['baseSeconds'] + interpolationJob['secondsPerMember'] * self.NN)
+      interpolationTask = TaskLookup[hpc.system](interpolationJob)
 
-    self._tasks += [('\n'
-                     '  [[InterpolateGCToMPAS]]'
-                     '\n'
-                     f'    inherit = {self.tf.execute}, BATCH'
-                     '\n'
-                     f'    script = $origin/bin/InterpolateGraphcast.csh'
-                     '\n'
-                     f'{interpolationTask.job() + interpolationTask.directives()}'
-                     '\n')]
+      self._tasks += [('\n'
+                      '  [[InterpolateGCToMPAS]]'
+                      '\n'
+                      f'    inherit = {self.tf.execute}, BATCH'
+                      '\n'
+                      f'    script = $origin/bin/InterpolateGraphcast.csh'
+                      '\n'
+                      f'{interpolationTask.job() + interpolationTask.directives()}'
+                      '\n')]
 
   #   for mm in range(1, self.NN+1, 1):
   #     # fcArgs explanation
@@ -258,9 +260,11 @@ class Forecast(Component):
         # ensure there is a valid sea-surface update file before forecast
         '''+self.ea['PrepareSeaSurfaceUpdate']+''' => '''+self.tf.pre]
     
-    # Use graphcast to generate forecast and interpolate to native MPAS mesh
-    self._dependencies += [('\n'
-                            f'        ForecastGC => InterpolateGCToMPAS => {self.tf.post}')]
+    # Use graphcast to generate forecast and interpolate to native MPAS mesh.
+    # Add dependency only if we want to run a forecast.
+    if self['execute']:
+      self._dependencies += [('\n'
+                              f'        ForecastGC => InterpolateGCToMPAS => {self.tf.post}')]
 
     # depends on previous DA
     previousDA = daFinished+'[-PT'+str(self.workflow['DA2FCOffsetHR'])+'H]'
