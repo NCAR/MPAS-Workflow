@@ -27,17 +27,18 @@ class VerifyObs(Component):
   workDir = 'Verification'
   diagnosticsDir = 'diagnostic_stats/obs'
   variablesWithDefaults = {
-    'script directory': ['/glade/work/ivette/pandac/graphics/graphics_7SEPT2023', str],
+      'script directory': [
+          '/glade/campaign/mmm/parc/ivette/pandac/codeBuild/'
+          'mpasBundle_25Nov2024/code/mpas-jedi/graphics',
+          str
+      ],
   }
 
   def __init__(self,
     config:Config,
     localConf:dict,
   ):
-    hname = os.getenv('NCAR_HOST')
-    if  hname == "derecho":
-      self.variablesWithDefaults['script directory'] = \
-          ['/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_25Nov2024/code/mpas-jedi/graphics', str]
+
     super().__init__(config)
 
     hpc = localConf['hpc']; assert isinstance(hpc, HPC), self.base+': incorrect type for hpc'
