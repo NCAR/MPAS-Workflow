@@ -183,6 +183,10 @@ class Build(Component):
     self._set('ungribEXE', 'ungrib.exe')
     self._set('WPSBuildDir', wpsBuildDir)
 
+    # WPS concenation application
+    self._set('concatenateWPSEXE', 'concatenate_wps')
+    self._set('concatenateWPSBuildDir', '/glade/work/stoedtli/bin/concatenate_wps/2026_02_28')
+
     # Obs2IODA-v3
     # -----------
     self._set('obs2iodaEXE', 'obs2ioda_v3')
