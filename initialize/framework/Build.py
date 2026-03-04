@@ -174,6 +174,10 @@ class Build(Component):
     # Non-bundle applications
     # =======================
 
+    # ERA5 to intermediate file
+    self._set('era5_to_int', 'era5_to_int.py')
+    self._set('era5_to_intBuildDir', '/glade/campaign/mmm/parc/ivette/pandac/converters/era5_to_int')
+
     # Ungrib
     # ------
     self._set('ungribEXE', 'ungrib.exe')

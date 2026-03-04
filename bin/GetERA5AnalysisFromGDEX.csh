@@ -67,10 +67,10 @@ endif
 echo "Getting ERA5 analysis from GDEX"
 
 # Link ECMWF coefficients
-ln -sf ${ModelConfigDir}/initic/ecmwf_coeffs ./ecmwf_coeffs
+ln -sf $era5_to_intBuildDir/ecmwf_coeffs .
 
 # Convert ERA5 NetCDF to WPS intermediate
-setenv myCommand `$era5_to_int ${datestr}`
+setenv myCommand `$era5_to_intBuildDir/$era5_to_int ${datestr}`
 echo "$myCommand"
 ${myCommand}
 
