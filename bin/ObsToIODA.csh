@@ -80,7 +80,7 @@ foreach gdasfile ( *"gdas."* )
    if ( ${gdasfile} =~ *"cris"* && ${ccyy} >= '2021' ) then
      ln -sf ${CRTMTABLES}/cris-fsr431_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
      ln -sf ${CRTMTABLES}/cris-fsr431_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
-     #ln -sf ${CRTMTABLES}/cris-fsr431_n21.SpcCoeff.bin  ./cris_n21.SpcCoeff.bin
+     ln -sf ${CRTMTABLES}/cris-fsr431_n21.SpcCoeff.bin  ./cris_n21.SpcCoeff.bin
    else if ( ${gdasfile} =~ *"cris"* && ${ccyy} < '2021' ) then
      ln -sf ${CRTMTABLES}/cris399_npp.SpcCoeff.bin  ./cris_npp.SpcCoeff.bin
      ln -sf ${CRTMTABLES}/cris399_n20.SpcCoeff.bin  ./cris_n20.SpcCoeff.bin
@@ -144,6 +144,30 @@ foreach gdasfile ( *"gdas."* )
   rm -rf $gdasfile
 
 end # gdasfile loop
+
+if ( "${convertToIODAObservations}" =~ *"cris"* ) then
+
+# Name update
+set NameUpdate = ( \
+    cris_npp \
+    cris_n20 \
+    cris_n21 \
+)
+
+foreach ty ( ${NameUpdate} )
+  echo 'begin NameUpdate' $ty
+  if ( -f ${ty}_obs_${thisValidDate}.h5 ) then
+    #if ( ${ty} =~ *"cris"* && ${ccyy} >= 2021 ) then
+    if ( ${ccyy} >= 2021 ) then
+       if ( ${ty} == "cris_npp" ) set tyy = "cris-fsr_npp"
+       if ( ${ty} == "cris_n20" ) set tyy = "cris-fsr_n20"
+       if ( ${ty} == "cris_n21" ) set tyy = "cris-fsr_n21"
+       mv -f ${ty}_obs_${thisValidDate}.h5 ${tyy}_obs_${thisValidDate}.h5
+    endif
+  endif
+  echo 'end of NameUpdate' $ty
+end
+endif
 
 date
 

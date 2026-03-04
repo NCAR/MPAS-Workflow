@@ -82,9 +82,15 @@ cost function:
       date: *date7
   background error:
     covariance model: hybrid
+    no outer loop update: true
     components:
     - weight:
-        value: {{staticCovarianceWeight}}
+        _staticWeightFromFile: &staticWeightFromFile
+          stream name: control
+          filename: {{hybridStaticWeightFile}}
+        _staticWeightFromValue: &staticWeightFromValue
+          value: {{staticCovarianceWeight}}
+        <<: {{staticBECWeight}}
       covariance:
         covariance model: SABER
         saber central block:
@@ -99,9 +105,9 @@ cost function:
               read local nicas: true
             grids:
               - model:
-                  variables: [air_horizontal_streamfunction,air_horizontal_velocity_potential,air_temperature,water_vapor_mixing_ratio_wrt_moist_air]
+                  variables: [{{bump3dControlVariables}}]
               - model:
-                  variables: [air_pressure_at_surface]
+                  variables: [{{bump2dControlVariables}}]
         saber outer blocks:
         - saber block name: StdDev
           read:
@@ -114,7 +120,7 @@ cost function:
               data directory: {{bumpCovVBalDir}}
               files prefix: {{bumpCovVBalPrefix}}
             drivers:
-              read local sampling: true
+              read global sampling: true
               read vertical balance: true
             vertical balance:
               vbal:
@@ -130,7 +136,12 @@ cost function:
           input variables: *ctlvars
           output variables: *incvars
     - weight:
-        value: {{ensembleCovarianceWeight}}
+        _ensembleWeightFromFile: &ensembleWeightFromFile
+          stream name: control
+          filename: {{hybridEnsembleWeightFile}}
+        _ensembleWeightFromValue: &ensembleWeightFromValue
+          value: {{ensembleCovarianceWeight}}
+        <<: {{ensembleBECWeight}}
       covariance:
         covariance model: ensemble
         localization:

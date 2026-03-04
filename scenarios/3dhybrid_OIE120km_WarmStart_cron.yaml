@@ -9,9 +9,10 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 observations:
-  resource: PANDACArchive
+  resource: PANDACArchiveForVarBC
 variational:
   DAType: 3dhybrid
+  biasCorrection: True
   ensembleCovarianceWeight: 0.5
   staticCovarianceWeight: 0.5
   ensemble:

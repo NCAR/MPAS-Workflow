@@ -1,0 +1,22 @@
+- obs space:
+    <<: *ObsSpace
+    name: atms_npp
+    obsdatain: &ObsDataIn
+      engine:
+        type: H5File
+        obsfile: {{InDBDir}}/atms_npp_obs_{{thisValidDate}}.h5
+    obsdataout: &ObsDataOut
+      engine:
+        type: H5File
+        obsfile: {{OutDBDir}}{{MemberDir}}/{{obsPrefix}}_atms_npp.h5
+    obsdatain: *{{ObsDataIn}}
+    {{ObsDataOut}}
+    simulated variables: [brightnessTemperature]
+    channels: &atms_npp_channels 1-22
+  obs error: *ObsErrorDiagonal
+  <<: *horizObsLoc
+  obs operator:
+    <<: *cloudyCRTMObsOperator
+    obs options:
+      <<: *CRTMObsOptions
+      Sensor_ID: atms_npp

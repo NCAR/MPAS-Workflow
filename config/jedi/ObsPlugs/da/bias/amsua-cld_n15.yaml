@@ -2,14 +2,14 @@
     input file: {{biasCorrectionDir}}/satbias_amsua-cld_n15.h5
     output file: {{OutDBDir}}{{MemberDir}}/satbias_amsua-cld_n15.h5
     variational bc:
-      predictors: &predictors2
+      predictors:
       - name: constant
       - name: lapseRate
         order: 2
         tlapse: &amsuacld15tlap {{fixedTlapmeanCov}}/amsua_n15_tlapmean.txt
       - name: lapseRate
         tlapse: *amsuacld15tlap
-      - name: emissivityJacobian
+#      - name: emissivityJacobian
       - name: sensorScanAngle
         order: 4
       - name: sensorScanAngle

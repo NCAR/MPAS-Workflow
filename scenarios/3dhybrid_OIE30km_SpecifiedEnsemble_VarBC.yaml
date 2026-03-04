@@ -1,14 +1,20 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
-  suffix: '_ensB-SE80+RTPP70_VarBC'
+  suffix: '_LGETKF_VarBC'
 
 firstbackground:
   resource: "PANDAC.GFS"
 
 forecast:
+  job:
+    30km:
+      nodes: 2
+      PEPerNode: 128
+      baseSeconds: 60
+      secondsPerForecastHR: 240
+
   #execute: False # the default is True
-  #post: [] # use this when doing extended forecast
-  post: [verifymodel] # this turns off verifyobs
+  post: [] # use this when doing extended forecast
 
 externalanalyses:
   resource: "GFS.PANDAC"
@@ -18,28 +24,33 @@ members:
 
 model:
   outerMesh: 30km
-  innerMesh: 60km
-  ensembleMesh: 60km
+  innerMesh: 30km
+  ensembleMesh: 30km
 
 observations:
   resource: PANDACArchiveForVarBC
 
 variational:
-  DAType: 3dhybrid-allsky
+  DAType: 3dhybrid
   biasCorrection: True
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
   nInnerIterations: [60,60,]
   ensemble:
     forecasts:
-      resource: "PANDAC.EDA"
-  #execute: False # the default is True
-  #post: [] # this turns off verifyobs
-hofx:
-  concatenateObsFeedback: True
+      resource: "PANDAC.LGETKF"
+  post: [] 
+  job:
+    30km:
+      nodes: 4
+      PEPerNode: 64
+      baseSeconds: 120
+      secondsPerForecastHR: 240
 
 workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180415T00
-  final cycle point: 20180415T06
+  final cycle point: 20180415T00
   #final cycle point: 20180514T18
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'

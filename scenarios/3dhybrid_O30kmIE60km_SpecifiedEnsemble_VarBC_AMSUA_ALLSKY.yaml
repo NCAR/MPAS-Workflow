@@ -1,7 +1,7 @@
 # settings borrowed from /glade/work/liuz/pandac_hybrid/amsua_clrsky
 experiment:
   #suffix: '_ensB-SE80+RTPP70_VarBC'
-  name: '3dhybrid-allsky_60-60-iter_O30kmI60km_ensB-SE80+RTPP70_VarBC_AMSUA'
+  name: '3dhybrid_60-60-iter_O30kmI60km_ensB-SE80+RTPP70_VarBC_AMSUA_ALLSKY'
 
 firstbackground:
   resource: "PANDAC.GFS"
@@ -26,7 +26,7 @@ observations:
   resource: PANDACArchiveForVarBC
 
 variational:
-  DAType: 3dhybrid-allsky
+  DAType: 3dhybrid
   biasCorrection: True
   nInnerIterations: [60,60,]
   ensemble:

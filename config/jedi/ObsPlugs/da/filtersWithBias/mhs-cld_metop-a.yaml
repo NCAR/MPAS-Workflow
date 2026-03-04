@@ -1,0 +1,244 @@
+  obs filters:
+  #- filter: GOMsaver
+  #  filename: {{OutDBDir}}{{MemberDir}}/{{geoPrefix}}_mhs_metop-a.nc4
+  - filter: Gaussian_Thinning
+    horizontal_mesh: {{RADTHINDISTANCE}}
+    action:
+      name: reduce obs space
+
+  - filter: Domain Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 5
+    where:
+    - variable:
+        name: MetaData/latitude
+      minvalue: -60.0
+      maxvalue: 60.0
+    <<: *multiIterationFilter
+
+# BennartzScatIndex check: remove excessive SI over water
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 4-5
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    test variables:
+    - name: ObsFunction/BennartzScatIndex
+      options:
+        channel_89ghz: 1
+        channel_150ghz: 2
+        bennartz_coeff_1: -39.2010
+        bennartz_coeff_2: 0.1104
+        apply_bias: ObsBiasData
+    maxvalue: 20.0
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+# obs prior filters:
+# over non-water:
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_metop-a_channels
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      maxvalue: 0.99
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelRamp
+        channels: *mhs_metop-a_channels
+        options:
+          channels: *mhs_metop-a_channels
+          xvar:
+            name: ObsFunction/SIRetSymmetricMW
+            options:
+              siret_ch90: 1
+              siret_ch150: 2
+              siret_types: [ObsValue, HofX]
+              bias_application: ObsValue
+          x0:    [  0.08,   0.08,   0.15,   0.15,   0.15]
+          x1:    [ 27.98,  29.78,  20.55,  18.15,  13.95]
+          err0:  [ 500.,   500.,    2.60,   2.67,   2.56]
+          err1:  [ 500.,   500.,  17.17,  24.03,  21.49]
+
+# over water
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_metop-a_channels
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    action:
+      name: assign error
+      error function:
+        name: ObsFunction/ObsErrorModelQuad
+        channels: *mhs_metop-a_channels
+        options:
+          channels: *mhs_metop-a_channels
+          xvar:
+            name: ObsFunction/SIRetSymmetricMW
+            options:
+              siret_ch90: 1
+              siret_ch150: 2
+              siret_types: [ObsValue, HofX]
+              bias_application: ObsValue
+          a:    [0.05,   0.02,   0.01,   0.01,   0.02 ]
+          b:    [0.13,   0.13,  -0.06,  -0.06,  -0.06 ]
+          err0: [500.,   500.,   2.75,   2.11,   1.55 ]
+          err1: [500.,   500., 14.68,  24.14,  31.97 ]
+
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_metop-a_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTopoRad
+        channels: *mhs_metop-a_channels
+        options:
+          sensor: mhs_metop-a
+          channels: *mhs_metop-a_channels
+    <<: *multiIterationFilter
+#  Transmittnace Top Check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_metop-a_channels
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
+        channels: *mhs_metop-a_channels
+        options:
+          channels: *mhs_metop-a_channels
+    <<: *multiIterationFilter
+
+#  Gross check for non-water
+  - filter: Background Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_metop-a_channels
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      maxvalue: 0.99
+    function absolute threshold:
+    - name: ObsFunction/ObsErrorBoundMW
+      channels: *mhs_metop-a_channels
+      options:
+        sensor: mhs_metop-a
+        channels: *mhs_metop-a_channels
+        threshold: 3.0
+        obserr_bound_latitude:
+          name: ObsFunction/ObsErrorFactorLatRad
+          options:
+            latitude_parameters: [0.0, 1.0, 0.0, 1.0]
+        obserr_bound_transmittop:
+          name: ObsFunction/ObsErrorFactorTransmitTopRad
+          channels: *mhs_metop-a_channels
+          options:
+            channels: *mhs_metop-a_channels
+        obserr_bound_topo:
+          name: ObsFunction/ObsErrorFactorTopoRad
+          channels: *mhs_metop-a_channels
+          options:
+            channels: *mhs_metop-a_channels
+            sensor: mhs_metop-a
+        obserr_function:
+          name: ObsFunction/ObsErrorModelRamp
+          channels: *mhs_metop-a_channels
+          options:
+            channels: *mhs_metop-a_channels
+            xvar:
+              name: ObsFunction/SIRetSymmetricMW
+              options:
+                siret_ch90: 1
+                siret_ch150: 2
+                siret_types: [ObsValue, HofX]
+                bias_application: HofX
+            x0:    [  0.08,   0.08,   0.15,   0.15,   0.15]
+            x1:    [ 27.98,  29.78,  20.55,  18.15,  13.95]
+            err0:  [ 500.,   500.,    2.60,   2.67,   2.56]
+            err1:  [ 500.,   500.,  17.17,  24.03,  21.49]
+        obserr_bound_max: [5.0, 5.0, 10.0, 10.0, 10.0]
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+#  Gross check for water
+  - filter: Background Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_metop-a_channels
+    where:
+    - variable:
+        name: GeoVaLs/water_area_fraction
+      minvalue: 1.0
+    function absolute threshold:
+    - name: ObsFunction/ObsErrorBoundMW
+      channels: *mhs_metop-a_channels
+      options:
+        sensor: mhs_metop-a
+        channels: *mhs_metop-a_channels
+        threshold: 3.0
+        obserr_bound_latitude:
+          name: ObsFunction/ObsErrorFactorLatRad
+          options:
+            latitude_parameters: [0.0, 1.0, 0.0, 1.0]
+        obserr_bound_transmittop:
+          name: ObsFunction/ObsErrorFactorTransmitTopRad
+          channels: *mhs_metop-a_channels
+          options:
+            channels: *mhs_metop-a_channels
+        obserr_bound_topo:
+          name: ObsFunction/ObsErrorFactorTopoRad
+          channels: *mhs_metop-a_channels
+          options:
+            channels: *mhs_metop-a_channels
+            sensor: mhs_metop-a
+        obserr_function:
+          name: ObsFunction/ObsErrorModelQuad
+          channels: *mhs_metop-a_channels
+          options:
+            channels: *mhs_metop-a_channels
+            xvar:
+              name: ObsFunction/SIRetSymmetricMW
+              options:
+                siret_ch90: 1
+                siret_ch150: 2
+                siret_types: [ObsValue, HofX]
+                bias_application: HofX
+            a:    [0.05,   0.02,   0.01,   0.01,   0.02 ]
+            b:    [0.13,   0.13,  -0.06,  -0.06,  -0.06 ]
+            err0: [500.,   500.,   2.75,   2.11,   1.55 ]
+            err1: [500.,   500., 14.68,  24.14,  31.97 ]
+        obserr_bound_max: [5.0, 5.0, 10.0, 10.0, 10.0]
+    action:
+      name: reject
+    <<: *multiIterationFilter
+
+#  Useflag check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: *mhs_metop-a_channels
+    test variables:
+    - name: ObsFunction/ChannelUseflagCheckRad
+      channels: *mhs_metop-a_channels
+      options:
+        channels: *mhs_metop-a_channels
+        use_flag: [ -1, -1, 1, 1, 1]
+    minvalue: 1.0e-12
+    action:
+      name: reject
+

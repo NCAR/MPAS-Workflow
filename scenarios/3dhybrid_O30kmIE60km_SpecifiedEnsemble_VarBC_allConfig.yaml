@@ -183,13 +183,14 @@ variational:
     - air_temperature
     - water_vapor_mixing_ratio_wrt_moist_air
     - air_pressure_at_surface
-    bumpCovPrefix: mpas_parametersbump_cov
-    bumpCovVBalPrefix: mpas_vbal
+    bumpCovPrefix: mpas
+    bumpCovVBalPrefix: mpas
     60km:
-      hybridCoefficientsDir: /glade/campaign/mmm/parc/liuz/pandac_hybrid/60km.allsky_hybrid
-      bumpCovDir: /glade/campaign/mmm/parc/bjung/pandac_common/BUMP_files.generic_names/60km.NICAS_00global
-      bumpCovStdDevFile: /glade/campaign/mmm/parc/bjung/pandac_common/BUMP_files.generic_names/60km.CMAT_00/mpas.stddev_0p33.2018-04-15_00.00.00.nc
-      bumpCovVBalDir: /glade/campaign/mmm/parc/bjung/pandac_common/BUMP_files.generic_names/60km.VBAL_00
+      bumpCovDir: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/60km/NICAS
+      bumpCovStdDevFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/60km/mpas.stddev.nc
+      bumpCovVBalDir: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/60km/VBAL
+      hybridEnsembleWeightFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/60km/mpas.hyb_coef_ens.nc
+      hybridStaticWeightFile: /glade/campaign/mmm/parc/bjung/pandac_common/Bflow/20251204/60km/mpas.hyb_coef_sta.nc
   job:
     30km:
       60km:
@@ -388,7 +389,7 @@ observations:
         abi_g16: 15X15
         ahi_himawari8: 15X15
 
-  CRTMTABLES: /glade/work/nystrom/Code/JEDI/jcsda_internal/CRTM_V3_coeffs/
+  CRTMTABLES: /glade/campaign/mmm/parc/jban/pandac_common/crtm_coeffs_v3/
   fixedCoeff: /glade/campaign/mmm/parc/jban/pandac_common/obs/satbias
   fixedTlapmeanCov: /glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2018
   initialVARBCcoeff: /glade/campaign/mmm/parc/jban/pandac_common/obs/satbias/2018

@@ -30,16 +30,12 @@ class Variational(Component):
 
   requiredVariables = {
     ## DAType [Required Parameter]
-    'DAType': [str, ['3dvar', '3denvar', '3dhybrid', '3dhybrid-allsky', '4denvar', '4dhybrid']],
+    'DAType': [str, ['3dvar', '3denvar', '3dhybrid', '4denvar', '4dhybrid']],
   }
 
   optionalVariables = {
-    ##ensembleCovarianceWeight and staticCovarianceWeight
-    # weights of ensemble and static components of the background errorcovariance
-    # MUST be specified when DAType==3dhybrid in order to avoid an error
-    'ensembleCovarianceWeight': float,
-    'staticCovarianceWeight': float,
-
+    ## Number of processors to run the variational exectuables
+    'numProcessors': int,
   }
 
   variablesWithDefaults = {
@@ -55,6 +51,15 @@ class Variational(Component):
     'MinimizerAlgorithm': ['DRPCG', str,
       ['DRPCG','DRIPCG', 'DRPLanczos', 'DRPBlockLanczos']
     ],
+
+    ## hybridBECWeightFromFile
+    # whether to use hybrid BEC weights from file or defined in values
+    'hybridBECWeightFromFile': [False, bool],
+
+    ##ensembleCovarianceWeight and staticCovarianceWeight
+    # weights of ensemble and static components of the background errorcovariance
+    'ensembleCovarianceWeight': [0.75, float],
+    'staticCovarianceWeight': [0.25, float],
 
     ## SelfExclusion, whether exclude own background from the ensemble B perturbations in EnVar during EDA cycling
     'SelfExclusion': [True, bool],
@@ -284,7 +289,8 @@ class Variational(Component):
       self._setOrDie('.'.join(['covariance', r, 'bumpCovDir']), str, None, 'bumpCovDir')
       self._setOrDie('.'.join(['covariance', r, 'bumpCovStdDevFile']), str, None, 'bumpCovStdDevFile')
       self._setOrDie('.'.join(['covariance', r, 'bumpCovVBalDir']), str, None, 'bumpCovVBalDir')
-      self._setOrDie('.'.join(['covariance', r, 'hybridCoefficientsDir']), str, None, 'hybridCoefficientsDir')
+      self._setOrDie('.'.join(['covariance', r, 'hybridEnsembleWeightFile']), str, None, 'hybridEnsembleWeightFile')
+      self._setOrDie('.'.join(['covariance', r, 'hybridStaticWeightFile']), str, None, 'hybridStaticWeightFile')
 
     self._cshVars = list(self._vtable.keys())
 
