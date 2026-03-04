@@ -48,7 +48,7 @@ class VerifyModel(Component):
     anaRef = self['anaRef']
     if anaRef not in valid_refs:
         raise ValueError(
-            f"Invalid anaRef '{self.anaRef}'. "
+            f"Invalid anaRef '{anaRef}'. "
             f"Must be one of {valid_refs}."
         )
 
