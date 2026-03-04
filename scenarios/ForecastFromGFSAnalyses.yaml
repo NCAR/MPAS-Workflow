@@ -33,3 +33,7 @@ workflow:
   first cycle point: 20220606T00
   final cycle point: 20220607T00
   max active cycle points: 4
+
+verifymodel:
+  #script directory: /glade/derecho/scratch/ivette/pandac/graphics/15km_abiahi/mpas-jedi/graphics
+  anaRef: 'GFS'
