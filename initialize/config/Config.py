@@ -19,6 +19,10 @@ class Config(Logger):
       filename: str=None,
       bundle_dir: str=None,
       suffix: str=None,
+      critical_account: str = None,
+      noncritical_account: str = None,
+      critical_priority: str = None,
+      noncritical_priority: str = None,
       defaultsFile: str = None,
     ):
 
@@ -29,6 +33,10 @@ class Config(Logger):
 
    self._bundle_dir = bundle_dir
    self._suffix = suffix
+   self._critical_account = critical_account
+   self._noncritical_account = noncritical_account
+   self._critical_priority = critical_priority
+   self._noncritical_priority = noncritical_priority
    if defaultsFile is not None:
      with open(defaultsFile) as file:
        self._defaults = yaml.load(file, Loader=yaml.FullLoader)
@@ -38,7 +46,17 @@ class Config(Logger):
   def __str__(self):
     bd =  (self._bundle_dir if self._bundle_dir != None else 'None')
     suffix =  (self._suffix if self._suffix != None else 'None')
-    return 'bundle_dir:' + bd + ' suffix:' + suffix
+    ret_str = 'bundle_dir:' + bd + ' suffix:' + suffix
+    if self._critical_account != None:
+      ret_str = ret_str + ' critical account:' + self._critical_account
+    if self._noncritical_account != None:
+      ret_str = ret_str + ' noncritical account:' + self._noncritical_account
+    if self._critical_priority != None:
+      ret_str = ret_str + ' critical priority:' + self._critical_priority
+    if self._noncritical_priority != None:
+      ret_str = ret_str + ' noncritical priority:' + self._noncritical_priority
+    self.log('ret_str'+ ret_str, level=self.MSG_DEBUG)
+    return ret_str
 
   def extract(self, subKey: str, defaultsFile:str = None):
     tab = deepcopy(self._table.get(subKey, {}))

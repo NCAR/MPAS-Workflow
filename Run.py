@@ -54,11 +54,17 @@ class Run(Logger):
                     help='configuration file; e.g., runs/test.yaml, scenarios/{{scenarioName}}.yaml')
     ap.add_argument('-b', '--bundle_dir', help='mpas bundle directory')
     ap.add_argument('-x', '--suffix', help='experiment name suffix')
+    ap.add_argument('-ac', '--critical_account', help='which account to charge critical jobs to')
+    ap.add_argument('-an', '--noncritical_account', help='which account to charge noncritical jobs to')
+    ap.add_argument('-pc', '--critical_priority', help='priority for critical jobs')
+    ap.add_argument('-pn', '--noncritical_priority', help='priority for noncritical jobs')
     args = ap.parse_args()
     assert Path(args.config).is_file(), (self.logPrefix+'config ('+args.config+') does not exist')
 
     self.__configFile = args.config
-    self.__config = Config(args.config, args.bundle_dir, args.suffix)
+    self.__config = Config(args.config, args.bundle_dir, args.suffix,
+                           args.critical_account, args.noncritical_account,
+                           args.critical_priority, args.noncritical_priority)
 
   def execute(self):
     '''
@@ -81,7 +87,9 @@ class Run(Logger):
 
       self.clean(self)
 
-      scenario = Scenario(scenarioFile, self.__config._bundle_dir, self.__config._suffix)
+      scenario = Scenario(scenarioFile, self.__config._bundle_dir, self.__config._suffix,
+                   self.__config._critical_account, self.__config._noncritical_account,
+                   self.__config._critical_priority, self.__config._noncritical_priority)
       scenario.initialize()
 
       # suite name (defaults to Cycle)
