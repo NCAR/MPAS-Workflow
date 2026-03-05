@@ -84,3 +84,15 @@ externalanalyses:
           - "GetGDASAnalysisFromFTP"
           #Vtable: /glade/campaign/mmm/parc/liuz/pandac_common/vtables/Vtable.GFS.O3MR
           retry: '40*PT10M'
+
+    ERA5:
+      GDEX:
+        common:
+          UngribPrefix: ERA5
+          PrepareExternalAnalysisTasks:
+          - "GetERA5AnalysisFromGDEX"
+          - "ExternalAnalysisToMPAS-{{mesh}}"
+          - "ExternalAnalysisReady__"
+          job:
+            GetAnalysisFrom:
+              retry: '3*PT5S'
