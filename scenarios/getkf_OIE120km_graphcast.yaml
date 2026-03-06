@@ -1,0 +1,57 @@
+suite: GraphcastCycle
+
+experiment:
+  prefix: 'stoedtli_'
+  name: 'getkf_120km_20mem_gc_coupled_'
+  suffix: '1'
+
+enkf:
+  solver: GETKF
+  # localization
+  horizontal localization lengthscale: 1.2e6
+  vertical localization lengthscale: 6000.0
+  vertical localization lengthscale units: height
+  fraction of retained variance: 0.95
+  # inflation
+  rtpp value: 0.5
+  rtps value: 0.9
+  # ensemble observation equivalent (background, analysis)
+  retainObsFeedback: True
+  concatenateObsFeedback: False
+  # coupling to var DA (bias correction, recentering)
+  coupledToVarDA: True
+  workflowNameVarDA: 'stoedtli_3denvar_120km_coupled_gc_1'
+  recenterAnalyses: True
+  biasCorrection: True
+  post: []
+
+externalanalyses:
+  resource: "GFS.PANDAC"
+
+firstbackground:
+  resource: "PANDAC.EnsPertB"
+
+forecast:
+  post: []
+
+members:
+  n: 20
+
+model:
+  outerMesh: 120km
+  # TODO: make inner and ensemble meshes unnecessary
+  # related to {{PrepareExternalAnalysisInner}} and {{PrepareExternalAnalysisEnsemble}}
+  innerMesh: 120km
+  ensembleMesh: 120km
+
+observations:
+  resource: PANDACArchiveForVarBC
+
+workflow:
+  first cycle point: 20180414T18
+  # restart cycle point: 20180415T12
+  final cycle point: 20180422T00
+
+build:
+  # mpas bundle: /glade/derecho/scratch/stoedtli/recenter_multires/mpas-bundle/build
+  mpas bundle: /glade/work/stoedtli/src/recenter_multires/mpas-bundle/build

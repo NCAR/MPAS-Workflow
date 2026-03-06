@@ -52,7 +52,10 @@ class Forecast(Component):
     ## post
     # list of tasks for Post
     # e.g.: ['verifyobs', 'verifymodel']
-    'post': [['verifymodel'], list]
+    'post': [['verifymodel'], list],
+
+    # directory containing GFS WPS file
+    'dirWPSFilesGFS': ['/glade/derecho/scratch/stoedtli/gfs_wps_files', str],
   }
 
   def __init__(self,
@@ -100,6 +103,8 @@ class Forecast(Component):
     self._set('outIntervalHR', outIntervalHR)
     self._set('lengthHR', lengthHR)
 
+    self._cshVars = list(self._vtable.keys())
+
     ########################
     # tasks and dependencies
     ########################
@@ -118,7 +123,8 @@ class Forecast(Component):
       'GPUType': {'def': 'a100_80gb', 'typ': str},
       'memory': {'def': '20GB', 'typ': str},
       'queue': {'def': hpc['SingleProcQueue']},  # submit to Casper
-      'account': {'def': hpc['CriticalAccount']},
+      # 'account': {'def': hpc['CriticalAccount']},
+      'account': {'def': hpc['GPUAccount']},
       'email': {'def': True, 'typ': bool},
     }
     # store job for ExtendedForecast to re-use

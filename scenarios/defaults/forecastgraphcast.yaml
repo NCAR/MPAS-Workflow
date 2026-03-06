@@ -30,4 +30,4 @@ forecast:
         PEPerNode: 2
         memory: '20GB'
         baseSeconds: 300
-        secondsPerMember: 60
+        secondsPerMember: 90

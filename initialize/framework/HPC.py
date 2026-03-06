@@ -32,13 +32,15 @@ class HPC(Component):
     # Derecho options: main
 
     # Critical*: used for all critical path jobs, single or multi-node, multi-processor only
-    'CriticalAccount': ['NMMM0015', str],
+    # 'CriticalAccount': ['NMMM0015', str],
+    'CriticalAccount': ['NMMM0043', str],
     # override these below based on host
     'CriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
     'CriticalPriority' : ['regular', str, ['premium', 'regular', 'economy', 'preempt']],
 
     # NonCritical*: used non-critical path jobs, single or multi-node, multi-processor only
-    'NonCriticalAccount': ['NMMM0015', str],
+    # 'NonCriticalAccount': ['NMMM0015', str],
+    'NonCriticalAccount': ['NMMM0043', str],
     # override these below based on host
     'NonCriticalQueue': ['economy', str, ['economy', 'regular', 'premium']],
     'NonCriticalPriority' : ['economy', str, ['premium', 'regular', 'economy', 'preempt']],
@@ -48,8 +50,12 @@ class HPC(Component):
 
     # SingleProc*: used for single-processor jobs, both critical and non-critical paths
     # IMPORTANT: must NOT be executed on login node to comply with CISL requirements
-    'SingleProcAccount': ['NMMM0015', str],
+    # 'SingleProcAccount': ['NMMM0015', str],
+    'SingleProcAccount': ['NMMM0043', str],
     'SingleProcQueue': ['casper@casper-pbs', str, ['casper@casper-pbs', 'share']],
+
+    # GPU account: only NMMM0015 has a GPU allocation on casper
+    'GPUAccount': ['NMMM0015', str],
   }
   def __init__(self, config:Config):
     self.logPrefix = self.__class__.__name__+': '
