@@ -58,13 +58,13 @@ class Run(Logger):
     ap.add_argument('-an', '--noncritical_account', help='which account to charge noncritical jobs to')
     ap.add_argument('-pc', '--critical_priority', help='priority for critical jobs')
     ap.add_argument('-pn', '--noncritical_priority', help='priority for noncritical jobs')
-    args = ap.parse_args()
-    assert Path(args.config).is_file(), (self.logPrefix+'config ('+args.config+') does not exist')
+    self._args = ap.parse_args()
+    assert Path(self._args.config).is_file(), (self.logPrefix+'config ('+self._args.config+') does not exist')
 
-    self.__configFile = args.config
-    self.__config = Config(args.config, args.bundle_dir, args.suffix,
-                           args.critical_account, args.noncritical_account,
-                           args.critical_priority, args.noncritical_priority)
+    self.__configFile = self._args.config
+    self.__config = Config(self._args.config, self._args.bundle_dir, self._args.suffix,
+                           self._args.critical_account, self._args.noncritical_account,
+                           self._args.critical_priority, self._args.noncritical_priority)
 
   def execute(self):
     '''
@@ -87,9 +87,9 @@ class Run(Logger):
 
       self.clean(self)
 
-      scenario = Scenario(scenarioFile, self.__config._bundle_dir, self.__config._suffix,
-                   self.__config._critical_account, self.__config._noncritical_account,
-                   self.__config._critical_priority, self.__config._noncritical_priority)
+      scenario = Scenario(scenarioFile, self._args.bundle_dir, self._args.suffix,
+                   self._args.critical_account, self._args.noncritical_account,
+                   self._args.critical_priority, self._args.noncritical_priority)
       scenario.initialize()
 
       # suite name (defaults to Cycle)

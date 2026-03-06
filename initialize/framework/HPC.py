@@ -55,25 +55,14 @@ class HPC(Component):
     self.logPrefix = self.__class__.__name__+': '
 
     # set system dependent defaults before invoking Component ctor
-    if config._critical_account != None:
-      self.variablesWithDefaults['CriticalAccount'] = [config._critical_account, str]
-    if config._noncritical_account != None:
-      self.variablesWithDefaults['NonCriticalAccount'] = [config._noncritical_account, str]
-
     system = os.getenv('NCAR_HOST')
     if system == 'derecho':
-      critical_priority = 'regular'
-      noncritical_priority = 'regular'
-      if config._critical_priority != None:
-        critical_priority = config._critical_priority
-      if config._noncritical_priority != None:
-        noncritical_priority = config._noncritical_priority
       topdir = '/glade/derecho/scratch'
       self.variablesWithDefaults['CriticalQueue'] = ['main', str, ['main', 'preempt']]
       self.variablesWithDefaults['NonCriticalQueue'] =  ['main', str, ['main', 'preempt']]
 #      self.variablesWithDefaults['SingleProcQueue'] = ['casper@casper-pbs', str, ['casper@casper-pbs', 'main']]
-      self.variablesWithDefaults['CriticalPriority'] = [critical_priority, str, ['premium', 'regular', 'economy', 'preempt']]
-      self.variablesWithDefaults['NonCriticalPriority'] = [noncritical_priority, str, ['premium', 'regular', 'economy', 'preempt']]
+      self.variablesWithDefaults['CriticalPriority'] = ['regular', str, ['premium', 'regular', 'economy', 'preempt']]
+      self.variablesWithDefaults['NonCriticalPriority'] = ['regular', str, ['premium', 'regular', 'economy', 'preempt']]
       self.system = system
       #config.convertToDerecho()
     elif system == 'cheyenne':
