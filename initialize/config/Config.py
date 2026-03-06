@@ -32,6 +32,9 @@ class Config(Logger):
        self._table = yaml.load(file, Loader=yaml.FullLoader)
        # if accounts or priorities are provided on the command line,
        # override the values specified in the scenario yaml
+       self.log('table:'+ str(self._table), level=self.MSG_DEBUG)
+       if 'hpc' not in self._table:
+         self._table['hpc'] = {}
        if critical_account != None:
          self._table['hpc']['CriticalAccount'] = critical_account
        if noncritical_account != None:
