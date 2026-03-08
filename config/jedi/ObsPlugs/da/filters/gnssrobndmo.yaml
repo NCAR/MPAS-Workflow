@@ -4,7 +4,8 @@
     - variable:
         name: MetaData/impactHeightRO
       minvalue: 0.0
-      maxvalue: 30000.0
+      maxvalue: 20000.0
+      # maxvalue: 30000.0
     - variable:
         name: MetaData/earthRadiusCurvature
       minvalue: 6250000.0
