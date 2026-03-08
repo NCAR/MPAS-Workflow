@@ -1,6 +1,6 @@
 experiment:
   prefix: "stoedtli_"
-  name: '3denvar_120km_coupled_'
+  name: '3denvar_120km_coupled_gc_'
   suffix: "1"
 
 firstbackground:
@@ -30,19 +30,18 @@ variational:
   nInnerIterations: [60,60,]
   ensemble:
     forecasts:
-      # resource: "PANDAC.GETKF_uncoupled"
       resource: "PANDAC.GETKF_coupled"
   #execute: False # the default is True
   post: [] # this turns off verifyobs
   coupledToEnKF: True
-  workflowNameEnKF: "stoedtli_getkf_120km_20mem_coupled_1"
+  workflowNameEnKF: "stoedtli_getkf_120km_20mem_gc_coupled_1"
 
 workflow:
   first cycle point: 20180414T18
-  #restart cycle point: 20180415T00
-  final cycle point: 20180422T00
+  restart cycle point: 20180501T06
+  final cycle point: 20180515T00
   #CyclingWindowHR: 24 # default is 6 for cycling DA
   #max active cycle points: 4 # used for independent 'extendedforecast'
 
 build:
-  mpas bundle: /glade/derecho/scratch/stoedtli/recenter_multires/mpas-bundle/build
+  mpas bundle: /glade/work/stoedtli/src/recenter_multires/mpas-bundle/build

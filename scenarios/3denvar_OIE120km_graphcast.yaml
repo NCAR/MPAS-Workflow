@@ -3,7 +3,7 @@ suite: GraphcastCycle
 experiment:
   prefix: "stoedtli_"
   name: '3denvar_120km_gc_test_'
-  suffix: "3"
+  suffix: "6"
 
 firstbackground:
   resource: "PANDAC.GFS"
@@ -45,4 +45,4 @@ workflow:
   #max active cycle points: 4 # used for independent 'extendedforecast'
 
 build:
-  mpas bundle: /glade/derecho/scratch/stoedtli/recenter_multires/mpas-bundle/build
+  mpas bundle: /glade/work/stoedtli/src/recenter_multires/mpas-bundle/build
