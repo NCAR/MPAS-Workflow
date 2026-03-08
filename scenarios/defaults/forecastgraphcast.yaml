@@ -24,10 +24,8 @@ forecast:
         memory: '20GB'
         baseSeconds: 1000
         secondsPerForecastHR: 30
-      # these need to be updated
       interpolation:
         nodes: 1
         PEPerNode: 2
-        memory: '20GB'
-        baseSeconds: 300
-        secondsPerMember: 90
+        memory: '10GB'
+        baseSeconds: 240
