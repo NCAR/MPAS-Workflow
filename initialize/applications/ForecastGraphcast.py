@@ -113,7 +113,31 @@ class Forecast(Component):
 
     # Notes:
     # - removed job_priority flag for now (not sure if it is supported on Casper)
-    attr = {
+    # attr = {
+    #   'retry': {'typ': str},
+    #   'baseSeconds': {'typ': int},
+    #   'secondsPerForecastHR': {'typ': int},
+    #   'nodes': {'def': 1, 'typ': int},
+    #   'PEPerNode': {'def': 1, 'typ': int},
+    #   'GPUPerNode': {'def': 1, 'typ': int},
+    #   'GPUType': {'def': 'a100_80gb', 'typ': str},
+    #   'memory': {'def': '20GB', 'typ': str},
+    #   'queue': {'def': hpc['SingleProcQueue']},  # submit to Casper
+    #   # 'account': {'def': hpc['CriticalAccount']},
+    #   'account': {'def': hpc['GPUAccount']},
+    #   'email': {'def': True, 'typ': bool},
+    # }
+    # store job for ExtendedForecast to re-use
+    # resourceForecast = mesh.name + '.graphcast'
+    # self.job = Resource(self._conf, attr, ('job', resourceForecast))
+    # self.job._set('seconds', self.job['baseSeconds'] + self.job['secondsPerForecastHR'] * lengthHR)
+    # task = TaskLookup[hpc.system](self.job)
+
+    # To maintain compatibility with Forecast.py and ExtendedForecast.py, define
+    # forecast job settings regarless of whether forecast is executed.
+    # Notes:
+    # - removed job_priority flag for now (not sure if it is supported on Casper)
+    keyListForecast = {
       'retry': {'typ': str},
       'baseSeconds': {'typ': int},
       'secondsPerForecastHR': {'typ': int},
@@ -123,25 +147,25 @@ class Forecast(Component):
       'GPUType': {'def': 'a100_80gb', 'typ': str},
       'memory': {'def': '20GB', 'typ': str},
       'queue': {'def': hpc['SingleProcQueue']},  # submit to Casper
-      # 'account': {'def': hpc['CriticalAccount']},
-      'account': {'def': hpc['GPUAccount']},
+      'account': {'def': hpc['GPUAccount']},  # not all accounts have Casper GPU allocation
       'email': {'def': True, 'typ': bool},
     }
-    # store job for ExtendedForecast to re-use
     resourceForecast = mesh.name + '.graphcast'
-    self.job = Resource(self._conf, attr, ('job', resourceForecast))
-    self.job._set('seconds', self.job['baseSeconds'] + self.job['secondsPerForecastHR'] * lengthHR)
-    task = TaskLookup[hpc.system](self.job)
+    forecastJob = Resource(self._conf, keyListForecast, ('job', resourceForecast))
+    forecastJob._set('seconds', forecastJob['baseSeconds'] + forecastJob['secondsPerForecastHR'] * lengthHR)
+    forecastTask = TaskLookup[hpc.system](forecastJob)
+    # store job for ExtendedForecast to re-use
+    self.job = forecastJob
 
     #######
     # tasks
     #######
     # warm-start, run all cycles
     # base task derived from every-cycle execute
-    self._tasks += ['''
-  [['''+self.base+''']]
-    inherit = '''+self.tf.execute+'''
-'''+task.job()+task.directives()]
+#     self._tasks += ['''
+#   [['''+self.base+''']]
+#     inherit = '''+self.tf.execute+'''
+# '''+task.job()+task.directives()]
     
     # only add these tasks if the forecast is to be executed
     if self['execute']:
@@ -149,11 +173,12 @@ class Forecast(Component):
       self._tasks += [('\n'
                       '  [[ForecastGC]]'
                       '\n'
-                      f'    inherit = {self.tf.base}, BATCH'
+                      f'    inherit = {self.tf.execute}, BATCH'
                       '\n'
                       f'    script = $origin/bin/ForecastGraphcast.csh'
                       '\n'
-      )]
+                      f'{forecastTask.job() + forecastTask.directives()}'
+                      '\n')]
 
       # Interpolation to MPAS mesh
       keyListInterpolation = {
@@ -161,7 +186,7 @@ class Forecast(Component):
         # - the interpolation application is currently small enough to run on develop
         'retry': {'typ': str},
         'baseSeconds': {'typ': int},
-        'secondsPerMember': {'typ': int},
+        # 'secondsPerMember': {'typ': int},
         'nodes': {'def': 1, 'typ': int},
         'PEPerNode': {'def': 1, 'typ': int},
         'memory': {'def': '20GB', 'typ': str},
@@ -171,18 +196,26 @@ class Forecast(Component):
       }
       resourceInterpolation = mesh.name + '.interpolation'
       interpolationJob = Resource(self._conf, keyListInterpolation, ('job', resourceInterpolation))
-      interpolationJob._set('seconds', interpolationJob['baseSeconds'] + interpolationJob['secondsPerMember'] * self.NN)
+      # interpolationJob._set('seconds', interpolationJob['baseSeconds'] + interpolationJob['secondsPerMember'] * self.NN)
+      interpolationJob._set('seconds', interpolationJob['baseSeconds'])
       interpolationTask = TaskLookup[hpc.system](interpolationJob)
 
       self._tasks += [('\n'
-                      '  [[InterpolateGCToMPAS]]'
+                      '  [[InterpolateGCToMPASFamily]]'
                       '\n'
                       f'    inherit = {self.tf.execute}, BATCH'
                       '\n'
-                      f'    script = $origin/bin/InterpolateGraphcast.csh'
-                      '\n'
                       f'{interpolationTask.job() + interpolationTask.directives()}'
                       '\n')]
+      
+      for idxMem in range(1, self.NN+1):
+        self._tasks += [('\n'
+                         f'  [[InterpolateGCToMPAS{idxMem}]]'
+                         '\n'
+                         '    inherit = InterpolateGCToMPASFamily'
+                         '\n'
+                         f'    script = $origin/bin/InterpolateGraphcast.csh {idxMem}'
+                         '\n')]
 
   #   for mm in range(1, self.NN+1, 1):
   #     # fcArgs explanation
@@ -270,7 +303,7 @@ class Forecast(Component):
     # Add dependency only if we want to run a forecast.
     if self['execute']:
       self._dependencies += [('\n'
-                              f'        ForecastGC => InterpolateGCToMPAS => {self.tf.post}')]
+                              f'        ForecastGC => InterpolateGCToMPASFamily')]
 
     # depends on previous DA
     previousDA = daFinished+'[-PT'+str(self.workflow['DA2FCOffsetHR'])+'H]'
