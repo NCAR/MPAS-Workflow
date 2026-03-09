@@ -116,8 +116,11 @@ class ExternalAnalyses(Component):
       'queue': {'def': hpc['SharedQueue']},
       'account': {'def': hpc['CriticalAccount']},
     }
-    ungribjob = Resource(self._conf, attr, ('job', 'ungrib'))
-    self.__ungribtask = TaskLookup[hpc.system](ungribjob)
+    if self['externalanalyses__UngribPrefix'] == 'GFS':
+        ungribjob = Resource(self._conf, attr, ('job', 'ungrib'))
+        self.__ungribtask = TaskLookup[hpc.system](ungribjob)
+    else:
+        self.__ungribtask = None
 
     #########
     # outputs
@@ -169,6 +172,25 @@ class ExternalAnalyses(Component):
   [['''+base+''']]
     inherit = '''+base+zeroHR]
 
+      # ERA5 GDEX
+      base = 'GetERA5AnalysisFromGDEX'
+      queue = 'GetExternalAnalyses'
+      if base in self['PrepareExternalAnalysisOuter']:
+        subqueues.append(queue)
+        taskNames[base] = base+dtLen
+        self._tasks += ['''
+  [['''+taskNames[base]+''']]
+    inherit = '''+queue+''', SingleBatch
+    script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
+    execution time limit = PT20M
+    execution retry delays = '''+self.__getRetry]
+
+        # generic 0hr task name for external classes/tasks to grab
+        if dt == 0:
+          self._tasks += ['''
+  [['''+base+''']]
+    inherit = '''+base+zeroHR]
+
       # GFS RDA
       base = 'GetGFSAnalysisFromRDA'
       queue = 'GetExternalAnalyses'
@@ -210,13 +232,13 @@ class ExternalAnalyses(Component):
       # ungrib
       base = 'UngribExternalAnalysis'
       queue = 'UngribExternalAnalyses'
-      if base in self['PrepareExternalAnalysisOuter']:
+      if base in self['PrepareExternalAnalysisOuter'] and self['externalanalyses__UngribPrefixOuter'] != 'ERA5':
         subqueues.append(queue)
         taskNames[base] = base+dtLen
         self._tasks += ['''
-  [['''+taskNames[base]+''']]
-    inherit = '''+queue+''', BATCH
-    script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
+[['''+taskNames[base]+''']]
+  inherit = '''+queue+''', BATCH
+  script = $origin/bin/'''+base+'''.csh '''+dt_work_Args+'''
 '''+self.__ungribtask.job()+self.__ungribtask.directives()]
 
         # generic 0hr task name for external classes/tasks to grab
