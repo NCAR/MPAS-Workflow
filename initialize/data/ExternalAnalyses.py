@@ -232,9 +232,9 @@ class ExternalAnalyses(Component):
       # ungrib
       base = 'UngribExternalAnalysis'
       queue = 'UngribExternalAnalyses'
-      if base in self['PrepareExternalAnalysisOuter'] and self['externalanalyses__UngribPrefixOuter'] != 'ERA5':
-        subqueues.append(queue)
-        taskNames[base] = base+dtLen
+      subqueues.append(queue)
+      taskNames[base] = base+dtLen
+      if self.__ungribtask is not None:
         self._tasks += ['''
 [['''+taskNames[base]+''']]
   inherit = '''+queue+''', BATCH

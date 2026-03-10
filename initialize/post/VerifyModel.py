@@ -27,8 +27,7 @@ class VerifyModel(Component):
   diagnosticsDir = 'diagnostic_stats/model'
   variablesWithDefaults = {
       'script directory': [
-          '/glade/campaign/mmm/parc/ivette/pandac/codeBuild/'
-          'mpasBundle_25Nov2024/code/mpas-jedi/graphics',
+          '/glade/work/jwittig/repos1/mpas-bundle-cron-src/mpas-bundle/mpas-jedi/graphics',
           str
       ],
       'anaRef': ['GFS', str],  # Reference data source (GFS, ERA5, or EC), default is GFS

@@ -28,8 +28,7 @@ class VerifyObs(Component):
   diagnosticsDir = 'diagnostic_stats/obs'
   variablesWithDefaults = {
       'script directory': [
-          '/glade/campaign/mmm/parc/ivette/pandac/codeBuild/'
-          'mpasBundle_25Nov2024/code/mpas-jedi/graphics',
+          '/glade/work/jwittig/repos1/mpas-bundle-cron-src/mpas-bundle/mpas-jedi/graphics',
           str
       ],
   }
