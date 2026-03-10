@@ -19,6 +19,10 @@ class Config(Logger):
       filename: str=None,
       bundle_dir: str=None,
       suffix: str=None,
+      critical_account: str = None,
+      noncritical_account: str = None,
+      critical_priority: str = None,
+      noncritical_priority: str = None,
       defaultsFile: str = None,
     ):
 
@@ -26,6 +30,20 @@ class Config(Logger):
    if filename is not None:
      with open(filename) as file:
        self._table = yaml.load(file, Loader=yaml.FullLoader)
+       # if accounts or priorities are provided on the command line,
+       # override the values specified in the scenario yaml
+       self.log('table:'+ str(self._table), level=self.MSG_DEBUG)
+       if 'hpc' not in self._table:
+         self._table['hpc'] = {}
+       if critical_account != None:
+         self._table['hpc']['CriticalAccount'] = critical_account
+       if noncritical_account != None:
+         self._table['hpc']['NonCriticalAccount'] = noncritical_account
+       if critical_priority != None:
+         self._table['hpc']['CriticalPriority'] = critical_priority
+       if noncritical_priority != None:
+         self._table['hpc']['NonCriticalPriority'] = noncritical_priority
+       self.log('HPC:'+ str(self._table['hpc']), level=self.MSG_DEBUG)
 
    self._bundle_dir = bundle_dir
    self._suffix = suffix
