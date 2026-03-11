@@ -25,6 +25,7 @@ members:
 
 model:
   outerMesh: 120km
+  innerMesh: 120km
 
 observations: # for optional verification
   resource: GladeRDAOnline
