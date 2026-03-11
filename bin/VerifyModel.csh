@@ -25,6 +25,9 @@ set ArgStatePrefix = "$4"
 # ArgNMembers: int, set > 1 to activate ensemble spread diagnostics
 set ArgNMembers = "$5"
 
+# ArgReference: reference data source
+set ArgReference = "$6"
+
 ## arg checks
 set test = `echo $ArgDT | grep '^[0-9]*$'`
 set isNotInt = ($status)
@@ -90,7 +93,7 @@ set NUMPROC=`cat $PBS_NODEFILE | wc -l`
 set EADir = ${ExperimentDirectory}/`echo "${ExternalAnalysesDirOuter}" \
   | sed 's@{{thisValidDate}}@'${thisValidDate}'@' \
   `
-setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $EADir/$externalanalyses__filePrefixOuter"
+setenv baseCommand "python ${mainScript}.py ${thisValidDate} -n ${NUMPROC} -r $EADir/$externalanalyses__filePrefixOuter -R $ArgReference"
 
 # additionally analyze diagnostic variables interpolated to fixed presssure levels
 setenv baseCommand "${baseCommand} -rd $EADir/diag"

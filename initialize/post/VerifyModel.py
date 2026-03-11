@@ -26,20 +26,30 @@ class VerifyModel(Component):
   workDir = 'Verification'
   diagnosticsDir = 'diagnostic_stats/model'
   variablesWithDefaults = {
-    'script directory': ['/glade/work/ivette/pandac/graphics/graphics_7SEPT2023', str],
+      'script directory': [
+          '/glade/work/jwittig/repos1/mpas-bundle-cron-src/mpas-bundle/mpas-jedi/graphics',
+          str
+      ],
+      'anaRef': ['GFS', str],  # Reference data source (GFS, ERA5, or EC), default is GFS
   }
 
   def __init__(self,
     config:Config,
     localConf:dict,
   ):
-    # adjust script directory for derecho
-    hname = os.getenv('NCAR_HOST')
-    if  hname == "derecho":
-      self.variablesWithDefaults['script directory'] = \
-          ['/glade/campaign/mmm/parc/ivette/pandac/codeBuild/mpasBundle_25Nov2024/code/mpas-jedi/graphics', str]
 
     super().__init__(config)
+
+    # ---------------------------
+    # Validate anaRef
+    # ---------------------------
+    valid_refs = ['GFS', 'ERA5', 'EC']
+    anaRef = self['anaRef']
+    if anaRef not in valid_refs:
+        raise ValueError(
+            f"Invalid anaRef '{anaRef}'. "
+            f"Must be one of {valid_refs}."
+        )
 
     hpc = localConf['hpc']; assert isinstance(hpc, HPC), self.base+': incorrect type for hpc'
     mesh = localConf['mesh']; assert isinstance(mesh, Mesh), self.base+': incorrect type for mesh'
@@ -110,6 +120,7 @@ class VerifyModel(Component):
         state.directory(),
         state.prefix(),
         memberMultiplier,
+        anaRef
       ]
       runArgs = ' '.join(['"'+str(a)+'"' for a in args])
 
