@@ -21,3 +21,7 @@ verifymodel:
     120km:
       seconds: 400
       secondsPerMember: 80
+      nodes: 1
+      PEPerNode: 16
+      memory: 20GB
+      queue: develop

@@ -188,7 +188,7 @@ variational:
       memory: 235GB
 
       # cylc retry string
-      retry: '0*PT30S'
+      retry: '2*PT30S'
 
     ## FORMAT
     #{{outerMesh}}:
@@ -374,9 +374,10 @@ variational:
         3denvar:
           nodes: 1
           PEPerNode: 128
-          memory: 235GB
-          baseSeconds: 200
-          secondsPerEnVarMember: 15
+          memory: 150GB
+          baseSeconds: 360
+          secondsPerEnVarMember: 20
+          queue: develop
         3dvar:
           nodes: 1
           PEPerNode: 128

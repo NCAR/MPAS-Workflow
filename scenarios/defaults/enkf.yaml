@@ -129,21 +129,24 @@ enkf:
         observer:
           nodes: 1
           PEPerNode: 64
-          memory: 235GB
-          baseSeconds: 200
-          secondsPerMember: 20
+          memory: 100GB
+          baseSeconds: 600
+          secondsPerMember: 60
+          queue: develop
         solver:
           nodes: 1
           PEPerNode: 128
-          memory: 235GB
+          memory: 200GB
           baseSeconds: 200
           secondsPerMember: 20
+          queue: develop
         diagoma:
           nodes: 1
           PEPerNode: 64
-          memory: 235GB
+          memory: 75GB
           baseSeconds: 200
           secondsPerMember: 10
+          queue: develop
         recenter:
           nodes: 1
           PEPerNode: 1

@@ -51,6 +51,14 @@ forecast:
       secondsPerForecastHR: 70
     120km:
       nodes: 1
-      PEPerNode: 128
+      PEPerNode: 12
+      memory: 20GB
       baseSeconds: 60
-      secondsPerForecastHR: 30
+      secondsPerForecastHR: 60
+      queue: develop
+    meanbackground:
+      nodes: 1
+      PEPerNode: 32
+      memory: 40GB
+      seconds: 300
+      queue: develop
