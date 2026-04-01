@@ -376,7 +376,7 @@ variational:
           PEPerNode: 128
           memory: 150GB
           baseSeconds: 360
-          secondsPerEnVarMember: 20
+          secondsPerEnVarMember: 40
           queue: develop
         3dvar:
           nodes: 1
