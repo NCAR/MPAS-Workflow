@@ -51,5 +51,5 @@ workflow:
   final cycle point: 20180422T00
 
 build:
-  mpas bundle: /glade/derecho/scratch/stoedtli/recenter_multires/mpas-bundle/build
+  mpas bundle: /glade/work/stoedtli/src/recenter_multires/mpas-bundle/build
 

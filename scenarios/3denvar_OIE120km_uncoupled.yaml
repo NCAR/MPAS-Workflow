@@ -43,4 +43,4 @@ workflow:
   #max active cycle points: 4 # used for independent 'extendedforecast'
 
 build:
-  mpas bundle: /glade/derecho/scratch/stoedtli/recenter_multires/mpas-bundle/build
+  mpas bundle: /glade/work/stoedtli/src/recenter_multires/mpas-bundle/build
