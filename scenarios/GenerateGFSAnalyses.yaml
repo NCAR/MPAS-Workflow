@@ -2,18 +2,22 @@ suite: GenerateExternalAnalyses
 
 externalanalyses:
   resource: "GFS.RDA"
-  #resource: "GFS.NCEPFTP"
 experiment:
-  name: 'GenerateGFSAnalyses'
-  prefix: ''
+  prefix: "stoedtli_"
+  name: 'ext_analyses_test_'
+  suffix: "1"
 model:
   outerMesh: 120km
+invariantstream:
+  resource: "20km_model_top.120km"
 hpc:
   CriticalPriority: economy
   NonCriticalPriority: economy
   #CriticalQueue: main
   #NonCriticalQueue: main
 workflow:
-  first cycle point: 20220606T00
-  final cycle point: 20220608T00
+  first cycle point: 20180414T12
+  final cycle point: 20180415T06
   max active cycle points: 60
+build:
+  mpas bundle: /glade/work/stoedtli/src/recenter_multires/mpas-bundle/build
