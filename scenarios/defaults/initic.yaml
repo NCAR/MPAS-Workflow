@@ -10,6 +10,7 @@ initic:
       seconds: 600
       nodes: 1
       PEPerNode: 128
+      memory: 235GB
 
       # cylc retry string
       retry: '0*PT30S'
@@ -27,6 +28,8 @@ initic:
       nodes: 1
       PEPerNode: 128
     120km:
-      seconds: 120
+      seconds: 240
       nodes: 1
-      PEPerNode: 128
+      PEPerNode: 8
+      memory: 10GB
+      queue: develop

@@ -40,6 +40,7 @@ class InitIC(Component):
       'queue': {'def': hpc['CriticalQueue']},
       'account': {'def': hpc['CriticalAccount']},
       'job_priority': {'def': hpc['CriticalPriority']},
+      'memory': {'typ': str},
     }
     job = Resource(self._conf, attr, ('job', meshes['Outer'].name))
     self.__task = TaskLookup[hpc.system](job)
