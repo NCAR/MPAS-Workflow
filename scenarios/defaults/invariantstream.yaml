@@ -15,3 +15,7 @@ invariantstream:
 
       ## InitFilePrefix
       InitFilePrefix: "x{{meshRatio}}.{{nCells}}.init"
+
+    20km_model_top:
+      120km:
+        InvariantDirectory: /glade/campaign/mmm/parc/stoedtli/20km_model_top/120km/invariant
