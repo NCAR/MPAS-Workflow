@@ -6,7 +6,7 @@
     config_coef_3rd_order = 0.25
 /
 &dimensions
-    config_nvertlevels = 55
+    config_nvertlevels = 44
     config_nsoillevels = 4
     config_nfglevels = 38
     config_nfgsoillevels = 4
@@ -21,12 +21,12 @@
     config_use_spechumd = false
 /
 &vertical_grid
-    config_ztop = 30000.0
+    config_ztop = 19800.0
     config_nsmterrain = 1
     config_smooth_surfaces = true
     config_dzmin = 0.3
     config_nsm = 30
-    config_tc_vertical_grid = true
+    config_tc_vertical_grid = false
 /
 &interpolation_control
     config_extrap_airtemp = 'linear'
