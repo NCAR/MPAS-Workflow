@@ -30,7 +30,7 @@
     config_smdiv = 0.1
 /
 &damping
-    config_zd = 22000.0
+    config_zd = 16000.0
     config_xnutr = 0.2
 /
 &limited_area
