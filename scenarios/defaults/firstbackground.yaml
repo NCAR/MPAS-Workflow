@@ -63,3 +63,16 @@ firstbackground:
           directory: "/glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/ENS_FCST/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/mem{:03d}"
+    20km_model_top:  # available: 20180414T18
+      gfs_det:
+        common:
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
+        120km:
+          directory: "/glade/campaign/mmm/parc/stoedtli/20km_model_top/120km/initial_conds/gfs_det/{{FirstCycleDate}}"
+      gefs_ens:
+        common:
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
+        120km:
+          directory: "/glade/campaign/mmm/parc/stoedtli/20km_model_top/120km/initial_conds/gefs_ens/{{FirstCycleDate}}"
+          maxMembers: 20
+          memberFormat: "/mem{:03d}"
