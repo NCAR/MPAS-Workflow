@@ -1,7 +1,7 @@
 experiment:
   prefix: 'stoedtli_'
-  name: 'getkf_120km_20mem_uncoupled_'
-  suffix: '3'
+  name: 'getkf_20mem_res120km_top20km_uc_test_'
+  suffix: '1'
 
 enkf:
   solver: GETKF
@@ -24,10 +24,13 @@ enkf:
   post: []
 
 externalanalyses:
-  resource: "GFS.PANDAC"
+  resource: "GFS.20km_model_top"
 
 firstbackground:
-  resource: "PANDAC.EnsPertB"
+  resource: "20km_model_top.gefs_ens"
+
+invariantstream:
+  resource: "20km_model_top.120km"
 
 forecast:
   post: []
@@ -48,7 +51,7 @@ observations:
 workflow:
   first cycle point: 20180414T18
   #restart cycle point: 20180415T06
-  final cycle point: 20180422T00
+  final cycle point: 20180415T06
 
 build:
   mpas bundle: /glade/work/stoedtli/src/recenter_multires/mpas-bundle/build

@@ -1,17 +1,20 @@
 experiment:
-  prefix: "stoedtli_"
-  name: '3denvar_120km_coupled_'
-  suffix: "2"
+  prefix: ''
+  name: '3denvar_res120km_top20km_c_mpas_'
+  suffix: '1'
 
 firstbackground:
-  resource: "PANDAC.GFS"
+  resource: "20km_model_top.gfs_det"
+
+invariantstream:
+  resource: "20km_model_top.120km"
 
 forecast:
   #execute: False # the default is True
   post: ['verifymodel'] # use this when doing extended forecast
 
 externalanalyses:
-  resource: "GFS.PANDAC"
+  resource: "GFS.20km_model_top"
 
 members:
   n: 1
@@ -31,10 +34,15 @@ variational:
   ensemble:
     forecasts:
       resource: "PANDAC.GETKF_coupled"
+    localization:
+      120km:
+        bumpLocPrefix: bumploc_1200km6km
+        bumpLocDir: /glade/campaign/mmm/parc/stoedtli/20km_model_top/120km/localization
+
   #execute: False # the default is True
   post: [] # this turns off verifyobs
   coupledToEnKF: True
-  workflowNameEnKF: "stoedtli_getkf_120km_20mem_coupled_2"
+  workflowNameEnKF: "getkf_20mem_res120km_top20km_c_mpas_1"
 
 workflow:
   first cycle point: 20180414T18

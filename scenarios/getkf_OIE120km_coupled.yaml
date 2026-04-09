@@ -1,7 +1,7 @@
 experiment:
-  prefix: 'stoedtli_'
-  name: 'getkf_120km_20mem_coupled_'
-  suffix: '2'
+  prefix: ''
+  name: 'getkf_20mem_res120km_top20km_c_mpas_'
+  suffix: '1'
 
 enkf:
   solver: GETKF
@@ -18,16 +18,19 @@ enkf:
   concatenateObsFeedback: False
   # coupling to var DA (bias correction, recentering)
   coupledToVarDA: True
-  workflowNameVarDA: 'stoedtli_3denvar_120km_coupled_2'
+  workflowNameVarDA: '3denvar_res120km_top20km_c_mpas_1'
   recenterAnalyses: True
   biasCorrection: True
   post: []
 
 externalanalyses:
-  resource: "GFS.PANDAC"
+  resource: "GFS.20km_model_top"
 
 firstbackground:
-  resource: "PANDAC.EnsPertB"
+  resource: "20km_model_top.gefs_ens"
+
+invariantstream:
+  resource: "20km_model_top.120km"
 
 forecast:
   post: []
