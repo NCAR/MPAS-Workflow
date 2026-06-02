@@ -1,0 +1,40 @@
+suite: ForecastFromExternalAnalyses
+
+externalanalyses:
+  resource: "ERA5.GDEX"
+
+experiment:
+  name: 'ForecastFromERA5mlAnalyses'
+  prefix: ''
+
+extendedforecast:
+  meanTimes: T00,T12
+  lengthHR: 24
+  outIntervalHR: 12
+  #execute: False # uncomment if forecasts are already completed
+
+  # optionally turn on extended forecast post
+  post: [verifyobs, verifymodel]
+
+hpc:
+  CriticalPriority: economy
+  NonCriticalPriority: economy
+
+members:
+  n: 1
+
+model:
+  outerMesh: 120km
+  innerMesh: 120km
+
+observations: # for optional verification
+  resource: GladeRDAOnline
+
+workflow:
+  first cycle point: 20220606T00
+  final cycle point: 20220607T00
+  max active cycle points: 4
+
+verifymodel:
+  #script directory: /glade/derecho/scratch/ivette/pandac/graphics/15km_abiahi/mpas-jedi/graphics
+  anaRef: 'ERA5'
