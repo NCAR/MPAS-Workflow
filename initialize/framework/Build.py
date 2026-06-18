@@ -186,7 +186,7 @@ class Build(Component):
     # Obs2IODA-v3
     # -----------
     self._set('obs2iodaEXE', 'obs2ioda')
-    self._set('obs2iodaBuildDir', '/glade/derecho/scratch/jwittig/repos-s/mpas-bundle-cron/build-gnu-1p_26_06_17/bin')
+    self._set('obs2iodaBuildDir', self['mpas bundle'] + '/bin')
 
     # Mean state calculator
     # ---------------------
