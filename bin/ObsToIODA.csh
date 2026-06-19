@@ -101,7 +101,7 @@ foreach gdasfile ( *"gdas."* )
 
    if ( ${gdasfile} =~ *"mtiasi"* ) then
      #./${obs2iodaEXE} ${SPLIThourly} ${gdasfile} >&! $log
-     ./${obs2iodaEXE} ${gdasfile} >&! $log
+     ./${obs2iodaEXE} -e h5 ${gdasfile} >&! $log
    else if ( ${gdasfile} =~ *"prepbufr"* ) then
      # use obs errors embedded in prepbufr file
      if ( -e obs_errtable ) then
@@ -109,12 +109,12 @@ foreach gdasfile ( *"gdas."* )
      endif
      set inst = `echo "$gdasfile" | cut -d'.' -f1`
      # run obs2ioda for preburf with additional QC as in GSI
-     ./${obs2iodaEXE} ${gdasfile} >&! $log
+     ./${obs2iodaEXE} -e h5 ${gdasfile} >&! $log
      # for surface obs, run obs2ioda for prepbufr without additional QC
      mkdir -p sfc
      cd sfc
      ln -sfv ${obs2iodaBuildDir}/${obs2iodaEXE} ./
-     ./${obs2iodaEXE} ${noGSIQCFilters} ../${gdasfile} >&! ../logs/log-converter_sfc
+     ./${obs2iodaEXE} -e h5 ${noGSIQCFilters} ../${gdasfile} >&! ../logs/log-converter_sfc
      # replace surface obs file with file created without additional QC
      mv -f sfc_obs_${thisCycleDate}.h5 ../sfc_obs_${thisCycleDate}.h5
      cd ..
@@ -127,9 +127,9 @@ foreach gdasfile ( *"gdas."* )
        echo "ERROR: ${GDASObsErrtable} does NOT exist" > ./FAIL
        exit 1
      endif
-     ./${obs2iodaEXE} ${gdasfile} >&! $log
+     ./${obs2iodaEXE} -e h5 ${gdasfile} >&! $log
    else
-     ./${obs2iodaEXE} ${gdasfile} >&! $log
+     ./${obs2iodaEXE} -e h5 ${gdasfile} >&! $log
    endif
 
    # Check status
