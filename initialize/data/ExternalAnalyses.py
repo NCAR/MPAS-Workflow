@@ -26,7 +26,7 @@ class ExternalAnalyses(Component):
     ## resource:
     # used to select from among available options (e.g., see defaults)
     # must be in quotes
-    # e.g., "GFS.RDA", "GFS.NCEPFTP", "GFS.PANDAC", "GFS.GFS_ungrib"
+    # e.g., "GFS.GDEX", "GFS.NCEPFTP", "GFS.PANDAC", "GFS.GFS_ungrib"
     'resource': str,
   }
 
@@ -191,8 +191,8 @@ class ExternalAnalyses(Component):
   [['''+base+''']]
     inherit = '''+base+zeroHR]
 
-      # GFS RDA
-      base = 'GetGFSAnalysisFromRDA'
+      # GFS GDEX
+      base = 'GetGFSAnalysisFromGDEX'
       queue = 'GetExternalAnalyses'
       if base in self['PrepareExternalAnalysisOuter']:
         subqueues.append(queue)

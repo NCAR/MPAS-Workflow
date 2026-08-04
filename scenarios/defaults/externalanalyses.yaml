@@ -43,10 +43,15 @@ externalanalyses:
           directory: "/glade/campaign/mmm/parc/taosun/pandac/15km3kmVMeshGFS/MPAS_IC"
         60-3km:
           directory: "/glade/campaign/mmm/parc/taosun/pandac/60km3kmVMeshGFS/MPAS_IC_NEW"
-      RDA:
+      SIO:
+        30km:
+          directory: "/glade/campaign/univ/ucsd0041/ivette/files_2023/ivette_GenerateExternalAnalyses_2023case_new_gwd/ExternalAnalyses/30km"
+        60km:
+          directory: "/glade/campaign/univ/ucsd0041/ivette/files_2023/ivette_GenerateExternalAnalyses_2023case_new_gwd/ExternalAnalyses/60km"
+      GDEX:
         common:
           PrepareExternalAnalysisTasks:
-          - "GetGFSAnalysisFromRDA"
+          - "GetGFSAnalysisFromGDEX"
           - "UngribExternalAnalysis"
           - "ExternalAnalysisToMPAS-{{mesh}}"
           - "ExternalAnalysisReady__"

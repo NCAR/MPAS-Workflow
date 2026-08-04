@@ -54,7 +54,7 @@ class Observations(Component):
 
   requiredVariables = {
     ## resource
-    # OPTIONS: PANDACArchive, GladeRDAOnline, NCEPFTPOnline, GenerateObs (see defaults)
+    # OPTIONS: PANDACArchive, GDEXOnline, NCEPFTPOnline, GenerateObs (see defaults)
     'resource': str,
   }
   variablesWithDefaults = {
@@ -74,6 +74,49 @@ class Observations(Component):
     # cylc retry strings for "GetObs" and "ObsToIODA" tasks
     'getRetry': ['80*PT5M', str],
     'convertRetry': ['2*PT30S', str],
+
+    ## AROWindowHours
+    # assimilation time window (hours) used to bucket ARO (gnssaro) observations into
+    # synoptic cycles when downloading/converting them in GetObs.csh
+    'AROWindowHours': [6, int],
+
+    ## AROFormat
+    # raw ARO (gnssaro) file format to download/convert in GetObs.csh/ObsToIODA.csh:
+    # 'netcdf' (AGS atmPrf profiles; receiver/tailnumber/antenna are read directly from
+    # the file) or 'bufr' (AGS bfrPrf profiles, WMO GNSS-RO template 3-10-026; smaller,
+    # but receiver/tailnumber/antenna are not carried in the message and are populated
+    # only for aircraft with a confirmed netcdf cross-reference). Per AGS, the bufr
+    # product is "self-developed based on the WMO standard, still under testing".
+    # OPTIONS: netcdf, bufr
+    'AROFormat': ['netcdf', str],
+
+    ## AROSource
+    # where GetObs.csh fetches raw ARO (gnssaro) files from:
+    # 'nrt': near-real-time, processed with UCAR/COSMIC real-time GNSS clocks. Per AGS,
+    #   "data quality has not been verified". Fetched per-cycle from AGS's per-day
+    #   level2 listing (https://agsweb.ucsd.edu/gnss-aro/<ccyy>/nrt/level2/<ccyy>.<ddd>/).
+    # 'postProc': a fixed, dated re-processed release using CODE final GNSS clocks
+    #   (higher quality), identified by AROPostProcRelease. Use for retrospective/
+    #   reanalysis-style experiments over a period AGS has already re-processed.
+    # OPTIONS: nrt, postProc
+    'AROSource': ['nrt', str],
+
+    ## AROPostProcRelease
+    # AGS post-processed release directory, relative to https://agsweb.ucsd.edu/gnss-aro/.
+    # Only used when AROSource == postProc. Available releases as of 2026-08 (see
+    # https://agsweb.ucsd.edu/gnss-aro/ar2026/readme.txt):
+    #   ar2026/postProc_20260408  (NOAA G-IV only)
+    #   ar2026/postProc_20260528  (NOAA G-IV, USAF WC-130s, NASA G-III, DLR G-550)
+    # Note the release directory name is fixed and not derived from each profile's own
+    # date -- e.g. postProc_20260528 also contains flights from late 2025.
+    'AROPostProcRelease': ['ar2026/postProc_20260528', str],
+
+    ## AROVersion
+    # AGS retrieval version, only used when AROSource == postProc (nrt is only ever
+    # published as 0027.0004): '0027.0004' (flight-level data as initial value, all
+    # aircraft) or '0028.0004' (ERA5-derived initial value, all aircraft except NASA G-III)
+    # OPTIONS: 0027.0004, 0028.0004
+    'AROVersion': ['0027.0004', str],
 
     ## GDAS observations error table
     # This file provides observation errors for all types of conventional and satwnd data
@@ -95,6 +138,18 @@ class Observations(Component):
     hpc:HPC,
   ):
     super().__init__(config)
+
+    # AROFormat=bufr + AROSource=postProc is not currently usable: AGS's postProc bfrPrf
+    # files use a different BUFR encoding (masterTablesVersionNumber=43, bufrHeaderCentre=183)
+    # than nrt bfrPrf files (masterTablesVersionNumber=12, bufrHeaderCentre=0), and eccodes
+    # has no local table definitions for centre 183 -- every postProc bufr file fails to
+    # unpack with gribapi.errors.HashArrayNoMatchError inside ObsToIODA.csh, regardless of
+    # environment (confirmed against both the workflow's and a standalone environment).
+    # This is an AGS data-encoding issue, not something fixable here.
+    assert not (self['AROFormat'] == 'bufr' and self['AROSource'] == 'postProc'), \
+      self._msg("AROFormat=bufr is not supported with AROSource=postProc -- AGS's postProc "
+        "bfrPrf files use a BUFR encoding eccodes cannot decode. Use AROFormat=netcdf for "
+        "postProc, or AROSource=nrt for bufr.")
 
     # WorkDir is where non-IODA-formatted observation files are linked/downloaded, then converted
     self.WorkDir = self.workDir+'/{{thisValidDate}}'

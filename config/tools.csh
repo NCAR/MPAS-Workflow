@@ -14,6 +14,7 @@ set pyTools = ( \
   fix_float2int \
   memberDir \
   nSpaces \
+  organize_data \
   substituteEnsembleBMembers \
   substituteEnsembleBTemplate \
   substituteEnsembleBTemplate_4d \

@@ -28,7 +28,7 @@ model:
   innerMesh: 120km
 
 observations: # for optional verification
-  resource: GladeRDAOnline
+  resource: GDEXOnline
 
 workflow:
   first cycle point: 20220606T00

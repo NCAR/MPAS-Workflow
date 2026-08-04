@@ -1,0 +1,23 @@
+suite: GenerateObs
+
+observations:
+  resource: GDEXOnline
+  AROWindowHours: 6
+  AROFormat: bufr  # OPTIONS: netcdf, bufr
+  AROSource: nrt  # OPTIONS: nrt, postProc
+  # only used when AROSource: postProc -- uncomment and set the release/version to use
+  # (NOTE: AROFormat: bufr is not supported with AROSource: postProc -- see README/known
+  # limitations, postProc's bfrPrf files use a BUFR encoding eccodes cannot decode):
+  #AROPostProcRelease: ar2026/postProc_20260528  # see https://agsweb.ucsd.edu/gnss-aro/ar2026/readme.txt for available releases
+  #AROVersion: '0027.0004'  # OPTIONS: 0027.0004, 0028.0004 -- must be quoted, otherwise
+                            # YAML parses it as a float and drops the leading zero (0027 -> 27)
+  convertToIODAObservations:
+  - gnssaro
+experiment:
+  name: 'GenerateObsARO'
+  prefix: ''
+workflow:
+  first cycle point: 20260113T06
+  final cycle point: 20260113T12
+
+  max active cycle points: 60

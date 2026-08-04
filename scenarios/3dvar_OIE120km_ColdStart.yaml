@@ -4,7 +4,7 @@ workflow:
   final cycle point: 20220218T06
   #final cycle point: 20220228T00
 observations:
-  resource: GladeRDAOnline
+  resource: GDEXOnline
 members:
   n: 1
 model:
@@ -12,7 +12,7 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 externalanalyses:
-  resource: "GFS.RDA"
+  resource: "GFS.GDEX"
 variational:
   DAType: 3dvar
   biasCorrection: True

@@ -69,11 +69,11 @@ set linkWPS = link_grib.csh
 ln -sfv ${WPSBuildDir}/${linkWPS} .
 rm -rf GRIBFILE.*
 
-echo "Getting GFS analysis from RDA"
-# RDA GFS forecasts directory
-set GFSgribdirRDA = /glade/campaign/collections/rda/data/d084001
+echo "Getting GFS analysis from GDEX"
+# GDEX GFS forecasts directory
+set GFSgribdirGDEX = /glade/campaign/collections/rda/data/d084001
 
-if ( ! -e ${GFSgribdirRDA}/${gribFile} ) then
+if ( ! -e ${GFSgribdirGDEX}/${gribFile} ) then
    set preVyymmdd = `echo ${prevValidDate} | cut -c 1-8`
    set preVyy = `echo ${prevValidDate} | cut -c 1-4`
    set preVhh = `echo ${prevValidDate} | cut -c 9-10`
@@ -82,7 +82,7 @@ if ( ! -e ${GFSgribdirRDA}/${gribFile} ) then
 endif
 
 # link ungribbed GFS
-./${linkWPS} ${GFSgribdirRDA}/${gribFile}
+./${linkWPS} ${GFSgribdirGDEX}/${gribFile}
 
 # check if the gribFile was linked
 if ( ! -e "GRIBFILE.AAA") then

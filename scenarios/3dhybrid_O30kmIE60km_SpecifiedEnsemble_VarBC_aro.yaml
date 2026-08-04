@@ -1,0 +1,72 @@
+experiment:
+  suffix: '_aro'
+
+build:
+  mpas bundle: /glade/campaign/univ/ucsd0041/ivette/codeBuild/mpasBundle_4.0.1_3Aug2026/build
+
+firstbackground:
+  resource: "SIO.GFS"
+
+forecast:
+  job:
+    30km:
+      nodes: 2
+      PEPerNode: 128
+      baseSeconds: 60
+      secondsPerForecastHR: 240
+  post: [] # this turns off verifyobs
+
+externalanalyses:
+  resource: "GFS.SIO"
+
+members:
+  n: 1
+
+model:
+  outerMesh: 30km
+  innerMesh: 60km
+  ensembleMesh: 60km
+
+observations:
+  resource: SIOArchive
+
+variational:
+  DAType: 3dhybrid
+  biasCorrection: True
+  ensembleCovarianceWeight: 0.75
+  staticCovarianceWeight: 0.25
+  nInnerIterations: [60,60,]
+  ensemble:
+    forecasts:
+      resource: "SIO.GEFS"
+
+  job:
+    30km:
+      60km:
+        3dhybrid:
+          baseSeconds: 800
+
+  observers: [
+    aircraft,
+    gnssrobndropp1d,
+    satwind,
+    satwnd,
+    sfc,
+    sondes,
+    amsua_aqua,
+    amsua_metop-a,
+    amsua_metop-b,
+    amsua_n15,
+    amsua_n18,
+    amsua_n19,
+    mhs_metop-a,
+    mhs_metop-b,
+    mhs_n18,
+    mhs_n19,
+    gnssarobndropp2d,
+  ]
+  post: [] # this turns off verifyobs
+
+workflow:
+  first cycle point: 20230106T12
+  final cycle point: 20230106T18

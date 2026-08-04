@@ -1,10 +1,10 @@
 suite: ForecastFromExternalAnalyses
 
 externalanalyses:
-  resource: "GFS.RDA"
+  resource: "GFS.GDEX"
 
 experiment:
-  name: 'VerifyingGFSAnalysesFromRDA'
+  name: 'VerifyingGFSAnalysesFromGDEX'
   prefix: ''
 
 extendedforecast:
@@ -35,7 +35,7 @@ model:
   GraphInfoDir: /glade/campaign/mmm/parc/liuz/pandac_common/mpas_meshes/30km_mesh
 
 observations: # for optional verification
-  #resource: GladeRDAOnline
+  #resource: GDEXOnline
   resource: GenerateObs
 
 workflow:

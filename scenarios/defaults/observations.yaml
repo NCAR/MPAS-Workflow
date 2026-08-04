@@ -38,7 +38,7 @@ observations:
         hofx:
           common: "{{ObservationsWorkDir}}"
 
-    GladeRDAOnline:
+    GDEXOnline:
       PrepareObservationsTasks:
       - GetObs
       - ObsToIODA
@@ -63,6 +63,7 @@ observations:
         gnssrobndmo-nopseudo: gnssro
         gnssrorefncep: gnssro
         gnssrorefncep_tunedErrors: gnssro
+        gnssarobndropp2d: gnssaro
         amsua-cld_aqua: amsua_aqua
         amsua-cld_metop-a: amsua_metop-a
         amsua-cld_metop-b: amsua_metop-b
@@ -831,3 +832,51 @@ observations:
       IODASuperObGrid:
         abi_g16: 15X15
         ahi_himawari8: 15X15
+
+    SIOArchive:
+      PrepareObservationsTasks: [ObsReady__]
+
+      instrumentsAllowingBiasCorrection:
+      - amsua_aqua
+      - amsua_metop-a
+      - amsua_metop-b
+      - amsua_metop-c
+      - amsua_n15
+      - amsua_n18
+      - amsua_n19
+      - iasi_metop-a
+      - iasi_metop-b
+      - iasi_metop-c
+
+      IODAPrefix:
+        gnssarobndropp2d: gnssaro
+        gnssrobndropp2d: gnssro
+        gnssrobndropp1d: gnssro
+        gnssrobndnbam: gnssro
+        gnssrobndmo: gnssro
+        gnssrobndmo-nopseudo: gnssro
+        gnssrorefncep: gnssro
+        gnssrorefncep_tunedErrors: gnssro
+        amsua-cld_aqua: amsua_aqua
+        amsua-cld_metop-a: amsua_metop-a
+        amsua-cld_metop-b: amsua_metop-b
+        amsua-cld_n15: amsua_n15
+        amsua-cld_n18: amsua_n18
+        amsua-cld_n19: amsua_n19
+        abi-clr_g16: abi_g16
+        ahi-clr_himawari8: ahi_himawari8
+
+      IODADirectory:
+        da:
+          common: /glade/campaign/univ/ucsd0041/ivette/files_2023/ivette_GenerateObs_2023case/Observations
+          aircraft: /glade/campaign/mmm/parc/ivette/aro_new_exps/GenerateObs_ARO_prep48h/Observations
+          gnssarobndropp2d: /glade/campaign/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
+
+        hofx:
+          common: /glade/campaign/univ/ucsd0041/ivette/files_2023/ivette_GenerateObs_2023case/Observations
+          aircraft: /glade/campaign/mmm/parc/ivette/aro_new_exps/GenerateObs_ARO_prep48h/Observations
+          gnssarobndropp2d: /glade/campaign/mmm/parc/ivette/sio/aro/new_data_format/netcdf/aro_ioda_data
+
+      IODASuperObGrid:
+        abi_g16: 59X59
+        ahi_himawari8: 101X101
