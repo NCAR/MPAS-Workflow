@@ -144,8 +144,7 @@ class Observations(Component):
     # than nrt bfrPrf files (masterTablesVersionNumber=12, bufrHeaderCentre=0), and eccodes
     # has no local table definitions for centre 183 -- every postProc bufr file fails to
     # unpack with gribapi.errors.HashArrayNoMatchError inside ObsToIODA.csh, regardless of
-    # environment (confirmed against both the workflow's and a standalone environment).
-    # This is an AGS data-encoding issue, not something fixable here.
+    # environment. This is an AGS data-encoding issue, not something fixable here.
     assert not (self['AROFormat'] == 'bufr' and self['AROSource'] == 'postProc'), \
       self._msg("AROFormat=bufr is not supported with AROSource=postProc -- AGS's postProc "
         "bfrPrf files use a BUFR encoding eccodes cannot decode. Use AROFormat=netcdf for "

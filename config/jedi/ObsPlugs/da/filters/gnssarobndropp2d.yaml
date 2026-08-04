@@ -14,27 +14,7 @@
       minvalue: -200.0
       maxvalue: 200.0
 
-  ## Scale ObsError based on ObsValue
-  # NPol
-  - filter: Perform Action
-    filter variables:
-    - name: bendingAngle
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minNPol
-      maxvalue: *maxNPol
-    action:
-      name: assign error
-      error function:
-        name: ObsFunction/ObsErrorModelStepwiseLinear
-        options:
-          xvar:
-            name: MetaData/impactHeightRO
-          scale_factor_var:
-            name: ObsValue/bendingAngle
-          xvals: *gnssroErrorLevels
-          errors: *gnssrobndropp1dNPolErrors
+  ## Scale ObsError based on ObsValue (based on GNSSRO spaceborne)
   # NMid
   - filter: Perform Action
     filter variables:
@@ -75,46 +55,6 @@
             name: ObsValue/bendingAngle
           xvals: *gnssroErrorLevels
           errors: *gnssrobndropp1dTroErrors
-  # SMid
-  - filter: Perform Action
-    filter variables:
-    - name: bendingAngle
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minSMid
-      maxvalue: *maxSMid
-    action:
-      name: assign error
-      error function:
-        name: ObsFunction/ObsErrorModelStepwiseLinear
-        options:
-          xvar:
-            name: MetaData/impactHeightRO
-          scale_factor_var:
-            name: ObsValue/bendingAngle
-          xvals: *gnssroErrorLevels
-          errors: *gnssrobndropp1dSMidErrors
-  # SPol
-  - filter: Perform Action
-    filter variables:
-    - name: bendingAngle
-    where:
-    - variable:
-        name: MetaData/latitude
-      minvalue: *minSPol
-      maxvalue: *maxSPol
-    action:
-      name: assign error
-      error function:
-        name: ObsFunction/ObsErrorModelStepwiseLinear
-        options:
-          xvar:
-            name: MetaData/impactHeightRO
-          scale_factor_var:
-            name: ObsValue/bendingAngle
-          xvals: *gnssroErrorLevels
-          errors: *gnssrobndropp1dSPolErrors
 
   - filter: Background Check
     threshold: 3.0
