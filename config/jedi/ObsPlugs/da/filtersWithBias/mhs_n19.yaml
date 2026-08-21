@@ -81,7 +81,7 @@
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: *mhs_n19_channels
         options:
-          sensor: mhs_n19
+          sensor: microwave
           channels: *mhs_n19_channels
     <<: *multiIterationFilter
 
@@ -125,7 +125,7 @@
           channels: *mhs_n19_channels
           options:
             channels: *mhs_n19_channels
-            sensor: mhs_n19
+            sensor: microwave
         error parameter vector:
                   [ 2.5, 2.5, 3.0, 2.5, 2.5]
         obserr_bound_max: [5.0, 5.0, 3.0, 5.0, 5.0]

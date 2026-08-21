@@ -83,7 +83,7 @@
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: *mhs_metop-b_channels
         options:
-          sensor: mhs_metop-b
+          sensor: microwave
           channels: *mhs_metop-b_channels
     <<: *multiIterationFilter
 
@@ -127,7 +127,7 @@
           channels: *mhs_metop-b_channels
           options:
             channels: *mhs_metop-b_channels
-            sensor: mhs_metop-b
+            sensor: microwave
         error parameter vector:
                   [ 2.5, 2.5, 2.5, 2.0, 2.0]
         obserr_bound_max: [5.0, 5.0, 10.0, 10.0, 10.0]

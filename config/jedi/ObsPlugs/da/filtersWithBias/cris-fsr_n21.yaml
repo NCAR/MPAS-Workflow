@@ -71,7 +71,7 @@
         channels: *cris-fsr_n21_channels
         options:
           channels: *cris-fsr_n21_channels
-          sensor: cris-fsr_n21
+          sensor: infrared
 #  Transmittance Top Check
   - filter: Perform Action
     filter variables:

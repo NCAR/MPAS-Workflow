@@ -127,7 +127,7 @@
           channels: *amsua-cld_n18_channels
           options:
             channels: *amsua-cld_n18_channels
-            sensor: amsua_n18
+            sensor: microwave
         obserr_function:
           name: ObsFunction/ObsErrorModelRamp
           channels: *amsua-cld_n18_channels

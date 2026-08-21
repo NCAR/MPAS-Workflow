@@ -107,7 +107,7 @@
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: *mhs_n18_channels
         options:
-          sensor: mhs_n18
+          sensor: microwave
           channels: *mhs_n18_channels
     <<: *multiIterationFilter
 #  Transmittnace Top Check
@@ -154,7 +154,7 @@
           channels: *mhs_n18_channels
           options:
             channels: *mhs_n18_channels
-            sensor: mhs_n18
+            sensor: microwave
         obserr_function:
           name: ObsFunction/ObsErrorModelRamp
           channels: *mhs_n18_channels
@@ -205,7 +205,7 @@
           channels: *mhs_n18_channels
           options:
             channels: *mhs_n18_channels
-            sensor: mhs_n18
+            sensor: microwave
         obserr_function:
           name: ObsFunction/ObsErrorModelQuad
           channels: *mhs_n18_channels

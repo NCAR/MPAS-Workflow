@@ -88,7 +88,7 @@
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: *amsua_aqua_channels
         options:
-          sensor: amsua_aqua
+          sensor: microwave
           channels: *amsua_aqua_channels
 #  Transmittance Top Check
   - filter: Perform Action
@@ -142,7 +142,7 @@
           channels: *amsua_aqua_channels
           options:
             channels: *amsua_aqua_channels
-            sensor: amsua_aqua
+            sensor: microwave
         obserr_function:
           name: ObsFunction/ObsErrorModelRamp
           channels: *amsua_aqua_channels

@@ -104,7 +104,7 @@
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: 1-15
         options:
-          sensor: amsua_n15
+          sensor: microwave
           channels: 1-15
     <<: *multiIterationFilter
 
@@ -238,7 +238,7 @@
           channels: 1-15
           options:
             channels: 1-15
-            sensor: amsua_n15
+            sensor: microwave
         obserr_function:
           name: ObsFunction/ObsErrorModelRamp
           channels: 1-15

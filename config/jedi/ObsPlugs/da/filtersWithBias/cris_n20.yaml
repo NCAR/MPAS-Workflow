@@ -67,7 +67,7 @@
         channels: *cris_n20_channels
         options:
           channels: *cris_n20_channels
-          sensor: cris_n20
+          sensor: infrared
 #  Transmittance Top Check
   - filter: Perform Action
     filter variables:
