@@ -325,6 +325,9 @@
           options:
             channels: *atms_n20_channels
             sensor: microwave
+            height groups:
+            - channels: 8
+              height: 4000
         obserr_function:
           name: ObsFunction/ObsErrorModelQuad
           channels: *atms_n20_channels
