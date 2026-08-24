@@ -90,6 +90,9 @@
         options:
           sensor: microwave
           channels: *amsua_metop-c_channels
+          height groups:
+          - channels: 7
+            height: 4000
 #  Transmittance Top Check
   - filter: Perform Action
     filter variables:
@@ -143,6 +146,9 @@
           options:
             channels: *amsua_metop-c_channels
             sensor: microwave
+            height groups:
+            - channels: 7
+              height: 4000
         obserr_function:
           name: ObsFunction/ObsErrorModelRamp
           channels: *amsua_metop-c_channels

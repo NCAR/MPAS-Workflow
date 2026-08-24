@@ -125,6 +125,9 @@
         options:
           sensor: microwave
           channels: *atms_npp_channels
+          height groups:
+          - channels: 8
+            height: 4000
     <<: *multiIterationFilter
 #  Transmittnace Top Check
   - filter: BlackList
@@ -252,6 +255,9 @@
           options:
             channels: *atms_npp_channels
             sensor: microwave
+            height groups:
+            - channels: 8
+              height: 4000
         obserr_function:
           name: ObsFunction/ObsErrorModelRamp
           channels: *atms_npp_channels
@@ -319,6 +325,9 @@
           options:
             channels: *atms_npp_channels
             sensor: microwave
+            height groups:
+            - channels: 8
+              height: 4000
         obserr_function:
           name: ObsFunction/ObsErrorModelQuad
           channels: *atms_npp_channels

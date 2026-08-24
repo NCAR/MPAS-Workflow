@@ -106,6 +106,9 @@
         options:
           sensor: microwave
           channels: 1-15
+          height groups:
+          - channels: 7
+            height: 4000
     <<: *multiIterationFilter
 
 #  Transmittance Top Check
@@ -239,6 +242,9 @@
           options:
             channels: 1-15
             sensor: microwave
+            height groups:
+            - channels: 7
+              height: 4000
         obserr_function:
           name: ObsFunction/ObsErrorModelRamp
           channels: 1-15
