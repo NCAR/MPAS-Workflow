@@ -1,7 +1,7 @@
 suite: GenerateObs
 
 observations:
-  resource: GDEXOnline
+  resource: CampaignOnline
   AROWindowHours: 6
   AROFormat: bufr  # OPTIONS: netcdf, bufr
   AROSource: nrt  # OPTIONS: nrt, postProc

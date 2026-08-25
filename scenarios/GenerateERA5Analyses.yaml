@@ -1,7 +1,7 @@
 suite: GenerateExternalAnalyses
 
 externalanalyses:
-  resource: "ERA5.GDEX"
+  resource: "ERA5.CampaignOnline"
 experiment:
   name: 'GenerateERA5Analyses'
   prefix: ''

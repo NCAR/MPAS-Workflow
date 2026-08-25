@@ -26,7 +26,7 @@ class ExternalAnalyses(Component):
     ## resource:
     # used to select from among available options (e.g., see defaults)
     # must be in quotes
-    # e.g., "GFS.GDEX", "GFS.NCEPFTP", "GFS.PANDAC", "GFS.GFS_ungrib"
+    # e.g., "GFS.CampaignOnline", "GFS.NCEPFTP", "GFS.PANDAC", "GFS.GFS_ungrib"
     'resource': str,
   }
 

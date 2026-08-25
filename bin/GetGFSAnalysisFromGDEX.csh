@@ -71,9 +71,9 @@ rm -rf GRIBFILE.*
 
 echo "Getting GFS analysis from GDEX"
 # GDEX GFS forecasts directory
-set GFSgribdirGDEX = /glade/campaign/collections/rda/data/d084001
+set GFSgribdir = ${campaignDataRoot}/d084001
 
-if ( ! -e ${GFSgribdirGDEX}/${gribFile} ) then
+if ( ! -e ${GFSgribdir}/${gribFile} ) then
    set preVyymmdd = `echo ${prevValidDate} | cut -c 1-8`
    set preVyy = `echo ${prevValidDate} | cut -c 1-4`
    set preVhh = `echo ${prevValidDate} | cut -c 9-10`
@@ -82,7 +82,7 @@ if ( ! -e ${GFSgribdirGDEX}/${gribFile} ) then
 endif
 
 # link ungribbed GFS
-./${linkWPS} ${GFSgribdirGDEX}/${gribFile}
+./${linkWPS} ${GFSgribdir}/${gribFile}
 
 # check if the gribFile was linked
 if ( ! -e "GRIBFILE.AAA") then

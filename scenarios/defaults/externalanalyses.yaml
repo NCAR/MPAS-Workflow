@@ -48,7 +48,7 @@ externalanalyses:
           directory: "/glade/campaign/univ/ucsd0041/ivette/files_2023/ivette_GenerateExternalAnalyses_2023case_new_gwd/ExternalAnalyses/30km"
         60km:
           directory: "/glade/campaign/univ/ucsd0041/ivette/files_2023/ivette_GenerateExternalAnalyses_2023case_new_gwd/ExternalAnalyses/60km"
-      GDEX:
+      CampaignOnline:
         common:
           PrepareExternalAnalysisTasks:
           - "GetGFSAnalysisFromGDEX"
@@ -91,7 +91,7 @@ externalanalyses:
           retry: '40*PT10M'
 
     ERA5:
-      GDEX:
+      CampaignOnline:
         common:
           UngribPrefix: ERA5
           PrepareExternalAnalysisTasks:

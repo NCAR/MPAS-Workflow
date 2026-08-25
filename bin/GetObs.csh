@@ -53,16 +53,15 @@ cd ${self_WorkDir}
 
 # ================================================================================================
 
-set dataRoot = /glade/campaign/collections
-set defaultBUFRDirectory = $dataRoot/rda/data/d735000
-set satwndBUFRDirectory = $dataRoot/rda/data/d351000
-set PrepBUFRDirectory = $dataRoot/rda/data/d337000
+set defaultBUFRDirectory = ${campaignDataRoot}/d735000
+set satwndBUFRDirectory = ${campaignDataRoot}/d351000
+set PrepBUFRDirectory = ${campaignDataRoot}/d337000
 
 foreach inst ( ${convertToIODAObservations} )
   if ( ${inst} == gnssaro ) then
     # ARO (airborne GNSS-RO) is always fetched from the UCSD/SIO AGS near-real-time
     # archive, regardless of ${observations__resource}, so it can be combined with
-    # BUFR-sourced obs types pulled from GDEXOnline/NCEPFTPOnline in the same experiment.
+    # BUFR-sourced obs types pulled from CampaignOnline/NCEPFTPOnline in the same experiment.
     echo "Getting ${inst} from AGS (UCSD/SIO airborne GNSS-RO archive), source=${AROSource} format=${AROFormat}"
     set AGSBaseURL = https://agsweb.ucsd.edu/gnss-aro
 
@@ -166,7 +165,7 @@ foreach inst ( ${convertToIODAObservations} )
       echo "$0 (WARNING): no ARO profiles found for ${thisValidDate} +/- ${aroHalfWindowHR}h"
     endif
     rm -rf ${aroStageDir}
-  else if ( "${observations__resource}" == "GDEXOnline" ) then
+  else if ( "${observations__resource}" == "CampaignOnline" ) then
     echo "Getting ${inst} from GDEX"
     # for satwnd observations
     if ( ${inst} == satwnd ) then

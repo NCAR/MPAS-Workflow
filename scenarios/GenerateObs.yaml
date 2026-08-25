@@ -1,7 +1,7 @@
 suite: GenerateObs
 
 observations:
-  resource: GDEXOnline
+  resource: CampaignOnline
   convertToIODAObservations:
   - 1bamua
   - 1bmhs

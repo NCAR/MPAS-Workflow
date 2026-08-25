@@ -54,7 +54,7 @@ class Observations(Component):
 
   requiredVariables = {
     ## resource
-    # OPTIONS: PANDACArchive, GDEXOnline, NCEPFTPOnline, GenerateObs (see defaults)
+    # OPTIONS: PANDACArchive, CampaignOnline, NCEPFTPOnline, GenerateObs (see defaults)
     'resource': str,
   }
   variablesWithDefaults = {

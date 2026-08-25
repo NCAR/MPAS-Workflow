@@ -38,7 +38,7 @@ observations:
         hofx:
           common: "{{ObservationsWorkDir}}"
 
-    GDEXOnline:
+    CampaignOnline:
       PrepareObservationsTasks:
       - GetObs
       - ObsToIODA

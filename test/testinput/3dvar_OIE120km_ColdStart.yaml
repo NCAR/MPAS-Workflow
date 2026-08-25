@@ -1,7 +1,7 @@
 experiment:
   name: '3dvar_OIE120km_ColdStart_TEST'
 externalanalyses:
-  resource: "GFS.GDEX"
+  resource: "GFS.CampaignOnline"
 forecast:
   post: []
 hpc:
@@ -14,7 +14,7 @@ model:
   innerMesh: 120km
   ensembleMesh: 120km
 observations:
-  resource: GDEXOnline
+  resource: CampaignOnline
 variational:
   DAType: 3dvar
   nInnerIterations: [15,]

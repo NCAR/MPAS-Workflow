@@ -1,7 +1,7 @@
 suite: ForecastFromExternalAnalyses
 
 externalanalyses:
-  resource: "GFS.GDEX"
+  resource: "GFS.CampaignOnline"
 
 experiment:
   name: 'VerifyingGFSAnalysesFromGDEX'
@@ -35,7 +35,7 @@ model:
   GraphInfoDir: /glade/campaign/mmm/parc/liuz/pandac_common/mpas_meshes/30km_mesh
 
 observations: # for optional verification
-  #resource: GDEXOnline
+  #resource: CampaignOnline
   resource: GenerateObs
 
 workflow:

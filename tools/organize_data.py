@@ -118,7 +118,7 @@ def main(dataDir, format='netcdf', targetDate=None, windowHR=6):
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(description=__doc__,
       formatter_class=argparse.RawDescriptionHelpFormatter)
-  parser.add_argument('-dataD', '--dataDir', type=str,
+  parser.add_argument('-dataD', '--dataDir', type=str, required=True,
       help='Data directory')
   parser.add_argument('--format', type=str, default='netcdf', choices=['netcdf', 'bufr'],
       help='raw ARO file format to organize: netcdf (atmPrf_*_nc) or bufr (bfrPrf_*_bufr) '
