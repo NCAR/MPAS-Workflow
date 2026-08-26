@@ -107,7 +107,7 @@
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: *mhs_metop-b_channels
         options:
-          sensor: mhs_metop-b
+          sensor: microwave
           channels: *mhs_metop-b_channels
     <<: *multiIterationFilter
 #  Transmittnace Top Check
@@ -155,7 +155,7 @@
           channels: *mhs_metop-b_channels
           options:
             channels: *mhs_metop-b_channels
-            sensor: mhs_metop-b
+            sensor: microwave
         obserr_function:
           name: ObsFunction/ObsErrorModelRamp
           channels: *mhs_metop-b_channels
@@ -207,7 +207,7 @@
           channels: *mhs_metop-b_channels
           options:
             channels: *mhs_metop-b_channels
-            sensor: mhs_metop-b
+            sensor: microwave
         obserr_function:
           name: ObsFunction/ObsErrorModelQuad
           channels: *mhs_metop-b_channels

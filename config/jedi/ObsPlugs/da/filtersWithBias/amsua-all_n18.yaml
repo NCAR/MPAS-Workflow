@@ -104,8 +104,11 @@
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: 1-15
         options:
-          sensor: amsua_n18
+          sensor: microwave
           channels: 1-15
+          height groups:
+          - channels: 7
+            height: 4000
     <<: *multiIterationFilter
 
 #  Transmittance Top Check
@@ -238,7 +241,10 @@
           channels: 1-15
           options:
             channels: 1-15
-            sensor: amsua_n18
+            sensor: microwave
+            height groups:
+            - channels: 7
+              height: 4000
         obserr_function:
           name: ObsFunction/ObsErrorModelRamp
           channels: 1-15
