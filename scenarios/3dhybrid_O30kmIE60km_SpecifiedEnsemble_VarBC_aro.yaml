@@ -1,3 +1,11 @@
+# NOTE: this scenario is added to serve as an example for running the 3dhybrid experiment with ARO data. 
+# It is not runnable standalone. It depends on:
+#   - a pre-staged SIO archive (SIOArchive/SIO.GFS/SIO.GEFS resources, all pointing
+#     at /glade/campaign/univ/ucsd0041/ivette/... paths)
+#   - CyclingFC/2023010612 MPAS forecast files already existing from a prior run
+# Running this as-is elsewhere will fail at InitVariational with no MPAS forecast files found
+# in CyclingFC/2023010612.
+
 experiment:
   suffix: '_aro'
 
