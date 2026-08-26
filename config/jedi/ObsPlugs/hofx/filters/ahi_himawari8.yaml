@@ -51,7 +51,7 @@
           <<: *ahi_himawari8_SymmCldFits{{AHISUPEROBGRID}}-{{HofXMeshDescriptor}}
           channels: *ahi_channels
           xvar:
-            name: ObsFunction/SymmCldImpactIR
+            name: ObsFunction/SymmCldImpact
             channels: *ahi_channels
             options:
               channels: *ahi_channels
