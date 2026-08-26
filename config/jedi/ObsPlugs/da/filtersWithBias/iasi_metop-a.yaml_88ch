@@ -84,7 +84,7 @@
         channels: *iasi_metop-a_channels
         options:
           channels: *iasi_metop-a_channels
-          sensor: iasi_metop-a
+          sensor: infrared
 #  Transmittance Top Check
   - filter: Perform Action
     filter variables:

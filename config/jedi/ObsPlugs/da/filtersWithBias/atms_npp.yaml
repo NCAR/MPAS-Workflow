@@ -123,8 +123,11 @@
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: *atms_npp_channels
         options:
-          sensor: atms_npp
+          sensor: microwave
           channels: *atms_npp_channels
+          height groups:
+          - channels: 8
+            height: 4000
     <<: *multiIterationFilter
 #  Transmittnace Top Check
   - filter: BlackList
@@ -251,7 +254,10 @@
           channels: *atms_npp_channels
           options:
             channels: *atms_npp_channels
-            sensor: atms_npp
+            sensor: microwave
+            height groups:
+            - channels: 8
+              height: 4000
         obserr_function:
           name: ObsFunction/ObsErrorModelRamp
           channels: *atms_npp_channels
@@ -318,7 +324,10 @@
           channels: *atms_npp_channels
           options:
             channels: *atms_npp_channels
-            sensor: atms_npp
+            sensor: microwave
+            height groups:
+            - channels: 8
+              height: 4000
         obserr_function:
           name: ObsFunction/ObsErrorModelQuad
           channels: *atms_npp_channels

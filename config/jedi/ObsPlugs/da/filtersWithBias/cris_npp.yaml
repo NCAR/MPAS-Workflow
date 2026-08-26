@@ -70,7 +70,7 @@
         channels: *cris_npp_channels
         options:
           channels: *cris_npp_channels
-          sensor: cris_npp
+          sensor: infrared
 #  Transmittance Top Check
   - filter: Perform Action
     filter variables:

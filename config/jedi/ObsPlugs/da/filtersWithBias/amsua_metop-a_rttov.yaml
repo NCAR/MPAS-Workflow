@@ -88,8 +88,11 @@
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: *amsua_metop-a_channels
         options:
-          sensor: amsua_metop-a
+          sensor: microwave
           channels: *amsua_metop-a_channels
+          height groups:
+          - channels: 7
+            height: 4000
 #  Transmittance Top Check
   - filter: Perform Action
     filter variables:
@@ -142,7 +145,10 @@
           channels: *amsua_metop-a_channels
           options:
             channels: *amsua_metop-a_channels
-            sensor: amsua_metop-a
+            sensor: microwave
+            height groups:
+            - channels: 7
+              height: 4000
         obserr_function:
           name: ObsFunction/ObsErrorModelRamp
           channels: *amsua_metop-a_channels
