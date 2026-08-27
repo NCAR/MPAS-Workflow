@@ -3,6 +3,9 @@
 if ( $?config_tools ) exit 0
 set config_tools = 1
 
+## GDEX-hosted archive data (formerly RDA)
+set campaignDataRoot = /glade/campaign/collections/gdex/data
+
 ## workflow tools
 set wd = `pwd`
 set pyDir = $wd/tools
@@ -14,6 +17,7 @@ set pyTools = ( \
   fix_float2int \
   memberDir \
   nSpaces \
+  organize_data \
   substituteEnsembleBMembers \
   substituteEnsembleBTemplate \
   substituteEnsembleBTemplate_4d \

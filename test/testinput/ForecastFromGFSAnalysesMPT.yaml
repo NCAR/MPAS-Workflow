@@ -1,7 +1,7 @@
 suite: ForecastFromExternalAnalyses
 
 externalanalyses:
-  resource: "GFS.RDA"
+  resource: "GFS.CampaignOnline"
 
 #build:
 #  forecast directory: path-for-mpas-model-build

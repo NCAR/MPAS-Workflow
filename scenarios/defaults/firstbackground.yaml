@@ -64,7 +64,15 @@ firstbackground:
           directory: "/glade/campaign/mmm/parc/taosun/pandac/60kmMeshGFS/ENS_FCST/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/mem{:03d}"
-        30km: 
+        30km:
           directory: "/glade/campaign/mmm/parc/taosun/pandac/30kmMeshGFS/ENS_FCST/{{FirstCycleDate}}"
           maxMembers: 80
           memberFormat: "/mem{:03d}"
+    SIO:
+      GFS:
+        common:
+          PrepareFirstBackground: "LinkWarmStartBackgrounds => ForecastFinished__"
+        30km:
+          directory: "/glade/campaign/univ/ucsd0041/ivette/files_2023/ivette_ForecastFromGFSAnalyses_case2023_firstFC_30km/ExtendedFC/{{FirstCycleDate}}/mean"
+        60km:
+          directory: "/glade/campaign/univ/ucsd0041/ivette/files_2023/ivette_ForecastFromGFSAnalyses_case2023_firstFC_60km/ExtendedFC/{{FirstCycleDate}}/mean"

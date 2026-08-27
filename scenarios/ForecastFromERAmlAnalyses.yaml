@@ -1,7 +1,7 @@
 suite: ForecastFromExternalAnalyses
 
 externalanalyses:
-  resource: "ERA5.GDEX"
+  resource: "ERA5.CampaignOnline"
 
 experiment:
   name: 'ForecastFromERA5mlAnalyses'
@@ -28,7 +28,7 @@ model:
   innerMesh: 120km
 
 observations: # for optional verification
-  resource: GladeRDAOnline
+  resource: CampaignOnline
 
 workflow:
   first cycle point: 20220606T00
