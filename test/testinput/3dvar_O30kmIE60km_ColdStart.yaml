@@ -1,5 +1,5 @@
 externalanalyses:
-  resource: "GFS.RDA"
+  resource: "GFS.CampaignOnline"
 experiment:
   name: '3dvar_O30kmIE60km_ColdStart_TEST'
 forecast:
@@ -22,7 +22,7 @@ model:
   # generated using the same MPAS-A code version as is used in the initic and forecast applications.
   GraphInfoDir: /glade/work/duda/static_moved_to_campaign
 observations:
-  resource: GladeRDAOnline
+  resource: CampaignOnline
 variational:
   DAType: 3dvar
   nInnerIterations: [30,]

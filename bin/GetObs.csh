@@ -6,7 +6,7 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
 # Get observations for a cold start experiment
-# from the NCEP FTP BUFR/PrepBUFR files or CISL RDA archived NCEP BUFR files
+# from the NCEP FTP BUFR/PrepBUFR files or GDEX archived NCEP BUFR files
 
 # Process arguments
 # =================
@@ -53,14 +53,120 @@ cd ${self_WorkDir}
 
 # ================================================================================================
 
-set dataRoot = /glade/campaign/collections
-set defaultBUFRDirectory = $dataRoot/rda/data/d735000
-set satwndBUFRDirectory = $dataRoot/rda/data/d351000
-set PrepBUFRDirectory = $dataRoot/rda/data/d337000
+set defaultBUFRDirectory = ${campaignDataRoot}/d735000
+set satwndBUFRDirectory = ${campaignDataRoot}/d351000
+set PrepBUFRDirectory = ${campaignDataRoot}/d337000
 
 foreach inst ( ${convertToIODAObservations} )
-  if ( "${observations__resource}" == "GladeRDAOnline" ) then
-    echo "Getting ${inst} from RDA"
+  if ( ${inst} == gnssaro ) then
+    # ARO (airborne GNSS-RO) is always fetched from the UCSD/SIO AGS near-real-time
+    # archive, regardless of ${observations__resource}, so it can be combined with
+    # BUFR-sourced obs types pulled from CampaignOnline/NCEPFTPOnline in the same experiment.
+    echo "Getting ${inst} from AGS (UCSD/SIO airborne GNSS-RO archive), source=${AROSource} format=${AROFormat}"
+    set AGSBaseURL = https://agsweb.ucsd.edu/gnss-aro
+
+    if ( "${AROFormat}" == bufr ) then
+      set aroPrefix = bfrPrf
+      set aroExt = _bufr
+    else
+      set aroPrefix = atmPrf
+      set aroExt = _nc
+    endif
+
+    # assimilation window kept for this cycle: [thisValidDate-half, thisValidDate+half]
+    @ aroHalfWindowHR = ${AROWindowHours} / 2
+
+    # download search span: pad by a full extra day on each side beyond the kept
+    # window, so an adjacent IOP/flight dated a day off from its actual profile
+    # timestamps (e.g. a mission that started/ended near a day boundary) still gets
+    # fetched. This only widens what GetObs.csh downloads; organize_data.py still
+    # only *keeps* profiles strictly inside +/-AROWindowHours/2, so cycles never
+    # overlap in what's actually processed.
+    @ aroSearchMarginHR = ${aroHalfWindowHR} + 24
+    set aroSearchPrevDate = `$advanceCYMDH ${thisValidDate} -${aroSearchMarginHR}`
+    set aroSearchNextDate = `$advanceCYMDH ${thisValidDate} ${aroSearchMarginHR}`
+    set aroPrevDay = `echo ${aroSearchPrevDate} | cut -c 1-8`
+    set aroNextDay = `echo ${aroSearchNextDate} | cut -c 1-8`
+
+    set aroStageDir = aro_staging
+    rm -rf ${aroStageDir}
+    mkdir -p ${aroStageDir}
+
+    if ( "${AROSource}" == postProc ) then
+      # postProc: a fixed, dated re-processed release (CODE final GNSS clocks; see
+      # https://agsweb.ucsd.edu/gnss-aro/ar<ccyy>/readme.txt), organized as one tarball
+      # per flight/aircraft/version under AROPostProcRelease (e.g. ar2026/postProc_20260528
+      # -- note the flights inside can predate 2026, the release directory name is fixed
+      # and not derived from each profile's own date). Two retrieval versions coexist
+      # (AROVersion); NRT below is only ever published as 0027.0004.
+      set aroDirURL = ${AGSBaseURL}/${AROPostProcRelease}
+      set aroDay = ${aroPrevDay}
+      while ( 1 )
+        set aroCCYY = `echo ${aroDay} | cut -c 1-4`
+        set aroDDD = `date -d ${aroDay} +%j`
+        echo "Fetching ARO postProc tarballs for ${aroDay} (day ${aroDDD}) from ${aroDirURL}"
+        # Fetch the directory listing once and pull matching hrefs directly instead of
+        # letting 'wget -r' crawl it: this directory has 500+ entries, and recursive
+        # crawling proved non-deterministic against it (observed runs that silently
+        # found zero matches despite the real files being present -- reproduced by
+        # running the identical 'wget -r' command back-to-back with different outcomes).
+        set aroPattern = "${aroPrefix}_postProc_${aroCCYY}\.${aroDDD}_[A-Za-z0-9_]*_${AROVersion}\.tar\.gz"
+        foreach aroHref ( `wget -q -O - ${aroDirURL}/ | grep -oE "${aroPattern}" | sort -u` )
+          wget -q ${aroDirURL}/${aroHref} -P ${aroStageDir} >>&! log_getARO_${aroDay}
+        end
+
+        if ( "${aroDay}" == "${aroNextDay}" ) break
+        set aroDay = `$advanceCYMDH ${aroDay}00 24 | cut -c 1-8`
+      end
+
+      # nonomatch has to stay set through the '-e' check below too, since testing '-e'
+      # on the literal unexpanded pattern (when zero tarballs were downloaded) would
+      # otherwise re-trigger glob expansion and abort the script
+      set nonomatch
+      foreach aroTar ( ${aroStageDir}/${aroPrefix}_postProc_*.tar.gz )
+        if ( -e ${aroTar} ) tar -x -f ${aroTar} -C ${aroStageDir}
+      end
+      unset nonomatch
+    else
+      # nrt: fetch individual profile files directly from AGS's per-day level2 listing.
+      # This is the actual current NRT distribution -- ar<ccyy>/nrt/*.tar.gz tarball
+      # bundles exist too but lag behind and are not the authoritative source. Files
+      # arrive already extracted, so no tar step is needed here.
+      set aroDay = ${aroPrevDay}
+      while ( 1 )
+        set aroCCYY = `echo ${aroDay} | cut -c 1-4`
+        set aroDDD = `date -d ${aroDay} +%j`
+        set aroDirURL = ${AGSBaseURL}/${aroCCYY}/nrt/level2/${aroCCYY}.${aroDDD}
+        echo "Fetching ARO profiles for ${aroDay} (day ${aroDDD}) from ${aroDirURL}"
+        # same non-recursive listing-then-direct-fetch approach as the postProc branch
+        # above, for the same reliability reason
+        set aroPattern = "${aroPrefix}_[A-Za-z0-9_.]*${aroExt}"
+        foreach aroHref ( `wget -q -O - ${aroDirURL}/ | grep -oE "${aroPattern}" | sort -u` )
+          wget -q ${aroDirURL}/${aroHref} -P ${aroStageDir} >>&! log_getARO_${aroDay}
+        end
+
+        if ( "${aroDay}" == "${aroNextDay}" ) break
+        set aroDay = `$advanceCYMDH ${aroDay}00 24 | cut -c 1-8`
+      end
+    endif
+
+    # organize_data.py creates its per-cycle output directory relative to its own
+    # CWD (not relative to -dataD), so run it from inside aroStageDir to land the
+    # output at ${aroStageDir}/${thisValidDate}/ as expected below. It only keeps
+    # profiles within +/-AROWindowHours/2 of this cycle (see aroSearchMarginHR above
+    # for why we downloaded a wider span than that).
+    cd ${aroStageDir}
+    $organize_data -dataD . -d ${thisValidDate} -w ${AROWindowHours} --format ${AROFormat}
+    cd ..
+
+    if ( -d ${aroStageDir}/${thisValidDate} ) then
+      mv ${aroStageDir}/${thisValidDate}/${aroPrefix}_*${aroExt} . |& grep -v "No match"
+    else
+      echo "$0 (WARNING): no ARO profiles found for ${thisValidDate} +/- ${aroHalfWindowHR}h"
+    endif
+    rm -rf ${aroStageDir}
+  else if ( "${observations__resource}" == "CampaignOnline" ) then
+    echo "Getting ${inst} from GDEX"
     # for satwnd observations
     if ( ${inst} == satwnd ) then
        setenv THIS_FILE gdas.${inst}.t${hh}z.${ccyymmdd}.bufr
