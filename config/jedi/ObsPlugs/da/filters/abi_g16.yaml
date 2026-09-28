@@ -65,7 +65,7 @@
           <<: *abi_g16_SymmCldFits{{ABISUPEROBGRID}}-{{HofXMeshDescriptor}}
           channels: *abi_g16_channels
           xvar:
-            name: ObsFunction/SymmCldImpactIR
+            name: ObsFunction/SymmCldImpact
             channels: *abi_g16_channels
             options:
               channels: *abi_g16_channels
@@ -81,7 +81,7 @@
 #    where:
 #    - variable:
 ##        name: MetaData/cloudAmount
-#        name: ObsFunction/SymmCldImpactIR
+#        name: ObsFunction/SymmCldImpact
 #        channels: *abi_g16_channels
 #        options:
 #          channels: *abi_g16_channels
