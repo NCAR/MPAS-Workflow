@@ -114,6 +114,19 @@ variational:
             #  zero padding: 3
             #  nmembers: 80
 
+      SIO:
+        GEFS:
+          60km:
+            maxMembers: 30
+            directory0: '/glade/campaign/univ/ucsd0041/ivette/files_2023/60km/EnsForCov/{{prevDateTime}}'
+            memberPrefix:
+            memberNDigits: 2
+          30km:
+            maxMembers: 30
+            directory0: '/glade/campaign/univ/ucsd0041/ivette/files_2023/30km/EnsForCov/{{prevDateTime}}'
+            memberPrefix:
+            memberNDigits: 2
+
     # externally-produced localization files
     localization:
       #{{ensembleMesh}}:

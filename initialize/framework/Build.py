@@ -7,6 +7,7 @@
  which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 '''
 import os
+import sys
 from pathlib import Path
 
 from initialize.config.Component import Component
@@ -187,6 +188,16 @@ class Build(Component):
     # -----------
     self._set('obs2iodaEXE', 'obs2ioda')
     self._set('obs2iodaBuildDir', self['mpas bundle'] + '/bin')
+
+    # ARO (airborne GNSS-RO) IODA converter
+    # --------------------------------------
+    # script name (gnssaro_netcdf2ioda.py / gnssaro_bufr2ioda.py) is chosen at run time
+    # in ObsToIODA.csh based on observations.AROFormat; both live in this directory
+    self._set('AROConverterBuildDir', '/glade/work/ivette/pandac/ioda-converters/src/gnssro')
+    # built nightly; not tied to 'mpas bundle' since this bundle may not include pyiodaconv
+    pyVersionDir = 'python{}.{}'.format(sys.version_info.major, sys.version_info.minor)
+    AROPyiodaconvBundle = '/glade/derecho/scratch/jwittig/repos-s/mpas-bundle-cron/build-gnu-1p_latest'
+    self._set('AROPyiodaconvPath', AROPyiodaconvBundle + '/lib/' + pyVersionDir)
 
     # Mean state calculator
     # ---------------------

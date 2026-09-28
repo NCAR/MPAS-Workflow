@@ -1,7 +1,7 @@
 suite: ForecastFromExternalAnalyses
 
 externalanalyses:
-  resource: "GFS.RDA"
+  resource: "GFS.CampaignOnline"
 
 experiment:
   name: 'ForecastFromGFSAnalyses'
@@ -28,7 +28,7 @@ model:
   innerMesh: 120km
 
 observations: # for optional verification
-  resource: GladeRDAOnline
+  resource: CampaignOnline
 
 workflow:
   first cycle point: 20220606T00
