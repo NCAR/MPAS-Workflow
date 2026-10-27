@@ -275,7 +275,11 @@ cd ${WorkDir}
 if ( ${thisValidDate} == ${nextFirstCycleDate} ) then
   set biasCorrectionDir = $initialVARBCcoeff
 else
-  set biasCorrectionDir = ${DAWorkDir}/$prevValidDate/$OutDBDir
+  # {{MemberDir}} is substituted per member in the YAML preparation stage, so that each EDA member
+  # reads its own coefficients from the previous cycle (e.g., /mem001, /mem002, ...).
+  # For deterministic variational (nMembers = 1), {{MemberDir}} is substituted with an empty
+  # string, so this is equivalent to ${DAWorkDir}/$prevValidDate/$OutDBDir.
+  set biasCorrectionDir = "${DAWorkDir}/$prevValidDate/${OutDBDir}{{MemberDir}}"
 endif
 # For EnKF, offline bias correction can be applied for bias correction
 if ( "$ArgAppType" == enkf ) then
@@ -344,8 +348,15 @@ foreach instrument ($observers)
         endif
       else
         if ( ! -f ${InDBDir}/${instrument}_obs_${thisValidDate}.h5 ) then
-          ln -sf ${biasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
-          ln -sf ${biasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}
+          set member = 1
+          while ( $member <= ${nMembers} )
+            set memDir = `${memberDir} $nMembers $member`
+            set memBiasCorrectionDir = `echo "${biasCorrectionDir}" | sed 's@{{MemberDir}}@'${memDir}'@'`
+            mkdir -p ${DAWorkDir}/${thisValidDate}/${OutDBDir}${memDir}
+            ln -sf ${memBiasCorrectionDir}/satbias_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}${memDir}
+            ln -sf ${memBiasCorrectionDir}/satbias_cov_${i}.h5 ${DAWorkDir}/${thisValidDate}/${OutDBDir}${memDir}
+            @ member++
+          end
         endif         
       endif
     endif
@@ -516,7 +527,7 @@ sed -i 's@{{geoPrefix}}@'${geoPrefix}'_'${AppCategory}'@g' $thisYAML
 sed -i 's@{{diagPrefix}}@'${diagPrefix}'_'${AppCategory}'@g' $thisYAML
 
 # satellite bias correction directories
-sed -i 's@{{biasCorrectionDir}}@'${biasCorrectionDir}'@g' $prevYAML
+sed -i 's@{{biasCorrectionDir}}@'"${biasCorrectionDir}"'@g' $prevYAML
 sed -i 's@{{fixedTlapmeanCov}}@'${fixedTlapmeanCov}'@g' $prevYAML
 
 # method for the tropopause pressure determination
