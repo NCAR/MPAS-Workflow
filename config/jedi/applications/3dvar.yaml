@@ -6,16 +6,14 @@ _iteration: &iterationConfig
     deallocate non-da fields: true
   gradient norm reduction: 1e-3
 output:
-  filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
-  stream name: analysis
+  analysis:
+    filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+    stream name: analysis
 variational:
   minimizer:
 {{VariationalMinimizer}}
   iterations:
 {{VariationalIterations}}
-final:
-  diagnostics:
-    departures: oman
 cost function:
   cost type: 3D-Var
   time window:

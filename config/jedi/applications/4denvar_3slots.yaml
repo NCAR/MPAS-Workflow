@@ -23,16 +23,14 @@ _member config3: &memberConfig3
   <<: *memberConfig1
   date: &date3 {{thisISO8601Date3}}
 output:
-  filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
-  stream name: analysis
+  analysis:
+    filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+    stream name: analysis
 variational:
   minimizer:
 {{VariationalMinimizer}}
   iterations:
 {{VariationalIterations}}
-final:
-  diagnostics:
-    departures: oman
 cost function:
   cost type: 4D-Ens-Var
   time window:
