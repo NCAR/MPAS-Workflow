@@ -17,16 +17,14 @@ _member: &memberConfig
   state variables: &incvars [{{AnalysisVariables}}]
   stream name: ensemble
 output:
-  filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
-  stream name: analysis
+  analysis:
+    filename: {{anStateDir}}{{MemberDir}}/{{anStatePrefix}}.$Y-$M-$D_$h.$m.$s.nc
+    stream name: analysis
 variational:
   minimizer:
 {{VariationalMinimizer}}
   iterations:
 {{VariationalIterations}}
-final:
-  diagnostics:
-    departures: oman
 cost function:
   cost type: 3D-Var
   time window:
