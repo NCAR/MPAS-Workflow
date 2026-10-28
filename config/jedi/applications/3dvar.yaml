@@ -21,6 +21,7 @@ cost function:
   time window:
     begin: {{windowBegin}}
     length: {{windowLength}}
+  jb evaluation: false
   geometry:
     nml_file: {{OuterNamelistFile}}
     streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
