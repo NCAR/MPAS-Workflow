@@ -29,6 +29,11 @@
 #      This factor is multipled to MPAS-io-name fields to match the unit of generic-name fields.
 #      This is only applicable for simple scaling.
 #      See the "subroutine da_copy_all2sub_fields" (scale) & "da_copy_sub2all_fields" (un-scale).
+# "positive definite" :
+#      If true, negative values are reset to zero, i.e., A = max(0,A). (default: false)
+#      If no field sets it to true, no field is kept non-negative and a warning is printed at geometry setup.
+#      This is applied when reading the background state and after adding the analysis increment.
+#      See the "subroutine da_posdef" and its use with "mpas_geom % posdef_fields".
 # ------------------------------------------------------------------------------
 
 fields:
@@ -76,11 +81,13 @@ fields:
   - field name: water_vapor_mixing_ratio_wrt_dry_air
     mpas template field: theta
     mpas io name: qv
+    positive definite: true
 
   - field name: water_vapor_mixing_ratio_wrt_moist_air
     mpas template field: theta
     mpas identity field: water_vapor_mixing_ratio_wrt_moist_air
     mpas io name: spechum
+    positive definite: true
 
   - field name: height_above_mean_sea_level_at_surface
     mpas template field: u10
@@ -166,61 +173,79 @@ fields:
     mpas template field: theta
     mpas identity field: cloud_liquid_water
     mpas io name: qc
+    positive definite: true
 
   - field name: cloud_liquid_ice
     mpas template field: theta
     mpas identity field: cloud_liquid_ice
     mpas io name: qi
+    positive definite: true
 
   - field name: rain_water
     mpas template field: theta
     mpas identity field: rain_water
     mpas io name: qr
+    positive definite: true
 
   - field name: snow_water
     mpas template field: theta
     mpas identity field: snow_water
     mpas io name: qs
+    positive definite: true
 
   - field name: graupel
     mpas template field: theta
     mpas identity field: graupel
     mpas io name: qg
+    positive definite: true
   
   - field name: hail
     mpas template field: theta
     mpas identity field: hail
     mpas io name: qh
+    positive definite: true
 
   - field name: cloud_droplet_number_concentration
     mpas template field: theta
     mpas identity field: cloud_droplet_number_concentration
     mpas io name: nc
+    positive definite: true
 
   - field name: cloud_ice_number_concentration
     mpas template field: theta
     mpas identity field: cloud_ice_number_concentration
     mpas io name: ni
+    positive definite: true
 
   - field name: rain_number_concentration
     mpas template field: theta
     mpas identity field: rain_number_concentration
     mpas io name: nr
+    positive definite: true
 
   - field name: snow_number_concentration
     mpas template field: theta
     mpas identity field: snow_number_concentration
     mpas io name: ns
+    positive definite: true
 
   - field name: graupel_number_concentration
     mpas template field: theta
     mpas identity field: graupel_number_concentration
     mpas io name: ng
+    positive definite: true
 
   - field name: hail_number_concentration
     mpas template field: theta
     mpas identity field: hail_number_concentration
     mpas io name: nh
+    positive definite: true
+
+  - field name: equivalent_reflectivity_factor
+    mpas template field: theta
+    mpas identity field: equivalent_reflectivity_factor
+    mpas io name: refl10cm
+    positive definite: true
 
   - field name: moist_air_density
     mpas template field: theta
@@ -342,7 +367,7 @@ fields:
   - field name: observable_domain_mask
     mpas template field: u10
 
-  - field name: wind_reduction_factor_at_10m
+  - field name: ratio_of_wind_at_surface_adjacent_layer_to_wind_at_10m
     mpas template field: u10
     
   - field name: land_type_index_USGS
@@ -408,3 +433,4 @@ fields:
     mpas template field: theta
     mpas identity field: relative_humidity
     mpas io name: relhum
+    mpas io scaling factor: 0.01 # from MPAS unit [percent] to generic unit [fraction] (or ratio)
