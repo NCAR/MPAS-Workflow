@@ -31,7 +31,7 @@
 #      See the "subroutine da_copy_all2sub_fields" (scale) & "da_copy_sub2all_fields" (un-scale).
 # "positive definite" :
 #      If true, negative values are reset to zero, i.e., A = max(0,A). (default: false)
-#      At least one field must set it to true; otherwise mpas-jedi aborts at geometry setup.
+#      If no field sets it to true, no field is kept non-negative and a warning is printed at geometry setup.
 #      This is applied when reading the background state and after adding the analysis increment.
 #      See the "subroutine da_posdef" and its use with "mpas_geom % posdef_fields".
 # ------------------------------------------------------------------------------
