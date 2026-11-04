@@ -636,13 +636,6 @@ cat >>! ${thisSEDF} << EOF
 ${indent}- <<: *iterationConfig\
 EOF
 
-  if ( $iOuter == 1 ) then
-cat >>! ${thisSEDF} << EOF
-${indent}  diagnostics:\
-${indent}    departures: ombg\
-EOF
-  endif
-
   if ( $iOuter < $nOuterIterations ) then
     set nn = $nn\\
   endif
