@@ -24,7 +24,7 @@ observations:
   resource: PANDACArchive
 variational:
   DAType: 3dvar
-  nInnerIterations: [15,]
+  nInnerIterations: [15,15]
   # turn off post to reduce overhead
   post: []
 workflow:
