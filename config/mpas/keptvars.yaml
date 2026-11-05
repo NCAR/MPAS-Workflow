@@ -43,8 +43,8 @@ fields:
   - isltyp
   - snowh
   - vegfra
-  - lai
   - smois
   - tslb
   - vorticity
   - w
+  - refl10cm
