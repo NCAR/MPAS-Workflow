@@ -61,6 +61,12 @@ class Variational(Component):
     'ensembleCovarianceWeight': [0.75, float],
     'staticCovarianceWeight': [0.25, float],
 
+    ## jbEvaluation
+    # whether to evaluate the nonlinear Jb term (sets `jb evaluation` and `full inverse` in the
+    # JEDI yaml); useful for debugging/diagnostics, but adds the cost of approximating the full
+    # B inverse (10 GMRESR iterations by default), which can be substantial on finer meshes
+    'jbEvaluation': [False, bool],
+
     ## SelfExclusion, whether exclude own background from the ensemble B perturbations in EnVar during EDA cycling
     'SelfExclusion': [True, bool],
 
