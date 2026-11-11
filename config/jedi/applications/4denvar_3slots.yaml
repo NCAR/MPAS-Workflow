@@ -37,7 +37,7 @@ cost function:
     begin: {{windowBegin}}
     length: {{windowLength}}
   subwindow: {{subwindowLength}}
-  jb evaluation: false
+  jb evaluation: {{JbEvaluation}}
   geometry:
     nml_file: {{OuterNamelistFile}}
     streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
@@ -56,6 +56,7 @@ cost function:
       date: *date3
   background error:
     covariance model: ensemble
+    full inverse: {{JbEvaluation}}
     no outer loop update: true
     localization:
       localization method: SABER

@@ -49,7 +49,7 @@ cost function:
     begin: {{windowBegin}}
     length: {{windowLength}}
   subwindow: {{subwindowLength}}
-  jb evaluation: false
+  jb evaluation: {{JbEvaluation}}
   geometry:
     nml_file: {{OuterNamelistFile}}
     streams_file: {{OuterStreamsFile}}{{StreamsFileMember}}
@@ -80,6 +80,7 @@ cost function:
       date: *date7
   background error:
     covariance model: hybrid
+    full inverse: {{JbEvaluation}}
     no outer loop update: true
     components:
     - weight:

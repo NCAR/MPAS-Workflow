@@ -685,6 +685,15 @@ EOF
   sed -i 's@{{anStatePrefix}}@'${ANFilePrefix}'@g' $prevYAML
   sed -i 's@{{anStateDir}}@'${WorkDir}'/'${analysisSubDir}'@g' $prevYAML
 
+  # Nonlinear Jb evaluation
+  # =======================
+  # `jb evaluation: true` requires `full inverse: true` under `background error`
+  if ( "$jbEvaluation" == "True" ) then
+    sed -i 's@{{JbEvaluation}}@true@g' $prevYAML
+  else
+    sed -i 's@{{JbEvaluation}}@false@g' $prevYAML
+  endif
+
   # Hybrid Jb weights
   # =================
   if ( "$DAType" =~ *"hybrid"* ) then
