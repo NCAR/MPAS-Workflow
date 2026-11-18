@@ -127,6 +127,7 @@ forecast:
 variational:
   #execute: False # the default is True
   DAType: 3dhybrid
+  jbEvaluation: False
   ensembleCovarianceWeight: 0.75
   staticCovarianceWeight: 0.25
   nInnerIterations: [60,60,]
